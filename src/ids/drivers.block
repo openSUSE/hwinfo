@@ -20,6 +20,7 @@
 
 # block/cciss.c
 0e11 b060
+0e11 b178
 	i	cciss
 
 # block/swim3.c

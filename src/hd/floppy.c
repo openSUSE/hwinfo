@@ -64,7 +64,10 @@ void hd_scan_floppy(hd_data_t *hd_data)
   fd = open(DEV_NVRAM, O_RDONLY | O_NONBLOCK);
   if(fd >= 0) close(fd);
 
-  if(!(hd_data->floppy = read_file(PROC_NVRAM, 0, 0))) return;
+  if(
+    !(hd_data->floppy = read_file(PROC_NVRAM_24, 0, 0)) &&
+    !(hd_data->floppy = read_file(PROC_NVRAM_22, 0, 0))
+  ) return;
 
   if((hd_data->debug & HD_DEB_FLOPPY)) dump_floppy_data(hd_data);
 

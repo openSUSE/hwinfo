@@ -1,5 +1,895 @@
 #x11DB
-#hwinfo data from 2001-01-17 15:22:02
+#hwinfo data from 2001-03-20 16:36:26
 #
 
+
+
+# Matrox:MGA G200 AGP
+102b 0521
+	x	4|mga||||||||
+
+
+# Matrox:MGA G200 AGP
+102b 0521
+	x	3|svga||||||||
+
+
+# Matrox:Marvel G200 SD
+102b ff04
+	x	4|mga||||||||
+
+
+# Matrox:Marvel G200 SD
+102b ff04
+	x	3|svga||||||||
+
+
+# Matrox:Millennium G200 SG
+102b ff03
+	x	4|mga||||||||
+
+
+# Matrox:Millennium G200 SG
+102b ff03
+	x	3|svga||||||||
+
+
+# Matrox:Mystique G200 SG
+102b ff02
+	x	4|mga||||||||
+
+
+# Matrox:Mystique G200 SG
+102b ff02
+	x	3|svga||||||||
+
+
+# Matrox:Mistral GUI+3D Accelerator
+102B 2007
+	x	4|mga||||||||
+
+
+# Matrox:Mistral GUI+3D Accelerator
+102B 2007
+	x	3|svga||||||||
+
+
+# Matrox:Mystique
+102b 1100
+	x	4|mga||||||||
+
+
+# Matrox:Mystique
+102b 1100
+	x	3|svga||||||||
+
+
+# Matrox:MGA G100 AGP
+102B 1001
+	x	4|mga||||||||
+
+
+# Matrox:MGA G100 AGP
+102B 1001
+	x	3|svga||||||||
+
+
+# Matrox:MGA G100 PCI
+102B 1000
+	x	4|mga||||||||
+
+
+# Matrox:MGA G100 PCI
+102B 1000
+	x	3|svga||||||||
+
+
+# Matrox:MGA Impression
+102B 0d10
+	x	4|mga||||||||
+
+
+# Matrox:MGA Impression
+102B 0d10
+	x	3|svga||||||||
+
+
+# Matrox:MGA G400
+102B 0525
+	x	4|mga||||||||
+
+
+# Matrox:MGA G400
+102B 0525
+	x	3|svga||||||||
+
+
+# Matrox:MGA G200 SD PCI
+102B 0520
+	x	4|mga||||||||
+
+
+# Matrox:MGA G200 SD PCI
+102B 0520
+	x	3|svga||||||||
+
+
+# Matrox:Millennium II (AGP)
+102B 051F
+	x	4|mga||||||||
+
+
+# Matrox:Millennium II (AGP)
+102B 051F
+	x	3|svga||||||||
+
+
+# Matrox:Mystique 220 (AGP)
+102B 051E
+	x	4|mga||||||||
+
+
+# Matrox:Mystique 220 (AGP)
+102B 051E
+	x	3|svga||||||||
+
+
+# Matrox:MGA 2164W
+102B 051b
+	x	4|mga||||||||
+
+
+# Matrox:MGA 2164W
+102B 051b
+	x	3|svga||||||||
+
+
+# Matrox:Mystique MGA 1064SG
+102B 051a
+	x	4|mga||||||||
+
+
+# Matrox:Mystique MGA 1064SG
+102B 051a
+	x	3|svga||||||||
+
+
+# Matrox:MGA 2064W
+102B 0519
+	x	4|mga||||||||
+
+
+# Matrox:MGA 2064W
+102B 0519
+	x	3|svga||||||||
+
+
+# Matrox:MGA 2085PX
+102B 0518
+	x	4|mga||||||||
+
+
+# Matrox:MGA 2085PX
+102B 0518
+	x	3|svga||||||||
+
+
+# Matrox:Millennium II
+102b 0100
+	x	4|mga||||||||
+
+
+# Matrox:Millennium II
+102b 0100
+	x	3|svga||||||||
+
+
+# Matrox:Matrox G400
+102b 0525 102b 0378
+	x	4|mga||||||||
+
+
+# Matrox:Matrox G400
+102b 0525 102b 0378
+	x	3|svga||||||||
+
+
+# Matrox:MGA G450
+102b 0525 102b 0641
+	x	4|mga||||||||
+
+
+# Matrox:MGA G450
+102b 0525 102b 0641
+	x	3|svga||||||||
+
+
+# Matrox:MGA G450 rev 82
+102b 0525 102b 07c0
+	x	4|mga||||||||
+
+
+# Matrox:MGA G450 rev 82
+102b 0525 102b 07c0
+	x	3|svga||||||||
+
+
+# ATI:Mach64 VT4 PCI
+1002 5656
+	x	4|ati||||||||
+
+
+# ATI:Mach64 VT4 PCI
+1002 5656
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 VT3
+1002 5655
+	x	4|ati||||||||
+
+
+# ATI:Mach64 VT3
+1002 5655
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 VT
+1002 5654
+	x	4|ati||||||||
+
+
+# ATI:Mach64 VT
+1002 5654
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 ST
+1002 5354
+	x	4|ati||||||||
+
+
+# ATI:Mach64 ST
+1002 5354
+	x	3|mach64||||||||
+
+
+# ATI:Rage 128 4x
+1002 534E
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 4x
+1002 534E
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 4x AGP 4x
+1002 534D
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 4x AGP 4x
+1002 534D
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 4x AGP 2x
+1002 534C
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 4x AGP 2x
+1002 534C
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 4x PCI
+1002 534B
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 4x PCI
+1002 534B
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 4x
+1002 5348
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 4x
+1002 5348
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 4x AGP 4x
+1002 5347
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 4x AGP 4x
+1002 5347
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 4x AGP 2x
+1002 5346
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 4x AGP 2x
+1002 5346
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 4x PCI
+1002 5345
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 4x PCI
+1002 5345
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 RL
+1002 524C
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 RL
+1002 524C
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 VR PCI
+1002 524B
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 VR PCI
+1002 524B
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 GL AGP 2x
+1002 5246
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 GL AGP 2x
+1002 5246
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 GL PCI
+1002 5245
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 GL PCI
+1002 5245
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x (TMDS)
+1002 5058
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x (TMDS)
+1002 5058
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x (TMDS)
+1002 5057
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x (TMDS)
+1002 5057
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI (TMDS)
+1002 5056
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI (TMDS)
+1002 5056
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x
+1002 5055
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x
+1002 5055
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x
+1002 5054
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x
+1002 5054
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI
+1002 5053
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI
+1002 5053
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x (TMDS)
+1002 5052
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x (TMDS)
+1002 5052
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x (TMDS)
+1002 5051
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x (TMDS)
+1002 5051
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI (TMDS)
+1002 5050
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI (TMDS)
+1002 5050
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x
+1002 504F
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x
+1002 504F
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x
+1002 504E
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x
+1002 504E
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI
+1002 504D
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI
+1002 504D
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x (TMDS)
+1002 504C
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x (TMDS)
+1002 504C
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x (TMDS)
+1002 504B
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x (TMDS)
+1002 504B
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI (TMDS)
+1002 504A
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI (TMDS)
+1002 504A
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x
+1002 5049
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x
+1002 5049
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x
+1002 5048
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x
+1002 5048
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI
+1002 5047
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI
+1002 5047
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x (TMDS)
+1002 5046
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x (TMDS)
+1002 5046
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x (TMDS)
+1002 5045
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x (TMDS)
+1002 5045
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI (TMDS)
+1002 5044
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI (TMDS)
+1002 5044
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x
+1002 5043
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 4x
+1002 5043
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x
+1002 5042
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro AGP 2x
+1002 5042
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI
+1002 5041
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro PCI
+1002 5041
+	x	3|r128||||||||
+
+
+# ATI:Mach64 LT
+1002 4C54
+	x	4|ati||||||||
+
+
+# ATI:Mach64 LT
+1002 4C54
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 LP
+1002 4C50
+	x	4|ati||||||||
+
+
+# ATI:Mach64 LP
+1002 4C50
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 LI
+1002 4C49
+	x	4|ati||||||||
+
+
+# ATI:Mach64 LI
+1002 4C49
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 LD
+1002 4C44
+	x	4|ati||||||||
+
+
+# ATI:Mach64 LD
+1002 4C44
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 GX (21088)
+1002 4758
+	x	4|ati||||||||
+
+
+# ATI:Mach64 GX (21088)
+1002 4758
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 based
+1002 4757
+	x	4|ati||||||||
+
+
+# ATI:Mach64 based
+1002 4757
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 based
+1002 4756
+	x	4|ati||||||||
+
+
+# ATI:Mach64 based
+1002 4756
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 GT (Rage II)
+1002 4754
+	x	4|ati||||||||
+
+
+# ATI:Mach64 GT (Rage II)
+1002 4754
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 XL or XC
+1002 4752
+	x	4|ati||||||||
+
+
+# ATI:Mach64 XL or XC
+1002 4752
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 XL or XC
+1002 474E
+	x	4|ati||||||||
+
+
+# ATI:Mach64 XL or XC
+1002 474E
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 XL or XC
+1002 474D
+	x	4|ati||||||||
+
+
+# ATI:Mach64 XL or XC
+1002 474D
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 VT
+1002 4654
+	x	4|ati||||||||
+
+
+# ATI:Mach64 VT
+1002 4654
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 ET
+1002 4554
+	x	4|ati||||||||
+
+
+# ATI:Mach64 ET
+1002 4554
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 CX
+1002 4358
+	x	4|ati||||||||
+
+
+# ATI:Mach64 CX
+1002 4358
+	x	3|mach64||||||||
+
+
+# ATI:Mach64 CT
+1002 4354
+	x	4|ati||||||||
+
+
+# ATI:Mach64 CT
+1002 4354
+	x	3|mach64||||||||
+
+
+# ATI:Mach64
+1002 0088
+	x	4|ati||||||||
+
+
+# ATI:Mach64
+1002 0088
+	x	3|mach64||||||||
+
+
+# ATI:Rage 128 Mobility LE
+1002 4c45
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Mobility LE
+1002 4c45
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Mobility MF
+1002 4d46
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Mobility MF
+1002 4d46
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Mobility ML
+1002 4d4c
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Mobility ML
+1002 4d4c
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 RG
+1002 5247
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 RG
+1002 5247
+	x	3|r128||||||||
+
+
+# ATI:Rage 128 Pro TR (AGP)
+1002 5452
+	x	4|r128||||||||
+
+
+# ATI:Rage 128 Pro TR (AGP)
+1002 5452
+	x	3|r128||||||||
+
+
+# Number 9:Imagine 128
+105D 2309
+	x	3|i128||||||||
+
+
+# Number 9:Imagine 128 II
+105D 2339
+	x	3|i128||||||||
+
+
+# Number 9:Imagine 128 T2R
+105D 493D
+	x	3|i128||||||||
+
+
+# Number 9:Imagine 128 T2R4
+105D 5348
+	x	3|i128||||||||
+
+
+# 3DLabs:Permedia2V 2D+3D
+3D3D 0009
+	x	4|glint||||||||
+
+
+# 3DLabs:Permedia2V 2D+3D
+3D3D 0009
+	x	3|glint||||||||
+
+
+# 3DLabs:3D Extreme Permedia II
+3D3D 0007
+	x	4|glint||||||||
+
+
+# 3DLabs:3D Extreme Permedia II
+3D3D 0007
+	x	3|glint||||||||
+
+
+# Texas Instruments:Permedia 2D+3D
+104c 3D04
+	x	4|glint||||||||
+
+
+# Texas Instruments:Permedia 2D+3D
+104c 3D04
+	x	3|glint||||||||
+
+
+# Texas Instruments:Permedia 2
+104c 3d07
+	x	4|glint||||||||
+
+
+# Texas Instruments:Permedia 2
+104c 3d07
+	x	3|glint||||||||
+
+
+# Digital:21030/TGA
+1011 0004
+	x	4|tga||||||||
+
+
+# Digital:21030/TGA
+1011 0004
+	x	3|tga||||||||
 
