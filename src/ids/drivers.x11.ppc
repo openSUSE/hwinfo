@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Tue Sep 18 16:56:17 2001
+# generated at: Wed Sep 19 17:35:15 2001
 
 # data source:  CDB
 
@@ -13,21 +13,81 @@
 
 #
 
+# ATI Technologies Inc:3D Rage Pro 215GP
+1002 4750
+	x	4|ati||||dpms|6|||
+
+# ATI Technologies Inc:3D Rage I/II 215GT [Mach64 GT]
+1002 4754
+	x	4|ati||||dpms|e|||
+
+# ATI Technologies Inc:3D Rage IIC 215IIC [Mach64 GT IIC]
+1002 4756
+	x	4|ati||||dpms|e|||
+
 # ATI Technologies Inc:Mobility M3 AGP 2x
 1002 4c46
-	x	4|r128||||usefbdev,hw_cursor,dpms|3|||
+	x	4|r128||||usefbdev,dpms|7|||
+
+# ATI Technologies Inc:Mobility M3 AGP 2x
+1002 4c46
+	x	4|r128|3d|xf86_glx|glx,dri|usefbdev,dpms|4||switch2xf86_glx|
+
+# ATI Technologies Inc:3D Rage L Mobility AGP 2x
+1002 4c4e
+	x	4|ati||||dpms|c|||
+
+# ATI Technologies Inc:3D Rage LT Pro
+1002 4c50
+	x	4|ati||||dpms|c|||
+		Option "reference_clock Mhz" "29.498928
 
 # ATI Technologies Inc:Rage 128 PF
 1002 5046
-	x	4|r128||||usefbdev,hw_cursor,dpms|e|||
+	x	4|r128||||usefbdev,dpms|e|||
 
 # ATI Technologies Inc:Rage 128 PF
 1002 5046
-	x	4|r128|3d|xf86_glx|glx,dri|usefbdev|e||switch2xf86_glx|
+	x	4|r128|3d|xf86_glx|glx,dri|dpms,usefbdev|c||switch2xf86_glx|
+
+# ATI Technologies Inc:Rage 128 PR
+1002 5052
+	x	4|r128||||usefbdev,dpms|4|||
+		ati_r128_rl
+
+# ATI Technologies Inc:Rage 128 PR
+1002 5052
+	x	4|r128|3d|xf86_glx|glx,dri|usefbdev,dpms|4||switch2xf86_glx|
+		ati_r128_rl
+
+# ATI Technologies Inc:Rage 128 RE
+1002 5245
+	x	4|r128||||usefbdev,dpms|4|||
+
+# ATI Technologies Inc:Rage 128 RE
+1002 5245
+	x	4|r128|3d|xf86_glx|glx,dri|usefbdev,dpms|4||switch2xf86_glx|
+
+# ATI Technologies Inc:Rage 128 RF
+1002 5246
+	x	4|r128||||usefbdev,dpms|4|||
+
+# ATI Technologies Inc:Rage 128 RL
+1002 524c
+	x	4|r128||||usefbdev,dpms|4|||
 
 # ATI Technologies Inc:Rage 128 Pro TR (AGP)
 1002 5452
-	x	4|fbdev||||usefbdev,dpms|b|||
+	x	4|r128||||usefbdev,dpms|7|||
+
+# ATI Technologies Inc:3D Rage LT-G 215LG
+1002 4c47
+	x	4|fbdev||||dpms|4|||
+
+# ATI Technologies Inc:Mach64 LI
+1002 4c49
+	x	4|ati||||dpms||||
+		Option "reference_clock Mhz" "29.498928
 
 #
 
@@ -35,17 +95,13 @@
 
 #
 
-# generated at: Tue Sep 18 16:56:17 2001
+# generated at: Wed Sep 19 17:35:15 2001
 
 # data source:  CDB
 
 # distribution: Stable
 
 #
-
-# Cirrus Logic:GD 5446
-1013 00b8
-	x	3|FBDEV|||||1|||
 
 # Sun Microsystems:Sun|Monochrome (bwtwo)
 s4001 0001
@@ -67,6 +123,10 @@ s4001 0004
 s4001 0005
 	x	3|||||||||
 
+# ATI Technologies Inc:3D Rage Pro 215GP
+1002 4750
+	x	3|FBDEV||||||||
+
 # ATI Technologies Inc:3D Rage I/II 215GT [Mach64 GT]
 1002 4754
 	x	3|FBDEV||||||||
@@ -77,7 +137,7 @@ s4001 0005
 
 # ATI Technologies Inc:Mobility M3 AGP 2x
 1002 4c46
-	x	3|FBDEV|||||f|||
+	x	3|FBDEV|||||7|||
 
 # ATI Technologies Inc:3D Rage L Mobility AGP 2x
 1002 4c4e
@@ -107,17 +167,13 @@ s4001 0005
 1002 524c
 	x	3|FBDEV||||||||
 
-# S3 Inc.:86c864 [Vision 864 DRAM] vers 1
-5333 88c1
-	x	3|FBDEV|||||1|||
-
 # ATI Technologies Inc:Rage 128 Pro TR (AGP)
 1002 5452
-	x	3|FBDEV|||||1b|||
+	x	3|FBDEV|||||7|||
 
 # Matrox Graphics, Inc.:MGA G200
 102b 0520
-	x	3|FBDEV|||||7|||
+	x	3|FBDEV|||||1|||
 
 # Matrox Graphics, Inc.:MGA 1064SG [Mystique]
 102b 051a
@@ -129,4 +185,8 @@ s4001 0005
 
 # ATI Technologies Inc:3D Rage LT-G 215LG
 1002 4c47
+	x	3|FBDEV||||||||
+
+# ATI Technologies Inc:Mach64 LI
+1002 4c49
 	x	3|FBDEV||||||||

@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Tue Sep 18 16:56:17 2001
+# generated at: Wed Sep 19 17:35:15 2001
 
 # data source:  CDB
 
@@ -523,7 +523,7 @@
 
 # 3DLabs:GLINT R3
 3d3d 000a
-	x	4|glint|||||9|||
+	x	4|glint||||||||
 
 # S3 Inc.:86c368 [Trio 3D/2X]
 5333 8a13
@@ -669,10 +669,6 @@
 # ATI Technologies Inc:Radeon QG
 1002 5147
 	x	4|radeon||||||||
-
-# Alliance Semiconductor Corporation:ProMotion AT3D
-1142 643d
-	x	4|apm||||||||
 
 # 3DLabs:Permedia II 2D+3D
 3d3d 0009
@@ -836,7 +832,7 @@
 
 # 3Dfx Interactive, Inc.:Voodoo 3
 121a 0005
-	x	4|tdfx|||||5|||
+	x	4|tdfx|||||d|||
 
 # 3Dfx Interactive, Inc.:Voodoo 3
 121a 0005
@@ -1076,7 +1072,7 @@ edd8 a099
 
 #
 
-# generated at: Tue Sep 18 16:56:17 2001
+# generated at: Wed Sep 19 17:35:15 2001
 
 # data source:  CDB
 
@@ -1902,7 +1898,7 @@ edd8 a099
 
 # S3 Inc.:86c964 [Vision 964 VRAM] vers 0
 5333 88d0
-	x	3|S3||||||||
+	x	3|S3|||||4|||
 
 # S3 Inc.:86c964 [Vision 964 VRAM] vers 1
 5333 88d1
@@ -2187,10 +2183,6 @@ edd8 a099
 # NVidia / SGS Thomson (Joint Venture):Riva128
 12d2 0018
 	x	3|SVGA|||||15|||
-
-# NVidia / SGS Thomson (Joint Venture):Riva128
-12d2 0018
-	x	3|SVGA|3d|glx|glx.so||4||switch2glx|
 
 # Trident Microsystems:Cyber 9525
 1023 9525

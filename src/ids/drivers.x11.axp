@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Tue Sep 18 16:56:17 2001
+# generated at: Wed Sep 19 17:35:15 2001
 
 # data source:  CDB
 
@@ -63,7 +63,7 @@
 
 # ATI Technologies Inc:3D Rage I/II 215GT [Mach64 GT]
 1002 4754
-	x	4|ati|||||1d|||
+	x	4|ati||||dpms|d|||
 
 # ATI Technologies Inc:3D Rage IIC 215IIC [Mach64 GT IIC]
 1002 4756
@@ -746,7 +746,7 @@
 
 #
 
-# generated at: Tue Sep 18 16:56:17 2001
+# generated at: Wed Sep 19 17:35:15 2001
 
 # data source:  CDB
 
@@ -964,7 +964,7 @@
 
 # ATI Technologies Inc:3D Rage I/II 215GT [Mach64 GT]
 1002 4754
-	x	3|MACH64|||||1d|||
+	x	3|FBDEV|||||9|||
 
 # ATI Technologies Inc:3D Rage IIC 215IIC [Mach64 GT IIC]
 1002 4756
