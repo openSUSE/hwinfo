@@ -360,6 +360,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
   driver_info_t *di;
   str_list_t *sl, *sl1, *sl2;
   isdn_parm_t *ip;
+  static char *geo_type_str[] = { "Physical", "Logical", "BIOS EDD", "BIOS Legacy" };
 
   if(h->model) dump_line("Model: \"%s\"\n", h->model);
 
@@ -641,7 +642,8 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
         break;
 
       case res_disk_geo:
-        s = res->disk_geo.logical ? "Logical" : "Physical";
+        s = res->disk_geo.geotype < sizeof geo_type_str / sizeof *geo_type_str ?
+          geo_type_str[res->disk_geo.geotype] : "";
         dump_line(
           "Geometry (%s): CHS %u/%u/%u\n", s,
           res->disk_geo.cyls, res->disk_geo.heads, res->disk_geo.sectors
@@ -709,6 +711,11 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
       case res_link:
 	dump_line("Link detected: %s\n", res->link.state ? "yes" : "no");
         break;
+
+      case res_wlan:
+        if(res->wlan.auth_modes) dump_line("WLAN auth modes: %s\n", res->wlan.auth_modes);
+        break;
+
 
       default:
         dump_line("Unknown resource type %d\n", res->any.type);

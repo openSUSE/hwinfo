@@ -1051,7 +1051,7 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
           res->disk_geo.cyls = u0;
           res->disk_geo.heads = u1;
           res->disk_geo.sectors = u2;
-          res->disk_geo.logical = u3;
+          res->disk_geo.geotype = u3;
         }
         break;
 
@@ -1456,7 +1456,7 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
         add_str_list(&sl, s);
         str_printf(&s, 0, "%u", res->disk_geo.sectors);
         add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->disk_geo.logical);
+        str_printf(&s, 0, "%u", res->disk_geo.geotype);
         add_str_list(&sl, s);
         break;
 

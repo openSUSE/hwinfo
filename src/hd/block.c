@@ -34,6 +34,7 @@ static cdrom_info_t *new_cdrom_entry(cdrom_info_t **ci);
 static cdrom_info_t *get_cdrom_entry(cdrom_info_t *ci, int n);
 static void get_scsi_tape(hd_data_t *hd_data);
 static void get_generic_scsi_devs(hd_data_t *hd_data);
+static void add_disk_size(hd_data_t *hd_data, hd_t *hd);
 
 
 void hd_scan_sysfs_block(hd_data_t *hd_data)
@@ -431,10 +432,8 @@ void add_cdrom_info(hd_data_t *hd_data, hd_t *hd)
 
 void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev)
 {
-  hd_res_t *geo, *size;
-  int fd;
   unsigned u0, u1;
-  char c, *pr_str;
+  char c;
 
   if(hd->sysfs_id) {
     if(
@@ -471,40 +470,14 @@ void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_
     }
   }
 
-
-  pr_str = NULL;
-
-  if(
-    hd->unix_dev_name &&
-    hd->sub_class.id == sc_sdev_disk
-  ) {
-    PROGRESS(5, 0, hd->unix_dev_name);
-    fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK);
-    if(fd >= 0) {
-
-      str_printf(&pr_str, 0, "%s geo", hd->unix_dev_name);
-      PROGRESS(5, 1, pr_str);
-
-      if(hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size) == 1)
-        /* (low-level) unformatted disk */
-        hd->is.notready=1;
-      	
-      if(geo) add_res_entry(&hd->res, geo);
-      if(size) add_res_entry(&hd->res, size);
-
-      close(fd);
-    }
-  }
-
-  pr_str = free_mem(pr_str);
-
+  add_disk_size(hd_data, hd);
 }
 
 
 void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev)
 {
   char *fname = NULL, buf[256], *dev_name, *s;
-  unsigned u0, u1, u2;
+  unsigned u0, u1, u2, size = 0;
   str_list_t *sl, *sl0;
   hd_res_t *res;
   FILE *f;
@@ -564,43 +537,49 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_de
       free_str_list(sl);
     }
 
-
-    str_printf(&fname, 0, PROC_IDE "/%s/geometry", dev_name);
-    if((sl0 = read_file(fname, 0, 2))) {
-      for(sl = sl0; sl; sl = sl->next) {
-        if(sscanf(sl->str, " physical %u / %u / %u", &u0, &u1, &u2) == 3) {
-          if(u0 || u1 || u2) {
-            res = add_res_entry(&hd->res, new_mem(sizeof *res));
-            res->disk_geo.type = res_disk_geo;
-            res->disk_geo.cyls = u0;
-            res->disk_geo.heads = u1;
-            res->disk_geo.sectors = u2;
-          }
-          continue;
-        }
-
-        if(sscanf(sl->str, " logical %u / %u / %u", &u0, &u1, &u2) == 3) {
-          res = add_res_entry(&hd->res, new_mem(sizeof *res));
-          res->disk_geo.type = res_disk_geo;
-          res->disk_geo.cyls = u0;
-          res->disk_geo.heads = u1;
-          res->disk_geo.sectors = u2;
-          res->disk_geo.logical = 1;
-        }
-      }
-      free_str_list(sl0);
-    }
-
     str_printf(&fname, 0, PROC_IDE "/%s/capacity", dev_name);
     if((sl = read_file(fname, 0, 1))) {
       if(sscanf(sl->str, "%u", &u0) == 1 && u0 != 0x7fffffff) {
         res = add_res_entry(&hd->res, new_mem(sizeof *res));
         res->size.type = res_size;
         res->size.unit = size_unit_sectors;
-        res->size.val1 = u0;
+        res->size.val1 = size = u0;
         res->size.val2 = 512;		// ####### FIXME: sector size?
       }
       free_str_list(sl);
+    }
+
+    str_printf(&fname, 0, PROC_IDE "/%s/geometry", dev_name);
+    if((sl0 = read_file(fname, 0, 2))) {
+      for(sl = sl0; sl; sl = sl->next) {
+        if(sscanf(sl->str, " physical %u / %u / %u", &u0, &u1, &u2) == 3) {
+          if(u0 || u1 || u2) {
+            if(size && u1 && u2) {
+              u0 = size / (u1 * u2);
+            }
+            res = add_res_entry(&hd->res, new_mem(sizeof *res));
+            res->disk_geo.type = res_disk_geo;
+            res->disk_geo.cyls = u0;
+            res->disk_geo.heads = u1;
+            res->disk_geo.sectors = u2;
+            res->disk_geo.geotype = geo_physical;
+          }
+          continue;
+        }
+
+        if(sscanf(sl->str, " logical %u / %u / %u", &u0, &u1, &u2) == 3) {
+          if(size && u1 && u2) {
+            u0 = size / (u1 * u2);
+          }
+          res = add_res_entry(&hd->res, new_mem(sizeof *res));
+          res->disk_geo.type = res_disk_geo;
+          res->disk_geo.cyls = u0;
+          res->disk_geo.heads = u1;
+          res->disk_geo.sectors = u2;
+          res->disk_geo.geotype = geo_logical;
+        }
+      }
+      free_str_list(sl0);
     }
 
     str_printf(&fname, 0, PROC_IDE "/%s/cache", dev_name);
@@ -634,6 +613,8 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_de
 
     free_mem(fname);
   }
+
+  if(!size) add_disk_size(hd_data, hd);
 }
 
 
@@ -692,6 +673,8 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
       !strcmp(hd->vendor.name, "ATA") &&
       hd->device.name
     ) {
+      hd->bus.id = bus_ide;
+
       if((cs = strchr(hd->device.name, ' '))) {
         t = canon_str(cs, strlen(cs));
         if(*t) {
@@ -850,10 +833,11 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
       str_printf(&pr_str, 0, "%s geo", hd->unix_dev_name);
       PROGRESS(5, 1, pr_str);
 
-      if(hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size) == 1)
+      if(hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size) == 1) {
         /* (low-level) unformatted disk */
-        hd->is.notready=1;
-      
+        hd->is.notready = 1;
+      }
+
       if(geo) add_res_entry(&hd->res, geo);
       if(size) add_res_entry(&hd->res, size);
 
@@ -1554,6 +1538,41 @@ void get_generic_scsi_devs(hd_data_t *hd_data)
   }
 
   sysfs_close_class(sf_class);
+}
+
+
+void add_disk_size(hd_data_t *hd_data, hd_t *hd)
+{
+  hd_res_t *geo, *size;
+  int fd;
+  char *pr_str;
+
+  pr_str = NULL;
+
+  if(
+    hd->unix_dev_name &&
+    hd->sub_class.id == sc_sdev_disk
+  ) {
+    PROGRESS(5, 0, hd->unix_dev_name);
+    fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK);
+    if(fd >= 0) {
+
+      str_printf(&pr_str, 0, "%s geo", hd->unix_dev_name);
+      PROGRESS(5, 1, pr_str);
+
+      if(hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size) == 1) {
+        /* (low-level) unformatted disk */
+        hd->is.notready = 1;
+      }
+
+      if(geo) add_res_entry(&hd->res, geo);
+      if(size) add_res_entry(&hd->res, size);
+
+      close(fd);
+    }
+  }
+
+  pr_str = free_mem(pr_str);
 }
 
 

@@ -141,7 +141,7 @@ void hd_scan_misc(hd_data_t *hd_data)
               res->disk_geo.cyls = geo.cylinders;
               res->disk_geo.heads = geo.heads;
               res->disk_geo.sectors = geo.sectors;
-              res->disk_geo.logical = 1;
+              res->disk_geo.geotype = geo_logical;
               size = geo.cylinders * geo.heads * geo.sectors;
               for(res = hd->res; res; res = res->next) {
                 if(res->any.type == res_size && res->size.unit == size_unit_sectors) {

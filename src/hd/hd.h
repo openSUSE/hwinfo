@@ -13,7 +13,7 @@ extern "C" {
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#define HD_VERSION	9
+#define HD_VERSION	10
 
 /*
  * debug flags
@@ -106,7 +106,7 @@ typedef enum probe_feature {
   pr_parallel_imm, pr_s390, pr_cpuemu, pr_sysfs, pr_s390disks, pr_udev,
   pr_block, pr_block_cdrom, pr_block_part, pr_edd, pr_edd_mod, pr_bios_ddc,
   pr_bios_fb, pr_bios_mode, pr_input, pr_block_mods, pr_bios_vesa,
-  pr_cpuemu_debug, pr_scsi_noserial,
+  pr_cpuemu_debug, pr_scsi_noserial, pr_wlan,
   pr_max, pr_lxrc, pr_dsl, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
@@ -1334,7 +1334,7 @@ typedef struct {
 typedef enum resource_types {
   res_any, res_phys_mem, res_mem, res_io, res_irq, res_dma, res_monitor,
   res_size, res_disk_geo, res_cache, res_baud, res_init_strings, res_pppd_option,
-  res_framebuffer, res_hwaddr, res_link
+  res_framebuffer, res_hwaddr, res_link, res_wlan
 } hd_resource_types_t;
 
 
@@ -1353,9 +1353,15 @@ typedef enum access_flags {
   acc_unknown, acc_ro, acc_wo, acc_rw		/* unknown, read only, write only, read/write */
 } hd_access_flags_t;
 
+
 typedef enum yes_no_flag {
   flag_unknown, flag_no, flag_yes		/* unknown, no, yes */
 } hd_yes_no_flag_t;
+
+
+typedef enum geo_types {
+  geo_physical = 0, geo_logical, geo_bios_edd, geo_bios_legacy
+} hd_geo_types_t;
 
 
 /*
@@ -1432,7 +1438,7 @@ typedef struct {
   union u_hd_res_t *next;
   enum resource_types type;
   unsigned cyls, heads, sectors;
-  unsigned logical:1;			/* logical/physical geometry */
+  enum geo_types geotype;		/* 0-3: physical/logical/bios edd/bios legacy */
 } res_disk_geo_t;
 
 typedef struct {
@@ -1477,6 +1483,14 @@ typedef struct {
   unsigned state:1;			/* network link state: 0 - not connected, 1 - connected */
 } res_link_t;
 
+typedef struct {
+  union u_hd_res_t *next;
+  enum resource_types type;
+  char *auth_modes;
+  // or: str_list_t *auth_modes ?
+  // ...
+} res_wlan_t;
+
 typedef union u_hd_res_t {
   union u_hd_res_t *next;  
   res_any_t any;
@@ -1495,6 +1509,7 @@ typedef union u_hd_res_t {
   res_framebuffer_t framebuffer;
   res_hwaddr_t hwaddr;
   res_link_t link;
+  res_wlan_t wlan;
 } hd_res_t;
 
 

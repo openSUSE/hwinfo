@@ -155,6 +155,15 @@ void hd_scan_net(hd_data_t *hd_data)
             add_res_entry(&hd2->res, res);
           }
         }
+        /* add interface names */
+        if(hd->unix_dev_name) {
+          if(!search_str_list(hd2->unix_dev_names, hd->unix_dev_name)) {
+            add_str_list(&hd2->unix_dev_names, hd->unix_dev_name);
+          }
+          if(!hd2->unix_dev_name) {
+            hd2->unix_dev_name = new_str(hd->unix_dev_name);
+          }
+        }
       }
     }
 

@@ -65,6 +65,7 @@
 #include "block.h"
 #include "edd.h"
 #include "input.h"
+#include "wlan.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -296,7 +297,8 @@ static struct s_pr_flags {
   { pr_block_mods,    pr_block,     8|4|2|1, "block.mods"    },
   { pr_edd,           0,            8|4|2|1, "edd"           },
   { pr_edd_mod,       pr_edd,       8|4|2|1, "edd.mod"       },
-  { pr_input,         0,            8|4|2|1, "input"         }
+  { pr_input,         0,            8|4|2|1, "input"         },
+  { pr_wlan,          0,            8|4|2|1, "wlan"          }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -632,6 +634,12 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_wlan:
       hd_set_probe_feature(hd_data, pr_pcmcia);
+      hd_set_probe_feature(hd_data, pr_wlan);
+      hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_usb);
+      hd_set_probe_feature(hd_data, pr_net);
+      break;
+
     case hw_tv:
     case hw_dvb:
       hd_set_probe_feature(hd_data, pr_pci);
@@ -1793,6 +1801,8 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_net(hd_data);
 
   hd_scan_pppoe(hd_data);
+
+  hd_scan_wlan(hd_data);
 
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd_data, hd);
 
@@ -4787,7 +4797,7 @@ int hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res
     res->disk_geo.cyls = big_geo_s.cylinders;
     res->disk_geo.heads = big_geo_s.heads;
     res->disk_geo.sectors = big_geo_s.sectors;
-    res->disk_geo.logical = 1;
+    res->disk_geo.geotype = geo_logical;
     secs0 = (uint64_t) res->disk_geo.cyls * res->disk_geo.heads * res->disk_geo.sectors;
     got_big = 1;
   }
@@ -4803,7 +4813,7 @@ int hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res
       res->disk_geo.cyls = geo_s.cylinders;
       res->disk_geo.heads = geo_s.heads;
       res->disk_geo.sectors = geo_s.sectors;
-      res->disk_geo.logical = 1;
+      res->disk_geo.geotype = geo_logical;
       secs0 = (uint64_t) res->disk_geo.cyls * res->disk_geo.heads * res->disk_geo.sectors;
     }
     else {
