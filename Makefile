@@ -7,10 +7,6 @@ LIBS		= -lhd -lsysfs
 
 include Makefile.common
 
-ifneq "$(findstring $(ARCH), i386 x86_64 ia64)" ""
-LIBS += -lx86emu
-endif
-
 SHARED_FLAGS	=
 OBJS_NO_TINY	= names.o parallel.o modem.o
 
