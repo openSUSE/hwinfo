@@ -57,7 +57,7 @@ void hd_scan_int(hd_data_t *hd_data)
 
 #if defined(__i386__) || defined (__x86_64__)
   PROGRESS(5, 0, "bios");
-  int_bios(hd_data);
+//  int_bios(hd_data);
 #endif
 
   PROGRESS(6, 0, "mouse");

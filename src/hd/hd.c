@@ -3600,7 +3600,7 @@ int load_module_with_params(hd_data_t *hd_data, char *module, char *params)
 
   if(hd_module_is_active(hd_data, module)) return 0;
 
-  str_printf(&cmd, 0, PROG_INSMOD " %s %s", module, params ? params : "");
+  str_printf(&cmd, 0, PROG_MODPROBE " %s %s", module, params ? params : "");
 
   i = run_cmd(hd_data, cmd);
 

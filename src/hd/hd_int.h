@@ -42,7 +42,6 @@
 #define DEV_MICE		"/dev/input/mice"
 #define DEV_FB			"/dev/fb"
 
-#define PROG_INSMOD		"/sbin/insmod"
 #define PROG_MODPROBE		"/sbin/modprobe"
 #define PROG_RMMOD		"/sbin/rmmod"
 #define PROG_CARDCTL		"/sbin/cardctl"
