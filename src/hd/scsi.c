@@ -10,6 +10,7 @@
 #include <sys/ioctl.h>
 #include <sys/mount.h>
 #include <linux/hdreg.h>
+#include <sysfs/libsysfs.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -278,6 +279,30 @@ void hd_scan_scsi(hd_data_t *hd_data)
     }
 #endif
 
+#if defined(__s390__) || defined(__s390x__)
+    /* find out WWPN and FCP LUN */
+    scsi->wwpn=scsi->fcp_lun=(uint64_t)-1;
+    if(hd->unix_dev_name)
+    {
+      char sysfs_path[SYSFS_PATH_MAX];
+      struct sysfs_attribute* attr;
+      
+      sprintf(sysfs_path,"/sys/block%s/device/wwpn",hd->unix_dev_name+4);
+      attr=sysfs_open_attribute(sysfs_path);
+      if(!sysfs_read_attribute(attr))
+	scsi->wwpn=strtoull(attr->value,0,16);
+      else
+	ADD2LOG("failed to read sysfs attribute %s\n",sysfs_path);
+      
+      sprintf(sysfs_path,"/sys/block%s/device/fcp_lun",hd->unix_dev_name+4);
+      attr=sysfs_open_attribute(sysfs_path);
+      if(!sysfs_read_attribute(attr))
+	scsi->fcp_lun=strtoull(attr->value,0,16);
+      else
+	ADD2LOG("failed to read sysfs attribute %s\n",sysfs_path);
+    }
+#endif
+    
     if(scsi->size) {
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
       res->size.type = res_size;

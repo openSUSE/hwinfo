@@ -1,3 +1,5 @@
+	- added WWPN, FCP LUN for s390 SCSI devices
+
 4/3/2004:	v8.15
 	- s390: added LCSS info to ccw_t
 	- link libhd against libsysfs
