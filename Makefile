@@ -9,6 +9,11 @@ OBJS_NO_TINY	= names.o parallel.o modem.o
 
 .PNONY:	static tiny
 
+all: hwinfo hwscan
+
+hwscan: hwscan.o $(LIBHD)
+	$(CC) hwscan.o $(LDFLAGS) -lhd -o $@
+
 hwinfo: hwinfo.o $(LIBHD)
 	$(CC) hwinfo.o $(LDFLAGS) -lhd -o $@
 
@@ -17,7 +22,7 @@ static: hwinfo
 	strip -R .note -R .comment hwinfo.static
 
 tiny:
-	@make EXTRA_FLAGS=-DLIBHD_TINY
+	@make EXTRA_FLAGS=-DLIBHD_TINY hwinfo
 
 shared: hwinfo.o
 	@make EXTRA_FLAGS=-fpic
@@ -25,10 +30,12 @@ shared: hwinfo.o
 		-Wl,-soname=libhd.so.$(LIBHD_MAJOR_VERSION)\
 		-o $(LIBHD_SO) 
 	$(CC) hwinfo.o $(LDFLAGS) $(LIBHD_SO) -o hwinfo
+	$(CC) hwscan.o $(LDFLAGS) $(LIBHD_SO) -o hwscan
 
 install:
 	install -d -m 755 /usr/sbin /usr/lib /usr/include
 	install -m 755 -s hwinfo /usr/sbin
+	install -m 755 -s hwscan /usr/sbin
 	if [ -f $(LIBHD_SO) ] ; then \
 		install $(LIBHD_SO) /usr/lib ; \
 		ln -snf libhd.so.$(LIBHD_VERSION) /usr/lib/libhd.so ; \

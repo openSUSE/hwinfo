@@ -163,7 +163,22 @@ void hd_scan_manual(hd_data_t *hd_data)
 
   if(hd_data->debug) dump_manual(hd_data);
 
+  /* initialize some useful status value */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      !hd->status.configured &&
+      !hd->status.available &&
+      !hd->status.critical &&
+      !hd->status.invalid
+    ) {
+      hd->status.configured = status_new;
+      hd->status.available = hd->module == mod_manual ? status_unknown : status_yes;
+      hd->status.critical = status_no;
+    }
+  }
+
   for(entry = hd_data->manual; entry; entry = entry->next) {
+
     for(hd = hd_data->hd; hd; hd = hd->next) {
       if(hd->unique_id && !strcmp(hd->unique_id, entry->unique_id)) break;
     }
@@ -171,12 +186,15 @@ void hd_scan_manual(hd_data_t *hd_data)
     if(hd) {
       /* just update config status */
       hd->status = entry->status;
+      hd->status.available = status_yes;
     }
     else {
       /* add new entry */
       hd = add_hd_entry(hd_data, __LINE__, 0);
 
       manual2hd(entry, hd);
+
+      if(hd->status.available != status_unknown) hd->status.available = status_no;
 
       if(hd->parent_id) {
         for(hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
@@ -187,6 +205,39 @@ void hd_scan_manual(hd_data_t *hd_data)
         }
       }
     }
+  }
+
+}
+
+
+void hd_scan_manual2(hd_data_t *hd_data)
+{
+  hd_t *hd, *hd1;
+
+  /* check if it's necessary to reconfigure this hardware */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    hd->status.reconfig = status_no;
+
+    if(hd->status.critical != status_yes) continue;
+
+    if(hd->status.available == status_no) {
+      hd->status.reconfig = status_yes;
+      continue;
+    }
+
+    if(hd->status.available != status_unknown) continue;
+
+    for(hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
+      if(hd1 == hd) continue;
+
+      if(
+        hd1->hw_class == hd->hw_class &&
+        hd1->status.configured == status_new &&
+        hd1->status.available == status_yes
+      ) break;
+    }
+
+    if(hd1) hd->status.reconfig = status_yes;
   }
 }
 

@@ -386,6 +386,192 @@ int hd_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 }
 
 
+void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
+{
+  hd_set_probe_feature(hd_data, pr_int);
+  hd_set_probe_feature(hd_data, pr_manual);
+
+  switch(item) {
+    case hw_cdrom:
+      hd_set_probe_feature(hd_data, pr_ide);
+      hd_set_probe_feature(hd_data, pr_scsi_cache);
+      hd_set_probe_feature(hd_data, pr_cdrom_info);
+      break;
+
+    case hw_floppy:
+      hd_set_probe_feature(hd_data, pr_floppy);
+      hd_set_probe_feature(hd_data, pr_ide);
+      hd_set_probe_feature(hd_data, pr_scsi_cache);	// really necessary?
+      hd_set_probe_feature(hd_data, pr_misc_floppy);
+      break;
+
+    case hw_disk:
+      hd_set_probe_feature(hd_data, pr_ide);
+      hd_set_probe_feature(hd_data, pr_scsi_cache);
+//      hd_set_probe_feature(hd_data, pr_scsi_geo);
+      hd_set_probe_feature(hd_data, pr_dac960);
+      hd_set_probe_feature(hd_data, pr_smart);
+      hd_set_probe_feature(hd_data, pr_i2o);
+      hd_set_probe_feature(hd_data, pr_cciss);
+      hd_set_probe_feature(hd_data, pr_dasd);
+      break;
+
+    case hw_network:
+      hd_set_probe_feature(hd_data, pr_net);
+      break;
+
+    case hw_display:
+      hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_sbus);
+      hd_set_probe_feature(hd_data, pr_prom);
+      hd_set_probe_feature(hd_data, pr_misc);		/* for isa cards */
+      break;
+
+    case hw_monitor:
+      hd_set_probe_feature(hd_data, pr_misc);
+      hd_set_probe_feature(hd_data, pr_prom);
+      hd_set_probe_feature(hd_data, pr_bios_vbe);
+      hd_set_probe_feature(hd_data, pr_monitor);
+      break;
+
+    case hw_framebuffer:
+      hd_set_probe_feature(hd_data, pr_misc);
+      hd_set_probe_feature(hd_data, pr_prom);
+      hd_set_probe_feature(hd_data, pr_bios_vbe);
+      hd_set_probe_feature(hd_data, pr_fb);
+      break;
+
+    case hw_mouse:
+      hd_set_probe_feature(hd_data, pr_misc);
+      hd_set_probe_feature(hd_data, pr_serial);
+      hd_set_probe_feature(hd_data, pr_adb);
+      hd_set_probe_feature(hd_data, pr_usb);
+      hd_set_probe_feature(hd_data, pr_kbd);
+      hd_set_probe_feature(hd_data, pr_sys);
+      hd_set_probe_feature(hd_data, pr_mouse);
+      break;
+
+    case hw_joystick:
+      hd_set_probe_feature(hd_data, pr_usb);
+      break;
+
+    case hw_chipcard:
+      hd_set_probe_feature(hd_data, pr_usb);
+      break;
+
+    case hw_camera:
+      hd_set_probe_feature(hd_data, pr_usb);
+      break;
+
+    case hw_keyboard:
+      hd_set_probe_feature(hd_data, pr_misc);
+      hd_set_probe_feature(hd_data, pr_adb);
+      hd_set_probe_feature(hd_data, pr_usb);
+      hd_set_probe_feature(hd_data, pr_kbd);
+#ifdef __PPC__
+      hd_set_probe_feature(hd_data, pr_serial);
+#endif
+      break;
+
+    case hw_sound:
+      hd_set_probe_feature(hd_data, pr_misc);
+      hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_isapnp);
+      hd_set_probe_feature(hd_data, pr_isapnp_mod);
+      hd_set_probe_feature(hd_data, pr_sbus);
+#ifdef __PPC__
+      hd_set_probe_feature(hd_data, pr_prom);
+#endif
+      break;
+
+    case hw_isdn:
+      hd_set_probe_feature(hd_data, pr_misc);		/* get basic i/o res */
+      hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_isapnp);
+      hd_set_probe_feature(hd_data, pr_isapnp_mod);
+      hd_set_probe_feature(hd_data, pr_isa_isdn);
+      hd_set_probe_feature(hd_data, pr_isdn);
+      break;
+
+    case hw_modem:
+      hd_set_probe_feature(hd_data, pr_misc);
+      hd_set_probe_feature(hd_data, pr_serial);
+      hd_set_probe_feature(hd_data, pr_usb);
+      hd_set_probe_feature(hd_data, pr_modem);
+      hd_set_probe_feature(hd_data, pr_modem_usb);
+      break;
+
+    case hw_storage_ctrl:
+      hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_sbus);
+      hd_set_probe_feature(hd_data, pr_misc_par);
+      hd_set_probe_feature(hd_data, pr_parallel_zip);
+#ifdef __PPC__
+      hd_set_probe_feature(hd_data, pr_prom);
+      hd_set_probe_feature(hd_data, pr_misc);
+#endif
+      break;
+
+    case hw_network_ctrl:
+      hd_set_probe_feature(hd_data, pr_misc);
+      hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_isapnp);
+      hd_set_probe_feature(hd_data, pr_isapnp_mod);
+      hd_set_probe_feature(hd_data, pr_sbus);
+      hd_set_probe_feature(hd_data, pr_isdn);
+#ifdef __PPC__
+      hd_set_probe_feature(hd_data, pr_prom);
+#endif
+#if defined(__s390__) || defined(__s390x__)
+      hd_set_probe_feature(hd_data, pr_net);
+#endif
+      break;
+
+    case hw_printer:
+      hd_set_probe_feature(hd_data, pr_bios);
+      hd_set_probe_feature(hd_data, pr_misc_par);
+      hd_set_probe_feature(hd_data, pr_parallel_lp);
+      hd_set_probe_feature(hd_data, pr_usb);
+      break;
+
+    case hw_tv:
+      hd_set_probe_feature(hd_data, pr_pci);
+      break;
+
+    case hw_scanner:
+      hd_set_probe_feature(hd_data, pr_usb); 
+      break;
+
+    case hw_braille:
+      hd_set_probe_feature(hd_data, pr_misc_serial);
+      hd_set_probe_feature(hd_data, pr_serial);
+      hd_set_probe_feature(hd_data, pr_braille_alva);
+      hd_set_probe_feature(hd_data, pr_braille_fhp);
+      hd_set_probe_feature(hd_data, pr_braille_ht);
+      hd_set_probe_feature(hd_data, pr_braille_baum);
+      break;
+
+    case hw_sys:
+      hd_set_probe_feature(hd_data, pr_bios);
+      hd_set_probe_feature(hd_data, pr_prom);
+      hd_set_probe_feature(hd_data, pr_sys);
+      break;
+
+    case hw_cpu:
+      hd_set_probe_feature(hd_data, pr_cpu);
+      break;
+
+    case hw_manual:
+      hd_set_probe_feature(hd_data, pr_manual);
+      break;
+
+    case hw_all:
+    case hw_partition:
+      break;
+  }
+}
+
+
 /*
  * Free all data associated with a hd_data_t struct. *Not* the struct itself.
  */
@@ -1308,6 +1494,11 @@ void hd_scan(hd_data_t *hd_data)
     create_model_name(hd_data, hd);
 #endif
   }
+
+#ifndef LIBHD_TINY
+  /* must be _after_ we have valid hw_class enries */
+  hd_scan_manual2(hd_data);
+#endif
 
   /* we are done... */
   hd_data->module = mod_none;
@@ -3209,7 +3400,7 @@ void hd_copy(hd_t *dst, hd_t *src)
 }
 
 
-hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
+hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
   unsigned char probe_save[sizeof hd_data->probe];
@@ -3218,7 +3409,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 #ifndef __PPC__
   {
     if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\t%u\t%u\t%p\n", __FUNCTION__, CALLED_FROM(hd_list, hd_data), hd_data, items, rescan, hd_old);
+      fprintf(libhd_log, "; %s\t%p\t%p\t%u\t%u\t%p\n", __FUNCTION__, CALLED_FROM(hd_list, hd_data), hd_data, item, rescan, hd_old);
   }
 #endif
 #endif
@@ -3226,197 +3417,56 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
   if(rescan) {
     memcpy(probe_save, hd_data->probe, sizeof probe_save);
     hd_clear_probe_feature(hd_data, pr_all);
-    hd_set_probe_feature(hd_data, pr_int);
-    hd_set_probe_feature(hd_data, pr_manual);
-    switch(items) {
-      case hw_cdrom:
-        hd_set_probe_feature(hd_data, pr_ide);
-        hd_set_probe_feature(hd_data, pr_scsi_cache);
-        hd_set_probe_feature(hd_data, pr_cdrom_info);
-        break;
-
-      case hw_floppy:
-        hd_set_probe_feature(hd_data, pr_floppy);
-        hd_set_probe_feature(hd_data, pr_ide);
-        hd_set_probe_feature(hd_data, pr_scsi_cache);	// really necessary?
-        hd_set_probe_feature(hd_data, pr_misc_floppy);
-        break;
-
-      case hw_disk:
-        hd_set_probe_feature(hd_data, pr_ide);
-        hd_set_probe_feature(hd_data, pr_scsi_cache);
-//        hd_set_probe_feature(hd_data, pr_scsi_geo);
-        hd_set_probe_feature(hd_data, pr_dac960);
-        hd_set_probe_feature(hd_data, pr_smart);
-        hd_set_probe_feature(hd_data, pr_i2o);
-        hd_set_probe_feature(hd_data, pr_cciss);
-        hd_set_probe_feature(hd_data, pr_dasd);
-        break;
-
-      case hw_network:
-        hd_set_probe_feature(hd_data, pr_net);
-        break;
-
-      case hw_display:
-        hd_set_probe_feature(hd_data, pr_pci);
-        hd_set_probe_feature(hd_data, pr_sbus);
-        hd_set_probe_feature(hd_data, pr_prom);
-        hd_set_probe_feature(hd_data, pr_misc);		/* for isa cards */
-        break;
-
-      case hw_monitor:
-        hd_set_probe_feature(hd_data, pr_misc);
-        hd_set_probe_feature(hd_data, pr_prom);
-        hd_set_probe_feature(hd_data, pr_bios_vbe);
-        hd_set_probe_feature(hd_data, pr_monitor);
-        break;
-
-      case hw_framebuffer:
-        hd_set_probe_feature(hd_data, pr_misc);
-        hd_set_probe_feature(hd_data, pr_prom);
-        hd_set_probe_feature(hd_data, pr_bios_vbe);
-        hd_set_probe_feature(hd_data, pr_fb);
-        break;
-
-      case hw_mouse:
-        hd_set_probe_feature(hd_data, pr_misc);
-        hd_set_probe_feature(hd_data, pr_serial);
-        hd_set_probe_feature(hd_data, pr_adb);
-        hd_set_probe_feature(hd_data, pr_usb);
-        hd_set_probe_feature(hd_data, pr_kbd);
-        hd_set_probe_feature(hd_data, pr_sys);
-        hd_set_probe_feature(hd_data, pr_mouse);
-        break;
-
-      case hw_joystick:
-        hd_set_probe_feature(hd_data, pr_usb);
-        break;
-
-      case hw_chipcard:
-        hd_set_probe_feature(hd_data, pr_usb);
-        break;
-
-      case hw_camera:
-        hd_set_probe_feature(hd_data, pr_usb);
-        break;
-
-      case hw_keyboard:
-        hd_set_probe_feature(hd_data, pr_misc);
-        hd_set_probe_feature(hd_data, pr_adb);
-        hd_set_probe_feature(hd_data, pr_usb);
-        hd_set_probe_feature(hd_data, pr_kbd);
-#ifdef __PPC__
-        hd_set_probe_feature(hd_data, pr_serial);
-#endif
-        break;
-
-      case hw_sound:
-        hd_set_probe_feature(hd_data, pr_misc);
-        hd_set_probe_feature(hd_data, pr_pci);
-        hd_set_probe_feature(hd_data, pr_isapnp);
-        hd_set_probe_feature(hd_data, pr_isapnp_mod);
-        hd_set_probe_feature(hd_data, pr_sbus);
-#ifdef __PPC__
-        hd_set_probe_feature(hd_data, pr_prom);
-#endif
-        break;
-
-      case hw_isdn:
-        hd_set_probe_feature(hd_data, pr_misc);		/* get basic i/o res */
-        hd_set_probe_feature(hd_data, pr_pci);
-        hd_set_probe_feature(hd_data, pr_isapnp);
-        hd_set_probe_feature(hd_data, pr_isapnp_mod);
-        hd_set_probe_feature(hd_data, pr_isa_isdn);
-        hd_set_probe_feature(hd_data, pr_isdn);
-        break;
-
-      case hw_modem:
-        hd_set_probe_feature(hd_data, pr_misc);
-        hd_set_probe_feature(hd_data, pr_serial);
-        hd_set_probe_feature(hd_data, pr_usb);
-        hd_set_probe_feature(hd_data, pr_modem);
-        hd_set_probe_feature(hd_data, pr_modem_usb);
-        break;
-
-      case hw_storage_ctrl:
-        hd_set_probe_feature(hd_data, pr_pci);
-        hd_set_probe_feature(hd_data, pr_sbus);
-        hd_set_probe_feature(hd_data, pr_misc_par);
-        hd_set_probe_feature(hd_data, pr_parallel_zip);
-#ifdef __PPC__
-        hd_set_probe_feature(hd_data, pr_prom);
-        hd_set_probe_feature(hd_data, pr_misc);
-#endif
-        break;
-
-      case hw_network_ctrl:
-        hd_set_probe_feature(hd_data, pr_misc);
-        hd_set_probe_feature(hd_data, pr_pci);
-        hd_set_probe_feature(hd_data, pr_isapnp);
-        hd_set_probe_feature(hd_data, pr_isapnp_mod);
-        hd_set_probe_feature(hd_data, pr_sbus);
-        hd_set_probe_feature(hd_data, pr_isdn);
-#ifdef __PPC__
-        hd_set_probe_feature(hd_data, pr_prom);
-#endif
-#if defined(__s390__) || defined(__s390x__)
-        hd_set_probe_feature(hd_data, pr_net);
-#endif
-        break;
-
-      case hw_printer:
-        hd_set_probe_feature(hd_data, pr_bios);
-        hd_set_probe_feature(hd_data, pr_misc_par);
-        hd_set_probe_feature(hd_data, pr_parallel_lp);
-        hd_set_probe_feature(hd_data, pr_usb);
-        break;
-
-      case hw_tv:
-        hd_set_probe_feature(hd_data, pr_pci);
-        break;
-
-      case hw_scanner:
-        hd_set_probe_feature(hd_data, pr_usb); 
-        break;
-
-      case hw_braille:
-        hd_set_probe_feature(hd_data, pr_misc_serial);
-        hd_set_probe_feature(hd_data, pr_serial);
-        hd_set_probe_feature(hd_data, pr_braille_alva);
-        hd_set_probe_feature(hd_data, pr_braille_fhp);
-        hd_set_probe_feature(hd_data, pr_braille_ht);
-        hd_set_probe_feature(hd_data, pr_braille_baum);
-        break;
-
-      case hw_sys:
-        hd_set_probe_feature(hd_data, pr_bios);
-        hd_set_probe_feature(hd_data, pr_prom);
-        hd_set_probe_feature(hd_data, pr_sys);
-        break;
-
-      case hw_cpu:
-        hd_set_probe_feature(hd_data, pr_cpu);
-        break;
-
-      case hw_manual:
-        hd_set_probe_feature(hd_data, pr_manual);
-        break;
-
-      case hw_all:
-      case hw_partition:
-        break;
-    }
+    hd_set_probe_feature_hw(hd_data, item);
     hd_scan(hd_data);
     memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
   }
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->hw_class == items) {
+    if(hd->hw_class == item) {
       /* don't report old entries again */
       for(hd1 = hd_old; hd1; hd1 = hd1->next) {
         if(!cmp_hd(hd1, hd)) break;
       }
       if(!hd1) {
+        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+        hd_copy(hd1, hd);
+      }
+    }
+  }
+
+  return hd_list;
+}
+
+
+hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t status)
+{
+  hd_t *hd, *hd1, *hd_list = NULL;
+  unsigned char probe_save[sizeof hd_data->probe];
+
+#ifdef LIBHD_MEMCHECK
+#ifndef __PPC__
+  {
+    if(libhd_log)
+      fprintf(libhd_log, "; %s\t%p\t%p\t%u\n", __FUNCTION__, CALLED_FROM(hd_list_with_status, hd_data), hd_data, item);
+  }
+#endif
+#endif
+
+  memcpy(probe_save, hd_data->probe, sizeof probe_save);
+  hd_clear_probe_feature(hd_data, pr_all);
+  hd_set_probe_feature(hd_data, pr_manual);
+  hd_scan(hd_data);
+  memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->hw_class == item) {
+      if(
+        (status.configured == 0 || status.configured == hd->status.configured) &&
+        (status.available == 0 || status.available == hd->status.available) &&
+        (status.critical == 0 || status.critical == hd->status.critical) &&
+        (status.reconfig == 0 || status.reconfig == hd->status.reconfig)
+      ) {
         hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
         hd_copy(hd1, hd);
       }

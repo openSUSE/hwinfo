@@ -221,6 +221,7 @@ typedef enum bus_types {
 /* hardware config status */
 typedef struct {
   unsigned invalid:1;
+  unsigned reconfig:3;
   unsigned configured:3;
   unsigned available:3;
   unsigned critical:3;
@@ -1168,6 +1169,7 @@ driver_info_t *hd_free_driver_info(driver_info_t *di);
 void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature);
 void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature);
 int hd_probe_feature(hd_data_t *hd_data, enum probe_feature feature);
+void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item);
 
 enum probe_feature hd_probe_feature_by_name(char *name);
 char *hd_probe_feature_by_value(enum probe_feature feature);
@@ -1178,7 +1180,8 @@ int hd_module_is_active(hd_data_t *hd_data, char *mod);
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class);
 hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_class);
 hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus);
-hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old);
+hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old);
+hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t status);
 
 int hd_has_special_eide(hd_data_t *hd_data);
 int hd_has_pcmcia(hd_data_t *hd_data);
@@ -1221,6 +1224,7 @@ hd_manual_t *hd_free_manual(hd_manual_t *manual);
 hd_t *hd_read_config(hd_data_t *hd_data, char *id);
 int hd_write_config(hd_data_t *hd_data, hd_t *hd);
 char *hd_hw_item_name(hd_hw_item_t item);
+char *hd_status_value_name(hd_status_value_t status);
 
 #ifdef __cplusplus
 }
