@@ -1295,13 +1295,14 @@ char *dump_hid(hd_data_t *hd_data, hd_id_t *hid, int format, char *buf, int buf_
   }
 
   i = strlen(buf);
+  if(i) buf[i++] = ' ';
   s = buf + i;
   buf_size -= i;
 
   if(!buf_size) return buf;
 
   if(hid->name) {
-    snprintf(s, buf_size - 1, " \"%s\"", hid->name);
+    snprintf(s, buf_size - 1, "\"%s\"", hid->name);
   }
 
   return buf;

@@ -2,6 +2,9 @@
 	- better ZIP drive handling
 	- handle usb devices with multiple interfaces (#21487, #22223, #22843)
 	- removed 'Looking for braille...' line
+	- fixed multi-CDROM bug (#24280)
+	- save/restore feature flags (#23364)
+	- keep feature flags for ide-scsi handled drives (#23550)
 
 25/2/2003:	v6.02
 	- fixed 64 bit int -> pointer gcc warnings

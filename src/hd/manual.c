@@ -106,7 +106,7 @@ typedef enum {
   hwdi_unix_dev_name, hwdi_rom_id, hwdi_broken, hwdi_usb_guid, hwdi_res_mem,
   hwdi_res_phys_mem, hwdi_res_io, hwdi_res_irq, hwdi_res_dma, hwdi_res_size,
   hwdi_res_baud, hwdi_res_cache, hwdi_res_disk_geo, hwdi_res_monitor,
-  hwdi_res_framebuffer
+  hwdi_res_framebuffer, hwdi_features
 } hw_hd_items_t;
 
 static hash_t hw_ids_hd_items[] = {
@@ -144,6 +144,7 @@ static hash_t hw_ids_hd_items[] = {
   { hwdi_res_disk_geo,    "Res.DiskGeometry" },
   { hwdi_res_monitor,     "Res.Monitor"      },
   { hwdi_res_framebuffer, "Res.Framebuffer"  },
+  { hwdi_features,        "Features"         },
   { 0,                    NULL               }
 };
 
@@ -945,6 +946,12 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
           res->framebuffer.mode = u4;
         }
         break;
+
+      case hwdi_features:
+        u0 = strtoul(sl2->str, NULL, 0);
+        u1 = sizeof hd->is < sizeof u0 ? sizeof hd->is : sizeof u0;
+        memcpy(&hd->is, &u0, u1);
+        break;
     }
   }
 
@@ -1006,6 +1013,7 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
   char *s, *t;
   hd_res_t *res;
   str_list_t *sl;
+  unsigned u0, u1;
 
   if(!hd || !entry) return;
 
@@ -1146,6 +1154,15 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
   if(hd->usb_guid) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_usb_guid));
     add_str_list(&entry->value, hd->usb_guid);
+  }
+
+  u1 = sizeof hd->is < sizeof u0 ? sizeof hd->is : sizeof u0;
+  u0 = 0;
+  memcpy(&u0, &hd->is, u1);
+  if(u0) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_features));
+    str_printf(&s, 0, "0x%x", u0);
+    add_str_list(&entry->value, s);
   }
 
   for(res = hd->res; res; res = res->next) {

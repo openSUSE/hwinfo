@@ -1637,6 +1637,7 @@ typedef struct s_hd_t {
     unsigned dvdr:1;		/* DVD-R */
     unsigned dvdram:1;		/* DVD-RAM */
     unsigned pppoe:1;		/* PPPOE modem connected */
+    /* note: only 32 bits are saved/restored */
   } is;
 
   struct tag_s {		/* this struct is for internal purposes only */
