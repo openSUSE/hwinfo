@@ -528,8 +528,14 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 #ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
 #endif
-#if defined(__s390__) || defined(__s390x__)
-      hd_set_probe_feature(hd_data, pr_net);
+#if defined(__s390__) || defined(__s390x__) || (__powerpc__)
+#ifdef __powerpc__
+      if(hd_data->flags.iseries) {
+#endif
+	      hd_set_probe_feature(hd_data, pr_net);
+#ifdef __powerpc__
+      }
+#endif
 #endif
       break;
 
@@ -3427,6 +3433,10 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
   if(rescan) {
     memcpy(probe_save, hd_data->probe, sizeof probe_save);
     hd_clear_probe_feature(hd_data, pr_all);
+#ifdef __powerpc__
+    hd_set_probe_feature(hd_data, pr_sys);
+    hd_scan(hd_data);
+#endif
     hd_set_probe_feature_hw(hd_data, item);
     hd_scan(hd_data);
     memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);

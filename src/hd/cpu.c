@@ -10,6 +10,10 @@
 #include <sys/mman.h>
 #endif
 
+#ifdef __powerpc__
+#include <sys/utsname.h>
+#endif
+
 #include "hd.h"
 #include "hd_int.h"
 #include "klog.h"
@@ -100,6 +104,7 @@ void read_cpuinfo(hd_data_t *hd_data)
 #ifdef __PPC__
   char model_id[80], vendor_id[80], motherboard[80];
   unsigned bogo, mhz, cache, family, model, stepping;
+  struct utsname un;
 #endif
 
 #ifdef __sparc__
@@ -318,8 +323,12 @@ void read_cpuinfo(hd_data_t *hd_data)
         ct->architecture = arch_ppc;
         if(model_id) {
           ct->model_name = new_str(model_id);
-          if(strstr(model_id, "POWER3 ")) ct->architecture = arch_ppc64;
         }
+
+        if(!uname(&un))
+        	if(strstr(un.machine,"ppc64"))
+        		ct->architecture = arch_ppc64;
+
         if(vendor_id) ct->vend_name = new_str(vendor_id);
         if(motherboard) ct->platform = new_str(motherboard);
         ct->family = family;

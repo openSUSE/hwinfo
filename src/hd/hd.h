@@ -1121,6 +1121,7 @@ typedef struct {
     unsigned internal:1;	/* hd_scan was called internally */
     unsigned dformat:2;		/* alternative output format */
     unsigned no_parport:1;	/* don't do parport probing: parport modules crash pmacs */
+    unsigned iseries:1;		/* set if we are on an iSeries machine */
   } flags;			/* special flags */
   enum boot_arch boot;		/* boot method */
   hd_t *old_hd;			/* old (outdated) entries (if you scan more than once) */
