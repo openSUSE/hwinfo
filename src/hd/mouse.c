@@ -94,6 +94,8 @@ void get_ps2_mouse(hd_data_t *hd_data)
 
       /* ...then assume a PS/2 mouse is attached */
       if(res) {
+        PROGRESS(1, 1, "ps/2");
+
         hd = add_hd_entry(hd_data, __LINE__, 0);
         hd->base_class = bc_mouse;
         hd->sub_class = sc_mou_ps2;
@@ -105,12 +107,21 @@ void get_ps2_mouse(hd_data_t *hd_data)
         hd->dev = MAKE_EISA_ID(0x0f0e);
       }
       else {	/* if the mouse has not been used so far... */
+        PROGRESS(1, 2, "ps/2");
+
 	/* open the mouse device... */
         fd = open(DEV_PSAUX, O_RDWR | O_NONBLOCK);
 
+        PROGRESS(1, 3, "ps/2");
+
         if(fd >= 0) {
           /* ...write the id command... */
+
+          PROGRESS(1, 4, "ps/2");
+
           if(write(fd, &cmd, 1) == 1) {
+
+            PROGRESS(1, 5, "ps/2");
             usleep(10000);        /* ...give it a chance to react... */
 
             /* ...read the response... */
@@ -118,6 +129,8 @@ void get_ps2_mouse(hd_data_t *hd_data)
               buf_len < sizeof buf &&
               (k = read(fd, buf + buf_len, sizeof buf - buf_len)) >= 0
             ) buf_len += k;
+
+            PROGRESS(1, 6, "ps/2");
 
             if((hd_data->debug & HD_DEB_MOUSE)) {
               if(errno != EAGAIN) {
@@ -128,6 +141,8 @@ void get_ps2_mouse(hd_data_t *hd_data)
               ADD2LOG("\n");
             }
 
+            PROGRESS(1, 7, "ps/2");
+
             /*
              * Assume a mouse to be attached, if at least 2 bytes
              * (besides the 0xfa) are returned.
@@ -135,6 +150,8 @@ void get_ps2_mouse(hd_data_t *hd_data)
             bp = buf;
             if(buf_len && (*bp == 0xfe || *bp == 0xfa)) { bp++; buf_len--; }
             if(buf_len >= 2) {
+              PROGRESS(1, 8, "ps/2");
+
               hd = add_hd_entry(hd_data, __LINE__, 0);
               hd->base_class = bc_mouse;
               hd->sub_class = sc_mou_ps2;
@@ -149,18 +166,30 @@ void get_ps2_mouse(hd_data_t *hd_data)
           }
           close(fd);
 
+          PROGRESS(1, 9, "ps/2");
+
           /*
            * The following code is apparently necessary on some board/mouse
            * combinations. Otherwise the PS/2 mouse won't work.
            */
           if((fd = open(DEV_PSAUX, O_RDONLY | O_NONBLOCK)) >= 0) {
+            PROGRESS(1, 10, "ps/2");
+
             FD_ZERO(&set);
             FD_SET(fd, &set);
             tv.tv_sec = 0; tv.tv_usec = 1;
             if(select(fd + 1, &set, NULL, NULL, &tv) == 1) {
+              PROGRESS(1, 11, "ps/2");
+    
               read(fd, buf, sizeof buf);
+    
+              PROGRESS(1, 12, "ps/2");
             }
+            PROGRESS(1, 13, "ps/2");
+
             close(fd);
+
+            PROGRESS(1, 14, "ps/2");
           }
         }
       }

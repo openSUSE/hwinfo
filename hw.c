@@ -68,6 +68,7 @@ int main(int argc, char **argv)
   }
 
   hd_free_hd_data(hd_data);
+  free(hd_data);
 
   return 0;
 }

@@ -147,12 +147,12 @@ int hd_probe_feature(hd_data_t *hd_data, int feature)
 
 
 /*
- * Free all data associated with a hd_data_t struct. Even the struct itself.
+ * Free all data associated with a hd_data_t struct. *Not* the struct itself.
  */
 hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
 {
 
-  return free_mem(hd_data);
+  return NULL;
 }
 
 

@@ -12,8 +12,11 @@ hw usage:
 
 Examples:
 
+  - hw +default
+    probes for nearly everything (this is the default when you just call "hw" without any args)
+
   - hw +all
-    probes for everything (this is the default when you just call "hw" without any args)
+    probes for everything
 
   - hw debug=-1 log=hw.log +all
     dto, with all debug info, output is written to hw.log *and* stdout (debug info
