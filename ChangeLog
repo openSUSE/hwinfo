@@ -1,4 +1,5 @@
 15/4/2003:	v5.54
+	- remove mouse probing from hwbootscan, it sometimes hangs (#25803)
 	- using x11 data from SL 8.2
 
 10/4/2003:	v5.53
