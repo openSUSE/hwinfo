@@ -3,6 +3,7 @@
 	- don't do scsi write cache detection in vmware
 	- added ia64 smp detection
 	- ia64 x11 data added
+	- use tulip instead of de4x5 (#7317)
 
 30/4/2001:	v2.07
 	- updated x11 data

@@ -104,13 +104,13 @@
 	i	tlan
 
 # net/de4x5.c
-# prefer those over tulip
+# prefer tulip over de4x5 (bug #7317)
 1011 0002
 1011 0009
 1011 0014
 1011 0019
-	i	de4x5
 	i	tulip
+	i	de4x5
 
 # net/tulip.c
 10d9 0512
