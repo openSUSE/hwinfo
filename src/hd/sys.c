@@ -70,6 +70,9 @@ void hd_scan_sys(hd_data_t *hd_data)
         st->model = new_str("PowerBook");
       }
     }
+    if(sscanf(sl->str, "pmac-generation : %79[^\n]", buf0) == 1) {
+      st->generation = new_str(buf0);
+    }
   }
 #endif	/* __PPC__ */
 

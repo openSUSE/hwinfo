@@ -1,3 +1,9 @@
+9/8/2000:	v1.28
+	- added pr_misc to hw_isdn
+	- fixed memory size detection
+	- added 'generation' to system entry (for ppc)
+	- new scsi detection code
+
 28/7/2000:	v1.27
 	- fixed 'x11' parameter parsing
 

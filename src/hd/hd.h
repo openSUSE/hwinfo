@@ -299,6 +299,30 @@ typedef enum isapnp_flags {
 
 
 /*
+ * raw SCSI data
+ */
+typedef struct scsi_s {
+  struct scsi_s *next;
+  unsigned deleted:1;
+  unsigned generic:1;
+  unsigned fake:1;
+  char *dev_name;
+  int generic_dev;
+  unsigned host, channel, id, lun;
+  char *vendor, *model, *rev, *type_str, *serial;
+  int type;
+  unsigned inode_low;
+  char *proc_dir, *driver;
+  unsigned unique;
+  char *info;
+  unsigned lgeo_c, lgeo_h, lgeo_s;
+  unsigned pgeo_c, pgeo_h, pgeo_s;
+  uint64_t size;
+  unsigned sec_size;
+} scsi_t;
+
+
+/*
  * special CDROM entry
  */
 // ###### rename these! (cf. mouse_info_t!!!)
@@ -345,6 +369,7 @@ typedef struct {
  */
 typedef struct {
   char *system_type;
+  char *generation;
   char *vendor;
   char *model;
   char *serial;
@@ -727,7 +752,7 @@ typedef union driver_info_u {
 typedef enum hd_detail_type {
   hd_detail_pci, hd_detail_usb, hd_detail_isapnp, hd_detail_cdrom,
   hd_detail_floppy, hd_detail_bios, hd_detail_cpu, hd_detail_prom,
-  hd_detail_monitor, hd_detail_sys
+  hd_detail_monitor, hd_detail_sys, hd_detail_scsi
 } hd_detail_type_t;
 
 typedef struct {
@@ -780,6 +805,11 @@ typedef struct {
   sys_info_t *data;
 } hd_detail_sys_t;
 
+typedef struct {
+  enum hd_detail_type type;
+  scsi_t *data;
+} hd_detail_scsi_t;
+
 typedef union {
   enum hd_detail_type type;
   hd_detail_pci_t pci;
@@ -792,6 +822,7 @@ typedef union {
   hd_detail_prom_t prom;
   hd_detail_monitor_t monitor;
   hd_detail_sys_t sys;
+  hd_detail_scsi_t scsi;
 } hd_detail_t;
 
 
@@ -854,7 +885,7 @@ typedef struct {
   str_list_t *floppy;		/* contents of PROC_NVRAM, used by the floppy module */
   misc_t *misc;			/* data gathered in the misc module */
   serial_t *serial;		/* /proc's serial info */
-  str_list_t *scsi;		/* /proc/scsi/scsi */
+  scsi_t *scsi;			/* raw SCSI data */
   ser_mouse_t *ser_mouse;	/* info about serial mice */
   ser_modem_t *ser_modem;	/* info about serial modems */
   str_list_t *cpu;		/* /proc/cpuinfo */

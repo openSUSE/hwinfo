@@ -20,6 +20,7 @@
 #define PROC_DAC960		"/proc/rd"
 #define PROC_SMART		"/proc/array"
 #define PROC_PROM		"/proc/device-tree"
+#define PROC_MEMINFO		"/proc/meminfo"
 
 #define DEV_USB_DEVICES		"/dev/usb/devices"
 #define DEV_NVRAM		"/dev/nvram"

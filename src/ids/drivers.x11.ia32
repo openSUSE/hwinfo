@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-07-28 14:59:18
+#hwinfo data from 2000-07-31 17:35:56
 #
 
 
@@ -77,11 +77,6 @@
 # Matrox:MGA G200 SD PCI
 102B 0520  
 	x	3|SVGA|||||
-
-
-# Matrox:MGA G200 SD PCI
-102B 0520  
-	x	3|SVGA|3d|glx|glx.so||4
 
 
 # Matrox:Millennium II (AGP)
@@ -166,7 +161,7 @@
 
 # Diamond:Fire GL1
 1014 00b7  
-	x	4|firegl1|3d|xfiregl1|glx,dri,fgl1|accel,DDCInfo|
+	x	4|firegl1|3d|xfiregl1|glx,dri,fgl1|accel,DDCInfo|8
 		Option "NumDMABuffers2D" "4"
 		Option "NumDMABuffers" "24"
 		Option "NumTMBuffers" "4"
