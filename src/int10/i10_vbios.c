@@ -22,6 +22,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <errno.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <string.h>
@@ -309,50 +310,56 @@ void unmap_vram()
 }
 
 
+/*
+ * Read video BIOS from /dev/mem.
+ *
+ * Return:
+ *  0: failed
+ *  1: ok
+ */
 int copy_vbios()
 {
-	int mem_fd;
-	unsigned char *tmp;
-	int size;
+  int mem_fd, size, ok = 0;
+  unsigned char tmp[3];
 
-	if ((mem_fd = open(MEM_FILE,O_RDONLY))<0) {
-		perror("opening memory");
-		return (0);
-	}
+  if((mem_fd = open(MEM_FILE, O_RDONLY)) == -1) {
+    log_err("vbe: failed to open BIOS memory, errno = %d", errno);
 
-	if (lseek(mem_fd,(off_t) V_BIOS, SEEK_SET) != (off_t) V_BIOS) { 
-	      fprintf(stderr,"Cannot lseek\n");
-	      goto Error;
-	  }
-	tmp = (unsigned char *)malloc(3);
-	if (read(mem_fd, (char *)tmp, (size_t) 3) != (size_t) 3) {
-	        fprintf(stderr,"Cannot read\n");
-		goto Error;
-	}
-	if (lseek(mem_fd,(off_t) V_BIOS,SEEK_SET) != (off_t) V_BIOS) 
-	    goto Error;
+    return 0;
+  }
 
-	if (*tmp != 0x55 || *(tmp+1) != 0xAA ) {
-		fprintf(stderr,"No bios found at: 0x%x\n",V_BIOS);
-		goto Error;
-	}
-	size = *(tmp+2) * 512;
+  if(lseek(mem_fd, (off_t) V_BIOS, SEEK_SET) != (off_t) V_BIOS) {
+    log_err("vbe: lseek failed, errno = %d\n", errno);
+  }
+  else {
+    if(read(mem_fd, tmp, sizeof tmp) != sizeof tmp) {
+      log_err("vbe: failed to read %u bytes at 0x%x, errno = %d\n", (unsigned) sizeof tmp, V_BIOS, errno);
+    }
+    else {
+      if(lseek(mem_fd, V_BIOS, SEEK_SET) != V_BIOS) {
+        log_err("vbe: lseek failed, errno = %d\n", errno);
+      }
+      else {
+        if(tmp[0] != 0x55 || tmp[1] != 0xAA ) {
+          log_err("vbe: no bios found at: 0x%x\n", V_BIOS);
+        }
+        else {
+          size = tmp[2] * 0x200;
 
-	if ((size_t) read(mem_fd, (char *)V_BIOS, (size_t) size) != (size_t) size) {
- 	        fprintf(stderr,"Cannot read\n");
-		goto Error;
-	}
-	free(tmp);
-	close(mem_fd);
-	if (!chksum((CARD8 *)V_BIOS))
-		return (0);
+          if(read(mem_fd, (char *) V_BIOS, size) != size) {
+            log_err("vbe: failed to read %d bytes at 0x%x, errno = %d\n", size, V_BIOS, errno);
+          }
+          else {
+            if(chksum((CARD8 *) V_BIOS)) ok = 1;
+          }
+        }
+      }
+    }
+  }
 
-	return (1);
+  close(mem_fd);
 
-Error:
-	perror("v_bios");
-	close(mem_fd);
-	return (0);
+  return ok;
 }
 
 
@@ -538,20 +545,27 @@ setup_system_bios(void)
 	return 1;
 }
 
-static int
-chksum(CARD8 *start)
+
+/*
+ * Check BIOS CRC.
+ *
+ * Return:
+ *  0: failed
+ *  1: ok
+ */
+int chksum(CARD8 *start)
 {
   CARD16 size;
   CARD8 val = 0;
   int i;
 
-  size = *(start+2) * 512;	
-  for (i = 0; i<size; i++)
-    val += *(start + i);
+  size = start[2] * 0x200;
+  for(i = 0; i < size; i++) val += start[i];
 	
-  if (!val)
-    return 1;
+  if(!val) return 1;
 
-  log_err("BIOS chksum wrong\n");
+  log_err("vbe: BIOS chksum wrong\n");
+
   return 0;
 }
+
