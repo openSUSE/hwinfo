@@ -3,6 +3,8 @@
 	  (reqd. by fehr)
 	- less agressively assume scsi devs are disks (#47654)
 	- fixed external hardware db parser (#47606, comment 6)
+	- ibm notebook data updated
+	- avoid libsysfs accidentally reading pci config space
 
 13/10/2004:	v9.32
 	- report network interfaces correctly even though udev lists them
