@@ -69,7 +69,11 @@
 10de 00a0
 10de 0100+2
 10de 0103
+10de 0150+4
 	x	4|nvidia|3d|nv_glx|glx
+# gforce2 not supported by 'nv' mod
+10de 0150+4
+	x	4|nvidia
 
 # vmware's emulated card
 15ad 0710

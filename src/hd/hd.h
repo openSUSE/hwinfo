@@ -77,6 +77,13 @@ typedef enum probe_feature {
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
+/*
+ * list types for hd_list()
+ */
+typedef enum hw_item {
+  hw_cdrom, hw_floppy, hw_disk, hw_network, hw_display, hw_mouse,
+  hw_keyboard, hw_sound, hw_isdn, hw_modem, hw_storage_ctrl, hw_network_ctrl
+} hd_hw_item_t;
 
 /*
  * device base classes and bus types
@@ -861,6 +868,7 @@ hd_t *hd_display_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class);
 hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_class);
 hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus);
+hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old);
 
 int hd_has_special_eide(hd_data_t *hd_data);
 int hd_has_pcmcia(hd_data_t *hd_data);

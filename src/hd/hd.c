@@ -2125,6 +2125,179 @@ hd_t *hd_display_list(hd_data_t *hd_data, int rescan)
   return hd_list;
 }
 
+hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
+{
+  hd_t *hd, *hd1, *hd_list = NULL;
+  unsigned char probe_save[sizeof hd_data->probe];
+  int sc;		/* compare sub_class too */
+  int add_it;
+  unsigned base_class, sub_class;
+
+  if(rescan) {
+    memcpy(probe_save, hd_data->probe, sizeof probe_save);
+    hd_clear_probe_feature(hd_data, pr_all);
+    switch(items) {
+      case hw_cdrom:
+        hd_set_probe_feature(hd_data, pr_cdrom_info);
+        break;
+
+      case hw_floppy:
+        hd_set_probe_feature(hd_data, pr_floppy);
+        hd_set_probe_feature(hd_data, pr_misc_floppy);
+        break;
+
+      case hw_disk:
+        hd_set_probe_feature(hd_data, pr_ide);
+        hd_set_probe_feature(hd_data, pr_scsi);
+        hd_set_probe_feature(hd_data, pr_dac960);
+        hd_set_probe_feature(hd_data, pr_smart);
+        hd_set_probe_feature(hd_data, pr_int);
+        break;
+
+      case hw_network:
+        hd_set_probe_feature(hd_data, pr_net);
+        break;
+
+      case hw_display:
+        hd_set_probe_feature(hd_data, pr_pci);
+        hd_set_probe_feature(hd_data, pr_sbus);
+        hd_set_probe_feature(hd_data, pr_misc);		/* for isa cards */
+        break;
+
+      case hw_mouse:
+        hd_set_probe_feature(hd_data, pr_misc);
+        hd_set_probe_feature(hd_data, pr_serial);
+        hd_set_probe_feature(hd_data, pr_adb);
+        hd_set_probe_feature(hd_data, pr_usb);
+        hd_set_probe_feature(hd_data, pr_kbd);
+        hd_set_probe_feature(hd_data, pr_mouse);
+        break;
+
+      case hw_keyboard:
+        hd_set_probe_feature(hd_data, pr_misc);
+        hd_set_probe_feature(hd_data, pr_adb);
+        hd_set_probe_feature(hd_data, pr_usb);
+        hd_set_probe_feature(hd_data, pr_kbd);
+        break;
+
+      case hw_sound:
+        hd_set_probe_feature(hd_data, pr_pci);
+        hd_set_probe_feature(hd_data, pr_sbus);
+        break;
+
+      case hw_isdn:
+        hd_set_probe_feature(hd_data, pr_pci);
+        hd_set_probe_feature(hd_data, pr_isa_isdn);
+        hd_set_probe_feature(hd_data, pr_isdn);
+        break;
+
+      case hw_modem:
+        hd_set_probe_feature(hd_data, pr_misc);
+        hd_set_probe_feature(hd_data, pr_serial);
+        hd_set_probe_feature(hd_data, pr_usb);
+        hd_set_probe_feature(hd_data, pr_modem);
+        break;
+
+      case hw_storage_ctrl:
+        hd_set_probe_feature(hd_data, pr_pci);
+        hd_set_probe_feature(hd_data, pr_sbus);
+        break;
+
+      case hw_network_ctrl:
+        hd_set_probe_feature(hd_data, pr_pci);
+        hd_set_probe_feature(hd_data, pr_sbus);
+        break;
+    }
+    hd_scan(hd_data);
+    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
+  }
+
+  sc = 0;
+  sub_class = 0;
+  switch(items) {
+    case hw_cdrom:
+      base_class = bc_storage_device;
+      sub_class = sc_sdev_cdrom;
+      sc = 1;
+      break;
+
+    case hw_floppy:
+      base_class = bc_storage_device;
+      sub_class = sc_sdev_floppy;
+      sc = 1;
+      break;
+
+    case hw_disk:
+      base_class = bc_storage_device;
+      sub_class = sc_sdev_disk;
+      sc = 1;
+      break;
+
+    case hw_network:
+      base_class = bc_network_interface;
+      break;
+
+    case hw_display:
+      base_class = bc_display;
+      break;
+
+    case hw_mouse:
+      base_class = bc_mouse;
+      break;
+
+    case hw_keyboard:
+      base_class = bc_keyboard;
+      break;
+
+    case hw_sound:
+      base_class = bc_multimedia;
+      sub_class = sc_multi_audio;
+      sc = 1;
+      break;
+
+    case hw_isdn:
+      base_class = bc_isdn;
+      break;
+
+    case hw_modem:
+      base_class = bc_modem;
+      break;
+
+    case hw_storage_ctrl:
+      base_class = bc_storage;
+      break;
+
+    case hw_network_ctrl:
+      base_class = bc_network;
+      break;
+
+    default:
+      base_class = -1;
+  }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class == base_class &&
+      (sc == 0 || hd->sub_class == sub_class)
+    ) {
+      add_it = 1;
+      for(hd1 = hd_old; hd1; hd1 = hd1->next) {
+        if(!cmp_hd(hd1, hd)) {
+          add_it = 0;
+          break;
+        }
+      }
+      if(add_it) {
+        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+        *hd1 = *hd;
+        hd1->next = NULL;
+      }
+    }
+  }
+
+  return hd_list;
+}
+
 
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
 {
@@ -2515,3 +2688,42 @@ int load_module(hd_data_t *hd_data, char *module)
 
   return run_cmd(hd_data, cmd);
 }
+
+/*
+ * Compare two hd entries and return 0 if they are identical.
+ */
+int cmp_hd(hd_t *hd1, hd_t *hd2)
+{
+  if(!hd1 || !hd2) return 1;
+
+  if(
+    hd1->bus != hd2->bus ||
+    hd1->slot != hd2->slot ||
+    hd1->func != hd2->func ||
+    hd1->base_class != hd2->base_class ||
+    hd1->sub_class != hd2->sub_class ||
+    hd1->prog_if != hd2->prog_if ||
+    hd1->dev != hd2->dev ||
+    hd1->vend != hd2->vend ||
+    hd1->sub_vend != hd2->sub_vend ||
+    hd1->rev != hd2->rev ||
+    hd1->compat_dev != hd2->compat_dev ||
+
+    hd1->module != hd2->module ||
+    hd1->line != hd2->line
+  ) {
+    return 1;
+  }
+
+  if(hd1->unix_dev_name || hd2->unix_dev_name) {
+    if(hd1->unix_dev_name && hd2->unix_dev_name) {
+      if(strcmp(hd1->unix_dev_name, hd2->unix_dev_name)) return 1;
+    }
+    else {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+

@@ -14,6 +14,7 @@ static void progress(char *, char *);
 static unsigned deb = 0;
 static char *log_file = "";
 static char *list = NULL;
+static int listplus = 0;
 
 static int test = 0;
 
@@ -40,11 +41,6 @@ int main(int argc, char **argv)
       hd_set_probe_feature(hd_data, pr_default);
     else {
       hd_clear_probe_feature(hd_data, pr_all);
-#if 0
-      printf("press return to start re-probe...");
-      fflush(stdout);
-      getchar();
-#endif
     }
 
     if((i = get_probe_flags(argc, argv, hd_data)) < 0) return 1;
@@ -85,44 +81,27 @@ int main(int argc, char **argv)
     );
   }
 
-#if 0
-  printf("-- list --\n");
-
-  hd = hd_base_class_list(hd_data, bc_display); printf("\n");
-  for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
-#endif
-
-#if 0	// ##### remove
-  printf("-- all --\n");
-
-  hd = hd_net_list(hd_data, 2); printf("\n");
-  for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
-
-  printf("-- new --\n");
-  getchar();
-
-  hd = hd_net_list(hd_data, 3); printf("\n");
-  for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
-
-  printf("-- new again --\n");
-
-  hd = hd_net_list(hd_data, 2); printf("\n");
-  for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
-
-  printf("-- nothing --\n");
-
-  hd = hd_net_list(hd_data, 2); printf("\n");
-  for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
-#endif
-
+  i = -1;
   if(list) {
-    if(!strcmp(list, "disk")) hd = hd_disk_list(hd_data, 1);
-    if(!strcmp(list, "cd")) hd = hd_cd_list(hd_data, 1);
-    if(!strcmp(list, "net")) hd = hd_net_list(hd_data, 1);
-    if(!strcmp(list, "floppy")) hd = hd_floppy_list(hd_data, 1);
-    if(!strcmp(list, "mouse")) hd = hd_mouse_list(hd_data, 1);
-    if(!strcmp(list, "keyboard")) hd = hd_keyboard_list(hd_data, 1);
-    if(!strcmp(list, "display")) hd = hd_display_list(hd_data, 1);
+    if(!strcmp(list, "cdrom")) i = hw_cdrom;
+    if(!strcmp(list, "disk")) i = hw_disk;
+    if(!strcmp(list, "floppy")) i = hw_floppy;
+    if(!strcmp(list, "network")) i = hw_network;
+    if(!strcmp(list, "display")) i = hw_display;
+    if(!strcmp(list, "mouse")) i = hw_mouse;
+    if(!strcmp(list, "keyboard")) i = hw_keyboard;
+    if(!strcmp(list, "sound")) i = hw_sound;
+    if(!strcmp(list, "isdn")) i = hw_isdn;
+    if(!strcmp(list, "modem")) i = hw_modem;
+    if(!strcmp(list, "storage_ctrl")) i = hw_storage_ctrl;
+    if(!strcmp(list, "network_ctrl")) i = hw_network_ctrl;
+
+    if(i >= 0) {
+      hd = hd_list(hd_data, i, listplus, NULL);
+    }
+    else {
+      hd = NULL;
+    }
 
     printf("\n");
     printf("-- %s list --\n", list);
@@ -130,13 +109,7 @@ int main(int argc, char **argv)
     printf("-- %s list end --\n", list);
   }
 
-  if(f) {
-#if 0
-    fseek(f, l, SEEK_SET);
-    while((i = fgetc(f)) != EOF) putchar(i);
-#endif
-    fclose(f);
-  }
+  if(f) fclose(f);
 
   hd_free_hd_data(hd_data);
   free(hd_data);
@@ -167,6 +140,13 @@ int get_probe_flags(int argc, char **argv, hd_data_t *hd_data)
     t = "list=";
     if(!strncmp(s, t, strlen(t))) {
       list = s + strlen(t);
+      continue;
+    }
+
+    t = "list+=";
+    if(!strncmp(s, t, strlen(t))) {
+      list = s + strlen(t);
+      listplus = 1;
       continue;
     }
 

@@ -1,3 +1,6 @@
+7/6/2000:	v0.99
+	- added hd_list() function
+
 6//6/2000:	v0.98
 	- hd_display_list() function
 	- new SaX[2] data
