@@ -4,3 +4,4 @@
 	- added a baud resource to modem entries: holds the modem's max.
 	  port speed
 	- added some modem ids
+	- updated docu (interface.html)

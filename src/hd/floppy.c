@@ -109,7 +109,7 @@ void hd_scan_floppy(hd_data_t *hd_data)
 
 
 /*
- * Add some network interface data to the global log.
+ * Add floppy data to the global log.
  */
 void dump_floppy_data(hd_data_t *hd_data)
 {

@@ -8,7 +8,7 @@
 
 Author: Steffen Winterfeldt <a href="wfeldt@suse.de">wfeldt@suse.de</a><p>
 
-Current version (24 Jan 2000): 0.51<p>
+Current version (25 Jan 2000): 0.52<p>
 
 <h2>Simple Expample</h2>
 
@@ -226,9 +226,52 @@ enum probe_feature {
   pr_default = 1, pr_memory, pr_pci, pr_pci_range, pr_pci_ext, pr_isapnp,
   pr_cdrom, pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial,
   pr_misc_par, pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor,
-  pr_mouse, pr_ide, pr_scsi, pr_usb, pr_adb,
+  pr_mouse, pr_ide, pr_scsi, pr_usb, pr_adb, pr_modem, pr_parallel,
   pr_all                /* pr_all must be the last */
 </pre>
+
+<ul>
+  <li><code>pr_all</code>: activate just everything<br>
+  <li><code>pr_default</code>: activate the most useful features; leave out
+  those that can easily cause the probing to hang<br>
+  <li><code>pr_memory</code>: get main memory size<br>
+  <li><code>pr_pci</code>: add all pci devices<br>
+  <li><code>pr_pci_range</code>: add the i/o and memory <em>ranges</em> for
+  the pci devices, too; this involves temporarily re-programming the pci
+  devices; excluded by <code>pr_default</code><br>
+  <li><code>pr_pci_ext</code>: read the extended pci config space, too;
+  causes problems with <em>some</em> hardware; excluded by
+  <code>pr_default</code><br>
+  <li><code>pr_isapnp</code>: add all isa plug &amp; play devices
+  (ix86 &amp; axp only)<br>
+  <li><code>pr_cdrom</code>: add cdrom devices<br>
+  <li><code>pr_cdrom_info</code>: try to read the cdrom and get the
+  info from the isao9660 file system<br>
+  <li><code>pr_net</code>: add network devices<br>
+  <li><code>pr_floppy</code>: go through <code>/proc/nvram</code> and
+  add all floppy drives listed there<br>
+  <li><code>pr_misc</code>: add basic system components, add resources
+  from <code>/proc/{ioports,interrupts,dma}</code><br>
+  <li><code>pr_misc_serial</code>: activate the serial support before
+  doing the <code>pr_misc</code> stuff<br>
+  <li><code>pr_misc_par</code>: activate the parallel support before
+  doing the <code>pr_misc</code> stuff<br>
+  <li><code>pr_misc_floppy</code>: activate the floppy before
+  doing the <code>pr_misc</code> stuff; this includes actually
+  <em>reading</em> the floppy<br>
+  <li><code>pr_serial</code>: add serial devices from <code>/proc/tty</code><br>
+  <li><code>pr_cpu</code>: add cpu entries<br>
+  <li><code>pr_bios</code>: add bios info (ix86 only): basically vesa &amp; apm<br>
+  <li><code>pr_monitor</code>: add monitor info<br>
+  <li><code>pr_mouse</code>: add mouse info (ps/2 &amp; serial)<br>
+  <li><code>pr_ide</code>: add ide devices<br>
+  <li><code>pr_scsi</code>: add scsi devices<br>
+  <li><code>pr_usb</code>: add usb devices<br>
+  <li><code>pr_adb</code>: add adb devices (ppc only)<br>
+  <li><code>pr_modem</code>: add (serial) modems<br>
+  <li><code>pr_parallel</code>: add parallel port devices info (printer)<br>
+</ul>
+
 
 <a name=enum@cpu_arch></a>
 <pre>

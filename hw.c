@@ -173,7 +173,7 @@ int get_probe_env(hd_data_t *hd_data)
 void progress(char *pos, char *msg)
 {
   if(!test) printf("\r%64s\r", "");
-  printf("> %s: %s ", pos, msg);
+  printf("> %s: %s", pos, msg);
   if(test) printf("\n");
   fflush(stdout);
 }
