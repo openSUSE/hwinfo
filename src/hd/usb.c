@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -8,6 +9,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
+#include <linux/version.h>
+#include <linux/types.h>
 #include <linux/usb.h>
 #include <linux/usbdevice_fs.h>
 
@@ -21,7 +24,6 @@
  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
-
 
 static int get_next_device(char *dev, int idx);
 static void get_usb_data(hd_data_t *hd_data);
@@ -460,14 +462,23 @@ int usb_control_msg(int fd, unsigned requesttype, unsigned request, unsigned val
   struct usbdevfs_ctrltransfer ctrl;
   int result, try;
 
+#if LINUX_VERSION_CODE > KERNEL_VERSION(2,5,0)
+  ctrl.bRequestType = requesttype;
+  ctrl.bRequest = request;
+  ctrl.wValue = value;
+  ctrl.wIndex = index;
+  ctrl.wLength = size;
+  ctrl.data = data;
+  ctrl.timeout = CTRL_TIMEOUT; 
+#else
   ctrl.requesttype = requesttype;
   ctrl.request = request;
   ctrl.value = value;
   ctrl.index = index;
   ctrl.length = size;
-  ctrl.timeout = 1000;
   ctrl.data = data;
   ctrl.timeout = CTRL_TIMEOUT; 
+#endif
   try = 0;
 
   do {
