@@ -57,13 +57,13 @@
 
 # nVidia Corporation:GeForce4 420 Go 32M
 10de 0176
-	x	4|nv||||FlatPanel||||
+	x	4|nv||||||||
 		#Option "CrtcNumber" "0"
 		#Option "CrtcNumber" "1"
 
 # nVidia Corporation:GeForce4 420 Go 32M
 10de 0176
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx|FlatPanel|4||switch2nvidia_glx|
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 		#Option "CrtcNumber" "0"
 		#Option "CrtcNumber" "1"
 
@@ -73,13 +73,13 @@
 
 # nVidia Corporation:GeForce4 440 Go 64M
 10de 0179
-	x	4|nv||||FlatPanel||||
+	x	4|nv||||||||
 		#Option "CrtcNumber" "0"
 		#Option "CrtcNumber" "1"
 
 # nVidia Corporation:GeForce4 440 Go 64M
 10de 0179
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx|FlatPanel|4||switch2nvidia_glx|
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 		#Option "CrtcNumber" "0"
 		#Option "CrtcNumber" "1"
 
@@ -429,7 +429,7 @@
 
 # Trident Microsystems:CyberBlade/i1
 1023 8500
-	x	4|trident||||||||
+	x	4|trident||||sw_cursor,CyberStretch||||
 
 # Trident Microsystems:Cyber 9397DVD
 1023 939a
@@ -475,9 +475,19 @@
 1039 5300
 	x	4|sis||||||||
 
+# Silicon Integrated Systems [SiS]:SiS540 PCI Display Adapter
+1039 5300
+	x	4|sis|3d|xf86_glx|dri,glx||c||switch2xf86_glx|
+		Option "MaxXFBMem" "12288"
+
 # Silicon Integrated Systems [SiS]:SiS630 GUI Accelerator+3D
 1039 6300
 	x	4|sis||||||||
+
+# Silicon Integrated Systems [SiS]:SiS630 GUI Accelerator+3D
+1039 6300
+	x	4|sis|3d|xf86_glx|dri,glx||c||switch2xf86_glx|
+		Option "MaxXFBMem" "12288"
 
 # Texas Instruments:TVP4020 [Permedia 2]
 104c 3d07
@@ -599,14 +609,6 @@
 1163 0001
 	x	4|rendition||||||||
 
-# 3Dfx Interactive, Inc.:Voodoo
-121a 0001
-	x	4|glide||glide_vg|||4|||
-
-# 3Dfx Interactive, Inc.:Voodoo
-121a 0001
-	x	4||3d|glide_vg,mesa3dfx|||4||switch2mesa3dfx|
-
 # Silicon Motion, Inc.:SM710 LynxEM
 126f 0710
 	x	4|siliconmotion||||||||
@@ -685,6 +687,30 @@
 8086 7125
 	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 		VideoRam 16384
+
+# ATI Technologies Inc:Radeon 8500 (0x000A)
+1002 514c 1002 000A
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon 8500 (0x000A)
+1002 514c 1002 000A
+	x	4|fglr200|3d|xf86_glx,xfglr200|dri,glx||8||switch2xf86_glx|
+
+# ATI Technologies Inc:Radeon 8500 (0x010A)
+1002 514c 1002 010A
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon 8500 (0x010A)
+1002 514c 1002 010A
+	x	4|fglr200|3d|xf86_glx,xfglr200|dri,glx||8||switch2xf86_glx|
+
+# ATI Technologies Inc:Radeon 8500 (0x113A)
+1002 514c 1002 113A
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon 8500 (0x113A)
+1002 514c 1002 113A
+	x	4|fglr200|3d|xf86_glx,xfglr200|dri,glx||8||switch2xf86_glx|
 
 # S3 Inc.:ProSavage KM 133
 5333 8a26
@@ -796,6 +822,11 @@
 1039 0300
 	x	4|sis||||||||
 
+# Silicon Integrated Systems [SiS]:SIS300
+1039 0300
+	x	4|sis|3d|xf86_glx|dri,glx||c||switch2xf86_glx|
+		Option "MaxXFBMem" "12288"
+
 # ATI Technologies Inc:Radeon QF
 1002 5146
 	x	4|radeon||||||||
@@ -814,17 +845,78 @@
 
 # nVidia Corporation:GeForce2 Go
 10de 0112
-	x	4|nv||||FlatPanel||||
+	x	4|nv||||||||
 		#Option "CrtcNumber" "0"
 
 # nVidia Corporation:GeForce2 Go
 10de 0112
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx|FlatPanel|4||switch2nvidia_glx|
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 		#Option "CrtcNumber" "0"
+
+# Silicon Integrated Systems [SiS]:SiS650
+1039 6325
+	x	4|sis||||||||
+
+# Silicon Integrated Systems [SiS]:SiS550
+1039 5315
+	x	4|sis||||||||
+
+# Silicon Integrated Systems [SiS]:SiS330
+1039 0330
+	x	4|sis||||||||
+
+# Silicon Integrated Systems [SiS]:SiS315PRO
+1039 0325
+	x	4|sis||||||||
+
+# Silicon Integrated Systems [SiS]:SiS315H
+1039 0310
+	x	4|sis||||||||
+
+# Silicon Integrated Systems [SiS]:SiS315
+1039 0315
+	x	4|sis||||||||
+
+# Silicon Integrated Systems [SiS]:SiS730
+1039 7300
+	x	4|sis||||||||
+
+# Silicon Integrated Systems [SiS]:SiS730
+1039 7300
+	x	4|sis|3d|xf86_glx|dri,glx||c||switch2xf86_glx|
+		Option "MaxXFBMem" "12288"
 
 # S3 Inc.:Integrated Trio3D
 5333 8904
 	x	4|s3virge||||||||
+
+# S3 Inc.:ProSavage DDR-K
+5333 8d04
+	x	4|savage||||||||
+
+# S3 Inc.:ProSavage DDR
+5333 8d03
+	x	4|savage||||||||
+
+# Intel Corporation:i845
+8086 2562
+	x	4|i810||||||||
+
+# ATI Technologies Inc:Radeon 8500 DV (0x02AA)
+1002 4242 1002 02AA
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon 8500 DV (0x02AA)
+1002 4242 1002 02AA
+	x	4|fglr200|3d|xfglr200,xf86_glx|dri,glx||8||switch2xf86_glx|
+
+# ATI Technologies Inc:Radeon 8500 DV (0x000A)
+1002 4242 1002 000A
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon 8500 DV (0x000A)
+1002 4242 1002 000A
+	x	4|fglr200|3d|xf86_glx,xfglr200|dri,glx||8||switch2xf86_glx|
 
 # 3DLabs:Permedia II 2D+3D
 3d3d 0009
@@ -870,6 +962,14 @@
 121a 0003
 	x	4|tdfx|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
 
+# ATI Technologies Inc:Radeon 8500 LE (0x113A)
+1002 516c 1002 113A
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon 8500 LE (0x113A)
+1002 516c 1002 113A
+	x	4|fglr200|3d|xf86_glx,xfglr200|dri,glx||8||switch2xf86_glx|
+
 # Silicon Integrated Systems [SiS]:86C326
 1039 6326
 	x	4|sis|||||d|||
@@ -889,6 +989,22 @@
 # S3 Inc.:Savage 4
 5333 8a22
 	x	4|savage||||||||
+
+# ATI Technologies Inc:Radeon 8500 LE (0x013A)
+1002 516c 1002 013A
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon 8500 LE (0x013A)
+1002 516c 1002 013A
+	x	4|fglr200|3d|xf86_glx,xfglr200|dri,glx||8||switch2xf86_glx|
+
+# ATI Technologies Inc:Radeon 8500 LE (0x010A)
+1002 516c 1002 010A
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon 8500 LE (0x010A)
+1002 516c 1002 010A
+	x	4|fglr200|3d|xfglr200,xf86_glx|dri,glx||8||switch2xf86_glx|
 
 # ATI Technologies Inc:Rage 128 Ultra TF
 1002 5446
@@ -931,6 +1047,14 @@
 		Option "Overlay" "off"
 		 Option "Qbs" "off"
 		 Option "PBuffer" "0"
+
+# ATI Technologies Inc:Radeon 8500 LE (0x000A)
+1002 516c 1002 000A
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon 8500 LE (0x000A)
+1002 516c 1002 000A
+	x	4|fglr200|3d|xf86_glx,xfglr200|dri,glx||8||switch2xf86_glx|
 
 # Matrox Graphics, Inc.:MGA G200
 102b 0520
@@ -1028,11 +1152,11 @@
 
 # VMWare Inc:VMWARE0405
 15ad 0405
-	x	4|vmware|||cfb24,cfb32,cfb16|||||
+	x	4|vmware||||||||
 
 # VMWare Inc:VMWARE0710
 15ad 0710
-	x	4|vmware|||cfb24,cfb32,cfb16|||||
+	x	4|vmware||||||||
 
 # Intel Corporation:i740_PCI
 8086 00d1
@@ -1096,11 +1220,15 @@ edd8 a099
 
 # ATI Technologies Inc:R200 BB
 1002 4242
-	x	4|ati||||||||
+	x	4|radeon||||||||
 
 # ATI Technologies Inc:Radeon 8500
 1002 514c 1002 013a
 	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon 8500
+1002 514c 1002 013a
+	x	4|fglr200|3d|xfglr200,xf86_glx|dri,glx||8||switch2xf86_glx|
 
 # ATI Technologies Inc:Radeon 7500
 1002 5157 1002 013a
@@ -1128,17 +1256,17 @@ edd8 a099
 
 # nVidia Corporation:GeForce2 Integrated GPU
 10de 01a0
-	x	4|fbdev||||||||
+	x	4|nv||||||||
 
 # nVidia Corporation:Quadro4 500 GoGL
 10de 017c
-	x	4|nv||||FlatPanel||||
+	x	4|nv||||||||
 		#Option "CrtcNumber" "0"
 		#Option "CrtcNumber" "1"
 
 # nVidia Corporation:Quadro4 500 GoGL
 10de 017c
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx|FlatPanel|4||switch2nvidia_glx|
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 		#Option "CrtcNumber" "0"
 		#Option "CrtcNumber" "1"
 
@@ -1168,27 +1296,35 @@ edd8 a099
 
 # nVidia Corporation:GeForce4 420 Go
 10de 0175
-	x	4|nv||||FlatPanel||||
+	x	4|nv||||||||
 		#Option "CrtcNumber" "0"
 		#Option "CrtcNumber" "1"
 
 # nVidia Corporation:GeForce4 420 Go
 10de 0175
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx|FlatPanel|4||switch2nvidia_glx|
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 		#Option "CrtcNumber" "0"
 		#Option "CrtcNumber" "1"
 
 # nVidia Corporation:GeForce4 440 Go
 10de 0174
-	x	4|nv||||FlatPanel||||
+	x	4|nv||||||||
 		#Option "CrtcNumber" "0"
 		#Option "CrtcNumber" "1"
 
 # nVidia Corporation:GeForce4 440 Go
 10de 0174
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx|FlatPanel|4||switch2nvidia_glx|
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 		#Option "CrtcNumber" "0"
 		#Option "CrtcNumber" "1"
+
+# Matrox Graphics, Inc.:G450 PCI
+102b 0525 102b 0d43
+	x	4|mga||||||||
+
+# Matrox Graphics, Inc.:G450 PCI
+102b 0525 102b 0d43
+	x	4|mga|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 # nVidia Corporation:GeForce4 MX 420
 10de 0172
@@ -1387,13 +1523,13 @@ edd8 a099
 10de 0203
 	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
 
-# 3Dfx Interactive, Inc.:Voodoo-2
-121a 0002
-	x	4|glide||glide_v2|||4|||
+# ATI Technologies Inc:Radeon LX
+1002 4c58
+	x	4|ati||||||||
 
-# 3Dfx Interactive, Inc.:Voodoo-2
-121a 0002
-	x	4||3d|glide_v2,mesa3dfx|||||switch2mesa3dfx|
+# ATI Technologies Inc:Radeon LX
+1002 4c58
+	x	4|ati|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 # S3 Inc.:Twister_K
 5333 8d02
@@ -1458,12 +1594,10 @@ edd8 a099
 # Matrox Graphics, Inc.:G550
 102b 2527
 	x	4|mga|||||d|||
-		Option "HWcursor" "off"
 
 # Matrox Graphics, Inc.:G550
 102b 2527
 	x	4|mga|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
-		Option "HWcursor" "off"
 
 #
 
@@ -1829,10 +1963,6 @@ edd8 a099
 1013 00e8
 	x	3|SVGA||||||||
 
-# Cirrus Logic:PD 6832
-1013 1110
-	x	3|SVGA||||||||
-
 # Cirrus Logic:PD 6834 PCMCIA/CardBus Ctrlr
 1013 1112
 	x	3|SVGA||||||||
@@ -1887,7 +2017,7 @@ edd8 a099
 
 # Trident Microsystems:CyberBlade/i1
 1023 8500
-	x	3|SVGA||||||||
+	x	3|SVGA||||CyberStretch,sw_cursor||||
 
 # Trident Microsystems:GUI Accelerator
 1023 9350
@@ -2169,10 +2299,6 @@ edd8 a099
 1142 6424
 	x	3|SVGA||||||||
 
-# 3Dfx Interactive, Inc.:Voodoo
-121a 0001
-	x	3||3d|mesa3dfx,glide_vg|||4||switch2mesa3dfx|
-
 # Sigma Designs Corporation:REALmagic 64/GX (SD 6425)
 1236 6401
 	x	3|SVGA||||||||
@@ -2431,7 +2557,7 @@ edd8 a099
 
 # Alliance Semiconductor Corporation:ProMotion AT3D
 1142 643d
-	x	3|SVGA||xsvga|||15|||
+	x	3|SVGA|||||15|||
 
 # 3DLabs:Permedia II 2D+3D
 3d3d 0009
@@ -2652,7 +2778,3 @@ edd8 a099
 # Weitek:P9100
 100e 9100
 	x	3|SVGA||||||||
-
-# 3Dfx Interactive, Inc.:Voodoo-2
-121a 0002
-	x	3||3d|glide_v2,mesa3dfx|||4||switch2mesa3dfx|

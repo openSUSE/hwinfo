@@ -132,6 +132,10 @@
 1002 4c47
 	x	4|fbdev||||dpms|a|||
 
+# ATI Technologies Inc:Radeon LY
+1002 4c59
+	x	4|radeon||||||||
+
 # ATI Technologies Inc:Mach64 LI
 1002 4c49
 	x	4|ati||||dpms||||

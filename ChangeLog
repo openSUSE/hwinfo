@@ -1,3 +1,6 @@
+22/7/2002:	v5.03
+	- updated x11 data
+
 22/7/2002:	v5.02
 	- run hwbootscan rc script after "kbd" script
 	- don't _change_ config status in hwbootscan

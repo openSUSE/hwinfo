@@ -371,22 +371,6 @@
 10de 002d
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:unknown1
-10de 002e
-	x	4|nv||||||||
-
-# nVidia Corporation:unknown1
-10de 002e
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|||4||switch2nvidia_glx|
-
-# nVidia Corporation:unknown
-10de 002f
-	x	4|nv||||||||
-
-# nVidia Corporation:unknown
-10de 002f
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|||4||switch2nvidia_glx|
-
 # nVidia Corporation:GeForce DDR
 10de 0101
 	x	4|nv||||||||
