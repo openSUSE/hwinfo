@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Wed Aug 29 09:08:39 2001
+# generated at: Wed Aug 29 10:25:22 2001
 
 # data source:  CDB
 
@@ -31,6 +31,10 @@
 
 # Matrox Graphics, Inc.:MGA 1064SG [Mystique] AGP
 102b 051e
+	x	4|mga|||||d|||
+
+# Matrox Graphics, Inc.:MGA G100 [Productiva] AGP
+102b 1001
 	x	4|mga|||||d|||
 
 # ATI Technologies Inc:210888CX [Mach64 CX]
@@ -734,7 +738,7 @@
 
 #
 
-# generated at: Wed Aug 29 09:08:39 2001
+# generated at: Wed Aug 29 10:25:22 2001
 
 # data source:  CDB
 
@@ -816,6 +820,10 @@
 
 # Matrox Graphics, Inc.:MGA 1064SG [Mystique] AGP
 102b 051e
+	x	3|SVGA|||||d|||
+
+# Matrox Graphics, Inc.:MGA G100 [Productiva] AGP
+102b 1001
 	x	3|SVGA|||||d|||
 
 # Cirrus Logic:GD 7548

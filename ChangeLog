@@ -1,3 +1,7 @@
+29/8/2001:	v3.15
+	- new x11 data
+	- ignore obviously broken ddc info
+
 27/8/2001:	v3.14
 	- new qlogic driver info (#9868)
 	- completely new x11 data

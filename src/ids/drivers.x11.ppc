@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Wed Aug 29 09:08:39 2001
+# generated at: Wed Aug 29 10:25:22 2001
 
 # data source:  CDB
 
@@ -35,7 +35,7 @@
 
 #
 
-# generated at: Wed Aug 29 09:08:39 2001
+# generated at: Wed Aug 29 10:25:22 2001
 
 # data source:  CDB
 
@@ -46,6 +46,26 @@
 # Cirrus Logic:GD 5446
 1013 00b8
 	x	3|FBDEV|||||1|||
+
+# Sun Microsystems:Sun|Monochrome (bwtwo)
+s4001 0001
+	x	3|||||||||
+
+# Sun Microsystems:Sun|Color3 (cgthree)
+s4001 0002
+	x	3|||||||||
+
+# Sun Microsystems:Sun|CG8/RasterOps (cgeight)
+s4001 0003
+	x	3|||||||||
+
+# Sun Microsystems:Sun|GS (cgtwelve)
+s4001 0004
+	x	3|XFB_Dev||||||||
+
+# Sun Microsystems:Sun|Graphics Tower (gt)
+s4001 0005
+	x	3|||||||||
 
 # ATI Technologies Inc:3D Rage I/II 215GT [Mach64 GT]
 1002 4754

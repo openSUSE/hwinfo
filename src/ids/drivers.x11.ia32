@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Wed Aug 29 09:08:39 2001
+# generated at: Wed Aug 29 10:25:22 2001
 
 # data source:  CDB
 
@@ -23,6 +23,10 @@
 
 # S3 Inc.:Trio 64 3D
 5333 8904
+	x	4|s3virge||||||||
+
+# S3 Inc.:86c325 [ViRGE]
+5333 5631
 	x	4|s3virge||||||||
 
 # nVidia Coorporation:Riva TNT2
@@ -53,6 +57,10 @@
 10c8 0001
 	x	4|neomagic||||||||
 
+# Matrox Graphics, Inc.:MGA G100 [Productiva] AGP
+102b 1001
+	x	4|mga||||NoHal|d|||
+
 # Cirrus Logic:GD 7548
 1013 0038
 	x	4|cirrus||||||||
@@ -67,6 +75,10 @@
 
 # Cirrus Logic:GD 5462
 1013 00d0
+	x	4|cirrus||||||||
+
+# Cirrus Logic:GD 5446
+1013 00b8
 	x	4|cirrus||||||||
 
 # Cirrus Logic:GD 5436 [Alpine]
@@ -92,10 +104,6 @@
 # Chips and Technologies:F65548
 102c 00dc
 	x	4|chips||||||||
-
-# Chips and Technologies:64310
-102c 00b8
-	x	4|cirrus||||||||
 
 # ATI Technologies Inc:210888CX [Mach64 CX]
 1002 4358
@@ -237,10 +245,6 @@
 1002 534d
 	x	4|r128|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
 
-# ATI Technologies Inc:Mach 64 reference
-1002 5354 1002 5654
-	x	4|ati||||||||
-
 # Tseng Labs Inc:ET4000/W32p rev B
 100c 3205
 	x	4|tseng||||||||
@@ -260,10 +264,6 @@
 # Cirrus Logic:GD 5464 [Laguna]
 1013 00d4
 	x	4|cirrus||||||||
-
-# Toshiba America Info Systems:Crystal CS4281 PCI Audio
-1013 6005 1179 0001
-	x	4|savage||||||||
 
 # IBM:256-bit Graphics Rasterizer [Fire GL1]
 1014 00b7
@@ -349,10 +349,6 @@
 1039 5300
 	x	4|sis||||||||
 
-# Micron:37C922
-1042 1001
-	x	4|mga||||||||
-
 # Texas Instruments:TVP4020 [Permedia 2]
 104c 3d07
 	x	4|glint|||||f|||
@@ -380,10 +376,6 @@
 # Neomagic Corporation:[MagicGraph 128ZV Plus]
 10c8 0083
 	x	4|neomagic||||||||
-
-# IBM:MagicMedia 256AV Audio Device on BlackTip Thinkpad
-10c8 8005 1014 00dd
-	x	4|neomagic|||||5|||
 
 # nVidia Coorporation:Riva TnT2 Ultra [NV5]
 10de 0029
@@ -1016,13 +1008,17 @@ edd8 a099
 10e0 9135
 	x	4|imstt||||||||
 
+# ATI:Mach64 VT
+1002 5654
+	x	4|ati||||||||
+
 #
 
 # x11.hwinfo-file for architecture i386
 
 #
 
-# generated at: Wed Aug 29 09:08:39 2001
+# generated at: Wed Aug 29 10:25:22 2001
 
 # data source:  CDB
 
@@ -1104,6 +1100,10 @@ edd8 a099
 
 # Matrox Graphics, Inc.:MGA 1064SG [Mystique] AGP
 102b 051e
+	x	3|SVGA||||||||
+
+# Matrox Graphics, Inc.:MGA G100 [Productiva] AGP
+102b 1001
 	x	3|SVGA||||||||
 
 # Cirrus Logic:GD 7548
