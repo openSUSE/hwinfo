@@ -2092,6 +2092,16 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
     di->isdn.i4l_subtype = idi->subtyp;
     di->isdn.i4l_name = new_str(ici->name);
 
+    if(idi->need_pkg && *idi->need_pkg) {
+      sl0 = hd_split(',', (char *) idi->need_pkg);
+      for(sl = sl0; sl; sl = sl->next) {
+        if(!search_str_list(hd->requires, sl->str)) {
+          add_str_list(&hd->requires, sl->str);
+        }
+      }
+      free_str_list(sl0);
+    }
+
     if(hd->bus == bus_pci) continue;
 
     pnr = 1;
