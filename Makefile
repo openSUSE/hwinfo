@@ -6,6 +6,7 @@ LIBDIR		= /lib
 ULIBDIR		= /usr$(LIBDIR)
 LIBS		= -lhd
 SLIBS		= -lhd -lsysfs
+TLIBS		= -lhd_tiny -lsysfs
 
 include Makefile.common
 
@@ -31,6 +32,12 @@ shared:
 	@make
 
 tiny:
+	@make EXTRA_FLAGS=-DLIBHD_TINY LIBHD_BASE=libhd_tiny LIBS="$(TLIBS)"
+
+tinyinstall:
+	@make EXTRA_FLAGS=-DLIBHD_TINY LIBHD_BASE=libhd_tiny LIBS="$(TLIBS)" install
+
+tinystatic:
 	@make EXTRA_FLAGS=-DLIBHD_TINY SHARED_FLAGS= LIBS="$(SLIBS)"
 
 diet:
@@ -66,8 +73,8 @@ install:
 	install -m 755 src/ids/convert_hd $(DESTDIR)/usr/sbin
 	if [ -f $(LIBHD_SO) ] ; then \
 		install $(LIBHD_SO) $(DESTDIR)$(LIBDIR) ; \
-		ln -snf libhd.so.$(LIBHD_VERSION) $(DESTDIR)$(LIBDIR)/libhd.so.$(LIBHD_MAJOR_VERSION) ; \
-		ln -snf $(LIBDIR)/libhd.so.$(LIBHD_MAJOR_VERSION) $(DESTDIR)$(ULIBDIR)/libhd.so ; \
+		ln -snf $(LIBHD_NAME) $(DESTDIR)$(LIBDIR)/$(LIBHD_SONAME) ; \
+		ln -snf $(LIBDIR)/$(LIBHD_SONAME) $(DESTDIR)$(ULIBDIR)/$(LIBHD_BASE).so ; \
 	else \
 		install -m 644 $(LIBHD) $(DESTDIR)$(ULIBDIR) ; \
 	fi

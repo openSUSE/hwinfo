@@ -1,14 +1,16 @@
 TOPDIR		= ..
 SUBDIRS		= hd isdn ids
 TARGETS		= touch $(LIBHD) $(LIBHD_SO)
-CLEANFILES	= $(LIBHD) $(LIBHD_D) $(LIBHD_SO) libhd.so*
+CLEANFILES	= $(LIBHD) $(LIBHD_D) $(LIBHD_SO) *.so *.so.* *.a
 
 .PHONY: touch
 
 include $(TOPDIR)/Makefile.common
 
 ifneq "$(findstring $(ARCH), i386 x86_64 ia64)" ""
+ifneq ($(LIBHD_BASE), libhd_tiny)
 SUBDIRS	+= x86emu int10
+endif
 endif
 
 #ifeq "$(findstring $(ARCH), i386 alpha)" ""
@@ -23,10 +25,10 @@ ifdef SHARED_FLAGS
 $(LIBHD_SO): $(LIBHD)
 	echo $(SHARED_FLAGS)
 	$(CC) -shared -lsysfs -Wl,--whole-archive $(LIBHD) -Wl,--no-whole-archive \
-		-Wl,-soname=libhd.so.$(LIBHD_MAJOR_VERSION) \
+		-Wl,-soname=$(LIBHD_SONAME) \
 		-o $(LIBHD_SO) 
-	ln -snf libhd.so.$(LIBHD_VERSION) libhd.so.$(LIBHD_MAJOR_VERSION)
-	ln -snf libhd.so.$(LIBHD_MAJOR_VERSION) libhd.so
+	ln -snf $(LIBHD_NAME) $(LIBHD_SONAME)
+	ln -snf $(LIBHD_SONAME) $(LIBHD_BASE).so
 else
 $(LIBHD_SO):
 endif

@@ -1,3 +1,7 @@
+17/2/2005:	v10.1
+	- notebook lcd data update
+	- build shared tiny lib
+
 15/2/2005:	v10.0
 	- libhd interface changes: geometry values
 	- prepare for wlan feature detection

@@ -49,6 +49,7 @@ static struct {
   { 1024,  768, "Sony Corporation", "PCG-F370(UC)", NULL },
   { 1024,  768, "Sony Corporation", "PCG-N505SN", NULL },
   { 1024,  768, "TOSHIBA", "S2400-103", NULL },
+  { 1280,  800, "Acer", "Aspire 1520", NULL },
   { 1400, 1050, "Acer", "TravelMate 660", NULL },
   { 1400, 1050, "Dell Computer Corporation", "Inspiron 8000", NULL },
   { 1600, 1200, "Dell Computer Corporation", "Inspiron 8200", NULL },

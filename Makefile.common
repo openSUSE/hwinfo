@@ -25,11 +25,14 @@ SHARED_FLAGS	= -fPIC
 
 LDFLAGS	= -Lsrc
 
-CFILES	= $(wildcard *.c)
-OBJS	= $(CFILES:.c=.o)
-LIBHD	= $(TOPDIR)/src/libhd.a
-LIBHD_SO	= $(TOPDIR)/src/libhd.so.$(LIBHD_VERSION)
-LIBHD_D	= $(TOPDIR)/src/.lib
+CFILES		= $(wildcard *.c)
+OBJS		= $(CFILES:.c=.o)
+LIBHD_BASE	= libhd
+LIBHD		= $(TOPDIR)/src/$(LIBHD_BASE).a
+LIBHD_SONAME	= $(LIBHD_BASE).so.$(LIBHD_MAJOR_VERSION)
+LIBHD_NAME	= $(LIBHD_BASE).so.$(LIBHD_VERSION)
+LIBHD_SO	= $(TOPDIR)/src/$(LIBHD_NAME)
+LIBHD_D		= $(TOPDIR)/src/.lib
 
 export CC TOPDIR CFLAGS LIBHD ARCH
 
