@@ -1,4 +1,5 @@
 	- fixed ia64 unaligned access (#32396)
+	- use modprobe for tulip (#32911)
 
 11/2/2004:	v8.06
 	- fixed segfault on s390*

@@ -76,8 +76,8 @@
 &device.id		pci 0x0019
 &subvendor.id		pci 0x1113
 &subdevice.id		pci 0x1207
-+driver.module.insmod	de4x5
-+driver.module.insmod	tulip
++driver.module.modprobe	de4x5
++driver.module.modprobe	tulip
 
  vendor.id		pci 0x1011
 &device.id		pci 0x0002
@@ -85,8 +85,8 @@
 &device.id		pci 0x0009
 |vendor.id		pci 0x1011
 &device.id		pci 0x0019
-+driver.module.insmod	tulip
-+driver.module.insmod	de4x5
++driver.module.modprobe	tulip
++driver.module.modprobe	de4x5
 
 #pcimap
  vendor.id		pci 0x1011
@@ -152,29 +152,29 @@
 &device.id		pci 0x9009
 |vendor.id		pci 0x1282
 &device.id		pci 0x9132
-+driver.module.insmod	dmfe
++driver.module.modprobe	dmfe
 
 # see #19271
  vendor.id		pci 0x1282
 &device.id		pci 0x9102
-+driver.module.insmod	dmfe
-+driver.module.insmod	tulip
++driver.module.modprobe	dmfe
++driver.module.modprobe	tulip
 
  vendor.id		pci 0x1282
 &device.id		pci 0x9100
-+driver.module.insmod	tulip
-+driver.module.insmod	dmfe
++driver.module.modprobe	tulip
++driver.module.modprobe	dmfe
 
 # net/wan/lmc/lmc_main.c
  vendor.id		pci 0x1011
 &device.id		pci 0x0009
 &subvendor.id		pci 0x1379
-+driver.module.insmod	lmc
++driver.module.modprobe	lmc
 
 # net/defxx.c
  vendor.id		pci 0x1011
 &device.id		pci 0x000f
-+driver.module.insmod	defxx
++driver.module.modprobe	defxx
 
 # pcimap
  vendor.id		pci 0x1011
