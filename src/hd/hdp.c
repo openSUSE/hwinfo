@@ -536,7 +536,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 
       case res_size:
         {
-          char *s, b0[32], b1[32];
+          char *s, b0[64], b1[64];
 
           switch(res->size.unit) {
             case size_unit_cinch:
@@ -559,8 +559,8 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
                 default:
                   s = "some unit";
               }
-              snprintf(b0, sizeof b0 - 1, "%u", res->size.val1);
-              snprintf(b1, sizeof b1 - 1, "%u", res->size.val2);
+              snprintf(b0, sizeof b0 - 1, "%"PRIu64, res->size.val1);
+              snprintf(b1, sizeof b1 - 1, "%"PRIu64, res->size.val2);
           }
           if(!res->size.val2)
             dump_line("Size: %s %s\n", b0, s);

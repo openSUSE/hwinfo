@@ -1043,7 +1043,7 @@ typedef struct {
   union u_hd_res_t *next;
   enum resource_types type;
   enum size_units unit;
-  unsigned val1, val2;			/* to allow for 2D values */
+  uint64_t val1, val2;			/* to allow for 2D values */
 } res_size_t;
 
 typedef struct {

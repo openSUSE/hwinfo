@@ -16,6 +16,9 @@
 #include <sys/mount.h>
 #include <linux/pci.h>
 #include <linux/hdreg.h>
+#include <linux/fs.h>
+
+#define u64 uint64_t
 
 #ifndef BLKSSZGET
 #define BLKSSZGET _IO(0x12,104)		/* get block device sector size */
@@ -4502,14 +4505,18 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
 {
   hd_res_t *res;
   struct hd_geometry geo_s;
+#ifdef HDIO_GETGEO_BIG
   struct hd_big_geometry big_geo_s;
-  unsigned long secs;
+#endif
+  unsigned long secs32;
+  uint64_t secs, secs0;
   unsigned sec_size;
   int close_fd = 0;
+  int got_big = 0;
 
   *geo = *size = NULL;
 
-  ADD2LOG("  dev = >%s<, fd = %d\n", dev, fd);
+  ADD2LOG("  dev = %s, fd = %d\n", dev, fd);
 
   if(fd < 0) {
     if(!dev) return;
@@ -4520,6 +4527,10 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
 
   ADD2LOG("  open ok, fd = %d\n", fd);
 
+  secs0 = 0;
+  res = NULL;
+
+#ifdef HDIO_GETGEO_BIG
   if(!ioctl(fd, HDIO_GETGEO_BIG, &big_geo_s)) {
     if(dev) ADD2LOG("%s: ioctl(big geo) ok\n", dev);
     res = add_res_entry(geo, new_mem(sizeof *res));
@@ -4528,9 +4539,14 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
     res->disk_geo.heads = big_geo_s.heads;
     res->disk_geo.sectors = big_geo_s.sectors;
     res->disk_geo.logical = 1;
+    secs0 = (uint64_t) res->disk_geo.cyls * res->disk_geo.heads * res->disk_geo.sectors;
+    got_big = 1;
   }
   else {
     ADD2LOG("  big geo failed: %s\n", strerror(errno));
+#else
+  {
+#endif
     if(!ioctl(fd, HDIO_GETGEO, &geo_s)) {
       if(dev) ADD2LOG("%s: ioctl(geo) ok\n", dev);
       res = add_res_entry(geo, new_mem(sizeof *res));
@@ -4539,18 +4555,39 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
       res->disk_geo.heads = geo_s.heads;
       res->disk_geo.sectors = geo_s.sectors;
       res->disk_geo.logical = 1;
+      secs0 = (uint64_t) res->disk_geo.cyls * res->disk_geo.heads * res->disk_geo.sectors;
     }
     else {
       ADD2LOG("  geo failed: %s\n", strerror(errno));
     }
   }
 
-  if(!ioctl(fd, BLKGETSIZE, &secs)) {
-    if(dev) ADD2LOG("%s: ioctl(disk size) ok\n", dev);
+  /* ##### maybe always BLKSZGET or always 0x200? */
+  if(!ioctl(fd, BLKSSZGET, &sec_size)) {
+    if(dev) ADD2LOG("%s: ioctl(block size) ok\n", dev);
+    if(!sec_size) sec_size = 0x200;
   }
   else {
-    secs = 0;
-    if(*geo) secs = (*geo)->disk_geo.cyls * (*geo)->disk_geo.heads * (*geo)->disk_geo.sectors;
+    sec_size = 0x200;
+  }
+
+  secs = 0;
+
+  if(!ioctl(fd, BLKGETSIZE64, &secs)) {
+    if(dev) ADD2LOG("%s: ioctl(disk size) ok\n", dev);
+    secs /= sec_size;
+  }
+  else if(!ioctl(fd, BLKGETSIZE, &secs32)) {
+    if(dev) ADD2LOG("%s: ioctl(disk size32) ok\n", dev);
+    secs = secs32;
+  }
+  else {
+    secs = secs0;
+  }
+
+  if(!got_big && secs0 && res) {
+    /* fix cylinder value */
+    res->disk_geo.cyls = secs / (res->disk_geo.heads * res->disk_geo.sectors);
   }
 
   if(secs) {
@@ -4558,14 +4595,10 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
     res->size.type = res_size;
     res->size.unit = size_unit_sectors;
     res->size.val1 = secs;
-    res->size.val2 = 512;
-    if(!ioctl(fd, BLKSSZGET, &sec_size)) {
-      if(dev) ADD2LOG("%s: ioctl(block size) ok\n", dev);
-      if(sec_size) res->size.val2 = sec_size;
-    }
+    res->size.val2 = sec_size;
   }
 
-  ADD2LOG("  geo = %p, size = %p\n", *geo, *size);
+  // ADD2LOG("  geo = %p, size = %p\n", *geo, *size);
 
   if(close_fd) close(fd);
 }

@@ -1,3 +1,6 @@
+18/7/2003:	v7.02
+	- changed disk size reading for 2.6
+
 17/7/2003:	v7.01
 	- store parent id (#27508) and hotplug field
 	- new attempt to work around broken cciss_ioctl.h inclue file

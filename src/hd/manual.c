@@ -1253,9 +1253,9 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
         add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_size));
         str_printf(&s, 0, "%u", res->size.unit);
         add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->size.val1);
+        str_printf(&s, 0, "%"PRIu64, res->size.val1);
         add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->size.val2);
+        str_printf(&s, 0, "%"PRIu64, res->size.val2);
         add_str_list(&sl, s);
         break;
 
