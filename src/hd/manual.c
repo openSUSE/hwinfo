@@ -748,51 +748,51 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
         break;
 
       case hwdi_dev:
-        hd->device3.id = str2id(sl2->str);
+        hd->device.id = str2id(sl2->str);
         break;
 
       case hwdi_vend:
-        hd->vendor3.id = str2id(sl2->str);
+        hd->vendor.id = str2id(sl2->str);
         break;
 
       case hwdi_sub_dev:
-        hd->sub_dev = str2id(sl2->str);
+        hd->sub_device.id = str2id(sl2->str);
         break;
 
       case hwdi_sub_vend:
-        hd->sub_vendor3.id = str2id(sl2->str);
+        hd->sub_vendor.id = str2id(sl2->str);
         break;
 
       case hwdi_rev:
-        hd->rev = strtoul(sl2->str, NULL, 0);
+        hd->revision.id = strtoul(sl2->str, NULL, 0);
         break;
 
       case hwdi_compat_dev:
-        hd->compat_dev = str2id(sl2->str);
+        hd->compat_device.id = str2id(sl2->str);
         break;
 
       case hwdi_compat_vend:
-        hd->compat_vend = str2id(sl2->str);
+        hd->compat_vendor.id = str2id(sl2->str);
         break;
 
       case hwdi_dev_name:
-        hd->device3.name = new_str(sl2->str);
+        hd->device.name = new_str(sl2->str);
         break;
 
       case hwdi_vend_name:
-        hd->vendor3.name = new_str(sl2->str);
+        hd->vendor.name = new_str(sl2->str);
         break;
 
       case hwdi_sub_dev_name:
-        hd->sub_dev_name = new_str(sl2->str);
+        hd->sub_device.name = new_str(sl2->str);
         break;
 
       case hwdi_sub_vend_name:
-        hd->sub_vendor3.name = new_str(sl2->str);
+        hd->sub_vendor.name = new_str(sl2->str);
         break;
 
       case hwdi_rev_name:
-        hd->rev_name = new_str(sl2->str);
+        hd->revision.name = new_str(sl2->str);
         break;
 
       case hwdi_serial:
@@ -818,36 +818,36 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
     }
   }
 
-  if(hd->device3.id || hd->vendor3.id) {
-    tag = ID_TAG(hd->device3.id);
-    tag = tag ? tag : ID_TAG(hd->vendor3.id);
+  if(hd->device.id || hd->vendor.id) {
+    tag = ID_TAG(hd->device.id);
+    tag = tag ? tag : ID_TAG(hd->vendor.id);
     tag = tag ? tag : TAG_PCI;
-    hd->device3.id = MAKE_ID(tag, ID_VALUE(hd->device3.id));
-    hd->vendor3.id = MAKE_ID(tag, ID_VALUE(hd->vendor3.id));
+    hd->device.id = MAKE_ID(tag, ID_VALUE(hd->device.id));
+    hd->vendor.id = MAKE_ID(tag, ID_VALUE(hd->vendor.id));
   }
 
-  if(hd->sub_dev || hd->sub_vendor3.id) {
-    tag = ID_TAG(hd->sub_dev);
-    tag = tag ? tag : ID_TAG(hd->sub_vendor3.id);
+  if(hd->sub_device.id || hd->sub_vendor.id) {
+    tag = ID_TAG(hd->sub_device.id);
+    tag = tag ? tag : ID_TAG(hd->sub_vendor.id);
     tag = tag ? tag : TAG_PCI;
-    hd->sub_dev = MAKE_ID(tag, ID_VALUE(hd->sub_dev));
-    hd->sub_vendor3.id = MAKE_ID(tag, ID_VALUE(hd->sub_vendor3.id));
+    hd->sub_device.id = MAKE_ID(tag, ID_VALUE(hd->sub_device.id));
+    hd->sub_vendor.id = MAKE_ID(tag, ID_VALUE(hd->sub_vendor.id));
   }
 
-  if(hd->compat_dev || hd->compat_vend) {
-    tag = ID_TAG(hd->compat_dev);
-    tag = tag ? tag : ID_TAG(hd->compat_vend);
+  if(hd->compat_device.id || hd->compat_vendor.id) {
+    tag = ID_TAG(hd->compat_device.id);
+    tag = tag ? tag : ID_TAG(hd->compat_vendor.id);
     tag = tag ? tag : TAG_PCI;
-    hd->compat_dev = MAKE_ID(tag, ID_VALUE(hd->compat_dev));
-    hd->compat_vend = MAKE_ID(tag, ID_VALUE(hd->compat_vend));
+    hd->compat_device.id = MAKE_ID(tag, ID_VALUE(hd->compat_device.id));
+    hd->compat_vendor.id = MAKE_ID(tag, ID_VALUE(hd->compat_vendor.id));
   }
 
   if(hd->status.available == status_unknown) hd->is.manual = 1;
 
   /* create some entries, if missing */
 
-  if(!hd->device3.id && !hd->vendor3.id && !hd->device3.name) {
-    hd->device3.name = new_str(hd->model);
+  if(!hd->device.id && !hd->vendor.id && !hd->device.name) {
+    hd->device.name = new_str(hd->model);
   }
 
   if(hd->hw_class && !hd->base_class.id) {
@@ -941,59 +941,59 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
     add_str_list(&entry->value, s);
   }
 
-  if(hd->device3.id || hd->vendor3.id) {
+  if(hd->device.id || hd->vendor.id) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_vend));
-    add_str_list(&entry->value, vend_id2str(hd->vendor3.id));
+    add_str_list(&entry->value, vend_id2str(hd->vendor.id));
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_dev));
-    str_printf(&s, 0, "%04x", ID_VALUE(hd->device3.id));
+    str_printf(&s, 0, "%04x", ID_VALUE(hd->device.id));
     add_str_list(&entry->value, s);
   }
 
-  if(hd->sub_dev || hd->sub_vendor3.id) {
+  if(hd->sub_device.id || hd->sub_vendor.id) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_vend));
-    add_str_list(&entry->value, vend_id2str(hd->sub_vendor3.id));
+    add_str_list(&entry->value, vend_id2str(hd->sub_vendor.id));
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_dev));
-    str_printf(&s, 0, "%04x", ID_VALUE(hd->sub_dev));
+    str_printf(&s, 0, "%04x", ID_VALUE(hd->sub_device.id));
     add_str_list(&entry->value, s);
   }
 
-  if(hd->rev) {
+  if(hd->revision.id) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_rev));
-    str_printf(&s, 0, "0x%x", hd->rev);
+    str_printf(&s, 0, "0x%x", hd->revision.id);
     add_str_list(&entry->value, s);
   }
 
-  if(hd->compat_dev || hd->compat_vend) {
+  if(hd->compat_device.id || hd->compat_vendor.id) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_compat_vend));
-    add_str_list(&entry->value, vend_id2str(hd->compat_vend));
+    add_str_list(&entry->value, vend_id2str(hd->compat_vendor.id));
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_compat_dev));
-    str_printf(&s, 0, "%04x", ID_VALUE(hd->compat_dev));
+    str_printf(&s, 0, "%04x", ID_VALUE(hd->compat_device.id));
     add_str_list(&entry->value, s);
   }
 
-  if(hd->device3.name) {
+  if(hd->device.name) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_dev_name));
-    add_str_list(&entry->value, hd->device3.name);
+    add_str_list(&entry->value, hd->device.name);
   }
 
-  if(hd->vendor3.name) {
+  if(hd->vendor.name) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_vend_name));
-    add_str_list(&entry->value, hd->vendor3.name);
+    add_str_list(&entry->value, hd->vendor.name);
   }
 
-  if(hd->sub_dev_name) {
+  if(hd->sub_device.name) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_dev_name));
-    add_str_list(&entry->value, hd->sub_dev_name);
+    add_str_list(&entry->value, hd->sub_device.name);
   }
 
-  if(hd->sub_vendor3.name) {
+  if(hd->sub_vendor.name) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_vend_name));
-    add_str_list(&entry->value, hd->sub_vendor3.name);
+    add_str_list(&entry->value, hd->sub_vendor.name);
   }
 
-  if(hd->rev_name) {
+  if(hd->revision.name) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_rev_name));
-    add_str_list(&entry->value, hd->rev_name);
+    add_str_list(&entry->value, hd->revision.name);
   }
 
   if(hd->serial) {

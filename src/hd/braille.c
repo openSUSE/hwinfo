@@ -80,8 +80,8 @@ void hd_scan_braille(hd_data_t *hd_data)
         hd_tmp->bus.id = bus_serial;
         hd_tmp->unix_dev_name = new_str(hd->unix_dev_name);
         hd_tmp->attached_to = hd->idx;
-        hd_tmp->vendor3.id = vend;
-        hd_tmp->device3.id = dev;
+        hd_tmp->vendor.id = vend;
+        hd_tmp->device.id = dev;
       }
     }
   }

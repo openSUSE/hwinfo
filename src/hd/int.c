@@ -113,7 +113,7 @@ void int_cdrom(hd_data_t *hd_data)
       hd->sub_class.id == sc_sdev_cdrom &&
       !hd->prog_if.id
     ) {
-      if(hd->device3.name && strstr(hd->device3.name, "DVD")) {
+      if(hd->device.name && strstr(hd->device.name, "DVD")) {
         hd->prog_if.id = 3;
       }
     }
@@ -250,12 +250,12 @@ void int_floppy(hd_data_t *hd_data)
       if(
         (
           (
-            (hd->vendor3.name && !strcasecmp(hd->vendor3.name, "iomega")) ||
-            (hd->sub_vendor3.name && !strcasecmp(hd->sub_vendor3.name, "iomega"))
+            (hd->vendor.name && !strcasecmp(hd->vendor.name, "iomega")) ||
+            (hd->sub_vendor.name && !strcasecmp(hd->sub_vendor.name, "iomega"))
           ) &&
           (
-            (hd->device3.name && strstr(hd->device3.name, "ZIP")) ||
-            (hd->sub_dev_name && strstr(hd->sub_dev_name, "Zip"))
+            (hd->device.name && strstr(hd->device.name, "ZIP")) ||
+            (hd->sub_device.name && strstr(hd->sub_device.name, "Zip"))
           )
         )
       ) {
@@ -293,11 +293,11 @@ void int_fix_ide_scsi(hd_data_t *hd_data)
           }
           hd_ide->status.available = status_no;
 
-          COPY_ENTRY(vendor3.name);
-          COPY_ENTRY(device3.name);
-          COPY_ENTRY(sub_dev_name);
-          COPY_ENTRY(sub_vendor3.name);
-          COPY_ENTRY(rev_name);
+          COPY_ENTRY(vendor.name);
+          COPY_ENTRY(device.name);
+          COPY_ENTRY(sub_device.name);
+          COPY_ENTRY(sub_vendor.name);
+          COPY_ENTRY(revision.name);
           COPY_ENTRY(serial);
 
           new_id(hd_data, hd_scsi);
@@ -348,15 +348,15 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
           COPY_ENTRY(model);
           COPY_ENTRY(driver);
 
-          hd_usb->vendor3.id = hd_scsi->vendor3.id;
-          COPY_ENTRY(vendor3.name);
-          hd_usb->device3.id = hd_scsi->device3.id;
-          COPY_ENTRY(device3.name);
-          hd_usb->sub_vendor3.name = free_mem(hd_usb->sub_vendor3.name);
-          COPY_ENTRY(sub_vendor3.name);
-          hd_usb->sub_dev_name = free_mem(hd_usb->sub_dev_name);
-          COPY_ENTRY(sub_dev_name);
-          COPY_ENTRY(rev_name);
+          hd_usb->vendor.id = hd_scsi->vendor.id;
+          COPY_ENTRY(vendor.name);
+          hd_usb->device.id = hd_scsi->device.id;
+          COPY_ENTRY(device.name);
+          hd_usb->sub_vendor.name = free_mem(hd_usb->sub_vendor.name);
+          COPY_ENTRY(sub_vendor.name);
+          hd_usb->sub_device.name = free_mem(hd_usb->sub_device.name);
+          COPY_ENTRY(sub_device.name);
+          COPY_ENTRY(revision.name);
           COPY_ENTRY(serial);
 
           hd_usb->is.notready = hd_scsi->is.notready;
@@ -401,20 +401,20 @@ void int_mouse(hd_data_t *hd_data)
       hd->base_class.id == bc_mouse &&
       hd->sub_class.id == sc_mou_ps2 &&
       hd->bus.id == bt->mouse.bus &&
-      hd->vendor3.id == MAKE_ID(TAG_SPECIAL, 0x0200) &&
-      hd->device3.id == MAKE_ID(TAG_SPECIAL, 0x0002)
+      hd->vendor.id == MAKE_ID(TAG_SPECIAL, 0x0200) &&
+      hd->device.id == MAKE_ID(TAG_SPECIAL, 0x0002)
     ) {
-      hd->vendor3.name = free_mem(hd->vendor3.name);
-      hd->device3.name = free_mem(hd->device3.name);
-      hd->vendor3.id = hd->device3.id = 0;
+      hd->vendor.name = free_mem(hd->vendor.name);
+      hd->device.name = free_mem(hd->device.name);
+      hd->vendor.id = hd->device.id = 0;
 #if 1
-      hd->vendor3.id = bt->mouse.compat_vend;
-      hd->device3.id = bt->mouse.compat_dev;
+      hd->vendor.id = bt->mouse.compat_vend;
+      hd->device.id = bt->mouse.compat_dev;
 #else
       hd->vend_name = new_str(bt->mouse.vendor);
-      hd->device3.name = new_str(bt->mouse.type);
-      hd->compat_vend = bt->mouse.compat_vend;
-      hd->compat_dev = bt->mouse.compat_dev;
+      hd->device.name = new_str(bt->mouse.type);
+      hd->compat_vendor.id = bt->mouse.compat_vend;
+      hd->compat_device.id = bt->mouse.compat_dev;
 #endif
       new_id(hd_data, hd);
     }

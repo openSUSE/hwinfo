@@ -1435,7 +1435,7 @@ typedef struct s_hd_t {
    * various id types and the real id. Use the \ref ID_VALUE macro to
    * get e.g. the real PCI id value for a PCI %device.
    */
-  hd_id_t vendor3;
+  hd_id_t vendor;
 
   /**
    * Device id and name.
@@ -1445,7 +1445,7 @@ typedef struct s_hd_t {
    * \note If you're looking or something printable, you might want to use \ref model
    * instead.
    */
-  hd_id_t device3;
+  hd_id_t device;
 
   /**
    * Subvendor id and name.
@@ -1453,32 +1453,22 @@ typedef struct s_hd_t {
    * various id types and the real id. Use the \ref ID_VALUE macro to
    * get e.g. the real PCI id value for a PCI %device.
    */
-  hd_id_t sub_vendor3;
+  hd_id_t sub_vendor;
 
   /**
-   * Subdevice id.
+   * Subdevice id and name.
    * Id is actually a combination of some tag to differentiate the
    * various id types and the real id. Use the \ref ID_VALUE macro to
    * get e.g. the real PCI id value for a PCI %device.
    */
-  unsigned sub_dev;
+  hd_id_t sub_device;
 
   /**
-   * Subdevice name (corresponds to \ref sub_dev).
+   * Revision id or string.
+   * If revision is numerical (e.g. PCI) \ref hd_id_t::id is used.
+   * If revision is some char data (e.g. disk drives) it is stored in \ref hd_id_t::name.
    */
-  char *sub_dev_name;
-
-  /**
-   * Revision id.
-   * Used if revision is numerical (e.g. PCI). Otherwise \ref rev_name is used.
-   */
-  unsigned rev;
-
-  /**
-   * Revision string.
-   * Used if revision is some char data (e.g. disk drives). Otherwise \ref rev is used.
-   */
-  char *rev_name;
+  hd_id_t revision;
 
   /**
    * Serial id.
@@ -1486,16 +1476,16 @@ typedef struct s_hd_t {
   char *serial;
 
   /**
-   * Vendor id of some compatible hardware.
+   * Vendor id and name of some compatible hardware.
    * Used mainly for ISA-PnP devices.
    */
-  unsigned compat_vend;
+  hd_id_t compat_vendor;
 
   /**
-   * Device id of some compatible hardware.
+   * Device id and name of some compatible hardware.
    * Used mainly for ISA-PnP devices.
    */
-  unsigned compat_dev;
+  hd_id_t compat_device;
 
   /**
    * Hardware class.
@@ -1672,18 +1662,6 @@ typedef struct s_hd_t {
    */
   char *usb_guid;
 
-  /**
-   * (Internal) Used for driver info lookups.
-   * \note Will likely be gone as a result of our new hardware database.
-   */
-  unsigned drv_vend;
-
-  /**
-   * (Internal) Used for driver info lookups.
-   * \note Will likely be gone as a result of our new hardware database.
-   */
-  unsigned drv_dev;
-
   driver_info_t *driver_info;	/* device driver info */
 
   str_list_t *requires;		/* packages/programs required for this hardware */
@@ -1842,9 +1820,6 @@ hd_t *hd_get_device_by_idx(hd_data_t *hd_data, int idx);
 
 /* implemented in hddb.c */
 
-char *hd_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned subvendor, unsigned subdevice);
-
-int hd_find_device_by_name(hd_data_t *hd_data, unsigned base_class, char *vendor, char *device, unsigned *vendor_id, unsigned *device_id);
 str_list_t *get_hddb_packages(hd_data_t *hd_data);
 
 void hddb_dump_raw(hddb2_data_t *hddb, FILE *f);

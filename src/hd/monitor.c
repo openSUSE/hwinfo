@@ -101,9 +101,9 @@ void hd_scan_monitor(hd_data_t *hd_data)
   hd = add_hd_entry(hd_data, __LINE__, 0);
 
   hd->base_class.id = bc_monitor;
-  hd->vendor3.id = name2eisa_id(m);
-  if(sscanf(m + 3, "%x", &u) == 1) hd->device3.id = MAKE_ID(TAG_EISA, u);
-  if((u = device_class(hd_data, hd->vendor3.id, hd->device3.id))) {
+  hd->vendor.id = name2eisa_id(m);
+  if(sscanf(m + 3, "%x", &u) == 1) hd->device.id = MAKE_ID(TAG_EISA, u);
+  if((u = device_class(hd_data, hd->vendor.id, hd->device.id))) {
     if((u >> 8) == bc_monitor) hd->sub_class.id = u & 0xff;
   }
 
@@ -210,8 +210,8 @@ void hd_scan_monitor(hd_data_t *hd_data)
 // ########### FIXME
     if(
       mi->vendor &&
-      ID_VALUE(hd->vendor3.id) &&
-      !hd_vendor_name(hd_data, hd->vendor3.id)
+      ID_VALUE(hd->vendor.id) &&
+      !hd_vendor_name(hd_data, hd->vendor.id)
     ) {
       add_vendor_name(hd_data, hd->vend, mi->vendor);
     }
@@ -221,8 +221,8 @@ void hd_scan_monitor(hd_data_t *hd_data)
 // ########### FIXME 
     if(
       mi->name &&
-      (ID_VALUE(hd->vendor3.id) || ID_VALUE(hd->device3.id)) &&
-      !hd_device_name(hd_data, hd->vend, hd->device3.id)
+      (ID_VALUE(hd->vendor.id) || ID_VALUE(hd->device.id)) &&
+      !hd_device_name(hd_data, hd->vend, hd->device.id)
     ) {
       add_device_name(hd_data, hd->vend, hd->dev, mi->name);
     }
@@ -320,8 +320,8 @@ void add_old_mac_monitor(hd_data_t *hd_data)
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class.id = bc_monitor;
 
-      hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0401);
-      hd->device3.id = MAKE_ID(TAG_SPECIAL, (u1 & 0xfff) + 0x1000);
+      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0401);
+      hd->device.id = MAKE_ID(TAG_SPECIAL, (u1 & 0xfff) + 0x1000);
 
       if((u1 = hd_display_adapter(hd_data))) {
         hd->attached_to = u1;
@@ -381,8 +381,8 @@ void add_lcd_info(hd_data_t *hd_data, hd_t *hd, bios_info_t *bt)
 {
   monitor_info_t *mi = NULL;
 
-  hd->vendor3.name = new_str(bt->lcd.vendor);
-  hd->device3.name = new_str(bt->lcd.name);
+  hd->vendor.name = new_str(bt->lcd.vendor);
+  hd->device.name = new_str(bt->lcd.name);
 
   add_monitor_res(hd, bt->lcd.width, bt->lcd.height, 60, 0);
 
@@ -408,10 +408,10 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
   fix_edid_info(hd_data, edid);
 
   u = (edid[8] << 8) + edid[9];
-  hd->vendor3.id = MAKE_ID(TAG_EISA, u);
+  hd->vendor.id = MAKE_ID(TAG_EISA, u);
   u = (edid[0xb] << 8) + edid[0xa];
-  hd->device3.id = MAKE_ID(TAG_EISA, u);
-  if((u = device_class(hd_data, hd->vendor3.id, hd->device3.id))) {
+  hd->device.id = MAKE_ID(TAG_EISA, u);
+  if((u = device_class(hd_data, hd->vendor.id, hd->device.id))) {
     if((u >> 8) == bc_monitor) hd->sub_class.id = u & 0xff;
   }
 
@@ -511,8 +511,8 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
 // ####### FIXME
     if(
       mi->vendor &&
-      ID_VALUE(hd->vendor3.id) &&
-      !hd_vendor_name(hd_data, hd->vendor3.id)
+      ID_VALUE(hd->vendor.id) &&
+      !hd_vendor_name(hd_data, hd->vendor.id)
     ) {
       add_vendor_name(hd_data, hd->vend, mi->vendor);
     }
@@ -522,8 +522,8 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
 // ######## FIXME
     if(
       mi->name &&
-      (ID_VALUE(hd->vendor3.id) || ID_VALUE(hd->device3.id)) &&
-      !hd_device_name(hd_data, hd->vend, hd->device3.id)
+      (ID_VALUE(hd->vendor.id) || ID_VALUE(hd->device.id)) &&
+      !hd_device_name(hd_data, hd->vend, hd->device.id)
     ) {
       add_device_name(hd_data, hd->vend, hd->dev, mi->name);
     }

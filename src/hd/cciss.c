@@ -46,7 +46,7 @@ void hd_scan_cciss(hd_data_t *hd_data)
         hd->sub_class.id = sc_sdev_disk;
         hd->unix_dev_name = s; s = NULL;
 
-        str_printf(&hd->device3.name, 0, "CCISS disk %u/%u", u0, u1);
+        str_printf(&hd->device.name, 0, "CCISS disk %u/%u", u0, u1);
 
         PROGRESS(2, u1, "ioctl");
 

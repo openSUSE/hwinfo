@@ -52,7 +52,7 @@ void hd_scan_dasd(hd_data_t *hd_data)
 
       hd->sub_class.id = sc_sdev_disk;
 
-      hd->device3.name = new_str("S390 Disk");
+      hd->device.name = new_str("S390 Disk");
       str_printf(&hd->unix_dev_name, 0, "/dev/dasd%c", c);
       str_printf(&hd->rom_id, 0, "%04X", u0);
 
@@ -85,7 +85,7 @@ void hd_scan_dasd(hd_data_t *hd_data)
     hd->base_class.id = bc_storage;
     hd->sub_class.id = sc_sto_other;
     hd->vend_name = new_str("IBM");
-    hd->device3.name = new_str("VIO DASD");
+    hd->device.name = new_str("VIO DASD");
   }
 }
 

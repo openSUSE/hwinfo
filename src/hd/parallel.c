@@ -150,12 +150,8 @@ void do_lp(hd_data_t *hd_data)
       if(base_class && !strcasecmp(base_class, "printer")) hd->base_class.id = bc_printer;
       hd->bus.id = bus_parallel;
 
-      // ###################
-      if(!hd_find_device_by_name(hd_data, hd->base_class.id, vendor, device, &hd->vendor3.id, &hd->device3.id)) {
-        /* not found in database */
-        hd->vendor3.name = new_str(vendor);
-        hd->device3.name = new_str(device);
-      }
+      hd->vendor.name = new_str(vendor);
+      hd->device.name = new_str(device);
     }
 
     free_mem(base_class);
@@ -251,8 +247,8 @@ void do_zip(hd_data_t *hd_data)
     hd->base_class.id = bc_storage;
     hd->sub_class.id = sc_sto_scsi;
     hd->bus.id = bus_parallel;
-    hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x1800);
-    hd->device3.id = MAKE_ID(TAG_SPECIAL, (i % 2) ? 2 : 1);
+    hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x1800);
+    hd->device.id = MAKE_ID(TAG_SPECIAL, (i % 2) ? 2 : 1);
   }
 
   if(!is_imm0) unload_module(hd_data, "imm");

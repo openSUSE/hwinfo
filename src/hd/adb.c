@@ -51,8 +51,8 @@ void hd_scan_adb(hd_data_t *hd_data)
 //        hd->func = i;
         hd->unix_dev_name = new_str(DEV_MICE);
 
-        hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0100);
-        hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0300 + i);
+        hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0100);
+        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0300 + i);
       }
     }
 
@@ -68,8 +68,8 @@ void hd_scan_adb(hd_data_t *hd_data)
 //        hd->func = i;
 //        hd->unix_dev_name = new_str(DEV_ADBMOUSE);
 
-        hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0100);
-        hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0200+i);
+        hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0100);
+        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0200+i);
       }
     }
   }

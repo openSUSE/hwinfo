@@ -112,7 +112,7 @@ void hd_scan_kbd(hd_data_t *hd_data)
       hd->base_class.id = bc_keyboard;
       hd->sub_class.id = sc_keyboard_console;
       hd->bus.id = bus_serial;
-      hd->device3.name = new_str("serial console");
+      hd->device.name = new_str("serial console");
       str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%d", ser_info.line);
       u = 9600;
       for(hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
@@ -164,12 +164,12 @@ void hd_scan_kbd(hd_data_t *hd_data)
       kid = 1;
     }
     if(k == 1) hd->attached_to = keyb_idx;
-    hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0201);
+    hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0201);
     if((s = get_cmd_param(hd_data, 3))) {
       if(*s && sscanf(s, "%x", &u) == 1) kid = u;
       free_mem(s);
     }
-    hd->device3.id = MAKE_ID(TAG_SPECIAL, kid);
+    hd->device.id = MAKE_ID(TAG_SPECIAL, kid);
   }
 }
 
@@ -229,8 +229,8 @@ void hd_scan_kbd(hd_data_t *hd_data)
 		  hd->base_class.id = bc_keyboard;
 		  hd->sub_class.id = sc_keyboard_console;
 		  hd->bus.id = bus_serial;
-		  hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0203);
-		  hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0000);
+		  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0203);
+		  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0000);
 		  str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%d", ser_cons);
 		  if((i = sscanf(opio->oprom_array, "%u,%u,%c,%u,%c",
 				 &u, &u1, &c1, &u2, &c2)) >= 1)
@@ -271,24 +271,24 @@ void hd_scan_kbd(hd_data_t *hd_data)
 	  if(kid == 4 && klay >= 0)
 	    hd->prog_if.id = klay;
 
-	  hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0202);
+	  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0202);
 	  kid2 = kid;
 	  if(kid == 4 && klay > 0x20)
 	    kid2 = 5;
-	  hd->device3.id = MAKE_ID(TAG_SPECIAL, kid2);
+	  hd->device.id = MAKE_ID(TAG_SPECIAL, kid2);
 	  if(kid2 == 5) {
 	    if(klay == 0x22 || klay == 0x51)
 	      {
-		hd>sub_vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0202);
-		hd->sub_dev = MAKE_ID(TAG_SPECIAL, 0x0001);
+		hd>sub_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0202);
+		hd->sub_device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
 	      }
 	    else if(!(
 		      klay == 0x21 || (klay >= 0x2f && klay <= 0x31) ||
 		      klay == 0x50 || (klay >= 0x5e && klay <= 0x60)
 		      ))
 	      {
-		hd>sub_vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0202);
-		hd->sub_dev = MAKE_ID(TAG_SPECIAL, 0x0002);
+		hd>sub_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0202);
+		hd->sub_device.id = MAKE_ID(TAG_SPECIAL, 0x0002);
 	      }
 	  }
 	}
@@ -304,8 +304,8 @@ void hd_scan_kbd(hd_data_t *hd_data)
         hd->base_class.id = bc_keyboard;
         hd->sub_class.id = sc_keyboard_kbd;
         hd->bus.id = bus_ps2;
-        hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0201);
-        hd->device3.id = MAKE_ID(TAG_SPECIAL, 1);
+        hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0201);
+        hd->device.id = MAKE_ID(TAG_SPECIAL, 1);
       }
     }
 }

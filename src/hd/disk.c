@@ -56,28 +56,28 @@ void hd_scan_disk(hd_data_t *hd_data)
       hd->sub_class.id = sc_sdev_disk;
       hd->unix_dev_name = s; s = NULL;
 
-      str_printf(&hd->device3.name, 0, "Disk");
+      str_printf(&hd->device.name, 0, "Disk");
       if(sscanf(sl->str, "ataraid/d%u", &u0) == 1) {
         hd->slot = u0;
-        str_printf(&hd->device3.name, 0, "IDE RAID Array %u", u0);
+        str_printf(&hd->device.name, 0, "IDE RAID Array %u", u0);
       }
       else if(sscanf(sl->str, "cciss/d%uc%u", &u0, &u1) == 2) {
         hd->slot = (u0 << 8) + u1;
-        str_printf(&hd->device3.name, 0, "CCISS disk %u/%u", u0, u1);
+        str_printf(&hd->device.name, 0, "CCISS disk %u/%u", u0, u1);
       }
       else if(sscanf(sl->str, "rd/d%uc%u", &u0, &u1) == 2) {
         hd->slot = (u0 << 8) + u1;
-        str_printf(&hd->device3.name, 0, "DAC960 RAID Array %u/%u", u0, u1);
+        str_printf(&hd->device.name, 0, "DAC960 RAID Array %u/%u", u0, u1);
       }
       else if(sscanf(sl->str, "hd%c", &c) == 1) {
         u0 = c - 'a';
         hd->slot = u0;
-        str_printf(&hd->device3.name, 0, "IDE Disk %u", u0);
+        str_printf(&hd->device.name, 0, "IDE Disk %u", u0);
       }
       else if(sscanf(sl->str, "sd%c", &c) == 1) {
         u0 = c - 'a';
         hd->slot = u0;
-        str_printf(&hd->device3.name, 0, "SCSI Disk %u", u0);
+        str_printf(&hd->device.name, 0, "SCSI Disk %u", u0);
       }
 
       hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size);

@@ -53,8 +53,8 @@ void scan_isa_isdn(hd_data_t *hd_data)
     hd = add_hd_entry(hd_data, __LINE__, 0);
     hd->bus.id = bus_isa;
     hd->base_class.id = bc_isdn;
-    hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x3000 + ii->type);
-    hd->device3.id = MAKE_ID(TAG_SPECIAL, ((ii->type << 8) + (ii->subtype & 0xff)) & 0xffff);
+    hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x3000 + ii->type);
+    hd->device.id = MAKE_ID(TAG_SPECIAL, ((ii->type << 8) + (ii->subtype & 0xff)) & 0xffff);
 
     if(ii->has_io) {
       res = add_res_entry(&hd->res, new_mem(sizeof *res));

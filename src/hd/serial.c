@@ -73,7 +73,7 @@ void hd_scan_serial(hd_data_t *hd_data)
     for(i = 0; i < sizeof ser_names / sizeof *ser_names; i++) {
       if(strstr(ser->name, ser_names[i])) hd->prog_if.id = i;
     }
-    hd->device3.name = new_str(ser->name);
+    hd->device.name = new_str(ser->name);
     hd->func = ser->line;
     str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%u", ser->line);
     for(i = 0; i < sizeof skip_dev / sizeof *skip_dev; i++) {

@@ -70,7 +70,7 @@ void hd_scan_ide(hd_data_t *hd_data)
         vend = MAKE_ID(TAG_PCI, u2);
         dev = MAKE_ID(TAG_PCI, u3);
         for(hd = hd_data->hd; hd; hd = hd->next) {
-          if(hd->slot == slot && hd->func == func && hd->vendor3.id == vend && hd->device3.id == dev) {
+          if(hd->slot == slot && hd->func == func && hd->vendor.id == vend && hd->device.id == dev) {
             if_table[i] = hd->idx;
             if(!search_str_list(hd->extra_info, t)) {
               add_str_list(&hd->extra_info, t);
@@ -141,7 +141,7 @@ void hd_scan_ide(hd_data_t *hd_data)
 
       str_printf(&fname, 0, PROC_IDE "/hd%c/model", i + 'a');
       if((sl = read_file(fname, 0, 1))) {
-        hd->device3.name = canon_str(sl->str, strlen(sl->str));
+        hd->device.name = canon_str(sl->str, strlen(sl->str));
         free_str_list(sl);
       }
 
@@ -215,7 +215,7 @@ void hd_scan_ide(hd_data_t *hd_data)
           hd->serial = canon_str(buf + 0x14, 20);
         }
         if(buf[0x2e] || buf[0x2f]) {	/* has revision id */
-          hd->rev_name = canon_str(buf + 0x2e, 8);
+          hd->revision.name = canon_str(buf + 0x2e, 8);
         }
       }
     }
@@ -263,7 +263,7 @@ void scan_ide2(hd_data_t *hd_data)
     hd->base_class.id = bc_storage;
     hd->sub_class.id = sc_sto_other;
     hd->vend_name = new_str("IBM");
-    hd->device3.name = new_str("VIO DASD");
+    hd->device.name = new_str("VIO DASD");
   }
 
   for(i = 0; i < max_disks; i++) {

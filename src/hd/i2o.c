@@ -50,7 +50,7 @@ void hd_scan_i2o(hd_data_t *hd_data)
       hd->sub_class.id = sc_sdev_disk;
       hd->unix_dev_name = s; s = NULL;
 
-      str_printf(&hd->device3.name, 0, "I2O disk %u", u);
+      str_printf(&hd->device.name, 0, "I2O disk %u", u);
 
       PROGRESS(2, u, "ioctl");
       if(!ioctl(fd, HDIO_GETGEO, &geo)) {

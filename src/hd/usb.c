@@ -108,23 +108,23 @@ void hd_scan_usb(hd_data_t *hd_data)
       hd->slot = (usb->bus << 8) + usb->dev_nr;
 
       if(usb->vendor || usb->device) {
-        hd->vendor3.id = MAKE_ID(TAG_USB, usb->vendor);
-        hd->device3.id = MAKE_ID(TAG_USB, usb->device);
+        hd->vendor.id = MAKE_ID(TAG_USB, usb->vendor);
+        hd->device.id = MAKE_ID(TAG_USB, usb->device);
       }
-      if(usb->rev) str_printf(&hd->rev_name, 0, "%x.%02x", usb->rev >> 8, usb->rev & 0xff);
+      if(usb->rev) str_printf(&hd->revision.name, 0, "%x.%02x", usb->rev >> 8, usb->rev & 0xff);
 
       if(usb->manufact) {
-        if(hd->vendor3.id)
-          hd->sub_vendor3.name = new_str(usb->manufact);
+        if(hd->vendor.id)
+          hd->sub_vendor.name = new_str(usb->manufact);
         else
-          hd->vendor3.name = new_str(usb->manufact);
+          hd->vendor.name = new_str(usb->manufact);
       }
 
       if(usb->product) {
-        if(hd->device3.id)
-          hd->sub_dev_name = new_str(usb->product);
+        if(hd->device.id)
+          hd->sub_device.name = new_str(usb->product);
         else
-          hd->device3.name = new_str(usb->product);
+          hd->device.name = new_str(usb->product);
       }
 
       if(usb->serial) hd->serial = new_str(usb->serial);
@@ -196,13 +196,13 @@ void hd_scan_usb(hd_data_t *hd_data)
 
         hd2 = hd_get_device_by_idx(hd_data, hd->attached_to);
 
-        if(hd2 && !(hd->vendor3.id || hd->vendor3.name)) {
-          hd->vendor3.id = hd2->vendor3.id;
-          hd->vendor3.name = new_str(hd2->vendor3.name);
+        if(hd2 && !(hd->vendor.id || hd->vendor.name)) {
+          hd->vendor.id = hd2->vendor.id;
+          hd->vendor.name = new_str(hd2->vendor.name);
         }
 
-        if(!(hd->device3.id || hd->device3.name)) {
-          hd->device3.name = new_str("Root Hub");
+        if(!(hd->device.id || hd->device.name)) {
+          hd->device.name = new_str("Root Hub");
         }
       }
     }
@@ -473,8 +473,8 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
         )) {
           hd->base_class.id = bc_mouse;
           hd->sub_class.id = sc_mou_usb;
-          hd->compat_vend = MAKE_ID(TAG_SPECIAL, 0x0200);
-          hd->compat_dev = MAKE_ID(TAG_SPECIAL, 0x001);
+          hd->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0200);
+          hd->compat_device.id = MAKE_ID(TAG_SPECIAL, 0x001);
         }
         break;
       }
@@ -519,7 +519,7 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
       break;
   }
 
-  if((u = device_class(hd_data, hd->vendor3.id, hd->device3.id))) {
+  if((u = device_class(hd_data, hd->vendor.id, hd->device.id))) {
     hd->base_class.id = u >> 8;
     hd->sub_class.id = u & 0xff;
   }
@@ -603,7 +603,7 @@ void add_usb_guid(hd_t *hd)
   unsigned pg[3];
   char c, *s;
 
-  pg[0] = ((hd->vendor3.id & 0xffff) << 16) | (hd->device3.id & 0xffff);
+  pg[0] = ((hd->vendor.id & 0xffff) << 16) | (hd->device.id & 0xffff);
   pg[1] = pg[2] = 0;
   if(hd->serial) {
     for(s = hd->serial; *s; s++) {

@@ -119,8 +119,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 	      hd->sub_class.id = 0x00;
 	      hd->bus.id = bus_sbus;
 
-	      hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-	      hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x3001);
+	      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+	      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x3001);
 	    }
 	  else if (strcmp (prop2, "le") == 0)
 	    {
@@ -130,8 +130,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 	      hd->sub_class.id = 0x00;
 	      hd->bus.id = bus_sbus;
 
-	      hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-	      hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x3002);
+	      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+	      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x3002);
 	    }
 	  else if (strcmp (prop2, "qe") == 0)
 	    {
@@ -144,8 +144,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		  hd->sub_class.id = 0x00;
 		  hd->bus.id = bus_sbus;
 
-		  hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-		  hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x3003);
+		  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x3003);
 		}
 	    }
           else if (strcmp (prop2, "qfe") == 0)
@@ -156,8 +156,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
               hd->sub_class.id = 0x00;
               hd->bus.id = bus_sbus;
 
-              hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-              hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x3001);
+              hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+              hd->device.id = MAKE_ID(TAG_SPECIAL, 0x3001);
             }
 	  else if (strcmp (prop2, "mlanai") == 0 || strcmp (prop2, "myri") == 0)
 	    {
@@ -167,8 +167,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 	      hd->sub_class.id = 0x00;
 	      hd->bus.id = bus_sbus;
 
-	      hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-	      hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x3004);
+	      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+	      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x3004);
 	    }
 	  else
 	    ADD2LOG ("NETWORK: Unknown device \"%s\"\n", prop2);
@@ -189,8 +189,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		  hd->sub_class.id = sc_sto_scsi;
 		  hd->bus.id = bus_sbus;
 
-		  hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-		  hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x1001);
+		  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1001);
 		}
 	      else if (strcmp (prop2, "soc") == 0)
 		{
@@ -200,8 +200,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		  hd->sub_class.id = sc_sto_scsi;
 		  hd->bus.id = bus_sbus;
 
-		  hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-		  hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x1101);
+		  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1101);
 		}
 	      else if (strcmp (prop2, "socal") == 0)
 		{
@@ -211,8 +211,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		  hd->sub_class.id = sc_sto_scsi;
 		  hd->bus.id = bus_sbus;
 
-		  hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-		  hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x1102);
+		  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1102);
 		}
 	      else if (strcmp (prop2, "fas") == 0)
 		{
@@ -222,8 +222,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		  hd->sub_class.id = sc_sto_scsi;
 		  hd->bus.id = bus_sbus;
 
-		  hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-		  hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x1002);
+		  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1002);
 		}
 	      else if (strcmp (prop2, "ptisp") == 0)
 		{
@@ -233,8 +233,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		  hd->sub_class.id = sc_sto_scsi;
 		  hd->bus.id = bus_sbus;
 
-		  hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-		  hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x1003);
+		  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1003);
 		}
 	      else if (strcmp (prop2, "isp") == 0)
 		{
@@ -244,8 +244,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		  hd->sub_class.id = sc_sto_scsi;
 		  hd->bus.id = bus_sbus;
 
-		  hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-		  hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x1004);
+		  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1004);
 		}
 	      else
 		ADD2LOG ("SCSI: Unknown SBUS device \"%s\"\n", prop2);
@@ -269,8 +269,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		hd->sub_class.id = sc_dis_vga;
 		hd->bus.id = bus_sbus;
 
-		hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-		hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0001);
+		hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
 	      }
 	    else if (strcmp (prop2, "cgthree") == 0)
 	      {
@@ -280,8 +280,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		hd->sub_class.id = sc_dis_vga;
 		hd->bus.id = bus_sbus;
 
-		hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-		hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0002);
+		hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0002);
 	      }
 	    else if (strcmp (prop2, "cgeight") == 0)
 	      {
@@ -291,8 +291,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		hd->sub_class.id = sc_dis_vga;
 		hd->bus.id = bus_sbus;
 
-		hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-		hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0003);
+		hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0003);
 	      }
 	    else if (strcmp (prop2, "cgtwelve") == 0)
 	      {
@@ -302,8 +302,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		hd->sub_class.id = sc_dis_vga;
 		hd->bus.id = bus_sbus;
 
-		hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-		hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0004);
+		hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0004);
 	      }
 	    else if (strcmp (prop2, "gt") == 0)
 	      {
@@ -313,8 +313,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		hd->sub_class.id = sc_dis_vga;
 		hd->bus.id = bus_sbus;
 
-		hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-		hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0005);
+		hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0005);
 	      }
 	    else if (strcmp (prop2, "mgx") == 0)
 	      {
@@ -322,17 +322,17 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		hd->base_class.id = bc_display;
 		hd->sub_class.id = sc_dis_vga;
 		hd->bus.id = bus_sbus;
-		hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
 		prop2 = prom_getproperty ("fb_size", &len, buf2);
 		if (prop2 && len == 4 && *(int *)prop2 == 0x400000)
 		  {
 		    ADD2LOG ("DISPLAY: Quantum 3D MGXplus with 4M VRAM (mgx), depth=24\n");
-		    hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0006);
+		    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0006);
 		  }
 		else
 		  {
 		    ADD2LOG ("DISPLAY: Quantum 3D MGXplus (mgx), depth=24\n");
-		    hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0007);
+		    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0007);
 		  }
 	      }
 	    else if (strcmp (prop2, "cgsix") == 0)
@@ -344,7 +344,7 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		hd->base_class.id = bc_display;
 		hd->sub_class.id = sc_dis_vga;
 		hd->bus.id = bus_sbus;
-		hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
 
 		prop2 = prom_getproperty("chiprev", &len, buf2);
 		if (prop2 && len == 4)
@@ -356,32 +356,32 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		  {
 		  case 1 ... 4:
 		    ADD2LOG ("DISPLAY: Sun|Double width GX (cgsix), depth=8\n");
-		    hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0008);
+		    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0008);
 		    break;
 		  case 5 ... 9:
 		    ADD2LOG ("DISPLAY: Sun|Single width GX (cgsix), depth=8\n");
-		    hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0009);
+		    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0009);
 		    break;
 		  case 11:
 		    switch (vmsize)
 		      {
 		      case 2:
 			ADD2LOG ("DISPLAY: Sun|Turbo GX with 1M VSIMM (cgsix), depth=8\n");
-			hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x000a);
+			hd->device.id = MAKE_ID(TAG_SPECIAL, 0x000a);
 			break;
 		      case 4:
 			ADD2LOG ("DISPLAY: Sun|Turbo GX Plus (cgsix), depth=8\n");
-			hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x000b);
+			hd->device.id = MAKE_ID(TAG_SPECIAL, 0x000b);
 			break;
 		      default:
 			ADD2LOG ("DISPLAY: Sun|Turbo GX (cgsix), depth=8\n");
-			hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x000c);
+			hd->device.id = MAKE_ID(TAG_SPECIAL, 0x000c);
 			break;
 		      }
 		    break;
 		  default:
 		    ADD2LOG ("DISPLAY: Sun|Unknown GX (cgsix), depth=8\n");
-		    hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x000d);
+		    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x000d);
 		    break;
 		  }
 	      }
@@ -393,7 +393,7 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		hd->base_class.id = bc_display;
 		hd->sub_class.id = sc_dis_vga;
 		hd->bus.id = bus_sbus;
-		hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
 
 		prop2 = prom_getproperty ("reg", &len, buf2);
 		if (prop2 && !(len % 12) && len > 0)
@@ -402,15 +402,15 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		  {
 		  case 0x400000:
 		    ADD2LOG ("DISPLAY: Sun|SX with 4M VSIMM (cgfourteen), depth=24\n");
-		    hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x000e);
+		    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x000e);
 		    break;
 		  case 0x800000:
 		    ADD2LOG ("DISPLAY: Sun|SX with 8M VSIMM (cgfourteen), depth=24\n");
-		    hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x000f);
+		    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x000f);
 		    break;
 		  default:
 		    ADD2LOG ("DISPLAY: Sun|SX (cgfourteen), depth=24\n");
-		    hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0010);
+		    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0010);
 		    break;
 		  }
 	      }
@@ -420,18 +420,18 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		hd->base_class.id = bc_display;
 		hd->sub_class.id = sc_dis_vga;
 		hd->bus.id = bus_sbus;
-		hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
 
 		prop2 = prom_getproperty("model", &len, buf2);
 		if (prop2 && len > 0 && !strstr(prop2, "501-2503"))
 		  {
 		    ADD2LOG ("DISPLAY: Sun|Turbo ZX (leo), depth=24\n");
-		    hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0012);
+		    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0012);
 		  }
 		else
 		 {
 		   ADD2LOG ("DISPLAY: Sun|ZX or Turbo ZX (leo), depth=24\n");
-		   hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0011);
+		   hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0011);
 		 }
 	      }
 	    else if (strcmp (prop2, "tcx") == 0)
@@ -440,17 +440,17 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		hd->base_class.id = bc_display;
 		hd->sub_class.id = sc_dis_vga;
 		hd->bus.id = bus_sbus;
-		hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
 
 		if (prom_getbool ("tcx-8-bit"))
 		  {
 		    ADD2LOG ("DISPLAY: Sun|TCX (8bit), depth=8\n");
-		    hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0013);
+		    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0013);
 		  }
 		else
 		  {
 		    ADD2LOG ("DISPLAY: Sun|TCX (S24), depth=24\n");
-		    hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0014);
+		    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0014);
 		  }
 	      }
 	    else if (strcmp (prop2, "afb") == 0)
@@ -465,17 +465,17 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		hd->base_class.id = bc_display;
 		hd->sub_class.id = sc_dis_vga;
 		hd->bus.id = bus_sbus;
-		hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
 
 		if (btype == 3)
 		  {
 		    ADD2LOG ("DISPLAY: Sun|Elite3D-M6 Horizontal (afb), depth=24\n");
-		    hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0015);
+		    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0015);
 		  }
 		else
 		  {
 		    ADD2LOG ("DISPLAY: Sun|Elite3D (afb), depth=24\n");
-		    hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0016);
+		    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0016);
 		  }
 	      }
 	    else if (strcmp (prop2, "ffb") == 0)
@@ -490,54 +490,54 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		hd->base_class.id = bc_display;
 		hd->sub_class.id = sc_dis_vga;
 		hd->bus.id = bus_sbus;
-		hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+		hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
 
 		 switch (btype)
 		   {
 		   case 0x08:
 		     ADD2LOG ("DISPLAY: Sun|FFB 67MHz Creator (ffb), depth=24\n");
-		     hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0017);
+		     hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0017);
 		     break;
 		   case 0x0b:
 		     ADD2LOG ("DISPLAY: Sun|FFB 67MHz Creator 3D (ffb), depth=24\n");
-		     hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0018);
+		     hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0018);
 		     break;
 		   case 0x1b:
 		     ADD2LOG ("DISPLAY: Sun|FFB 75MHz Creator 3D (ffb), depth=24\n");
-		     hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0019);
+		     hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0019);
 		     break;
 		   case 0x20:
 		   case 0x28:
 		     ADD2LOG ("DISPLAY: Sun|FFB2 Vertical Creator (ffb), depth=24\n");
-		     hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x001a);
+		     hd->device.id = MAKE_ID(TAG_SPECIAL, 0x001a);
 		     break;
 		   case 0x23:
 		   case 0x2b:
 		     ADD2LOG ("DISPLAY: Sun|FFB2 Vertical Creator 3D (ffb), depth=24\n");
-		     hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x001b);
+		     hd->device.id = MAKE_ID(TAG_SPECIAL, 0x001b);
 		     break;
 		   case 0x30:
 		     ADD2LOG ("DISPLAY: Sun|FFB2+ Vertical Creator (ffb), depth=24\n");
-		     hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x001c);
+		     hd->device.id = MAKE_ID(TAG_SPECIAL, 0x001c);
 		     break;
 		   case 0x33:
 		     ADD2LOG ("DISPLAY: Sun|FFB2+ Vertical Creator 3D (ffb), depth=24\n");
-		     hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x001d);
+		     hd->device.id = MAKE_ID(TAG_SPECIAL, 0x001d);
 		     break;
 		   case 0x40:
 		   case 0x48:
 		     ADD2LOG ("DISPLAY: Sun|FFB2 Horizontal Creator (ffb), depth=24\n");
-		     hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x001e);
+		     hd->device.id = MAKE_ID(TAG_SPECIAL, 0x001e);
 		     break;
 		   case 0x43:
 		   case 0x4b:
 		     ADD2LOG ("DISPLAY: Sun|FFB2 Horizontal Creator 3D (ffb), depth=24\n");
-		     hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x001f);
+		     hd->device.id = MAKE_ID(TAG_SPECIAL, 0x001f);
 		     break;
 		   default:
 		     ADD2LOG ("DISPLAY: Sun|FFB (ffb), type=%xi, depth=24\n",
 			      btype);
-		     hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0020);
+		     hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0020);
 		     break;
 		   }
 	      }
@@ -569,8 +569,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 	      hd->bus.id = bus_sbus;
 	      hd->unix_dev_name = new_str ("/dev/audio");
 
-	      hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-	      hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x2001);
+	      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+	      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x2001);
 	    }
 	  else if (strcmp (prop2, "CS4231") == 0)
 	    {
@@ -583,14 +583,14 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 	      if (ebus)
 		{
 		  ADD2LOG ("AUDIO: type=CS4231 EB2 DMA (PCI), module=cs4231\n");
-		  hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x2002);
+		  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x2002);
 		}
 	      else
 		{
 		  ADD2LOG ("AUDIO: type=CS4231 APC DMA (SBUS), module=cs4231\n");
-		  hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x2003);
+		  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x2003);
 		}
-	      hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+	      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
 	    }
 	  else if (strcmp (prop2, "DBRIe") == 0)
 	    {
@@ -601,8 +601,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 	      hd->bus.id = bus_sbus;
 	      hd->unix_dev_name = new_str ("/dev/audio");
 
-	      hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-	      hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x2004);
+	      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+	      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x2004);
 	    }
 	  else if (strcmp (prop2, "bpp") == 0)
 	    {
@@ -616,8 +616,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 	      hd->sub_class.id = sc_sto_scsi;
 	      hd->bus.id = bus_sbus;
 
-	      hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-	      hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x1101);
+	      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+	      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1101);
 	    }
 	  else if (strcmp (prop2, "socal") == 0)
 	    {
@@ -627,8 +627,8 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 	      hd->sub_class.id = sc_sto_scsi;
 	      hd->bus.id = bus_sbus;
 
-	      hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x4001);
-	      hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x1102);
+	      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4001);
+	      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1102);
 	    }
 	  else if (strcmp(prop2, "sbus") == 0 || strcmp(prop2, "sbi") == 0)
 	    nsbus = 1;

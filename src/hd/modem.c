@@ -434,25 +434,23 @@ void get_serial_modem(hd_data_t *hd_data)
       if(*sm->pnp_id) {
         strncpy(buf, sm->pnp_id, 3);
         buf[3] = 0;
-        hd->vendor3.id = name2eisa_id(buf);
-        hd->device3.id = MAKE_ID(TAG_EISA, strtol(sm->pnp_id + 3, NULL, 16));
+        hd->vendor.id = name2eisa_id(buf);
+        hd->device.id = MAKE_ID(TAG_EISA, strtol(sm->pnp_id + 3, NULL, 16));
       }
       hd->serial = new_str(sm->serial);
-      if(sm->user_name && hd->device3.id) {
+      if(sm->user_name && hd->device.id) {
 #if 0
 // ######### FIXME
         add_device_name(hd_data, hd->vend, hd->dev, sm->user_name);
 #endif
       }
       else if(sm->user_name && sm->vend) {
-        if(!hd_find_device_by_name(hd_data, hd->base_class.id, sm->vend, sm->user_name, &hd->vendor3.id, &hd->device3.id)) {
-          hd->device3.name = new_str(sm->user_name);
-          hd->vendor3.name = new_str(sm->vend);
-        }
+        hd->device.name = new_str(sm->user_name);
+        hd->vendor.name = new_str(sm->vend);
       }
-      if(!(hd->device3.id || hd->device3.name || hd->vendor3.id || hd->vendor3.name)) {
-        hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x2000);
-        hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0001);
+      if(!(hd->device.id || hd->device.name || hd->vendor.id || hd->vendor.name)) {
+        hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x2000);
+        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
       }
     }
     res = add_res_entry(&hd->res, new_mem(sizeof *res));
@@ -495,7 +493,7 @@ void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
   s1 = NULL;
   if(sl) {
     if(strstr(sl->str, "PowerBook")) {
-      sm->vendor3.id = new_str("Apple");
+      sm->vendor.id = new_str("Apple");
       sm->user_name = new_str(sl->str);
 
       return;
@@ -509,7 +507,7 @@ void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
 
   if(sl) {
     if(strstr(sl->str, "APPLE")) {
-      sm->vendor3.id = new_str("Apple");
+      sm->vendor.id = new_str("Apple");
       str_printf(&sm->user_name, 0, "AT Modem");
       if(s1) {
         u = strtoul(s1, &s2, 10);

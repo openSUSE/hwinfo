@@ -844,12 +844,12 @@ static char *scanner_info(hd_t *hd)
 {
   int i;
 
-  if(!hd->vendor3.name || !hd->device3.name) return NULL;
+  if(!hd->vendor.name || !hd->device.name) return NULL;
 
   for(i = 0; i < sizeof scanner_data / sizeof *scanner_data; i++) {
     if(
-      !strcasecmp(scanner_data[i].vendor, hd->vendor3.name) &&
-      !strcasecmp(scanner_data[i].model, hd->device3.name)
+      !strcasecmp(scanner_data[i].vendor, hd->vendor.name) &&
+      !strcasecmp(scanner_data[i].model, hd->device.name)
     ) {
       return scanner_data[i].driver;
     }
@@ -1286,7 +1286,7 @@ int braille_install_info(hd_data_t *hd_data)
     if(
       hd->base_class.id == bc_braille &&	/* is a braille display */
       hd->unix_dev_name &&			/* and has a device name */
-      (braille = hd->device3.name)
+      (braille = hd->device.name)
     ) {
       braille_dev = hd->unix_dev_name;
       ok = 1;

@@ -371,9 +371,12 @@
 &device.id		pci 0x0003+0x0002
 +driver.module.insmod	ataraid|hptraid
 
-# look at ../hd/pci.c::add_driver_info() before changing anything
+# promise ide raid
  vendor.id		pci 0x105a
 &device.id		pci 0x6268
+|baseclass.id		0x001
+&subclass.id		0x04
+&vendor.id		pci 0x105a
 +driver.module.insmod	ataraid|pdcraid
 
  baseclass.id		0x00e

@@ -20,7 +20,7 @@
  */
 
 
-static void add_driver_info(hd_data_t *hd_data);
+// static void add_driver_info(hd_data_t *hd_data);
 static unsigned char pci_cfg_byte(pci_t *pci, int fd, unsigned idx);
 static void get_pci_data(hd_data_t *hd_data);
 static void dump_pci_data(hd_data_t *hd_data);
@@ -78,16 +78,16 @@ void hd_scan_pci(hd_data_t *hd_data)
     }
 
     if(p->dev || p->vend) {
-      hd->device3.id = MAKE_ID(TAG_PCI, p->dev);
-      hd->vendor3.id = MAKE_ID(TAG_PCI, p->vend);
+      hd->device.id = MAKE_ID(TAG_PCI, p->dev);
+      hd->vendor.id = MAKE_ID(TAG_PCI, p->vend);
     }
     if(p->sub_dev || p->sub_vend) {
-      hd->sub_dev = MAKE_ID(TAG_PCI, p->sub_dev);
-      hd->sub_vendor3.id = MAKE_ID(TAG_PCI, p->sub_vend);
+      hd->sub_device.id = MAKE_ID(TAG_PCI, p->sub_dev);
+      hd->sub_vendor.id = MAKE_ID(TAG_PCI, p->sub_vend);
     }
-    hd->rev = p->rev;
+    hd->revision.id = p->rev;
 
-    if((u = device_class(hd_data, hd->vendor3.id, hd->device3.id))) {
+    if((u = device_class(hd_data, hd->vendor.id, hd->device.id))) {
       hd->base_class.id = u >> 8;
       hd->sub_class.id = u & 0xff;
     }
@@ -159,10 +159,11 @@ void hd_scan_pci(hd_data_t *hd_data)
     }
   }
 
-  add_driver_info(hd_data);
+//  add_driver_info(hd_data);
 }
 
 
+#if 0
 /*
  * Add driver info in some special cases.
  */
@@ -194,7 +195,7 @@ void add_driver_info(hd_data_t *hd_data)
     if(
       hd->base_class.id == bc_storage &&
       hd->sub_class.id == sc_sto_raid &&
-      hd->vendor3.id == MAKE_ID(TAG_PCI, 0x105a)
+      hd->vendor.id == MAKE_ID(TAG_PCI, 0x105a)
     ) {
       hd->drv_vend = MAKE_ID(TAG_PCI, 0x105a);
       hd->drv_dev = MAKE_ID(TAG_PCI, 0x6268);
@@ -202,7 +203,7 @@ void add_driver_info(hd_data_t *hd_data)
     }
   }
 }
-
+#endif
 
 /*
  * get a byte from pci config space

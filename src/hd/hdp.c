@@ -32,8 +32,8 @@ static void dump_smbios(hd_data_t *hd_data, FILE *f);
 static void dump_prom(hd_data_t *, hd_t *, FILE *);
 static void dump_sys(hd_data_t *, hd_t *, FILE *);
 
-static char *make_sub_device_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size);
 static char *dump_hid(hd_data_t *hd_data, hd_id_t *hid, int format, char *buf, int buf_size);
+static char *dump_hid2(hd_data_t *hd_data, hd_id_t *hid1, hd_id_t *hid2, char *buf, int buf_size);
 
 /*
  * Dump a hardware entry to FILE *f.
@@ -287,7 +287,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
 void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 {
   int i, j;
-  char *s, *a0;
+  char *s;
   uint64_t u64;
   hd_res_t *res;
   char buf[256], c0, c1;
@@ -322,39 +322,39 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("Hotplug: %s\n", s);
   }
 
-  if(h->vendor3.id || h->vendor3.name || h->device3.id || h->device3.name) {
-    if(h->vendor3.id || h->vendor3.name) {
-      dump_line("Vendor: %s\n", dump_hid(hd_data, &h->vendor3, 1, buf, sizeof buf));
+  if(h->vendor.id || h->vendor.name || h->device.id || h->device.name) {
+    if(h->vendor.id || h->vendor.name) {
+      dump_line("Vendor: %s\n", dump_hid(hd_data, &h->vendor, 1, buf, sizeof buf));
     }
-    dump_line("Device: %s\n", dump_hid(hd_data, &h->device3, 0, buf, sizeof buf));
+    dump_line("Device: %s\n", dump_hid(hd_data, &h->device, 0, buf, sizeof buf));
   }
 
-  if(h->sub_vendor3.id || h->sub_dev || h->sub_dev_name || h->sub_vendor3.name) {
-    if(h->sub_vendor3.id || h->sub_vendor3.name || h->sub_dev) {
-      dump_line("SubVendor: %s\n", dump_hid(hd_data, &h->sub_vendor3, 1, buf, sizeof buf));
+  if(h->sub_vendor.id || h->sub_device.id || h->sub_device.name || h->sub_vendor.name) {
+    if(h->sub_vendor.id || h->sub_vendor.name || h->sub_device.id) {
+      dump_line("SubVendor: %s\n", dump_hid(hd_data, &h->sub_vendor, 1, buf, sizeof buf));
     }
-    dump_line("SubDevice: %s\n", make_sub_device_name_str(hd_data, h, buf, sizeof buf));
+    dump_line("SubDevice: %s\n", dump_hid(hd_data, &h->sub_device, 0, buf, sizeof buf));
   }
 
-  if(h->rev_name)
-    dump_line("Revision: \"%s\"\n", h->rev_name);
-  else if(h->rev)
-    dump_line("Revision: 0x%02x\n", h->rev);
+  if(h->revision.name) {
+    dump_line("Revision: \"%s\"\n", h->revision.name);
+  }
+  else if(h->revision.id) {
+    dump_line("Revision: 0x%02x\n", h->revision.id);
+  }
 
-  if(h->serial)
+  if(h->serial) {
     dump_line("Serial ID: \"%s\"\n", h->serial);
+  }
 
   if(h->usb_guid) {
     dump_line("USB GUID: %s\n", h->usb_guid);
   }
 
-  if(h->compat_vend || h->compat_dev) {
-    // ###############
-    // a0 = hd_device_name(hd_data, h->compat_vend, h->compat_dev);
-    a0 = NULL;
+  if(h->compat_vendor.id || h->compat_device.id) {
     dump_line(
-      "Comaptible to: %s %04x \"%s\"\n",
-      vend_id2str(h->compat_vend), ID_VALUE(h->compat_dev), a0 ? a0 : "?"
+      "Comaptible to: %s\n",
+      dump_hid2(hd_data, &h->compat_vendor, &h->compat_device, buf, sizeof buf)
     );
   }
 
@@ -1251,22 +1251,6 @@ void dump_sys(hd_data_t *hd_data, hd_t *hd, FILE *f)
 }
 
 
-char *make_sub_device_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size)
-{
-  char *s;
-
-  if(h->sub_dev_name) {
-    snprintf(buf, buf_size - 1, "\"%s\"", h->sub_dev_name);
-  }
-  else {
-    s = hd_sub_device_name(hd_data, h->vendor3.id, h->device3.id, h->sub_vendor3.id, h->sub_dev);
-    snprintf(buf, buf_size - 1, "%04x \"%s\"", ID_VALUE(h->sub_dev), s ? s : "?");
-  }
-
-  return buf;
-}
-
-
 char *dump_hid(hd_data_t *hd_data, hd_id_t *hid, int format, char *buf, int buf_size)
 {
   char *s;
@@ -1283,7 +1267,7 @@ char *dump_hid(hd_data_t *hd_data, hd_id_t *hid, int format, char *buf, int buf_
       snprintf(buf, buf_size - 1, "%s", eisa_vendor_str(id));
     }
     else {
-      snprintf(buf, buf_size - 1, "%s0x%04x", hid_tag_name(t), id);
+      snprintf(buf, buf_size - 1, "%s0x%04x", hid_tag_name2(t), id);
     }
   }
 
@@ -1295,6 +1279,43 @@ char *dump_hid(hd_data_t *hd_data, hd_id_t *hid, int format, char *buf, int buf_
 
   if(hid->name) {
     snprintf(s, buf_size - 1, " \"%s\"", hid->name);
+  }
+
+  return buf;
+}
+
+char *dump_hid2(hd_data_t *hd_data, hd_id_t *hid1, hd_id_t *hid2, char *buf, int buf_size)
+{
+  char *s;
+  int i;
+  unsigned t, id1, id2;
+
+  *buf = 0;
+
+  t = 0;
+  if(hid1->id) t = ID_TAG(hid1->id);
+  if(hid2->id) t = ID_TAG(hid2->id);
+
+  id1 = ID_VALUE(hid1->id);
+  id2 = ID_VALUE(hid2->id);
+
+  if(hid1->id || hid2->id) {
+    if(t == TAG_EISA) {
+      snprintf(buf, buf_size - 1, "%s 0x%04x", eisa_vendor_str(id1), id2);
+    }
+    else {
+      snprintf(buf, buf_size - 1, "%s0x%04x 0x%04x", hid_tag_name2(t), id1, id2);
+    }
+  }
+
+  i = strlen(buf);
+  s = buf + i;
+  buf_size -= i;
+
+  if(!buf_size) return buf;
+
+  if(hid2->name) {
+    snprintf(s, buf_size - 1, " \"%s\"", hid2->name);
   }
 
   return buf;

@@ -72,7 +72,7 @@ void hd_scan_dac960(hd_data_t *hd_data)
         hd->func = u1;
         str_printf(&hd->unix_dev_name, 0, DEV_DAC960 "/c%ud%u", hd->slot, hd->func);
 
-        str_printf(&hd->device3.name, 0, "DAC960 RAID Array %u/%u", hd->slot, hd->func);
+        str_printf(&hd->device.name, 0, "DAC960 RAID Array %u/%u", hd->slot, hd->func);
         
         hd_getdisksize(hd_data, hd->unix_dev_name, -1, &geo, &size);
       

@@ -279,18 +279,18 @@ static void get_ps2_mouse(hd_data_t *hd_data)
         hd->unix_dev_name = new_str(DEV_PSAUX);
         hd->attached_to = hd1->idx;
 
-        hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0200);
+        hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0200);
         switch(mouse_id) {
           case 3:		/* 3 buttons + wheel */
-            hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0004);
+            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0004);
             break;
 
           case 4:		/* 5 buttons + wheel */
-            hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0005);
+            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0005);
             break;
 
           default:	/* 0 */
-            hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0002);
+            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0002);
         }
       }
 
@@ -318,7 +318,7 @@ static void get_sunmouse(hd_data_t *hd_data)
     {
       if(hd->base_class.id == bc_keyboard &&
 	 hd->sub_class.id == sc_keyboard_kbd &&
-	 ID_TAG(hd->vendor3.id) == TAG_SPECIAL && ID_VALUE(hd->vendor3.id) == 0x0202)
+	 ID_TAG(hd->vendor.id) == TAG_SPECIAL && ID_VALUE(hd->vendor.id) == 0x0202)
 	found = 1;
     }
 
@@ -338,8 +338,8 @@ static void get_sunmouse(hd_data_t *hd_data)
 	  hd->bus.id = bus_serial;
 	  hd->unix_dev_name = new_str(DEV_SUNMOUSE);
 
-	  hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0202);
-	  hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0000);
+	  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0202);
+	  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0000);
 	}
     }
 }
@@ -447,12 +447,12 @@ void get_serial_mouse(hd_data_t *hd_data)
       if(*sm->pnp_id) {
         strncpy(buf, sm->pnp_id, 3);
         buf[3] = 0;
-        hd->vendor3.id = name2eisa_id(buf);
-        hd->device3.id = MAKE_ID(TAG_EISA, strtol(sm->pnp_id + 3, NULL, 16));
+        hd->vendor.id = name2eisa_id(buf);
+        hd->device.id = MAKE_ID(TAG_EISA, strtol(sm->pnp_id + 3, NULL, 16));
       }
       else {
-        hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0200);
-        hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0003);
+        hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0200);
+        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0003);
       }
     }
   }

@@ -316,10 +316,10 @@ void hd_scan_bios(hd_data_t *hd_data)
       hd->detail->bios.data = bt = new_mem(sizeof *bt);
 #endif
 
-      hd->vendor3.name = new_str(vbe->vendor_name);
-      hd->device3.name = new_str(vbe->product_name);
-      hd->sub_vendor3.name = new_str(vbe->oem_name);
-      hd->rev_name = new_str(vbe->product_revision);
+      hd->vendor.name = new_str(vbe->vendor_name);
+      hd->device.name = new_str(vbe->product_name);
+      hd->sub_vendor.name = new_str(vbe->oem_name);
+      hd->revision.name = new_str(vbe->product_revision);
 
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
       res->phys_mem.type = res_phys_mem;
@@ -355,7 +355,7 @@ void hd_scan_bios(hd_data_t *hd_data)
       if(
         hd->vend_name &&
         !strcmp(hd->vend_name, "Matrox") &&
-        hd->device3.name &&
+        hd->device.name &&
         (
           strstr(hd->dev_name, "G200") ||
           strstr(hd->dev_name, "G400") ||

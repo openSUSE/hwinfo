@@ -58,7 +58,7 @@ void hd_scan_fb(hd_data_t *hd_data)
       if(hd->base_class.id == bc_monitor) break;
     }
 
-    if(hd && hd->device3.id == imac_dev && hd->vendor3.id == imac_vend) {
+    if(hd && hd->device.id == imac_dev && hd->vendor.id == imac_vend) {
       hd->tag.remove = 1;
       remove_tagged_hd_entries(hd_data);
       imac = 1;
@@ -70,12 +70,12 @@ void hd_scan_fb(hd_data_t *hd_data)
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class.id = bc_monitor;
       if(imac) {
-        hd->vendor3.id = imac_vend;
-        hd->device3.id = imac_dev;
+        hd->vendor.id = imac_vend;
+        hd->device.id = imac_dev;
       }
       else {
-        hd->vendor3.name = new_str("Generic");
-        hd->device3.name = new_str("Monitor");
+        hd->vendor.name = new_str("Generic");
+        hd->device.name = new_str("Monitor");
       }
 
       res = add_res_entry(&hd->res, new_mem(sizeof *res));

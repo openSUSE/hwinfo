@@ -238,9 +238,9 @@ void hd_scan_scsi(hd_data_t *hd_data)
     hd->slot = (scsi->host << 8) + (scsi->channel << 4) + (scsi->id);
     hd->func = scsi->lun;
     hd->unix_dev_name = new_str(scsi->dev_name);
-    hd->vendor3.name = new_str(scsi->vendor);
-    hd->device3.name = new_str(scsi->model);
-    hd->rev_name = new_str(scsi->rev);
+    hd->vendor.name = new_str(scsi->vendor);
+    hd->device.name = new_str(scsi->model);
+    hd->revision.name = new_str(scsi->rev);
     hd->serial = new_str(scsi->serial);
     hd->usb_guid = new_str(scsi->usb_guid);
     if(scsi->host < sizeof scsi_ctrl / sizeof *scsi_ctrl) {
