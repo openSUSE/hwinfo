@@ -1,5 +1,4 @@
 #define PROC_CMDLINE		"/proc/cmdline"
-#define LIB_CMDLINE		"/var/lib/libhd/cmdline"
 #define PROC_PCI_DEVICES	"/proc/bus/pci/devices"
 #define PROC_PCI_BUS		"/proc/bus/pci"
 #define PROC_CPUINFO		"/proc/cpuinfo"
@@ -53,8 +52,10 @@
 #define KLOG_BOOT		"/var/log/boot.msg"
 #define ISAPNP_CONF		"/etc/isapnp.conf"
 
-#define ID_LIST			"/var/lib/libhd/hd.ids"
-#define MANUAL_DIR		"/var/lib/hardware"
+#define HARDWARE_DIR		"/var/lib/hardware"
+#define HARDWARE_UNIQUE_KEYS	HARDWARE_DIR "/unique-keys"
+#define ID_LIST			HARDWARE_DIR "/hd.ids"
+#define LIB_CMDLINE		HARDWARE_DIR "/cmdline"
 
 #define KERNEL_22		0x020200
 #define KERNEL_24		0x020400

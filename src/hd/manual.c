@@ -156,12 +156,30 @@ void hd_scan_manual(hd_data_t *hd_data)
   hd_data->manual = hd_free_manual(hd_data->manual);
   entry_next = &hd_data->manual;
 
-  if((dir = opendir(MANUAL_DIR))) {
+  if((dir = opendir(HARDWARE_UNIQUE_KEYS))) {
     i = 0;
     while((de = readdir(dir))) {
-//      if(!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..")) continue;
       if(*de->d_name == '.') continue;
       PROGRESS(1, ++i, "read");
+      if((entry = hd_manual_read_entry(hd_data, de->d_name))) {
+        ADD2LOG("  got %s\n", entry->unique_id);
+        *entry_next = entry;
+        entry_next = &entry->next;
+      }
+    }
+    closedir(dir);
+  }
+
+  /* for compatibility: read old files, too */
+  if((dir = opendir(HARDWARE_DIR))) {
+    i = 0;
+    while((de = readdir(dir))) {
+      if(*de->d_name == '.') continue;
+      for(entry = hd_data->manual; entry; entry = entry->next) {
+        if(entry->unique_id && !strcmp(entry->unique_id, de->d_name)) break;
+      }
+      if(entry) continue;
+      PROGRESS(2, ++i, "read");
       if((entry = hd_manual_read_entry(hd_data, de->d_name))) {
         ADD2LOG("  got %s\n", entry->unique_id);
         *entry_next = entry;
@@ -296,9 +314,13 @@ hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
   char *s, *s1, *s2;
   int err = 0;
 
-  snprintf(path, sizeof path, "%s/%s", MANUAL_DIR, id);
+  snprintf(path, sizeof path, "%s/%s", HARDWARE_UNIQUE_KEYS, id);
 
-  if(!(sl0 = read_file(path, 0, 0))) return NULL;
+  if(!(sl0 = read_file(path, 0, 0))) {
+    /* try old location, too */
+    snprintf(path, sizeof path, "%s/%s", HARDWARE_DIR, id);
+    if(!(sl0 = read_file(path, 0, 0))) return NULL;
+  }
 
   entry = new_mem(sizeof *entry);
 
@@ -480,13 +502,17 @@ int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
   if(!entry) return 0;
   if(!entry->unique_id || entry->status.invalid) return 1;
 
-  snprintf(path, sizeof path, "%s/%s", MANUAL_DIR, entry->unique_id);
+  snprintf(path, sizeof path, "%s/%s", HARDWARE_UNIQUE_KEYS, entry->unique_id);
 
   if(!(f = fopen(path, "w"))) {
-    /* maybe we have to create the MANUAL_DIR directory first... */
+    /* maybe we have to create the HARDWARE_UNIQUE_KEYS directory first... */
 
-    if(lstat(MANUAL_DIR, &sbuf)) {
-      mkdir(MANUAL_DIR, 0755);
+    if(lstat(HARDWARE_DIR, &sbuf)) {
+      mkdir(HARDWARE_DIR, 0755);
+    }
+
+    if(lstat(HARDWARE_UNIQUE_KEYS, &sbuf)) {
+      mkdir(HARDWARE_UNIQUE_KEYS, 0755);
     }
 
     if(!(f = fopen(path, "w"))) return 2;
@@ -575,6 +601,12 @@ int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
   fputs("\n", f);
 
   fclose(f);
+
+  /* remove old file */
+  if(!error) {
+    snprintf(path, sizeof path, "%s/%s", HARDWARE_DIR, entry->unique_id);
+    unlink(path);
+  }
 
   return error;
 }

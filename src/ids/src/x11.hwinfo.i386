@@ -1,7 +1,7 @@
 #
 # x11.hwinfo-file for architecture i386
 #
-# generated at: Thu Aug  8 18:01:49 2002
+# generated at: Fri Aug  9 10:04:21 2002
 # data source:  CDB
 # distribution: Stable
 #
@@ -1022,14 +1022,6 @@
 	x	4|sis|3d|xf86_glx|dri,glx||16,24||switch2xf86_glx|
 		Option "MaxXFBMem" "12288"
 
-# Hewlett-Packard Company:J2585A
-103c 1030
-	x	3|XF86_SVGA||||||||
-
-# Hewlett-Packard Company:J2585B
-103c 1031
-	x	3|XF86_SVGA||||||||
-
 # Micron:FDC 37C665
 1042 1000
 	x	3|XF86_SVGA||||||||
@@ -1149,14 +1141,6 @@
 # Neomagic Corporation:MagicGraph 128ZV Plus
 10c8 0083
 	x	4|neomagic||||||||
-
-# Neomagic Corporation:MagicMedia 256AV Audio
-10c8 8005
-	x	3|XF86_SVGA||||||||
-
-# IBM:MagicMedia 256AV Audio Device on BlackTip Thinkpad
-10c8 8005 1014 00dd
-	x	3|XF86_SVGA||||||||
 
 # nVidia Corporation:EDGE 3D [NV1]
 10de 0008

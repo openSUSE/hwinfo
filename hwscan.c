@@ -53,21 +53,27 @@ struct option options[] = {
   { "bridge", 0, NULL, 1000 + hw_bridge },
   { "hub", 0, NULL, 1000 + hw_hub },
   { "memory", 0, NULL, 1000 + hw_memory },
+  { "update", 0, NULL, 1000 + hw_manual },
   { }
 };
+
+#define HARDWARE_DIR		"/var/lib/hardware"
+#define HARDWARE_UNIQUE_KEYS	HARDWARE_DIR "/unique-keys"
 
 int verbose = 0;
 hd_hw_item_t scan_item = 0;
 int found_items = 0;
 
-int opt_show = 0;
-int opt_scan = 0;
-int opt_list = 0;
-int opt_config_cfg = 0;
-int opt_config_avail = 0;
-int opt_config_need = 0;
-int opt_new = 0;
-int opt_fast = 0;
+struct {
+  unsigned show:1;
+  unsigned scan:1;
+  unsigned list:1;
+  unsigned config_cfg:1;
+  unsigned config_avail:1;
+  unsigned config_need:1;
+  unsigned new:1;
+  unsigned fast:1;
+} opt;
 
 void help(void);
 int do_scan(hd_hw_item_t item);
@@ -99,39 +105,39 @@ int main(int argc, char **argv)
         break;
 
       case 500:
-        opt_show = 1;
+        opt.show = 1;
         id = optarg;
         break;
 
       case 501:
-        opt_list = 1;
+        opt.list = 1;
         break;
 
       case 502:
-        opt_config_cfg = 1;
+        opt.config_cfg = 1;
         config_cfg = optarg;
         break;
 
       case 503:
-        opt_config_avail = 1;
+        opt.config_avail = 1;
         config_avail = optarg;
         break;
 
       case 504:
-        opt_config_need = 1;
+        opt.config_need = 1;
         config_need = optarg;
         break;
 
       case 505:
-        opt_new = 1;
+        opt.new = 1;
         break;
 
       case 506:
-        opt_fast = 1;
+        opt.fast = 1;
         break;
 
       case 1000 ... 1100:
-        opt_scan = 1;
+        opt.scan = 1;
         scan_item = i - 1000;
         break;
 
@@ -141,39 +147,40 @@ int main(int argc, char **argv)
     }
   }
 
-  if(opt_scan && !opt_list) {
+  if(opt.scan && !opt.list) {
     if(argv[optind] || !scan_item) return help(), 1;
     rc = do_scan(scan_item);
     if(found_items) {
-      unlink("/var/lib/hardware/.update"); /* so we do retrigger a rescan */
-      if((f = fopen("/var/lib/hardware/.update", "a"))) fclose(f);
+      unlink(HARDWARE_DIR "/.update");		/* the old file */
+      unlink(HARDWARE_UNIQUE_KEYS "/.update");	/* so we trigger a rescan */
+      if((f = fopen(HARDWARE_UNIQUE_KEYS "/.update", "a"))) fclose(f);
     }
     ok = 1;
   }
 
-  if(opt_show) {
+  if(opt.show) {
     do_show(id);
     ok = 1;
   }
 
-  if(opt_list) {
+  if(opt.list) {
     do_list(scan_item);
     ok = 1;
   }
 
-  if(opt_config_cfg) {
+  if(opt.config_cfg) {
     if(!argv[optind]) return help(), 1;
     do_config(1, config_cfg, argv[optind]);
     ok = 1;
   }
 
-  if(opt_config_avail) {
+  if(opt.config_avail) {
     if(!argv[optind]) return help(), 1;
     do_config(2, config_avail, argv[optind]);
     ok = 1;
   }
 
-  if(opt_config_need) {
+  if(opt.config_need) {
     if(!argv[optind]) return help(), 1;
     do_config(3, config_need, argv[optind]);
     ok = 1;
@@ -216,12 +223,12 @@ int do_scan(hd_hw_item_t item)
   hd_t *hd, *hd1;
   int err = 0;
 
-  if(opt_fast) opt_fast = fast_ok(item);
+  if(opt.fast) opt.fast = fast_ok(item);
 
   hd_data = calloc(1, sizeof *hd_data);
 
   hd_data->flags.list_all = 1;
-  hd_data->flags.fast = opt_fast;
+  hd_data->flags.fast = opt.fast;
 
   hd = hd_list(hd_data, item, 1, NULL);
 
@@ -263,7 +270,7 @@ int do_scan(hd_hw_item_t item)
 
   hd = hd_free_hd_list(hd);
 
-  if(opt_new) {
+  if(opt.new) {
     status.configured = status_new;
   }
   else {
@@ -341,7 +348,7 @@ int do_list(hd_hw_item_t item)
 
   hd_manual = hd_list(hd_data, hw_manual, 1, NULL);
 
-  if(opt_scan) {
+  if(opt.scan) {
     hd = hd_list(hd_data, item, 0, NULL);
     for(hd = hd; hd; hd = hd->next) printf("%s\n", hd->unique_id);
     hd = hd_free_hd_list(hd);

@@ -1557,7 +1557,7 @@ void hd_scan(hd_data_t *hd_data)
 
   /* log the debug & probe flags */
   if(hd_data->debug && !hd_data->flags.internal) {
-    ADD2LOG("libhd version %s%s (%s)\n", HD_VERSION, getuid() ? "u" : "", HD_ARCH);
+    ADD2LOG("libhd version %s%s (%s)\n", HD_VERSION_STRING, getuid() ? "u" : "", HD_ARCH);
   }
 
   get_kernel_version(hd_data);
