@@ -34,6 +34,7 @@ static void dump_sys(hd_data_t *, hd_t *, FILE *);
 
 static char *dump_hid(hd_data_t *hd_data, hd_id_t *hid, int format, char *buf, int buf_size);
 static char *dump_hid2(hd_data_t *hd_data, hd_id_t *hid1, hd_id_t *hid2, char *buf, int buf_size);
+static char *print_dev_num(hd_dev_num_t *d);
 
 /*
  * Dump a hardware entry to FILE *f.
@@ -472,15 +473,9 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
   }
 
   if(h->unix_dev_num.type) {
-    dump_line("Device Number: %s %u:%u",
-      h->unix_dev_num.type == 'b' ? "block" : "char",
-      h->unix_dev_num.major, h->unix_dev_num.minor
-    );
-    if(h->unix_dev_num.range > 1) {
-      dump_line0(
-        "-%u:%u",
-        h->unix_dev_num.major, h->unix_dev_num.minor + h->unix_dev_num.range - 1
-      );
+    dump_line("Device Number: %s", print_dev_num(&h->unix_dev_num));
+    if(h->unix_dev_num2.type) {
+      dump_line0(" (%s)", print_dev_num(&h->unix_dev_num2));
     }
     dump_line0("\n");
   }
@@ -1198,6 +1193,30 @@ char *dump_hid2(hd_data_t *hd_data, hd_id_t *hid1, hd_id_t *hid2, char *buf, int
 
   return buf;
 }
+
+
+char *print_dev_num(hd_dev_num_t *d)
+{
+  static char *buf = NULL;
+
+  if(d->type) {
+    str_printf(&buf, 0, "%s %u:%u",
+      d->type == 'b' ? "block" : "char",
+      d->major, d->minor
+    );
+    if(d->range > 1) {
+      str_printf(&buf, -1, "-%u:%u",
+        d->major, d->minor + d->range - 1
+      );
+    }
+  }
+  else {
+    str_printf(&buf, 0, "%s", "");
+  }
+
+  return buf;
+}
+
 
 #else	/* ifndef LIBHD_TINY */
 

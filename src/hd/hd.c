@@ -62,7 +62,6 @@
 #include "s390.h"
 #include "pci.h"
 #include "block.h"
-#include "sysfs_usb.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -453,8 +452,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_block:
-      hd_set_probe_feature(hd_data, pr_floppy);
-      hd_set_probe_feature(hd_data, pr_misc_floppy);
       hd_set_probe_feature(hd_data, pr_prom);
       hd_set_probe_feature(hd_data, pr_s390disks);
       hd_set_probe_feature(hd_data, pr_bios);		// bios disk order
@@ -462,6 +459,8 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_block);
       if(!hd_data->flags.fast) {
+        hd_set_probe_feature(hd_data, pr_floppy);
+        hd_set_probe_feature(hd_data, pr_misc_floppy);
         hd_set_probe_feature(hd_data, pr_block_cdrom);
       }
       hd_set_probe_feature(hd_data, pr_block_part);
@@ -1719,17 +1718,11 @@ void hd_scan(hd_data_t *hd_data)
 
   hd_scan_sysfs_block(hd_data);
   hd_scan_sysfs_scsi(hd_data);
+  hd_scan_sysfs_usb(hd_data);
 
 #if defined(__PPC__)   
   hd_scan_veth(hd_data);
 #endif
-
-  if(hd_data->flags.nosysfs) {
-    hd_scan_usb(hd_data);
-  }
-  else {
-    hd_scan_sysfs_usb(hd_data);
-  }
 
 #if defined(__PPC__)
   hd_scan_adb(hd_data);

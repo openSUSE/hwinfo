@@ -1934,6 +1934,11 @@ typedef struct s_hd_t {
   char *unix_dev_name;
 
   /**
+   * Device type & number according to sysfs.
+   */
+  hd_dev_num_t unix_dev_num;
+
+  /**
    * List of %device names.
    * Device file names to access this hardware. Normally something below /dev.
    * They should be all equivalent. The preferred name however is
@@ -1952,7 +1957,7 @@ typedef struct s_hd_t {
   /**
    * Device type & number according to sysfs.
    */
-  hd_dev_num_t unix_dev_num;
+  hd_dev_num_t unix_dev_num2;
 
   /**
    * BIOS/PROM id.
