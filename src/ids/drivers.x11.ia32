@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Mon Feb 18 18:24:54 2002
+# generated at: Mon Feb 25 18:15:46 2002
 
 # data source:  CDB
 
@@ -28,6 +28,23 @@
 # S3 Inc.:86c764/765 [Trio32/64/64V+]
 5333 8811
 	x	4|s3||||||||
+
+# Compaq Computer Corporation:Compaq 3D Rage P/M Mobility AGP 2x
+1002 4c4d 0e11 b160
+	x	4|ati||||||||
+
+# SGS Thomson Microelectronics:KyroII
+104a 0010
+	x	4|fbdev||||||||
+
+# ATI Technologies Inc:3D Rage LT Pro AGP-133
+1002 4c42 1002 0044
+	x	4|ati||||||||
+
+# ATI Technologies Inc:fgl8x00
+1002 5148
+	x	4|radeon||||||||
+		ChipID 0x514C
 
 # S3 Inc.:86c795 [Savage 3D/MV]
 5333 8a21
@@ -248,10 +265,6 @@
 # ATI Technologies Inc:Rage 128 SM
 1002 534d
 	x	4|r128||||||||
-
-# ATI Technologies Inc:Rage 128 SM
-1002 534d
-	x	4|r128|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
 
 # Tseng Labs Inc:ET4000/W32p rev B
 100c 3205
@@ -549,28 +562,13 @@
 8086 7121
 	x	4|i810|||||d|||
 
-# Intel Corporation:82810 CGC [Chipset Graphics Controller]
-8086 7121
-	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
-		VideoRam 16384
-
 # Intel Corporation:82810-DC100 CGC [Chipset Graphics Controller]
 8086 7123
 	x	4|i810|||||d|||
 
-# Intel Corporation:82810-DC100 CGC [Chipset Graphics Controller]
-8086 7123
-	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
-		VideoRam 16384
-
 # Intel Corporation:82810E CGC [Chipset Graphics Controller]
 8086 7125
 	x	4|i810|||||d|||
-
-# Intel Corporation:82810E CGC [Chipset Graphics Controller]
-8086 7125
-	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
-		VideoRam 16384
 
 # S3 Inc.:ProSavage KM 133
 5333 8a26
@@ -624,11 +622,6 @@
 # Intel Corporation:I815
 8086 1132
 	x	4|i810|||||d|||
-
-# Intel Corporation:I815
-8086 1132
-	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
-		VideoRam 16384
 
 # 3Dfx Interactive, Inc.:Voodoo5 5500
 121a 0009
@@ -737,10 +730,6 @@
 # ATI Technologies Inc:Rage 128 Ultra TF
 1002 5446
 	x	4|r128||||||||
-
-# ATI Technologies Inc:Rage 128 Ultra TF
-1002 5446
-	x	4|r128|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
 
 # ATI Technologies Inc:Radeon VE
 1002 5159
@@ -877,10 +866,6 @@
 # Intel Corporation:i740_PCI
 8086 00d1
 	x	4|i740||||||||
-
-# S3 Inc.:ViRGE/DX
-5333 8a01
-	x	4|s3virge||||||||
 
 # S3 Inc.:SuperSavage/MX 64C
 5333 8c26
@@ -1205,6 +1190,7 @@ edd8 a099
 # S3 Inc.:Twister_K
 5333 8d02
 	x	4|savage||||||||
+		Option "mtrr" "off"
 
 # Silicon Motion, Inc.:820
 126f 0820
@@ -1282,7 +1268,7 @@ edd8 a099
 
 #
 
-# generated at: Mon Feb 18 18:24:54 2002
+# generated at: Mon Feb 25 18:15:46 2002
 
 # data source:  CDB
 
@@ -2389,10 +2375,6 @@ edd8 a099
 # 3DLabs:Permedia
 3d3d 0004
 	x	3|3DLABS|||||15|||
-
-# S3 Inc.:ViRGE/DX
-5333 8a01
-	x	3|SVGA||||||||
 
 # Alliance Semiconductor Corporation:ProVideo 6422
 1142 6422

@@ -1,3 +1,10 @@
+25/2/2002:	v4.13
+	- meissner: boot.hwscan:
+	  probe for storage, network, tv, sound handware
+	- updated x11 data
+	- handle usb ehci controller
+	- added basic smbios parser
+
 21/2/2002:	v4.12
 	- meissner: boot.hwscan: fixed confused curses output
 	- new isdn database

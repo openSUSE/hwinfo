@@ -21,6 +21,7 @@
 static void read_memory(memory_range_t *mem);
 static void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *label);
 static void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt);
+static void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt);
 static unsigned char crc(unsigned char *mem, unsigned len);
 static int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
 static void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
@@ -185,6 +186,7 @@ void hd_scan_bios(hd_data_t *hd_data)
 
   if(hd_data->bios_rom.data) {
     get_pnp_support_status(&hd_data->bios_rom, bt);
+    get_smbios_info(hd_data, &hd_data->bios_rom, bt);
   }
 
   PROGRESS(3, 0, "smp");
@@ -225,7 +227,7 @@ void hd_scan_bios(hd_data_t *hd_data)
   if((hd_data->debug & HD_DEB_BIOS)) {
     dump_memory(hd_data, &hd_data->bios_ram, 0, "BIOS data");
     dump_memory(hd_data, &hd_data->bios_ebda, hd_data->bios_ebda.size <= (8 << 10) ? 0 : 1, "EBDA");
-    dump_memory(hd_data, &hd_data->bios_rom, 1, "BIOS ROM");
+    // dump_memory(hd_data, &hd_data->bios_rom, 1, "BIOS ROM");
 
     if(bt->smp.ok && bt->smp.mpfp) {
       mem.start = bt->smp.mpfp;
@@ -413,6 +415,86 @@ unsigned char crc(unsigned char *mem, unsigned len)
 
   return uc;
 }
+
+void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
+{
+  unsigned u, u1, u2, ok, hlen = 0, ofs;
+  unsigned addr = 0, len = 0;
+  unsigned structs = 0, type, slen;
+  memory_range_t memory;
+
+  if(!mem->data || mem->size < 0x100) return;
+
+  for(u = ok = 0; u <= mem->size - 0x100; u += 0x10) {
+    if(*(unsigned *) (mem->data + u) == 0x5f4d535f) {	/* "_MP_" */
+      hlen = mem->data[u + 5];
+      addr = *(unsigned *) (mem->data + u + 0x18);
+      len = *(unsigned short *) (mem->data + u + 0x16);
+      structs = *(unsigned short *) (mem->data + u + 0x1c);
+      if(hlen < 0x1e) continue;
+      ok = crc(mem->data + u, hlen) == 0 && addr < (1 << 20) && len;
+      if(ok) break;
+    }
+  }
+
+  if(!ok) return;
+
+  memory.start = mem->start + u;
+  memory.size = hlen;
+  memory.data = mem->data + u;
+  dump_memory(hd_data, &memory, 0, "SMBIOS Entry Point");
+
+  memory.start = addr;
+  memory.size = len;
+  memory.data = NULL;
+  read_memory(&memory);
+  if(len >= 0x4000) {
+    ADD2LOG(
+      "  SMBIOS Structure Table at 0x%05x (size 0x%x)\n",
+      addr, len
+    );
+  }
+  else {
+    dump_memory(hd_data, &memory, 0, "SMBIOS Structure Table");
+  }
+
+  ADD2LOG("s: %d\n", structs);
+
+  for(u = 0, ofs = 0; u < structs && ofs + 3 < len; u++) {
+    type = memory.data[ofs];
+    slen = memory.data[ofs + 1];
+    if(ofs + slen > len || slen < 4) break;
+    slen -= 4;
+    ofs += 4;
+    ADD2LOG("  %2u [type 0x%02x, ofs 0x%03x]: ", u, type, ofs);
+    if(slen) hexdump(&hd_data->log, 0, slen, memory.data + ofs);
+    ADD2LOG("\n");
+    ofs += slen;
+    u1 = ofs;
+    u2 = 1;
+    while(ofs + 1 < len) {
+      if(!memory.data[ofs]) {
+        if(ofs > u1) {
+          ADD2LOG("     str%u: \"%s\"\n", u2, memory.data + u1);
+          u1 = ofs + 1;
+          u2++;
+        }
+        if(!memory.data[ofs + 1]) {
+          ofs += 2;
+          break;
+        }
+      }
+      ofs++;
+    }
+  }
+
+  if(u != structs) ADD2LOG("  oops: only %d of %d structs found\n", u, structs);
+
+  memory.data = free_mem(memory.data);
+
+}
+
+
 
 int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
 {

@@ -74,6 +74,11 @@ C 00c	Serial bus controller
 	01	ACCESS Bus
 	02	SSA
 	03	USB Controller
+		00  UHCI
+		10  OHCI
+		20  EHCI
+		80  Unspecified
+		Fe  USB Device
 	04	Fibre Channel
 C 00e	Intelligent controller
 	00	I2O

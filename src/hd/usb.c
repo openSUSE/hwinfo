@@ -73,6 +73,7 @@ void hd_scan_usb(hd_data_t *hd_data)
     hd2 = hd_get_device_by_idx(hd_data, usb_ctrl[0]);
     s = "usb-uhci";
     if(hd2 && hd2->prog_if == pif_usb_ohci) s = "usb-ohci";
+    if(hd2 && hd2->prog_if == pif_usb_ehci) s = "usb-ehci";
     load_module(hd_data, s);
     load_module(hd_data, "input");
     load_module(hd_data, "hid");
