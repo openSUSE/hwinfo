@@ -1,95 +1,26 @@
-Real docu will come soon.
-Sorry, even this one is out of date. :-(((
+1. Usage
+========
 
-Tested platforms:
-
-  - Intel ix86
-  - Alpha AXP
-  - PowerPC
-  - SPARC
-
-hwinfo usage:
-
-  hw [debug=deb_flag] [log=log_file] [[+|-]probe_option1] [[+|-]probe_option2] ... [.] [[+|-]probe_option3] ...
+  hwinfo [debug=deb_flag] [log=log_file] [list[+]=hw_item] [[+|-]probe_option1] [[+|-]probe_option2] ...
 
 Examples:
 
-  - hwinfo +default
-    probes for nearly everything (this is the default when you just call "hwinfo" without any args)
+  hwinfo
+    - probes for nearly everything
 
-  - hwinfo +all
-    probes for everything
+  hwinfo +all
+    - probes for everything
 
-  - hwinfo debug=-1 log=hw_log +all
-    dto, with all debug info, output is written to hw_log
+  hwinfo log=hw_log
+    - default probing, output is written to hw_log
+      *** Please don't use "hwinfo >some_log 2>&1" to store the output into a
+      log file! ***
 
-  - hwinfo -all +ide
-    probe for ide drives only
+  hwinfo -all +ide
+    - probe for ide drives only
 
-  - hwinfo +all -isapnp -floppy
-    probe for everything *except* isapnp and floppies
-
-  - hwinfo debug=-1 -all
-    does *no* probing at all; useful if you want to see all supported probing flags
-
-You can specify probing flags via the environment variable 'hwprobe' (yes,
-lower case); e.g.
-
-  hwprobe=-isapnp,-usb hwinfo
-
-The 'hwprobe' environment variable will override *all* other probing flag
-settings. This way you can e.g. get hwinfo to ignore all isapnp & usb
-devices completely.
-
-Note: the order of arguments is relevant *only* for building the internal
-representation of the probing flags. It has *no* effect on the order the
-actual probing is done!
-
-Notably
-
-  hwinfo -all +ide +scsi
-
-is *identical* to
-
-  hwinfo -all +scsi +ide
-
-but different from
-
-  hwinfo +ide +scsi -all
-
-(If you don't believe it, just try it out.)
-
-The "." is a special tag to test re-probing; e.g.
-
-  hwinfo +all . +net
-
-(note the spaces around ".") will probe everything and then call the probing function
-*again*, this time looking only for network devices. All non-network devs are unaffected
-by the second probing, so the basic effect in this example would be to move
-all the network devs at the end of the hardware list.
-
-This works even multiple times:
-
-  hwinfo -all +scsi . +scsi . +scsi
-
-probes 3 times just for the scsi devices. But this really is useful only for
-testing the lib.
-
-Note that re-probing can have unexpected side effects, as some probing
-modules are interdependend. (Particularly the misc module.)
-
-Likewise, some modules are only useful if others are active as well; eg.
-
-  hwinfo -all +mouse
-
-will probably do not what you want, so
-
-  hwinfo -all +mouse +serial
-
-is better. A ps/2 mouse is only found if you add at least the "misc" module. So to get
-all the mice, do (currently)
-
-  hwinfo -all +mouse +serial +misc
+  hwinfo +all -isapnp -floppy
+    - probe for everything *except* isapnp and floppies
 
 Some probing flags do not stand for complete modules but enable additional
 features; e.g. "pci.range" or "cdrom.info".
@@ -100,4 +31,119 @@ Example:
 
   hwinfo -all +cdrom.info
   additionally reads the iso9660 info
+
+To get a list of all supported probing flags, call 'hwinfo -all'.
+
+
+2. Environment variables/kernel cmdline parameters
+==================================================
+
+You can control the hardware probing using the environment variable
+"hwprobe" and the kernel cmdline parameters "hwprobe" & "x11".
+
+If "hwprobe" is set on the kernel cmdline, the environment variable
+"hwprobe" is ignored. Otherwise, the meaning of both is exactly the same.
+
+  x11
+    - Controls the X server/X version to prefer. It is either "3" or "4" or the
+      name of the X server/X server module to use (XF3: server name without
+      the leading "XF86_", XF4: the server module name).
+
+      Examples:
+        x11=3
+          o prefer XFree86 3.x over 4.x (if possible)
+
+        x11=SVGA
+          o use the XF86_SVGA server (*** Even if the server does not
+            support the card! ***)
+
+        x11=nv
+          o use the XF4 nv_drv.o driver (*** Even if the module does not
+            support the card! ***)
+
+  hwprobe
+    - Controls which probing flags should *always* be set/cleared. (These
+      settings *cannot* be overridden by command line switches.)
+
+      Examples:
+        hwprobe=-isapnp
+          o *never* do any isapnp probing
+
+        hwprobe=-braille,-modem
+          o don't look for braille displays & modems
+
+    - Allows you to add and remove hardware from the probing results. In this case
+      the syntax is (-: remove, +: add at end of list, <nothing>: add at begin of
+      list):
+        hwprobe=[+-]<device_class>:<vendor_id>:<device_id>[:<unix_device_file>]
+
+      <device_class>, <vendor_id> and <device_id> are device ids as used by libhd.
+      See the output of hwinfo for examples. In connection with "-", you can use
+      "*" as a placeholder that matches every id.
+
+      Note: <unix_device_file> is optional.
+
+      Note2: you cannot usefully *add* hardware that needs more info than that
+      given by the hwprobe entry. Disks & floppies are notable examples.
+      (But you can *remove* them.)
+
+      Here is a typical hwinfo output for a mouse, with the relevant ids
+      underlined (<device_class> is the combined base_class & sub_class),
+      [see 1st example below]:
+
+        14: PS/2 00.0: 10500 PS/2 Mouse
+                       ^^^^^ -->	<device_class>
+          [Created at mouse.110]
+          Vendor: s0200 "Unknown"
+                  ^^^^^  -->		<vendor_id>
+          Model: 0002 "Generic PS/2 Mouse"
+                 ^^^^  -->		<device_id>
+          Device File: /dev/psaux
+                       ^^^^^^^^^^ -->	<unix_device_file>
+          Driver Info #0:
+            XFree86 Protocol: ps/2
+            GPM Protocol: ps2
+          Attached to: #8 (PS/2 Controller)
+
+
+      Examples:
+        hwprobe=+10500:s200:2:/dev/psaux
+          o add a ps/2 mouse [at the end of the hardware list]
+
+        hwprobe=10500:s200:2:/dev/psaux
+          o add a ps/2 mouse [at the start of the hardware list, so it
+            is our default mouse]
+
+        hwprobe=+10b00:s5001:0:/dev/ttyS0
+          o add a braille display connected to /dev/ttyS0
+
+        hwprobe=-10500:s200:2:/dev/psaux
+          o remove ps/2 mice attached to /dev/psaux
+
+        hwprobe=-10500:s200:2
+          o remove all ps/2 mice
+
+        hwprobe=-10500:*:*
+          o remove all ps/2 mice
+
+        hwprobe=-*:*:*:/dev/hdc
+          o remove /dev/hdc
+
+        hwprobe=+401:1274:5000
+          o add an ensoniq sound card
+
+      Grafics cards are are slightly trickier:
+
+        hwprobe=+300:1014:b7
+          o add a Fire GL1 card
+            Note: this way you'll get a multihead config. You'll probably
+            rather want the following example.
+
+        hwprobe=-300:*:*,+300:1014:b7
+          o remove all graphics cards; then add a Fire GL1 card
+
+        hwprobe=+400:121a:1
+          o add a 3fx voodoo card (Note the class "400", not "300"!)
+
+    - for more ids, see "src/ids/names.*" and "src/ids/drivers.*"
 

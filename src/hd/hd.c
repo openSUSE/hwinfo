@@ -3085,8 +3085,10 @@ void hd_scan_xtra(hd_data_t *hd_data)
       default: k = 2;
     }
     if(
-      (i = sscanf(s, "%8[^:]:%8[^:]:%8[^:]:%60s", buf0, buf1, buf2, buf3)) >= 3 /* check 'i == 4' below!!! */
+      (i = sscanf(s, "%8[^:]:%8[^:]:%8[^:]:%60s", buf0, buf1, buf2, buf3)) >= 3
     ) {
+      if(i < 4) *buf3 = 0;
+
       u0 = strtoul(buf0, &s, 16);
       if(*s) err |= 1;
       if(strlen(buf1) == 3) {
@@ -3137,24 +3139,21 @@ void hd_scan_xtra(hd_data_t *hd_data)
           hd->sub_class = u0 & 0xff;
           hd->vend = u1;
           hd->dev = u2;
-          if(i == 4) hd->unix_dev_name = new_str(buf3);
+          if(*buf3) hd->unix_dev_name = new_str(buf3);
         }
         else {
           for(hd = hd_data->hd; hd; hd = hd->next) {
             if(
-              (
                 (u0 == -1 || (
                   hd->base_class == (u0 >> 8) &&
                   hd->sub_class == (u0 & 0xff)
                 )) &&
                 (u1 == 0 || hd->vend == u1) &&
-                (u2 == 0 || hd->dev == u2)
-              ) ||
-              (
-                i == 4 &&
-                hd->unix_dev_name &&
-                !strcmp(hd->unix_dev_name, buf3)
-              )
+                (u2 == 0 || hd->dev == u2) &&
+                (*buf3 == 0 || (
+                  hd->unix_dev_name &&
+                  !strcmp(hd->unix_dev_name, buf3)
+                ))
             ) {
               hd->tag.remove = 1;
             }

@@ -1,3 +1,7 @@
+26/6/2000:	v1.09
+	- updated README
+	- fixed bug in 'hwprobe' handling
+
 26/6/2000:	v1.08
 	- new usb mouse devices
 

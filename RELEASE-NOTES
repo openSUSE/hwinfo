@@ -1,3 +1,6 @@
+Outdated, don't read!
+
+
 The lib uses no global variables, everything is kept in a hd_data_t struct.
 As a consequence, you have to pass a pointer to it in nearly all calls to
 libhd functions. The actual hardware list is stored in (hd_data_t)->hd.
