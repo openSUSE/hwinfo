@@ -1,3 +1,5 @@
+	- cleanup ISDN ids, remove unsupported protocols (#22179)
+
 25/11/2002:	v5.46
 	- rewrote assignment of BIOS driver numbers
 	- slight cleanup of int10 code
