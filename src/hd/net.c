@@ -401,7 +401,7 @@ void add_uml(hd_data_t *hd_data)
     if(
       hd->module == hd_data->module &&
       hd->base_class.id == bc_network_interface &&
-      !search_str_list(hd->drivers, "uml virtual ethernet")
+      search_str_list(hd->drivers, "uml virtual ethernet")
     ) {
       hd_card = add_hd_entry(hd_data, __LINE__, 0);
       hd_card->base_class.id = bc_network;

@@ -486,6 +486,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_net);
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_prom);
+      hd_set_probe_feature(hd_data, pr_usb);
       break;
 
     case hw_display:
@@ -602,6 +603,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_network_ctrl:
       hd_set_probe_feature(hd_data, pr_misc);
+      hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_net);
       hd_set_probe_feature(hd_data, pr_pcmcia);

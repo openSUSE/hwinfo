@@ -99,14 +99,18 @@ void add_serial_console(hd_data_t *hd_data)
   hd_t *hd;
   hd_res_t *res = NULL;
   int fd, i;
-  str_list_t *cmd, *sl;
+  str_list_t *cmd, *cmd0, *sl;
   unsigned u, u1;
   struct serial_struct ser_info;
   unsigned tty_major = 0, tty_minor = 0;
   char c, *dev = NULL, *s;
 
   /* first, try console= option */
-  cmd = get_cmdline(hd_data, "console");
+  cmd = cmd0 = get_cmdline(hd_data, "console");
+
+  /* use last console entry */
+  if(cmd) while(cmd->next) cmd = cmd->next;
+
   if(
     cmd &&
     (
@@ -161,7 +165,7 @@ void add_serial_console(hd_data_t *hd_data)
     free_mem(dev);
   }
 
-  free_str_list(cmd);
+  free_str_list(cmd0);
 }
 
 
