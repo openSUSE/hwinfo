@@ -102,12 +102,33 @@ void hd_scan_modem(hd_data_t *hd_data)
     free_mem(sm->dev_id);
     free_mem(sm->user_name);
     free_mem(sm->vend);
-    free_mem(sm->init_string);
+    free_mem(sm->init_string1);
+    free_mem(sm->init_string2);
 
     free_mem(sm);
   }
   hd_data->ser_modem = NULL;
 
+}
+
+int check_for_responce(str_list_t *str_list, char *str, int len)
+{
+  for(; str_list != NULL; str_list = str_list->next) {
+    if(!strncmp(str_list->str, str, len)) return 1;
+  }
+
+  return 0;
+}
+
+str_list_t *str_list_dup(str_list_t *orig)
+{
+  str_list_t *dup = NULL;
+
+  for(; orig != NULL; orig = orig->next) {
+    add_str_list(&dup, orig->str);
+  }
+
+  return dup;
 }
 
 void get_serial_modem(hd_data_t *hd_data)
@@ -199,14 +220,107 @@ void get_serial_modem(hd_data_t *hd_data)
 
     for(sm = hd_data->ser_modem; sm; sm = sm->next) {
       if(strstr(sm->buf, "OK") || strstr(sm->buf, "0")) {
-        str_printf(&sm->init_string, -1,
-          "%s %s", sm->init_string ? "" : "AT", init_strings[i]
+        str_printf(&sm->init_string2, -1,
+          "%s %s", sm->init_string2 ? "" : "AT", init_strings[i]
         );
       }
     }
   }
   command = free_mem(command);
 
+  for(sm = hd_data->ser_modem; sm; sm = sm->next)
+    str_printf(&sm->init_string1, -1, "ATZ");
+
+  {
+    int cmds[] = { 1, 3, 4, 5, 6 };
+    char at[10];
+    int i, j, ModemsCount = 0;
+    str_list_t **responces = NULL;
+    for(sm = hd_data->ser_modem; sm; sm = sm->next) ModemsCount++;
+    responces = new_mem(ModemsCount * sizeof *responces);
+    
+    at_cmd(hd_data, "ATI\r", 0, 1);
+    for(i = 0, sm = hd_data->ser_modem; sm; sm = sm->next) {
+      responces[i++] = str_list_dup(sm->at_resp);
+    }
+
+    for(i = 0; i < sizeof cmds / sizeof *cmds; i++) {
+      int atx = cmds[i];
+      sprintf(at, "ATI%d\r", atx);
+      at_cmd(hd_data, at, 0, 1);
+      for(j = 0, sm = hd_data->ser_modem; sm; sm = sm->next) {
+	if(atx == 1 && check_for_responce(responces[j], "Hagenuk", 7) &&
+	    (check_for_responce(sm->at_resp, "Speed Dragon", 12) ||
+	     check_for_responce(sm->at_resp, "Power Dragon", 12))) {
+	  free_mem(sm->init_string1);
+	  free_mem(sm->init_string2);
+	  sm->init_string1 = new_str("AT&F");
+	  sm->init_string2 = new_str("ATB8");
+	}
+	if(atx == 3 && check_for_responce(responces[j], "346900", 6) &&
+	    check_for_responce(sm->at_resp, "3Com U.S. Robotics ISDN", 23)) {
+	  free_mem(sm->init_string1);
+	  free_mem(sm->init_string2);
+	  sm->init_string1 = new_str("AT&F");
+	  sm->init_string2 = new_str("AT*PPP=1");
+	}
+	if(atx == 4 && check_for_responce(responces[j], "SP ISDN", 7) &&
+	    check_for_responce(sm->at_resp, "Sportster ISDN TA", 17)) {
+	  free_mem(sm->init_string1);
+	  free_mem(sm->init_string2);
+	  sm->init_string1 = new_str("AT&F");
+	  sm->init_string2 = new_str("ATB3");
+	}
+	if(atx == 6 && check_for_responce(responces[j], "644", 3) &&
+	    check_for_responce(sm->at_resp, "ELSA MicroLink ISDN", 19)) {
+	  free_mem(sm->init_string1);
+	  free_mem(sm->init_string2);
+	  sm->init_string1 = new_str("AT&F");
+	  sm->init_string2 = new_str("AT$IBP=HDLCP");
+	}
+	if(atx == 6 && check_for_responce(responces[j], "643", 3) &&
+	    check_for_responce(sm->at_resp, "MicroLink ISDN/TLV.34", 21)) {
+	  free_mem(sm->init_string1);
+	  free_mem(sm->init_string2);
+	  sm->init_string1 = new_str("AT&F");
+	  sm->init_string2 = new_str("AT\\N10%P1");
+	}
+	if(atx == 5 && check_for_responce(responces[j], "ISDN TA", 6) &&
+	    check_for_responce(sm->at_resp, ";ASU", 4)) {
+	  free_mem(sm->init_string1);
+	  free_mem(sm->init_string2);
+	  sm->init_string1 = new_str("AT&F");
+	  sm->init_string2 = new_str("ATB40");
+	}
+	if(atx==3 && check_for_responce(responces[j], "128000", 6) &&
+	    check_for_responce(sm->at_resp, "Lasat Speed", 11)) {
+	  free_mem(sm->init_string1);
+	  free_mem(sm->init_string2);
+	  sm->init_string1 = new_str("AT&F");
+	  sm->init_string2 = new_str("AT\\P1&B2X3");
+	}
+	if(atx == 1 &&
+	    (check_for_responce(responces[j], "28642", 5) ||
+	     check_for_responce(responces[j], "1281", 4) ||
+	     check_for_responce(responces[j], "1282", 4) ||
+	     check_for_responce(responces[j], "1283", 4) ||
+	     check_for_responce(responces[j], "1291", 4) ||
+	     check_for_responce(responces[j], "1292", 4) ||
+	     check_for_responce(responces[j], "1293", 4)) &&
+	    (check_for_responce(sm->at_resp, "Elite 2864I", 11) ||
+	     check_for_responce(sm->at_resp, "ZyXEL omni", 10))) {
+	  free_mem(sm->init_string1);
+	  free_mem(sm->init_string2);
+	  sm->init_string1 = new_str("AT&F");
+	  sm->init_string2 = new_str("AT&O2B40");
+	}
+      }
+    }
+
+    for(i = 0; i < ModemsCount; i++) free_str_list(responces[i]);
+    free_mem(responces);
+  }
+     
   /* now, go for the maximum speed... */
   PROGRESS(5, 0, "speed");
 
@@ -297,8 +411,8 @@ void get_serial_modem(hd_data_t *hd_data)
       res->baud.speed = sm->max_baud;
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
       res->init_strings.type = res_init_strings;
-      res->init_strings.init1 = new_str("ATZ");
-      res->init_strings.init2 = new_str(sm->init_string);
+      res->init_strings.init1 = new_str(sm->init_string1);
+      res->init_strings.init2 = new_str(sm->init_string2);
       if(*sm->pnp_id) {
         strncpy(buf, sm->pnp_id, 3);
         buf[3] = 0;
