@@ -24,6 +24,7 @@ static char *list = NULL;
 static int listplus = 0;
 
 static int test = 0;
+static int is_short = 0;
 
 static char *showconfig = NULL;
 static char *saveconfig = NULL;
@@ -36,12 +37,12 @@ int oem_install_info(hd_data_t *hd_data);
 int dump_packages(hd_data_t *hd_data);
 
 void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item);
+void do_short(hd_data_t *hd_data, hd_t *hd, FILE *f);
 void do_test(hd_data_t *hd_data);
 void help(void);
 
 struct option options[] = {
   { "special", 1, NULL, 1 },
-//  { "probe", 2, NULL, 1 },
   { "help", 1, NULL, 'h' },
   { "debug", 1, NULL, 'd' },
   { "log", 1, NULL, 'l' },
@@ -50,6 +51,7 @@ struct option options[] = {
   { "format", 1, NULL, 301 },
   { "show-config", 1, NULL, 302 },
   { "save-config", 1, NULL, 303 },
+  { "short", 0, NULL, 304 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -153,6 +155,10 @@ int main(int argc, char **argv)
           saveconfig = optarg;
           break;
 
+        case 304:
+          is_short = 1;
+          break;
+
         case 1000 ... 1100:
           if(hw_items < sizeof hw_item / sizeof *hw_item)
             hw_item[hw_items++] = i - 1000;
@@ -177,7 +183,9 @@ int main(int argc, char **argv)
       }
     }
 
-    if(hw_item >= 0 || showconfig || saveconfig) {
+    if(!hw_items && is_short) hw_item[hw_items++] = 2000;	/* all */
+
+    if(hw_items >= 0 || showconfig || saveconfig) {
       if(*log_file) f = fopen(log_file, "w+");
 
       for(i = 0; i < hw_items; i++) {
@@ -401,9 +409,14 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
     fprintf(f ? f : stdout, "\n");
   }
   else {
-    for(hd = hd0; hd; hd = hd->next) {
-      if(hw_item != 3003 || hd->is.isapnp) {
-        hd_dump_entry(hd_data, hd, f ? f : stdout);
+    if(is_short) {
+      do_short(hd_data, hd0, f ? f : stdout);
+    }
+    else {
+      for(hd = hd0; hd; hd = hd->next) {
+        if(hw_item != 3003 || hd->is.isapnp) {
+          hd_dump_entry(hd_data, hd, f ? f : stdout);
+        }
       }
     }
   }
@@ -413,6 +426,34 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
   }
 
   if(hd0 != hd_data->hd) hd_free_hd_list(hd0);
+}
+
+
+void do_short(hd_data_t *hd_data, hd_t *hd, FILE *f)
+{
+  hd_hw_item_t item;
+  hd_t *hd1;
+  int i;
+  char *s;
+
+  for(item = 1; item < hw_all; item++) {
+    i = 0;
+    s = hd_hw_item_name(item);
+    if(!s) continue;
+
+    if(item == hw_sys) continue;
+
+    for(hd1 = hd; hd1; hd1 = hd1->next) {
+      if(hd1->hw_class == item) {
+        if(!i++) fprintf(f, "%s:\n", s);
+        fprintf(f, "  %-20s %s\n",
+          hd1->unix_dev_name ? hd1->unix_dev_name : "",
+          hd1->model ? hd1->model : "???"
+        );
+      }
+    }
+  }
+
 }
 
 

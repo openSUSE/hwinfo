@@ -4501,69 +4501,86 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
   char *vend, *dev;
   char *compat, *dev_class, *hw_class;
   char *part1, *part2;
+  cpu_info_t *ct;
 
   /* early out */
   if(!hd || hd->model) return;
 
   part1 = part2 = NULL;
 
-  compat = dev_class = hw_class = NULL;
+  vend = dev = compat = dev_class = hw_class = NULL;
 
-  vend = new_str(hd->sub_vend_name);
+  if(
+    hd->hw_class == hw_cpu &&
+    hd->detail &&
+    hd->detail->type == hd_detail_cpu &&
+    (ct = hd->detail->cpu.data) &&
+    ct->model_name
+  ) {
+    /* cpu entry */
 
-  dev = new_str(hd->sub_dev_name);
-
-  if(!vend) vend = new_str(hd_vendor_name(hd_data, hd->sub_vend));
-
-  if(!dev)
-    dev = new_str(hd_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev));
-
-  if(!vend) vend = new_str(hd->vend_name);
-
-  if(!dev) dev = new_str(hd->dev_name);
-
-  if(!vend) vend = new_str(hd_vendor_name(hd_data, hd->vend));
-
-  if(!dev) dev = new_str(hd_device_name(hd_data, hd->vend, hd->dev));
-
-
-  if(dev) {
-    if(vend) {
-      part1 = vend; part2 = dev;
-    }
-    else {
-      part1 = dev;
-    }
+    part1 = new_str(ct->model_name);
+    if(ct->clock) str_printf(&part1, -1, ", %u MHz", ct->clock);
   }
+  else {
+    /* normal entry */
 
-  if(!part1 && !part2) {
-    if(hd->compat_vend || hd->compat_dev) {
-      compat = new_str(hd_device_name(hd_data, hd->compat_vend, hd->compat_dev));
+    vend = new_str(hd->sub_vend_name);
+
+    dev = new_str(hd->sub_dev_name);
+
+    if(!vend) vend = new_str(hd_vendor_name(hd_data, hd->sub_vend));
+
+    if(!dev)
+      dev = new_str(hd_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev));
+
+    if(!vend) vend = new_str(hd->vend_name);
+
+    if(!dev) dev = new_str(hd->dev_name);
+
+    if(!vend) vend = new_str(hd_vendor_name(hd_data, hd->vend));
+
+    if(!dev) dev = new_str(hd_device_name(hd_data, hd->vend, hd->dev));
+
+
+    if(dev) {
+      if(vend) {
+        part1 = vend; part2 = dev;
+      }
+      else {
+        part1 = dev;
+      }
     }
 
-    dev_class = new_str(hd_class_name(hd_data, 2, hd->base_class, hd->sub_class, 0));
+    if(!part1 && !part2) {
+      if(hd->compat_vend || hd->compat_dev) {
+        compat = new_str(hd_device_name(hd_data, hd->compat_vend, hd->compat_dev));
+      }
 
-    hw_class = new_str(hd_hw_item_name(hd->hw_class));
+      dev_class = new_str(hd_class_name(hd_data, 2, hd->base_class, hd->sub_class, 0));
 
-    if(vend) {
-      if(compat) {
-        part1 = vend; part2 = compat;
+      hw_class = new_str(hd_hw_item_name(hd->hw_class));
+
+      if(vend) {
+        if(compat) {
+          part1 = vend; part2 = compat;
+        }
+        else if(dev_class) {
+          part1 = vend; part2 = dev_class;
+        }
       }
-      else if(dev_class) {
-        part1 = vend; part2 = dev_class;
-      }
-    }
-    else {
-      if(compat && dev_class) {
-        part1 = compat; part2 = dev_class;
-      }
-      else if(compat) {
-        part1 = compat;
-      }
-      else if(dev_class) {
-        part1 = dev_class;
-        if(hw_class && !index(part1, ' ') && index(hw_class, ' ')) {
-          part2 = hw_class;
+      else {
+        if(compat && dev_class) {
+          part1 = compat; part2 = dev_class;
+        }
+        else if(compat) {
+          part1 = compat;
+        }
+        else if(dev_class) {
+          part1 = dev_class;
+          if(hw_class && !index(part1, ' ') && index(hw_class, ' ')) {
+            part2 = hw_class;
+          }
         }
       }
     }

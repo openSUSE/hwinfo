@@ -87,10 +87,10 @@ typedef enum probe_feature {
  * if you want to modify this: cf. manual.c::hw_items[]
  */
 typedef enum hw_item {
-  hw_cdrom = 1, hw_floppy, hw_disk, hw_network, hw_display, hw_monitor,
-  hw_mouse, hw_keyboard, hw_sound, hw_isdn, hw_modem, hw_storage_ctrl,
-  hw_network_ctrl, hw_printer, hw_tv, hw_scanner, hw_braille, hw_sys,
-  hw_cpu, hw_manual, hw_partition,
+  hw_sys = 1, hw_cpu, hw_keyboard, hw_braille, hw_mouse, hw_printer,
+  hw_scanner, hw_monitor, hw_display, hw_tv, hw_sound, hw_storage_ctrl,
+  hw_network_ctrl, hw_isdn, hw_modem, hw_network, hw_disk, hw_partition,
+  hw_cdrom, hw_floppy, hw_manual,
   hw_all					/* hw_all must be last */
 } hd_hw_item_t;
 
@@ -1200,6 +1200,7 @@ int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry);
 hd_manual_t *hd_free_manual(hd_manual_t *manual);
 hd_t *hd_read_config(hd_data_t *hd_data, char *id);
 int hd_write_config(hd_data_t *hd_data, hd_t *hd);
+char *hd_hw_item_name(hd_hw_item_t item);
 
 #ifdef __cplusplus
 }

@@ -750,6 +750,17 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
 
   entry->status = hd->status;
 
+  if(
+    !entry->status.configured &&
+    !entry->status.available &&
+    !entry->status.critical &&
+    !entry->status.invalid
+  ) {
+    entry->status.configured = status_new;
+    entry->status.available = hd->module == mod_manual ? status_unknown : status_yes;
+    entry->status.critical = status_no;
+  }
+
   s = NULL;
 
   if(hd->bus) {
