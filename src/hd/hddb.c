@@ -81,7 +81,7 @@ static driver_info_t *monitor_driver(hd_data_t *hd_data, hd_t *hd);
 
 #if WITH_ISDN
 static int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len);
-static isdn_parm_t *new_isdn_parm(isdn_parm_t **ip);
+/* static isdn_parm_t *new_isdn_parm(isdn_parm_t **ip); */
 static driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, cdb_isdn_card *cic);
 #endif
 
@@ -2069,9 +2069,11 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, cdb_isdn_card *cic)
 {
   driver_info_t *di0, *di;
   cdb_isdn_vario *civ;
-  hd_res_t *res;
-  uint64_t irqs, irqs2;
-  int i, irq_val, drv, pnr;
+/*  hd_res_t *res;
+  uint64_t i, irqs, irqs2;
+  int irq_val, pnr;
+*/
+  int drv;
   str_list_t *sl, *sl0;
 
   if(!cic) return NULL;
