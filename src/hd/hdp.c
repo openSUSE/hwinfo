@@ -424,6 +424,11 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
         }
         break;
 
+      case res_init_strings:
+	dump_line("Init1: %s\n", res->init_strings.init1);
+	dump_line("Init2: %s\n", res->init_strings.init2);
+        break;
+
       default:
         dump_line("Unkown resource type %d\n", res->any.type);
     }

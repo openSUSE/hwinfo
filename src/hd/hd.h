@@ -484,7 +484,7 @@ typedef struct {
  */
 typedef enum resource_types {
   res_any, res_phys_mem, res_mem, res_io, res_irq, res_dma, res_monitor,
-  res_size, res_disk_geo, res_cache, res_baud
+  res_size, res_disk_geo, res_cache, res_baud, res_init_strings
 } hd_resource_types_t;
 
 
@@ -593,6 +593,13 @@ typedef struct {
   unsigned interlaced:1;		/* 0/1 */
 } res_monitor_t;
 
+typedef struct {
+  union u_hd_res_t *next;
+  enum resource_types type;
+  char *init1;
+  char *init2;
+} res_init_strings_t;
+
 typedef union u_hd_res_t {
   union u_hd_res_t *next;  
   res_any_t any;
@@ -606,6 +613,7 @@ typedef union u_hd_res_t {
   res_baud_t baud;
   res_disk_geo_t disk_geo;
   res_monitor_t monitor;
+  res_init_strings_t init_strings;
 } hd_res_t;
 
 
@@ -675,7 +683,7 @@ typedef struct s_ser_modem_t {
   int buf_len;
   int garbage, pnp;
   unsigned char pnp_id[8];
-  char *serial, *class_name, *dev_id, *user_name, *vend;
+  char *serial, *class_name, *dev_id, *user_name, *vend, *init_string;
   unsigned pnp_rev;
   unsigned bits;
 } ser_modem_t;

@@ -1006,9 +1006,18 @@ int have_common_res(hd_res_t *res1, hd_res_t *res2)
  */
 hd_res_t *free_res_list(hd_res_t *res)
 {
-  hd_res_t *r;
+  hd_res_t *next;
 
-  for(; res; res = (r = res)->next, free_mem(r));
+  for(; res; res = next) {
+    next = res->next;
+
+    if(res->any.type == res_init_strings) {
+      free_mem(res->init_strings.init1);
+      free_mem(res->init_strings.init2);
+    }
+
+    free_mem(res);
+  }
 
   return NULL;
 }

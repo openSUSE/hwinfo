@@ -51,6 +51,16 @@ static struct speeds_s {
 
 #define MAX_SPEED	(sizeof speeds / sizeof *speeds)
 
+static char *init_strings[] = {
+  "Q0 V1 E1",
+  "S0=0",
+  "&C1",
+  "&D2",
+  "+FCLASS=0"
+};
+
+#define MAX_INIT_STRING	(sizeof init_strings / sizeof *init_strings)
+
 static void get_serial_modem(hd_data_t* hd_data);
 static int dev_name_duplicate(hd_data_t *hd_data, char *dev_name);
 static void guess_modem_name(hd_data_t *hd_data, ser_modem_t *sm);
@@ -92,6 +102,7 @@ void hd_scan_modem(hd_data_t *hd_data)
     free_mem(sm->dev_id);
     free_mem(sm->user_name);
     free_mem(sm->vend);
+    free_mem(sm->init_string);
 
     free_mem(sm);
   }
@@ -105,6 +116,7 @@ void get_serial_modem(hd_data_t *hd_data)
   int i, j, fd;
   unsigned modem_info, baud;
   char buf[4];
+  char *command;
   ser_modem_t *sm;
   hd_res_t *res;
   int chk_usb = hd_probe_feature(hd_data, pr_modem_usb);
@@ -177,9 +189,26 @@ void get_serial_modem(hd_data_t *hd_data)
     }
   }
 
-  /* now, go for the maximum speed... */
+  /* check for init string */
+  PROGRESS(4, 0, "init string");
 
-  PROGRESS(4, 0, "speed");
+  command = NULL;
+  for(i = 0; i < MAX_INIT_STRING; i++) {
+    str_printf(&command, 0, "AT %s\r", init_strings[i]);
+    at_cmd(hd_data, command, 1, 1);
+
+    for(sm = hd_data->ser_modem; sm; sm = sm->next) {
+      if(strstr(sm->buf, "OK") || strstr(sm->buf, "0")) {
+        str_printf(&sm->init_string, -1,
+          "%s %s", sm->init_string ? "" : "AT", init_strings[i]
+        );
+      }
+    }
+  }
+  command = free_mem(command);
+
+  /* now, go for the maximum speed... */
+  PROGRESS(5, 0, "speed");
 
   for(i = MAX_SPEED - 1; i >= 0; i--) {
     baud = speeds[i].baud;
@@ -266,6 +295,10 @@ void get_serial_modem(hd_data_t *hd_data)
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
       res->baud.type = res_baud;
       res->baud.speed = sm->max_baud;
+      res = add_res_entry(&hd->res, new_mem(sizeof *res));
+      res->init_strings.type = res_init_strings;
+      res->init_strings.init1 = new_str("ATZ");
+      res->init_strings.init2 = new_str(sm->init_string);
       if(*sm->pnp_id) {
         strncpy(buf, sm->pnp_id, 3);
         buf[3] = 0;
