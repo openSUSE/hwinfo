@@ -37,6 +37,7 @@
 #define DEV_SUNMOUSE		"/dev/sunmouse"
 #define DEV_MICE		"/dev/input/mice"
 #define DEV_I2O			"/dev/i2o"
+#define DEV_CCISS		"/dev/cciss"
 
 #define KLOG_BOOT		"/var/log/boot.msg"
 #define ISAPNP_CONF		"/etc/isapnp.conf"
@@ -87,7 +88,7 @@ enum mod_idx {
   mod_net, mod_floppy, mod_misc, mod_bios, mod_cpu, mod_monitor, mod_mouse,
   mod_ide, mod_scsi, mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel,
   mod_isa, mod_dac960, mod_smart, mod_isdn, mod_kbd, mod_prom, mod_sbus,
-  mod_int, mod_braille, mod_xtra, mod_sys, mod_dasd, mod_i2o
+  mod_int, mod_braille, mod_xtra, mod_sys, mod_dasd, mod_i2o, mod_cciss
 };
 
 void *new_mem(size_t size);

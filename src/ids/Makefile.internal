@@ -5,17 +5,20 @@ CLEANFILES	= *.c *.err hd.names hd.drivers
 include $(TOPDIR)/Makefile.common
 
 IDFILES	= names.SuSE names.bus names.class names.special names.usb\
-	  names.eisa /usr/X11R6/share/x11DB/names.monitor
+	  names.eisa names.monitor
 
-IDFILES += drivers.x11.susedb names.pciutils\
-	   drivers.network drivers.scsi drivers.block /usr/X11R6/share/x11DB/drivers.monitor\
+IDFILES += drivers.x11.susedb names.x11.susedb
+
+IDFILES += names.pciutils\
+	   drivers.network drivers.scsi drivers.block drivers.monitor\
 	   drivers.audio drivers.mouse drivers.video drivers.braille
 
-OBJS	+= names.o names_s.o drivers.o
+OBJS	+= names.o drivers.o
 
 $(LIBHD_D): $(OBJS)
 	ar r $(LIBHD) $?
 
-names.c names_s.c drivers.c: $(IDFILES)
-	./mk_ids $(IDFILES) 2>mk_ids.err
+names.c: names.h names_s.h
 
+names.h names_s.h drivers.h: $(IDFILES)
+	./mk_ids $(IDFILES) 2>mk_ids.err

@@ -17,6 +17,10 @@
 1011 0046
 	i	cpqarray
 
+# block/cciss.c
+0e11 b060
+	i	cciss
+
 # block/swim3.c
 s0401 0040
 	i	swim3
