@@ -108,21 +108,21 @@ void hd_scan_net(hd_data_t *hd_data)
         hd->unix_dev_name = new_str(hd0->unix_dev_name);
         hd->slot = hd0->slot;
         hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);	// IBM
-        switch(hd0->sub_class) {
+        switch(hd0->sub_class.id) {
           case sc_nif_ethernet:
             hd->sub_class.id = 0;
             hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0000);
-            str_printf(&hd->dev_name, 0, "Ethernet card %d", hd->slot);
+            str_printf(&hd->device.name, 0, "Ethernet card %d", hd->slot);
             break;
           case sc_nif_tokenring:
             hd->sub_class.id = 1;
             hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
-            str_printf(&hd->dev_name, 0, "Token ring card %d", hd->slot);
+            str_printf(&hd->device.name, 0, "Token ring card %d", hd->slot);
             break;
           case sc_nif_escon:
             hd->sub_class.id = 0x70;
             hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0070);
-            str_printf(&hd->dev_name, 0, "ESCON %d", hd->slot);
+            str_printf(&hd->device.name, 0, "ESCON %d", hd->slot);
             break;
           default:
             hd->sub_class.id = 0x80;
