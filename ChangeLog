@@ -1,7 +1,7 @@
 22/4/2004:	v8.42
 	- s390: set is.notready flag on unformatted DASDs (bug #39174)
 	- rewrote serial console handling
-	- updated X11 data
+	- updated X11 data (#39282)
 
 20/4/2004:	v8.41
 	- s390: add bus id bus_ccw
