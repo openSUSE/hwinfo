@@ -4263,7 +4263,7 @@ void short_vendor(char *vendor)
     " america", " co", " of", "solutions", " as", "publishing", "(old)",
     " usa", " gmbh", "electronic", "components", "(matsushita)", " ab",
     " pte", " north", " japan", "limited", "microcomputer", " kg",
-    "incorporated", "semiconductor", "graphics"
+    "incorporated", "semiconductor", "sem", "graphics"
   };
   int i, j;
   int len, len1, len2;

@@ -65,6 +65,10 @@
 &device.id		usb 0xc012
 +driver.mouse		imps/2|imps2|4|1
 
+ vendor.id		usb 0x05fe
+&device.id		usb 0x0005
++driver.mouse		imps/2|imps2|3|1
+
 # apple/logitech usb mouse
  vendor.id		usb 0x05ac
 &device.id		usb 0x0301
