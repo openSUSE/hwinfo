@@ -535,32 +535,6 @@
 &device.id		pci 0x3512
 +driver.module.modprobe	sata_sil
 
-# ide/hpt3*.c
- vendor.id		pci 0x1103
-&device.id		pci 0x0003+0x0006
-+driver.module.insmod	ataraid|hptraid
-
-# promise ide raid
- vendor.id		pci 0x105a
-&device.id		pci 0x6268+2
-|vendor.id		pci 0x105a
-&device.id		pci 0x4d68+2
-|vendor.id		pci 0x105a
-&device.id		pci 0x1275
-|vendor.id		pci 0x105a
-&device.id		pci 0x5275
-|vendor.id		pci 0x105a
-&device.id		pci 0x7275
-|baseclass.id		0x001
-&subclass.id		0x04
-&vendor.id		pci 0x105a
-+driver.module.insmod	ataraid|pdcraid
-
-# ???
- vendor.id		pci 0x1095
-&device.id		pci 0x0680
-+driver.module.insmod	ataraid|silraid
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # usb controller

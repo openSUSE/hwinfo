@@ -30,7 +30,7 @@
 static void read_cpuinfo(hd_data_t *hd_data);
 static void dump_cpu_data(hd_data_t *hd_data);
 
-#ifdef __i386__
+#if defined(__i386__) || defined(__x86_64__)
 static inline unsigned units_per_cpu();
 #endif
 #ifdef __ia64__
@@ -298,9 +298,7 @@ void read_cpuinfo(hd_data_t *hd_data)
         if(*features) {
           for(t0 = features; (t = strsep(&t0, " ")); ) {
             add_str_list(&ct->features, t);
-#ifdef __i386__
             if(!strcmp(t, "ht")) ct->units = units_per_cpu();
-#endif
           }
         }
 
@@ -497,7 +495,7 @@ void dump_cpu_data(hd_data_t *hd_data)
 }
 
 
-#ifdef __i386__
+#if defined(__i386__) || defined(__x86_64__)
 inline unsigned units_per_cpu()
 {
   unsigned u;

@@ -1,3 +1,6 @@
+	- check for hyperthreading on amd64 (#34742)
+	- removed last references to ataraid from hardware db
+
 17/2/2004:	v8.09
 	- handle '-' vs. '_' in module names
 
