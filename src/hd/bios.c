@@ -23,6 +23,7 @@
 
 #if defined(__i386__) || defined (__x86_64__) || defined(__ia64__)
 
+#ifndef LIBHD_TINY
 static struct {
   int width;
   int height;
@@ -49,7 +50,7 @@ static struct {
   { 1600, 1200, "Dell Computer Corporation", "Inspiron 8200", NULL },
   { 1600, 1200, "Dell Computer Corporation", "Latitude C840", NULL }
 };
-
+#endif
 
 #define BIOS_TEST
 

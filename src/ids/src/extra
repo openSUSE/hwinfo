@@ -295,3 +295,6 @@
 &subdevice.id		pci 0x0259
 +subdevice.name		ServeRAID 5i
 
+ vendor.id		pci 0x1022
++vendor.name		AMD
+
