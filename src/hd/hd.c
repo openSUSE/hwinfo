@@ -4014,6 +4014,7 @@ void hd_add_id(hd_data_t *hd_data, hd_t *hd)
   }
   else if(
     hd->bus.id != bus_usb &&
+    hd->bus.id != bus_pci &&
     hd->sysfs_id
   ) {
     STR_CRC(id0, sysfs_id);

@@ -1,3 +1,6 @@
+6/4/2004:	v8.37
+	- fixed unique ids for pci devs (#37570)
+
 6/4/2004:	v8.36
 	- run raiddetect only on x86-like archs (#36157)
 	- don't run raiddetect if we didn't find any disks
