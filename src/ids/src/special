@@ -649,3 +649,10 @@
 &device.id		special 0x0080
 +device.name		Network card
 
+
+# iSeries network
+ vendor.id		special 0x6001
+&device.id		special 0x1000
++device.name		Ethernet card
++driver.module.insmod	veth
+

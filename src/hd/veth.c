@@ -42,7 +42,7 @@ void hd_scan_veth(hd_data_t *hd_data)
         hd->base_class.id = bc_network;
         hd->slot = u;
         hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);	// IBM
-        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0000);
+        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1000);
         str_printf(&hd->device.name, 0, "Ethernet card %d", hd->slot);
       }
     }
@@ -54,7 +54,7 @@ void hd_scan_veth(hd_data_t *hd_data)
     hd->base_class.id = bc_network;
     hd->slot = 0;
     hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);	// IBM
-    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0000);
+    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1000);
     str_printf(&hd->device.name, 0, "Ethernet card %d", hd->slot);
   }
 
