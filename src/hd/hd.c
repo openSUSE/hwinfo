@@ -2318,7 +2318,7 @@ hd_t *hd_display_list(hd_data_t *hd_data, int rescan)
 
 hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 {
-  hd_t *hd, *hd1, *hd_list = NULL;
+  hd_t *hd, *hd1, *hd_list = NULL, *bridge_hd;
   unsigned char probe_save[sizeof hd_data->probe];
   int sc;		/* compare sub_class too */
   int xtra;		/* some special test */
@@ -2518,9 +2518,25 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == base_class &&
-      (sc == 0 || hd->sub_class == sub_class)
+      (
+        hd->base_class == base_class &&
+        (sc == 0 || hd->sub_class == sub_class)
+      )
+      ||
+      ( /* list other display adapters, too */
+        base_class == bc_display &&
+        hd->base_class == bc_multimedia &&
+        hd->sub_class == sc_multi_video
+      )
     ) {
+      /* ##### fix? card bus magic: don't list card bus devices */
+      if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
+        if(
+          bridge_hd->base_class == bc_bridge &&
+          bridge_hd->sub_class == sc_bridge_cardbus
+        ) continue;
+      }
+
       ok = 0;
       switch(xtra) {
         case 1:		/* tv cards */

@@ -1,3 +1,7 @@
+3/7/2000:	v1.12
+	- don't list cardbus/pcmcia devs in hd_list()
+	- add multimedia/video boards to display adapters
+
 27/6/2000:	v1.11
 	- increased timeout in fhp detection
 
