@@ -1,3 +1,6 @@
+16/4/2003:	v5.54
+	- fixed megaraid info (#26325)
+
 10/4/2003:	v5.53
 	- add fibre channel adapters to storage controller list (#23686)
 
