@@ -2,7 +2,8 @@ TOPDIR		= $(CURDIR)
 SUBDIRS		= src
 TARGETS		= hwinfo hwscan hwscand hwscanqueue
 CLEANFILES	= hwinfo hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~
-LIBDIR		= /usr/lib
+LIBDIR		= /lib
+ULIBDIR		= /usr$(LIBDIR)
 LIBS		= -lhd
 SLIBS		= -lhd -lsysfs
 
@@ -57,7 +58,7 @@ doc:
 	@cd doc ; doxygen libhd.doxy
 
 install:
-	install -d -m 755 $(DESTDIR)/sbin $(DESTDIR)/usr/sbin $(DESTDIR)$(LIBDIR) \
+	install -d -m 755 $(DESTDIR)/sbin $(DESTDIR)/usr/sbin $(DESTDIR)$(LIBDIR) $(DESTDIR)$(ULIBDIR)\
 		$(DESTDIR)/usr/include $(DESTDIR)/etc/init.d
 	install -m 755 hwinfo $(DESTDIR)/usr/sbin
 	install -m 755 hwscan hwscand hwscanqueue $(DESTDIR)/sbin
@@ -66,9 +67,9 @@ install:
 	if [ -f $(LIBHD_SO) ] ; then \
 		install $(LIBHD_SO) $(DESTDIR)$(LIBDIR) ; \
 		ln -snf libhd.so.$(LIBHD_VERSION) $(DESTDIR)$(LIBDIR)/libhd.so.$(LIBHD_MAJOR_VERSION) ; \
-		ln -snf libhd.so.$(LIBHD_MAJOR_VERSION) $(DESTDIR)$(LIBDIR)/libhd.so ; \
+		ln -snf $(LIBDIR)/libhd.so.$(LIBHD_MAJOR_VERSION) $(DESTDIR)$(ULIBDIR)/libhd.so ; \
 	else \
-		install -m 644 $(LIBHD) $(DESTDIR)$(LIBDIR) ; \
+		install -m 644 $(LIBHD) $(DESTDIR)$(ULIBDIR) ; \
 	fi
 	install -m 644 src/hd/hd.h $(DESTDIR)/usr/include
 	install -m 755 hwbootscan getsysinfo $(DESTDIR)/usr/sbin
