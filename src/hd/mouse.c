@@ -141,7 +141,7 @@ static void get_ps2_mouse(hd_data_t *hd_data)
   for(hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
     /* look for a PS/2 controller entry... */
     if(hd1->base_class == bc_ps2) {
-      /* ...and see if there where irq events... */
+      /* ...and see if there were irq events... */
       for(res = hd1->res; res; res = res->next) {
         if(res->irq.type == res_irq && res->irq.triggered) break;
       }

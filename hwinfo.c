@@ -464,6 +464,11 @@ void do_short(hd_data_t *hd_data, hd_t *hd, FILE *f)
 }
 
 
+#if 0
+void dump_hddb_data(hd_data_t *hd_data, hddb_data_t *x, char *name);
+void *free_mem(void *);
+#endif
+
 void do_test(hd_data_t *hd_data)
 {
   hd_t *hd, *hd0;
@@ -474,6 +479,12 @@ void do_test(hd_data_t *hd_data)
   for(hd = hd0; hd; hd = hd->next) {
     hd_dump_entry(hd_data, hd, stdout);
   }
+
+#if 0
+  hd_data->log = free_mem(hd_data->log);
+  dump_hddb_data(hd_data, hd_data->hddb_dev, "hddb_dev, final");  
+  if(hd_data->log) printf("%s", hd_data->log);
+#endif
 }
 
 

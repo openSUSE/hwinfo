@@ -94,10 +94,10 @@ unsigned get_data(unsigned char *buf, unsigned buf_size, unsigned addr)
 
 void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v)
 {
-  unsigned char tmp[1024];
+  unsigned char tmp[1024], s[64];
   unsigned i, l, u;
   unsigned modelist[0x100];
-  unsigned bpp, fb, clock;
+  unsigned bpp, res_bpp, fb, clock;
   vbe_mode_info_t *mi;
 
   vbe->ok = 1;
@@ -173,7 +173,7 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v)
     mi->win_gran = (tmp[0x04] + (tmp[0x05] << 8)) << 10;
     mi->win_size = (tmp[0x06] + (tmp[0x07] << 8)) << 10;
 
-    bpp = 0;
+    bpp = res_bpp = 0;
     switch(tmp[0x1b]) {
       case 0:
         bpp = -1;
@@ -197,6 +197,7 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v)
 
       case 6:
         bpp = tmp[0x19] - tmp[0x25];
+        res_bpp = tmp[0x25];
     }
 
     fb = 0;
@@ -221,9 +222,11 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v)
       ) {
         if(!vbe->fb_start) vbe->fb_start = mi->fb_start;
       }
+      *s = 0;
+      if(res_bpp) sprintf(s, "+%u", res_bpp);
       ADD2LOG(
-        "  0x%04x[%02x]: %ux%u+%u, %u bpp",
-        mi->number, mi->attributes, mi->width, mi->height, mi->bytes_p_line, mi->pixel_size
+        "  0x%04x[%02x]: %ux%u+%u, %u%s bpp",
+        mi->number, mi->attributes, mi->width, mi->height, mi->bytes_p_line, mi->pixel_size, s
       );
 
       if(mi->pixel_clock) ADD2LOG(", max. %u MHz", mi->pixel_clock/1000000);

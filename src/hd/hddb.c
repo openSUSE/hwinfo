@@ -29,8 +29,9 @@ typedef struct {
   unsigned tag, val, range, xtra;
 } hwid_t;
 
-static unsigned find_entry2(hddb_data_t *x, unsigned flag, unsigned level, unsigned *ids);
+static unsigned find_entry2(hddb_data_t *x, unsigned flag, unsigned level, unsigned *ids, unsigned *count);
 static unsigned find_entry(hddb_data_t **x, unsigned flag, unsigned level, unsigned *ids);
+static unsigned find_entry_n(hddb_data_t **x, unsigned flag, unsigned level, unsigned *ids, unsigned *count);
 static unsigned find_entry2_by_name(hddb_data_t *x, unsigned tag, unsigned level, unsigned base_class, unsigned *ids, char **names);
 static unsigned find_entry_by_name(hddb_data_t **xx, unsigned tag, unsigned level, unsigned base_class, unsigned *ids, char **names);
 static char *name_ind(hddb_data_t *x, unsigned ind);
@@ -47,13 +48,14 @@ static unsigned store_name(hddb_data_t *x, char *name);
 static void store_id(hddb_data_t *x, hwid_t *id, unsigned tag, unsigned level, char *name);
 
 #ifdef DEBUG_HDDB
-static void dump_hddb_data(hd_data_t *hd_data, hddb_data_t *x, char *name);
+void dump_hddb_data(hd_data_t *hd_data, hddb_data_t *x, char *name);
 #endif
 
 /*
  * Returns 0 if no entry was found.
+ * Find the count'th entry. count is decremented for every match.
  */
-unsigned find_entry2(hddb_data_t *x, unsigned flag, unsigned level, unsigned *ids)
+unsigned find_entry2(hddb_data_t *x, unsigned flag, unsigned level, unsigned *ids, unsigned *count)
 {
   unsigned u, u0, u1, v;
   unsigned cur_ids[4], cur_ranges[4], cur_level;
@@ -99,6 +101,9 @@ unsigned find_entry2(hddb_data_t *x, unsigned flag, unsigned level, unsigned *id
     }
 
     if(v > level) {	/* ok */
+
+      if(--*count) continue;
+
       if(flag) {
         /* skip all id entries */
         for(u++; u < x->data_len; u++) {
@@ -119,12 +124,23 @@ unsigned find_entry2(hddb_data_t *x, unsigned flag, unsigned level, unsigned *id
  */
 unsigned find_entry(hddb_data_t **xx, unsigned flag, unsigned level, unsigned *ids)
 {
+  unsigned count = 1;
+
+  return find_entry_n(xx, flag, level, ids, &count);
+}
+
+
+/*
+ * Check loaded entries first, then check to the static ones.
+ */
+unsigned find_entry_n(hddb_data_t **xx, unsigned flag, unsigned level, unsigned *ids, unsigned *count)
+{
   unsigned u;
 
-  if((u = find_entry2(*xx, flag, level, ids))) return u;
+  if((u = find_entry2(*xx, flag, level, ids, count))) return u;
 
   *xx = flag ? &HDDB_DRV : &HDDB_DEV;
-  return find_entry2(*xx, flag, level, ids);
+  return find_entry2(*xx, flag, level, ids, count);
 }
 
 
@@ -422,29 +438,41 @@ char *hd_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, u
 unsigned device_class(hd_data_t *hd_data, unsigned vendor, unsigned device)
 {
   hddb_data_t *x;
-  unsigned u;
+  unsigned u, v, count, d;
   unsigned ids[4] = { vendor, device, };
 
   init_hddb(hd_data);
 
   x = hd_data->hddb_dev;
 
-  u = find_entry(&x, 0, 1, ids);
-  return device_class_ind(x, u);
+  for(d = 0, v = 1; v < 10 /* just to be sure */; v++) {
+    count = v;
+    u = find_entry_n(&x, 0, 1, ids, &count);
+    if(u) d = device_class_ind(x, u);
+    if(d || count) break;
+  }
+
+  return d;
 }
 
 unsigned sub_device_class(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device)
 {
   hddb_data_t *x;
-  unsigned u;
+  unsigned u, v, count, d;
   unsigned ids[4] = { vendor, device, sub_vendor, sub_device };
 
   init_hddb(hd_data);
 
   x = hd_data->hddb_dev;
 
-  u = find_entry(&x, 0, 3, ids);
-  return device_class_ind(x, u);
+  for(d = 0, v = 1; v < 10 /* just to be sure */; v++) {
+    count = v;
+    u = find_entry_n(&x, 0, 3, ids, &count);
+    if(u) d = device_class_ind(x, u);
+    if(d || count) break;
+  }
+
+  return d;
 }
 
 driver_info_t *device_driver(hd_data_t *hd_data, unsigned vendor, unsigned device)
