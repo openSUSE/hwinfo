@@ -1,3 +1,9 @@
+15/9/2003:	v7.24
+	- report pci modems (#30887)
+	- don't get fooled by removed pcmcia cards
+	- wlan data update (#30886, #30823, #30501)
+	- driver data update (#30384, #29468, #30745)
+
 15/9/2003:	v7.23
 	- ignore alternative usb interface settings
 

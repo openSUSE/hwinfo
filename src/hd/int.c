@@ -128,6 +128,7 @@ void int_hotplug(hd_data_t *hd_data)
       ) {
         for(u = p_sock[hd->slot], hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
           if(hd1->tag.remove) continue;
+          if(hd1->status.available == status_no) continue;
           if(hd1->attached_to == u) break;
         }
         if(hd1) {
@@ -814,10 +815,21 @@ void int_wlan(hd_data_t *hd_data)
     "aironet4500_cs",
     "airport",
     "arlan",
+    "ath_hal",
+    "ath_pci",
+    "hermes",
+    "hostap",
+    "hostap_pci",
+    "hostap_plx",
     "netwave_cs",
     "orinoco_cs",
     "orinoco_pci",
     "orinoco_plx",
+    "p80211",
+    "prism2_cs",
+    "prism2_pci",
+    "prism2_plx",
+    "prism2_usb",
     "ray_cs",
     "wavelan",
     "wavelan_cs"

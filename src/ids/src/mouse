@@ -60,6 +60,9 @@
 # Optical Logitech Wheel Mouse (#22797)
 |vendor.id		usb 0x046d
 &device.id		usb 0xc030
+# some mouse (#29468)
+|vendor.id		usb 0x046d
+&device.id		usb 0xc404
 # some mouse (#29719)
 |vendor.id		usb 0x0461
 &device.id		usb 0x4d03

@@ -93,10 +93,10 @@ $he_class_id = $he_nomask;
 );
 @xml_values{@xml_names} = ( 0 .. 100 );
 
-( $tag_none, $tag_pci, $tag_eisa, $tag_usb, $tag_special ) = ( 0 .. 4 );
+( $tag_none, $tag_pci, $tag_eisa, $tag_usb, $tag_special, $tag_pcmcia ) = ( 0 .. 5 );
 
-@tag_name = ( "", "pci", "eisa", "usb", "special" );
-@tag_values{@tag_name} = ( 0 .. 4 );
+@tag_name = ( "", "pci", "eisa", "usb", "special", "pcmcia" );
+@tag_values{@tag_name} = ( 0 .. 5 );
 $tag_values{none} = 0;
 
 ( $flag_id, $flag_range, $flag_mask, $flag_string, $flag_regexp ) = ( 0 .. 4 );
@@ -2539,7 +2539,7 @@ sub hd_dtd
 
 <!ENTITY % keyfields "bus|baseclass|subclass|progif|vendor|device|subvendor|subdevice|revision|serial|driver|requires">
 <!ENTITY % idelements "id|idrange|idmask|name">
-<!ENTITY % idtypes "none|pci|eisa|usb|special">
+<!ENTITY % idtypes "none|pci|eisa|usb|pcmcia|special">
 
 <!ELEMENT hwdata (item*)>
 
@@ -2637,7 +2637,7 @@ sub hd_dtd_internal
       <!ELEMENT idmask (value,mask)>
         <!ELEMENT value (#PCDATA)>
         <!ELEMENT mask (#PCDATA)>
-      <!ATTLIST id type (none|pci|eisa|usb|special) "none">
+      <!ATTLIST id type (none|pci|eisa|usb|pcmcia|special) "none">
       <!ATTLIST idrange type (none|pci|eisa|usb|special) "none">
       <!ATTLIST idmask type (none|pci|eisa|usb|special) "none">
     <!ELEMENT name (#PCDATA)>

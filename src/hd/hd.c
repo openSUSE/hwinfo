@@ -142,6 +142,7 @@ static int has_hw_class(hd_t *hd, hd_hw_item_t *items);
 
 static void test_read_block0_open(void *arg);
 static void get_kernel_version(hd_data_t *hd_data);
+static int is_modem(hd_data_t *hd_data, hd_t *hd);
 static void assign_hw_class(hd_data_t *hd_data, hd_t *hd);
 #ifndef LIBHD_TINY
 static void short_vendor(char *vendor);
@@ -3857,6 +3858,7 @@ void hd_scan_xtra(hd_data_t *hd_data)
           case 'r': tag = 0; s++; break;
           case 's': tag = TAG_SPECIAL; s++; break;
           case 'u': tag = TAG_USB; s++; break;
+          case 'P': tag = TAG_PCMCIA; s++; break;
         }
         u1 = strtoul(s, &s, 16);
         if(*s) err |= 2;
@@ -3896,6 +3898,10 @@ void hd_scan_xtra(hd_data_t *hd_data)
           hd->device.id = u2;
           if(ID_TAG(hd->vendor.id) == TAG_PCI) hd->bus.id = bus_pci;
           if(ID_TAG(hd->vendor.id) == TAG_USB) hd->bus.id = bus_usb;
+          if(ID_TAG(hd->vendor.id) == TAG_PCMCIA) {
+            hd->bus.id = bus_pcmcia;
+            hd->hotplug = hp_pcmcia;
+          }
           if(*buf3) hd->unix_dev_name = new_str(buf3);
           hd->status.available = status_yes;
           hd->status.configured = status_new;
@@ -4232,12 +4238,26 @@ char *vend_id2str(unsigned vend)
   else {
     if(ID_TAG(vend) == TAG_USB) *s++ = 'u', *s = 0;
     if(ID_TAG(vend) == TAG_SPECIAL) *s++ = 's', *s = 0;
+    if(ID_TAG(vend) == TAG_PCMCIA) *s++ = 'P', *s = 0;
     sprintf(s, "%04x", ID_VALUE(vend));
   }
 
   return buf;
 }
 
+
+int is_modem(hd_data_t *hd_data, hd_t *hd)
+{
+  if(
+    hd->base_class.id == bc_modem ||
+    (
+      hd->base_class.id == bc_comm &&
+      hd->sub_class.id == sc_com_modem
+    )
+  ) return 1;
+
+  return 0;
+}
 
 
 void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
@@ -4325,7 +4345,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           break;
 
         case hw_modem:
-          base_class = bc_modem;
+          test_func = is_modem;
           break;
 
         case hw_storage_ctrl:

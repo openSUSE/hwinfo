@@ -177,7 +177,7 @@ typedef enum sc_bridge {
 
 /* subclass values of bc_comm */
 typedef enum sc_comm { 
-  sc_com_ser, sc_com_par, sc_com_other = 0x80
+  sc_com_ser, sc_com_par, sc_com_multi, sc_com_modem, sc_com_other = 0x80
 } hd_sc_comm_t;
 
 /* subclass values of bc_system */

@@ -763,6 +763,10 @@ unsigned str2id(char *str)
 
     case 's':
       tag = TAG_SPECIAL; str++; break;
+
+    case 'P':
+      tag = TAG_PCMCIA; str++; break;
+
   }
 
   id = strtoul(str, &str, 16);

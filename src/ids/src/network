@@ -88,7 +88,16 @@
 +driver.module.insmod	tulip
 +driver.module.insmod	de4x5
 
- vendor.id		pci 0x104a
+#pcimap
+ vendor.id		pci 0x1011
+&device.id		pci 0x0002
+|vendor.id		pci 0x1011
+&device.id		pci 0x0009
+|vendor.id		pci 0x1011
+&device.id		pci 0x0014
+|vendor.id		pci 0x1011
+&device.id		pci 0x0019
+|vendor.id		pci 0x104a
 &device.id		pci 0x0981
 |vendor.id		pci 0x104a
 &device.id		pci 0x2774
@@ -97,13 +106,19 @@
 |vendor.id		pci 0x10d9
 &device.id		pci 0x0531
 |vendor.id		pci 0x1113
-&device.id		pci 0x1217
+&device.id		pci 0x1216+0x0002
+|vendor.id		pci 0x1113
+&device.id		pci 0x9511
+|vendor.id		pci 0x1186
+&device.id		pci 0x1561
 |vendor.id		pci 0x11ad
 &device.id		pci 0x0002
 |vendor.id		pci 0x11ad
 &device.id		pci 0xc115
 |vendor.id		pci 0x11f6
 &device.id		pci 0x9881
+|vendor.id		pci 0x1259
+&device.id		pci 0xa120
 |vendor.id		pci 0x125b
 &device.id		pci 0x1400
 |vendor.id		pci 0x1317
@@ -112,11 +127,43 @@
 &device.id		pci 0x0985
 |vendor.id		pci 0x1317
 &device.id		pci 0x1985
+|vendor.id		pci 0x1317
+&device.id		pci 0x9511
 |vendor.id		pci 0x13d1
 &device.id		pci 0xab02+0x0002
+|vendor.id		pci 0x13d1
+&device.id		pci 0xab08
+|vendor.id		pci 0x14f1
+&device.id		pci 0x1803
+|vendor.id		pci 0x1626
+&device.id		pci 0x8410
+|vendor.id		pci 0x1737
+&device.id		pci 0xab09
+|vendor.id		pci 0x17b3
+&device.id		pci 0xab08
 |vendor.id		pci 0x8086
 &device.id		pci 0x0039
++driver.module.modprobe	tulip
+
+# pcimap
+ vendor.id		pci 0x10b9
+&device.id		pci 0x5261
+|vendor.id		pci 0x1282
+&device.id		pci 0x9009
+|vendor.id		pci 0x1282
+&device.id		pci 0x9132
++driver.module.insmod	dmfe
+
+# see #19271
+ vendor.id		pci 0x1282
+&device.id		pci 0x9102
++driver.module.insmod	dmfe
 +driver.module.insmod	tulip
+
+ vendor.id		pci 0x1282
+&device.id		pci 0x9100
++driver.module.insmod	tulip
++driver.module.insmod	dmfe
 
 # net/wan/lmc/lmc_main.c
  vendor.id		pci 0x1011
@@ -401,26 +448,6 @@
  vendor.id		pci 0x120f
 &device.id		pci 0x0001
 +driver.module.insmod	rrunner
-
-# pcimap
- vendor.id		pci 0x10b9
-&device.id		pci 0x5261
-|vendor.id		pci 0x1282
-&device.id		pci 0x9009
-|vendor.id		pci 0x1282
-&device.id		pci 0x9132
-+driver.module.insmod	dmfe
-
-# see #19271
- vendor.id		pci 0x1282
-&device.id		pci 0x9102
-+driver.module.insmod	dmfe
-+driver.module.insmod	tulip
-
- vendor.id		pci 0x1282
-&device.id		pci 0x9100
-+driver.module.insmod	tulip
-+driver.module.insmod	dmfe
 
 # net/hamachi.c
  vendor.id		pci 0x1318
