@@ -18,7 +18,7 @@ IDFILES	+= src/bus src/class src/extra src/special src/scanner src/network \
 	  src/chipcard src/modem src/pcmcia src/s390
 
 ifeq "$(ARCH)" "i386"
-IDFILES += src/x11.i386
+IDFILES += src/x11.i386 src/modem.i386
 endif
 
 ifeq "$(ARCH)" "ppc"
