@@ -229,6 +229,10 @@ void int_floppy(hd_data_t *hd_data)
         (
           (hd->vend_name && !strcasecmp(hd->vend_name, "teac")) &&
           (hd->dev_name && strstr(hd->dev_name, "FD") == hd->dev_name)
+        ) ||
+        (
+          (hd->vend_name && !strcasecmp(hd->vend_name, "y-e data")) &&
+          (hd->dev_name && strstr(hd->dev_name, "USB-FD") == hd->dev_name)
         )
       ) {
         hd->sub_class = sc_sdev_floppy;

@@ -175,7 +175,7 @@ static struct s_pr_flags {
   { pr_pci,          0,           8|4|2|1, "pci"          },
   { pr_pci_range,    pr_pci,        4|2  , "pci.range"    },
   { pr_pci_ext,      pr_pci,        4|2  , "pci.ext"      },
-  { pr_isapnp,       0,           8|4|2|1, "isapnp"       },
+  { pr_isapnp,       0,             4|2|1, "isapnp"       },
   { pr_isapnp,       0,                 0, "pnpdump"      },	/* alias for isapnp */
   { pr_cdrom,        0,           8|4|2|1, "cdrom"        },
   { pr_cdrom_info,   pr_cdrom,    8|4|2|1, "cdrom.info"   },

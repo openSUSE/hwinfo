@@ -1,3 +1,7 @@
+24/4/2001:	v2.05
+	- worked on usb-storage support
+	- no isa-pnp probing in linuxrc
+
 20/4/2001:	v2.04
 	- better usb-storage support
 
