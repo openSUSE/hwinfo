@@ -85,6 +85,10 @@
 #define HD_ARCH "s390x"
 #endif
 
+#ifdef __arm__
+#define HD_ARCH "arm"
+#endif
+
 #if defined(__s390__) || defined(__s390x__) ||defined(__alpha__)
 #define WITH_ISDN	0
 #else

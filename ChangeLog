@@ -1,3 +1,6 @@
+26/11/2001:	v3.35
+	- prepare for arm
+
 22/11/2001:	v3.34
 	- call cpu probe for keyboard query
 	- reduced libhd_tiny size
