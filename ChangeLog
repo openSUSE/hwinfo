@@ -1,3 +1,6 @@
+16/4/2003:	v6.20
+	- fixed megaraid info (#26325)
+
 17/3/2003:	v6.19
 	- updated X11 data (#23847)
 	- workaround for ps/2 mouse detection inconsistency (#25331)
