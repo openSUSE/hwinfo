@@ -1186,6 +1186,7 @@ void help()
     "  --short        just a short listing\n"
     "  --log logfile  write info to logfile\n"
     "  --debug level  set debuglevel\n"
+    "  --dump-db n    dump hardware data base, 0: external, 1: internal\n"
     "  --hw_item      probe for hw_item\n"
     "  hw_item is one of:\n"
     "    cdrom, floppy, disk, network, gfxcard, framebuffer, monitor, camera,\n"

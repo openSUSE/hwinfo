@@ -406,6 +406,8 @@ int main(int argc, char **argv)
       join_items_by_value(&hd);
       join_items_by_key(&hd);
     }
+
+    if(opt.split) split_items(&hd);
   }
 
   if(opt.sort) {

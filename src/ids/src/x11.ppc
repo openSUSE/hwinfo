@@ -1,0 +1,212 @@
+ vendor.id		pci 0x0000
++vendor.name		Sun Microsystems
+
+ vendor.id		pci 0x0000
+&device.id		pci 0x0001
++device.name		Sun|Monochrome (bwtwo)
++driver.xfree		3
+
+ vendor.id		pci 0x0000
+&device.id		pci 0x0002
++device.name		Sun|Color3 (cgthree)
++driver.xfree		3
+
+ vendor.id		pci 0x0000
+&device.id		pci 0x0003
++device.name		Sun|CG8/RasterOps (cgeight)
++driver.xfree		3
+
+ vendor.id		pci 0x0000
+&device.id		pci 0x0004
++device.name		Sun|GS (cgtwelve)
++driver.xfree		3|XFB_Dev
+
+ vendor.id		pci 0x0000
+&device.id		pci 0x0005
++device.name		Sun|Graphics Tower (gt)
++driver.xfree		3
+
+ vendor.id		pci 0x1002
++vendor.name		ATI Technologies Inc
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4749
++device.name		3D Rage Pro
++driver.xfree		4|ati||||dpms|15,24
++driver.xfree		3|FBDev
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4750
++device.name		3D Rage Pro 215GP
++driver.xfree		4|ati||||dpms|15
++driver.xfree		3|FBDev
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4754
++device.name		3D Rage I/II 215GT [Mach64 GT]
++driver.xfree		4|ati||||dpms|15,24
++driver.xfree		3|FBDev|||||15
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4756
++device.name		3D Rage IIC 215IIC [Mach64 GT IIC]
++driver.xfree		4|ati||||dpms|15,16,24
++driver.xfree		3|FBDev
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4758
++device.name		210888GX [Mach64 GX]
++driver.xfree		4|fbdev||||dpms|15
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4c46
++device.name		Mobility M3 AGP 2x
++driver.xfree		4|r128||||dpms,usefbdev|8,15
++driver.xfree		4|r128|3d||dri,glx|dpms,usefbdev|16||switch2xf86_glx
++driver.xfree		3|FBDev|||||8,15
++requires		xf86_glx
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4c47
++device.name		3D Rage LT-G 215LG
++driver.xfree		4|fbdev||||dpms|15,24
++driver.xfree		3|FBDev
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4c49
++device.name		Mach64 LI
++driver.xfree		4|ati||||dpms
++driver.xfree.config	Option "reference_clock" "29.498928 Mhz"
++driver.xfree		3|FBDev
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4c4e
++device.name		3D Rage L Mobility AGP 2x
++driver.xfree		4|ati||||dpms|15,24
++driver.xfree		3|FBDev
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4c50
++device.name		3D Rage LT Pro
++driver.xfree		4|ati||||dpms|15,24
++driver.xfree.config	Option "reference_clock" "29.498928 Mhz"
++driver.xfree		3|FBDev|||||15
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4c59
++device.name		Radeon LY
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5046
++device.name		Rage 128 PF
++driver.xfree		4|r128||||dpms,usefbdev|15,24
++driver.xfree		4|r128|3d||dri,glx|dpms,usefbdev|16,24||switch2xf86_glx
++driver.xfree		3|FBDev
++requires		xf86_glx
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5052
++device.name		Rage 128 PR
++driver.xfree		4|r128||||dpms,usefbdev|15
++driver.xfree.config	ati_r128_rl
++driver.xfree		4|r128|3d||dri,glx|dpms,usefbdev|16||switch2xf86_glx
++driver.xfree.config	ati_r128_rl
++driver.xfree		3|FBDev
++requires		xf86_glx
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5144
++device.name		Radeon QD
++driver.xfree		4|radeon|||||16
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5145
++device.name		Radeon QE
++driver.xfree		4|radeon|||||16
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5146
++device.name		Radeon QF
++driver.xfree		4|radeon|||||16
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5147
++device.name		Radeon QG
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5245
++device.name		Rage 128 RE
++driver.xfree		4|r128||||dpms,usefbdev|15,24
++driver.xfree		4|r128|3d||dri,glx|dpms,usefbdev|16,24||switch2xf86_glx
++driver.xfree		3|FBDev
++requires		xf86_glx
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5246
++device.name		Rage 128 RF
++driver.xfree		4|r128||||dpms,usefbdev|15,24
++driver.xfree		3|FBDev
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x524c
++device.name		Rage 128 RL
++driver.xfree		4|r128||||dpms,usefbdev|15
++driver.xfree		3|FBDev
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5452
++device.name		Rage 128 Pro TR (AGP)
++driver.xfree		4|r128||||dpms,usefbdev|8,15
++driver.xfree		3|FBDev|||||8,15
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5654
++device.name		Mach64 VT
++driver.xfree		4|fbdev||||dpms|15
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5656
++device.name		264VT4 [Mach64 VT4]
++driver.xfree		4|ati||||dpms,usefbdev|15
+
+ vendor.id		pci 0x1013
++vendor.name		Cirrus Logic
+
+ vendor.id		pci 0x1013
+&device.id		pci 0x00b8
++device.name		GD 5446
++driver.xfree		4|fbdev||||dpms,usefbdev
+
+ vendor.id		pci 0x102b
++vendor.name		Matrox Graphics, Inc.
+
+ vendor.id		pci 0x102b
+&device.id		pci 0x0519
++device.name		MGA 2064W [Millennium]
++driver.xfree		4|mga||||DDCInfo,dpms,hw_cursor|8,15,16,24,32
++driver.xfree		3||||||8,15
+
+ vendor.id		pci 0x102b
+&device.id		pci 0x051a
++device.name		MGA 1064SG [Mystique]
++driver.xfree		4|fbdev||||dpms,hw_cursor|16,24
++driver.xfree.config	DacSpeed     200
++driver.xfree		3|FBDev|||||8,15,16
+
+ vendor.id		pci 0x102b
+&device.id		pci 0x0520
++device.name		MGA G200
++driver.xfree		4|fbdev||||dpms,hw_cursor|16,24
++driver.xfree.config	DacSpeed     200
++driver.xfree		3|FBDev|||||8
+
+ vendor.id		pci 0x121a
++vendor.name		3Dfx Interactive, Inc.
+
+ vendor.id		pci 0x121a
+&device.id		pci 0x0003
++device.name		Voodoo Banshee
++driver.xfree		4|fbdev|||||24
+

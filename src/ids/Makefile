@@ -7,32 +7,30 @@ include $(TOPDIR)/Makefile.common
 
 IDFILES	= src/names.SuSE src/bus src/class src/names.special \
 	  src/scanner src/network src/names.usbutils src/names.usb \
-	  src/names.eisa src/monitor src/names.x11 src/camera src/tv src/dvb
-
-IDFILES += src/names.x11.ia32
+	  src/names.eisa src/monitor src/camera src/tv src/dvb
 
 ifeq "$(ARCH)" "i386"
-IDFILES += src/x11.hwinfo.i386
+IDFILES += src/x11.i386
 endif
 
 ifeq "$(ARCH)" "ppc"
-IDFILES += src/x11.hwinfo.ppc src/x11.ppc.special
+IDFILES += src/x11.ppc src/x11.ppc.special
 endif
 
 ifeq "$(ARCH)" "alpha"
-IDFILES += src/x11.hwinfo.axp
+IDFILES += src/x11.axp
 endif
 
 ifeq "$(ARCH)" "sparc"
-IDFILES += src/x11.hwinfo.sparc
+IDFILES += src/x11.sparc
 endif
 
 ifeq "$(ARCH)" "sparc64"
-IDFILES += src/x11.hwinfo.sparc
+IDFILES += src/x11.sparc
 endif
 
 ifeq "$(ARCH)" "ia64"
-IDFILES += src/x11.hwinfo.ia64
+IDFILES += src/x11.ia64
 endif
 
 IDFILES += src/names.pciutils src/storage.scsi src/storage.block \
@@ -47,7 +45,7 @@ check_hd: check_hd.c
 hd_ids.c: hd_ids.h hd_ids_tiny.h
 
 hd0.ids: $(IDFILES)
-	./convert_hd --fix-driver $(IDFILES) 2>hd0.log
+	./convert_hd $(IDFILES) 2>hd0.log
 	mv hd.ids hd0.ids
 
 hd_ids.h hd.ids: check_hd hd0.ids

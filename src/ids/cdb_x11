@@ -187,12 +187,19 @@ foreach $arch_name (@arch_names) {
 	  }
       }
       if ( ($vendor_class ne "") && ($product_class ne "") ) {
-	print FH "\n# $vendor_name:$product_name\n";
+          print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
+          print FH "+vendor.name\t\t$vendor_name\n";
 	  if ( ($subvendor_class ne "") && ($subproduct_class ne "") ) {
-	    print FH "$subvendor_class $subproduct_class $vendor_class $product_class\n";
+	    print FH "\n vendor.id\t\tpci 0x$subvendor_class\n";
+	    print FH "&device.id\t\tpci 0x$subproduct_class\n";
+	    print FH "&subvendor.id\t\tpci 0x$vendor_class\n";
+	    print FH "&subdevice.id\t\tpci 0x$product_class\n";
+	    print FH "+subdevice.name\t\t$product_name\n";
 	  } else {
-	    print FH "$vendor_class $product_class\n";
-	  }	
+	    print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
+	    print FH "&device.id\t\tpci 0x$product_class\n";
+	    print FH "+device.name\t\t$product_name\n";
+	  }
 	if ($tooltopics{resol} ne "") {
 	  $tooltopics{resol} =~ s/bpp//g;
 	  }
@@ -203,11 +210,11 @@ foreach $arch_name (@arch_names) {
 	  die "\nMore than one driver- or installscript-topic. Product-id=$product_id. Vario=$vario_name. Arch=$arch_name.\n";
 	}
 	
-	print FH "\tx\t3|$tooltopics{driver}||$tooltopics{package}|$tooltopics{extension}|$tooltopics{option}|$tooltopics{resol}||$tooltopics{installscript}|\n";
+	print FH "+driver.xfree\t\t3|$tooltopics{driver}||$tooltopics{package}|$tooltopics{extension}|$tooltopics{option}|$tooltopics{resol}||$tooltopics{installscript}|\n";
 	if ($tooltopics{raw} ne "") {
 	  @raw = (split(',',$tooltopics{raw}));
 	  foreach $raw (@raw) {
-	    print FH "\t\t$raw\n";
+	    print FH "+driver.xfree.config\t$raw\n";
 	  }
 	}
 	
@@ -280,11 +287,18 @@ foreach $arch_name (@arch_names) {
 	}
       }
       if ( ($vendor_class ne "") && ($product_class ne "") ) {
-	  print FH "\n# $vendor_name:$product_name\n";
+          print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
+          print FH "+vendor.name\t\t$vendor_name\n";
 	  if ( ($subvendor_class ne "") && ($subproduct_class ne "") ) {
-	    print FH "$subvendor_class $subproduct_class $vendor_class $product_class\n";
+	    print FH "\n vendor.id\t\tpci 0x$subvendor_class\n";
+	    print FH "&device.id\t\tpci 0x$subproduct_class\n";
+	    print FH "&subvendor.id\t\tpci 0x$vendor_class\n";
+	    print FH "&subdevice.id\t\tpci 0x$product_class\n";
+	    print FH "+subdevice.name\t\t$product_name\n";
 	  } else {
-	    print FH "$vendor_class $product_class\n";
+	    print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
+	    print FH "&device.id\t\tpci 0x$product_class\n";
+	    print FH "+device.name\t\t$product_name\n";
 	  }
 	  if ($tooltopics{resol} ne "") {
 	    $tooltopics{resol} =~ s/bpp//g;
@@ -295,11 +309,11 @@ foreach $arch_name (@arch_names) {
 	    die "\nMore than one driver- or installscript-topic. Product-id=$product_id. Vario=$vario_name. Arch=$arch_name.\n";
 	  }
 	  
-	  print FH "\tx\t3|$tooltopics{driver}|3d|$tooltopics{package}|$tooltopics{extension}|$tooltopics{option}|$tooltopics{resol}||$tooltopics{installscript}|\n";
+	  print FH "+driver.xfree\t\t3|$tooltopics{driver}|3d|$tooltopics{package}|$tooltopics{extension}|$tooltopics{option}|$tooltopics{resol}||$tooltopics{installscript}|\n";
 	  if ($tooltopics{raw} ne "") {
 	    @raw = (split(',',$tooltopics{raw}));
 	    foreach $raw (@raw) {
-	      print FH "\t\t$raw\n";
+	      print FH "+driver.xfree.config\t$raw\n";
 	    }
 	  }
 	}
@@ -371,12 +385,19 @@ foreach $arch_name (@arch_names) {
 	}
 	}
       if ( ($vendor_class ne "") && ($product_class ne "") ) {
-	print FH "\n# $vendor_name:$product_name\n";
+        print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
+        print FH "+vendor.name\t\t$vendor_name\n";
 	if ( ($subvendor_class ne "") && ($subproduct_class ne "") ) {
-	  print FH "$subvendor_class $subproduct_class $vendor_class $product_class\n";
+	  print FH "\n vendor.id\t\tpci 0x$subvendor_class\n";
+	  print FH "&device.id\t\tpci 0x$subproduct_class\n";
+	  print FH "&subvendor.id\t\tpci 0x$vendor_class\n";
+	  print FH "&subdevice.id\t\tpci 0x$product_class\n";
+	  print FH "+subdevice.name\t\t$product_name\n";
 	} else {
-	  print FH "$vendor_class $product_class\n";
-	  }
+	  print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
+	  print FH "&device.id\t\tpci 0x$product_class\n";
+	  print FH "+device.name\t\t$product_name\n";
+	}
 	if ($tooltopics{resol} ne "") {
 	  $tooltopics{resol} =~ s/bpp//g;
 	}
@@ -386,11 +407,11 @@ foreach $arch_name (@arch_names) {
 	    die "\nMore than one driver- or installscript-topic. Product-id=$product_id. Vario=$vario_name. Arch=$arch_name.\n";
 	  }
 	
-	print FH "\tx\t4|$tooltopics{driver}||$tooltopics{package}|$tooltopics{extension}|$tooltopics{option}|$tooltopics{resol}||$tooltopics{installscript}|\n";
+	print FH "+driver.xfree\t\t4|$tooltopics{driver}||$tooltopics{package}|$tooltopics{extension}|$tooltopics{option}|$tooltopics{resol}||$tooltopics{installscript}|\n";
 	if ($tooltopics{raw} ne "") {
 	  @raw = (split(',',$tooltopics{raw}));
 	  foreach $raw (@raw) {
-	    print FH "\t\t$raw\n";
+	    print FH "+driver.xfree.config\t$raw\n";
 	  }
 	}
       }
@@ -462,12 +483,19 @@ foreach $arch_name (@arch_names) {
 	  }
       }
       if ( ($vendor_class ne "") && ($product_class ne "") ) {
-	print FH "\n# $vendor_name:$product_name\n";
+        print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
+        print FH "+vendor.name\t\t$vendor_name\n";
 	if ( ($subvendor_class ne "") && ($subproduct_class ne "") ) {
-	  print FH "$subvendor_class $subproduct_class $vendor_class $product_class\n";
+	  print FH "\n vendor.id\t\tpci 0x$subvendor_class\n";
+	  print FH "&device.id\t\tpci 0x$subproduct_class\n";
+	  print FH "&subvendor.id\t\tpci 0x$vendor_class\n";
+	  print FH "&subdevice.id\t\tpci 0x$product_class\n";
+	  print FH "+subdevice.name\t\t$product_name\n";
 	} else {
-	  print FH "$vendor_class $product_class\n";
-	  }
+	  print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
+	  print FH "&device.id\t\tpci 0x$product_class\n";
+	  print FH "+device.name\t\t$product_name\n";
+	}
 	if ($tooltopics{resol} ne "") {
 	  $tooltopics{resol} =~ s/bpp//g;
 	}
@@ -477,11 +505,11 @@ foreach $arch_name (@arch_names) {
 	    die "\nMore than one driver- or installscript-topic. Product-id=$product_id. Vario=$vario_name. Arch=$arch_name.\n";
 	  }
 	
-	print FH "\tx\t4|$tooltopics{driver}|3d|$tooltopics{package}|$tooltopics{extension}|$tooltopics{option}|$tooltopics{resol}||$tooltopics{installscript}|\n";
+	print FH "+driver.xfree\t\t4|$tooltopics{driver}|3d|$tooltopics{package}|$tooltopics{extension}|$tooltopics{option}|$tooltopics{resol}||$tooltopics{installscript}|\n";
 	if ($tooltopics{raw} ne "") {
 	  @raw = (split(',',$tooltopics{raw}));
 	  foreach $raw (@raw) {
-	    print FH "\t\t$raw\n";
+	    print FH "+driver.xfree.config\t$raw\n";
 	  }
 	}
       }
