@@ -26962,7 +26962,7 @@
 &device.id		pci 0x1644
 &subvendor.id		pci 0x1014
 &subdevice.id		pci 0x0277
-+subdevice.name		Broadcom Vigil B5700 1000Base-T
++subdevice.name		Broadcom BCM5700 1000Base-T
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x1644
