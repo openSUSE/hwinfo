@@ -6,6 +6,9 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <linux/usb.h>
+#include <linux/usbdevice_fs.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -21,10 +24,15 @@
 
 static int get_next_device(char *dev, int idx);
 static void get_usb_data(hd_data_t *hd_data);
+static int usb_control_msg(int fd, unsigned requesttype, unsigned request, unsigned value, unsigned index, unsigned size, void *data);
 static void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb);
 static usb_t *find_usb_entry(hd_data_t *hd_data, int *dev_idx);
 static usb_t *add_usb_entry(hd_data_t *hd_data, usb_t *new_usb);
 static void dump_usb_data(hd_data_t *hd_data);
+
+#define USB_DT_CS_DEVICE	0x21
+#define CTRL_RETRIES		50
+#define CTRL_TIMEOUT		100	/* milliseconds */
 
 void hd_scan_usb(hd_data_t *hd_data)
 {
@@ -238,6 +246,8 @@ void get_usb_data(hd_data_t *hd_data)
   str_list_t *sl;
   usb_t *usb = NULL;
   char *s;
+  int fd, cfg_descr_size, i;
+  unsigned char *cfg_descr, *hid_descr;
 
   if(
     !(hd_data->proc_usb = read_file(PROC_USB_DEVICES, 0, 0)) &&
@@ -341,8 +351,86 @@ void get_usb_data(hd_data_t *hd_data)
       usb->i_prot = i5;
       if(strcmp(buf, "(none)")) usb->driver = new_str(buf);
     }
+
+    if(usb->i_cls == 3) {	/* hid */
+      s = NULL;
+      str_printf(&s, 0, "/proc/bus/usb/%03u/%03u", usb->bus, usb->dev_nr);
+      fd = open(s, O_RDWR);
+      if(fd >= 0) {
+        if(
+          usb_control_msg(fd,
+            USB_DIR_IN,
+            USB_REQ_GET_DESCRIPTOR,
+            (USB_DT_CONFIG << 8) + 0,
+            0, USB_DT_CONFIG_SIZE, buf
+          ) >= 0 &&
+          buf[0] >= USB_DT_CONFIG_SIZE &&
+          buf[1] == USB_DT_CONFIG
+        ) {
+          cfg_descr_size = buf[2] | buf[3] << 8;
+          cfg_descr = new_mem(cfg_descr_size);
+          if(
+            usb_control_msg(fd,
+              USB_DIR_IN,
+              USB_REQ_GET_DESCRIPTOR,
+              (USB_DT_CONFIG << 8) + 0,
+              0, cfg_descr_size, cfg_descr
+            ) >= 0
+          ) {
+            ADD2LOG("  got config descr for %03u/%03u (%u bytes):\n    ", usb->bus, usb->dev_nr, cfg_descr_size);
+            hexdump(&hd_data->log, 0, cfg_descr_size, cfg_descr);
+            ADD2LOG("\n");
+
+            /* ok, we have it, now parse it */
+
+            for(i = 0; i < cfg_descr_size; i += cfg_descr[i]) {
+              if(cfg_descr[i] < 2 || cfg_descr[i] + i > cfg_descr_size) break;
+              if(cfg_descr[i + 1] == USB_DT_CS_DEVICE) {
+                hid_descr = cfg_descr + i;
+                if(hid_descr[0] >= 6 + 3 * hid_descr[5]) {
+                  ADD2LOG("    hid descr: ");
+                  hexdump(&hd_data->log, 0, hid_descr[0], hid_descr);
+                  ADD2LOG("\n");
+                  usb->country = hid_descr[4];
+                  // ADD2LOG("    country code: %u\n", usb->country);
+                }
+              }
+            }
+          }
+          cfg_descr = free_mem(cfg_descr);
+        }
+        close(fd);
+      }
+      s = free_mem(s);
+    }
   }
 }
+
+
+/* taken from lsusb.c (usbutils-0.8) */
+int usb_control_msg(int fd, unsigned requesttype, unsigned request, unsigned value, unsigned index, unsigned size, void *data)
+{
+  struct usbdevfs_ctrltransfer ctrl;
+  int result, try;
+
+  ctrl.requesttype = requesttype;
+  ctrl.request = request;
+  ctrl.value = value;
+  ctrl.index = index;
+  ctrl.length = size;
+  ctrl.timeout = 1000;
+  ctrl.data = data;
+  ctrl.timeout = CTRL_TIMEOUT; 
+  try = 0;
+
+  do {
+    result = ioctl(fd, USBDEVFS_CONTROL, &ctrl);
+    try++;
+  } while(try < CTRL_RETRIES && result == -1 && errno == ETIMEDOUT);
+
+  return result;
+}
+
 
 void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
 {
@@ -484,6 +572,7 @@ void dump_usb_data(hd_data_t *hd_data)
     if(usb->manufact) ADD2LOG("  manufacturer \"%s\"\n", usb->manufact);
     if(usb->product) ADD2LOG("  product \"%s\"\n", usb->product);
     if(usb->serial) ADD2LOG("  serial \"%s\"\n", usb->serial);
+    if(usb->country) ADD2LOG("  country %u\n", usb->country);
     if(usb->next) ADD2LOG("\n");
   }
   ADD2LOG("----- usb device info end -----\n");

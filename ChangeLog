@@ -1,3 +1,6 @@
+2/11/2001:.	v3.33
+	- read country code from usb devices
+
 30/10/2001:	v3.32
 	- handle iSeries network and storage devices
 	  return ppc64 when uname -m returns it

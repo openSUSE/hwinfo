@@ -356,6 +356,7 @@ typedef struct usb_s {
   char *driver;
   int d_cls, d_sub, d_prot;
   int i_cls, i_sub, i_prot;
+  unsigned country;
 } usb_t;
 
 /*

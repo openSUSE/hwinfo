@@ -2182,6 +2182,60 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
   unsigned u;
   char *s1, *s2;
   hd_t *hd_tmp;
+  usb_t *usb;
+
+  /* country codes
+     1 Arabic
+     2 Belgian
+     3 Canadian-Bilingual
+     4 Canadian-French
+     5 Czech Republic
+     6 Danish
+     7 Finnish
+     8 French
+     9 German
+    10 Greek
+    11 Hebrew
+    12 Hungary
+    13 International (ISO)
+    14 Italian
+    15 Japan (Katakana)
+    16 Korean
+    17 Latin American
+    18 Netherlands/Dutch
+    19 Norwegian
+    20 Persian (Farsi)
+    21 Poland
+    22 Portuguese
+    23 Russia
+    24 Slovakia
+    25 Spanish
+    26 Swedish 
+    27 Swiss/French
+    28 Swiss/German
+    29 Switzerland
+    30 Taiwan
+    31 Turkish
+    32 UK
+    33 US
+    34 Yugoslavia
+  */
+  static struct {
+    unsigned country;
+    char *layout;
+    char *keymap;
+  } country_code[] = {
+    {  5, "cs", "cz-us-qwertz" },
+    {  8, "fr", "fr-latin1" },
+    {  9, "de", "de-latin1-nodeadkeys" },
+    { 10, "gr", "gr" },
+    { 14, "it", "it" },
+    { 18, "nl", "us" },
+    { 23, "ru", "ru1" },
+    { 25, "es", "es" },
+    { 32, "uk", "uk" },
+    { 33, "us", "us" }
+  };
 
   if(hd->sub_class == sc_keyboard_console) return NULL;
 
@@ -2324,6 +2378,22 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
 
     default:
       ki->XkbRules = new_str("xfree86");
+  }
+
+  if(
+    hd->bus == bus_usb &&
+    hd->detail &&
+    hd->detail->type == hd_detail_usb &&
+    (usb = hd->detail->usb.data) &&
+    usb->country
+  ) {
+    for(u = 0; u < sizeof country_code / sizeof *country_code; u++) {
+      if(country_code[u].country == usb->country) {
+        if(!ki->XkbLayout) ki->XkbLayout = new_str(country_code[u].layout);
+        if(!ki->keymap) ki->keymap = new_str(country_code[u].keymap);
+        break;
+      }
+    }
   }
 
   return di;
