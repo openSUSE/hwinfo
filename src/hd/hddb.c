@@ -1365,6 +1365,7 @@ void complete_ids(
 
       case 3:
         ids--;
+        hs->driver = free_str_list(hs->driver);
         do {
           ids++;
           fl = DATA_FLAG(*ids) & ~FLAG_CONT;
@@ -1634,7 +1635,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
   }
 
   if((hs.value & (1 << he_requires))) {
-    hd->requires = free_str_list(hd->requires);
+    if(!hd->ref) hd->requires = free_str_list(hd->requires);
     hd->requires = hd_split('|', hs.requires);
   }
 
@@ -1708,6 +1709,8 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     hd->driver_info = new_driver_info;
     expand_driver_info(hd_data, hd);
   }
+
+  free_str_list(hs.driver);
 }
 
 

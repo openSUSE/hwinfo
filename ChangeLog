@@ -1,5 +1,6 @@
 	- extended isdn package info
 	- detect dvb cards
+	- fixed reading driver info
 
 6/8/2002:	v5.05
 	- minor libhd interface changes

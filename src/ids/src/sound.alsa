@@ -1,0 +1,357 @@
+# alsa sound driver
+
+
+ vendor.id		pci 0x1013
+&device.id		pci 0x6001
+|vendor.id		pci 0x1013
+&device.id		pci 0x6003+0x0002
++driver.any		snd-cs46xx
+
+ vendor.id		pci 0x1013
+&device.id		pci 0x6005
++driver.any		snd-cs4281
+
+ vendor.id		pci 0x1022
+&device.id		pci 0x7445
+|vendor.id		pci 0x1022
+&device.id		pci 0x764d
+|vendor.id		pci 0x1039
+&device.id		pci 0x7012
+|vendor.id		pci 0x10de
+&device.id		pci 0x01b1
+|vendor.id		pci 0x8086
+&device.id		pci 0x2415
+|vendor.id		pci 0x8086
+&device.id		pci 0x2425
+|vendor.id		pci 0x8086
+&device.id		pci 0x2445
+|vendor.id		pci 0x8086
+&device.id		pci 0x2485
+|vendor.id		pci 0x8086
+&device.id		pci 0x7195
++driver.any		snd-intel8x0
+
+ vendor.id		pci 0x1023
+&device.id		pci 0x2000+0x0002
+|vendor.id		pci 0x1039
+&device.id		pci 0x7018
++driver.any		snd-trident
+
+ vendor.id		pci 0x1073
+&device.id		pci 0x0004
+|vendor.id		pci 0x1073
+&device.id		pci 0x000a
+|vendor.id		pci 0x1073
+&device.id		pci 0x000c+0x0002
+|vendor.id		pci 0x1073
+&device.id		pci 0x0010
+|vendor.id		pci 0x1073
+&device.id		pci 0x0012
++driver.any		snd-ymfpci
+
+ vendor.id		pci 0x10b5
+&device.id		pci 0x906d
++driver.any		snd-korg1212
+
+ vendor.id		pci 0x10b9
+&device.id		pci 0x0111
+|vendor.id		pci 0x13f6
+&device.id		pci 0x0100+0x0002
+|vendor.id		pci 0x13f6
+&device.id		pci 0x0111+0x0002
++driver.any		snd-cmipci
+
+ vendor.id		pci 0x10b9
+&device.id		pci 0x5451
++driver.any		snd-ali5451
+
+ vendor.id		pci 0x10c8
+&device.id		pci 0x8005+0x0002
++driver.any		snd-nm256
+
+ vendor.id		pci 0x10ee
+&device.id		pci 0x3fc0+0x0004
++driver.any		snd-rme96
+
+ vendor.id		pci 0x10ee
+&device.id		pci 0x3fc4
++driver.any		snd-rme9652
+
+ vendor.id		pci 0x1102
+&device.id		pci 0x0002
+|vendor.id		pci 0x1102
+&device.id		pci 0x0004
++driver.any		snd-emu10k1
+
+ vendor.id		pci 0x1102
+&device.id		pci 0x8938
+|vendor.id		pci 0x1274
+&device.id		pci 0x1371
+|vendor.id		pci 0x1274
+&device.id		pci 0x5880
++driver.any		snd-ens1371
+
+ vendor.id		pci 0x1106
+&device.id		pci 0x3058
++driver.any		snd-via686
+
+ vendor.id		pci 0x1106
+&device.id		pci 0x3059
++driver.any		snd-via686|snd-via8233
+
+ vendor.id		pci 0x125d
+&device.id		pci 0x1968
+|vendor.id		pci 0x125d
+&device.id		pci 0x1978
+|vendor.id		pci 0x1285
+&device.id		pci 0x0100
++driver.any		snd-es1968
+
+ vendor.id		pci 0x125d
+&device.id		pci 0x1969
++driver.any		snd-es1938
+
+ vendor.id		pci 0x125d
+&device.id		pci 0x1988+0x0002
+|vendor.id		pci 0x125d
+&device.id		pci 0x1990
+|vendor.id		pci 0x125d
+&device.id		pci 0x1992
+|vendor.id		pci 0x125d
+&device.id		pci 0x1998+0x0004
++driver.any		snd-maestro3
+
+ vendor.id		pci 0x1274
+&device.id		pci 0x5000
++driver.any		snd-ens1370
+
+ vendor.id		pci 0x1319
+&device.id		pci 0x0801
++driver.any		snd-fm801
+
+ vendor.id		pci 0x1412
+&device.id		pci 0x1712
++driver.any		snd-ice1712
+
+ vendor.id		pci 0x4005
+&device.id		pci 0x4000
++driver.any		snd-als4000
+
+ vendor.id		pci 0x5333
+&device.id		pci 0xca00
++driver.any		snd-sonicvibes
+
+ vendor.id		ADS
+&device.id		eisa 0x7150
+|vendor.id		ADS
+&device.id		eisa 0x7181
+|vendor.id		AZT
+&device.id		eisa 0x1022
+|vendor.id		LWC
+&device.id		eisa 0x1061
+|vendor.id		MDK
+&device.id		eisa 0x1605
+|vendor.id		SMM
+&device.id		eisa 0x7180
+|vendor.id		TER
+&device.id		eisa 0x1112
+|vendor.id		TER
+&device.id		eisa 0x1411
++driver.any		snd-ad1816a
+
+ vendor.id		ADV
+&device.id		eisa 0x550a
++driver.any		snd-interwave-stb
+
+ vendor.id		ADV
+&device.id		eisa 0x55ff
+|vendor.id		CDC
+&device.id		eisa 0x1111
+|vendor.id		DXP
+&device.id		eisa 0x3201
+|vendor.id		GRV
+&device.id		eisa 0x0001
+|vendor.id		STB
+&device.id		eisa 0x011a
++driver.any		snd-interwave
+
+ vendor.id		ALS
+&device.id		eisa 0x0001
+|vendor.id		ALS
+&device.id		eisa 0x0110
+|vendor.id		ALS
+&device.id		eisa 0x0120
+|vendor.id		ALS
+&device.id		eisa 0x0200
+|vendor.id		RTL
+&device.id		eisa 0x3000
++driver.any		snd-als100
+
+ vendor.id		AZT
+&device.id		eisa 0x1008
+|vendor.id		AZT
+&device.id		eisa 0x2320
+|vendor.id		AZT
+&device.id		eisa 0x3000
+|vendor.id		AZT
+&device.id		eisa 0x3002
+|vendor.id		AZT
+&device.id		eisa 0x3005
+|vendor.id		AZT
+&device.id		eisa 0x3011
++driver.any		snd-azt2320
+
+ vendor.id		CMI
+&device.id		eisa 0x0001
++driver.any		snd-cmi8330
+
+ vendor.id		CSC
+&device.id		eisa 0x0225
+|vendor.id		CSC
+&device.id		eisa 0x0437
+|vendor.id		CSC
+&device.id		eisa 0x0735
+|vendor.id		CSC
+&device.id		eisa 0x0b35
+|vendor.id		CSC
+&device.id		eisa 0x1335
+|vendor.id		CSC
+&device.id		eisa 0x1425
+|vendor.id		CSC
+&device.id		eisa 0x1525
+|vendor.id		CSC
+&device.id		eisa 0x1e37
+|vendor.id		CSC
+&device.id		eisa 0x4236+0x0002
+|vendor.id		CSC
+&device.id		eisa 0x4336
+|vendor.id		CSC
+&device.id		eisa 0x4536
+|vendor.id		CSC
+&device.id		eisa 0x4637
+|vendor.id		CSC
+&device.id		eisa 0x4837
+|vendor.id		CSC
+&device.id		eisa 0x6835+0x0002
+|vendor.id		CSC
+&device.id		eisa 0x7537
+|vendor.id		CSC
+&device.id		eisa 0x8025
+|vendor.id		CSC
+&device.id		eisa 0x8037
+|vendor.id		CSC
+&device.id		eisa 0x9836+0x0002
+|vendor.id		CSC
+&device.id		eisa 0xa836
+|vendor.id		CSC
+&device.id		eisa 0xc835
+|vendor.id		CSC
+&device.id		eisa 0xd925
+|vendor.id		CSC
+&device.id		eisa 0xd937
+|vendor.id		CSC
+&device.id		eisa 0xe825
+|vendor.id		CSC
+&device.id		eisa 0xe836
+|vendor.id		CSC
+&device.id		eisa 0xf235
+|vendor.id		CSC
+&device.id		eisa 0xf238
++driver.any		snd-cs4236
+
+ vendor.id		CSC
+&device.id		eisa 0x0d32
+|vendor.id		CSC
+&device.id		eisa 0x1a32
+|vendor.id		CSC
+&device.id		eisa 0x4232
+|vendor.id		CSC
+&device.id		eisa 0xf032
++driver.any		snd-cs4232
+
+ vendor.id		CSC
+&device.id		eisa 0x7532
+|vendor.id		CSC
+&device.id		eisa 0x7632
++driver.any		snd-cs4232|snd-wavefront
+
+ vendor.id		CTL
+&device.id		eisa 0x0024
+|vendor.id		CTL
+&device.id		eisa 0x0026+0x0007
+|vendor.id		CTL
+&device.id		eisa 0x0051
+|vendor.id		CTL
+&device.id		eisa 0x0070
+|vendor.id		CTL
+&device.id		eisa 0x0080
+|vendor.id		CTL
+&device.id		eisa 0x00f0
++driver.any		snd-sb16
+
+ vendor.id		CTL
+&device.id		eisa 0x0035
+|vendor.id		CTL
+&device.id		eisa 0x0039
+|vendor.id		CTL
+&device.id		eisa 0x0042+0x0004
+|vendor.id		CTL
+&device.id		eisa 0x0047+0x0002
+|vendor.id		CTL
+&device.id		eisa 0x0054
+|vendor.id		CTL
+&device.id		eisa 0x009a
+|vendor.id		CTL
+&device.id		eisa 0x009c+0x0004
+|vendor.id		CTL
+&device.id		eisa 0x00b2
+|vendor.id		CTL
+&device.id		eisa 0x00c1
+|vendor.id		CTL
+&device.id		eisa 0x00c3
+|vendor.id		CTL
+&device.id		eisa 0x00c5
+|vendor.id		CTL
+&device.id		eisa 0x00c7
+|vendor.id		CTL
+&device.id		eisa 0x00e4
+|vendor.id		CTL
+&device.id		eisa 0x00e9
+|vendor.id		CTL
+&device.id		eisa 0x00ed
++driver.any		snd-sbawe
+
+ vendor.id		ESS
+&device.id		eisa 0x0003
+|vendor.id		ESS
+&device.id		eisa 0x1868+0x0002
+|vendor.id		ESS
+&device.id		eisa 0x1878+0x0002
++driver.any		snd-es18xx
+
+ vendor.id		ESS
+&device.id		eisa 0x0968
++driver.any		snd-es968
+
+ vendor.id		NMX
+&device.id		eisa 0x2200
+|vendor.id		YMH
+&device.id		eisa 0x0020
+|vendor.id		YMH
+&device.id		eisa 0x0030
+|vendor.id		YMH
+&device.id		eisa 0x0800
++driver.any		snd-opl3sa2
+
+ vendor.id		OPT
+&device.id		eisa 0x0924+0x0002
++driver.any		snd-opti92x-ad1848|snd-opti92x-cs4231
+
+ vendor.id		OPT
+&device.id		eisa 0x0931
++driver.any		snd-opti93x
+
+ vendor.id		RWB
+&device.id		eisa 0x1688
++driver.any		snd-dt0197h
+

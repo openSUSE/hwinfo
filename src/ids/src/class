@@ -1,0 +1,864 @@
+# device classes
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# PCI device classes and subclasses
+
+ baseclass.id		0x000
++baseclass.name		Unclassified device
+
+ baseclass.id		0x000
+&subclass.id		0x00
++subclass.name		Unclassified device
+
+ baseclass.id		0x000
+&subclass.id		0x01
++subclass.name		VGA compatible unclassified device
+
+ baseclass.id		0x001
++baseclass.name		Mass storage controller
+
+ baseclass.id		0x001
+&subclass.id		0x00
++subclass.name		SCSI storage controller
+
+ baseclass.id		0x001
+&subclass.id		0x01
++subclass.name		IDE interface
+
+ baseclass.id		0x001
+&subclass.id		0x02
++subclass.name		Floppy disk controller
+
+ baseclass.id		0x001
+&subclass.id		0x03
++subclass.name		IPI bus controller
+
+ baseclass.id		0x001
+&subclass.id		0x04
++subclass.name		RAID bus controller
+
+ baseclass.id		0x001
+&subclass.id		0x80
++subclass.name		Unknown mass storage controller
+
+ baseclass.id		0x002
++baseclass.name		Network controller
+
+ baseclass.id		0x002
+&subclass.id		0x00
++subclass.name		Ethernet controller
+
+ baseclass.id		0x002
+&subclass.id		0x01
++subclass.name		Token ring network controller
+
+ baseclass.id		0x002
+&subclass.id		0x02
++subclass.name		FDDI network controller
+
+ baseclass.id		0x002
+&subclass.id		0x03
++subclass.name		ATM network controller
+
+ baseclass.id		0x002
+&subclass.id		0x04
++subclass.name		ISDN controller
+
+ baseclass.id		0x002
+&subclass.id		0x80
++subclass.name		Network controller
+
+ baseclass.id		0x003
++baseclass.name		Display controller
+
+ baseclass.id		0x003
+&subclass.id		0x00
++subclass.name		VGA compatible controller
+
+ baseclass.id		0x003
+&subclass.id		0x00
+&progif.id		0x00
++progif.name		VGA
+
+ baseclass.id		0x003
+&subclass.id		0x00
+&progif.id		0x01
++progif.name		8514
+
+ baseclass.id		0x003
+&subclass.id		0x01
++subclass.name		XGA compatible controller
+
+ baseclass.id		0x003
+&subclass.id		0x02
++subclass.name		3D controller
+
+ baseclass.id		0x003
+&subclass.id		0x80
++subclass.name		Display controller
+
+ baseclass.id		0x004
++baseclass.name		Multimedia controller
+
+ baseclass.id		0x004
+&subclass.id		0x00
++subclass.name		Multimedia video controller
+
+ baseclass.id		0x004
+&subclass.id		0x01
++subclass.name		Multimedia audio controller
+
+ baseclass.id		0x004
+&subclass.id		0x02
++subclass.name		Computer telephony device
+
+ baseclass.id		0x004
+&subclass.id		0x80
++subclass.name		Multimedia controller
+
+ baseclass.id		0x005
++baseclass.name		Memory controller
+
+ baseclass.id		0x005
+&subclass.id		0x00
++subclass.name		RAM memory
+
+ baseclass.id		0x005
+&subclass.id		0x01
++subclass.name		FLASH memory
+
+ baseclass.id		0x005
+&subclass.id		0x80
++subclass.name		Memory controller
+
+ baseclass.id		0x006
++baseclass.name		Bridge
+
+ baseclass.id		0x006
+&subclass.id		0x00
++subclass.name		Host bridge
+
+ baseclass.id		0x006
+&subclass.id		0x01
++subclass.name		ISA bridge
+
+ baseclass.id		0x006
+&subclass.id		0x02
++subclass.name		EISA bridge
+
+ baseclass.id		0x006
+&subclass.id		0x03
++subclass.name		MicroChannel bridge
+
+ baseclass.id		0x006
+&subclass.id		0x04
++subclass.name		PCI bridge
+
+ baseclass.id		0x006
+&subclass.id		0x04
+&progif.id		0x00
++progif.name		Normal decode
+
+ baseclass.id		0x006
+&subclass.id		0x04
+&progif.id		0x01
++progif.name		Subtractive decode
+
+ baseclass.id		0x006
+&subclass.id		0x05
++subclass.name		PCMCIA bridge
+
+ baseclass.id		0x006
+&subclass.id		0x06
++subclass.name		NuBus bridge
+
+ baseclass.id		0x006
+&subclass.id		0x07
++subclass.name		CardBus bridge
+
+ baseclass.id		0x006
+&subclass.id		0x08
++subclass.name		RACEway bridge
+
+ baseclass.id		0x006
+&subclass.id		0x08
+&progif.id		0x00
++progif.name		Transparent mode
+
+ baseclass.id		0x006
+&subclass.id		0x08
+&progif.id		0x01
++progif.name		Endpoint mode
+
+ baseclass.id		0x006
+&subclass.id		0x09
++subclass.name		Semi-transparent PCI-to-PCI bridge
+
+ baseclass.id		0x006
+&subclass.id		0x09
+&progif.id		0x40
++progif.name		Primary bus towards host CPU
+
+ baseclass.id		0x006
+&subclass.id		0x09
+&progif.id		0x80
++progif.name		Secondary bus towards host CPU
+
+ baseclass.id		0x006
+&subclass.id		0x0a
++subclass.name		InfiniBand to PCI host bridge
+
+ baseclass.id		0x006
+&subclass.id		0x80
++subclass.name		Bridge
+
+ baseclass.id		0x007
++baseclass.name		Communication controller
+
+ baseclass.id		0x007
+&subclass.id		0x00
++subclass.name		Serial controller
+
+ baseclass.id		0x007
+&subclass.id		0x00
+&progif.id		0x00
++progif.name		8250
+
+ baseclass.id		0x007
+&subclass.id		0x00
+&progif.id		0x01
++progif.name		16450
+
+ baseclass.id		0x007
+&subclass.id		0x00
+&progif.id		0x02
++progif.name		16550
+
+ baseclass.id		0x007
+&subclass.id		0x00
+&progif.id		0x03
++progif.name		16650
+
+ baseclass.id		0x007
+&subclass.id		0x00
+&progif.id		0x04
++progif.name		16750
+
+ baseclass.id		0x007
+&subclass.id		0x00
+&progif.id		0x05
++progif.name		16850
+
+ baseclass.id		0x007
+&subclass.id		0x00
+&progif.id		0x06
++progif.name		16950
+
+ baseclass.id		0x007
+&subclass.id		0x01
++subclass.name		Parallel controller
+
+ baseclass.id		0x007
+&subclass.id		0x01
+&progif.id		0x00
++progif.name		SPP
+
+ baseclass.id		0x007
+&subclass.id		0x01
+&progif.id		0x01
++progif.name		BiDir
+
+ baseclass.id		0x007
+&subclass.id		0x01
+&progif.id		0x02
++progif.name		ECP
+
+ baseclass.id		0x007
+&subclass.id		0x01
+&progif.id		0x03
++progif.name		IEEE1284
+
+ baseclass.id		0x007
+&subclass.id		0x01
+&progif.id		0xfe
++progif.name		IEEE1284 Target
+
+ baseclass.id		0x007
+&subclass.id		0x02
++subclass.name		Multiport serial controller
+
+ baseclass.id		0x007
+&subclass.id		0x03
++subclass.name		Modem
+
+ baseclass.id		0x007
+&subclass.id		0x03
+&progif.id		0x01
++progif.name		Hayes/16450
+
+ baseclass.id		0x007
+&subclass.id		0x03
+&progif.id		0x02
++progif.name		Hayes/16550
+
+ baseclass.id		0x007
+&subclass.id		0x03
+&progif.id		0x03
++progif.name		Hayes/16650
+
+ baseclass.id		0x007
+&subclass.id		0x03
+&progif.id		0x04
++progif.name		Hayes/16750
+
+ baseclass.id		0x007
+&subclass.id		0x80
++subclass.name		Communication controller
+
+ baseclass.id		0x007+0x0002
+&subclass.id		0x03
+&progif.id		0x00
++progif.name		Generic
+
+ baseclass.id		0x008
++baseclass.name		Generic system peripheral
+
+ baseclass.id		0x008
+&subclass.id		0x00
++subclass.name		PIC
+
+ baseclass.id		0x008
+&subclass.id		0x00
+&progif.id		0x00
++progif.name		8259
+
+ baseclass.id		0x008
+&subclass.id		0x00
+&progif.id		0x01
++progif.name		ISA PIC
+
+ baseclass.id		0x008
+&subclass.id		0x00
+&progif.id		0x02
++progif.name		EISA PIC
+
+ baseclass.id		0x008
+&subclass.id		0x00
+&progif.id		0x10
++progif.name		IO-APIC
+
+ baseclass.id		0x008
+&subclass.id		0x00
+&progif.id		0x20
++progif.name		IO(X)-APIC
+
+ baseclass.id		0x008
+&subclass.id		0x01
++subclass.name		DMA controller
+
+ baseclass.id		0x008
+&subclass.id		0x01
+&progif.id		0x00
++progif.name		8237
+
+ baseclass.id		0x008
+&subclass.id		0x01
+&progif.id		0x01
++progif.name		ISA DMA
+
+ baseclass.id		0x008
+&subclass.id		0x01
+&progif.id		0x02
++progif.name		EISA DMA
+
+ baseclass.id		0x008
+&subclass.id		0x02
++subclass.name		Timer
+
+ baseclass.id		0x008
+&subclass.id		0x02
+&progif.id		0x00
++progif.name		8254
+
+ baseclass.id		0x008
+&subclass.id		0x02
+&progif.id		0x01
++progif.name		ISA Timer
+
+ baseclass.id		0x008
+&subclass.id		0x02
+&progif.id		0x02
++progif.name		EISA Timers
+
+ baseclass.id		0x008
+&subclass.id		0x03
++subclass.name		RTC
+
+ baseclass.id		0x008
+&subclass.id		0x03
+&progif.id		0x01
++progif.name		ISA RTC
+
+ baseclass.id		0x008
+&subclass.id		0x04
++subclass.name		PCI Hot-plug controller
+
+ baseclass.id		0x008
+&subclass.id		0x80
++subclass.name		System peripheral
+
+ baseclass.id		0x009
++baseclass.name		Input device controller
+
+ baseclass.id		0x009
+&subclass.id		0x00
++subclass.name		Keyboard controller
+
+ baseclass.id		0x009
+&subclass.id		0x01
++subclass.name		Digitizer Pen
+
+ baseclass.id		0x009
+&subclass.id		0x02
++subclass.name		Mouse controller
+
+ baseclass.id		0x009
+&subclass.id		0x03
++subclass.name		Scanner controller
+
+ baseclass.id		0x009
+&subclass.id		0x04
++subclass.name		Gameport controller
+
+ baseclass.id		0x009
+&subclass.id		0x04
+&progif.id		0x00
++progif.name		Generic
+
+ baseclass.id		0x009
+&subclass.id		0x04
+&progif.id		0x10
++progif.name		Extended
+
+ baseclass.id		0x009
+&subclass.id		0x80
++subclass.name		Input device controller
+
+ baseclass.id		0x00a
++baseclass.name		Docking station
+
+ baseclass.id		0x00a
+&subclass.id		0x00
++subclass.name		Generic Docking Station
+
+ baseclass.id		0x00a
+&subclass.id		0x80
++subclass.name		Docking Station
+
+ baseclass.id		0x00b
++baseclass.name		Processor
+
+ baseclass.id		0x00b
+&subclass.id		0x00
++subclass.name		386
+
+ baseclass.id		0x00b
+&subclass.id		0x01
++subclass.name		486
+
+ baseclass.id		0x00b
+&subclass.id		0x02
++subclass.name		Pentium
+
+ baseclass.id		0x00b
+&subclass.id		0x10
++subclass.name		Alpha
+
+ baseclass.id		0x00b
+&subclass.id		0x20
++subclass.name		Power PC
+
+ baseclass.id		0x00b
+&subclass.id		0x30
++subclass.name		MIPS
+
+ baseclass.id		0x00b
+&subclass.id		0x40
++subclass.name		Co-processor
+
+ baseclass.id		0x00c
++baseclass.name		Serial bus controller
+
+ baseclass.id		0x00c
+&subclass.id		0x00
++subclass.name		FireWire (IEEE 1394)
+
+ baseclass.id		0x00c
+&subclass.id		0x00
+&progif.id		0x00
++progif.name		Generic
+
+ baseclass.id		0x00c
+&subclass.id		0x00
+&progif.id		0x10
++progif.name		OHCI
+
+ baseclass.id		0x00c
+&subclass.id		0x01
++subclass.name		ACCESS Bus
+
+ baseclass.id		0x00c
+&subclass.id		0x02
++subclass.name		SSA
+
+ baseclass.id		0x00c
+&subclass.id		0x03
++subclass.name		USB Controller
+
+ baseclass.id		0x00c
+&subclass.id		0x03
+&progif.id		0x00
++progif.name		UHCI
+
+ baseclass.id		0x00c
+&subclass.id		0x03
+&progif.id		0x10
++progif.name		OHCI
+
+ baseclass.id		0x00c
+&subclass.id		0x03
+&progif.id		0x20
++progif.name		EHCI
+
+ baseclass.id		0x00c
+&subclass.id		0x03
+&progif.id		0x80
++progif.name		Unspecified
+
+ baseclass.id		0x00c
+&subclass.id		0x03
+&progif.id		0xfe
++progif.name		USB Device
+
+ baseclass.id		0x00c
+&subclass.id		0x04
++subclass.name		Fibre Channel
+
+ baseclass.id		0x00c
+&subclass.id		0x05
++subclass.name		SMBus
+
+ baseclass.id		0x00c
+&subclass.id		0x06
++subclass.name		InfiniBand
+
+ baseclass.id		0x00d
++baseclass.name		Wireless controller
+
+ baseclass.id		0x00d
+&subclass.id		0x00
++subclass.name		IRDA controller
+
+ baseclass.id		0x00d
+&subclass.id		0x01
++subclass.name		Consumer IR controller
+
+ baseclass.id		0x00d
+&subclass.id		0x10
++subclass.name		RF controller
+
+ baseclass.id		0x00d
+&subclass.id		0x80
++subclass.name		Wireless controller
+
+ baseclass.id		0x00e
++baseclass.name		Intelligent controller
+
+ baseclass.id		0x00e
+&subclass.id		0x00
++subclass.name		I2O
+
+ baseclass.id		0x00f
++baseclass.name		Satellite communications controller
+
+ baseclass.id		0x00f
+&subclass.id		0x00
++subclass.name		Satellite TV controller
+
+ baseclass.id		0x00f
+&subclass.id		0x01
++subclass.name		Satellite audio communication controller
+
+ baseclass.id		0x00f
+&subclass.id		0x03
++subclass.name		Satellite voice communication controller
+
+ baseclass.id		0x00f
+&subclass.id		0x04
++subclass.name		Satellite data communication controller
+
+ baseclass.id		0x010
++baseclass.name		Encryption controller
+
+ baseclass.id		0x010
+&subclass.id		0x00
++subclass.name		Network and computing encryption device
+
+ baseclass.id		0x010
+&subclass.id		0x10
++subclass.name		Entertainment encryption device
+
+ baseclass.id		0x010
+&subclass.id		0x80
++subclass.name		Encryption controller
+
+ baseclass.id		0x011
++baseclass.name		Signal processing controller
+
+ baseclass.id		0x011
+&subclass.id		0x00
++subclass.name		DPIO module
+
+ baseclass.id		0x011
+&subclass.id		0x01
++subclass.name		Performance counters
+
+ baseclass.id		0x011
+&subclass.id		0x10
++subclass.name		Communication synchronizer
+
+ baseclass.id		0x011
+&subclass.id		0x80
++subclass.name		Signal processing controller
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# our own class definitions
+
+ baseclass.id		0x0ff
++baseclass.name		Unclassified device
+
+ baseclass.id		0x100
++baseclass.name		Monitor
+
+ baseclass.id		0x100
+&subclass.id		0x01
++subclass.name		CRT Monitor
+
+ baseclass.id		0x100
+&subclass.id		0x02
++subclass.name		LCD Monitor
+
+ baseclass.id		0x101
++baseclass.name		Internally Used Class
+
+ baseclass.id		0x101
+&subclass.id		0x01
++subclass.name		ISA PnP Interface
+
+ baseclass.id		0x101
+&subclass.id		0x02
++subclass.name		Main Memory
+
+ baseclass.id		0x101
+&subclass.id		0x03
++subclass.name		CPU
+
+ baseclass.id		0x101
+&subclass.id		0x04
++subclass.name		FPU
+
+ baseclass.id		0x101
+&subclass.id		0x05
++subclass.name		BIOS
+
+ baseclass.id		0x101
+&subclass.id		0x06
++subclass.name		PROM
+
+ baseclass.id		0x101
+&subclass.id		0x07
++subclass.name		System
+
+ baseclass.id		0x102
++baseclass.name		Modem
+
+ baseclass.id		0x102
+&subclass.id		0x00
++subclass.name		Modem
+
+ baseclass.id		0x102
+&subclass.id		0x01
++subclass.name		Win-Modem
+
+ baseclass.id		0x103
++baseclass.name		ISDN Adapter
+
+ baseclass.id		0x104
++baseclass.name		PS/2 Controller
+
+ baseclass.id		0x105
++baseclass.name		Mouse
+
+ baseclass.id		0x105
+&subclass.id		0x00
++subclass.name		PS/2 Mouse
+
+ baseclass.id		0x105
+&subclass.id		0x01
++subclass.name		Serial Mouse
+
+ baseclass.id		0x105
+&subclass.id		0x02
++subclass.name		Bus Mouse
+
+ baseclass.id		0x105
+&subclass.id		0x03
++subclass.name		USB Mouse
+
+ baseclass.id		0x105
+&subclass.id		0x80
++subclass.name		Mouse
+
+ baseclass.id		0x106
++baseclass.name		Mass Storage Device
+
+ baseclass.id		0x106
+&subclass.id		0x00
++subclass.name		Disk
+
+ baseclass.id		0x106
+&subclass.id		0x01
++subclass.name		Tape
+
+ baseclass.id		0x106
+&subclass.id		0x02
++subclass.name		CD-ROM
+
+ baseclass.id		0x106
+&subclass.id		0x02
+&progif.id		0x01
++progif.name		CD-R
+
+ baseclass.id		0x106
+&subclass.id		0x02
+&progif.id		0x02
++progif.name		CD-RW
+
+ baseclass.id		0x106
+&subclass.id		0x02
+&progif.id		0x03
++progif.name		DVD
+
+ baseclass.id		0x106
+&subclass.id		0x02
+&progif.id		0x04
++progif.name		DVD-R
+
+ baseclass.id		0x106
+&subclass.id		0x02
+&progif.id		0x05
++progif.name		DVD-RAM
+
+ baseclass.id		0x106
+&subclass.id		0x03
++subclass.name		Floppy Disk
+
+ baseclass.id		0x106
+&subclass.id		0x80
++subclass.name		Storage Device
+
+ baseclass.id		0x107
++baseclass.name		Network Interface
+
+ baseclass.id		0x107
+&subclass.id		0x00
++subclass.name		Loopback
+
+ baseclass.id		0x107
+&subclass.id		0x01
++subclass.name		Ethernet
+
+ baseclass.id		0x107
+&subclass.id		0x02
++subclass.name		Tokenring
+
+ baseclass.id		0x107
+&subclass.id		0x03
++subclass.name		FDDI
+
+ baseclass.id		0x107
+&subclass.id		0x80
++subclass.name		Network Interface
+
+ baseclass.id		0x108
++baseclass.name		Keyboard
+
+ baseclass.id		0x108
+&subclass.id		0x00
++subclass.name		Keyboard
+
+ baseclass.id		0x108
+&subclass.id		0x01
++subclass.name		Console
+
+ baseclass.id		0x109
++baseclass.name		Printer
+
+ baseclass.id		0x10a
++baseclass.name		Hub
+
+ baseclass.id		0x10a
+&subclass.id		0x01
++subclass.name		USB Hub
+
+ baseclass.id		0x10b
++baseclass.name		Braille Display
+
+ baseclass.id		0x10c
++baseclass.name		Scanner
+
+ baseclass.id		0x10d
++baseclass.name		Joystick
+
+ baseclass.id		0x10d
+&subclass.id		0x01
++subclass.name		Gamepad
+
+ baseclass.id		0x10e
++baseclass.name		Chipcard Reader
+
+ baseclass.id		0x10f
++baseclass.name		Camera
+
+ baseclass.id		0x10f
+&subclass.id		0x01
++subclass.name		WebCam
+
+ baseclass.id		0x10f
+&subclass.id		0x02
++subclass.name		Digital Camera
+
+ baseclass.id		0x110
++baseclass.name		Framebuffer
+
+ baseclass.id		0x110
+&subclass.id		0x01
++subclass.name		VESA Framebuffer
+
+ baseclass.id		0x111
++baseclass.name		DVB Card
+
+ baseclass.id		0x111
+&subclass.id		0x01
++subclass.name		DVB-C Card
+
+ baseclass.id		0x111
+&subclass.id		0x02
++subclass.name		DVB-S Card
+
+ baseclass.id		0x111
+&subclass.id		0x03
++subclass.name		DVB-T Card
+
