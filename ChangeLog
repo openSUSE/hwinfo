@@ -1,4 +1,7 @@
+3/9/2004:	v9.7
 	- win modem dev name change (#44253)
+	- added nongpl module info
+	- fixed /tmp file handling (#44538)
 
 30/8/2004:	v9.6
 	- changed hwbootscan to use bash (#44199)

@@ -1000,7 +1000,7 @@ static char *scanner_info(hd_t *hd)
 
 void do_test(hd_data_t *hd_data)
 {
-#if 1
+#if 0
   hd_t *hd, *hd0;
   hd_res_t *res;
   driver_info_t *di;

@@ -58,9 +58,20 @@ cp --parents /proc/mounts "$dir/$host"
 echo -e "\n------  dmesg start  ------\n" >>"$dir/$host/var/log/boot.msg"
 dmesg >>"$dir/$host/var/log/boot.msg"
 
-tar -C "$dir" -zcf "/tmp/$host.tar.gz" "$host"
+file="$host.tar.gz"
+tar -C "$dir" -zcf "$dir/$file" "$host"
+
+rm -f "/tmp/$file"
+
+if [ -e "/tmp/$file" ] ; then
+  echo "Warning: /tmp/$file exists, no info written"\!
+  rm -rf "$dir"
+  exit 1
+fi
+
+ln -nf "$dir/$file" "/tmp/$file"
 
 rm -rf "$dir"
 
-echo -e "\nSystem data written to: /tmp/$host.tar.gz"
+echo -e "\nSystem data written to: /tmp/$file"
 
