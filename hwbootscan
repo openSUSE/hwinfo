@@ -19,4 +19,12 @@ fi
 
 /usr/sbin/hwscan --silent --boot --fast --isapnp --pci --block --floppy --mouse
 
+#
+# create icons for static drives
+#
+if [ -e /etc/hotplug/hotplug.subfs.functions ]; then
+  . /etc/hotplug/hotplug.subfs.functions
+  coldplug_create_subfs
+fi
+
 exit 0
