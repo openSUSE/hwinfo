@@ -53,6 +53,8 @@ rc_reset
 case "$1" in
     start)
 	echo -n "Starting hardware scan on boot"
+	rc_splash "YaST"
+	exec 0<> $REDIRECT 1>&0 2>&0
 	$HWBOOTSCAN_BIN
 	rc_check
         rc_status -v
