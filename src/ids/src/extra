@@ -251,3 +251,47 @@
 &subdevice.id		pci 0x009a
 +subdevice.name		NC7770 Gigabit Server Adapter
 
+
+# IBM ServeRAID adapters (#20268)
+ vendor.id		pci 0x1014
+&device.id		pci 0x002e
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x022e
++subdevice.name		ServeRAID 4H
+
+ vendor.id		pci 0x1014
+&device.id		pci 0x01bd
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x01be
++subdevice.name		ServeRAID 4M
+
+ vendor.id		pci 0x1014
+&device.id		pci 0x01bd
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x01bf
++subdevice.name		ServeRAID 4L
+
+ vendor.id		pci 0x1014
+&device.id		pci 0x01bd
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x0208
++subdevice.name		ServeRAID 4Mx
+
+ vendor.id		pci 0x1014
+&device.id		pci 0x01bd
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x020e
++subdevice.name		ServeRAID 4Lx
+
+ vendor.id		pci 0x1014
+&device.id		pci 0x01bd
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x0258
++subdevice.name		ServeRAID 5i
+
+ vendor.id		pci 0x1014
+&device.id		pci 0x01bd
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x0259
++subdevice.name		ServeRAID 5i
+
