@@ -42,6 +42,10 @@
 &device.id		pci 0x0621+0x0002
 |vendor.id		pci 0x1000
 &device.id		pci 0x0624
+|vendor.id		pci 0x1000
+&device.id		pci 0x0626
+|vendor.id		pci 0x1000
+&device.id		pci 0x0628
 +driver.module.modprobe	mptscsih
 +driver.module.insmod	mptbase|mptscsih
 
