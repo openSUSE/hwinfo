@@ -1,8 +1,4 @@
-void init_hddb(hd_data_t *hd_data);
-
-void add_vendor_name(hd_data_t *hd_data, unsigned vendor, char *name);
-void add_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, char *name);
-void add_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device, char *name);
+void hddb_init(hd_data_t *hd_data);
 
 unsigned device_class(hd_data_t *hd_data, unsigned vendor, unsigned device);
 unsigned sub_device_class(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device);

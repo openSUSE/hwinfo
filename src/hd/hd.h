@@ -800,6 +800,23 @@ typedef struct {
   char *names;
 } hddb_data_t;
 
+typedef uint32_t hddb_entry_mask_t;
+
+typedef struct hddb_list_s {   
+  hddb_entry_mask_t key_mask;
+  hddb_entry_mask_t value_mask;
+  unsigned key;
+  unsigned value;
+} hddb_list_t;
+
+typedef struct {
+  unsigned list_len, list_max;
+  hddb_list_t *list;
+  unsigned ids_len, ids_max;
+  unsigned *ids;
+  unsigned strings_len, strings_max;
+  char *strings;
+} hddb2_data_t;
 
 /*
  * pci module info
@@ -1385,9 +1402,8 @@ typedef struct {
   str_list_t *klog;		/* kernel log */
   str_list_t *proc_usb;		/* proc usb info */
   usb_t *usb;			/* usb info */
-  hddb_data_t *hddb_dev;	/* device name database */
-  hddb_data_t *hddb_drv;	/* driver info database */
   hddb_pci_t *hddb_pci;		/* pci module info */
+  hddb2_data_t *hddb2[2];	/* hardware database */
   str_list_t *kmods;		/* list of active kernel modules */
   uint64_t used_irqs;		/* irq usage */
   uint64_t assigned_irqs;	/* irqs automatically assigned by libhd (for driver info) */
@@ -1465,6 +1481,9 @@ char *hd_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, u
 
 int hd_find_device_by_name(hd_data_t *hd_data, unsigned base_class, char *vendor, char *device, unsigned *vendor_id, unsigned *device_id);
 str_list_t *get_hddb_packages(hd_data_t *hd_data);
+
+void hddb_dump_raw(hddb2_data_t *hddb, FILE *f);
+void hddb_dump(hddb2_data_t *hddb, FILE *f);
 
 /* implemented in hdp.c */
 

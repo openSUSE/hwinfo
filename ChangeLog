@@ -1,5 +1,9 @@
-	- Use _exit instead of exit to avoid calling QT destructors
-	  in Yast2.
+5/8/2002:	v5.04
+	- gmac -> sungem
+	- don't source rc.config
+	- report cardbus cards
+	- _exit instead of exit to avoid calling QT destructors in Yast2
+	- activated new database code
 
 22/7/2002:	v5.03
 	- updated x11 data

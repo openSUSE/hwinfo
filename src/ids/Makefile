@@ -1,52 +1,32 @@
 TOPDIR		= ../..
 TARGETS		= $(LIBHD_D)
-CLEANFILES	= *.h *.err hd.names hd.drivers hd.drivers_s
+CLEANFILES	= *.log hd0.ids
+DISTCLEANFILES	= *.h *.xml *.ids check_hd
 
 include $(TOPDIR)/Makefile.common
 
-IDFILES	= names.SuSE names.bus names.class names.special \
-	  names.scanner names.network names.usbutils names.usb names.eisa names.monitor \
-	  names.x11 names.camera
+IDFILES	= src/names.SuSE src/names.bus src/names.class src/names.special \
+	  src/names.scanner src/names.network src/names.usbutils src/names.usb\
+	  src/names.eisa src/names.monitor src/names.x11 src/names.camera
 
-# IDFILES		+= drivers.x11
+IDFILES += src/drivers.xfree src/names.x11.ia32
 
-ifeq "$(ARCH)" "i386"
-IDFILES	+= drivers.x11.ia32 names.x11.ia32
-endif
+IDFILES += src/names.video src/names.pciutils\
+	   src/drivers.network src/drivers.scsi src/drivers.block src/drivers.monitor\
+	   src/drivers.alsa src/drivers.audio src/drivers.mouse src/drivers.video\
+	   src/drivers.braille src/drivers.special
 
-ifeq "$(ARCH)" "ppc"
-IDFILES	+= drivers.x11.ppc drivers.x11special.ppc names.x11.ppc
-# IDFILES	+= drivers.x11special.ppc
-endif
-
-ifeq "$(ARCH)" "alpha"
-IDFILES	+= drivers.x11.axp names.x11.axp
-endif
-
-ifeq "$(ARCH)" "sparc"
-IDFILES	+= drivers.x11.sparc names.x11.sparc
-endif
-
-ifeq "$(ARCH)" "sparc64"
-IDFILES	+= drivers.x11.sparc names.x11.sparc
-endif
-
-ifeq "$(ARCH)" "ia64"
-IDFILES	+= drivers.x11.ia32 names.x11.ia32
-endif
-
-IDFILES += names.video names.pciutils\
-	   drivers.network drivers.scsi drivers.block drivers.monitor\
-	   drivers.alsa drivers.audio drivers.mouse drivers.video\
-	   drivers.braille drivers.special
-
-$(LIBHD_D): $(OBJS)
+$(LIBHD_D): hd_ids.o
 	ar r $(LIBHD) $?
 
-names.c: names.h names_s.h
+check_hd: check_hd.o
+	$(CC) $< $(LDFLAGS) -o $@
 
-drivers.c: drivers.h drivers_s.h
+hd_ids.c: hd_ids.h
 
-names.h names_s.h drivers.h drivers_s.h: $(IDFILES)
-	./mk_ids $(IDFILES) 2>mk_ids.err
+hd0.ids: $(IDFILES)
+	./convert_hd --fix-driver $(IDFILES) 2>hd0.log
+	mv hd.ids hd0.ids
 
+hd_ids.h: check_hd hd0.ids
+	./check_hd --check --sort --cfile hd_ids.h hd0.ids

@@ -204,6 +204,8 @@ void hd_scan_monitor(hd_data_t *hd_data)
 
     hd->serial = new_str(mi->serial);
 
+#if 0
+// ########### FIXME
     if(
       mi->vendor &&
       ID_VALUE(hd->vend) &&
@@ -211,7 +213,10 @@ void hd_scan_monitor(hd_data_t *hd_data)
     ) {
       add_vendor_name(hd_data, hd->vend, mi->vendor);
     }
+#endif
 
+#if 0
+// ########### FIXME 
     if(
       mi->name &&
       (ID_VALUE(hd->vend) || ID_VALUE(hd->dev)) &&
@@ -219,6 +224,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
     ) {
       add_device_name(hd_data, hd->vend, hd->dev, mi->name);
     }
+#endif
 
     if(hd_data->debug) {
       ADD2LOG("----- DDC info -----\n");
@@ -497,6 +503,8 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
 
     hd->serial = new_str(mi->serial);
 
+#if 0
+// ####### FIXME
     if(
       mi->vendor &&
       ID_VALUE(hd->vend) &&
@@ -504,7 +512,10 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
     ) {
       add_vendor_name(hd_data, hd->vend, mi->vendor);
     }
+#endif
 
+#if 0
+// ######## FIXME
     if(
       mi->name &&
       (ID_VALUE(hd->vend) || ID_VALUE(hd->dev)) &&
@@ -512,6 +523,7 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
     ) {
       add_device_name(hd_data, hd->vend, hd->dev, mi->name);
     }
+#endif
 
     if(hd_data->debug) {
       ADD2LOG("----- DDC info -----\n");

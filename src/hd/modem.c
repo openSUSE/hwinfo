@@ -439,7 +439,10 @@ void get_serial_modem(hd_data_t *hd_data)
       }
       hd->serial = new_str(sm->serial);
       if(sm->user_name && hd->dev) {
+#if 0
+// ######### FIXME
         add_device_name(hd_data, hd->vend, hd->dev, sm->user_name);
+#endif
       }
       else if(sm->user_name && sm->vend) {
         if(!hd_find_device_by_name(hd_data, hd->base_class, sm->vend, sm->user_name, &hd->vend, &hd->dev)) {

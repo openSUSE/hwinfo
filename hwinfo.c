@@ -40,6 +40,13 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item);
 void do_short(hd_data_t *hd_data, hd_t *hd, FILE *f);
 void do_test(hd_data_t *hd_data);
 void help(void);
+void dump_db_raw(hd_data_t *hd_data);
+void dump_db(hd_data_t *hd_data);
+
+
+struct {
+  unsigned db_idx;
+} opt;
 
 struct option options[] = {
   { "special", 1, NULL, 1 },
@@ -53,6 +60,8 @@ struct option options[] = {
   { "save-config", 1, NULL, 303 },
   { "short", 0, NULL, 304 },
   { "fast", 0, NULL, 305 },
+  { "dump-db", 1, NULL, 306 },
+  { "dump-db-raw", 1, NULL, 307 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -69,9 +78,11 @@ struct option options[] = {
   { "sound", 0, NULL, 1000 + hw_sound },
   { "isdn", 0, NULL, 1000 + hw_isdn },
   { "modem", 0, NULL, 1000 + hw_modem },
+  { "storage-ctrl", 0, NULL, 1000 + hw_storage_ctrl },
   { "storage_ctrl", 0, NULL, 1000 + hw_storage_ctrl },
   { "netcard", 0, NULL, 1000 + hw_network_ctrl },
   { "netcards", 0, NULL, 1000 + hw_network_ctrl },	// outdated, just kept for comaptibility
+  { "network-ctrl", 0, NULL, 1000 + hw_network_ctrl },
   { "network_ctrl", 0, NULL, 1000 + hw_network_ctrl },
   { "printer", 0, NULL, 1000 + hw_printer },
   { "tv", 0, NULL, 1000 + hw_tv },
@@ -81,6 +92,7 @@ struct option options[] = {
   { "bios", 0, NULL, 1000 + hw_bios },
   { "cpu", 0, NULL, 1000 + hw_cpu },
   { "partition", 0, NULL, 1000 + hw_partition },
+  { "usb-ctrl", 0, NULL, 1000 + hw_usb_ctrl },
   { "usb_ctrl", 0, NULL, 1000 + hw_usb_ctrl },
   { "usb", 0, NULL, 1000 + hw_usb },
   { "pci", 0, NULL, 1000 + hw_pci },
@@ -175,6 +187,16 @@ int main(int argc, char **argv)
 
         case 305:
           hd_data->flags.fast = 1;
+          break;
+
+        case 306:
+          opt.db_idx = strtoul(optarg, NULL, 0);
+          dump_db(hd_data);
+          break;
+
+        case 307:
+          opt.db_idx = strtoul(optarg, NULL, 0);
+          dump_db_raw(hd_data);
           break;
 
         case 1000 ... 1100:
@@ -451,12 +473,6 @@ void do_short(hd_data_t *hd_data, hd_t *hd, FILE *f)
   }
 #endif
 }
-
-
-#if 0
-void dump_hddb_data(hd_data_t *hd_data, hddb_data_t *x, char *name);
-void *free_mem(void *);
-#endif
 
 
 #if 1
@@ -1095,8 +1111,8 @@ void help()
     "  --hw_item      probe for hw_item\n"
     "  hw_item is one of:\n"
     "    cdrom, floppy, disk, network, gfxcard, framebuffer, monitor, camera,\n"
-    "    mouse, joystick, keyboard, chipcard, sound, isdn, modem, storage_ctrl,\n"
-    "    netcard, printer, tv, scanner, braille, sys, bios, cpu, partition, usb_ctrl,\n"
+    "    mouse, joystick, keyboard, chipcard, sound, isdn, modem, storage-ctrl,\n"
+    "    netcard, printer, tv, scanner, braille, sys, bios, cpu, partition, usb-ctrl,\n"
     "    usb, pci, isapnp, ide, scsi, bridge, hub, memory, smp,\n"
     "    all, reallyall\n\n"
     "  Note: debug info is shown only in the log file. (If you specify a\n"
@@ -1612,3 +1628,28 @@ int oem_install_info(hd_data_t *hd_data)
   fclose(f);
   return 0;
 }
+
+
+void dump_db_raw(hd_data_t *hd_data)
+{
+  hd_data->progress = NULL;
+  hd_clear_probe_feature(hd_data, pr_all);
+  hd_scan(hd_data);
+
+  if(opt.db_idx >= sizeof hd_data->hddb2 / sizeof *hd_data->hddb2) return;
+
+  hddb_dump_raw(hd_data->hddb2[opt.db_idx], stdout);
+}
+
+
+void dump_db(hd_data_t *hd_data)
+{
+  hd_data->progress = NULL;
+  hd_clear_probe_feature(hd_data, pr_all);
+  hd_scan(hd_data);
+
+  if(opt.db_idx >= sizeof hd_data->hddb2 / sizeof *hd_data->hddb2) return;
+
+  hddb_dump(hd_data->hddb2[opt.db_idx], stdout);
+}
+

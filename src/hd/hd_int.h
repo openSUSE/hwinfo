@@ -53,8 +53,7 @@
 #define KLOG_BOOT		"/var/log/boot.msg"
 #define ISAPNP_CONF		"/etc/isapnp.conf"
 
-#define NAME_LIST		"/var/lib/libhd/hd.names"
-#define DRIVER_LIST		"/var/lib/libhd/hd.drivers"
+#define ID_LIST			"/var/lib/libhd/hd.ids"
 #define MANUAL_DIR		"/var/lib/hardware"
 
 #define KERNEL_22		0x020200
@@ -193,6 +192,8 @@ void gather_resources(misc_t *m, hd_res_t **r, char *name, unsigned which);
 char *vend_id2str(unsigned vend);
 
 void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res_t **size);
+
+str_list_t *hd_split(char del, char *str);
 
 driver_info_t *hd_pcidb(hd_data_t *hd_data, hd_t *hd);
 

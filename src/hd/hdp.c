@@ -291,6 +291,18 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 
   if(h->model) dump_line("Model: \"%s\"\n", h->model);
 
+  s = NULL;
+  if(h->is.cardbus) {
+    s = "PCCard";
+  }
+  else if(h->is.pcmcia) {
+    s = "PCMCIA";
+  }
+
+  if(s) {
+    dump_line("Hotplug: %s\n", s);
+  }
+
   if(h->vend || h->dev || h->dev_name || h->vend_name) {
     if(h->vend || h->vend_name || h->dev)
       dump_line("Vendor: %s\n", make_vend_name_str(hd_data, h, buf, sizeof buf));

@@ -31,7 +31,7 @@ LIBHD_D	= $(TOPDIR)/src/.lib
 
 export CC TOPDIR CFLAGS LIBHD ARCH
 
-.PHONY: all clean install subdirs
+.PHONY: all distclean clean install subdirs
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $<
@@ -48,8 +48,11 @@ endif
 clean: subdirs
 	@rm -rf $(OBJS) .depend $(CLEANFILES) *~
 
+distclean: subdirs
+	@rm -rf $(OBJS) .depend $(CLEANFILES) $(DISTCLEANFILES) *~
+
 ifneq "$(CFILES)" ""
-ifneq "$(MAKECMDGOALS)" "clean"
+ifeq ($(findstring $(MAKECMDGOALS), clean distclean),)
 .depend: $(CFILES)
 	@$(CC) -MG -MM $(CFLAGS) $(CFILES) >$@
 

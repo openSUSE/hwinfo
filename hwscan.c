@@ -26,8 +26,10 @@ struct option options[] = {
   { "sound", 0, NULL, 1000 + hw_sound },
   { "modem", 0, NULL, 1000 + hw_modem },
   { "printer", 0, NULL, 1000 + hw_printer },
+  { "storage-ctrl", 0, NULL, 1000 + hw_storage_ctrl },
   { "storage_ctrl", 0, NULL, 1000 + hw_storage_ctrl },
   { "netcard", 0, NULL, 1000 + hw_network_ctrl },
+  { "network-ctrl", 0, NULL, 1000 + hw_network_ctrl },
   { "network_ctrl", 0, NULL, 1000 + hw_network_ctrl },
   { "camera", 0, NULL, 1000 + hw_camera },
   { "isdn", 0, NULL, 1000 + hw_isdn },
@@ -42,6 +44,7 @@ struct option options[] = {
   { "chipcard", 0, NULL, 1000 + hw_chipcard },
   { "braille", 0, NULL, 1000 + hw_braille },
   { "partition", 0, NULL, 1000 + hw_partition },
+  { "usb-ctrl", 0, NULL, 1000 + hw_usb_ctrl },
   { "usb_ctrl", 0, NULL, 1000 + hw_usb_ctrl },
   { "sys", 0, NULL, 1000 + hw_sys },
   { "cpu", 0, NULL, 1000 + hw_cpu },
@@ -196,9 +199,9 @@ void help()
     "  --hw_item         probe for hw_item and update status info\n"
     "  hw_item is one of:\n"
     "    cdrom, floppy, disk, mouse, gfxcard, monitor, network, sound, modem,\n"
-    "    printer, storage_ctrl, netcard, camera, isdn, tv, scanner, joystick,\n"
+    "    printer, storage-ctrl, netcard, camera, isdn, tv, scanner, joystick,\n"
     "    usb, pci, isapnp, framebuffer, keyboard, chipcard, braille, partition,\n"
-    "    usb_ctrl, sys, cpu, bios, bridge, hub, memory\n"
+    "    usb-ctrl, sys, cpu, bios, bridge, hub, memory\n"
   );
 }
 

@@ -1,0 +1,2065 @@
+#! /usr/bin/perl
+
+use XML::Writer;
+use XML::Parser;
+use IO;
+use Dumpvalue;
+
+sub read_name_file;
+sub read_driver_file;
+sub read_id_file;
+sub eisa_id;
+sub eisa_str;
+
+sub remove_nops;
+sub remove_duplicates;
+sub fix_driver_info;
+
+sub cmp_id;
+sub cmp_skey;
+sub cmp_item;
+
+sub match_id;
+sub match_skey;
+sub match_item;
+
+sub join_skey;
+
+sub split_item;
+
+sub add_name;
+sub get_xml_data;
+sub parse_xml_item;
+sub parse_xml_id;
+sub parse_xml_class;
+sub parse_xml_cdata;
+
+sub dump2ids;
+sub dump2xml;
+sub dump_xml_item;
+sub dump_xml_names;
+sub dump_xml_drivers;
+sub id2xml;
+
+$dump = new Dumpvalue();
+
+(
+  $he_other, $he_bus_id, $he_baseclass_id, $he_subclass_id, $he_progif_id,
+  $he_vendor_id, $he_device_id, $he_subvendor_id, $he_subdevice_id, $he_rev_id,
+  $he_bus_name, $he_baseclass_name, $he_subclass_name, $he_progif_name,
+  $he_vendor_name, $he_device_name, $he_subvendor_name, $he_subdevice_name,
+  $he_rev_name, $he_serial, $he_driver, $he_requires,
+  $he_nomask,
+  $he_driver_module_insmod, $he_driver_module_modprobe,
+  $he_driver_module_config, $he_driver_xfree, $he_driver_xfree_config,
+  $he_driver_mouse, $he_driver_display, $he_driver_any
+) = ( 0 .. 100 );
+$he_class_id = $he_nomask;
+
+@ent_names = (
+  "other", "bus.id", "baseclass.id", "subclass.id", "progif.id",
+  "vendor.id", "device.id", "subvendor.id", "subdevice.id", "rev.id",
+  "bus.name", "baseclass.name", "subclass.name", "progif.name",
+  "vendor.name", "device.name", "subvendor.name", "subdevice.name",
+  "rev.name", "serial", "driver", "requires",
+  "class.id", "driver.module.insmod", "driver.module.modprobe",
+  "driver.module.config", "driver.xfree", "driver.xfree.config",
+  "driver.mouse", "driver.display", "driver.any"
+);
+@ent_values{@ent_names} = ( 0 .. 100 );
+
+@xml_names = (
+  "other", "bus", "baseclass", "subclass", "progif",
+  "vendor", "device", "subvendor", "subdevice", "revision",
+  "bus", "baseclass", "subclass", "progif",
+  "vendor", "device", "subvendor", "subdevice",
+  "revision", "serial", "driver", "requires"
+);
+
+( $tag_none, $tag_pci, $tag_eisa, $tag_usb, $tag_special ) = ( 0 .. 4 );
+
+@tag_name = ( "", "pci", "eisa", "usb", "special" );
+@tag_values{@tag_name} = ( 0 .. 4 );
+
+( $flag_id, $flag_range, $flag_mask, $flag_string, $flag_regexp ) = ( 0 .. 4 );
+$flag_cont = 8;
+
+$write_ids = 1;
+$write_xml = 0;
+
+while($ARGV[0] =~ /^(--xml|--ids|--no-xml|--no-ids|--sort|--reverse|--random|--split|--with-source|--fix-driver)$/) {
+  shift;
+  if($1 eq '--xml') {
+    $write_xml = 1;
+  }
+  elsif($1 eq '--no-xml') {
+    $write_xml = 0;
+  }
+  elsif($1 eq '--ids') {
+    $write_ids = 1;
+  }
+  elsif($1 eq '--no-ids') {
+    $write_ids = 0;
+  }
+  elsif($1 eq '--sort') {
+    $sort_ids = 1;
+  }
+  elsif($1 eq '--reverse') {
+    $sort_reverse = 1;
+  }
+  elsif($1 eq '--random') {
+    $sort_random = 1;
+  }
+  elsif($1 eq '--split') {
+    $do_split = 1;
+  }
+  elsif($1 eq '--with-source') {
+    $opt_with_source = 1;
+  }
+  elsif($1 eq '--fix-driver') {
+    $opt_fix_driver = 1;
+  }
+}
+
+for $f (@ARGV) {
+  if(open F, $f) {
+    @f = (<F>);
+    close F;
+
+    # file format check
+
+    undef $format;
+
+    for (@f) {
+      if(/^\s*\<\?xml\s/) {
+        $format = 'xml';
+        last;
+      }
+    }
+
+    if(!$format) {
+      $i = join "|", map "\Q$_", @ent_names;
+      for (@f) {
+        if(/^\s*[+&|]?($i)\s/) {
+          $format = 'ids';
+          last;
+        }
+      }
+    }
+
+    if(!$format) {
+      for (@f) {
+        if(/^\t[a-z]\s/) {
+          $format = 'drivers';
+          last;
+        }
+      }
+    }
+
+    $format = 'names' if !$format;
+
+    if($format eq 'xml') {
+      print STDERR "======  \"$f\": xml info  ======\n";
+      $xmlp = new XML::Parser(Style => 'Tree', ParseParamEnt => 1);
+      get_xml_data $xmlp->parsefile($f);
+      next;
+    }
+
+    if($format eq 'names') {
+
+      print STDERR "======  \"$f\": name info  ======\n";
+      read_name_file $f, \@f;
+
+    }
+    elsif($format eq 'drivers') {
+
+      print STDERR "======  \"$f\": driver info  ======\n";
+      read_driver_file $f, \@f;
+
+    }
+    elsif($format eq 'xml') {
+
+      print STDERR "======  \"$f\": xml info  ======\n";
+      $xmlp = new XML::Parser(Style => 'Tree', ParseParamEnt => 1);
+      get_xml_data $xmlp->parsefile($f);
+      next;
+
+    }
+    elsif($format eq 'ids') {
+
+      print STDERR "======  \"$f\": id info  ======\n";
+      read_id_file $f, \@f;
+
+    }
+  }
+  else {
+    die "$f: $!\n"
+  }
+}
+
+print STDERR "removing unnecessary items\n";
+remove_nops;
+
+print STDERR "got ${\scalar @hd} items\n";
+
+if($opt_fix_driver) {
+  fix_driver_info;
+}
+
+if($split) {
+  print STDERR "splitting items\n";
+  for (@hd) {
+    push @hd_new, split_item($_);
+  }
+  @hd = @hd_new;
+  undef @hd_new;
+}
+
+if($sort_ids) {
+  print STDERR "sorting\n";
+  if($sort_random) {
+    @hd = sort { $cmp_item_cnt++, rand() <=> rand() } @hd;
+  }
+  elsif($sort_reverse) {
+    @hd = sort { cmp_item $b, $a } @hd;
+  }
+  else {
+    @hd = sort { cmp_item $a, $b } @hd;
+  }
+}
+
+if($write_ids) {
+  print STDERR "writing \"hd.ids\"\n";
+  dump2ids;
+}
+
+if($write_xml) {
+  print STDERR "writing \"hd.xml\"\n";
+  dump2xml;
+}
+
+print STDERR "cmps: $cmp_item_cnt\n" if $cmp_item_cnt;
+
+# $dump->dumpValue( \@hd );
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# read file with name/class info
+#
+# (either pciutils or SaX/SaX2 format)
+#
+
+sub read_name_file
+{
+  my ( $file_name, $file, $line, $sax_version, $tag, $id, $val, $ent );
+  my ( @id0, @id1, @id2, @id3, @id4, $raw, $opt, $ext, $srv, $str );
+  local $_;
+
+  my $rnf_add_id0 = sub
+  {
+    my ( $id0, $name0, $ent_id0, $ent_name0, $id, $val );
+
+    # note: $tag belongs to read_name_file()
+    ( $ent_id0, $ent_name0, $tag, $id0, $name0 ) = @_;
+
+    $ent = $ent_id0;
+
+    @id0 = ( $flag_id, $tag, $id0 );
+    undef @id1; undef @id2; undef @id3;
+
+    $id->[$ent_id0] = [ @id0 ];
+    $val->[$ent_name0] = [ $flag_string, $name0 ];
+
+    push @hd, [ "$file_name($line)", [ $id ], $val ];
+  };
+
+  my $rnf_add_bus = sub
+  {
+    $rnf_add_id0->($he_bus_id, $he_bus_name, 0, @_);
+  };
+
+  my $rnf_add_baseclass = sub
+  {
+    $rnf_add_id0->($he_baseclass_id, $he_baseclass_name, 0, @_);
+  };
+
+  my $rnf_add_vendor = sub
+  {
+    $rnf_add_id0->($he_vendor_id, $he_vendor_name, @_);
+  };
+
+  my $rnf_add_subdevice = sub
+  {
+    my ( $id2, $id3, $range, $name, $class, $id, $val );
+
+    ( $id2, $id3, $range, $name, $class ) = @_;
+
+    @id2 = ( $flag_id, $tag, $id2 );
+    @id3 = ( $flag_id, $tag, $id3 );
+    $id3[3] = $range if defined $range;
+
+    if($ent == $he_device_id || $ent == $he_subdevice_id) {
+      $ent = $he_subdevice_id;
+
+      $id->[$he_vendor_id] = [ @id0 ];
+      $id->[$he_device_id] = [ @id1 ];
+      $id->[$he_subvendor_id] = [ @id2 ];
+      $id->[$he_subdevice_id] = [ @id3 ];
+      $val->[$he_subdevice_name] = [ $flag_string, $name ];
+      if(defined $class) {
+        $val->[$he_baseclass_id] = [ $flag_id, $tag_none, $class >> 8 ];
+        $val->[$he_subclass_id] = [ $flag_id, $tag_none, $class & 0xff ];
+      }
+    }
+    else {
+      die "oops $file_name($line): subdevice id expected\n";
+    }
+
+    push @hd, [ "$file_name($line)", [ $id ], $val ];
+  };
+
+  ( $file_name, $file ) = @_;
+
+  $line = 0;
+  undef $sax_version;
+
+  for (@$file) {
+    $line++;
+    chomp;
+    s/\s*$//;
+    next if /^\s*[#;]/;
+    next if /^$/;
+
+    # SaX Identity file
+    if(/^NAME=(.+?)§DEVICE=(.+?)§VID=0x([0-9a-fA-F]+?)§DID=0x([0-9a-fA-F]+?)§SERVER=([^§]+)(§EXT=([^§]*))?(§OPT=([^§]*))?(§RAW=([^§]*))?$/) {
+      #       1            2           3                     4                      5      6     7        8     9        10    11
+
+      $rnf_add_vendor->($tag_pci, hex($3), $1);
+
+      @id0 = ( $flag_id, $tag, hex($3) );
+      @id1 = ( $flag_id, $tag, hex($4) );
+      @id3 = ( $flag_string, $2 );
+
+      $id = [];
+      $val = [];
+
+      $id->[$he_vendor_id] = [ @id0 ];
+      $id->[$he_device_id] = [ @id1 ];
+      $val->[$he_device_name] = [ @id3 ];
+
+      push @hd, [ "$file_name($line)", [ $id ], $val ];
+
+      ( $srv, $ext, $opt, $raw ) = ( $5, $7, $9, $11 );
+      $sax_tmp = $srv =~ /^3DLABS|MACH64|P9000|RUSH|S3|SVGA|TGA$/ ? 1 : 2;
+      $sax_version = $sax_tmp unless defined $sax_version;
+      die "line has SaX$sax_tmp format (expected SaX$sax_version): $file_name($line)\n" if $sax_tmp != $sax_version;
+
+      $id = [];
+      $val = [];
+
+      $id->[$he_vendor_id] = [ @id0 ];
+      $id->[$he_device_id] = [ @id1 ];
+
+      if($opt) {
+        $str = join "|", ( $sax_version == 1 ? 3 : 4, $srv, undef, undef, $ext, $opt );
+      }
+      elsif($ext) {
+        $str = join "|", ( $sax_version == 1 ? 3 : 4, $srv, undef, undef, $ext );
+      }
+      else {
+        $str = join "|", ( $sax_version == 1 ? 3 : 4, $srv );
+      }
+
+      @id4 = ( "x\t$str" );
+      if($raw) {
+        for $str (split /,/, $raw) { $id4[0] .= "\x00X\t$str" }
+      }
+
+      $val->[$he_driver] = [ $flag_string, @id4 ];
+
+      push @hd, [ "$file_name($line)", [ $id ], $val ];
+    }
+
+    elsif(/^B\s+([0-9a-fA-F]+)\s+(.*?)\s*$/) {
+
+      $rnf_add_bus->(hex($1), $2);
+
+    }
+
+    elsif(/^C\s+([0-9a-fA-F]+)\s+(.*?)\s*$/) {
+
+      $rnf_add_baseclass->(hex($1), $2);
+
+    }
+
+    elsif(/^([0-9a-fA-F]{4})(\s+(.*?))?\s*$/) {
+
+      $rnf_add_vendor->($tag_pci, hex($1), $3);
+
+    }
+
+    elsif(/^u([0-9a-fA-F]{4})(\s+(.*?))?\s*$/) {
+
+      $rnf_add_vendor->($tag_usb, hex($1), $3);
+
+    }
+
+    elsif(/^s([0-9a-fA-F]{4})(\s+(.*?))?\s*$/) {
+
+      $rnf_add_vendor->($tag_special, hex($1), $3);
+
+    }
+
+    elsif(/^([A-Z_@]{3})(\s+(.*?))?\s*$/) {
+
+      $rnf_add_vendor->($tag_eisa, eisa_id($1), $3);
+
+    }
+
+    elsif(/^\t([0-9a-fA-F]{1,4})(\+([0-9a-fA-F]+))?(\.([0-9a-fA-F]+))?(\s+(.*?))?\s*$/) {
+
+      $range = $3 ? hex($3) : undef;
+      $class = $5 ? hex($5) : undef;
+
+      @id1 = ( $flag_id, $tag, hex($1) );
+      $id1[3] = $range if defined $range;
+      undef @id2; undef @id3;
+
+      $id = [];
+      $val = [];
+
+      if($ent == $he_baseclass_id || $ent == $he_subclass_id) {
+        $ent = $he_subclass_id;
+
+        $id->[$he_baseclass_id] = [ @id0 ];
+        $id->[$he_subclass_id] = [ @id1 ];
+        $val->[$he_subclass_name] = [ $flag_string, $7 ];
+      }
+      elsif($ent == $he_vendor_id || $ent == $he_device_id || $ent == $he_subdevice_id) {
+        $ent = $he_device_id;
+
+        $id->[$he_vendor_id] = [ @id0 ];
+        $id->[$he_device_id] = [ @id1 ];
+        $val->[$he_device_name] = [ $flag_string, $7 ];
+        if(defined $class) {
+          $val->[$he_baseclass_id] = [ $flag_id, $tag_none, $class >> 8 ];
+          $val->[$he_subclass_id] = [ $flag_id, $tag_none, $class & 0xff ];
+        }
+      }
+      else {
+        die "oops $file_name($line): device id expected\n";
+      }
+
+      push @hd, [ "$file_name($line)", [ $id ], $val ];
+
+    }
+
+    elsif($ent == $he_subclass_id && /^\t\t([0-9a-fA-F]+)\s+(.*?)\s*$/) {
+
+      @id2 = ( $flag_id, $tag, hex($1) );
+      undef @id3;
+
+      $id = [];
+      $val = [];
+
+      $id->[$he_baseclass_id] = [ @id0 ];
+      $id->[$he_subclass_id] = [ @id1 ];
+      $id->[$he_progif_id] = [ @id2 ];
+      $val->[$he_progif_name] = [ $flag_string, $2 ];
+
+      push @hd, [ "$file_name($line)", [ $id ], $val ];
+
+    }
+
+    elsif(/^\t\t([0-9a-fA-F]{4})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?(\.([0-9a-fA-F]+))?(\s+(.*?))?\s*$/) {
+
+      $rnf_add_subdevice->(hex($1), hex($2), $4 ? hex($4) : undef, $8, $6 ? hex($6) : undef);
+
+    }
+
+    elsif(/^\t\t([A-Z_@]{3})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?(\.([0-9a-fA-F]+))?(\s+(.*?))?\s*$/) {
+
+      $rnf_add_subdevice->(eisa_id($1), hex($2), $4 ? hex($4) : undef, $8, $6 ? hex($6) : undef);
+
+    }
+
+    elsif(/^\t\t([0-9a-fA-F]{4})([0-9a-fA-F]{4})\s+(.*?)\s*$/) {
+
+      # NOTE: subvendor & subdevice ids are reversed!
+      $rnf_add_subdevice->(hex($2), hex($1), undef, $3);
+
+    }
+
+    else {
+      die "invalid line: $file_name($line)\n";
+    }
+  }
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# read file with driver info
+#
+
+sub read_driver_file
+{
+  my ( $line, @drv, $file, $file_name, $drv_type, $tag );
+  local $_;
+
+  my $rdf_save_drv = sub
+  {
+    if($drv_type) {
+      push @hd, [ @drv ] if defined @drv;
+      @drv = ( "$file_name($line)" );
+      $drv[2][$he_driver] = [ $flag_string ];
+      $drv_type = undef;
+    }
+  };
+
+  my $rdf_add_id = sub
+  {
+    my ( $tag, $id0, $id1, $range1, $id2, $id3, $range3, $id );
+
+    ( $tag, $id0, $id1, $range1, $id2, $id3, $range3 ) = @_;
+
+    $rdf_save_drv->();
+
+    $id = [];
+
+    @id0 = ( $flag_id, $tag, $id0 );
+    @id1 = ( $flag_id, $tag, $id1 );
+    $id1[3] = $range1 if defined $range1;
+
+    $id->[$he_vendor_id] = [ @id0 ];
+    $id->[$he_device_id] = [ @id1 ];
+
+    if(defined $id2) {
+      @id2 = ( $flag_id, $tag, $id2 );
+      @id3 = ( $flag_id, $tag, $id3 );
+      $id3[3] = $range3 if defined $range3;
+
+      $id->[$he_subvendor_id] = [ @id2 ];
+      $id->[$he_subdevice_id] = [ @id3 ];
+    }
+    push @{$drv[1]}, $id;
+  };
+
+  ( $file_name, $file ) = @_;
+
+  $drv_type = 1;
+
+  for (@$file) {
+    $line++;
+    chomp;
+    s/\s*$//;
+    next if /^[#;]/;
+    next if /^$/;
+
+    if(/^([us]?)([0-9a-fA-F]{4})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?\s*$/) {
+
+      $tag = $tag_pci;
+      $tag = $tag_usb if $1 eq 'u';
+      $tag = $tag_special if $1 eq 's';
+
+      $rdf_add_id->($tag, hex($2), hex($3), $5 ? hex($5) : undef);
+
+    }
+
+    elsif(/^([A-Z_@]{3})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?\s*$/) {
+
+      $rdf_add_id->($tag_eisa, eisa_id($1), hex($2), $4 ? hex($4) : undef);
+
+    }
+
+    elsif(/^([us]?)([0-9a-fA-F]{4})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?\s+([us]?)([0-9a-fA-F]{4})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?\s*$/) {
+
+      $tag = $tag_pci;
+      $tag = $tag_usb if $1 eq 'u';
+      $tag = $tag_special if $1 eq 's';
+
+      $rdf_add_id->($tag, hex($2), hex($3), $5 ? hex($5) : undef, hex($7), hex($8), $10 ? hex($10) : undef);
+
+    }
+
+    elsif(/^([A-Z_@]{3})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?\s+([A-Z_@]{3})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?\s*$/) {
+
+      $rdf_add_id->($tag_eisa, eisa_id($1), hex($2), $4 ? hex($4) : undef, eisa_id($5), hex($6), $8 ? hex($8) : undef);
+
+    }
+
+    elsif(/^\t([a-z])\s+(.*?)\s*$/) {
+
+      push @{$drv[2][$he_driver]}, "$1\t$2";
+      $drv_type = $1;
+
+    }
+
+    elsif($drv_type && /^\t\t\s*(.*)$/) {
+
+      $drv_type = "X" if $drv_type eq "x";
+      $drv_type = "M" if $drv_type eq "m";
+      $drv[2][$he_driver][-1] .= "\x00$drv_type\t$1";
+
+    }
+
+    else {
+      die "invalid line: $file_name($line)\n";
+    }
+  }
+
+  $rdf_save_drv->();
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# read file with id info
+#
+
+sub read_id_file
+{
+  my ( $line, $file, $file_name, $tag, $pre, $fields, @item, @id, $state, $keyid );
+  my ( $is_id, $i );
+  local $_;
+
+  my $rif_save_item = sub
+  {
+    if(@item > 1) {
+      push @hd, [ @item ];
+    }
+    @item = ( "$file_name($line)" );
+  };
+
+  # parse id field
+  my $str2id = sub
+  {
+    my ($val, $id, $tag, $mask, $range, @id);
+
+    $val = shift;
+
+    if($val =~ s/^(${\join '|', @tag_name})\s+//o) {
+      die "internal oops: $file_name($line)\n" unless exists $tag_values{$1};
+      $tag = $tag_values{$1};
+    }
+    else {
+      $tag = 0;
+    }
+
+    if($val =~ /^\s*(\S+)\s*([&+])\s*(\S+)\s*$/) {
+      $id = $1;
+      if($2 eq "+") {
+        $range = $3;
+      }
+      else {
+        $mask = $3;
+      }
+    }
+    else {
+      $id = $val;
+    }
+
+    if(defined $range) {
+      if($range =~ /^(0x[0-9a-zA-Z]+|\d+)$/) {
+        $range += 0;
+      }
+      else {
+        die "$file_name($line): invalid range\n"
+      }
+    }
+
+    if(defined $mask) {
+      if($mask =~ /^(0x[0-9a-zA-Z]+|\d+)$/) {
+        $mask += 0;
+      }
+      else {
+        die "$file_name($line): invalid mask\n"
+      }
+    }
+
+    if($id =~ /^(0x[0-9a-zA-Z]+|\d+)$/) {
+      $id += 0;
+    }
+    elsif(($tag == $tag_none || $tag == $tag_eisa) && $id =~ /^[A-Z_@]{3}$/) {
+      $id = eisa_id $id;
+      $tag = $tag_eisa;
+    }
+    else {
+      die "$file_name($line): invalid id\n"
+    }
+
+    @id = ( $flag_id, $tag, $id );
+    $id[3] = $range if defined $range;
+    $id[4] = $mask if defined $mask;
+
+    return \@id;
+  };
+
+  ( $file_name, $file ) = @_;
+
+  $fields = join "|", map "\Q$_", @ent_names;
+
+  $state = 0;
+
+  $rif_save_item->();
+
+  for (@$file) {
+    $line++;
+    chomp;
+    s/\s*$//;
+    next if /^\s*[#;]/;
+    next if /^$/;
+
+    if(/^\s*([+&|]?)($fields)\s+(.+)/) {
+      ($pre, $key, $val) = ($1, $2, $3);
+      # print ">$pre< $is_id>$key< >$val<\n";
+      die "internal oops: $file_name($line)\n" unless exists $ent_values{$key};
+      $keyid = $ent_values{$key};
+      $is_id = $keyid < $he_nomask && $key =~ /\.id$/ ? 1 : 0;
+    }
+    else {
+      die "invalid line: $file_name($line)\n";
+    }
+
+    if($pre eq "") {
+      die "invalid line: $file_name($line)\n" unless $state == 0 || $state == 2;
+      if($state == 2) {
+        $item[2] = [ @id ];
+        undef @id;
+      }
+      $rif_save_item->();
+      $state = 1;
+    }
+    elsif($pre eq "|") {
+      die "invalid line: $file_name($line)\n" unless $state == 1;
+      push @{$item[1]}, [ @id ];
+      undef @id;
+    }
+    elsif($pre eq "&") {
+      die "invalid line: $file_name($line)\n" unless $state == 1;
+    }
+    elsif($pre eq "+") {
+      die "invalid line: $file_name($line)\n" unless $state == 1 || $state == 2;
+      if($state == 1) {
+        push @{$item[1]}, [ @id ];
+        undef @id;
+      }
+      $state = 2;
+    }
+    else {
+      die "internal oops: $file_name($line)\n";
+    }
+
+    if($is_id) {
+      $id[$keyid] = $str2id->($val);
+    }
+    elsif($keyid < $he_nomask) {
+      $id[$keyid] = [ $flag_string, $val ];
+    }
+    elsif($keyid == $he_class_id) {
+      $i = ${$str2id->($val)}[2];
+      $id[$he_baseclass_id] = [ $flag_id, $tag_none, $i >> 8 ];
+      $id[$he_subclass_id] = [ $flag_id, $tag_none, $i & 0xff ];
+    }
+    else {
+      undef $i;
+      if($keyid == $he_driver_module_insmod) {
+        $i = "i";
+      }
+      elsif($keyid == $he_driver_module_modprobe) {
+        $i = "m";
+      }
+      elsif($keyid == $he_driver_module_config) {
+        $i = "M";
+      }
+      elsif($keyid == $he_driver_xfree) {
+        $i = "x";
+      }
+      elsif($keyid == $he_driver_xfree_config) {
+        $i = "X";
+      }
+      elsif($keyid == $he_driver_mouse) {
+        $i = "p";
+      }
+      elsif($keyid == $he_driver_display) {
+        $i = "d";
+      }
+      elsif($keyid == $he_driver_any) {
+        $i = "a";
+      }
+      else {
+        die "unhandled entry: $file_name($line)\n"
+      }
+      $val = "$i\t$val";
+      if(!defined $id[$he_driver]) {
+        $id[$he_driver] = [ $flag_string ];
+      }
+      if($i eq "X" || $i eq "M") {
+        $id[$he_driver]->[-1] .= "\x00$val"
+      }
+      else {
+        push @{$id[$he_driver]}, $val;
+      }
+    }
+  }
+
+  if($state == 2) {
+    $item[2] = [ @id ];
+    undef @id;
+  }
+
+  $rif_save_item->();
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# convert 3-letter eisa id to number
+#
+
+sub eisa_id
+{
+  my ( $str, $id, $i, $j );
+
+  $str = shift;
+  $id = 0;
+
+  die "internal oops" unless length($str) == 3;
+  for($i = 0; $i < 3; $i++) {
+    $id <<= 5;
+    $j = ord substr $str, $i, 1;
+    $j -= ord('A') - 1;
+    die "internal oops" unless $j >= 0 && $j <= 0x1f;
+    $id += $j;
+  }
+  
+  return $id;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# convert numerical eisa id to 3-letter string
+#
+
+sub eisa_str
+{
+  my ( $id, $str );
+
+  $id = shift;
+
+  die "internal oops: eisa id \"$id\"" unless $id >= 0 && $id <= 0x7fff;
+
+  $str  = chr((($id >> 10) & 0x1f) + ord('A') - 1);
+  $str .= chr((($id >>  5) & 0x1f) + ord('A') - 1);
+  $str .= chr(( $id        & 0x1f) + ord('A') - 1);
+
+  return $str;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# remove entries that have no effect
+#
+
+sub remove_nops
+{
+  my ($hd, $id, $f, $i, $cf);
+  local $_;
+
+  for $hd (@hd) {
+    if(!defined($hd->[1]) || !@{$hd->[1]} || !defined($hd->[2]) || !@{$hd->[2]}) {
+      undef $hd;
+      next;
+    }
+    for $id (@{$hd->[1]}, $hd->[2]) {
+      if(defined($id)) {
+        $cf = 0;
+        for $f (@$id) {
+          if(defined $f) {
+            $cf++;
+            if(@$f == 2 && $f->[0] == $flag_string && $f->[1] eq "") {
+              undef $f;
+              $cf--;
+            }
+          }
+        }
+        undef $id if !$cf;
+      }
+    }
+    if(!defined($hd->[1]) || !@{$hd->[1]} || !defined($hd->[2]) || !@{$hd->[2]}) {
+      print STDERR "$hd->[0] has no info, dropped\n";
+      undef $hd;
+      next;
+    }
+  }
+
+  @hd = grep { defined } @hd;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# remove duplicate entries
+#
+
+sub remove_duplicates
+{
+  my ($hd, $hd0, $hd1, $len, $i, $j, $m, $v, $buf, $errors, $drop);
+  local $_;
+
+  $len = @hd;
+
+  for($j = 0; $j < $len; $j++) {
+    print STDERR ">> $j\r";
+    $hd0 = \$hd[$j];
+    for($i = $j + 1; $i < $len; $i++) {
+      $hd1 = \$hd[$i];
+      $m = match_item $$hd0, $$hd1;
+      # print "$$hd0->[0] -- $$hd1->[0]: $m\n";
+      if($m) {
+        $drop = cmp_item $$hd0, $$hd1;
+        $drop = !$drop || abs($drop) == 2 ? ", dropped" : undef;
+        undef $buf;
+        # print STDERR "j: $$hd0->[0], $$hd1->[0]\n";
+        $v = join_skey $$hd0->[2], $$hd1->[2], \$buf, \$errors;
+        if($errors) {
+          print STDERR "$$hd1->[0] conflicts with $$hd0->[0]$drop:\n$buf\n";
+          $$hd1 = undef if $drop;
+        }
+        else {
+          if($drop) {
+            print STDERR "$$hd1->[0] added to $$hd0->[0] and dropped\n";
+            $$hd0->[2] = $v;
+#            $$hd1 = undef;
+          }
+          else {
+            print STDERR "$$hd1->[0] shadowed by $$hd0->[0]\n";
+            $$hd0->[2] = $v;
+          }
+        }
+      }
+    }
+  }
+
+  @hd = grep { defined } @hd;
+
+  for $hd (@hd) {
+    if(
+      !defined($hd->[2]) ||
+      !defined($hd->[2][$he_driver]) ||
+      !(defined($hd->[2][$he_device_name]) || defined($hd->[2][$he_subdevice_name]))
+    ) {
+      undef $hd;
+      next;
+    }
+  }
+
+  @hd = grep { defined } @hd;
+
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# remove duplicate entries
+#
+
+sub remove_duplicatesx
+{
+  my ($hd0, $hd1, $len, $i, $j, $m, $v, $buf, $errors, $drop);
+  local $_;
+
+  $len = @hd;
+
+  for($j = 0; $j < $len; $j++) {
+    print STDERR ">> $j\r";
+    $hd0 = \$hd[$j];
+    for($i = $j + 1; $i < $len; $i++) {
+      $hd1 = \$hd[$i];
+      $m = match_item $$hd0, $$hd1;
+      # print "$$hd0->[0] -- $$hd1->[0]: $m\n";
+      if($m) {
+        $drop = cmp_item $$hd0, $$hd1;
+        $drop = !$drop || abs($drop) == 2 ? ", dropped" : undef;
+        undef $buf;
+        $v = join_skey $$hd0->[2], $$hd1->[2], \$buf, \$errors;
+        if($errors) {
+          print STDERR "$$hd1->[0] conflicts with $$hd0->[0]$drop:\n$buf\n";
+          $$hd1 = undef if $drop;
+        }
+        else {
+          if($drop) {
+            print STDERR "$$hd1->[0] added to $$hd0->[0] and dropped\n";
+            $$hd0->[2] = $v;
+            $$hd1 = undef;
+          }
+          else {
+            print STDERR "$$hd1->[0] shadowed by $$hd0->[0]\n";
+          }
+        }
+      }
+    }
+  }
+
+  @hd = grep { defined } @hd;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# fix drive info
+#
+
+sub fix_driver_info
+{
+  my ($hd, $hid, $drv, $i, @i, @info, @req, %req);
+
+  for $hd (@hd) {
+    if(
+      !defined($hd->[2]) ||
+      !defined($hd->[2][$he_driver])
+    ) {
+      next;
+    }
+    $hid = $hd->[2][$he_driver];
+    next unless $hid->[0] == $flag_string;
+
+    undef @req;
+
+    for $drv (@$hid[1 .. @$hid - 1]) {
+      @i = split /\x00/, $drv;
+      for $i (@i) {
+        next if $i =~ /^[MX]\t/;
+        $i =~ s/\|+$//;
+        next unless $i =~ /^x\t/;
+        @info = split /\|/, $i;
+        # sort package, extension and option lists
+        push @req, split /,/, $info[3] if $info[3];
+        # $info[3] = join ',', sort split /,/, $info[3] if $info[3];
+        $info[3] = undef if $info[3];
+        $info[4] = join ',', sort split /,/, $info[4] if $info[4];
+        $info[5] = join ',', sort split /,/, $info[5] if $info[5];
+        $info[6] = join ',', sort { $a <=> $b } split /,/, $info[6] if $info[6];
+=head
+        if($info[6]) {
+          my $j = hex $info[6];
+          $i = undef;
+          $i .= ",8"  if $j &  1;
+          $i .= ",15" if $j &  2;
+          $i .= ",16" if $j &  4;
+          $i .= ",24" if $j &  8;
+          $i .= ",32" if $j & 16;
+          $i =~ s/^,//;
+          $info[6] = $i;
+        }
+=cut
+        $i = join '|', @info;  
+      }
+      $drv = join "\x00", @i;
+      # print ">$drv<\n"
+    }
+
+    if(@req) {
+      $hid = $hd->[2][$he_requires];
+      if($hid) {
+        if($hid->[0] != $flag_string) {
+          die "oops, invalid data"
+        }
+        push @req, split /\|/, $hid->[1];
+        $hid->[1] = join '|', @req;
+      }
+      else {
+        $hd->[2][$he_requires] = [ $flag_string, join('|', @req) ];
+      }
+    }
+  }
+
+  for $hd (@hd) {
+    if(
+      !defined($hd->[2]) ||
+      !defined($hd->[2][$he_requires])
+    ) {
+      next;
+    }
+    $hid = $hd->[2][$he_requires];
+    next unless $hid->[0] == $flag_string;
+
+    undef @req;
+    undef %req;
+
+    @req = split /\|/, $hid->[1];
+    @req{@req} = @req;
+
+    $hid->[1] = join '|', sort keys %req;
+  }
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# hd: [ "source", [ skey, skey, ... ], [ val ] ]
+# skey/val: [ ... , id, ..., id, ... ]
+# id: [ $flag_id, $tag, $value, $range, $mask ]
+# id: [ $flag_string, "str", "str", ... ]
+
+sub cmp_id
+{
+  my ($id0, $id1, $len0, $len1, $len, $i, $k);
+
+  ($id0, $id1) = @_;
+
+  return 0 if !defined($id0) && !defined($id1);
+  return -1 if !defined($id0);
+  return 1 if !defined($id1);
+
+  if($id0->[0] != $id1->[0]) {
+    return $id0->[0] <=> $id1->[0];
+  }
+
+  $len0 = @$id0;
+  $len1 = @$id1;
+  $len = $len0 < $len1 ? $len0 : $len1;
+
+  if($id0->[0] == $flag_string) {
+    for($i = 1; $i < $len; $i++) {
+      $k = $id0->[$i] cmp $id1->[$i];
+      return $k if $k;
+    }
+    return $len0 <=> $len1;
+  }
+
+  if($id0->[0] == $flag_id) {
+    $k = $id0->[1] <=> $id1->[1];
+    return $k if $k;
+    $k = $id0->[2] <=> $id1->[2];
+    return $k if $k;
+    $k = $len0 <=> $len1;
+    return $k if $k || $len <= 3;
+    # print "-\n";
+    # $dump->dumpValue( $id0 );
+    # $dump->dumpValue( $id1 );
+    # die "internal oops: strange id" if $len < 4;
+    $i = $len - 1;
+    return -1 if !defined($id0->[$i]);
+    return 1 if !defined($id1->[$i]);
+    return $id0->[$i] <=> $id1->[$i];
+  }
+
+  die "internal oops: can't compare that!";
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+sub cmp_skey
+{
+  my ($skey0, $skey1, $len0, $len1, $len, $i, $k);
+
+  ($skey0, $skey1) = @_;
+
+  return 0 if !defined($skey0) && !defined($skey1);
+  return -1 if !defined($skey0);
+  return 1 if !defined($skey1);
+
+  $len0 = @$skey0;
+  $len1 = @$skey1;
+  $len = $len0 < $len1 ? $len0 : $len1;
+
+  # $dump->dumpValue( $skey0 );
+  # $dump->dumpValue( $skey1 );
+
+  for($i = 0; $i < $len; $i++) {
+    next unless defined($skey0->[$i]) || defined($skey1->[$i]);
+
+    # note: this looks reversed, but is intentional!
+    return 1 if !defined($skey0->[$i]);
+    return -1 if !defined($skey1->[$i]);
+
+    $k = cmp_id $skey0->[$i], $skey1->[$i];
+
+    return $k if $k;
+  }
+
+  return $len0 <=> $len1;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+#   0: equal
+# +-1: differing keys
+# +-2: differing values
+#
+sub cmp_item
+{
+  my ($item0, $item1, $len0, $len1, $len, $i, $k);
+
+  ($item0, $item1) = @_;
+
+  $cmp_item_cnt++;
+
+  return 0 if !defined($item0) && !defined($item1);
+  return -1 if !defined($item0);
+  return 1 if !defined($item1);
+
+  $len0 = @{$item0->[1]};
+  $len1 = @{$item1->[1]};
+  $len = $len0 < $len1 ? $len0 : $len1;
+
+#  $dump->dumpValue( $item0 );
+
+  for($i = 0; $i < $len; $i++) {
+    return -1 if !defined($item0->[1][$i]);
+    return 1 if !defined($item1->[1][$i]);
+    $k = cmp_skey $item0->[1][$i], $item1->[1][$i];
+    # print "  skey: $k\n";
+    return $k if $k;
+  }
+  $k = $len0 <=> $len1;
+  return $k if $k;
+
+  return 0 if !defined($item0->[2]) && !defined($item1->[2]);
+  return -2 if !defined($item0->[2]);
+  return 2 if !defined($item1->[2]);
+
+  $k = cmp_skey $item0->[2], $item1->[2];
+  # print "  val: $k\n";
+  return 2 * $k;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# check if id1 is part of id0
+#
+# return:
+#   1: yes
+#   0: no
+#   undef: don't know
+#
+# hd: [ "source", [ skey, skey, ... ], [ val ] ]
+# skey/val: [ ... , id, ..., id, ... ]
+# id: [ $flag_id, $tag, $value, $range, $mask ]
+# id: [ $flag_string, "str", "str", ... ]
+
+sub match_id
+{
+  my ($id0, $id1, $len0, $len1, $len, $i, $k);
+
+  ($id0, $id1) = @_;
+
+  return 0 if !defined($id0) || !defined($id1);
+
+  return 0 if $id0->[0] != $id1->[0];
+
+  $len0 = @$id0;
+  $len1 = @$id1;
+  $len = $len0 < $len1 ? $len0 : $len1;
+
+  if($id0->[0] == $flag_string) {
+    for($i = 1; $i < $len; $i++) {
+      return 0 if $id0->[$i] cmp $id1->[$i];
+    }
+    return $len0 != $len1 ? 0 : 1;
+  }
+
+  if($id0->[0] == $flag_id) {
+    return 0 if $id0->[1] != $id1->[1];
+    if($len1 == 3) {
+      if($len0 == 3) {
+        return $id0->[2] != $id1->[2] ? 0 : 1;
+      }
+      elsif($len0 == 4) {
+        return $id1->[2] >= $id0->[2] && $id1->[2] < $id0->[2] + $id0->[3] ? 1 : 0;
+      }
+      elsif($len0 == 5) {
+        return ($id1->[2] & ~$id0->[4]) == $id0->[2] ? 1 : 0;
+      }
+      else {
+        die "invalid id";
+      }
+    }
+    elsif($len1 == 4) {
+      return undef;
+    }
+    elsif($len1 == 5) {
+      return undef;
+    }
+    else {
+      die "invalid id";
+    }
+  }
+
+  die "internal oops: can't match that!";
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# skey1 part of skey0?
+#
+sub match_skey
+{
+  my ($skey0, $skey1, $len0, $len1, $len, $i, $k);
+
+  ($skey0, $skey1) = @_;
+
+  return 0 if !defined($skey0) || !defined($skey1);
+
+  $len0 = @$skey0;
+  $len1 = @$skey1;
+
+  $len = $len0 > $len1 ? $len0 : $len1;
+
+  # $dump->dumpValue( $skey0 );
+  # $dump->dumpValue( $skey1 );
+
+  for($i = 0; $i < $len; $i++) {
+    next unless defined($skey1->[$i]);
+
+    return 0 if !defined($skey0->[$i]) && defined($skey1->[$i]);
+
+    $k = match_id $skey0->[$i], $skey1->[$i];
+
+    return $k if !$k;
+  }
+
+  return 1;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# item1 part of item0?
+#
+sub match_item
+{
+  my ($item0, $item1, $len0, $len1, $i, $j, $k, $m);
+
+  ($item0, $item1) = @_;
+
+  $match_item_cnt++;
+
+  return 0 if !defined($item0) || !defined($item1);
+
+  $len0 = @{$item0->[1]};
+  $len1 = @{$item1->[1]};
+
+  for($j = 0; $j < $len1; $j++) {
+    for($i = 0; $i < $len0; $i++) {
+      $k = match_skey $item0->[1][$i], $item1->[1][$j];
+      $m = $k if defined $k;
+      return $k if $k;
+    }
+  }
+
+  return $m
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# add skey1 to skey0
+#
+sub join_skey
+{
+  my ($skey0, $skey1, $len, $i, $k, $n, $buf, $err);
+
+  ($skey0, $skey1, $buf, $errors) = @_;
+
+  $$errors = 0;
+
+  return undef if !defined($skey0) && !defined($skey1);
+  return [ @$skey0 ] if !defined($skey1);
+  return [ @$skey1 ] if !defined($skey0);
+
+  $n = [ @$skey0 ];
+
+  $len = @$skey1;
+
+  for($i = 0; $i < $len; $i++) {
+    next unless defined $skey1->[$i];
+
+    $n->[$i] = $skey1->[$i];
+
+    next unless defined $skey0->[$i];
+
+    $k = cmp_id $skey0->[$i], $skey1->[$i];
+
+    if($k) {
+      if(defined $buf) {
+        if($i != $he_driver) {
+          $$buf .= ent_name_pr("  0:", $ent_names[$i]);
+          $$buf .= id_dump($i, $skey0->[$i]) . "\n";
+          $$buf .= ent_name_pr("  1:", $ent_names[$i]);
+          $$buf .= id_dump($i, $skey1->[$i]) . "\n";
+        }
+        else {
+          $$buf .= drv_dump("  0:", $skey0->[$i]);
+          $$buf =~ s/\n&/\n  0:/;
+          $$buf .= drv_dump("  1:", $skey1->[$i]);
+          $$buf =~ s/\n&/\n  1:/;
+        }
+      }
+      $$errors++ if defined $errors;
+    }
+  }
+
+  return $n;
+}
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# split key fields
+#
+sub split_item
+{
+  my ($item, @items, $tmp);
+  local $_;
+
+  $item = shift;
+
+  return $item if !defined($item) || !defined($item->[1]);
+
+  for (@{$item->[1]}) {
+    $tmp = [ @$item ];
+    $tmp->[1] = [ $_ ];
+    push @items, $tmp;
+  }
+
+  return @items;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+sub get_xml_data
+{
+  my ($xml, $i, $j);
+
+  $xml = shift;
+
+  if($xml->[0] ne 'hwdata') {
+    die "invalid XML root element (expected 'hwdata')\n"
+  }
+
+  for($i = 1; $i < @{$xml->[1]}; $i += 2) {
+    if($xml->[1][$i] eq 'item') {
+      parse_xml_item $xml->[1][$i + 1];
+    }
+  }
+}
+
+
+sub parse_xml_item
+{
+  my (@xml, %attr, $i, @id, $nc, @driver);
+
+  @xml = @{$_[0]};
+  %attr = %{shift @xml};
+
+  if($attr{type}) {
+    print "type = $attr{type}\n";
+  }
+
+  for($i = 0; $i < @xml; $i += 2) {
+    if($xml[$i] eq 'id') {
+      push @id, parse_xml_id $xml[$i + 1];
+    }
+    elsif($xml[$i] eq 'name') {
+      $nc->[0] = parse_xml_cdata $xml[$i + 1];
+    }
+    elsif($xml[$i] eq 'class') {
+      $nc->[1] = parse_xml_class $xml[$i + 1];
+    }
+  }
+
+  if(defined($nc) || !defined(@driver)) {
+    for $i (@id) {
+      add_name $nc, @{$i};
+      # hd.names output needs all intermediate steps
+      # actually quite slow...
+#      add_name [ ], $i->[0] if @$i > 1;
+#      add_name [ ], $i->[0], $i->[1] if @$i > 2;
+#      add_name [ ], $i->[0], $i->[1], $i->[2] if @$i > 3;
+    }
+  }
+
+}
+
+
+sub parse_xml_id
+{
+  my (@xml, %attr, $i, $id, $tag, $value, $range, @idlist);
+
+  @xml = @{$_[0]};
+  %attr = %{shift @xml};
+
+  $tag = $tag{$attr{type}};
+
+  if(!$tag) {
+    die "missing/unsupported id attribute \"$attr{type}\"\n";
+  }
+
+  for($i = 0; $i < @xml; $i += 2) {
+    next if $xml[$i] eq '0';
+    if(
+      $xml[$i] eq 'bus' ||
+      $xml[$i] eq 'baseclass' ||
+      $xml[$i] eq 'subclass' ||
+      $xml[$i] eq 'progif' ||
+      $xml[$i] eq 'vendor' ||
+      $xml[$i] eq 'device' ||
+      $xml[$i] eq 'subvendor' ||
+      $xml[$i] eq 'subdevice'
+    ) {
+      $value = parse_xml_cdata $xml[$i + 1];
+
+      if($tag == $tag_eisa) {
+        if(length($value) == 3 && $value !~ /^[0-9]/) {
+          $value = eisa_id $value;
+        }
+      }
+      $value += 0;
+
+      $id = [ $tag, $value ];
+      $id->[2] = $range if defined $range;
+      push @idlist, $id;
+      # printf "%d, 0x%x\n", $id->[0], $id->[1];
+    }
+    else {
+      die "unknown id element \"$xml[$i]\"\n";
+    }
+  }
+
+
+  return [ @idlist ];
+}
+
+
+sub parse_xml_class
+{
+  my (@xml, %attr, $i, $value);
+
+  @xml = @{$_[0]};
+  %attr = %{shift @xml};
+
+  for($i = 0; $i < @xml; $i += 2) {
+    next if $xml[$i] eq '0';
+    if(
+      $xml[$i] eq 'baseclass' ||
+      $xml[$i] eq 'subclass'
+    ) {
+      $value = ($value << 8) + parse_xml_cdata($xml[$i + 1]);
+    }
+    else {
+      die "unknown class element \"$xml[$i]\"\n";
+    }
+  }
+
+  # hm, I wonder why this must be a string...
+  return sprintf "%05x", $value;
+}
+
+
+sub parse_xml_cdata
+{
+  my (@xml, %attr, $i);
+
+  @xml = @{$_[0]};
+  %attr = %{shift @xml};
+
+  for($i = 0; $i < @xml; $i += 2) {
+    if($xml[$i] eq '0') {
+      return $xml[$i + 1]
+    }
+  }
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+sub ent_name_pr
+{
+  my ($str, $len);
+
+  $str = $_[0] . $_[1];
+
+  $len = length $str;
+
+  $str .= "\t";
+  $len = ($len & ~7) + 8;
+  $str .= "\t" x ((24 - $len)/8) if $len < 24;
+  
+  return $str;
+}
+
+
+sub id_dump
+{
+  my ($id, $ent, $str, $tag, $format);
+
+  ($ent, $id) = @_;
+
+  if($id->[0] == $flag_id) {
+    $tag = $id->[1];
+    if($tag == $tag_eisa && ($ent == $he_vendor_id || $ent == $he_subvendor_id)) {
+      $str = eisa_str $id->[2];
+    }
+    else {
+      $str .= $tag_name[$tag];
+      $str .= " " if $tag;
+      $format = "0x%04x";
+      $format = "0x%02x" if $ent == $he_bus_id || $ent == $he_subclass_id || $ent == $he_progif_id;
+      $format = "0x%03x" if $ent == $he_baseclass_id;
+      $str .= sprintf $format, $id->[2];
+    }
+    if(defined $id->[3]) {
+      $str .= sprintf "+0x%04x", $id->[3];
+    }
+    elsif(defined $id->[4]) {
+      $str .= sprintf "&0x%04x", $id->[4];
+    }
+  }
+  elsif($id->[0] == $flag_string) {
+    if(defined($id->[2])) {
+      die "oops: strage string data\n";
+    }
+    $str = $id->[1];
+  }
+  else {
+    die "oops: unknown id flag\n"
+  }
+  
+  return $str;
+}
+
+
+sub drv_dump
+{
+  my ($id, $str, $i, $pre, $type, $drv, $buf);
+
+  ($pre, $id) = @_;
+
+  die "oops: invalid driver data\n" if $id->[0] != $flag_string;
+
+  for($i = 1; $i < @{$id}; $i++) {
+    for $drv (split /\x00/, $id->[$i]) {
+      $type = substr $drv, 0, 2;
+
+      if($type eq "x\t") {
+        $buf .= ent_name_pr($pre, $ent_names[$he_driver_xfree]);
+        $buf .= substr($drv, 2) . "\n";
+      }
+      elsif($type eq "X\t") {
+        $buf .= ent_name_pr($pre, $ent_names[$he_driver_xfree_config]);
+        $buf .= substr($drv, 2) . "\n";
+      }
+      elsif($type eq "i\t") {
+        $buf .= ent_name_pr($pre, $ent_names[$he_driver_module_insmod]);
+        $buf .= substr($drv, 2) . "\n";
+      }
+      elsif($type eq "m\t") {
+        $buf .= ent_name_pr($pre, $ent_names[$he_driver_module_modprobe]);
+        $buf .= substr($drv, 2) . "\n";
+      }
+      elsif($type eq "M\t") {
+        $buf .= ent_name_pr($pre, $ent_names[$he_driver_module_config]);
+        $buf .= substr($drv, 2) . "\n";
+      }
+      elsif($type eq "p\t") {
+        $buf .= ent_name_pr($pre, $ent_names[$he_driver_mouse]);
+        $buf .= substr($drv, 2) . "\n";
+      }
+      elsif($type eq "d\t") {
+        $buf .= ent_name_pr($pre, $ent_names[$he_driver_display]);
+        $buf .= substr($drv, 2) . "\n";
+      }
+      elsif($type eq "a\t") {
+        $buf .= ent_name_pr($pre, $ent_names[$he_driver_any]);
+        $buf .= substr($drv, 2) . "\n";
+      }
+      else {
+        die "oops: unhandled driver info type: $drv\n";
+      }
+
+      $pre = "&" if $pre ne "+";
+    }
+  }
+
+  return $buf;
+}
+
+
+sub ent_dump
+{
+  my ($pre, $id, $ent, $buf);
+
+  ($buf, $pre, $id) = @_;
+
+  $pre = defined($pre) ? "|" : " " if $pre ne "+";
+  for($ent = 0; $ent < @{$id}; $ent++) {
+    if(defined $id->[$ent]) {
+      if($ent != $he_driver) {
+        $$buf .= ent_name_pr($pre, $ent_names[$ent]);
+        $$buf .= id_dump($ent, $id->[$ent]);
+        $$buf .= "\n";
+      }
+      else {
+        $$buf .= drv_dump($pre, $id->[$ent]);
+      }
+      $pre = "&" if $pre ne "+";
+    }
+  }
+
+  return $pre;
+}
+
+
+sub dump2ids
+{
+  my ($item, $id, $ent, $pre, $buf);
+
+  # $dump->dumpValue( \@hd );
+
+  open F, ">hd.ids";
+
+  for $item (@hd) {
+    undef $buf;
+    undef $pre;
+    print F "# $item->[0]\n" if $opt_with_source;
+    for $id (@{$item->[1]}) {
+      $pre = ent_dump \$buf, $pre, $id;
+    }
+    $pre = "+";
+    ent_dump \$buf, $pre, $item->[2];
+    $buf .= "\n";
+
+    print F $buf;
+  }
+
+  close F;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+sub dump2xml
+{
+  my ($item, $dtd);
+
+  # $dtd = `cat hd.dtd.internal`;
+  $dtd = "<!DOCTYPE hwdata SYSTEM \"hd.dtd\">\n";
+
+  $xml_file = new IO::File(">hd.xml");
+  $xml = new XML::Writer(OUTPUT => $xml_file, DATA_MODE => 1, DATA_INDENT => 2);
+
+  $xml->xmlDecl("utf-8");
+
+  print $xml_file "\n$dtd";
+
+  $xml->startTag("hwdata");
+
+  print $xml_file "\n";
+
+  for $item (@hd) {
+    dump_xml_item $item;
+  }
+
+  $xml->endTag("hwdata");
+  $xml->end();
+}
+
+
+sub dump_xml_id
+{
+  my ($ent, $id, $i, $tag, $str, $format, $range, $mask);
+
+  ($ent, $id) = @_;
+
+  $i = $xml_names[$ent];
+
+  die "oops: entry $ent not allowed here\n" unless $i;
+
+  if($ent == $he_requires) {
+    if($id->[0] == $flag_string) {
+      die "oops: strange string data\n" if defined $id->[2];
+      for $str (split /\|/, $id->[1]) {
+        $xml->dataElement("requires", $str);
+      }
+    }
+    else {
+      die "oops: requires _id_???\n"
+    }
+  }
+  else {
+    $xml->startTag($i);
+
+    if($ent == $he_serial) {
+      if($id->[0] == $flag_string) {
+        die "oops: strange string data\n" if defined $id->[2];
+        $xml->characters($id->[1]);
+      }
+      else {
+        die "oops: serial _id_???\n"
+      }
+    }
+    else {
+      if($id->[0] == $flag_id) {
+        $tag = $id->[1];
+        if($tag == $tag_eisa && ($ent == $he_vendor_id || $ent == $he_subvendor_id)) {
+          $str = eisa_str $id->[2];
+        }
+        else {
+          $format = "0x%04x";
+          $format = "0x%02x" if $ent == $he_bus_id || $ent == $he_subclass_id || $ent == $he_progif_id;
+          $format = "0x%03x" if $ent == $he_baseclass_id;
+          $str = sprintf $format, $id->[2];
+        }
+        if(defined $id->[3]) {
+          if($tag == $tag_eisa && ($ent == $he_vendor_id || $ent == $he_subvendor_id)) {
+            $range = eisa_str $id->[2] + $id->[3] - 1;
+          }
+          else {
+            $range = sprintf "0x%04x", $id->[2] + $id->[3] - 1;
+          }
+        }
+        elsif(defined $id->[4]) {
+          $mask = sprintf "0x%04x", $id->[4];
+        }
+        $tag = $tag_name[$tag];
+
+        if(defined $range) {
+          if($tag) {
+            $xml->startTag("idrange", "type" => $tag);
+          }
+          else {
+            $xml->startTag("idrange");
+          }
+          $xml->dataElement("first", $str);
+          $xml->dataElement("last", $range);
+          $xml->endTag();
+        }
+        elsif(defined $mask) {
+          if($tag) {
+            $xml->startTag("idmask", "type" => $tag);
+          }
+          else {
+            $xml->startTag("idmask");
+          }
+          $xml->dataElement("value", $str);
+          $xml->dataElement("mask", $mask);
+          $xml->endTag();
+        }
+        else {
+          if($tag) {
+            $xml->dataElement("id", $str, "type" => $tag);
+          }
+          else {
+            $xml->dataElement("id", $str);
+          }
+        }
+      }
+      elsif($id->[0] == $flag_string) {
+        die "oops: strage string data\n" if defined $id->[2];
+        $xml->dataElement("name", $id->[1]);
+      }
+      else {
+        die "oops: unknown id flag\n"
+      }
+    }
+
+    $xml->endTag();
+  }
+}
+
+
+sub dump_xml_drv
+{
+  my ($id, $str, $i, $j, $k, $type, $drv, $info, @info, $current);
+
+  $id = shift;
+
+  die "oops: invalid driver data\n" if $id->[0] != $flag_string;
+
+  for($i = 1; $i < @{$id}; $i++) {
+
+    $xml->startTag('driver');
+
+    undef $current;
+
+    for $drv (split /\x00/, $id->[$i]) {
+      $type = substr $drv, 0, 2;
+      $info = substr $drv, 2;
+      @info = split /\|/, $info;
+
+      if($type eq "i\t") {
+        $xml->endTag() if $current; $current = $type;
+        $xml->startTag('module');
+        for $j (@info) {
+          $xml->dataElement('insmod', $j);
+        }
+      }
+      elsif($type eq "m\t") {
+        $xml->endTag() if $current; $current = $type;
+        $xml->startTag('module');
+        for $j (@info) {
+          $xml->dataElement('modprobe', $j);
+        }
+      }
+      elsif($type eq "M\t") {
+        die "oops: incorrect driver info: $drv\n" unless $current eq "m\t";
+        $xml->dataElement('modconf', $info);
+      }
+      elsif($type eq "a\t") {
+        $xml->endTag() if $current; $current = undef;;
+        $xml->dataElement('any', $info);
+      }
+      elsif($type eq "d\t") {
+        $xml->endTag() if $current; $current = undef;
+        $xml->startTag('display');
+        if($info[0] =~ /^(\d+)x(\d+)$/) {
+          ($j, $k) = ($1, $2);
+          $xml->startTag('resolution');
+          $xml->dataElement('width', $j);
+          $xml->dataElement('height', $k);
+          $xml->endTag('resolution');
+        }
+        if($info[1] =~ /^(\d+)-(\d+)$/) {
+          ($j, $k) = ($1, $2);
+          $xml->startTag('vsync');
+          $xml->dataElement('min', $j);
+          $xml->dataElement('max', $k);
+          $xml->endTag('vsync');
+        }
+        if($info[2] =~ /^(\d+)-(\d+)$/) {
+          ($j, $k) = ($1, $2);
+          $xml->startTag('hsync');
+          $xml->dataElement('min', $j);
+          $xml->dataElement('max', $k);
+          $xml->endTag('hsync');
+        }
+        if($info[3] =~ /^\d+$/) {
+          $xml->dataElement('bandwidth', $info[3]);
+        }
+        $xml->endTag('display');
+      }
+      elsif($type eq "x\t") {
+        $xml->endTag() if $current; $current = $type;
+        $xml->startTag('xfree');
+        if(defined $info[0]) {
+          $xml->dataElement('version', $info[0]);
+        }
+        if($info[1]) {
+          $xml->dataElement('server', $info[1]);
+        }
+        if($info[2]) {
+          $xml->emptyTag('has3d');
+        }
+#        if($info[3]) {
+#          for $j (split /,/, $info[3]) {
+#            $xml->dataElement('package', $j);
+#          }
+#        }
+        if($info[4]) {
+          for $j (split /,/, $info[4]) {
+            $xml->dataElement('extension', $j);
+          }
+        }
+        if($info[5]) {
+          for $j (split /,/, $info[5]) {
+            $xml->dataElement('option', $j);
+          }
+        }
+        if($info[6]) {
+          for $j (split /,/, $info[6]) {
+            $xml->dataElement('bpp', $j);
+          }
+        }
+        if($info[7] =~ /^\d+$/) {
+          $xml->dataElement('dacspeed', $info[7]);
+        }
+        if($info[8]) {
+          $xml->dataElement('script', $info[8]);
+        }
+      }
+      elsif($type eq "X\t") {
+        die "oops: incorrect driver info: $drv\n" unless $current eq "x\t";
+        $xml->dataElement('xf86conf', $info);
+      }
+      elsif($type eq "p\t") {
+        $xml->endTag() if $current; $current = undef;
+        $xml->startTag('mouse');
+        if($info[0]) {
+          $xml->dataElement('xf86', $info[0]);
+        }
+        if($info[1]) {
+          $xml->dataElement('gpm', $info[1]);
+        }
+        if($info[2] ne "") {
+          $xml->dataElement('buttons', $info[2]);
+        }
+        if($info[3] ne "") {
+          $xml->dataElement('wheels', $info[3]);
+        }
+        $xml->endTag('mouse');
+      }
+      else {
+        $xml->endTag() if $current; $current = undef;
+        # die "oops: unhandled driver info type: $drv\n";
+      }
+    }
+
+    $xml->endTag() if $current;
+
+    $xml->endTag('driver');
+
+  }
+}
+
+
+sub dump_xml_ent
+{
+  my ($id, $ent);
+
+  $id = shift;
+
+  for($ent = 0; $ent < @{$id}; $ent++) {
+    if(defined $id->[$ent]) {
+      if($ent != $he_driver) {
+        dump_xml_id $ent, $id->[$ent];
+      }
+      else {
+        dump_xml_drv $id->[$ent];
+      }
+    }
+  }
+
+}
+
+
+sub dump_xml_item
+{
+  my ($item, $id);
+
+  $item = shift;
+
+  $xml->startTag('item');
+
+  for $id (@{$item->[1]}) {
+    $xml->startTag('key');
+    dump_xml_ent $id;
+    $xml->endTag('key');
+  }
+
+  dump_xml_ent $item->[2];
+
+  $xml->endTag('item');
+  print $xml_file "\n";
+}
+
+

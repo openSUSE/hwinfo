@@ -1,874 +1,127 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <sys/utsname.h>
 
 #include "hd.h"
 #include "hd_int.h"
 #include "hddb.h"
 
-/* activate special data base debug code */
-#undef DEBUG_HDDB
+extern hddb2_data_t hddb_internal;
 
-#define HDDB_DEV	hddb_dev
-#define HDDB_DRV	hddb_drv
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+// #define HDDB_TRACE
+// #define HDDB_TEST
 
-extern hddb_data_t HDDB_DEV;
-extern hddb_data_t HDDB_DRV;
+#define DATA_VALUE(a)	((a) & ~(-1 << 28))
+#define DATA_FLAG(a)	(((a) >> 28) & 0xf)
+#define MAKE_DATA(a, b)	((a << 28) | (b))
 
-#define FL_RANGE	4
-#define FL_VAL0		5
-#define FL_VAL1		6
-#define FL_RES		7
+#define FLAG_ID		0
+#define FLAG_RANGE	1
+#define FLAG_MASK	2
+#define FLAG_STRING	3
+#define FLAG_REGEXP	4
+/* 5 - 7 reserved */
+#define FLAG_CONT	8	/* bit mask, _must_ be bit 31 */
 
-#define DATA_VALUE(a)	((a) & ~(-1 << 29))
-#define DATA_FLAG(a)	(((a) >> 29) & 0x7)
-#define MAKE_DATA(a, b)	((a << 29) | (b))
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+typedef enum hddb_entry_e {
+  he_other, he_bus_id, he_baseclass_id, he_subclass_id, he_progif_id,
+  he_vendor_id, he_device_id, he_subvendor_id, he_subdevice_id, he_rev_id,
+  he_bus_name, he_baseclass_name, he_subclass_name, he_progif_name,
+  he_vendor_name, he_device_name, he_subvendor_name, he_subdevice_name,
+  he_rev_name, he_serial, he_driver, he_requires /* 21 */,
+  /* add new entries _here_! */
+  he_nomask,
+  he_class_id = he_nomask, he_driver_module_insmod, he_driver_module_modprobe,
+  he_driver_module_config, he_driver_xfree, he_driver_xfree_config,
+  he_driver_mouse, he_driver_display, he_driver_any
+} hddb_entry_t;
+
+static hddb_entry_t hddb_is_numeric[] = {
+  he_bus_id, he_baseclass_id, he_subclass_id, he_progif_id, he_vendor_id,
+  he_device_id, he_subvendor_id, he_subdevice_id, he_rev_id
+};
+
+static char *hddb_entry_strings[] = {
+  "other", "bus.id", "baseclass.id", "subclass.id", "progif.id",
+  "vendor.id", "device.id", "subvendor.id", "subdevice.id", "rev.id",
+  "bus.name", "baseclass.name", "subclass.name", "progif.name",
+  "vendor.name", "device.name", "subvendor.name", "subdevice.name",
+  "rev.name", "serial", "driver", "requires",
+  "class.id", "driver.module.insmod", "driver.module.modprobe",
+  "driver.module.config", "driver.xfree", "driver.xfree.config",
+  "driver.mouse", "driver.display", "driver.any"
+};
+
+static char *hid_tag_names[] = { "", "pci ", "eisa ", "usb ", "special " };
+
+typedef enum {
+  pref_empty, pref_new, pref_and, pref_or, pref_add
+} prefix_t;
+
+typedef struct line_s {
+  prefix_t prefix;
+  hddb_entry_t key;
+  char *value;
+} line_t;
 
 typedef struct {
-  unsigned ok:1, tag_ok:1, val_ok:1, range_ok:1, xtra_ok:1;
-  unsigned tag, val, range, xtra;
-} hwid_t;
+  int len;
+  unsigned val[32];	/* arbitrary (approx. max. number of modules/xf86 config lines) */
+} tmp_entry_t;
 
-static unsigned find_entry2(hddb_data_t *x, unsigned flag, unsigned level, unsigned *ids, unsigned *count);
-static unsigned find_entry(hddb_data_t **x, unsigned flag, unsigned level, unsigned *ids);
-static unsigned find_entry_n(hddb_data_t **x, unsigned flag, unsigned level, unsigned *ids, unsigned *count);
-static unsigned find_entry2_by_name(hddb_data_t *x, unsigned tag, unsigned level, unsigned base_class, unsigned *ids, char **names);
-static unsigned find_entry_by_name(hddb_data_t **xx, unsigned tag, unsigned level, unsigned base_class, unsigned *ids, char **names);
-static char *name_ind(hddb_data_t *x, unsigned ind);
-static unsigned device_class_ind(hddb_data_t *x, unsigned ind);
-static driver_info_t *device_driver_ind(hddb_data_t *x, unsigned ind);
+typedef struct {
+  unsigned id;
+  char *name;
+} hd_id_t;
 
-static int is_space(int c);
-static int is_delim(int c);
-static void skip_spaces(char **str);
-static hwid_t read_id(char **s);
-static char *read_str(char *s);
-static void store_data(hddb_data_t *x, unsigned val);
-static unsigned store_name(hddb_data_t *x, char *name);
-static void store_id(hddb_data_t *x, hwid_t *id, unsigned tag, unsigned level, char *name);
+/* except for driver, all strings are static and _must not_ be freed */
+typedef struct {
+  hddb_entry_mask_t key;
+  hddb_entry_mask_t value;
+  hddb_entry_mask_t value_mask[he_nomask];
+  hd_id_t bus;
+  hd_id_t base_class;
+  hd_id_t sub_class;
+  hd_id_t prog_if;
+  hd_id_t vendor;
+  hd_id_t device;
+  hd_id_t sub_vendor;
+  hd_id_t sub_device;
+  hd_id_t revision;
+  char *serial;
+  str_list_t *driver;
+  char *requires;
+} hddb_search_t;
 
-static void init_hddb_pci(hd_data_t *hd_data);
 
-#ifdef DEBUG_HDDB
-void dump_hddb_data(hd_data_t *hd_data, hddb_data_t *x, char *name);
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+static void hddb_init_pci(hd_data_t *hd_data);
+static void hddb_init_external(hd_data_t *hd_data);
+
+static line_t *parse_line(char *str);
+static unsigned store_string(hddb2_data_t *x, char *str);
+static unsigned store_list(hddb2_data_t *x, hddb_list_t *list);
+static unsigned store_value(hddb2_data_t *x, unsigned val);
+static unsigned store_entry(hddb2_data_t *x, tmp_entry_t *te);
+static void clear_entry(tmp_entry_t *te);
+static void add_value(tmp_entry_t *te, hddb_entry_t idx, unsigned val);
+static hddb_entry_mask_t add_entry(hddb2_data_t *hddb2, tmp_entry_t *te, hddb_entry_t idx, char *str);
+static int compare_ids(hddb2_data_t *hddb, hddb_search_t *hs, hddb_entry_mask_t mask, unsigned key);
+static void complete_ids(hddb2_data_t *hddb, hddb_search_t *hs, hddb_entry_mask_t key_mask, hddb_entry_mask_t mask, unsigned val_idx);
+static int hddb_search(hd_data_t *hd_data, hddb_search_t *hs);
+#ifdef HDDB_TEST
+static void test_db(hd_data_t *hd_data);
 #endif
+static driver_info_t *hddb_to_device_driver(hd_data_t *hd_data, hddb_search_t *hs);
 
-/*
- * Returns 0 if no entry was found.
- * Find the count'th entry. count is decremented for every match.
- */
-unsigned find_entry2(hddb_data_t *x, unsigned flag, unsigned level, unsigned *ids, unsigned *count)
-{
-  unsigned u, u0, u1, v;
-  unsigned cur_ids[4], cur_ranges[4], cur_level;
 
-  if(level > 3) return 0;
-  memset(cur_ids, 0, sizeof cur_ids);
-  for(u = 0; u < sizeof cur_ranges / sizeof *cur_ranges; u++) { cur_ranges[u] = 1; }
-  cur_level = 0;
-
-  for(u = 0; u < x->data_len; u++) {
-    u0 = DATA_FLAG(x->data[u]);
-    u1 = DATA_VALUE(x->data[u]);
-    if(u0 < 4) {
-      for(v = u0 + 1; v <= level; v++) {
-        cur_ids[v] = 0;
-        cur_ranges[v] = 1;
-      }
-      cur_ids[cur_level = u0] = u1;
-      cur_ranges[cur_level] = 1;
-      if(u + 1 < x->data_len && DATA_FLAG(x->data[u + 1]) == FL_RANGE) continue;
-    }
-    else if(u0 == 4) {
-      cur_ranges[cur_level] = u1;
-    }
-    else {
-      continue;
-    }
-
-    /* check if we found an id */
-    if(level != cur_level) continue;	/* must match */
-
-    /* this one is tricky... */
-    if(
-      u < x->data_len &&
-      DATA_FLAG(x->data[u + 1]) < 4 &&
-      DATA_FLAG(x->data[u + 1]) > cur_level
-    ) {
-      continue;
-    }
-
-    for(v = 0; v <= level; v++) {
-      if(ids[v] - cur_ids[v] >= cur_ranges[v]) break;
-    }
-
-    if(v > level) {	/* ok */
-
-      if(--*count) continue;
-
-      if(flag) {
-        /* skip all id entries */
-        for(u++; u < x->data_len; u++) {
-          if(DATA_FLAG(x->data[u]) >= FL_VAL0) break;
-        }
-        return u < x->data_len ? u : 0;
-      }
-      if(++u >= x->data_len) return 0;
-      return DATA_FLAG(x->data[u]) >= FL_VAL0 ? u : 0;
-    }
-  }
-
-  return 0;
-}
-
-/*
- * Check loaded entries first, then check to the static ones.
- */
-unsigned find_entry(hddb_data_t **xx, unsigned flag, unsigned level, unsigned *ids)
-{
-  unsigned count = 1;
-
-  return find_entry_n(xx, flag, level, ids, &count);
-}
-
-
-/*
- * Check loaded entries first, then check to the static ones.
- */
-unsigned find_entry_n(hddb_data_t **xx, unsigned flag, unsigned level, unsigned *ids, unsigned *count)
-{
-  unsigned u;
-
-  if((u = find_entry2(*xx, flag, level, ids, count))) return u;
-
-  *xx = flag ? &HDDB_DRV : &HDDB_DEV;
-  return find_entry2(*xx, flag, level, ids, count);
-}
-
-
-/*
- * Returns 0 if no entry was found.
- */
-unsigned find_entry2_by_name(hddb_data_t *x, unsigned tag, unsigned level, unsigned base_class, unsigned *ids, char **names)
-{
-  unsigned u, u0, u1, v;
-  unsigned cur_ids[4], matched, final, cur_level, cur_class, cur_tag;
-  char *s;
-
-  if(level > 3) return 0;
-  memset(cur_ids, 0, sizeof cur_ids);
-  cur_level = matched = final = cur_class = cur_tag = 0;
-
-  /* bitmask */
-  final = (1 << (level + 1)) - 1;
-
-  for(u = 0; u < x->data_len; u++) {
-    u0 = DATA_FLAG(x->data[u]);
-    u1 = DATA_VALUE(x->data[u]);
-    if(u0 < 4) {
-      cur_class = 0;
-      cur_tag = ID_TAG(u1);
-      for(v = u0 + 1; v <= level; v++) {
-        cur_ids[v] = 0;
-        matched &= ~(1 << v);
-      }
-      cur_ids[cur_level = u0] = u1;
-      if(u + 1 < x->data_len && DATA_FLAG(x->data[u + 1]) == FL_RANGE) continue;
-    }
-    else if(u0 == FL_VAL1) {
-      cur_class = u1 >> 8;	/* only base class */
-    }
-    else if(u0 == FL_VAL0 && cur_level <= level && cur_tag == tag) {
-      s = x->names + u1;
-//      fprintf(stderr, ">>%d/%d: class 0x%x: \"%s\" <-> \"%s\"\n", cur_level, level, cur_class, s, names[cur_level]);
-      if(!strcmp(s, names[cur_level])) matched |= 1 << cur_level;
-
-//      fprintf(stderr, ">>> %x/%x\n", matched, final);
-
-      if(matched == final && level == cur_level && cur_class == base_class) {
-//        fprintf(stderr, "FOUND!!!, 0x%04x/0x%04x\n", cur_ids[0], cur_ids[1]);
-        for(v = 0; v <= level; v++) {
-          ids[v] = cur_ids[v];
-        }
-        return u;
-      }
-    }
-  }
-
-  return 0;
-}
-
-/*
- * Check loaded entries first, then check to the static ones.
- */
-unsigned find_entry_by_name(hddb_data_t **xx, unsigned tag, unsigned level, unsigned base_class, unsigned *ids, char **names)
-{
-  unsigned u;
-
-  if((u = find_entry2_by_name(*xx, tag, level, base_class, ids, names))) return u;
-
-  return find_entry2_by_name(&HDDB_DEV, tag, level, base_class, ids, names);
-}
-
-
-char *name_ind(hddb_data_t *x, unsigned ind)
-{
-  unsigned u0, u1;
-
-  if(!ind) return NULL;
-
-  u0 = DATA_FLAG(x->data[ind]);
-  u1 = DATA_VALUE(x->data[ind]);
-
-  if(u0 == FL_VAL1 && ind + 1 < x->data_len) {
-    ind++;
-    u0 = DATA_FLAG(x->data[ind]);
-    u1 = DATA_VALUE(x->data[ind]);
-  }
-
-  if(u0 != FL_VAL0) return NULL;
-
-  return x->names + u1;
-}
-
-unsigned device_class_ind(hddb_data_t *x, unsigned ind)
-{
-  unsigned u0, u1;
-
-  if(!ind) return 0;
-
-  u0 = DATA_FLAG(x->data[ind]);
-  u1 = DATA_VALUE(x->data[ind]);
-
-  return u0 == FL_VAL1 ? u1 : 0;
-}
-
-driver_info_t *device_driver_ind(hddb_data_t *x, unsigned ind)
-{
-  unsigned u0, u1, u2, u3;
-  char *s, *t, *t0;
-  driver_info_t *di = NULL, *di0 = NULL;
-
-  while(1) {
-    if(!ind || ind + 1 >= x->data_len) return di0;
-
-    u0 = DATA_FLAG(x->data[ind]);
-    u1 = DATA_VALUE(x->data[ind]);
-
-    ind++;
-    u2 = DATA_FLAG(x->data[ind]);
-    u3 = DATA_VALUE(x->data[ind]);
-
-    if(u0 != FL_VAL1 || u2 != FL_VAL0) return di0;
-
-    if(di)
-      di = di->next = new_mem(sizeof *di);
-    else
-      di = di0 = new_mem(sizeof *di);
-
-    switch(u1) {
-      case 'd':
-        di->any.type = di_display;
-        break;
-
-      case 'm':
-        di->module.modprobe = 1;
-      case 'i':
-        di->any.type = di_module;
-        break;
-
-      case 'p':
-        di->any.type = di_mouse;
-        break;
-
-      case 'x':
-        di->any.type = di_x11;
-        break;
-
-      default:
-        di->any.type = di_any;
-    }
-
-    s = new_str(x->names + u3);
-    for(t0 = s; (t = strsep(&t0, "|")); ) {
-      add_str_list(&di->any.hddb0, t);
-    }
-    free_mem(s);
-
-    for(ind++; ind < x->data_len; ind++) {
-      u0 = DATA_FLAG(x->data[ind]);
-      u1 = DATA_VALUE(x->data[ind]);
-      if(u0 != FL_VAL0) break;
-      add_str_list(&di->any.hddb1, x->names + u1);
-    }
-  }
-}
-
-
-char *hd_bus_name(hd_data_t *hd_data, unsigned bus)
-{
-  hddb_data_t *x;
-  unsigned u;
-  unsigned ids[4] = { MAKE_ID(TAG_BUS, ID_VALUE(bus)), };
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_bus_name, hd_data), hd_data);
-  }
-#endif
-
-  init_hddb(hd_data);
-
-  x = hd_data->hddb_dev;
-
-  u = find_entry(&x, 0, 0, ids);
-  return name_ind(x, u);
-}
-
-/*
- * level is 1, 2 or 3 indicating if the base_class, sub_class or prog_if values are valid.
- */
-char *hd_class_name(hd_data_t *hd_data, int level, unsigned base_class, unsigned sub_class, unsigned prog_if)
-{
-  static char *name = NULL;
-  hddb_data_t *x;
-  unsigned u;
-  unsigned ids[4] = { MAKE_ID(TAG_CLASS, ID_VALUE(base_class)), 0, 0, 0 };
-  char *s = NULL, *t;
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_class_name, hd_data), hd_data);
-  }
-#endif
-
-  init_hddb(hd_data);
-
-  x = hd_data->hddb_dev;
-
-  if(name) name = free_mem(name);
-
-  if(level > 1) ids[1] = MAKE_ID(TAG_CLASS, ID_VALUE(sub_class));
-  if(level > 2) ids[2] = MAKE_ID(TAG_CLASS, ID_VALUE(prog_if));
-
-  if(level == 3) {
-    u = find_entry(&x, 0, --level, ids);
-    if(u) s = name_ind(x, u);
-    x = hd_data->hddb_dev;
-  }
-
-  do {
-    u = find_entry(&x, 0, --level, ids);
-  }
-  while(u == 0 && level > 0);
-
-  t = name_ind(x, u);
-
-  if(s && t && *t) {
-    str_printf(&name, 0, "%s (%s)", t, s);
-    t = name;
-  }
-
-  return t;
-}
-
-char *hd_vendor_name(hd_data_t *hd_data, unsigned vendor)
-{
-  hddb_data_t *x;
-  unsigned u;
-  unsigned ids[4] = { vendor, };
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_vendor_name, hd_data), hd_data);
-  }
-#endif
-
-  init_hddb(hd_data);
-
-  x = hd_data->hddb_dev;
-
-  u = find_entry(&x, 0, 0, ids);
-  return name_ind(x, u);
-}
-
-char *hd_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device)
-{
-  hddb_data_t *x;
-  unsigned u;
-  unsigned ids[4] = { vendor, device, };
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_device_name, hd_data), hd_data);
-  }
-#endif
-
-  init_hddb(hd_data);
-
-  x = hd_data->hddb_dev;
-
-  u = find_entry(&x, 0, 1, ids);
-  return name_ind(x, u);
-}
-
-char *hd_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device)
-{
-  hddb_data_t *x;
-  unsigned u;
-  unsigned ids[4] = { vendor, device, sub_vendor, sub_device };
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_sub_device_name, hd_data), hd_data);
-  }
-#endif
-
-  init_hddb(hd_data);
-
-  x = hd_data->hddb_dev;
-
-  u = find_entry(&x, 0, 3, ids);
-  return name_ind(x, u);
-}
-
-unsigned device_class(hd_data_t *hd_data, unsigned vendor, unsigned device)
-{
-  hddb_data_t *x;
-  unsigned u, v, count, d;
-  unsigned ids[4] = { vendor, device, };
-
-  init_hddb(hd_data);
-
-  x = hd_data->hddb_dev;
-
-  for(d = 0, v = 1; v < 10 /* just to be sure */; v++) {
-    count = v;
-    u = find_entry_n(&x, 0, 1, ids, &count);
-    if(u) d = device_class_ind(x, u);
-    if(d || count) break;
-  }
-
-  return d;
-}
-
-unsigned sub_device_class(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device)
-{
-  hddb_data_t *x;
-  unsigned u, v, count, d;
-  unsigned ids[4] = { vendor, device, sub_vendor, sub_device };
-
-  init_hddb(hd_data);
-
-  x = hd_data->hddb_dev;
-
-  for(d = 0, v = 1; v < 10 /* just to be sure */; v++) {
-    count = v;
-    u = find_entry_n(&x, 0, 3, ids, &count);
-    if(u) d = device_class_ind(x, u);
-    if(d || count) break;
-  }
-
-  return d;
-}
-
-driver_info_t *device_driver(hd_data_t *hd_data, unsigned vendor, unsigned device)
-{
-  hddb_data_t *x;
-  unsigned u;
-  unsigned ids[4] = { vendor, device, };
-
-  init_hddb(hd_data);
-
-  x = hd_data->hddb_drv;
-
-  u = find_entry(&x, 1, 1, ids);
-  return device_driver_ind(x, u);
-}
-
-driver_info_t *sub_device_driver(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device)
-{
-  hddb_data_t *x;
-  unsigned u;
-  unsigned ids[4] = { vendor, device, sub_vendor, sub_device };
-
-  init_hddb(hd_data);
-
-  x = hd_data->hddb_drv;
-
-  u = find_entry(&x, 1, 3, ids);
-  return device_driver_ind(x, u);
-}
-
-int is_space(int c)
-{
-  return c == ' ' || c == '\t' || c == '\n' ? 1 : 0;
-}
-
-int is_delim(int c)
-{
-  return c == '+' || c == '.' || c == 0 ? 1 : is_space(c);
-}
-
-void skip_spaces(char **str)
-{
-  while(is_space(**str)) (*str)++;
-}
-
-hwid_t read_id(char **s)
-{
-  char *t, *t1;
-  int l;
-  unsigned u;
-  hwid_t id;
-
-  memset(&id, 0, sizeof id);
-
-  skip_spaces(s);
-  t = *s;
-  l = strlen(t);
-
-  if(l >= 3 && is_delim(t[3]) && (u = name2eisa_id(t))) {
-    id.tag_ok = id.val_ok = 1;
-    id.tag = TAG_EISA;
-    id.val = ID_VALUE(u);
-    t += 3; l -= 3;
-  }
-  else {
-    switch(*t) {
-      case 'p':
-        id.tag_ok = 1;
-        id.tag = TAG_PCI;
-        t++; l--;
-        break;
-
-      case 'u':
-        id.tag_ok = 1;
-        id.tag = TAG_USB;
-        t++; l--;
-        break;
-
-      case 's':
-        id.tag_ok = 1;
-        id.tag = TAG_SPECIAL;
-        t++; l--;
-        break;
-    }
-
-    if(l < 2) return id;
-
-    u = strtoul(t, &t1, 16);
-
-    if(t1 - t > 4 || t1 - t < 2) return id;
-    l -= t1 - t; t = t1;
-
-    id.val = u;
-    id.val_ok = 1;
-  }
-
-  if(*t == '+') {
-    t++;
-    u = strtoul(t, &t1, 16);
-    if(t1 == t) return id;
-    t = t1;
-    id.range = u;
-    id.range_ok = 1;
-    if(id.range > 0x10000 || id.val + id.range > 0x10000) {
-      id.range = 0x10000 - id.val;
-    }
-  }
-
-  if(*t == '.') {
-    t++;
-    u = strtoul(t, &t1, 16);
-    if(t1 == t) return id;
-    t = t1;
-    id.xtra = u;
-    id.xtra_ok = 1;
-  }
-
-  if(is_delim(*t)) {
-    *s = t;
-    id.ok = 1;
-  }
-
-  return id;
-}
-
-char *read_str(char *s)
-{
-  static char *buf = NULL;
-
-  if(buf) buf = free_mem(buf);
-
-  skip_spaces(&s);
-
-  buf = new_str(s);
-  s = buf + strlen(buf);
-
-  while(s > buf && is_space(s[-1])) *--s = 0;
-
-  return buf;
-}
-
-void store_data(hddb_data_t *x, unsigned val)
-{
-  if(x->data_len == x->data_max) {
-    x->data_max += 0x400;	/* 4k steps */
-    x->data = resize_mem(x->data, x->data_max * sizeof *x->data);
-  }
-
-  x->data[x->data_len++] = val;
-}
-
-unsigned store_name(hddb_data_t *x, char *name)
-{
-  unsigned l = strlen(name), u;
-
-  if(x->names_len + l >= x->names_max) {
-    x->names_max += l + 0x1000;		/* >4k steps */
-    x->names = resize_mem(x->names, x->names_max * sizeof *x->names);
-  }
-
-  /* make sure that the 1st byte is 0 */
-  if(x->names_len == 0) x->names_len = 1;
-
-  if(l == 0) return 0;		/* 1st byte is always 0 */
-
-  strcpy(x->names + (u = x->names_len), name);
-  x->names_len += l + 1;
-
-  return u;
-}
-
-void store_id(hddb_data_t *x, hwid_t *id, unsigned tag, unsigned level, char *name)
-{
-  unsigned u;
-
-  store_data(x, MAKE_DATA(level, MAKE_ID(tag, id->val)));
-
-  if(id->range_ok) {
-    store_data(x, MAKE_DATA(FL_RANGE, id->range));
-  }
-
-  if(id->xtra_ok) {
-    store_data(x, MAKE_DATA(FL_VAL1, id->xtra));
-  }
-
-  if(name) {
-    u = store_name(x, read_str(name));
-    store_data(x, MAKE_DATA(FL_VAL0, u));
-  }
-}
-
-void init_hddb(hd_data_t *hd_data)
-{
-  char *s;
-  int line, no_init = -1;
-  str_list_t *sl, *sl0;
-  hwid_t id_0, id_1, id_2, id_3;
-  unsigned u, tag, last_ids;
-  unsigned id0, id1, id2;
-
-  init_hddb_pci(hd_data);
-
-  if(hd_data->hddb_dev && hd_data->hddb_drv) return;
-
-  hd_data->hddb_dev = new_mem(sizeof *hd_data->hddb_dev);
-  hd_data->hddb_drv = new_mem(sizeof *hd_data->hddb_drv);
-
-  /* read the device names */
-
-  sl0 = read_file(NAME_LIST, 0, 0);
-
-  for(sl = sl0, line = tag = 0; sl; sl = sl->next) {
-    s = sl->str;
-    line++;
-
-    /* skip empty lines & comments */
-    if(*s == '\n' || *s == '#' || *s == ';') continue;
-
-    /* sub-entries */
-    if(*s == '\t') {
-      if(s[1] == '\t') {	/* level 2 & 3 entries */
-
-        id_0 = read_id(&s);
-        if(id_0.ok) {
-          if(tag == TAG_CLASS) {	/* only level 2 (prog-if) */
-            store_id(hd_data->hddb_dev, &id_0, tag, 2, s);
-            continue;
-          }
-          else {
-            store_id(hd_data->hddb_dev, &id_0, tag, 2, NULL);
-            id_0 = read_id(&s);
-            if(id_0.ok) {
-              store_id(hd_data->hddb_dev, &id_0, tag, 3, s);
-              continue;
-            }
-          }
-        }
-
-        ADD2LOG("invalid sub-sub id (tag %u) at line %d\n", tag, line);
-        no_init = -2;
-        break;
-      }
-
-      /* level 1 entries */
-      id_0 = read_id(&s);
-      if(id_0.ok) {
-        store_id(hd_data->hddb_dev, &id_0, tag, 1, s);
-        continue;
-      }
-
-      ADD2LOG("invalid sub id (tag %u) at line %d\n", tag, line);
-      no_init = -3;
-      break;
-    }
-
-    /* level 0 entries */
-
-    tag = TAG_PCI;
-
-    if(*s == 'B' && is_space(s[1])) {
-      s++;
-      tag = TAG_BUS;
-    }
-    else if(*s == 'C' && is_space(s[1])) {
-      s++;
-      tag = TAG_CLASS;
-    }
-
-    id_0 = read_id(&s);
-    if(id_0.ok) {
-      if(id_0.tag_ok) tag = id_0.tag;
-      store_id(hd_data->hddb_dev, &id_0, tag, 0, s);
-      continue;
-    }
-
-    ADD2LOG("invalid id (tag %u) at line %d\n", tag, line);
-    no_init = -4;
-    break;
-  }
-
-  free_str_list(sl0);
-
-  if(no_init < -1) return;
-
-  /* read the driver info */
-
-  sl0 = read_file(DRIVER_LIST, 0, 0);
-
-  id0 = id1 = id2 = 0;
-  last_ids = 0;
-
-  for(sl = sl0, line = tag = 0; sl; sl = sl->next) {
-    s = sl->str;
-    line++;
-
-    /* skip empty lines & comments */
-    if(*s == '\n' || *s == '#' || *s == ';') continue;
-
-    /* driver info */
-    if(*s == '\t') {
-      last_ids = 0;
-
-      if(s[1] == '\t') {	/* extra driver info */
-
-        /* remove new-line char at end of line */
-        u = strlen(s);
-        if(u && s[u - 1] == '\n') s[u - 1] = 0;
-
-        u = store_name(hd_data->hddb_drv, s + 2);
-        store_data(hd_data->hddb_drv, MAKE_DATA(FL_VAL0, u));
-
-        continue;
-      }
-
-      if(s[1] >= 'a' && s[1] <= 'z' && is_space(s[2])) {
-         /* beware of chars > 127! */
-         store_data(hd_data->hddb_drv, MAKE_DATA(FL_VAL1, s[1]));
-
-         u = store_name(hd_data->hddb_drv, read_str(s + 2));
-         store_data(hd_data->hddb_drv, MAKE_DATA(FL_VAL0, u));
-         
-         continue;
-      }
-
-      ADD2LOG("invalid driver info at line %d\n", line);
-      break;
-    }
-
-    /* device ids */
-
-    tag = TAG_PCI;
-
-    id_1.ok = id_2.ok = id_3.ok = 0;
-    id_0 = read_id(&s);
-    if(id_0.ok) id_1 = read_id(&s);
-    if(id_1.ok) id_2 = read_id(&s);
-    if(id_2.ok) id_3 = read_id(&s);
-
-    if(id_0.ok && (id_1.ok || id_3.ok)) {
-      if(id_0.tag_ok) tag = id_0.tag;
-
-      if(id0 != id_0.val || id_0.range_ok) {
-        id0 = id_0.val;
-        store_id(hd_data->hddb_drv, &id_0, tag, 0, NULL);
-      }
-      if(id_1.ok && (
-        id1 != id_1.val ||
-        id_1.range_ok ||
-        (id_3.ok && last_ids < 4) ||
-        (!id_3.ok && last_ids > 2)
-      )) {
-        id1 = id_1.val;
-        store_id(hd_data->hddb_drv, &id_1, tag, 1, NULL);
-      }
-      if(id_2.ok && (id2 != id_2.val || id_2.range_ok)) {
-        id2 = id_2.val;
-        store_id(hd_data->hddb_drv, &id_2, tag, 2, NULL);
-      }
-      if(id_3.ok) {
-        store_id(hd_data->hddb_drv, &id_3, tag, 3, NULL);
-      }
-
-      last_ids = 1;
-      if(id_1.ok) last_ids++;
-      if(id_2.ok) last_ids++;
-      if(id_3.ok) last_ids++;
-
-      continue;
-    }
-
-    ADD2LOG("invalid id spec (tag %u) at line %d\n", tag, line);
-    no_init = -10;
-    break;
-  }
-
-  free_str_list(sl0);
-
-  if(no_init < -1) return;
-
-  no_init = 0;
-
-#ifdef DEBUG_HDDB
-  if((hd_data->debug & HD_DEB_HDDB)) {
-    dump_hddb_data(hd_data, &HDDB_DEV, "hddb_dev, static");
-    dump_hddb_data(hd_data, hd_data->hddb_dev, "hddb_dev, loaded");
-    dump_hddb_data(hd_data, &HDDB_DRV, "hddb_drv, static");
-    dump_hddb_data(hd_data, hd_data->hddb_drv, "hddb_drv, loaded");
-  }
-#endif
-}
-
-
-void init_hddb_pci(hd_data_t *hd_data)
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+void hddb_init_pci(hd_data_t *hd_data)
 {
   str_list_t *sl0 = NULL, *sl;
   char *s = NULL;
@@ -918,137 +171,6 @@ void init_hddb_pci(hd_data_t *hd_data)
 #endif
 }
 
-/*
- * Should we remove a potentially existing old entry? At the moment the new
- * entry is ignored in that case.
- */
-void add_vendor_name(hd_data_t *hd_data, unsigned vendor, char *name)
-{
-  hddb_data_t *x;
-  unsigned u;
-
-  init_hddb(hd_data);
-
-  if(!(x = hd_data->hddb_dev)) return;
-
-  store_data(x, MAKE_DATA(0, DATA_VALUE(vendor)));
-
-  if(name) {
-    u = store_name(x, name);
-    store_data(x, MAKE_DATA(FL_VAL0, u));
-  }
-}
-
-void add_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, char *name)
-{
-  hddb_data_t *x;
-  unsigned u;
-
-  init_hddb(hd_data);
-
-  if(!(x = hd_data->hddb_dev)) return;
-
-  store_data(x, MAKE_DATA(0, DATA_VALUE(vendor)));
-  store_data(x, MAKE_DATA(1, DATA_VALUE(device)));
-
-  if(name) {
-    u = store_name(x, name);
-    store_data(x, MAKE_DATA(FL_VAL0, u));
-  }
-}
-
-void add_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device, char *name)
-{
-  hddb_data_t *x;
-  unsigned u;
-
-  init_hddb(hd_data);
-
-  if(!(x = hd_data->hddb_dev)) return;
-
-  store_data(x, MAKE_DATA(0, DATA_VALUE(vendor)));
-  store_data(x, MAKE_DATA(1, DATA_VALUE(device)));
-  store_data(x, MAKE_DATA(2, DATA_VALUE(sub_vendor)));
-  store_data(x, MAKE_DATA(3, DATA_VALUE(sub_device)));
-
-  if(name) {
-    u = store_name(x, name);
-    store_data(x, MAKE_DATA(FL_VAL0, u));
-  }
-}
-
-int hd_find_device_by_name(hd_data_t *hd_data, unsigned base_class, char *vendor, char *device, unsigned *vendor_id, unsigned *device_id)
-{
-  hddb_data_t *x;
-  unsigned u;
-  unsigned ids[4];
-  char *names[4];
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_find_device_by_name, hd_data), hd_data);
-  }
-#endif
-
-  init_hddb(hd_data);
-
-  x = hd_data->hddb_dev;
-
-  names[0] = vendor;
-  names[1] = device;
-
-  u = find_entry_by_name(&x, TAG_SPECIAL, 1, base_class, ids, names);
-
-  if(u) {
-    *vendor_id = ids[0];
-    *device_id = ids[1];
-  }
-
-  return u;
-}
-
-str_list_t *get_hddb_packages(hd_data_t *hd_data)
-{
-  unsigned u, u0, u1;
-  str_list_t *sl = 0;
-  char *s, *t, *t0;
-  char *s2, *t2, *t02;
-  int i, j;
-  hddb_data_t *x;
-
-  init_hddb(hd_data);
-
-  for (j = 0; j < 2; j++) {
-    x = j ? &HDDB_DRV : hd_data->hddb_drv;
-    if (x == 0)
-      continue;
-    for(u = 0; u < x->data_len; u++) {
-      u0 = DATA_FLAG(x->data[u]);
-      u1 = DATA_VALUE(x->data[u]);
-      if (u0 != FL_VAL1 || u1 != 'x')
-	continue;
-      if (++u >= x->data_len)
-	break;
-      u0 = DATA_FLAG(x->data[u]);
-      u1 = DATA_VALUE(x->data[u]);
-      if (u0 != FL_VAL0)
-	continue;
-      s = new_str(x->names + u1);
-      for(i = 0, t0 = s; (t = strsep(&t0, "|")); i++) {
-	if (i == 3 && *t) {
-	  s2 = new_str(t);
-	  for(t02 = s2; (t2 = strsep(&t02, ",")); )
-	    if (!search_str_list(sl, t2))
-	      add_str_list(&sl, t2);
-	  free_mem(s2);
-	}
-      }
-      free_mem(s);
-    }
-  }
-  return sl;
-}
 
 driver_info_t *hd_pcidb(hd_data_t *hd_data, hd_t *hd)
 {
@@ -1098,59 +220,1454 @@ driver_info_t *hd_pcidb(hd_data_t *hd_data, hd_t *hd)
   return di0;
 }
 
-#ifdef DEBUG_HDDB
-static char *id2str(unsigned id, int vend);
 
-char *id2str(unsigned id, int vend)
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+void hddb_init(hd_data_t *hd_data)
 {
-  static char buf[32];
+  hddb_init_pci(hd_data);
+  hddb_init_external(hd_data);
+
+  hd_data->hddb2[1] = &hddb_internal;
+
+#ifdef HDDB_TEST
+  test_db(hd_data);
+#endif
+}
+
+
+void hddb_init_external(hd_data_t *hd_data)
+{
+  str_list_t *sl, *sl0;
+  line_t *l;
+  unsigned l_start, l_end /* end points _past_ last element */;
+  unsigned u, ent, l_nr = 1;
+  tmp_entry_t tmp_entry[he_nomask /* _must_ be he_nomask! */];
+  hddb_entry_mask_t entry_mask = 0;
+  int state;
+  hddb_list_t dbl = {};
+  hddb2_data_t *hddb2;
+
+  if(hd_data->hddb2[0]) return;
+
+  hddb2 = hd_data->hddb2[0] = new_mem(sizeof *hd_data->hddb2[0]);
+
+  sl0 = read_file(ID_LIST, 0, 0);
+
+  l_start = l_end = 0;
+  state = 0;
+
+  for(sl = sl0; sl; sl = sl->next, l_nr++) {
+    l = parse_line(sl->str);
+    if(!l) {
+      fprintf(stderr, "hd.ids line %d: invalid line\n", l_nr);
+      state = 4;
+      break;
+    };
+    if(l->prefix == pref_empty) continue;
+    switch(l->prefix) {
+      case pref_new:
+        if((state == 2 && !entry_mask) || state == 1) {
+          fprintf(stderr, "hd.ids line %d: new item not allowed\n", l_nr);
+          state = 4;
+          break;
+        }
+        if(state == 2 && entry_mask) {
+          ent = store_entry(hddb2, tmp_entry);
+          if(ent == -1) {
+            fprintf(stderr, "hd.ids line %d: internal hddb oops 1\n", l_nr);
+            state = 4;
+            break;
+          }
+          if(l_end && l_end > l_start) {
+            for(u = l_start; u < l_end; u++) {
+              hddb2->list[u].value_mask = entry_mask;
+              hddb2->list[u].value = ent;
+            }
+          }
+        }
+        entry_mask = 0;
+        clear_entry(tmp_entry);
+        state = 1;
+        l_start = store_list(hddb2, &dbl);
+        l_end = l_start + 1;
+        break;
+
+      case pref_and:
+        if(state != 1) {
+          fprintf(stderr, "hd.ids line %d: must start item first\n", l_nr);
+          state = 4;
+          break;
+        }
+        break;
+
+      case pref_or:
+        if(state != 1 || !entry_mask || l_end <= l_start || l_end < 1) {
+          fprintf(stderr, "hd.ids line %d: must start item first\n", l_nr);
+          state = 4;
+          break;
+        }
+        ent = store_entry(hddb2, tmp_entry);
+        if(ent == -1) {
+          fprintf(stderr, "hd.ids line %d: internal hddb oops 2\n", l_nr);
+          state = 4;
+          break;
+        }
+        hddb2->list[l_end - 1].key_mask = entry_mask;
+        hddb2->list[l_end - 1].key = ent;
+        entry_mask = 0;
+        clear_entry(tmp_entry);
+        u = store_list(hddb2, &dbl);
+        if(u != l_end) {
+          fprintf(stderr, "hd.ids line %d: internal hddb oops 2\n", l_nr);
+          state = 4;
+          break;
+        }
+        l_end++;
+        break;
+
+      case pref_add:
+        if(state == 1 && !entry_mask) {
+          fprintf(stderr, "hd.ids line %d: driver info not allowed\n", l_nr);
+          state = 4;
+          break;
+        }
+        if(state == 1 && l_end > l_start) {
+          ent = store_entry(hddb2, tmp_entry);
+          if(ent == -1) {
+            fprintf(stderr, "hd.ids line %d: internal hddb oops 3\n", l_nr);
+            state = 4;
+            break;
+          }
+          hddb2->list[l_end - 1].key_mask = entry_mask;
+          hddb2->list[l_end - 1].key = ent;
+          entry_mask = 0;
+          clear_entry(tmp_entry);
+          state = 2;
+        }
+        if(state != 2 || l_end == 0) {
+          fprintf(stderr, "hd.ids line %d: driver info not allowed\n", l_nr);
+          state = 4;
+          break;
+        }
+        break;
+
+      default:
+        state = 4;
+    }
+
+    if(state != 4) {
+      u = add_entry(hddb2, tmp_entry, l->key, l->value);
+      if(u) {
+        entry_mask |= u;
+      }
+      else {
+        fprintf(stderr, "hd.ids line %d: invalid info\n", l_nr);
+        state = 4;
+      }
+    }
+
+    if(state == 4) break;	/* error */
+  }
+
+  /* finalize last item */
+  if(state == 2 && entry_mask) {
+    ent = store_entry(hddb2, tmp_entry);
+    if(ent == -1) {
+      fprintf(stderr, "hd.ids line %d: internal hddb oops 4\n", l_nr);
+      state = 4;
+    }
+    else if(l_end && l_end > l_start) {
+      for(u = l_start; u < l_end; u++) {
+        hddb2->list[u].value_mask = entry_mask;
+        hddb2->list[u].value = ent;
+      }
+    }
+  }
+
+  sl0 = free_str_list(sl0);
+
+  if(state == 4) {
+    /* there was an error */
+
+    free_mem(hddb2->list);
+    free_mem(hddb2->ids);
+    free_mem(hddb2->strings);
+    hd_data->hddb2[0] = free_mem(hd_data->hddb2[0]);
+  }
+}
+
+
+line_t *parse_line(char *str)
+{
+  static line_t l;
   char *s;
+  int i;
 
-  *(s = buf) = 0;
+  /* drop leading spaces */
+  while(isspace(*str)) str++;
 
-  if(vend && ID_TAG(id) == TAG_EISA) {
-    strcpy(s, eisa_vendor_str(id));
+  /* skip emtpy lines and comments */
+  if(!*str || *str == ';' || *str == '#') {
+    l.prefix = pref_empty;
+    return &l;
+  }
+
+  l.prefix = pref_new;
+
+  switch(*str) {
+    case '&':
+      l.prefix = pref_and;
+      str++;
+      break;
+
+    case '|':
+      l.prefix = pref_or;
+      str++;
+      break;
+
+    case '+':
+      l.prefix = pref_add;
+      str++;
+      break;
+  }
+
+  /* skip spaces */
+  while(isspace(*str)) str++;
+
+  s = str;
+  while(*str && !isspace(*str)) str++;
+  if(*str) *str++ = 0;
+  while(isspace(*str)) str++;
+
+  for(i = 0; i < sizeof hddb_entry_strings / sizeof *hddb_entry_strings; i++) {
+    if(!strcmp(s, hddb_entry_strings[i])) {
+      l.key = i;
+      break;
+    }
+  }
+
+  if(i >= sizeof hddb_entry_strings / sizeof *hddb_entry_strings) return NULL;
+
+  l.value = str;
+
+  /* drop trailing white space */
+  i = strlen(str);
+  while(i > 0) {
+    if(isspace(str[i - 1]))
+      str[--i] = 0;
+    else
+      break;
+  }
+
+  /* special case: drop leading and final double quotes, if any */
+  i = strlen(l.value);
+  if(i >= 2 && l.value[0] == '"' && l.value[i - 1] == '"') {
+    l.value[i - 1] = 0;
+    l.value++;
+  }
+
+  // fprintf(stderr, "pre = %d, key = %d, val = \"%s\"\n", l.prefix, l.key, l.value);
+
+  return &l;
+}
+
+
+unsigned store_string(hddb2_data_t *x, char *str)
+{
+  unsigned l = strlen(str), u;
+
+  if(x->strings_len + l >= x->strings_max) {
+    x->strings_max += l + 0x1000;         /* >4k steps */
+    x->strings = resize_mem(x->strings, x->strings_max * sizeof *x->strings);
+  }
+
+  /* make sure the 1st byte is 0 */
+  if(x->strings_len == 0) {
+    *x->strings = 0;	/* resize_mem does _not_ clear memory */
+    x->strings_len = 1;
+  }
+
+  if(l == 0) return 0;		/* 1st byte is always 0 */
+
+  strcpy(x->strings + (u = x->strings_len), str);
+  x->strings_len += l + 1;
+
+  return u;
+}
+
+
+unsigned store_list(hddb2_data_t *x, hddb_list_t *list)
+{
+  if(x->list_len == x->list_max) {
+    x->list_max += 0x100;	/* 4k steps */
+    x->list = resize_mem(x->list, x->list_max * sizeof *x->list);
+  }
+
+  x->list[x->list_len++] = *list;
+
+  return x->list_len - 1;
+}
+
+
+unsigned store_value(hddb2_data_t *x, unsigned val)
+{
+  if(x->ids_len == x->ids_max) {
+    x->ids_max += 0x400;	/* 4k steps */
+    x->ids = resize_mem(x->ids, x->ids_max * sizeof *x->ids);
+  }
+
+  x->ids[x->ids_len++] = val;
+
+  return x->ids_len - 1;
+}
+
+
+/* returns index in hddb2->ids */
+unsigned store_entry(hddb2_data_t *x, tmp_entry_t *te)
+{
+  int i, j;
+  unsigned ent = -1, u, v;
+
+  for(i = 0; i < he_nomask; i++) {
+    if(te[i].len) {
+      for(j = 0; j < te[i].len; j++) {
+        v = te[i].val[j] | (1 << 31);
+        if(j == te[i].len - 1) v &= ~(1 << 31);
+        u = store_value(x, v);
+        if(ent == -1) ent = u;
+      }
+    }
+  }
+
+  return ent;
+}
+
+void clear_entry(tmp_entry_t *te)
+{
+  memset(te, 0, he_nomask * sizeof *te);
+}
+
+void add_value(tmp_entry_t *te, hddb_entry_t idx, unsigned val)
+{
+  if(idx >= he_nomask) return;
+  te += idx;
+
+  if(te->len >= sizeof te->val / sizeof *te->val) return;
+
+  te->val[te->len++] = val;
+}
+
+int parse_id(char *str, unsigned *id, unsigned *range, unsigned *mask)
+{
+  static unsigned id0, val;
+  unsigned tag = 0;
+  char c = 0, *s, *t = NULL;
+
+  *id = *range = *mask = 0;
+
+  if(!str || !*str) return 0;
+  
+  for(s = str; *str && !isspace(*str); str++);
+  if(*str) {
+    c = *(t = str);	/* remember for later */
+    *str++ = 0;
+  }
+  while(isspace(*str)) str++;
+
+  if(*s) {
+    if(!strcmp(s, "pci")) tag = TAG_PCI;
+    else if(!strcmp(s, "usb")) tag = TAG_USB;
+    else if(!strcmp(s, "special")) tag = TAG_SPECIAL;
+    else if(!strcmp(s, "eisa")) tag = TAG_EISA;
+    else if(!strcmp(s, "isapnp")) tag = TAG_EISA;
+    else {
+      str = s;
+      if(t) *t = c;	/* restore */
+    }
+  }
+
+  id0 = strtoul(str, &s, 0);
+
+  if(s == str) {
+    id0 = name2eisa_id(str);
+    if(!id0) return 0;
+    s = str + 3;
+    id0 = ID_VALUE(id0);
+    if(!tag) tag = TAG_EISA;
+  }
+
+  while(isspace(*s)) s++;
+  if(*s && *s != '&' && *s != '+') return 0;
+
+  *id = MAKE_ID(tag, id0);
+
+  if(!*s) return 1;
+
+  c = *s++;
+
+  while(isspace(*s)) s++;
+
+  val = strtoul(s, &str, 0);
+
+  if(s == str) return 0;
+
+  while(isspace(*str)) str++;
+
+  if(*str) return 0;
+
+  if(c == '+') *range = val; else *mask = val;
+
+  return c == '+' ? 2 : 3;
+}
+
+
+hddb_entry_mask_t add_entry(hddb2_data_t *hddb2, tmp_entry_t *te, hddb_entry_t idx, char *str)
+{
+  hddb_entry_mask_t mask = 0;
+  int i;
+  unsigned u, u0, u1, u2;
+  char *s, c;
+
+  for(i = 0; i < sizeof hddb_is_numeric / sizeof *hddb_is_numeric; i++) {
+    if(idx == hddb_is_numeric[i]) break;
+  }
+
+  if(i < sizeof hddb_is_numeric / sizeof *hddb_is_numeric) {
+    /* numeric id */
+    mask |= 1 << idx;
+
+    i = parse_id(str, &u0, &u1, &u2);
+
+    switch(i) {
+      case 1:
+        add_value(te, idx, MAKE_DATA(FLAG_ID, u0));
+        break;
+
+      case 2:
+        add_value(te, idx, MAKE_DATA(FLAG_RANGE, u1));
+        add_value(te, idx, MAKE_DATA(FLAG_ID, u0));
+        break;
+
+      case 3:
+        add_value(te, idx, MAKE_DATA(FLAG_MASK, u2));
+        add_value(te, idx, MAKE_DATA(FLAG_ID, u0));
+        break;
+
+      default:
+        return 0;
+    }
   }
   else {
-    if(ID_TAG(id) == TAG_PCI) *s++ = 'p', *s = 0;
-    if(ID_TAG(id) == TAG_EISA) *s++ = 'i', *s = 0;
-    if(ID_TAG(id) == TAG_USB) *s++ = 'u', *s = 0;
-    if(ID_TAG(id) == TAG_SPECIAL) *s++ = 's', *s = 0;
-    if(ID_TAG(id) == TAG_BUS) *s++ = 'b', *s = 0;
-    if(ID_TAG(id) == TAG_CLASS) *s++ = 'c', *s = 0;
-    sprintf(s, "%04x", ID_VALUE(id));
-  }
+    if(idx < he_nomask) {
+      /* strings */
 
-  return buf;
-}
-
-
-void dump_hddb_data(hd_data_t *hd_data, hddb_data_t *x, char *name)
-{
-  unsigned u, u0, u1;
-  static char *flags[8] = {
-    "#0   ", "#1   ", "#2   ", "#3   ", "range", "   v0", "   v1", "  res"
-  };
-
-  ADD2LOG(
-    "%s: data 0x%x/0x%x, names 0x%x/0x%x\n",
-    name, x->data_len, x->data_max, x->names_len, x->names_max
-  );
-  
-  for(u = 0; u < x->data_len; u++) {
-    u0 = DATA_FLAG(x->data[u]);
-    u1 = DATA_VALUE(x->data[u]);
-    ADD2LOG("%3d\t%x:%05x\t%s:", u, u0, u1, flags[u0]);
-    if(u0 < 4) {
-      ADD2LOG("\t%-5s", id2str(u1, 1 ^ (u0 & 1)));
+      mask |= 1 << idx;
+      u = store_string(hddb2, str);
+      // fprintf(stderr, ">>> %s\n", str);
+      add_value(te, idx, MAKE_DATA(FLAG_STRING, u));
     }
     else {
+      /* special */
+
+      if(idx == he_class_id) {
+        i = parse_id(str, &u0, &u1, &u2);
+        if(i != 1) return 0;
+        u = ID_VALUE(u0) >> 8;
+        add_value(te, he_baseclass_id, MAKE_DATA(FLAG_ID, u));
+        u = u0 & 0xff;
+        add_value(te, he_subclass_id, MAKE_DATA(FLAG_ID, u));
+        /* add_value(te, he_progif_id, MAKE_DATA(FLAG_ID, 0)); */
+        mask |= (1 << he_baseclass_id) + (1 << he_subclass_id) /* + (1 << he_progif_id) */;
+      }
+      else {
+        switch(idx) {
+          case he_driver_module_insmod:
+            c = 'i';
+            break;
+
+          case he_driver_module_modprobe:
+            c = 'm';
+            break;
+
+          case he_driver_module_config:
+            c = 'M';
+            break;
+
+          case he_driver_xfree:
+            c = 'x';
+            break;
+
+          case he_driver_xfree_config:
+            c = 'X';
+            break;
+
+          case he_driver_mouse:
+            c = 'p';
+            break;
+
+          case he_driver_display:
+            c = 'd';
+            break;
+
+          case he_driver_any:
+            c = 'a';
+            break;
+
+          default:
+            c = 0;
+            break;
+        }
+        if(c) {
+          s = new_mem(strlen(str) + 3);
+          s[0] = c;
+          s[1] = '\t';
+          strcpy(s + 2, str);
+          mask |= add_entry(hddb2, te, he_driver, s);
+          s = free_mem(s);
+        }
+      }
     }
-    if(u0 == FL_RANGE) ADD2LOG("  +0x%04x", u1);
-    if(u0 == FL_VAL0) ADD2LOG("  \"%s\"", x->names + u1);
-    if(u0 == FL_VAL1) ADD2LOG("  '%c'", u1 & 0xff);
-    ADD2LOG("\n");
   }
-  ADD2LOG("----\n");
+
+  return mask;
+}
+
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+void hddb_dump_raw(hddb2_data_t *hddb, FILE *f)
+{
+  int i;
+  unsigned u, fl, v, t, id;
+  char *s;
+
+  if(!hddb) return;
+
+  fprintf(f, "=== strings 0x%05x/0x%05x ===\n", hddb->strings_len, hddb->strings_max);
+
+  for(s = hddb->strings, i = 0, u = 0; u < hddb->strings_len; u++) {
+    if(!hddb->strings[u]) {
+      fprintf(f, "%4d (0x%05x): \"%s\"\n", i, s - hddb->strings, s);
+      i++;
+      s = hddb->strings + u + 1;
+    }
+  }
+
+  fprintf(f, "\n=== ids 0x%05x/0x%05x ===\n", hddb->ids_len, hddb->ids_max);
+
+  for(u = 0; u < hddb->ids_len; u++) {
+    fprintf(f, "0x%05x: 0x%08x  ", u, hddb->ids[u]);
+    if(hddb->ids[u] & (1 << 31)) fprintf(f, "    ");
+    fl = DATA_FLAG(hddb->ids[u]) & 0x7;
+    v = DATA_VALUE(hddb->ids[u]);
+    if(fl == FLAG_STRING && v < hddb->strings_len) {
+      fprintf(f, "\"%s\"", hddb->strings + v);
+    }
+    else if(fl == FLAG_MASK) {
+      fprintf(f, "&0x%04x", v);
+    }
+    else if(fl == FLAG_RANGE) {
+      fprintf(f, "+0x%04x", v);
+    }
+    else if(fl == FLAG_ID) {
+      t = ID_TAG(v);
+      id = ID_VALUE(v);
+      fprintf(f, "%s0x%04x",
+        t < sizeof hid_tag_names / sizeof *hid_tag_names ? hid_tag_names[t] : "",
+        id
+      );
+      if(t == TAG_EISA) {
+        fprintf(f, " (%s)", eisa_vendor_str(id));
+      }
+    }
+    fprintf(f, "\n");
+  }
+
+  fprintf(f, "\n===  search list 0x%05x/0x%05x ===\n", hddb->list_len, hddb->list_max);
+
+  for(u = 0; u < hddb->list_len; u++) {
+    fprintf(f,
+      "%4d: 0x%08x 0x%08x 0x%05x 0x%05x\n",
+      u, hddb->list[u].key_mask, hddb->list[u].value_mask,
+      hddb->list[u].key, hddb->list[u].value
+    );
+  }
+}
+
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+void hddb_dump_ent_name(hddb2_data_t *hddb, FILE *f, char pre, hddb_entry_t ent)
+{
+  int len, tab_ind = 24;
+
+  if(ent >= sizeof hddb_entry_strings / sizeof *hddb_entry_strings) return;
+
+  fprintf(f, "%c%s\t", pre, hddb_entry_strings[ent]);
+
+  len = strlen(hddb_entry_strings[ent]) + 1;
+
+  for(len = (len & ~7) + 8; len < tab_ind; len += 8) {
+    fputc('\t', f);
+  }
+}
+
+
+void hddb_dump_skey(hddb2_data_t *hddb, FILE *f, prefix_t pre, hddb_entry_mask_t key_mask, unsigned key)
+{
+  static char pref_char[5] = { ' ', ' ', '&', '|', '+' };
+  hddb_entry_t ent;
+  unsigned rm_val = 0, r_or_m = 0;
+  unsigned fl, val, *ids, id, tag, u;
+  char *str_val;
+  int i;
+
+  if(pre >= sizeof pref_char) return;
+
+  if(key >= hddb->ids_len) return;
+
+  ids = hddb->ids + key;
+
+  for(ent = 0; ent < he_nomask && key_mask; ent++, key_mask >>= 1) {
+    if(!(key_mask & 1)) continue;
+
+    fl = DATA_FLAG(*ids);
+    val = DATA_VALUE(*ids);
+
+    r_or_m = 0;
+
+    while((fl & FLAG_CONT)) {
+      if(fl == (FLAG_CONT | FLAG_RANGE)) {
+        rm_val = val;
+        r_or_m = 1;
+      }
+      else if(fl == (FLAG_CONT | FLAG_MASK)) {
+        rm_val = val;
+        r_or_m = 2;
+      }
+      else {
+        break;
+      }
+
+      ids++;
+
+      fl = DATA_FLAG(*ids);
+      val = DATA_VALUE(*ids);
+    }
+
+    fl &= ~FLAG_CONT;
+
+    if(ent != he_driver) {
+      hddb_dump_ent_name(hddb, f, pref_char[pre], ent);
+
+      if(fl == FLAG_ID) {
+        tag = ID_TAG(val);
+        id = ID_VALUE(val);
+        if(tag == TAG_EISA && (ent == he_vendor_id || ent == he_subvendor_id)) {
+          fprintf(f, "%s", eisa_vendor_str(id));
+        }
+        else {
+          u = 4;
+          if(ent == he_bus_id || ent == he_subclass_id || ent == he_progif_id) {
+            u = 2;
+          }
+          else if(ent == he_baseclass_id) {
+            u = 3;
+          }
+          fprintf(f, "%s0x%0*x",
+            tag < sizeof hid_tag_names / sizeof *hid_tag_names ? hid_tag_names[tag] : "",
+            u, id
+          );
+        }
+        if(r_or_m) {
+          fprintf(f, "%c0x%04x", r_or_m == 1 ? '+' : '&', rm_val);
+        }
+      }
+      else if(fl == FLAG_STRING) {
+        if(val < hddb->strings_len) {
+          str_val = hddb->strings + val;
+          fprintf(f, "%s", str_val);
+        }
+      }
+      fputc('\n', f);
+    }
+    else {
+      ids--;
+      do {
+        ids++;
+        fl = DATA_FLAG(*ids) & ~FLAG_CONT;
+        val = DATA_VALUE(*ids);
+        if(fl != FLAG_STRING) break;
+        str_val = NULL;
+        if(val < hddb->strings_len) str_val = hddb->strings + val;
+        if(!str_val) break;
+        if(!*str_val && !str_val[1] == '\t') break;
+
+        switch(*str_val) {
+          case 'x':
+             i = he_driver_xfree;
+             break;
+
+           case 'X':
+             i = he_driver_xfree_config;
+             break;
+
+           case 'i':
+             i = he_driver_module_insmod;
+             break;
+
+           case 'm':
+             i = he_driver_module_modprobe;
+             break;
+
+           case 'M':
+             i = he_driver_module_config;
+             break;
+
+           case 'p':
+             i = he_driver_mouse;
+             break;
+
+           case 'd':
+             i = he_driver_display;
+             break;
+
+           case 'a':
+             i = he_driver_any;
+             break;
+
+           default:
+             i = -1;
+             break;
+        }
+        if(i == -1) break;
+
+        hddb_dump_ent_name(hddb, f, pref_char[pre], i);
+        fprintf(f, "%s\n", str_val + 2);
+      }
+      while((*ids & (1 << 31)));
+    }
+
+    /* at this point 'ids' must be the _current_ entry (_not_ the next) */
+
+    /* skip potential garbage/unhandled entries */
+    while((*ids & (1 << 31))) ids++;
+
+    ids++;
+
+    if(pre != pref_add) pre = pref_and;
+  }
+}
+
+
+void hddb_dump(hddb2_data_t *hddb, FILE *f)
+{
+  unsigned u;
+
+  if(!hddb) return;
+
+  for(u = 0; u < hddb->list_len; u++) {
+    hddb_dump_skey(hddb, f, pref_new, hddb->list[u].key_mask, hddb->list[u].key);
+    hddb_dump_skey(hddb, f, pref_add, hddb->list[u].value_mask, hddb->list[u].value);
+    fputc('\n', f);
+  }
+}
+
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+int compare_ids(hddb2_data_t *hddb, hddb_search_t *hs, hddb_entry_mask_t mask, unsigned key)
+{
+  hddb_entry_t ent;
+  unsigned rm_val = 0, r_or_m = 0, res = 0;
+  unsigned fl, val, ok, *ids, id;
+  char *str, *str_val;
+
+  if(key >= hddb->ids_len) return 1;
+
+  ids = hddb->ids + key;
+
+  for(ent = 0; ent < he_nomask && mask && !res; ent++, mask >>= 1) {
+    if(!(mask & 1)) continue;
+
+    fl = DATA_FLAG(*ids);
+    val = DATA_VALUE(*ids);
+
+    r_or_m = 0;
+
+    while((fl & FLAG_CONT)) {
+      if(fl == (FLAG_CONT | FLAG_RANGE)) {
+        rm_val = val;
+        r_or_m = 1;
+      }
+      else if(fl == (FLAG_CONT | FLAG_MASK)) {
+        rm_val = val;
+        r_or_m = 2;
+      }
+      else {
+        break;
+      }
+
+      ids++;
+
+      fl = DATA_FLAG(*ids);
+      val = DATA_VALUE(*ids);
+    }
+
+    fl &= ~FLAG_CONT;
+
+    id = 0;
+    str = str_val = NULL;
+    ok = 0;
+    if(fl == FLAG_ID) {
+      ok = 1;
+      switch(ent) {
+        case he_bus_id:
+          id = hs->bus.id;
+          break;
+
+        case he_baseclass_id:
+          id = hs->base_class.id;
+          break;
+
+        case he_subclass_id:
+          id = hs->sub_class.id;
+          break;
+
+        case he_progif_id:
+          id = hs->prog_if.id;
+          break;
+
+        case he_vendor_id:
+          id = hs->vendor.id;
+          break;
+
+        case he_device_id:
+          id = hs->device.id;
+          break;
+
+        case he_subvendor_id:
+          id = hs->sub_vendor.id;
+          break;
+
+        case he_subdevice_id:
+          id = hs->sub_device.id;
+          break;
+
+        case he_rev_id:
+          id = hs->revision.id;
+          break;
+
+        default:
+          ok = 0;
+          break;
+      }
+    }
+    else if(fl == FLAG_STRING) {
+      if(val < hddb->strings_len) str_val = hddb->strings + val;
+      ok = 2;
+      switch(ent) {
+        case he_bus_name:
+          str = hs->bus.name;
+          break;
+
+        case he_baseclass_name:
+          str = hs->base_class.name;
+          break;
+
+        case he_subclass_name:
+          str = hs->sub_class.name;
+          break;
+
+        case he_progif_name:
+          str = hs->prog_if.name;
+          break;
+
+        case he_vendor_name:
+          str = hs->vendor.name;
+          break;
+
+        case he_device_name:
+          str = hs->device.name;
+          break;
+
+        case he_subvendor_name:
+          str = hs->sub_vendor.name;
+          break;
+
+        case he_subdevice_name:
+          str = hs->sub_device.name;
+          break;
+
+        case he_rev_name:
+          str = hs->revision.name;
+          break;
+
+        case he_serial:
+          str = hs->serial;
+          break;
+
+        case he_requires:
+          str = hs->requires;
+          break;
+
+        default:
+          ok = 0;
+      }
+    }
+
+    switch(ok) {
+      case 1:
+        switch(r_or_m) {
+          case 1:
+            if(id < val || id >= val + rm_val) res = 1;
+            break;
+
+          case 2:
+            if((id & ~rm_val) != val) res = 1;
+            break;
+
+          default:
+            if(id != val) res = 1;
+        }
+        break;
+
+      case 2:
+        if(str && str_val) {
+          if(strcmp(str, str_val)) res = 1;
+        }
+        else {
+          res = 1;
+        }
+        break;
+
+      default:
+        res = 1;
+    }
+
+#ifdef HDDB_TRACE
+    switch(ok) {
+      case 1:
+        if(r_or_m) {
+          printf(
+            "cmp: 0x%05x: (ent = %2d, id = 0x%x, val = 0x%x%c0x%x) = %d\n",
+            key, ent, id, val, r_or_m == 1 ? '+' : '&', rm_val, res
+          );
+        }
+        else {
+          printf(
+            "cmp: 0x%05x: (ent = %2d, id = 0x%x, val = 0x%x) = %d\n",
+            key, ent, id, val, res
+          );
+        }
+        break;
+
+      case 2:
+        printf(
+          "cmp: 0x%05x: (ent = %2d, id = \"%s\", val = \"%s\") = %d\n",
+          key, ent, str, str_val, res
+        );
+        
+        break;
+
+      default:
+        printf("cmp: 0x%05x: (ent = %2d, *** unhandled key ***) = %d\n", key, ent, res);
+    }
+#endif
+
+    /* at this point 'ids' must be the _current_ entry (_not_ the next) */
+
+    /* skip potential garbage/unhandled entries */
+    while((*ids & (1 << 31))) ids++;
+
+    ids++;
+  }
+
+  return res;
+}
+
+void complete_ids(
+  hddb2_data_t *hddb, hddb_search_t *hs,
+  hddb_entry_mask_t key_mask, hddb_entry_mask_t mask, unsigned val_idx
+)
+{
+  hddb_entry_t ent;
+  unsigned *ids, *id;
+  unsigned fl, val, ok;
+  char **str, *str_val;
+
+  if(val_idx >= hddb->ids_len) return;
+
+  ids = hddb->ids + val_idx;
+
+  for(ent = 0; ent < he_nomask && mask; ent++, mask >>= 1) {
+    if(!(mask & 1)) continue;
+
+    fl = DATA_FLAG(*ids);
+    val = DATA_VALUE(*ids);
+
+    fl &= ~FLAG_CONT;
+
+    id = NULL;
+    str = NULL;
+    str_val = NULL;
+    ok = 0;
+    if(fl == FLAG_ID) {
+      ok = 1;
+      switch(ent) {
+        case he_bus_id:
+          id = &hs->bus.id;
+          break;
+
+        case he_baseclass_id:
+          id = &hs->base_class.id;
+          break;
+
+        case he_subclass_id:
+          id = &hs->sub_class.id;
+          break;
+
+        case he_progif_id:
+          id = &hs->prog_if.id;
+          break;
+
+        case he_vendor_id:
+          id = &hs->vendor.id;
+          break;
+
+        case he_device_id:
+          id = &hs->device.id;
+          break;
+
+        case he_subvendor_id:
+          id = &hs->sub_vendor.id;
+          break;
+
+        case he_subdevice_id:
+          id = &hs->sub_device.id;
+          break;
+
+        case he_rev_id:
+          id = &hs->revision.id;
+          break;
+
+        default:
+          ok = 0;
+          break;
+      }
+    }
+    else if(fl == FLAG_STRING) {
+      if(val < hddb->strings_len) str_val = hddb->strings + val;
+      ok = 2;
+      switch(ent) {
+        case he_bus_name:
+          str = &hs->bus.name;
+          break;
+
+        case he_baseclass_name:
+          str = &hs->base_class.name;
+          break;
+
+        case he_subclass_name:
+          str = &hs->sub_class.name;
+          break;
+
+        case he_progif_name:
+          str = &hs->prog_if.name;
+          break;
+
+        case he_vendor_name:
+          str = &hs->vendor.name;
+          break;
+
+        case he_device_name:
+          str = &hs->device.name;
+          break;
+
+        case he_subvendor_name:
+          str = &hs->sub_vendor.name;
+          break;
+
+        case he_subdevice_name:
+          str = &hs->sub_device.name;
+          break;
+
+        case he_rev_name:
+          str = &hs->revision.name;
+          break;
+
+        case he_serial:
+          str = &hs->serial;
+          break;
+
+        case he_driver:
+          ok = 3;
+          break;
+
+        case he_requires:
+          str = &hs->requires;
+          break;
+
+        default:
+          ok = 0;
+      }
+    }
+
+    if(ok) {
+      if(
+        (hs->value_mask[ent] & key_mask) == hs->value_mask[ent] &&
+        key_mask != hs->value_mask[ent]
+      ) {
+        hs->value_mask[ent] = key_mask;
+        hs->value |= 1 << ent;
+      }
+      else {
+        /* don't change if already set */
+        ok = 4;
+      }
+
+#if 0
+      if((hs->value & (1 << ent))) {
+        /* don't change if already set */
+        ok = 4;
+      }
+      else if(ent != he_driver) {
+        hs->value |= 1 << ent;
+      }
+#endif
+    }
+
+    switch(ok) {
+      case 1:
+        *id = val;
+#ifdef HDDB_TRACE
+        printf("add: 0x%05x: (ent = %2d, val = 0x%08x)\n", val_idx, ent, val);
+#endif
+        break;
+
+      case 2:
+        *str = str_val;
+#ifdef HDDB_TRACE
+        printf("add: 0x%05x: (ent = %2d, val = \"%s\")\n", val_idx, ent, str_val);
+#endif
+        break;
+
+      case 3:
+        ids--;
+        do {
+          ids++;
+          fl = DATA_FLAG(*ids) & ~FLAG_CONT;
+          val = DATA_VALUE(*ids);
+          if(fl != FLAG_STRING) break;
+          str_val = NULL;
+          if(val < hddb->strings_len) str_val = hddb->strings + val;
+          if(!str_val) break;
+#ifdef HDDB_TRACE
+          printf("add: 0x%05x: (ent = %2d, val = \"%s\")\n", val_idx, ent, str_val);
+#endif
+          add_str_list(&hs->driver, str_val);
+        }
+        while((*ids & (1 << 31)));
+        break;
+
+      case 4:
+        break;
+
+#ifdef HDDB_TRACE
+      default:
+        printf("add: 0x%05x: (ent = %2d, *** unhandled value ***)\n", val_idx, ent);
+#endif
+    }
+
+    /* at this point 'ids' must be the _current_ entry (_not_ the next) */
+
+    /* skip potential garbage/unhandled entries */
+    while((*ids & (1 << 31))) ids++;
+
+    ids++;
+  }
+}
+
+int hddb_search(hd_data_t *hd_data, hddb_search_t *hs)
+{
+  unsigned u;
+  int i;
+  hddb2_data_t *hddb;
+  int db_idx;
+
+  if(!hs) return 0;
+
+  for(db_idx = 0; db_idx < sizeof hd_data->hddb2 / sizeof *hd_data->hddb2; db_idx++) {
+    if(!(hddb = hd_data->hddb2[db_idx])) continue;
+
+    for(u = 0; u < hddb->list_len; u++) {
+      if(
+        (hs->key & hddb->list[u].key_mask) == hddb->list[u].key_mask
+        /* && (hs->value & hddb->list[u].value_mask) != hddb->list[u].value_mask */
+      ) {
+        i = compare_ids(hddb, hs, hddb->list[u].key_mask, hddb->list[u].key);
+        if(!i) {
+          complete_ids(hddb, hs,
+            hddb->list[u].key_mask,
+            hddb->list[u].value_mask, hddb->list[u].value
+          );
+        }
+      }
+    }
+  }
+
+  return 1;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+#ifdef HDDB_TEST
+void test_db(hd_data_t *hd_data)
+{
+  hddb_search_t hs = {};
+  int i;
+
+  hs.bus.id = 4;
+  hs.key |= (1 << he_bus_id) + (1 << he_serial);
+
+  hs.serial = "ser 0123";
+
+  i = hddb_search(hd_data, &hs);
+
+  printf("%d, >%s<\n", i, hs.bus.name);
 }
 #endif
+
+
+str_list_t *get_hddb_packages(hd_data_t *hd_data)
+{
+  return NULL;
+}
+
+int hd_find_device_by_name(hd_data_t *hd_data, unsigned base_class, char *vendor, char *device, unsigned *vendor_id, unsigned *device_id)
+{
+  return 0;
+}
+
+
+char *hd_bus_name(hd_data_t *hd_data, unsigned bus)
+{
+  hddb_search_t hs = {};
+
+  hs.bus.id = bus;
+  hs.key |= 1 << he_bus_id;
+
+  hddb_search(hd_data, &hs);
+
+  return hs.bus.name;
+}
+
+char *hd_class_name(hd_data_t *hd_data, int level, unsigned base_class, unsigned sub_class, unsigned prog_if)
+{
+  hddb_search_t hs = {};
+  static char *name = NULL;
+  char *s;
+
+  hs.base_class.id = base_class;
+  hs.sub_class.id = sub_class;
+  hs.prog_if.id = prog_if;
+  hs.key |= 1 << he_baseclass_id;
+  if(level > 1) hs.key |= 1 << he_subclass_id;
+  if(level > 2) hs.key |= 1 << he_progif_id;
+
+  hddb_search(hd_data, &hs);
+
+  if(name) name = free_mem(name);
+
+  s = hs.base_class.name;
+  switch(level) {
+    case 2:
+      if(hs.sub_class.name) s = hs.sub_class.name;
+      break;
+
+    case 3:
+      if(hs.sub_class.name) s = hs.sub_class.name;
+      if(hs.prog_if.name) {
+        str_printf(&name, 0, "%s (%s)", s, hs.prog_if.name);
+        s = name;
+      }
+      break;
+  }
+
+  return s;
+}
+
+char *hd_vendor_name(hd_data_t *hd_data, unsigned vendor)
+{
+  hddb_search_t hs = {};
+
+  hs.vendor.id = vendor;
+  hs.key |= 1 << he_vendor_id;
+
+  hddb_search(hd_data, &hs);
+
+  return hs.vendor.name;
+}
+
+
+char *hd_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device)
+{
+  hddb_search_t hs = {};
+
+  hs.vendor.id = vendor;
+  hs.device.id = device;
+  hs.key |= (1 << he_vendor_id) + (1 << he_device_id);
+
+  hddb_search(hd_data, &hs);
+
+  return hs.device.name;
+}
+
+
+char *hd_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device)
+{
+  hddb_search_t hs = {};
+
+  hs.vendor.id = vendor;
+  hs.device.id = device;
+  hs.sub_vendor.id = sub_vendor;
+  hs.sub_device.id = sub_device;
+  hs.key |= (1 << he_vendor_id) + (1 << he_device_id) + (1 << he_subvendor_id) + (1 << he_subdevice_id);
+
+  hddb_search(hd_data, &hs);
+
+  return hs.sub_device.name;
+}
+
+
+unsigned device_class(hd_data_t *hd_data, unsigned vendor, unsigned device)
+{
+  hddb_search_t hs = {};
+
+  hs.vendor.id = vendor;
+  hs.device.id = device;
+  hs.key |= (1 << he_vendor_id) + (1 << he_device_id);
+
+  hddb_search(hd_data, &hs);
+
+  if(
+    (hs.value & ((1 << he_baseclass_id) + (1 << he_subclass_id))) ==
+    ((1 << he_baseclass_id) + (1 << he_subclass_id))
+  ) {
+    return (hs.base_class.id << 8) + (hs.sub_class.id & 0xff);
+  }
+
+  return 0;
+}
+
+
+unsigned sub_device_class(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device)
+{
+  hddb_search_t hs = {};
+
+  hs.vendor.id = vendor;
+  hs.device.id = device;
+  hs.sub_vendor.id = sub_vendor;
+  hs.sub_device.id = sub_device;
+  hs.key |= (1 << he_vendor_id) + (1 << he_device_id) + (1 << he_subvendor_id) + (1 << he_subdevice_id);
+
+  hddb_search(hd_data, &hs);
+
+  if(
+    (hs.value & ((1 << he_baseclass_id) + (1 << he_subclass_id))) ==
+    ((1 << he_baseclass_id) + (1 << he_subclass_id))
+  ) {
+    return (hs.base_class.id << 8) + (hs.sub_class.id & 0xff);
+  }
+
+  return 0;
+}
+
+
+driver_info_t *device_driver(hd_data_t *hd_data, unsigned vendor, unsigned device)
+{
+  hddb_search_t hs = {};
+
+  hs.vendor.id = vendor;
+  hs.device.id = device;
+  hs.key |= (1 << he_vendor_id) + (1 << he_device_id);
+
+  hddb_search(hd_data, &hs);
+
+  if((hs.value & (1 << he_driver))) {
+    return hddb_to_device_driver(hd_data, &hs);
+  }
+
+  return NULL;
+}
+
+
+driver_info_t *sub_device_driver(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device)
+{
+  hddb_search_t hs = {};
+
+  hs.vendor.id = vendor;
+  hs.device.id = device;
+  hs.sub_vendor.id = sub_vendor;
+  hs.sub_device.id = sub_device;
+  hs.key |= (1 << he_vendor_id) + (1 << he_device_id) + (1 << he_subvendor_id) + (1 << he_subdevice_id);
+
+  hddb_search(hd_data, &hs);
+
+  if((hs.value & (1 << he_driver))) {
+    return hddb_to_device_driver(hd_data, &hs);
+  }
+
+  return NULL;
+}
+
+
+driver_info_t *hddb_to_device_driver(hd_data_t *hd_data, hddb_search_t *hs)
+{
+  char *s, *t, *t0;
+  driver_info_t *di = NULL, *di0 = NULL;
+  str_list_t *sl;
+
+  for(sl = hs->driver; sl; sl = sl->next) {
+    if(!sl->str || !*sl->str || sl->str[1] != '\t') return NULL;
+
+    if(di && (*sl->str == 'M' || *sl->str == 'X')) {
+      add_str_list(&di->any.hddb1, sl->str + 2);
+      continue;
+    }
+
+    if(di)
+      di = di->next = new_mem(sizeof *di);
+    else
+      di = di0 = new_mem(sizeof *di);
+
+    switch(*sl->str) {
+      case 'd':
+        di->any.type = di_display;
+        break;
+
+      case 'm':
+        di->module.modprobe = 1;
+      case 'i':
+        di->any.type = di_module;
+        break;
+
+      case 'p':
+        di->any.type = di_mouse;
+        break;
+
+      case 'x':
+        di->any.type = di_x11;
+        break;
+
+      default:
+        di->any.type = di_any;
+    }
+
+    s = new_str(sl->str + 2);
+    for(t0 = s; (t = strsep(&t0, "|")); ) {
+      add_str_list(&di->any.hddb0, t);
+    }
+    free_mem(s);
+  }
+
+  return di0;
+}
+
+

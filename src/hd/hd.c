@@ -721,19 +721,18 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->proc_usb = free_str_list(hd_data->proc_usb);
   /* hd_data->usb is always NULL */
 
-  if(hd_data->hddb_dev) {
-    free_mem(hd_data->hddb_dev->data);
-    free_mem(hd_data->hddb_dev->names);
-    hd_data->hddb_dev = free_mem(hd_data->hddb_dev);
-  }
-  if(hd_data->hddb_drv) {
-    free_mem(hd_data->hddb_drv->data);
-    free_mem(hd_data->hddb_drv->names);
-    hd_data->hddb_drv = free_mem(hd_data->hddb_drv);
-  }
   if((p = hd_data->hddb_pci)) {
     for(; p->module; p++) free_mem(p->module);
   }
+  if(hd_data->hddb2[0]) {
+    free_mem(hd_data->hddb2[0]->list);
+    free_mem(hd_data->hddb2[0]->ids); 
+    free_mem(hd_data->hddb2[0]->strings);
+    hd_data->hddb2[0] = free_mem(hd_data->hddb2[0]);
+  }
+  /* hddb2[1] is the static internal database; don't try to free it! */
+  hd_data->hddb2[1] = NULL;
+
   hd_data->hddb_pci = free_mem(hd_data->hddb_pci);
   hd_data->kmods = free_str_list(hd_data->kmods);
   hd_data->bios_rom.data = free_mem(hd_data->bios_rom.data);
@@ -1599,7 +1598,7 @@ void hd_scan(hd_data_t *hd_data)
   }
 
   /* init driver info database */
-  init_hddb(hd_data);
+  hddb_init(hd_data);
 
 #ifndef LIBHD_TINY
   /*
@@ -2991,7 +2990,7 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 #if WITH_ISDN
   ihw_card_info *ici;
 #endif
-  str_list_t *sl;
+  str_list_t *sl, *sl1, *sl2;
 //  hd_t *bridge_hd;
 
 #ifdef LIBHD_MEMCHECK
@@ -3151,12 +3150,36 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
             free_mem(s);
           }
           else if(i == 6) {
-            di->x11.colors.all = strtol(sl->str, NULL, 16);
-            if(di->x11.colors.all & (1 << 0)) di->x11.colors.c8 = 1;
-            if(di->x11.colors.all & (1 << 1)) di->x11.colors.c15 = 1;
-            if(di->x11.colors.all & (1 << 2)) di->x11.colors.c16 = 1;
-            if(di->x11.colors.all & (1 << 3)) di->x11.colors.c24 = 1;
-            if(di->x11.colors.all & (1 << 4)) di->x11.colors.c32 = 1;
+            for(sl2 = sl1 = hd_split(',', sl->str); sl2; sl2 = sl2->next) {
+              u1 = strtoul(sl2->str, NULL, 0);
+              switch(u1) {
+                case 8:
+                  di->x11.colors.c8 = 1;
+                  di->x11.colors.all |= (1 << 0);
+                  break;
+
+                case 15:
+                  di->x11.colors.c15 = 1;
+                  di->x11.colors.all |= (1 << 1);
+                  break;
+
+                case 16:
+                  di->x11.colors.c16 = 1;
+                  di->x11.colors.all |= (1 << 2);
+                  break;
+
+                case 24:
+                  di->x11.colors.c24 = 1;
+                  di->x11.colors.all |= (1 << 3);
+                  break;
+
+                case 32:
+                  di->x11.colors.c32 = 1;
+                  di->x11.colors.all |= (1 << 4);
+                  break;
+              }
+            }
+            free_str_list(sl1);
           }
           else if(i == 7) {
             di->x11.dacspeed = strtol(sl->str, NULL, 10);
@@ -3941,7 +3964,7 @@ hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t sta
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
-  hd_t *bridge_hd;
+//  hd_t *bridge_hd;
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -3952,6 +3975,7 @@ hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
 
+#if 0
     /* ###### fix later: card bus magic */
     if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
       if(
@@ -3959,6 +3983,7 @@ hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
         bridge_hd->sub_class == sc_bridge_cardbus
       ) continue;
     }
+#endif
 
     /* add multimedia/sc_multi_video to display */
     if(
@@ -4022,7 +4047,7 @@ hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus)
 /*
  * Check if the execution of (*func)() takes longer than timeout seconds.
  * This is useful to work around long kernel-timeouts as in the floppy
- * detection and ps/2 mosue detection.
+ * detection and ps/2 mouse detection.
  */
 int hd_timeout(void(*func)(void *), void *arg, int timeout)
 {
@@ -4908,7 +4933,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
   unsigned base_class, sub_class;
   driver_info_t *di = NULL;
   hd_hw_item_t item;
-  hd_t *bridge_hd;
+//  hd_t *bridge_hd;
 
   if(!hd) return;
 
@@ -5078,6 +5103,8 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           )
         )
       ) {
+
+#if 0
         /* ##### fix? card bus magic: don't list card bus devices */
         if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
           if(
@@ -5085,6 +5112,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
             bridge_hd->sub_class == sc_bridge_cardbus
           ) continue;
         }
+#endif
 
         /* ISA-PnP sound cards: just one entry per card */
         if(
@@ -5362,9 +5390,7 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
 {
   hd_res_t *res;
   struct hd_geometry geo_s;
-#if 0
   struct hd_big_geometry big_geo_s;
-#endif
   unsigned long secs;
   unsigned sec_size;
   int close_fd = 0;
@@ -5382,7 +5408,6 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
 
   ADD2LOG("  open ok, fd = %d\n", fd);
 
-#if 0
   if(!ioctl(fd, HDIO_GETGEO_BIG, &big_geo_s)) {
     if(dev) ADD2LOG("%s: ioctl(big geo) ok\n", dev);
     res = add_res_entry(geo, new_mem(sizeof *res));
@@ -5394,7 +5419,6 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
   }
   else {
     ADD2LOG("  big geo failed: %s\n", strerror(errno));
-#endif
     if(!ioctl(fd, HDIO_GETGEO, &geo_s)) {
       if(dev) ADD2LOG("%s: ioctl(geo) ok\n", dev);
       res = add_res_entry(geo, new_mem(sizeof *res));
@@ -5407,9 +5431,7 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
     else {
       ADD2LOG("  geo failed: %s\n", strerror(errno));
     }
-#if 0
   }
-#endif
 
   if(!ioctl(fd, BLKGETSIZE, &secs)) {
     if(dev) ADD2LOG("%s: ioctl(disk size) ok\n", dev);
@@ -5434,5 +5456,24 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
   ADD2LOG("  geo = %p, size = %p\n", *geo, *size);
 
   if(close_fd) close(fd);
+}
+
+
+str_list_t *hd_split(char del, char *str)
+{
+  char *t, *s;
+  str_list_t *sl = NULL;
+
+  if(!str) return NULL;
+
+  for(s = str = new_str(str); (t = strchr(s, del)); s = t + 1) {
+    *t = 0;
+    add_str_list(&sl, s);
+  }
+  add_str_list(&sl, s);
+
+  free_mem(str);
+
+  return sl;
 }
 

@@ -146,7 +146,7 @@ void build_list(hd_data_t *hd_data, str_list_t *isapnp_list)
   str_list_t *sl;
   char s1[4], s2[100];
   int card, ldev, cdev_id, ldev_active = 0;
-  char *dev_name = NULL, *ldev_name = NULL, *db_name;
+  char *dev_name = NULL, *ldev_name = NULL;
   unsigned dev_id = 0, vend_id = 0, base_class = 0, sub_class = 0, ldev_id;
   unsigned u, ux[5];
   int i, j;
@@ -169,6 +169,8 @@ void build_list(hd_data_t *hd_data, str_list_t *isapnp_list)
         sub_class = u & 0xff;
       }
       
+#if 0
+// ########## FIXME
       if(
         (ID_VALUE(vend_id) || ID_VALUE(dev_id)) &&
         !((db_name = hd_device_name(hd_data, vend_id, dev_id)) && *db_name)
@@ -177,6 +179,7 @@ void build_list(hd_data_t *hd_data, str_list_t *isapnp_list)
           add_device_name(hd_data, vend_id, dev_id, dev_name);
         }
       }
+#endif
 
       continue;
     }
@@ -212,6 +215,8 @@ void build_list(hd_data_t *hd_data, str_list_t *isapnp_list)
         hd->sub_class = u & 0xff;
       }
 
+#if 0
+# ############# FIXME
       if(
         (ID_VALUE(hd->sub_vend) || ID_VALUE(hd->sub_dev)) &&
         !hd_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev)
@@ -220,6 +225,7 @@ void build_list(hd_data_t *hd_data, str_list_t *isapnp_list)
           add_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev, ldev_name);
         }
       }
+#endif
 
       continue;
     }

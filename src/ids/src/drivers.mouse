@@ -1,0 +1,67 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# mice
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+LGI   800b+2
+	p	mouseman|mman|3|0
+
+PNP   0f04
+	p	mousesystems|msc|3|0
+
+# KYE 0001: protocol info not verified
+KYE   0001
+LGI   8001
+	p	microsoft|ms|3|0
+
+PNP   0f0a
+PNP   0f0c
+s0200 0003
+	p	microsoft|ms
+
+PNP   0f0e
+s0200 0002
+	p	ps/2|ps2||0
+
+s0200 0004
+	p	imps/2|imps2|3|1
+
+s0200 0005
+	p	imps/2|imps2|5|1
+
+s0200 0006
+	p	ps/2|ps2|2|0
+
+# Sun Mouse (/dev/sunmouse)
+s0202 0000
+	p	mousesystems|sun|3|0
+
+# USB mice
+s0200 0001
+	p	imps/2|imps2
+
+# ADB mice
+s0100 0300+100
+	p	imps/2|imps2|1|0
+
+# apple/logitech usb mouse
+u05ac 0301
+	p	imps/2|imps2|1|0
+# genius usb netmouse pro
+u0458 0002
+	p	imps/2|imps2|4|0
+
+# MS IntelliMouse Explorer
+u045e 001e
+# Logitech Wheelmouse Model M-BB48
+u046d c001
+# Optical(?) Logitech Wheel Mouse
+u046d c00c
+# Optical Logitech Wheel Mouse (#16003)
+u046d c00e
+	p	imps/2|imps2|3|1
+
+# Razer Boomslang USB Mouse
+u05e3 000b
+	p	explorerps/2|exps2|5|1

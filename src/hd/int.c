@@ -77,6 +77,10 @@ void int_pcmcia(hd_data_t *hd_data)
         bridge_hd->base_class == bc_bridge &&
         bridge_hd->sub_class == sc_bridge_cardbus
       ) hd->is.cardbus = 1;
+     else if(
+        bridge_hd->base_class == bc_bridge &&
+        bridge_hd->sub_class == sc_bridge_pcmcia
+      ) hd->is.pcmcia = 1;
     }
   }
 }

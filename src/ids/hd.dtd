@@ -1,0 +1,70 @@
+<!-- libhd DTD V0.0 -->
+
+<!ENTITY % keyfields "bus|baseclass|subclass|progif|vendor|device|subvendor|subdevice|revision|serial|driver|requires">
+<!ENTITY % idelements "id|idrange|idmask|name">
+<!ENTITY % idtypes "none|pci|eisa|usb|special">
+
+<!ELEMENT hwdata (item*)>
+
+<!ELEMENT item (key+,(%keyfields;)*)>
+
+<!ELEMENT key (%keyfields;)+>
+
+  <!ELEMENT bus (%idelements;)>
+  <!ELEMENT baseclass (%idelements;)>
+  <!ELEMENT subclass (%idelements;)>
+  <!ELEMENT progif (%idelements;)>
+  <!ELEMENT vendor (%idelements;)>
+  <!ELEMENT device (%idelements;)>
+  <!ELEMENT subvendor (%idelements;)>
+  <!ELEMENT subdevice (%idelements;)>
+  <!ELEMENT revision (%idelements;)>
+  <!ELEMENT serial (#PCDATA)>
+  <!ELEMENT requires (#PCDATA)>
+  <!ELEMENT id (#PCDATA)>
+  <!ELEMENT idrange (first,last)>
+    <!ELEMENT first (#PCDATA)>
+    <!ELEMENT last (#PCDATA)>
+  <!ELEMENT idmask (value,mask)>
+    <!ELEMENT value (#PCDATA)>
+    <!ELEMENT mask (#PCDATA)>
+  <!ATTLIST id type (%idtypes;) "none">
+  <!ATTLIST idrange type (%idtypes;) "none">
+  <!ATTLIST idmask type (%idtypes;) "none">
+  <!ELEMENT name (#PCDATA)>
+
+<!ELEMENT driver (any|display|module|mouse|xfree)?>
+
+  <!ELEMENT any (#PCDATA)>
+
+  <!ELEMENT display (resolution?,vsync?,hsync?,bandwidth?)>
+    <!ELEMENT resolution (width,height)>
+      <!ELEMENT width (#PCDATA)>
+      <!ELEMENT height (#PCDATA)>
+    <!ELEMENT vsync (min,max)>
+    <!ELEMENT hsync (min,max)>
+      <!ELEMENT min (#PCDATA)>
+      <!ELEMENT max (#PCDATA)>
+    <!ELEMENT bandwidth (#PCDATA)>
+
+  <!ELEMENT module (insmod+|(modprobe+,modconf*))>
+    <!ELEMENT insmod (#PCDATA)>
+    <!ELEMENT modprobe (#PCDATA)>
+    <!ELEMENT modconf (#PCDATA)>
+
+  <!ELEMENT mouse (xf86?,gpm?,buttons?,wheels?)>
+    <!ELEMENT xf86 (#PCDATA)>
+    <!ELEMENT gpm (#PCDATA)>
+    <!ELEMENT buttons (#PCDATA)>
+    <!ELEMENT wheels (#PCDATA)>
+
+  <!ELEMENT xfree (version,server?,has3d?,extension*,option*,bpp*,dacspeed?,script?,xf86conf*)>
+    <!ELEMENT version (#PCDATA)>
+    <!ELEMENT server (#PCDATA)>
+    <!ELEMENT has3d EMPTY>
+    <!ELEMENT extension (#PCDATA)>
+    <!ELEMENT option (#PCDATA)>
+    <!ELEMENT bpp (#PCDATA)>
+    <!ELEMENT dacspeed (#PCDATA)>
+    <!ELEMENT script (#PCDATA)>
+    <!ELEMENT xf86conf (#PCDATA)>
