@@ -88,6 +88,10 @@
 109e 036f bd11 1200
 	m	bttv
 
+109e 0350+2
+109e 036e+2
+	a	bttv
+
 # media/video/buz.c
 11de 6057
 	a	buz
