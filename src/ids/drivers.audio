@@ -75,18 +75,18 @@ s4001 2004
 
 # sound/sonicvibes
 5333 ca00
-	m	sonicvibes.c
+	m	sonicvibes
 
 # sound/trident.c
 1023 2000
 1023 2001
 1039 7018
 10b9 5451
-	m	trident.o
+	m	trident
 
 # sound/via82cxxx_audio.c
 1106 3058
-	m	via82cxxx_audio.c
+	m	via82cxxx_audio
 
 # sound/ymfpci.c
 1073 0004

@@ -44,10 +44,7 @@ int main(int argc, char **argv)
         verbose = 1;
         break;
 
-      case 1000 + hw_disk:
-      case 1000 + hw_cdrom:
-      case 1000 + hw_mouse:
-      case 1000 + hw_display:
+      case 1000 ... 1100:
         scan_item = i - 1000;
         break;
 

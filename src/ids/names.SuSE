@@ -98,3 +98,9 @@
 
 8086
 	0600	RAID Controller
+
+# cf #9638
+14e4	Broadcom
+	1647
+		0e11 0099	NC7780 Gigabit Server Adapter
+		0e11 009a	NC7770 Gigabit Server Adapter

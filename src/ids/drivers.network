@@ -301,3 +301,9 @@ TCM 5094+2
 TCM 5098
 PNP 80f7+2
 	m	3c509
+
+# Broadcom gigabit network
+# cf. bug #9638
+14e4 1647 0e11 0099+2
+	i	bcm5700
+
