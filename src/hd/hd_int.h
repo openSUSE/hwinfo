@@ -22,10 +22,6 @@
 #define PROC_KCORE		"/proc/kcore"
 // #define PROC_USB_DEVICES	"/proc/bus/usb/devices"
 #define PROC_USB_DEVICES	"/proc/bus/usb/devices_please-use-sysfs-instead"
-#define PROC_DAC960		"/proc/rd"
-#define PROC_SMART_22		"/proc/array"
-#define PROC_SMART_24		"/proc/driver/array"
-#define PROC_SMART_24_NEW	"/proc/driver/cpqarray"
 #define PROC_PROM		"/proc/device-tree"
 #define PROC_MEMINFO		"/proc/meminfo"
 #define PROC_DASD		"/proc/dasd"
@@ -40,8 +36,6 @@
 #define DEV_PSAUX		"/dev/psaux"
 #define DEV_ADBMOUSE		"/dev/adbmouse"
 #define DEV_MEM			"/dev/mem"
-#define DEV_DAC960		"/dev/rd"
-#define DEV_SMART		"/dev/ida"
 #define DEV_KBD			"/dev/kbd"
 #define DEV_CONSOLE		"/dev/console"
 #define DEV_OPENPROM		"/dev/openprom"
@@ -112,10 +106,10 @@ FILE *libhd_log;
 enum mod_idx {
   mod_none, mod_memory, mod_pci, mod_isapnp, mod_pnpdump, mod_net,
   mod_floppy, mod_misc, mod_bios, mod_cpu, mod_monitor, mod_mouse, mod_scsi,
-  mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel, mod_isa,
-  mod_dac960, mod_smart, mod_isdn, mod_kbd, mod_prom, mod_sbus, mod_int,
-  mod_braille, mod_xtra, mod_sys, mod_dasd, mod_manual, mod_fb, mod_veth,
-  mod_pppoe, mod_pcmcia, mod_s390, mod_sysfs, mod_dsl, mod_block
+  mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel, mod_isa, mod_isdn,
+  mod_kbd, mod_prom, mod_sbus, mod_int, mod_braille, mod_xtra, mod_sys,
+  mod_dasd, mod_manual, mod_fb, mod_veth, mod_pppoe, mod_pcmcia, mod_s390,
+  mod_sysfs, mod_dsl, mod_block
 };
 
 void *new_mem(size_t size);

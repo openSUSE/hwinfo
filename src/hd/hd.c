@@ -47,8 +47,6 @@
 #include "modem.h"
 #include "parallel.h"
 #include "isa.h"
-#include "dac960.h"
-#include "smart.h"
 #include "isdn.h"
 #include "kbd.h"
 #include "prom.h"
@@ -180,8 +178,6 @@ static struct s_mod_names {
   { mod_modem, "modem"},
   { mod_parallel, "parallel" },
   { mod_isa, "isa" },
-  { mod_dac960, "dac960" },
-  { mod_smart, "smart" },
   { mod_isdn, "isdn" },
   { mod_kbd, "kbd" },
   { mod_prom, "prom" },
@@ -255,8 +251,6 @@ static struct s_pr_flags {
   { pr_parallel_imm,  0,                  0, "parallel.imm"  },
   { pr_isa,           0,              4|2|1, "isa"           },
   { pr_isa_isdn,      pr_isa,         4|2|1, "isa.isdn"      },
-  { pr_dac960,        0,            8|4|2|1, "dac960"        },
-  { pr_smart,         0,            8|4|2|1, "smart"         },
   { pr_isdn,          0,              4|2|1, "isdn"          },
   { pr_kbd,           0,            8|4|2|1, "kbd"           },
   { pr_prom,          0,            8|4|2|1, "prom"          },
@@ -289,10 +283,10 @@ static struct s_pr_flags {
   { pr_cpuemu,        0,                  0, "cpuemu"        },
   { pr_sysfs,         0,                  0, "sysfs"         },
   { pr_dsl,           0,              4|2|1, "dsl"           },
-  { pr_udev,          0,                  0, "udev"          },
-  { pr_block,         0,                  0, "block"         },
-  { pr_block_cdrom,   pr_block,           0, "block.cdrom"   },
-  { pr_block_part,    pr_block,           0, "block.part"    }
+  { pr_udev,          0,            8|4|2|1, "udev"          },
+  { pr_block,         0,            8|4|2|1, "block"         },
+  { pr_block_cdrom,   pr_block,     8|4|2|1, "block.cdrom"   },
+  { pr_block_part,    pr_block,     8|4|2|1, "block.part"    }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -456,9 +450,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_s390disks);
 #endif      
       hd_set_probe_feature(hd_data, pr_bios);		// bios disk order
-      hd_set_probe_feature(hd_data, pr_pci);		// assign disk -> controller
-      hd_set_probe_feature(hd_data, pr_dac960);
-      hd_set_probe_feature(hd_data, pr_smart);
+      hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_dasd);
       hd_set_probe_feature(hd_data, pr_block);
       break;
@@ -1714,12 +1706,6 @@ void hd_scan(hd_data_t *hd_data)
   if(!hd_data->flags.no_parport) {
     hd_scan_parallel(hd_data);	/* after hd_scan_misc*() */
   }
-#endif
-
-#if 0
-// ###### FIXME: remove
-    hd_scan_dac960(hd_data);
-    hd_scan_smart(hd_data);
 #endif
 
   hd_scan_sysfs_block(hd_data);
