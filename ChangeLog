@@ -1,3 +1,5 @@
+	- fixed to work with the new cpqarray driver
+
 20/8/2001:	v3.12
 	- removed usb network module info
 	- added iSeries disks
