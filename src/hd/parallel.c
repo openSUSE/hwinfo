@@ -130,7 +130,7 @@ void do_lp(hd_data_t *hd_data)
       hd->attached_to = hd_i->idx;
       hd->unix_dev_name = new_str(hd_i->unix_dev_name);
       hd->base_class = bc_none;
-      if(base_class && !strcmp(base_class, "PRINTER")) hd->base_class = bc_printer;
+      if(base_class && !strcasecmp(base_class, "printer")) hd->base_class = bc_printer;
       hd->bus = bus_parallel;
 
       if(!hd_find_device_by_name(hd_data, hd->base_class, vendor, device, &hd->vend, &hd->dev)) {

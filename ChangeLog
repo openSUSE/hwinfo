@@ -1,3 +1,7 @@
+12/1/2001:	v1.0.72
+	- fix minor bug in printer detection
+	- fix bios disk number detection
+
 11/1/2001:	v1.0.71
 	- arvin: made res_pppd_option work
 	- arvin: fixed detection of terminal adapters
