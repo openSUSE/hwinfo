@@ -1,0 +1,6 @@
+25/10/2000:	v0.52
+	- started this log :-)
+	- modem code now handles non-pnp modems
+	- added a baud resource to modem entries: holds the modem's max.
+	  port speed
+	- added some modem ids

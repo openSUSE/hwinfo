@@ -14,6 +14,7 @@ CTL	Creative Technology Ltd.
 
 ELS	ELSA International
 	0133.10300	ELSA QuickStep 1000
+	0754	MicroLink 56k basic
 
 LGI	Logitech
 	8001	Logitech First/Pilot Maus
@@ -32,3 +33,5 @@ PNP	PnP
 
 	b02f	Joystick/Game port
 
+USR	U.S. Robotics, Inc.
+	9100	U.S. Robotics 56K Message

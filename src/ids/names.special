@@ -1,9 +1,25 @@
+# adb devices
 s0100	Apple Computer, Inc.
 	0201	ADB Keyboard 1
 	0203	ADB Keyboard 3
 	0302	ADB Mouse
 
+# printer
 s1001	Minolta Co., Ltd.
 s1001	MINOLTA
 	0001.10900	PageWorks/Pro 18
 	0002.10900	PagePro 1100
+
+s1002	Epson
+s1002	EPSON
+	0001.10900	Stylus COLOR 660
+
+s1003	Kyocera
+	0001.10900	FS-1700+
+
+# modem
+s2001	U.S. Robotics, Inc.
+	0001.10200	USRobotics Sportster Vi 33600 Faxmodem
+
+s2002	ZyXEL
+	0001.10200	U1496C
