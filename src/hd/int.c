@@ -976,12 +976,13 @@ void int_softraid(hd_data_t *hd_data)
   /* no disks -> no check necessary */
   if(!hd) return;
   
-  raid = read_file("| /sbin/raiddetect -s 2>/dev/null", 0, 0);
+  raid = read_file("| /sbin/dmraid -rc 2>/dev/null", 0, 0);
 
   for(sl = raid; sl; sl = sl->next) {
-    s = hd_sysfs_id(sl->str);
+    s = *sl->str ? strchr(sl->str + 1, '/') : NULL;
     if(s) {
-      sl1 = add_str_list(&raid_sysfs, s);
+      sl1 = add_str_list(&raid_sysfs, NULL);
+      str_printf(&sl1->str, 0, "/block%s", s);
       len = strlen(sl1->str);
       if(len) sl1->str[len - 1] = 0;
     }
