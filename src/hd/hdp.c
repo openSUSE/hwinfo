@@ -416,25 +416,6 @@ void dump_cpu(hd_t *hd, unsigned debug, FILE *f)
 	break;
   }
 
-  dump_line0 ("  Boot: ");
-  switch (ct->boot) {
-      case boot_lilo:
-	dump_line0 ("LILO\n");
-	break;
-      case boot_milo:
-	dump_line0 ("MILO\n");
-	break;
-      case boot_aboot:
-	dump_line0 ("aboot\n");
-	break;
-      case boot_silo:
-	dump_line0 ("SILO\n");
-	break;
-      default:
-	dump_line0 ("**unknown**\n");
-	break;
-  }
-
   if(ct->vend_name) dump_line("Vendor: \"%s\"\n", ct->vend_name);
  
   if(ct->model_name)

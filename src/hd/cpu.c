@@ -74,9 +74,9 @@ void hd_scan_cpu(hd_data_t *hd_data)
     if(model_id) ct->model_name = new_str(model_id);
     if(system_id) ct->vend_name = new_str(system_id);
     if(strncmp(serial_number, "MILO", 4) == 0)
-      ct->boot = boot_milo;
+      hd_data->boot = boot_milo;
     else
-      ct->boot = boot_aboot;
+      hd_data->boot = boot_aboot;
 
     ct->family = cpu_variation;
     ct->model = cpu_revision;
@@ -136,7 +136,7 @@ void hd_scan_cpu(hd_data_t *hd_data)
         ct->model = model;
         ct->stepping = stepping;
         ct->cache = cache;
-	ct->boot = boot_lilo;
+	hd_data->boot = boot_lilo;
 
         /* round clock to typical values */
         if(mhz >= 38 && mhz <= 42)
@@ -209,7 +209,7 @@ void hd_scan_cpu(hd_data_t *hd_data)
         ct->model = model;
         ct->stepping = stepping;
         ct->cache = cache;
-	ct->boot = boot_unknown;
+	hd_data->boot = boot_ppc;
         ct->clock = mhz;
 
         hd = add_hd_entry(hd_data, __LINE__, 0);

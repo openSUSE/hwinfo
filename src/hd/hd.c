@@ -78,7 +78,6 @@ static struct s_mod_names {
   { mod_scsi, "scsi"}
 };
 
-
 /*
  * Names for the probe flags. Used for debugging and command line parsing in
  * hw.c. Cf. enum probe_feature, hd_data_t.probe.
@@ -462,6 +461,33 @@ void hd_scan(hd_data_t *hd_data)
 
   /* we are done... */
   hd_data->module = mod_none;
+
+  if(hd_data->debug) {
+    ADD2LOG("  pcmcia support: %d\n", hd_has_pcmcia(hd_data));
+    ADD2LOG("  special eide chipset: %d\n", hd_has_special_eide(hd_data));
+    if(hd_data->cpu) {
+      switch(hd_boot_arch(hd_data)) {
+        case boot_lilo:
+          s = "lilo";
+          break;
+        case boot_milo:
+          s = "milo";
+          break;
+        case boot_aboot:
+          s = "aboot";
+          break;
+        case boot_silo:
+          s = "silo";
+          break;
+        case boot_ppc:
+          s = "ppc";
+          break;
+        default:
+          s = "unknown";
+      }
+      ADD2LOG("  boot concept: %s\n", s);
+    }
+  }
 }
 
 
@@ -1226,6 +1252,12 @@ int hd_has_pcmcia(hd_data_t *hd_data)
 }
 
 
+enum boot_arch hd_boot_arch(hd_data_t *hd_data)
+{
+  return hd_data->boot;
+}
+
+
 hd_t *hd_cd_list(hd_data_t *hd_data, int rescan)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
@@ -1302,4 +1334,3 @@ hd_t *hd_net_list(hd_data_t *hd_data, int rescan)
   return hd_list;
 }
 
-   

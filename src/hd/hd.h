@@ -248,13 +248,12 @@ enum cpu_arch {
 
 enum boot_arch {
   boot_unknown = 0,
-  boot_lilo, boot_milo, boot_aboot, boot_silo
+  boot_lilo, boot_milo, boot_aboot, boot_silo, boot_ppc
 };
 
 /* special cpu entry */
 typedef struct {
   enum cpu_arch architecture;
-  enum boot_arch boot;
   unsigned family;		/* cpu variation on alpha  */
   unsigned model;		/* cpu revision on alpha  */
   unsigned stepping;
@@ -527,6 +526,7 @@ typedef struct {
    */
   unsigned last_idx;		/* index of the last hd entry generated */
   unsigned module;		/* the current probing module we are in */
+  enum boot_arch boot;		/* boot method */
   hd_t *old_hd;			/* old (outdated) entries (if you scan more than once) */
   pci_t *pci;			/* raw PCI data */
   isapnp_t *isapnp;		/* raw ISA-PnP data */
@@ -627,7 +627,7 @@ hd_t *hd_net_list(hd_data_t *hd_data, int rescan);
 
 int hd_has_special_eide(hd_data_t *hd_data);
 int hd_has_pcmcia(hd_data_t *hd_data);
-
+enum boot_arch hd_boot_arch(hd_data_t *hd_data);
 
 /* implemented in hdx.c */
 
