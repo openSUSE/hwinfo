@@ -1,3 +1,6 @@
+4/2/2003:	v5.52
+	- fixed pci base addresses on 64bit archs (#21075)
+
 20/1/2003:	v5.51
 	- detection of more Microcom modems
 	- updated the pcmcia controllers fallback list
