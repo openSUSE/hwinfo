@@ -858,7 +858,8 @@ void int_wlan(hd_data_t *hd_data)
     "at76c505-rfmd",
     "at76c505-rfmd2958",
     "usbdfu",
-    "wl3501_cs"
+    "wl3501_cs",
+    "ipw2100"
   };
 
   for(hd = hd_data->hd; hd; hd = hd->next) {

@@ -764,6 +764,10 @@
 &device.id		pci 0x6915
 +driver.module.modprobe	starfire
 
+ vendor.id		pci 0x8086
+&device.id		pci 0x1043
++driver.module.modprobe	ipw2100
+
 # net/ne.c
  vendor.id		AXE
 &device.id		eisa 0x2201

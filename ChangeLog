@@ -1,3 +1,6 @@
+2/4/2004:	v8.33
+	- another wlan card (#38119)
+
 2/4/2004:	v8.32
 	- store driver list & sysfs info in hardware config files
 
