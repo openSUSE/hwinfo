@@ -153,7 +153,7 @@ static struct s_pr_flags {
   { pr_isa_isdn,     pr_isa,     4|2|1, "isa.isdn"    },
   { pr_dac960,       0,        8|4|2|1, "dac960"      },
   { pr_smart,        0,        8|4|2|1, "smart"       },
-  { pr_isdn,         0,        8|4|2|1, "isdn"        },
+  { pr_isdn,         0,          4|2|1, "isdn"        },
   { pr_kbd,          0,        8|4|2|1, "kbd"         }
 };
 
