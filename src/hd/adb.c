@@ -48,11 +48,11 @@ void hd_scan_adb(hd_data_t *hd_data)
         hd->sub_class = sc_mou_bus;
         hd->bus = bus_adb;
         hd->slot = u;
-        hd->func = i;
+//        hd->func = i;
         hd->unix_dev_name = new_str(DEV_ADBMOUSE);
 
-        hd->vend = name2eisa_id("PNP");
-        hd->dev = MAKE_ID(ID_EISA, 0x0f90);
+        hd->vend = MAKE_ID(TAG_SPECIAL, 0x0100);
+        hd->dev = MAKE_ID(TAG_SPECIAL, 0x0300 + i);
       }
     }
 
@@ -65,11 +65,11 @@ void hd_scan_adb(hd_data_t *hd_data)
         hd->sub_class = 0;
         hd->bus = bus_adb;
         hd->slot = u;
-        hd->func = i;
+//        hd->func = i;
 //        hd->unix_dev_name = new_str(DEV_ADBMOUSE);
 
-        hd->vend = name2eisa_id("PNP");
-        hd->dev = MAKE_ID(ID_EISA, 0x0f91);
+        hd->vend = MAKE_ID(TAG_SPECIAL, 0x0100);
+        hd->dev = MAKE_ID(TAG_SPECIAL, 0x0200+i);
       }
     }
   }

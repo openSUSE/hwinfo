@@ -29,12 +29,12 @@
 #define DRIVER_LIST		"hd.drivers"
 
 /* some  macros to handle internal id numbers */
-#define TAG_PCI		0
-#define TAG_EISA	1
-#define TAG_USB		2
-#define TAG_SPECIAL	3	/* e.g. ADB */
-#define TAG_BUS		4
-#define TAG_CLASS	5
+#define TAG_PCI		1
+#define TAG_EISA	2
+#define TAG_USB		3
+#define TAG_SPECIAL	4	/* e.g. ADB */
+#define TAG_BUS		5
+#define TAG_CLASS	6
 
 #define ID_VALUE(a)	((a) & 0xffff)
 #define ID_TAG(a)	(((a) >> 16) & 0xf)

@@ -79,9 +79,14 @@ write_init () {
 	echo "starting update..."
 	update
 
+        export MODPATH=/lib
 	echo "installing some modules..."
-	insmod /lib/nvram.o
-	insmod /lib/serial.o
+	insmod nvram
+	insmod serial
+	insmod parport
+	insmod parport_pc
+	insmod parport_probe
+	insmod lp
 
 	echo "running hardware probing..."
 	hw debug=-1 log=hw.log
@@ -143,7 +148,7 @@ for i in $libs ; do
 done
 
 cp_and_strip $our_shell $mnt/bin/sh
-cp /lib/modules/2.2.13/misc/{nvram,serial}.o $mnt/lib || error 15 "no space left"
+cp /lib/modules/2.2.13/misc/{nvram,serial,lp,parport,parport_pc,parport_probe}.o $mnt/lib || error 15 "no space left"
 
 write_init
 chmod 755 $mnt/sbin/init

@@ -301,7 +301,8 @@ PNP 0f0c
 PNP 0f0e
 	p	ps/2|ps2
 
-# 0f90... is SuSE-specific
-PNP 0f90
-	p	busmouse|bm
+u05ac 0301
+	p	imps/2|ps2
 
+s0100 0302
+	p	busmouse|bm

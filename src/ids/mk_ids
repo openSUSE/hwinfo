@@ -14,15 +14,15 @@ sub dump_drivers;
 sub merge_sax;
 
 %tag = (
-  'pci'     => 0,
-  'eisa'    => 1,
-  'usb'     => 2,
-  'special' => 3,
-  'bus'     => 4,
-  'class'   => 5
+  'pci'     => 1,
+  'eisa'    => 2,
+  'usb'     => 3,
+  'special' => 4,
+  'bus'     => 5,
+  'class'   => 6
 );
 
-@tag_sort = ( 2, 3, 4, 5, 0, 1 );
+@tag_sort = ( 6, 2, 3, 4, 5, 0, 1 );
 
 $fast = 1;		# use hash to speed up id checking
 

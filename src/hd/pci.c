@@ -59,10 +59,14 @@ void hd_scan_pci(hd_data_t *hd_data)
     hd->sub_class = p->sub_class;
     hd->prog_if = p->prog_if;
 
-    hd->dev = p->dev;
-    hd->vend = p->vend;
-    hd->sub_dev = p->sub_dev;
-    hd->sub_vend = p->sub_vend;
+    if(p->dev || p->vend) {
+      hd->dev = MAKE_ID(TAG_PCI, p->dev);
+      hd->vend = MAKE_ID(TAG_PCI, p->vend);
+    }
+    if(p->sub_dev || p->sub_vend) {
+      hd->sub_dev = MAKE_ID(TAG_PCI, p->sub_dev);
+      hd->sub_vend = MAKE_ID(TAG_PCI, p->sub_vend);
+    }
     hd->rev = p->rev;
 
     for(j = 0; j < 6; j++) {

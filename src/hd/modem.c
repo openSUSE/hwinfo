@@ -78,6 +78,8 @@ void get_serial_modem(hd_data_t *hd_data)
 
   if(!hd_data->ser_modem) return;
 
+  PROGRESS(2, 0, "init");
+
   usleep(300000);		/* PnP protocol; 200ms seems to be too fast  */
   
   for(sm = hd_data->ser_modem; sm; sm = sm->next) {
@@ -85,8 +87,15 @@ void get_serial_modem(hd_data_t *hd_data)
     ioctl(sm->fd, TIOCMBIS, &modem_info);
   }
 
+  PROGRESS(3, 0, "at write");
+
   write_modem(hd_data, "AT\r");
+
+  PROGRESS(4, 0, "at read");
+
   read_modem(hd_data, &set, fd_max);
+
+  PROGRESS(5, 0, "read ok");
 
   for(sm = hd_data->ser_modem; sm; sm = sm->next) {
     if(!strstr(sm->buf, "OK") && !strstr(sm->buf, "0")) {
@@ -96,14 +105,56 @@ void get_serial_modem(hd_data_t *hd_data)
     sm->buf_len = 0;		/* clear buffer */
   }
 
+#if 0
+  // just for testing
+
+  {
+    int i, cmds[] = { 3, 6, 11 };
+    char at[10];
+
+    PROGRESS(9, 0, "pnp write");
+
+    for(i = 0; i < sizeof cmds / sizeof *cmds; i++) {
+      sprintf(at, "ATI%d\r", cmds[i]);
+
+      PROGRESS(9, i + 1, "at test write");
+
+      write_modem(hd_data, at);
+
+      PROGRESS(9, i + 1, "at test read");
+
+      read_modem(hd_data, &set, fd_max);
+
+      PROGRESS(9, i + 1, "at test read ok");
+
+      for(sm = hd_data->ser_modem; sm; sm = sm->next) {
+        if(sm->is_modem) {
+          ADD2LOG("%s: AT%d:\n", sm->dev_name, cmds[i]);
+          hexdump(&hd_data->log, 1, sm->buf_len, sm->buf);
+          ADD2LOG("\n");
+        }
+        sm->buf_len = 0;		/* clear buffer */
+      }
+    }
+  }
+
+#endif
+
+  PROGRESS(6, 0, "pnp write");
+
   write_modem(hd_data, "ATI9\r");
+
+  PROGRESS(7, 0, "pnp read");
+
   read_modem(hd_data, &set, fd_max);
+
+  PROGRESS(8, 0, "pnp read ok");
 
   for(sm = hd_data->ser_modem; sm; sm = sm->next) {
     chk4id(sm);
 
     /* reset serial lines */
-    tcsetattr(sm->fd, TCSAFLUSH, &sm->tio);
+//    tcsetattr(sm->fd, TCSAFLUSH, &sm->tio);
     close(sm->fd);
 
     if(sm->is_modem) {

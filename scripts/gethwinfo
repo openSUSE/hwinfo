@@ -1,30 +1,11 @@
 #! /bin/sh
 
-#
-# This is a test script intended to check the hardware auto detection routine.
-#
-# It runs the hardware detection program and copies some data out of the /proc.
-#
-# All this is put into a .tar.gz file.
+LOG=/tmp/hw-`hostname`-$$.log
 
-TMP_DIR=/tmp/gethwinfo$$
+./hw debug=-1 log=$LOG
 
-mkdir $TMP_DIR
+gzip -9 $LOG
 
-./hw debug=-1 log=$TMP_DIR/hw.log +all
-
-cd /proc
-for i in \
-  modules misc ide/ide*/{model,mate,channel} ide/drivers partitions \
-  parport/*/{autoprobe,devices,hardware}
-do
-  if [ -e "/proc/$i" ] ; then
-    mkdir -p $TMP_DIR/`dirname $i`
-    cat /proc/$i >$TMP_DIR/$i
-  fi
-done
-
-tar -C $TMP_DIR -zcf /tmp/hwdata.tar.gz .
-rm -rf $TMP_DIR
-
-echo "Hardware info written to /tmp/hwdata.tar.gz."
+echo
+echo "***  Hardware info written to $LOG.gz  ***"
+echo
