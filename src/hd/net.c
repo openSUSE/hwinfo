@@ -354,7 +354,7 @@ void add_iseries(hd_data_t *hd_data)
 {
   hd_t *hd, *hd_card;
   hd_res_t *res, *res2;
-  unsigned i, cardmask = 0, cards = 0, card_cnt = 0;
+  unsigned i, cardmask = 0, card_cnt = 0;
   str_list_t *sl0, *sl;
 
   for(hd = hd_data->hd ; hd; hd = hd->next) {
@@ -395,16 +395,10 @@ void add_iseries(hd_data_t *hd_data)
   if(!card_cnt) {
     sl0 = read_file("/proc/iSeries/config", 0, 0);
     for(sl = sl0; sl; sl = sl->next) {
-      if(sscanf(sl->str, "AVAILABLE_VETH=%d", &cards) == 1)
-     	 continue;
-      if(sscanf(sl->str, "AVAILABLE_VETH_MASK=%x", &cardmask) == 1)
-     	 continue;
+      if(sscanf(sl->str, "AVAILABLE_VETH=%x", &cardmask) == 1)
+     	 break;
     }
     free_str_list(sl0);
-
-    if (cards && !cardmask) /* old kernels */
-      for (i=0;i<cards;i++)
-        cardmask |= 0x8000>>i;
 
     for (i = 0; i < 16; i++) {
       if ((0x8000 >> i) & cardmask) {
