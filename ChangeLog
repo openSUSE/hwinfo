@@ -1,3 +1,6 @@
+03/3/2003:	v6.04
+	- reenable mouse probing, but without serial mice and no dialog (#20309)
+
 26/2/2003:	v6.03
 	- better ZIP drive handling
 	- handle usb devices with multiple interfaces (#21487, #22223, #22843)
