@@ -422,10 +422,6 @@ void get_serial_modem(hd_data_t *hd_data)
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
       res->baud.type = res_baud;
       res->baud.speed = sm->max_baud;
-      res = add_res_entry(&hd->res, new_mem(sizeof *res));
-      res->init_strings.type = res_init_strings;
-      res->init_strings.init1 = new_str(sm->init_string1);
-      res->init_strings.init2 = new_str(sm->init_string2);
       if(sm->pppd_option) {
 	res = add_res_entry(&hd->res, new_mem(sizeof *res));
 	res->pppd_option.type = res_pppd_option;
@@ -452,6 +448,10 @@ void get_serial_modem(hd_data_t *hd_data)
         hd->dev = MAKE_ID(TAG_SPECIAL, 0x0001);
       }
     }
+    res = add_res_entry(&hd->res, new_mem(sizeof *res));
+    res->init_strings.type = res_init_strings;
+    res->init_strings.init1 = new_str(sm->init_string1);
+    res->init_strings.init2 = new_str(sm->init_string2);
   }
 }
 

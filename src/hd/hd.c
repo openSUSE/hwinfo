@@ -3241,6 +3241,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_serial);
         hd_set_probe_feature(hd_data, pr_usb);
         hd_set_probe_feature(hd_data, pr_modem);
+        hd_set_probe_feature(hd_data, pr_modem_usb);
         break;
 
       case hw_storage_ctrl:

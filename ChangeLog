@@ -1,3 +1,9 @@
+22/5/2001:	v2.16
+	- dan: fix usb modem bug (#8490)
+
+14/5/2001:	v2.15
+	- use isapnp_reset=0 for loading isa-pnp.o
+
 11/5/2001:	v2.14
 	- new driver data for 3c509
 	- X11 data updated
