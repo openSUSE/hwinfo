@@ -77,6 +77,7 @@ struct option options[] = {
   { "only", 1, NULL, 311 },
   { "listmd", 0, NULL, 312 },
   { "map", 0, NULL, 313 },
+  { "kernel-version", 1, NULL, 314 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -256,6 +257,10 @@ int main(int argc, char **argv)
 
         case 313:
           get_mapping(hd_data);
+          break;
+
+        case 314:
+          if(*optarg) setenv("LIBHD_KERNELVERSION", optarg, 1);
           break;
 
         case 400:

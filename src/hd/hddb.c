@@ -98,12 +98,14 @@ static char *module_cmd(hd_t *hd, char *cmd);
 void hddb_init_pci(hd_data_t *hd_data)
 {
   str_list_t *sl = NULL;
-  char *s = NULL;
+  char *s = NULL, *r;
   struct utsname ubuf;
 
   if(!hd_data->hddb_pci) {
     if(!uname(&ubuf)) {
-      str_printf(&s, 0, "/lib/modules/%s/modules.pcimap", ubuf.release);
+      r = getenv("LIBHD_KERNELVERSION");
+      if(!r || !*r) r = ubuf.release;
+      str_printf(&s, 0, "/lib/modules/%s/modules.pcimap", r);
       sl = read_file(s, 0, 0);
       s = free_mem(s);
     }
