@@ -36,6 +36,7 @@
 #include "isa.h"
 #include "dac960.h"
 #include "smart.h"
+#include "isdn.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -63,8 +64,11 @@
 #define MOD_INFO_SEP		'|'
 #define MOD_INFO_SEP_STR	"|"
 
+static int is_default_feature(enum probe_feature feature);
 static hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd);
 static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
+static isdn_parm_t *new_isdn_parm(isdn_parm_t **ip);
+static driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici);
 static char *module_cmd(hd_t *, char *);
 static void timeout_alarm_handler(int signal);
 
@@ -98,7 +102,8 @@ static struct s_mod_names {
   { mod_parallel, "parallel" },
   { mod_isa, "isa" },
   { mod_dac960, "dac960" },
-  { mod_smart, "smart" }
+  { mod_smart, "smart" },
+  { mod_isdn, "isdn" }
 };
 
 /*
@@ -140,42 +145,73 @@ static struct s_pr_flags {
   { pr_isa, "isa" },
   { pr_isa_isdn, "isa.isdn" },
   { pr_dac960, "dac960" },
-  { pr_smart, "smart" }
+  { pr_smart, "smart" },
+  { pr_isdn, "isdn" }
 };
 
-#define PR_OFS			2		/* skip 0, default */
-#define ALL_PR_FEATURE		((1 << (pr_all - PR_OFS)) - 1)
-#define DEFAULT_PR_FEATURE	(\
-                                  ALL_PR_FEATURE\
-                                  - (1 << (pr_pci_range - PR_OFS))\
-                                  - (1 << (pr_pci_ext - PR_OFS))\
-                                )
+int is_default_feature(enum probe_feature feature)
+{
+  static enum probe_feature non_default_features[] = {
+    pr_pci_range, pr_pci_ext
+  };
+  int i;
+
+  for(i = 0; i < sizeof non_default_features / sizeof *non_default_features; i++) {
+    if(non_default_features[i] == feature) return 0;
+  }
+
+  return 1;
+}
 
 void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
-  if(feature == pr_all)
-    hd_data->probe |= ALL_PR_FEATURE;
-  else if(feature == pr_default)
-    hd_data->probe |= DEFAULT_PR_FEATURE;
-  else if((feature -= PR_OFS) >= 0)	/* skip 0, default, all */
-    hd_data->probe |= (1 << feature);
+  unsigned ofs = feature >> 3, bit = feature & 7;
+  int i;
+
+  if(feature > pr_all) return;
+
+  if(feature == pr_all) {
+    for(i = 0; i < pr_default; i++) {
+      hd_set_probe_feature(hd_data, i);
+    }
+  }
+  else if(feature == pr_default) {
+    for(i = 0; i < pr_default; i++) {
+      if(is_default_feature(i)) hd_set_probe_feature(hd_data, i);
+    }
+  }
+  else if(ofs < sizeof hd_data->probe) {
+    hd_data->probe[ofs] |= 1 << bit;
+  }
 }
 
 void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
-  if(feature == pr_all)
-    hd_data->probe &= ~ALL_PR_FEATURE;
-  else if(feature == pr_default)
-    hd_data->probe &= ~DEFAULT_PR_FEATURE;
-  else if((feature -= PR_OFS) >= 0)	/* skip 0, default, all */
-    hd_data->probe &= ~(1 << feature);
+  unsigned ofs = feature >> 3, bit = feature & 7;
+  int i;
+
+  if(feature > pr_all) return;
+
+  if(feature == pr_all) {
+    for(i = 0; i < pr_default; i++) {
+      hd_clear_probe_feature(hd_data, i);
+    }
+  }
+  else if(feature == pr_default) {
+    for(i = 0; i < pr_default; i++) {
+      if(is_default_feature(i)) hd_clear_probe_feature(hd_data, i);
+    }
+  }
+  else if(ofs < sizeof hd_data->probe) {
+    hd_data->probe[ofs] &= ~(1 << bit);
+  }
 }
 
 int hd_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
-  feature -= PR_OFS;			/* skip 0, default, all */
+  if(feature < 0 || feature >= pr_default) return 0;
 
-  return feature >= 0 && (hd_data->probe & (1 << feature)) ? 1 : 0;
+  return hd_data->probe[feature >> 3] & (1 << (feature & 7)) ? 1 : 0;
 }
 
 
@@ -214,9 +250,11 @@ hd_t *hd_free_hd_list(hd_t *hd)
 
 void *new_mem(size_t size)
 {
-  void *p = calloc(size, 1);
+  void *p;
 
-  if(p) return p;
+  if(size == 0) return NULL;
+
+  if((p = calloc(size, 1))) return p;
 
   fprintf(stderr, "memory oops 1\n");
   exit(11);
@@ -444,20 +482,24 @@ hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd)
 
 void hd_scan(hd_data_t *hd_data)
 {
-  char *s;
-  int i, j;
+  char *s = NULL;
+  int i;
   hd_t *hd;
 
   /* log the debug & probe flags */
   if(hd_data->debug) {
+    for(i = sizeof hd_data->probe - 1; i >= 0; i--) {
+      str_printf(&s, -1, "%02x", hd_data->probe[i]);
+    }
     ADD2LOG(
-      "libhd version %s%s (%s)\ndebug = 0x%x\nprobe = 0x%x (",
-      HD_VERSION, getuid() ? "u" : "", HD_ARCH, hd_data->debug, hd_data->probe
+      "libhd version %s%s (%s)\ndebug = 0x%x\nprobe = 0x%s (",
+      HD_VERSION, getuid() ? "u" : "", HD_ARCH, hd_data->debug, s
     );
+    s = free_mem(s);
 
-    for(j = PR_OFS, i = 0; j < pr_all; j++) {
-      if((s = hd_probe_feature_by_value(j))) {
-        ADD2LOG("%s%c%s", i++ ? " " : "", hd_probe_feature(hd_data, j) ? '+' : '-', s);
+    for(i = 0; i < pr_default; i++) {
+      if((s = hd_probe_feature_by_value(i))) {
+        ADD2LOG("%s%c%s", i ? " " : "", hd_probe_feature(hd_data, i) ? '+' : '-', s);
       }
     }
 
@@ -517,6 +559,7 @@ void hd_scan(hd_data_t *hd_data)
   /* keep these at the end of the list */
   hd_scan_cdrom(hd_data);
   hd_scan_net(hd_data);
+  hd_scan_isdn(hd_data);
 
   /* we are done... */
   hd_data->module = mod_none;
@@ -993,51 +1036,82 @@ void remove_tagged_hd_entries(hd_data_t *hd_data)
   }
 }
 
-
-
-
-/*
- * Scan the hardware list for CD-ROMs with a given volume_id. Start
- * searching at the start'th entry.
- *
- * Returns a pointer to a hardware entry (hw_t *) or NULL on failure.
- */
-
-// ####### replace or fix this!!!
-
-#if 0
-hw_t *find_cdrom_volume(const char *volume_id, int *start)
+isdn_parm_t *new_isdn_parm(isdn_parm_t **ip)
 {
-  int i;
-  cdrom_info_t *ci;
-  hw_t *h;
+  while(*ip) ip = &(*ip)->next;
 
-  for(i = *start; i < hw_len; i++) {
-    h = hw + i;
-    if(
-      h->base_class == bc_storage_device &&
-      h->sub_class == sc_sdev_cdrom /* &&
-      (h->ext_flags & (1 << cdrom_flag_media_probed)) */
-    ) {
-      /* ok, found a CDROM device... */
-      ci = h->ext;
-      /* ... now compare the volume id */
-      if(
-        ci &&
-        (!volume_id || !strncmp(ci->volume, volume_id, strlen(volume_id)))
-      ) {
-        *start = i + 1;
-        return h;
-      }
+  return *ip = new_mem(sizeof **ip);
+}
+
+driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
+{
+  driver_info_t *di;
+  ihw_para_info *ipi0, *ipi;
+  isdn_parm_t *ip;
+  hd_res_t *res;
+  int i;
+
+  di = new_mem(sizeof *di);
+  ipi0 = new_mem(sizeof *ipi0);
+
+  di->isdn.type = di_isdn;
+  di->isdn.i4l_type = ici->type;
+  di->isdn.i4l_subtype = ici->subtype;
+  di->isdn.i4l_name = new_str(ici->name);
+
+  while((ipi = ihw_get_parameter(ici->handle, ipi0))) {
+    ip = new_isdn_parm(&di->isdn.params);
+    ip->name = new_str(ipi->name);
+    ip->type = ipi->type & P_TYPE_MASK;
+    ip->flags = ipi->flags & P_PROPERTY_MASK;
+    ip->def_value = ipi->def_value;
+    if(ipi->list) ip->alt_values = *ipi->list;
+    ip->alt_value = new_mem(ip->alt_values * sizeof *ip->alt_value);
+    for(i = 0; i < ip->alt_values; i++) {
+      ip->alt_value[i] = ipi->list[i + 1];
     }
+    ip->valid = 1;
+
+    /* now get the value */
+    if((ip->flags & P_DEFINE)) {
+      res = NULL;
+      switch(ip->type) {
+        case P_IRQ:
+          res = get_res(hd, res_irq, 0);
+          if(res) ip->value = res->irq.base;
+          break;
+        case P_MEM:
+          res = get_res(hd, res_mem, 0);
+          if(res) ip->value = res->mem.base;
+          break;
+        case P_IO:
+          res = get_res(hd, res_io, 0);
+          if(res) ip->value = res->io.base;
+          break;
+        case P_IO0:
+        case P_IO1:
+        case P_IO2:
+          res = get_res(hd, res_io, ip->type - P_IO0);
+          if(res) ip->value = res->io.base;
+          break;
+        // ##### might break for 64bit pci entries?
+        case P_BASE0:
+        case P_BASE1:
+        case P_BASE2:
+        case P_BASE3:
+        case P_BASE4:
+        case P_BASE5:
+          res = get_res(hd, res_mem, ip->type - P_BASE0);
+          if(res) ip->value = res->mem.base;
+          break;
+      }
+      if(!res) ip->valid = 0;
+    }
+
   }
 
-
-
-  return NULL;	/* CD not found :-( */
+  return di;
 }
-#endif
-
 
 /*
  * Reads the driver info.
@@ -1052,6 +1126,7 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
   int i;
   unsigned u1, u2;
   driver_info_t *di, *di0 = NULL;
+  ihw_card_info *ici;
   str_list_t *sl;
 
   if(hd->sub_vend || hd->sub_dev) {
@@ -1064,6 +1139,11 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 
   if(!di0 && (hd->compat_vend || hd->compat_dev)) {
     di0 = device_driver(hd_data, hd->compat_vend, hd->compat_dev);
+  }
+
+  if((ici = get_isdn_info(hd))) {
+    di0 = isdn_driver(hd_data, hd, ici);
+    if(di0) return di0;
   }
 
   if(!di0) return hd_free_driver_info(di0);
@@ -1349,15 +1429,15 @@ enum boot_arch hd_boot_arch(hd_data_t *hd_data)
 hd_t *hd_cd_list(hd_data_t *hd_data, int rescan)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
-  unsigned probe_save;
+  unsigned char probe_save[sizeof hd_data->probe];
 
   if(rescan) {
-    probe_save = hd_data->probe;
+    memcpy(probe_save, hd_data->probe, sizeof probe_save);
     hd_clear_probe_feature(hd_data, pr_all);
     hd_set_probe_feature(hd_data, pr_cdrom);
     hd_set_probe_feature(hd_data, pr_cdrom_info);
     hd_scan(hd_data);
-    hd_data->probe = probe_save;
+    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
   }
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -1380,15 +1460,17 @@ hd_t *hd_cd_list(hd_data_t *hd_data, int rescan)
 hd_t *hd_disk_list(hd_data_t *hd_data, int rescan)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
-  unsigned probe_save;
+  unsigned char probe_save[sizeof hd_data->probe];
 
   if(rescan) {
-    probe_save = hd_data->probe;
+    memcpy(probe_save, hd_data->probe, sizeof probe_save);
     hd_clear_probe_feature(hd_data, pr_all);
     hd_set_probe_feature(hd_data, pr_ide);
     hd_set_probe_feature(hd_data, pr_scsi);
+    hd_set_probe_feature(hd_data, pr_dac960);
+    hd_set_probe_feature(hd_data, pr_smart);
     hd_scan(hd_data);
-    hd_data->probe = probe_save;
+    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
   }
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -1411,14 +1493,14 @@ hd_t *hd_disk_list(hd_data_t *hd_data, int rescan)
 hd_t *hd_net_list(hd_data_t *hd_data, int rescan)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
-  unsigned probe_save;
+  unsigned char probe_save[sizeof hd_data->probe];
 
   if(rescan) {
-    probe_save = hd_data->probe;
+    memcpy(probe_save, hd_data->probe, sizeof probe_save);
     hd_clear_probe_feature(hd_data, pr_all);
     hd_set_probe_feature(hd_data, pr_net);
     hd_scan(hd_data);
-    hd_data->probe = probe_save;
+    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
   }
 
   for(hd = hd_data->hd; hd; hd = hd->next) {

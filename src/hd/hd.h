@@ -65,17 +65,14 @@ extern "C" {
 
 /*
  * flags to control the probing.
- *
- * Note: only 32 features are supported at this time; if you want more,
- * change the definition of hd_data_t.probe
  */
 typedef enum probe_feature {
-  pr_default = 1, pr_memory, pr_pci, pr_pci_range, pr_pci_ext, pr_isapnp,
-  pr_cdrom, pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial,
-  pr_misc_par, pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor,
-  pr_mouse, pr_ide, pr_scsi, pr_usb, pr_adb, pr_modem, pr_modem_usb,
-  pr_parallel, pr_isa, pr_isa_isdn, pr_dac960, pr_smart,
-  pr_all		/* 31; pr_all must be the last */
+  pr_memory, pr_pci, pr_pci_range, pr_pci_ext, pr_isapnp, pr_cdrom,
+  pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial, pr_misc_par,
+  pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide,
+  pr_scsi, pr_usb, pr_adb, pr_modem, pr_modem_usb, pr_parallel, pr_isa,
+  pr_isa_isdn, pr_dac960, pr_smart, pr_isdn,
+  pr_default, pr_all		/* pr_default, pr_all must be the last 2 */
 } hd_probe_feature_t;
 
 
@@ -228,7 +225,6 @@ typedef struct usb_s {
   int d_cls, d_sub, d_prot;
   int i_cls, i_sub, i_prot;
 } usb_t;
-
 
 /*
  *structures to hold the (raw) ISA-PnP data
@@ -534,6 +530,100 @@ typedef struct s_ser_modem_t {
   unsigned bits;
 } ser_modem_t;
 
+typedef struct isdn_parm_s {
+  struct isdn_parm_s *next;
+  char *name;
+  unsigned valid:1;
+  uint64_t value;
+  unsigned type;
+  unsigned flags;
+  unsigned def_value;
+  int alt_values;
+  unsigned *alt_value;
+} isdn_parm_t;
+
+
+/* device driver info types */
+typedef enum driver_info_type {
+  di_any, di_display, di_module, di_mouse, di_x11, di_isdn
+} hd_driver_info_t;
+
+/* unspecific info */
+typedef struct {
+  union driver_info_u *next;
+  enum driver_info_type type;		/* driver info type */
+  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
+} driver_info_any_t;
+
+/* display (monitor) info */
+typedef struct {
+  union driver_info_u *next;
+  enum driver_info_type type;		/* driver info type */
+  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
+  unsigned width, height;		/* max. useful display geometry */
+  unsigned min_vsync, max_vsync;	/* vsync range */
+  unsigned min_hsync, max_hsync;	/* hsync range */
+  unsigned bandwidth;			/* max. pixel clock */
+} driver_info_display_t;
+
+/* module info */
+typedef struct {
+  union driver_info_u *next;
+  enum driver_info_type type;		/* driver info type */
+  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
+  unsigned active:1;			/* if module is currently active */
+  unsigned modprobe:1;			/* modprobe or insmod  */
+  char *name;				/* module name */
+  char *mod_args;			/* additional module args */
+  char *conf;				/* conf.modules entry, if any (e.g. for sb.o) */
+} driver_info_module_t;
+
+/* mouse protocol info */
+typedef struct {
+  union driver_info_u *next;
+  enum driver_info_type type;		/* driver info type */
+  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
+  char *xf86;				/* the XF86 protocol name */
+  char *gpm;				/* dto, gpm */
+} driver_info_mouse_t;
+
+/* X11 server info */
+typedef struct {
+  union driver_info_u *next;
+  enum driver_info_type type;		/* driver info type */
+  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
+  char *server;				/* the server name */
+  str_list_t *x3d;			/* 3D info (list of packages to install) */
+  struct {
+    unsigned all:5;			/* the next 5 entries combined */
+    unsigned c8:1, c15:1, c16:1, c24:1, c32:1;
+  } colors;				/* supported color depths */
+  unsigned dacspeed;			/* max. ramdac clock */
+} driver_info_x11_t;
+
+/* isdn info */
+typedef struct {
+  union driver_info_u *next;
+  enum driver_info_type type;		/* driver info type */
+  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
+  int i4l_type, i4l_subtype;		/* I4L types */
+  char *i4l_name;			/* I4L card name */
+  isdn_parm_t *params;			/* isdn parameters */
+} driver_info_isdn_t;
+
+/*
+ * holds device driver info
+ */
+typedef union driver_info_u {
+  union driver_info_u *next;
+  driver_info_any_t any;
+  driver_info_module_t module;
+  driver_info_mouse_t mouse;
+  driver_info_x11_t x11;
+  driver_info_display_t display;
+  driver_info_isdn_t isdn;
+} driver_info_t;
+
 
 /*
  * Some hardware doesn't fit into the hd_t scheme or there is info we
@@ -622,7 +712,6 @@ typedef struct s_hd_t {
 } hd_t;
 
 typedef struct {
-  enum probe_feature probe;	/* bitmask of probing features */
   hd_t *hd;			/* the hardware list */
 
   /* a callback to indicate that we are still doing something... */
@@ -634,6 +723,7 @@ typedef struct {
   /*
    * The following entries should *not* be accessed outside of libhd!!!
    */
+  unsigned char probe[(pr_all + 7) / 8];	/* bitmask of probing features */
   unsigned last_idx;		/* index of the last hd entry generated */
   unsigned module;		/* the current probing module we are in */
   enum boot_arch boot;		/* boot method */
@@ -659,77 +749,6 @@ typedef struct {
   str_list_t *disk_list;	/* dto, hd_disk_list() */
   str_list_t *net_list;		/* dto hd_net_list() */
 } hd_data_t;
-
-
-/* device driver info types */
-typedef enum driver_info_type {
-  di_any, di_display, di_module, di_mouse, di_x11
-} hd_driver_info_t;
-
-/* unspecific info */
-typedef struct {
-  union driver_info_u *next;
-  enum driver_info_type type;		/* driver info type */
-  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
-} driver_info_any_t;
-
-/* display (monitor) info */
-typedef struct {
-  union driver_info_u *next;
-  enum driver_info_type type;		/* driver info type */
-  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
-  unsigned width, height;		/* max. useful display geometry */
-  unsigned min_vsync, max_vsync;	/* vsync range */
-  unsigned min_hsync, max_hsync;	/* hsync range */
-  unsigned bandwidth;			/* max. pixel clock */
-} driver_info_display_t;
-
-/* module info */
-typedef struct {
-  union driver_info_u *next;
-  enum driver_info_type type;		/* driver info type */
-  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
-  unsigned active:1;			/* if module is currently active */
-  unsigned modprobe:1;			/* modprobe or insmod  */
-  char *name;				/* module name */
-  char *mod_args;			/* additional module args */
-  char *conf;				/* conf.modules entry, if any (e.g. for sb.o) */
-} driver_info_module_t;
-
-/* mouse protocol info */
-typedef struct {
-  union driver_info_u *next;
-  enum driver_info_type type;		/* driver info type */
-  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
-  char *xf86;				/* the XF86 protocol name */
-  char *gpm;				/* dto, gpm */
-} driver_info_mouse_t;
-
-/* X11 server info */
-typedef struct {
-  union driver_info_u *next;
-  enum driver_info_type type;		/* driver info type */
-  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
-  char *server;				/* the server name */
-  str_list_t *x3d;			/* 3D info (list of packages to install) */
-  struct {
-    unsigned all:5;			/* the next 5 entries combined */
-    unsigned c8:1, c15:1, c16:1, c24:1, c32:1;
-  } colors;				/* supported color depths */
-  unsigned dacspeed;			/* max. ramdac clock */
-} driver_info_x11_t;
-
-/*
- * holds device driver info
- */
-typedef union driver_info_u {
-  union driver_info_u *next;
-  driver_info_any_t any;
-  driver_info_module_t module;
-  driver_info_mouse_t mouse;
-  driver_info_x11_t x11;
-  driver_info_display_t display;
-} driver_info_t;
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

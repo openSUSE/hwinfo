@@ -4,9 +4,7 @@
 
 #include "hd.h"
 #include "hd_int.h"
-#include "hddb.h"
 #include "isa.h"
-#include "../isdn/ihw.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * isa cards
@@ -40,7 +38,6 @@ void hd_scan_isa(hd_data_t *hd_data)
 void scan_isa_isdn(hd_data_t *hd_data)
 {
   isa_isdn_t *ii0, *ii;
-  ihw_card_info ici0, *ici;
   hd_t *hd;
   hd_res_t *res;
 
@@ -53,13 +50,9 @@ void scan_isa_isdn(hd_data_t *hd_data)
   PROGRESS(1, 1, "isdn");
 
   for(ii = ii0; ii; ii = ii->next) {
-    memset(&ici0, 0, sizeof ici0);
-    ici0.type = ii->type;
-    ici0.subtype = ii->subtype;
-    ici = ihw_get_device_from_type(&ici0);
-
     hd = add_hd_entry(hd_data, __LINE__, 0);
     hd->bus = bus_isa;
+    hd->base_class = bc_isdn;
     hd->vend = MAKE_ID(TAG_SPECIAL, 0x3000);
     hd->dev = MAKE_ID(TAG_SPECIAL, ((ii->type << 8) + (ii->subtype & 0xff)) & 0xffff);
 
@@ -68,7 +61,7 @@ void scan_isa_isdn(hd_data_t *hd_data)
       res->io.type = res_io;
       res->io.enabled = 1;
       res->io.base = ii->io;
-      res->io.access = acc_wo;
+      res->io.access = acc_rw;
     }
 
     if(ii->has_irq) {
@@ -78,7 +71,7 @@ void scan_isa_isdn(hd_data_t *hd_data)
       res->irq.base = ii->irq;
     }
 
-    // #### ask libihw
+    // #### ask libihw? -> isdn.c
 
   }
 

@@ -3,7 +3,7 @@
 #include <string.h>
 #include "ihw.h"
 
-#define IHW_DATABASE	"ihw_database"
+#define IHW_DATABASE	"src/isdn/ihw_database"
 
 #define debprintf(a...)
 

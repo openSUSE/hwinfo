@@ -144,6 +144,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
   char buf[256];
   driver_info_t *di, *di0;
   str_list_t *sl;
+  isdn_parm_t *ip;
 
   if(h->vend || h->dev || h->dev_name || h->vend_name) {
     if(h->vend || h->vend_name || h->dev)
@@ -418,6 +419,36 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
           dump_line0("\n");
         }
         if(di->x11.dacspeed) dump_line("Max. DAC Clock: %u MHz\n", di->x11.dacspeed);
+        break;
+
+      case di_isdn:
+        dump_line(
+          "I4L Type: %d/%d [%s]\n",
+          di->isdn.i4l_type, di->isdn.i4l_subtype, di->isdn.i4l_name
+        );
+        if((ip = di->isdn.params)) {
+          int k, l;
+
+          dump_line_str("Parameter:\n");
+          for(k = 0; ip; ip = ip->next, k++) {
+            dump_line(
+              "  %d%s: (0x%x/%02x): %s = 0x%"PRIx64,
+              k, ip->valid ? "" : "(invalid)",
+              ip->type, ip->flags >> 8, ip->name, ip->value
+            );
+            if(ip->alt_values) {
+              for(l = 0; l < ip->alt_values; l++) {
+                dump_line0(
+                  "%s%s0x%x", l ? "," : " [",
+                  ip->alt_value[l] == ip->def_value ? "*" : "",
+                  ip->alt_value[l]
+                );
+              }
+              dump_line0("]");
+            }
+            dump_line0("\n");
+          }
+        }
         break;
 
       default:
