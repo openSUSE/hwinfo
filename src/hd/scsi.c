@@ -346,7 +346,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
   int i, j, k, fd;
   char *dev_name = NULL;
   scsi_t *ioctl_scsi = NULL, *scsi, *gen;
-  char *sdevs[] = { "g", "r", "t" };	/* generic first, no *disk* devices */
+  char *sdevs[] = { "sg", "sr", "nst" };	/* generic first, no *disk* devices */
   unsigned char *uc;
   char s[3], *t, *t2, *t3;
   DIR *dir, *dir2;
@@ -361,7 +361,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
 
   for(i = 0; i < sizeof sdevs / sizeof *sdevs; i++) {
     for(j = 0; j < 256; j++) {
-      str_printf(&dev_name, 0, "/dev/s%s%d", sdevs[i], j);
+      str_printf(&dev_name, 0, "/dev/%s%d", sdevs[i], j);
       fd = open(dev_name, O_RDONLY | O_NONBLOCK);
       if(fd >= 0) {
         PROGRESS(2, i * 100 + j, "ioctl");
@@ -770,10 +770,10 @@ void get_proc_scsi(hd_data_t *hd_data)
             !strncmp(scsi->model, "USB", 3)
           )
         ) {
-          str_printf(&scsi->guessed_dev_name, 0, "/dev/osst%u", osst_cnt++);
+          str_printf(&scsi->guessed_dev_name, 0, "/dev/nosst%u", osst_cnt++);
         }
         else {
-          str_printf(&scsi->guessed_dev_name, 0, "/dev/st%u", st_cnt++);
+          str_printf(&scsi->guessed_dev_name, 0, "/dev/nst%u", st_cnt++);
         }
         break;
     }

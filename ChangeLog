@@ -1,3 +1,6 @@
+8/6/2004:	v5.63
+	- use non-rewinding scsi tape devices (#41646)
+
 15/10/2003:	v5.62
 	- avoid pci config type detection on Gateway 920 (#30704)
 	- updated e100 module data (#32199)
