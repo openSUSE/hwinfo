@@ -501,7 +501,7 @@ C "AVM FRITZ!X USB"; 8; 0x57c; 0x2000; 0xffff; 0xffff; 0x1; 0x1;
 D "AVM CAPI2.0"; "fxusb"; 8003; 5; 0x1; 0x1300002; ""; "capi"; ""; ""; "binary only CAPI with FAX G3"; "i4l-base,i4l-isdnlog,capi4linux";
 C "Teledat X120"; 8; 0x57c; 0x2800; 0xffff; 0xffff; 0x1; 0x1;
 D "AVM CAPI2.0"; "fxusb_CZ"; 8003; 6; 0x1; 0x1300002; ""; "capi"; ""; ""; "binary only CAPI with FAX G3"; "i4l-base,i4l-isdnlog,capi4linux";
-C "AVM FRITZ!Card DSL"; 1; 0x1131; 0x5402; 0x1244; 0xf00; 0x5; 0x1;
+C "AVM FRITZ!Card DSL PCI"; 1; 0x1131; 0x5402; 0x1244; 0xf00; 0x5; 0x1;
 D "AVM CAPI2.0"; "fcdsl"; 8004; 1; 0x1; 0x1300002; ""; "capi"; ""; ""; "binary only CAPI with FAX G3 and DSL"; "i4l-base,i4l-isdnlog,capi4linux,avm_fcdsl";
 C "AVM FRITZ!Card DSL USB"; 8; 0x57c; 0x2300; 0xffff; 0xffff; 0x5; 0x1;
 D "AVM CAPI2.0"; "fcdslusb"; 8004; 2; 0x1; 0x1300002; ""; "capi"; ""; "fdsubase.frm"; "binary only CAPI with FAX G3"; "i4l-base,i4l-isdnlog,capi4linux,avm_fcdsl";
