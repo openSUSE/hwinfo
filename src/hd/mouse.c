@@ -32,10 +32,6 @@ static unsigned chk4id(ser_mouse_t *mi);
 static ser_mouse_t *add_ser_mouse_entry(ser_mouse_t **sm, ser_mouse_t *new_sm);
 static void dump_ser_mouse_data(hd_data_t *hd_data);
 
-#ifdef __PPC__
-static void get_adb_mouse(hd_data_t *hd_data);
-#endif
-
 void hd_scan_mouse(hd_data_t *hd_data)
 {
   if(!hd_probe_feature(hd_data, pr_mouse)) return;
@@ -54,12 +50,6 @@ void hd_scan_mouse(hd_data_t *hd_data)
 
   get_serial_mouse(hd_data);
   if((hd_data->debug & HD_DEB_MOUSE)) dump_ser_mouse_data(hd_data);
-
-#ifdef __PPC__
-  PROGRESS(3, 0, "adb");
-
-  get_adb_mouse(hd_data);
-#endif
 }
 
 /*
@@ -562,30 +552,3 @@ void dump_ser_mouse_data(hd_data_t *hd_data)
   ADD2LOG("----- serial mice end -----\n");
 }
 
-#ifdef __PPC__
-void get_adb_mouse(hd_data_t *hd_data)
-{
-  unsigned u, adr = 0;
-  hd_t *hd;
-  str_list_t *sl;
-
-  for(sl = hd_data->klog; sl; sl = sl->next) {
-    if(sscanf(sl->str, "<4>ADB mouse at %u", &u) == 1 && u < 32) {	/* max 15 actually, but who cares... */
-      if(!(adr & (1 << u))) {
-        adr |= 1 << u;
-        hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->base_class = bc_mouse;
-        hd->sub_class = sc_mou_bus;
-        hd->bus = bus_adb;
-        hd->slot = u;
-        hd->unix_dev_name = new_str(DEV_ADBMOUSE);
-
-        hd->vend = name2eisa_id("PNP");
-        hd->dev = MAKE_ID(ID_EISA, 0x0f90);
-      }
-      break;
-    }
-  }
-}
-
-#endif	/* __PPC__ */

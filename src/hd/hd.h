@@ -31,6 +31,7 @@ extern "C" {
 #define HD_DEB_IDE		(1 << 15)
 #define HD_DEB_SCSI		(1 << 16)
 #define HD_DEB_USB		(1 << 17)
+#define HD_DEB_ADB		(1 << 18)
 
 
 /*
@@ -43,7 +44,7 @@ enum probe_feature {
   pr_default = 1, pr_memory, pr_pci, pr_pci_range, pr_isapnp, pr_cdrom,
   pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial, pr_misc_par,
   pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide,
-  pr_scsi, pr_usb,
+  pr_scsi, pr_usb, pr_adb,
   pr_all	/* pr_all must be the last */
 };
 
