@@ -646,6 +646,9 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_isdn);
+#ifdef __PPC__
+      hd_set_probe_feature(hd_data, pr_prom);
+#endif
       break;
 
     case hw_isapnp:
@@ -1702,7 +1705,7 @@ void hd_scan(hd_data_t *hd_data)
 #endif
   hd_scan_kbd(hd_data);
 #ifndef LIBHD_TINY
-#if !defined(__sparc__)
+#if !defined(__sparc__) && !defined(__ia64__)
   hd_scan_braille(hd_data);
 #endif
   hd_scan_modem(hd_data);	/* do it before hd_scan_mouse() */
@@ -4189,7 +4192,14 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         )
         ||
         ( /* make i2o storage controllers */
-          item == hw_storage_ctrl && hd->base_class.id == bc_i2o
+          item == hw_storage_ctrl &&
+          hd->base_class.id == bc_i2o
+        )
+        ||
+        ( /* add fibre channel to storage ctrl list */
+          item == hw_storage_ctrl &&
+          hd->base_class.id == bc_serial &&
+          hd->sub_class.id == sc_ser_fiber
         )
       ) {
 

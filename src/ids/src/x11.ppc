@@ -171,7 +171,7 @@
 &device.id		pci 0x0520
 +device.name		MGA G200
 +driver.xfree		4|fbdev||||dpms,hw_cursor|16,24
-+driver.xfree.config	DacSpeed     200
++driver.xfree.config	DacSpeed 200 200 200 200
 +driver.xfree		3|FBDev|||||8
 
  vendor.id		pci 0x121a

@@ -57,6 +57,9 @@
 # Optical Logitech Wheel Mouse (#16003)
 |vendor.id		usb 0x046d
 &device.id		usb 0xc00e
+# Optical Logitech Wheel Mouse (#22797)
+|vendor.id		usb 0x046d
+&device.id		usb 0xc030
 +driver.mouse		imps/2|imps2|3|1
 
 # MouseMan Dual Optical (#18296)

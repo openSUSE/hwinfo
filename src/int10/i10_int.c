@@ -72,7 +72,6 @@ int42_handler(int num,struct regs86 *regs)
 			c &= ~0x02;
 			outb(0x3c2,c);
 			return 1;
-		default:
 		}
 	}
 	if (num == 0x42)

@@ -203,6 +203,9 @@ static void get_ps2_mouse(hd_data_t *hd_data)
 
           if(buf_len >= 1) mouse_id = buf[buf_len - 1];
 
+          /* assume the user just can't keep his hands still... */
+          if(buf_len >= 5) mouse_id = buf[0];
+
           // if we didn't get any response, try this
           if(buf_len == 0 || (hd_data->debug & HD_DEB_MOUSE)) {
             PROGRESS(1, 5, "ps/2");
@@ -354,7 +357,7 @@ void test_serial_open(void *arg)
 void get_serial_mouse(hd_data_t *hd_data)
 {
   hd_t *hd;
-  int j, fd, fd_max = 0, sel;
+  int j, fd, fd_max = 0, sel, max_len;
   unsigned modem_info;
   fd_set set, set0;
   struct timeval to;
@@ -410,6 +413,9 @@ void get_serial_mouse(hd_data_t *hd_data)
     ioctl(sm->fd, TIOCMBIS, &modem_info);
   }
 
+  /* smaller buffer size, otherwise we might wait really long... */
+  max_len = sizeof sm->buf < 128 ? sizeof sm->buf : 128;
+
   to.tv_sec = 0; to.tv_usec = 300000;
 
   set0 = set;
@@ -419,7 +425,7 @@ void get_serial_mouse(hd_data_t *hd_data)
     if((sel = select(fd_max + 1, &set, NULL, NULL, &to)) > 0) {
       for(sm = hd_data->ser_mouse; sm; sm = sm->next) {
         if(FD_ISSET(sm->fd, &set)) {
-          if((j = read(sm->fd, sm->buf + sm->buf_len, sizeof sm->buf - sm->buf_len)) > 0)
+          if((j = read(sm->fd, sm->buf + sm->buf_len, max_len - sm->buf_len)) > 0)
             sm->buf_len += j;
           if(j <= 0) FD_CLR(sm->fd, &set0);	// #####
         }
@@ -509,7 +515,7 @@ int _setspeed(int fd, int old, int new, int needtowrite, unsigned short flags)
     default:    tty.c_cflag = flags | B1200; break;
     }
 
-  if(tcsetattr(fd, TCSAFLUSH, &tty)) return errno;
+  if(tcsetattr(fd, TCSANOW, &tty)) return errno;
 
   switch (new)
     {
@@ -526,7 +532,7 @@ int _setspeed(int fd, int old, int new, int needtowrite, unsigned short flags)
 
   usleep(100000);
 
-  if(tcsetattr(fd, TCSAFLUSH, &tty)) return errno;
+  if(tcsetattr(fd, TCSANOW, &tty)) return errno;
 
   return err;
 }
