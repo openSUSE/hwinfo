@@ -66,6 +66,18 @@
 +subclass.name		ISDN controller
 
  baseclass.id		0x002
+&subclass.id		0x05
++subclass.name		CTC controller
+
+ baseclass.id		0x002
+&subclass.id		0x06
++subclass.name		HiperSocket controller
+
+ baseclass.id		0x002
+&subclass.id		0x07
++subclass.name		OSA-Express controller
+
+ baseclass.id		0x002
 &subclass.id		0x80
 +subclass.name		Network controller
 
