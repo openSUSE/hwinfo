@@ -1,5 +1,6 @@
 20/9/2004:	v9.14
 	- sata info update (#45551)
+	- look at smbios data for smp detection, too
 
 17/9/2004:	v9.13
 	- added some epson scanners (#45074)

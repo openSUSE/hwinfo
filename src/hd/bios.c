@@ -181,7 +181,9 @@ static int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_
 int detect_smp_bios(hd_data_t *hd_data)
 {
   bios_info_t *bt;
+  hd_smbios_t *sm;
   hd_t *hd;
+  int cpus;
 
   if(!hd_data->bios_ram.data) return -1;	/* hd_scan_bios() not called */
 
@@ -199,12 +201,25 @@ int detect_smp_bios(hd_data_t *hd_data)
 
   if(!bt) return -1;
 
-//  return bt->smp.ok ? bt->smp.cpus_en ? bt->smp.cpus_en : 1 : 0;
-// Dell Dimension 8100 has a MP table with 0 cpus!
+  cpus = 0;
 
-  return bt->smp.ok ? bt->smp.cpus_en : 0;
+  /* look at smbios data in case there's no mp table */
+  if(hd_data->smbios) {
+    for(sm = hd_data->smbios; sm; sm = sm->next) {
+      if(
+        sm->any.type == sm_processor &&
+        sm->processor.pr_type.id == 3 &&	/* cpu */
+        sm->processor.cpu_status.id == 1	/* enabled */
+      ) {
+        cpus++;
+      }
+    }
+    ADD2LOG("  smp detect: mp %d cpus, smbios %d cpus\n", bt->smp.ok ? bt->smp.cpus_en : 0, cpus);
+  }
 
-  return 0;
+  if(bt->smp.ok && bt->smp.cpus_en) cpus = bt->smp.cpus_en;
+
+  return cpus;
 }
 
 
