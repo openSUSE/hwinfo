@@ -527,8 +527,13 @@ typedef struct {
 
 typedef enum cpu_arch {
   arch_unknown = 0,
-  arch_intel, arch_alpha, arch_sparc, arch_sparc64, arch_ppc, arch_68k, arch_ia64,
-  arch_s390
+  arch_intel,
+  arch_alpha,
+  arch_sparc, arch_sparc64,
+  arch_ppc, arch_ppc64,
+  arch_68k,
+  arch_ia64,
+  arch_s390, arch_s390x
 } hd_cpu_arch_t;
 
 // ###### drop boot_arch at all?
