@@ -1,6 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <sys/mount.h>
+#include <linux/hdreg.h>
+
+#ifndef BLKSSZGET
+#define BLKSSZGET  _IO(0x12,104)	/* get block device sector size */
+#endif
 
 #include "hd.h"
 #include "hd_int.h"
@@ -14,6 +25,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+static void scan_ide2(hd_data_t *hd_data);
 
 void hd_scan_ide(hd_data_t *hd_data)
 {
@@ -25,6 +37,7 @@ void hd_scan_ide(hd_data_t *hd_data)
   int i, j;
   str_list_t *sl, *sl0;
   hd_res_t *res;
+  int found = 0;
 
   if(!hd_probe_feature(hd_data, pr_ide)) return;
 
@@ -45,6 +58,7 @@ void hd_scan_ide(hd_data_t *hd_data)
       hd->base_class = bc_storage_device;
       hd->bus = bus_ide;
       hd->slot = i;
+      found++;
 
       str_printf(&hd->unix_dev_name, 0, "/dev/hd%c", i + 'a');
 
@@ -141,6 +155,104 @@ void hd_scan_ide(hd_data_t *hd_data)
     }
   }
 
+#if defined(__PPC__)
+  if(!found) scan_ide2(hd_data);
+#endif
+
   free_mem(fname);
 }
+
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ *
+ * DASD disks that appear as ide drives
+ *
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ */
+
+#if defined(__PPC__)
+
+void scan_ide2(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  char *s = NULL;
+  str_list_t *sl, *sl0;
+  hd_res_t *res;
+  struct hd_geometry geo;
+  int i, fd;
+  int max_disks = 0;
+  unsigned long secs;
+  unsigned sec_size;
+
+  PROGRESS(2, 0, "dasd info");
+
+  sl0 = read_file(PROC_ISERIES "/viodasd", 0, 0);
+
+  for(sl = sl0; sl; sl = sl->next) {
+    if(!strncmp(sl->str, "DISK", sizeof "DISK" - 1)) max_disks++;
+  }
+
+  for(i = 0; i < max_disks; i++) {
+
+    str_printf(&s, 0, "/dev/hd%c", i + 'a');
+
+    fd = open(s, O_RDONLY | O_NONBLOCK);
+    if(fd >= 0) {
+
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class = bc_storage_device;
+      hd->sub_class = sc_sdev_disk;
+      hd->bus = bus_none;
+      hd->slot = i;
+
+      hd->unix_dev_name = new_str(s);
+      str_printf(&hd->dev_name, 0, "iSeries DASD #%u", i);
+
+      secs = 0;
+      if(!ioctl(fd, BLKGETSIZE, &secs)) {
+        ADD2LOG("ide ioctl(size) ok\n");
+      }
+      else {
+        secs = 0;
+      }
+
+      sec_size = 0;
+      if(!ioctl(fd, BLKSSZGET, &sec_size)) {
+        ADD2LOG("ide ioctl(sec size) ok\n");
+      }
+      else {
+        sec_size = 512;
+      }
+
+      PROGRESS(2, i + 1, "ioctl");
+      if(!ioctl(fd, HDIO_GETGEO, &geo)) {
+        ADD2LOG("ide ioctl(geo) ok\n");
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->disk_geo.type = res_disk_geo;
+        res->disk_geo.cyls = geo.cylinders;
+        res->disk_geo.heads = geo.heads;
+        res->disk_geo.sectors = geo.sectors;
+        res->disk_geo.logical = 1;
+        if(!secs) secs = geo.cylinders * geo.heads * geo.sectors;
+      }
+
+      if(secs) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->size.type = res_size;
+        res->size.unit = size_unit_sectors;
+        res->size.val1 = secs;
+        res->size.val2 = sec_size;
+      }
+
+      close(fd);
+    }
+
+  }
+
+  free_mem(s);
+  free_str_list(sl0);
+}
+
+#endif	/* defined(__PPC__) */
+
 

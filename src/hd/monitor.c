@@ -318,11 +318,7 @@ void add_old_mac_monitor(hd_data_t *hd_data)
 void add_monitor(hd_data_t *hd_data, devtree_t *dt)
 {
   hd_t *hd, *hd2;
-  hd_res_t *res;
-  monitor_info_t *mi = NULL;
-  int i;
   unsigned char *edid = dt->edid;
-  unsigned u, u1, u2;
 
   if(!chk_edid_info(hd_data, edid)) return;
 

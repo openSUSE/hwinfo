@@ -28,6 +28,7 @@
 #define PROC_DASD		"/proc/dasd"
 #define PROC_VERSION		"/proc/version"
 #define PROC_ISAPNP		"/proc/isapnp"
+#define PROC_ISERIES		"/proc/iSeries"
 
 #define DEV_USB_DEVICES		"/dev/usb/devices"
 #define DEV_NVRAM		"/dev/nvram"
