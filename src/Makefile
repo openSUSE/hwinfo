@@ -15,7 +15,11 @@ ifeq "$(ARCH)" "i386"
 SUBDIRS	+= int10
 endif
 
-ifeq "$(findstring $(ARCH), i386 alpha)" ""
+ifeq "$(ARCH)" "x86_64"
+SUBDIRS	+= int10
+endif
+
+ifeq "$(findstring $(ARCH), i386 alpha x86_64)" ""
 SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
 endif
 
