@@ -1,3 +1,6 @@
+	- Use _exit instead of exit to avoid calling QT destructors
+	  in Yast2.
+
 22/7/2002:	v5.03
 	- updated x11 data
 

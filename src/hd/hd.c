@@ -4063,7 +4063,7 @@ int hd_timeout(void(*func)(void *), void *arg, int timeout)
       alarm(timeout);
       if(waitpid(child2, &status, 0) == -1) return -1;
 //      fprintf(stderr, ">child2 status: 0x%x\n", status);
-      exit(0);
+      _exit(0);
     }
     else {
       (*func)(arg);
@@ -4076,7 +4076,7 @@ int hd_timeout(void(*func)(void *), void *arg, int timeout)
 
 void timeout_alarm_handler(int signal)
 {
-  exit(63);
+  _exit(63);
 }
 
 
