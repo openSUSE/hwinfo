@@ -324,6 +324,13 @@ HWP	Hewlett Packard
 	0AF6	HP D2806A Ergo Ultra VGA 15"
 	0AF8	HP D2808 1024 Low Emission
 	0AFF	HP D2815A 1024 Low Emission 14"
+	0b0a	HP D2826 15"
+	0b10	HP D2832A
+	0b13	HP D2835 Ultra VGA 1280 Monitor 17"
+	0b16	HP D2838 M700 17"
+	0b18	HP D2840 Ergo 1280 Monitor 17"
+	0b1d	HP D2845 Ergo 1600 Monitor 21"
+	0b1e	HP D2846 21"
 	0F11	HP D3857A Multi Media 15"
 	0F12	HP D3858A Multi Media 14"
 

@@ -1,3 +1,7 @@
+15/2/2000:	v0.65
+	- a lot of driver info
+	- timeout problem opening serial devs?
+
 12/2/2000:	v0.64
 	- added some ids
 	- added Zoom modem detection

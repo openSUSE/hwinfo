@@ -32,6 +32,7 @@ int main(int argc, char **argv)
 
   hd_data = calloc(1, sizeof *hd_data);
   hd_data->progress = progress;
+  hd_data->debug=~(HD_DEB_DRIVER_INFO);
 
   do {
     if(first_probe)				/* only for the 1st probing */

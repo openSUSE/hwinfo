@@ -361,7 +361,7 @@ ADP 1505
 10de 00a0
 10de 0100
 12d2 0018+2
-	x	SVGA|glxriva|17
+	x	SVGA|glx|17
 
 # vmware's emulated card
 15ad 0710
@@ -375,6 +375,9 @@ ADP 1505
 
 AOC a566
 	d	1280x1024|30-64|50-100|85
+
+HWP 0b1e
+	d	1800x1440|50-180|29-121
 
 IVM 1901
 	d	1600x1200|50-160|25-115|230

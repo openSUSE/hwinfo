@@ -7,6 +7,16 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+ADP     Adaptec
+	1505.00100	Adaptec AVA-1505AE
+
+ADS	Analog Devices
+
+AVM	AVM
+	0900.10300	AVM ISDN-Controller FRITZ!Card
+
+AZT	Aztech Systems
+
 CTL	Creative Technology Ltd.
 	009e.00401	Creative SB AWE64 Gold
 		CTL 0044	AWE64 Gold 16-bit Audio (SB16 compatible)
@@ -16,9 +26,6 @@ ELS	ELSA International
 	0133.10300	ELSA QuickStep 1000
 	0213	MicroLink 33.6TQV
 	0754	MicroLink 56k basic
-
-AVM	AVM
-	0900.10300	AVM ISDN-Controller FRITZ!Card
 
 GWY	Gateway
 	001c.10201	Telepath for Windows with x2
@@ -41,6 +48,7 @@ PNP	PnP
 
 	80d6.00200	NE2000 Compatible
 
+	b006	MPU401 compatible
 	b02f	Joystick/Game port
 
 USR	U.S. Robotics, Inc.

@@ -188,22 +188,22 @@ int telesdetect(isa_isdn_t **ii) {
 				break;
 			case TELES_16_3_0:
 				/* printf("# Teles 16.3 v1.0 found\n");
-				printf("TYPE=2 SUBTYPE=0 IO=0x%3x\n",
+				printf("TYPE=3 SUBTYPE=0 IO=0x%3x\n",
 					TELES_ADR[i]); */
 			case TELES_16_3_1:
 				/* printf("# Teles 16.3 v1.1 found\n");
-				printf("TYPE=2 SUBTYPE=0 IO=0x%3x\n",
+				printf("TYPE=3 SUBTYPE=0 IO=0x%3x\n",
 					TELES_ADR[i]); */
 			case TELES_16_3_3:
 				/* printf("# Teles 16.3 v1.3 found\n");
-				printf("TYPE=2 SUBTYPE=0 IO=0x%3x\n",
+				printf("TYPE=3 SUBTYPE=0 IO=0x%3x\n",
 					TELES_ADR[i]); */
 			case TELES_16_3_AB:
 				/* printf("# Teles 16.3 AB Video found\n");
-				printf("TYPE=2 SUBTYPE=1 IO=0x%3x\n",
+				printf("TYPE=3 SUBTYPE=1 IO=0x%3x\n",
 					TELES_ADR[i]); */
 			        card = new_isa_isdn(ii);
-			        card->type = 2;
+			        card->type = 3;
 			        if(val == TELES_16_3_AB) card->subtype = 1;
 			        card->has_io = 1; card->io = TELES_ADR[i];
 				found++;
