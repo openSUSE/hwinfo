@@ -12108,7 +12108,7 @@
 +device.name		TARGA 1000
 
  vendor.id		pci 0x10fb
-+vendor.name		Thesys Gesellschaft für Mikroelektronik mbH
++vendor.name		Thesys Gesellschaft fÃ¼r Mikroelektronik mbH
 
  vendor.id		pci 0x10fc
 +vendor.name		I-O Data Device, Inc.
@@ -25024,7 +25024,7 @@
 +vendor.name		UltraStor
 
  vendor.id		pci 0x6374
-+vendor.name		c't Magazin für Computertechnik
++vendor.name		c't Magazin fÃ¼r Computertechnik
 
  vendor.id		pci 0x6374
 &device.id		pci 0x6773

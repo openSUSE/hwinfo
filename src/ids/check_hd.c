@@ -340,13 +340,22 @@ int main(int argc, char **argv)
 
       default:
         fprintf(stderr,
-          "Usage: check_hd [options] [file]...\n"
+          "Usage: check_hd [options] files\n"
           "Try to put hardware data into a consistent form.\n"
-          "  --check\tdo a lot of checks and remove unnecessary data\n"
-          "  --sort\tsort data\n"
-          "  --reverse\treverse sorting order\n"
-          "  --out file\twrite results to file, default is \"hd.ids\"\n"
-          "  --log file\twrite log info to file, default is \"hd.log\"\n"
+          "  --check\t\tdo a lot of checks and remove unnecessary data\n"
+          "  --sort\t\tsort data\n"
+          "  --reverse\t\treverse sorting order\n"
+          "  --split\t\twrite separate entries for each key\n"
+          "  --with-source\t\tadd comment to each item indicating info source\n"
+          "  --mini\t\tminimal data base (basically driver info only)\n"
+          "  --join-keys-first\twhen combining similar items, join entries with\n"
+          "  \t\t\tcommon keys first (default is common values first)\n"
+          "  --cfile file\t\tcreate C file to be included in libhd\n"
+          "  --no-compact\t\tdon't try to make C version as small as possible\n"
+          "  --out file\t\twrite results to file, default is \"hd.ids\"\n"
+          "  --log file\t\twrite log info to file, default is \"hd.log\"\n\n"
+          "  Note: check_hd works with libhd/hwinfo internal format only;\n"
+          "  to convert to other formats, use convert_hd\n"
         );
         return 1;
     }

@@ -1,9 +1,12 @@
 #! /usr/bin/perl
 
+use Getopt::Long;
 use XML::Writer;
 use XML::Parser;
 use IO;
 use Dumpvalue;
+
+sub help;
 
 sub read_name_file;
 sub read_driver_file;
@@ -84,47 +87,32 @@ $he_class_id = $he_nomask;
 ( $flag_id, $flag_range, $flag_mask, $flag_string, $flag_regexp ) = ( 0 .. 4 );
 $flag_cont = 8;
 
-$write_ids = 1;
-$write_xml = 0;
 
+# options
+$opt_write_ids = 1;
+$opt_write_xml = 0;
+$opt_sort_ids = 0;
+$opt_sort_reverse = 0;
+$opt_sort_random = 0;		# for testing
+$opt_split = 0;
+$opt_with_source = 0;
 $opt_fix_driver = 1;
+$opt_help = 0;
 
-while($ARGV[0] =~ /^(--xml|--ids|--no-xml|--no-ids|--sort|--reverse|--random|--split|--with-source|--fix-driver|--no-fix-driver)$/) {
-  shift;
-  if($1 eq '--xml') {
-    $write_xml = 1;
-  }
-  elsif($1 eq '--no-xml') {
-    $write_xml = 0;
-  }
-  elsif($1 eq '--ids') {
-    $write_ids = 1;
-  }
-  elsif($1 eq '--no-ids') {
-    $write_ids = 0;
-  }
-  elsif($1 eq '--sort') {
-    $sort_ids = 1;
-  }
-  elsif($1 eq '--reverse') {
-    $sort_reverse = 1;
-  }
-  elsif($1 eq '--random') {
-    $sort_random = 1;
-  }
-  elsif($1 eq '--split') {
-    $do_split = 1;
-  }
-  elsif($1 eq '--with-source') {
-    $opt_with_source = 1;
-  }
-  elsif($1 eq '--fix-driver') {
-    $opt_fix_driver = 1;
-  }
-  elsif($1 eq '--no-fix-driver') {
-    $opt_fix_driver = 0;
-  }
-}
+$opt_ok = GetOptions(
+  'ids'           => \$opt_write_ids,
+  'no-ids'        => sub { $opt_write_ids = 0 },
+  'xml'           => \$opt_write_xml,
+  'no-xml'        => sub { $opt_write_xml = 0 },
+  'sort'          => \$opt_sort,
+  'reverse'       => \$opt_sort_reverse,
+  'random'        => \$opt_sort_random,
+  'split'         => \$opt_split,
+  'with-source'   => \$opt_with_source,
+  'fix-driver'    => \$opt_fix_driver,
+  'no-fix-driver' => sub { $opt_fix_driver = 0 },
+  'help'          => \&help
+) ;
 
 for $f (@ARGV) {
   if(open F, $f) {
@@ -163,13 +151,6 @@ for $f (@ARGV) {
 
     $format = 'names' if !$format;
 
-    if($format eq 'xml') {
-      print STDERR "======  \"$f\": xml info  ======\n";
-      $xmlp = new XML::Parser(Style => 'Tree', ParseParamEnt => 1);
-      get_xml_data $xmlp->parsefile($f);
-      next;
-    }
-
     if($format eq 'names') {
 
       print STDERR "======  \"$f\": name info  ======\n";
@@ -187,7 +168,6 @@ for $f (@ARGV) {
       print STDERR "======  \"$f\": xml info  ======\n";
       $xmlp = new XML::Parser(Style => 'Tree', ParseParamEnt => 1);
       get_xml_data $xmlp->parsefile($f);
-      next;
 
     }
     elsif($format eq 'ids') {
@@ -211,7 +191,7 @@ if($opt_fix_driver) {
   fix_driver_info;
 }
 
-if($split) {
+if($opt_split) {
   print STDERR "splitting items\n";
   for (@hd) {
     push @hd_new, split_item($_);
@@ -220,12 +200,12 @@ if($split) {
   undef @hd_new;
 }
 
-if($sort_ids) {
+if($opt_sort_ids) {
   print STDERR "sorting\n";
-  if($sort_random) {
+  if($opt_sort_random) {
     @hd = sort { $cmp_item_cnt++, rand() <=> rand() } @hd;
   }
-  elsif($sort_reverse) {
+  elsif($opt_sort_reverse) {
     @hd = sort { cmp_item $b, $a } @hd;
   }
   else {
@@ -233,12 +213,12 @@ if($sort_ids) {
   }
 }
 
-if($write_ids) {
+if($opt_write_ids) {
   print STDERR "writing \"hd.ids\"\n";
   dump2ids;
 }
 
-if($write_xml) {
+if($opt_write_xml) {
   print STDERR "writing \"hd.xml\"\n";
   dump2xml;
 }
@@ -246,6 +226,24 @@ if($write_xml) {
 print STDERR "cmps: $cmp_item_cnt\n" if $cmp_item_cnt;
 
 # $dump->dumpValue( \@hd );
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+sub help
+{
+  print STDERR
+  "Usage: convert_hd [options] files\n" .
+  "Convert various hardware info to libhd/hwinfo internal format or to XML.\n" .
+  "  --ids          write internal format (default)\n" .
+  "  --no-ids       do not write internal format\n" .
+  "  --xml          write XML\n" .
+  "  --no-xml       do not write XML (default)\n" .
+  "  --with-source  add comment to each item indicating info source\n\n" .
+  "  Note: for more sophisticated operations on hardware data use check_hd.\n";
+
+  exit 0;
+}
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1062,19 +1060,6 @@ sub fix_driver_info
         $info[4] = join ',', sort split /,/, $info[4] if $info[4];
         $info[5] = join ',', sort split /,/, $info[5] if $info[5];
         $info[6] = join ',', sort { $a <=> $b } split /,/, $info[6] if $info[6];
-=head
-        if($info[6]) {
-          my $j = hex $info[6];
-          $i = undef;
-          $i .= ",8"  if $j &  1;
-          $i .= ",15" if $j &  2;
-          $i .= ",16" if $j &  4;
-          $i .= ",24" if $j &  8;
-          $i .= ",32" if $j & 16;
-          $i =~ s/^,//;
-          $info[6] = $i;
-        }
-=cut
         $i = join '|', @info;  
       }
       $drv = join "\x00", @i;
@@ -1469,7 +1454,7 @@ sub get_xml_data
 
   for($i = 1; $i < @{$xml->[1]}; $i += 2) {
     if($xml->[1][$i] eq 'item') {
-      parse_xml_item $xml->[1][$i + 1];
+      push @hd, parse_xml_item $xml->[1][$i + 1];
     }
   }
 }
@@ -1501,14 +1486,10 @@ sub parse_xml_item
   if(defined($nc) || !defined(@driver)) {
     for $i (@id) {
       add_name $nc, @{$i};
-      # hd.names output needs all intermediate steps
-      # actually quite slow...
-#      add_name [ ], $i->[0] if @$i > 1;
-#      add_name [ ], $i->[0], $i->[1] if @$i > 2;
-#      add_name [ ], $i->[0], $i->[1], $i->[2] if @$i > 3;
     }
   }
 
+  return [ "", [ ],  ];
 }
 
 

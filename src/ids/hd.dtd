@@ -1,4 +1,4 @@
-<!-- libhd DTD V0.1 -->
+<!-- libhd DTD V0.2 -->
 
 <!ENTITY % keyfields "bus|baseclass|subclass|progif|vendor|device|subvendor|subdevice|revision|serial|driver|requires">
 <!ENTITY % idelements "id|idrange|idmask|name">

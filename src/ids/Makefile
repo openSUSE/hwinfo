@@ -47,12 +47,8 @@ check_hd: check_hd.c
 
 hd_ids.c: hd_ids.h hd_ids_tiny.h
 
-hd0.ids: $(IDFILES)
-	./convert_hd $(IDFILES)
-	mv hd.ids hd0.ids
-
-hd_ids.h hd.ids: check_hd hd0.ids
-	./check_hd --check --sort --cfile hd_ids.h hd0.ids
+hd_ids.h hd.ids: check_hd $(IDFILES)
+	./check_hd --check --sort --cfile hd_ids.h $(IDFILES)
 
 hd_ids_tiny.h: check_hd hd.ids
 	./check_hd --mini --cfile hd_ids_tiny.h --log=hd_tiny.log --out=hd_tiny.ids hd.ids
