@@ -18,6 +18,7 @@
  */
 
 static void read_partition(hd_data_t *hd_data);
+static void add_partition(hd_data_t *hd_data);
 
 
 void hd_scan_partition(hd_data_t *hd_data)
@@ -35,7 +36,18 @@ void hd_scan_partition(hd_data_t *hd_data)
   PROGRESS(1, 0, "partition");
 
   read_partition(hd_data);
+}
 
+
+void hd_scan_partition2(hd_data_t *hd_data)
+{
+  if(!hd_data->flags.add_partitions) return;
+
+  hd_data->module = mod_partition;
+
+  PROGRESS(2, 0, "partition");
+
+  add_partition(hd_data);
 }
 
 
@@ -113,6 +125,31 @@ void read_partition(hd_data_t *hd_data)
     for(sl = hd_data->disks; sl; sl = sl->next) ADD2LOG("  %s\n", sl->str);
     ADD2LOG("partitions:\n");
     for(sl = hd_data->partitions; sl; sl = sl->next) ADD2LOG("  %s\n", sl->str);
+  }
+}
+
+
+void add_partition(hd_data_t *hd_data)
+{
+  hd_t *hd, *hd1;
+  str_list_t *sl;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_disk &&
+      hd->unix_dev_name &&
+      !strncmp(hd->unix_dev_name, "/dev/", sizeof "/dev/" - 1)
+    ) {
+      for(sl = hd_data->partitions; sl; sl = sl->next) {
+        if(strstr(sl->str, hd->unix_dev_name + sizeof "/dev/" - 1) == sl->str) {
+          hd1 = add_hd_entry(hd_data, __LINE__, 0);
+          hd1->base_class.id = bc_partition;
+          str_printf(&hd1->unix_dev_name, 0, "/dev/%s", sl->str);
+          hd1->attached_to = hd->idx;
+        }
+      }
+    }
   }
 }
 

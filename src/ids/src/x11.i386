@@ -3004,7 +3004,7 @@
  vendor.id		pci 0x5333
 &device.id		pci 0x8c2e
 +device.name		SuperSavage/IXC 64 SDR
-+driver.xfree		4|savage||||ShadowFB
++driver.xfree		4|savage
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8c2f
