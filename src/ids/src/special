@@ -647,6 +647,7 @@
 
 
 # internal: special notebook packages
+# see int.c::int_system()
  vendor.id		special 0xf001
 &device.id		special 0x0001
 +device.name		IBM Notebook
@@ -656,6 +657,11 @@
 &device.id		special 0x0002
 +device.name		Toshiba Notebook
 +requires		toshutils|fnfx
+
+ vendor.id		special 0xf001
+&device.id		special 0x0003
++device.name		Sony Notebook
++requires		spicctrl
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -1689,6 +1689,24 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     }
   }
 
+  /* get package info for compat device id */
+
+  if(!hd->requires) {
+    hddb_search_t hs2 = {};
+
+    hs2.vendor.id = hd->compat_vendor.id;
+    hs2.key |= 1 << he_vendor_id;
+
+    hs2.device.id = hd->compat_device.id;
+    hs2.key |= 1 << he_device_id;
+
+    hddb_search(hd_data, &hs2, 1);
+
+    if((hs2.value & (1 << he_requires))) {
+      hd->requires = hd_split('|', hs2.requires);
+    }
+  }
+
   /* get driver info */
 
 #if WITH_ISDN

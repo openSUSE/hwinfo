@@ -21,13 +21,15 @@
 
 #if defined(__i386__)
 int is_txt(char c);
-static int chk_vaio(hd_data_t *hd_data, sys_info_t *st);
 static void sigsegv_handler(int signum);
 static void chk_vmware(hd_data_t *hd_data, sys_info_t *st);
 #ifdef UCLIBC
 void *memmem(const void *haystack, size_t haystacklen, const void *needle, size_t needlelen);
 #endif
+#endif
 
+#if defined(__i386__) || defined(__x86_64__)
+static int chk_vaio(hd_data_t *hd_data, sys_info_t *st);
 #endif
 
 void hd_scan_sys(hd_data_t *hd_data)
@@ -60,16 +62,6 @@ void hd_scan_sys(hd_data_t *hd_data)
   }
 
 #ifdef __PPC__
-#if 0
-  for(sl = hd_data->cpu; sl; sl = sl->next) {
-    if(sscanf(sl->str, "cpu : %79[^\n]", buf0) == 1) {
-      if(strstr(buf0, "POWER3 ") == buf0) {
-        is_64 = 1;
-        break;
-      }
-    }
-  }
-#endif
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(sscanf(sl->str, "motherboard : %79[^\n]", buf0) == 1) {
       if((s = strstr(buf0, "MacRISC"))) {
@@ -111,11 +103,17 @@ void hd_scan_sys(hd_data_t *hd_data)
   }
 #endif
 
-#if defined(__i386__)
+#if defined(__i386__) || defined(__x86_64__)
   chk_vaio(hd_data, st);
+#endif
+
+#if defined(__i386__)
   chk_vmware(hd_data, st);
 #endif
 
+  if(st->vendor) hd->vendor.name = new_str(st->vendor);
+  if(st->model) hd->device.name = new_str(st->model);
+  if(st->serial) hd->serial = new_str(st->serial);
 }
 
 #if defined(__i386__)
@@ -154,52 +152,6 @@ int decimal_len(char *s)
 
   return i;
 }
-
-int chk_vaio(hd_data_t *hd_data, sys_info_t *st)
-{
-  int i;
-  unsigned char *data, *s, *s0, *s1;
-
-  if(!hd_data->bios_rom.data) return 0;
-
-  data = hd_data->bios_rom.data + 0xf0000 - hd_data->bios_rom.start;
-
-  if(!(s = memmem(data, 0x8000, "Sony Corp", sizeof "Sony Corp" - 1))) return 0;
-
-  if((i = txt_len(s))) st->vendor = canon_str(s, i);
-  s += i;
-
-  if(!(s = memmem(s, 0x1000, "PCG-", sizeof "PCG-" - 1))) return 0;
-
-  if((i = txt_len(s))) {
-    st->model = canon_str(s, i);
-  }
-  s += i;
-
-  for(i = 0; i < 0x1000; i++) {
-    if(is_decimal(s[i]) && txt_len(s + i) >= 10 && decimal_len(s + i) >= 5) {
-      st->serial = canon_str(s + i, txt_len(s + i));
-      break;
-    }
-  }
-
-  if(st->model) {
-    s0 = strrchr(st->model, '(');
-    s1 = strrchr(st->model, ')');
-
-    if(s0 && s1 && s1 - s0 >= 3 && s1[1] == 0) {
-      st->lang = canon_str(s0 + 1, s1 - s0 - 1);
-      for(s = st->lang; *s; s++) {
-        if(*s >= 'A' && *s <= 'Z') *s += 'a' - 'A';
-      }
-      if(!strcmp(st->lang, "uc")) strcpy(st->lang, "en");
-      *s0 = 0;	/* cut the model entry */
-    }
-  }
-
-  return st->model ? 1 : 0;
-}
-
 
 void sigsegv_handler(int signum) { exit(77); }
 
@@ -241,7 +193,7 @@ void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
       }
     }
 
-    ADD2LOG("vmware check: %d\n", is_vmware);
+    ADD2LOG("  vmware check: %d\n", is_vmware);
   }
 
   if(is_vmware == 1) {
@@ -252,4 +204,54 @@ void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
 }
 
 #endif	/* __i386__ */
+
+
+#if defined(__i386__) || defined(__x86_64__)
+int chk_vaio(hd_data_t *hd_data, sys_info_t *st)
+{
+  int i;
+  unsigned char *data, *s, *s0, *s1;
+
+  if(!hd_data->bios_rom.data) return 0;
+
+  data = hd_data->bios_rom.data + 0xe8000 - hd_data->bios_rom.start;
+
+  if(!(s = memmem(data, 0x10000, "Sony Corp", sizeof "Sony Corp" - 1))) return 0;
+
+  if((i = txt_len(s))) st->vendor = canon_str(s, i);
+  s += i;
+
+  if(!(s = memmem(s, 0x1000, "PCG-", sizeof "PCG-" - 1))) return 0;
+
+  if((i = txt_len(s))) {
+    st->model = canon_str(s, i);
+  }
+  s += i;
+
+  ADD2LOG("  vaio: %s\n", st->model);
+
+  for(i = 0; i < 0x1000; i++) {
+    if(is_decimal(s[i]) && txt_len(s + i) >= 10 && decimal_len(s + i) >= 5) {
+      st->serial = canon_str(s + i, txt_len(s + i));
+      break;
+    }
+  }
+
+  if(st->model) {
+    s0 = strrchr(st->model, '(');
+    s1 = strrchr(st->model, ')');
+
+    if(s0 && s1 && s1 - s0 >= 3 && s1[1] == 0) {
+      st->lang = canon_str(s0 + 1, s1 - s0 - 1);
+      for(s = st->lang; *s; s++) {
+        if(*s >= 'A' && *s <= 'Z') *s += 'a' - 'A';
+      }
+      if(!strcmp(st->lang, "uc")) strcpy(st->lang, "en");
+      *s0 = 0;	/* cut the model entry */
+    }
+  }
+
+  return st->model ? 1 : 0;
+}
+#endif
 

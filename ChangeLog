@@ -1,3 +1,6 @@
+24/9/2004:	v9.19
+	- return package info for sony notebooks, too (35245)
+
 23/9/2004:	v9.18
 	- added --pcmcia option to hwscanqueue (#44290)
 	- return package info in system entry (#35245)

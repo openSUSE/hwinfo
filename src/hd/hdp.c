@@ -155,10 +155,6 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
   else if(h->base_class.id == bc_internal && h->sub_class.id == sc_int_prom) {
     dump_prom(hd_data, h, f);
   }
-  else if(h->base_class.id == bc_internal && h->sub_class.id == sc_int_sys) {
-    dump_sys(hd_data, h, f);
-    dump_normal(hd_data, h, f);
-  }
   else {
     dump_normal(hd_data, h, f);
   }
@@ -435,17 +431,15 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     );
   }
 
+  if(h->base_class.id == bc_internal && h->sub_class.id == sc_int_sys) {
+    dump_sys(hd_data, h, f);
+  }
+
   if(h->drivers) {
     s = hd_join("\", \"", h->drivers);
     dump_line("Driver: \"%s\"\n", s);
     s = free_mem(s);
   }
-
-#if 0
-  if(h->driver) {
-    dump_line("Driver: \"%s\"\n", h->driver);
-  }
-#endif
 
   if(h->broken) {
     dump_line_str("Warning: might be broken\n");
@@ -1116,15 +1110,7 @@ void dump_sys(hd_data_t *hd_data, hd_t *hd, FILE *f)
   if(st->generation) {
     dump_line("Generation: \"%s\"\n", st->generation);
   }
-  if(st->vendor) {
-    dump_line("Vendor: \"%s\"\n", st->vendor);
-  }
-  if(st->model) {
-    dump_line("Model: \"%s\"\n", st->model);
-  }
-  if(st->serial) {
-    dump_line("Serial ID: \"%s\"\n", st->serial);
-  }
+
   if(st->lang) {
     dump_line("Language: \"%s\"\n", st->lang);
   }

@@ -4642,7 +4642,11 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
         }
       }
       else {
-        if(compat && dev_class) {
+        if(
+          compat &&
+          dev_class &&
+          hd->base_class.id != bc_internal	/* avoid things like 'Notebook *System*' */
+       ) {
           part1 = compat; part2 = dev_class;
         }
         else if(compat) {

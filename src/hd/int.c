@@ -1022,14 +1022,12 @@ void int_softraid(hd_data_t *hd_data)
 void int_system(hd_data_t *hd_data)
 {
   hd_t *hd_sys;
-  // hd_t *hd_bios;
-  // bios_info_t *bt;
   hd_smbios_t *sm;
   struct {
     unsigned notebook:1;
-    unsigned ibm:1;
-    unsigned toshiba:1;
+    enum { v_none = 0, v_ibm = 1, v_toshiba, v_sony } vendor;
   } is = { };
+  char *s;
 
   for(hd_sys = hd_data->hd; hd_sys; hd_sys = hd_sys->next) {
     if(
@@ -1040,13 +1038,27 @@ void int_system(hd_data_t *hd_data)
 
   if(!hd_sys) return;
 
+  if(
+    hd_sys->vendor.name &&
+    !strncasecmp(hd_sys->vendor.name, "sony", sizeof "sony" - 1)
+  ) {
+    is.vendor = v_sony;
+  }
+
+  if(
+    hd_sys->device.name &&
+    !strncmp(hd_sys->device.name, "PCG-", sizeof "PCG-" - 1)
+  ) {
+    is.notebook = 1;
+  }
+
   for(sm = hd_data->smbios; sm; sm = sm->next) {
     if(
       sm->any.type == sm_sysinfo &&
       sm->sysinfo.manuf &&
       !strcasecmp(sm->sysinfo.manuf, "ibm")
     ) {
-      is.ibm = 1;
+      is.vendor = v_ibm;
     }
 
     if(
@@ -1054,7 +1066,35 @@ void int_system(hd_data_t *hd_data)
       sm->sysinfo.manuf &&
       !strcasecmp(sm->sysinfo.manuf, "toshiba")
     ) {
-      is.toshiba = 1;
+      is.vendor = v_toshiba;
+
+      if(!hd_sys->device.name && !hd_sys->device.id && sm->sysinfo.product) {
+        hd_sys->device.name = new_str(sm->sysinfo.product);
+      }
+      if(!hd_sys->vendor.name && !hd_sys->vendor.id) {
+        hd_sys->vendor.name = new_str("Toshiba");
+      }
+    }
+
+    if(
+      sm->any.type == sm_sysinfo &&
+      sm->sysinfo.manuf &&
+      !strncasecmp(sm->sysinfo.manuf, "sony", sizeof "sony" - 1)
+    ) {
+      is.vendor = v_sony;
+
+      if(!hd_sys->device.name && !hd_sys->device.id && sm->sysinfo.product) {
+        hd_sys->device.name = new_str(sm->sysinfo.product);
+        if(
+          (s = strchr(hd_sys->device.name, '(')) &&
+          hd_sys->device.name[strlen(hd_sys->device.name) - 1] == ')'
+        ) {
+          *s = 0;
+        }
+      }
+      if(!hd_sys->vendor.name && !hd_sys->vendor.id) {
+        hd_sys->vendor.name = new_str("Sony");
+      }
     }
 
     if(
@@ -1068,43 +1108,18 @@ void int_system(hd_data_t *hd_data)
     }
   }
 
-#if 0
-  /* doesn't really help, we don't know whether it's a notebook anyway in this case */
-  for(hd_bios = hd_data->hd; hd_bios; hd_bios = hd_bios->next) {
-    if(
-      hd_bios->base_class.id == bc_internal &&
-      hd_bios->sub_class.id == sc_int_bios
-    ) break;
-  }
-
-  if(
-    hd_bios &&
-    hd_bios->detail &&
-    hd_bios->detail->type == hd_detail_bios &&
-    (bt = hd_bios->detail->bios.data) &&
-    bt->is_pnp_bios
-  ) {
-    char *s = isa_id2str(bt->pnp_id);
-    if(!strncmp(s, "TOS", 3)) is.toshiba = 1;
-    free_mem(s);
-  }
-#endif
-
   ADD2LOG(
-    "  system type:%s%s%s\n",
-    is.ibm ? " ibm" : "",
-    is.toshiba ? " toshiba" : "",
+    "  system type:%s%s\n",
+    is.vendor == v_ibm ? " ibm" :
+      is.vendor == v_toshiba ? " toshiba" :
+      is.vendor == v_sony ? " sony" :
+      "",
     is.notebook ? " notebook" : ""
   );
 
-  if(is.notebook && is.ibm) {
-    hd_sys->vendor.id = MAKE_ID(TAG_SPECIAL, 0xf001);
-    hd_sys->device.id = MAKE_ID(TAG_SPECIAL, 1);
-  }
-
-  if(is.notebook && is.toshiba) {
-    hd_sys->vendor.id = MAKE_ID(TAG_SPECIAL, 0xf001);
-    hd_sys->device.id = MAKE_ID(TAG_SPECIAL, 2);
+  if(is.notebook && is.vendor) {
+    hd_sys->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0xf001);
+    hd_sys->compat_device.id = MAKE_ID(TAG_SPECIAL, is.vendor);
   }
 }
 #endif
