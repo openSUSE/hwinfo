@@ -16,8 +16,9 @@
 #define PROC_PARPORT		"/proc/parport"
 #define PROC_KCORE		"/proc/kcore"
 #define PROC_USB_DEVICES	"/proc/bus/usb/devices"
-#define DEV_USB_DEVICES		"/dev/usb/devices"
+#define PROC_DAC960		"/proc/rd"
 
+#define DEV_USB_DEVICES		"/dev/usb/devices"
 #define DEV_NVRAM		"/dev/nvram"
 #define DEV_PSAUX		"/dev/psaux"
 #define DEV_ADBMOUSE		"/dev/adbmouse"
@@ -39,7 +40,7 @@ enum mod_idx {
   mod_none, mod_memory, mod_pci, mod_isapnp, mod_pnpdump, mod_cdrom,
   mod_net, mod_floppy, mod_misc, mod_bios, mod_cpu, mod_monitor, mod_mouse,
   mod_ide, mod_scsi, mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel,
-  mod_isa
+  mod_isa, mod_dac960
 };
 
 void *new_mem(size_t size);

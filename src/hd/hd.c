@@ -34,6 +34,7 @@
 #include "modem.h"
 #include "parallel.h"
 #include "isa.h"
+#include "dac960.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -94,7 +95,8 @@ static struct s_mod_names {
   { mod_adb, "adb"},
   { mod_modem, "modem"},
   { mod_parallel, "parallel" },
-  { mod_isa, "isa" }
+  { mod_isa, "isa" },
+  { mod_dac960, "dac960" }
 };
 
 /*
@@ -134,7 +136,8 @@ static struct s_pr_flags {
   { pr_modem_usb, "modem.usb" },
   { pr_parallel, "parallel" },
   { pr_isa, "isa" },
-  { pr_isa_isdn, "isa.isdn" }
+  { pr_isa_isdn, "isa.isdn" },
+  { pr_dac960, "dac960" }
 };
 
 #define PR_OFS			2		/* skip 0, default */
@@ -497,6 +500,7 @@ void hd_scan(hd_data_t *hd_data)
 #endif
   hd_scan_ide(hd_data);
   hd_scan_scsi(hd_data);
+  hd_scan_dac960(hd_data);
   hd_scan_usb(hd_data);
 #if defined(__PPC__)
   hd_scan_adb(hd_data);
