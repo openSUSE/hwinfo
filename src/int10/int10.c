@@ -22,10 +22,23 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
   int i;
   unsigned char vbeinfo[0x200];
   int ax, bx, cx;
+  hd_smbios_t *sm;
+  int pci_cfg_method = 0;
 
   log_hd_data = hd_data;
 
-  if(InitInt10()) {
+  /* pci config method (1/2) detection may cause problems */
+  for(sm = hd_data->smbios; sm; sm = sm->next) {
+    if(
+      sm->any.type == sm_sysinfo &&
+      sm->sysinfo.product &&
+      !strcmp(sm->sysinfo.product, "920 Server")
+    ) {
+      pci_cfg_method = 1;
+    }
+  }
+
+  if(InitInt10(pci_cfg_method)) {
     ADD2LOG("VBE: Could not init Int10\n");
     return;
   }

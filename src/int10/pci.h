@@ -82,7 +82,7 @@ extern void PciWrite8(int offset,CARD8 byte, CARD32 slot);
 extern void PciWrite16(int offset,CARD16 word, CARD32 slot);
 extern void PciWrite32(int offset,CARD32 lg, CARD32 slot);
 
-extern void scan_pci(void);
+extern void scan_pci(int);
 extern void pciVideoDisable(void);
 extern void pciVideoRestore(void);
 extern void EnableCurrent(void);

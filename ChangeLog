@@ -1,3 +1,7 @@
+15/10/2003:	v5.62
+	- avoid pci config type detection on Gateway 920 (#30704)
+	- updated e100 module data (#32199)
+
 13/10/2003:	v5.61
 	- more modules need mii.o (#32141)
 	- ibmsis driver info updated (#31676)
