@@ -3,8 +3,10 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/ioctl.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -17,9 +19,23 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+#define IOCNR_GET_DEVICE_ID             1
+#define IOCNR_GET_BUS_ADDRESS           5
+#define IOCNR_GET_VID_PID               6
+
+/* Get device_id string: */
+#define LPIOC_GET_DEVICE_ID(len) _IOC(_IOC_READ, 'P', IOCNR_GET_DEVICE_ID, len)
+/* Get two-int array: [0]=bus number, [1]=device address: */
+#define LPIOC_GET_BUS_ADDRESS(len) _IOC(_IOC_READ, 'P', IOCNR_GET_BUS_ADDRESS, len)
+/* Get two-int array: [0]=vendor ID, [1]=product ID: */
+#define LPIOC_GET_VID_PID(len) _IOC(_IOC_READ, 'P', IOCNR_GET_VID_PID, len)
+
+
 static void get_usb_devs(hd_data_t *hd_data);
 static void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb);
 static void get_input_devs(hd_data_t *hd_data);
+static void get_printer_devs(hd_data_t *hd_data);
+static void read_usb_lp(hd_data_t *hd_data, hd_t *hd);
 
 void hd_scan_sysfs_usb(hd_data_t *hd_data)
 {
@@ -48,6 +64,9 @@ void hd_scan_sysfs_usb(hd_data_t *hd_data)
 
   PROGRESS(3, 3, "input");
   get_input_devs(hd_data);
+
+  PROGRESS(3, 4, "lp");
+  get_printer_devs(hd_data);
 
 }
 
@@ -240,12 +259,6 @@ void get_usb_devs(hd_data_t *hd_data)
       if(hd->base_class.id == bc_modem) {
         hd->unix_dev_name = new_str("/dev/ttyACM0");
       }
-
-#if 0
-      if(hd->base_class.id == bc_mouse) {
-        hd->unix_dev_name = new_str(DEV_MICE);
-      }
-#endif
 
     }
   }
@@ -518,3 +531,143 @@ void get_input_devs(hd_data_t *hd_data)
 }
 
 
+void get_printer_devs(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  char *s, *t;
+  hd_dev_num_t dev_num;
+  unsigned u1, u2;
+
+  struct sysfs_class *sf_class;
+  struct sysfs_class_device *sf_cdev;
+  struct sysfs_device *sf_dev;
+  struct dlist *sf_cdev_list;
+
+  sf_class = sysfs_open_class("usb");
+
+  if(!sf_class) {
+    ADD2LOG("sysfs: no such class: usb\n");
+    return;
+  }
+
+  sf_cdev_list = sysfs_get_class_devices(sf_class);
+  if(sf_cdev_list) dlist_for_each_data(sf_cdev_list, sf_cdev, struct sysfs_class_device) {
+    ADD2LOG(
+      "  usb: name = %s, path = %s\n",
+      sf_cdev->name,
+      hd_sysfs_id(sf_cdev->path)
+    );
+
+    if((s = hd_attr_str(sysfs_get_classdev_attr(sf_cdev, "dev")))) {
+      if(sscanf(s, "%u:%u", &u1, &u2) == 2) {
+        dev_num.type = 'c';
+        dev_num.major = u1;
+        dev_num.minor = u2;
+        dev_num.range = 1;
+      }
+      ADD2LOG("    dev = %u:%u\n", u1, u2);
+    }
+
+    sf_dev = sysfs_get_classdev_device(sf_cdev);
+    if(sf_dev) {
+      s = hd_sysfs_id(sf_dev->path);
+
+      ADD2LOG(
+        "    usb device: bus = %s, bus_id = %s driver = %s\n      path = %s\n",
+        sf_dev->bus,
+        sf_dev->bus_id,
+        sf_dev->driver_name,
+        s
+      );
+
+      for(hd = hd_data->hd; hd; hd = hd->next) {
+        if(
+          hd->module == hd_data->module &&
+          hd->sysfs_id &&
+          !strcmp(s, hd->sysfs_id)
+        ) {
+          t = NULL;
+          str_printf(&t, 0, "/dev/usb/%s", sf_cdev->name);
+
+          hd->unix_dev_name = t;
+          hd->unix_dev_num = dev_num;
+
+          read_usb_lp(hd_data, hd);
+        }
+      }
+    }
+  }
+
+  sysfs_close_class(sf_class);
+}
+
+
+#define MATCH_FIELD(field, var) \
+  if(!strncasecmp(sl->str, field, sizeof field - 1)) var = sl->str + sizeof field - 1
+
+/*
+ * assign /dev/usb/lp* to usb printers.
+ */
+void read_usb_lp(hd_data_t *hd_data, hd_t *hd)
+{
+  char *s;
+  char buf[1024];
+  int fd, two_ints[2];
+  unsigned bus;
+  str_list_t *sl0, *sl;
+  char *vend, *prod, *serial, *descr;
+
+  if((fd = open(hd->unix_dev_name, O_RDWR)) < 0) return;
+
+  if(ioctl(fd, LPIOC_GET_BUS_ADDRESS(sizeof two_ints), two_ints) == -1) {
+    close(fd);
+    return;
+  }
+  
+  ADD2LOG("  usb/lp: bus = %d, dev_nr = %d\n", two_ints[0], two_ints[1]);
+  bus = ((two_ints[0] & 0xff) << 8) + (two_ints[1] & 0xff);
+
+  if(ioctl(fd, LPIOC_GET_VID_PID(sizeof two_ints), two_ints) != -1) {
+    /* just for the record */
+    ADD2LOG("  usb/lp: vend = 0x%04x, prod = 0x%04x\n", two_ints[0], two_ints[1]);
+  }
+
+  memset(buf, 0, sizeof buf);
+  if(!ioctl(fd, LPIOC_GET_DEVICE_ID(sizeof buf), buf)) {
+    buf[sizeof buf - 1] = 0;
+    s = canon_str(buf + 2, sizeof buf - 3);
+    ADD2LOG("  usb/lp: \"%s\"\n", s);
+    sl0 = hd_split(';', s);
+    free_mem(s);
+    vend = prod = serial = descr = NULL;
+    for(sl = sl0; sl; sl = sl->next) {
+      MATCH_FIELD("MFG:", vend);
+      MATCH_FIELD("MANUFACTURER:", vend);
+      MATCH_FIELD("MDL:", prod);
+      MATCH_FIELD("MODEL:", prod);
+      MATCH_FIELD("DES:", descr);
+      MATCH_FIELD("DESCRIPTION:", descr);
+      MATCH_FIELD("SERN:", serial);
+      MATCH_FIELD("SERIALNUMBER:", serial);
+    }
+    ADD2LOG(
+      "  usb/lp: vend = %s, prod = %s, descr = %s, serial = %s\n",
+      vend ?: "", prod ?: "", descr ?: "", serial ?: ""
+    );
+    if(descr) {
+      str_printf(&hd->model, 0, "%s", descr);
+    }
+    if(vend && prod) {
+      str_printf(&hd->sub_vendor.name, 0, "%s", vend);
+      str_printf(&hd->sub_device.name, 0, "%s", prod);
+    }
+    if(serial && !hd->serial) {
+      hd->serial = new_str(serial);
+    }
+
+    free_str_list(sl0);
+  }
+
+  close(fd);
+}
+#undef MATCH_FIELD
