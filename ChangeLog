@@ -1,5 +1,7 @@
+13/6/2000:	v1.01
 	- new module info
 	- fix old VGA entries
+	- hw_tv now functional
 
 9/6/2000:	v1.00
 	- added hw_monitor, hw_printer, hw_tv, hw_scanner

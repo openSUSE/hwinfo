@@ -379,6 +379,14 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("Driver Info #%d:\n", i);
     ind += 2;
     switch(di->any.type) {
+      case di_any:
+        dump_line_str("Driver Info:");
+        for(sl = di->any.hddb0, j = 0; sl; sl = sl->next, j++) {
+          dump_line0("%c%s", j ? ',' : ' ', sl->str);
+        }
+        dump_line0("\n");
+        break;
+
       case di_display:
         if(di->display.width)
           dump_line("Max. Resolution: %ux%u\n", di->display.width, di->display.height);

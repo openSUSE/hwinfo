@@ -2177,8 +2177,10 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
   hd_t *hd, *hd1, *hd_list = NULL;
   unsigned char probe_save[sizeof hd_data->probe];
   int sc;		/* compare sub_class too */
-  int add_it;
+  int xtra;		/* some special test */
+  int add_it, ok;
   unsigned base_class, sub_class;
+  driver_info_t *di;
 
   if(rescan) {
     memcpy(probe_save, hd_data->probe, sizeof probe_save);
@@ -2278,6 +2280,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 
   sc = 0;
   sub_class = 0;
+  xtra = 0;
   switch(items) {
     case hw_cdrom:
       base_class = bc_storage_device;
@@ -2344,7 +2347,9 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
       break;
 
     case hw_tv:
-      base_class = -1;
+      base_class = bc_multimedia;
+      sub_class = sc_multi_video;
+      xtra = 1;
       break;
 
     case hw_scanner:
@@ -2360,17 +2365,36 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
       hd->base_class == base_class &&
       (sc == 0 || hd->sub_class == sub_class)
     ) {
-      add_it = 1;
-      for(hd1 = hd_old; hd1; hd1 = hd1->next) {
-        if(!cmp_hd(hd1, hd)) {
-          add_it = 0;
+      ok = 0;
+      switch(xtra) {
+        case 1:		/* tv cards */
+          di = hd_driver_info(hd_data, hd);
+          if(
+            di && di->any.type == di_any &&
+            di->any.hddb0 && di->any.hddb0->str &&
+            !strcmp(di->any.hddb0->str, "bttv")
+          ) {
+            ok = 1;
+          }
+          hd_free_driver_info(di);
           break;
-        }
+
+        default:
+          ok = 1;
       }
-      if(add_it) {
-        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-        *hd1 = *hd;
-        hd1->next = NULL;
+      if(ok) {
+        add_it = 1;
+        for(hd1 = hd_old; hd1; hd1 = hd1->next) {
+          if(!cmp_hd(hd1, hd)) {
+            add_it = 0;
+            break;
+          }
+        }
+        if(add_it) {
+          hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+          *hd1 = *hd;
+          hd1->next = NULL;
+        }
       }
     }
   }
