@@ -536,6 +536,15 @@
 +driver.module.modprobe	sata_sil
 
 
+# modules.alias, #38628
+ baseclass.id		0x00b
+&subclass.id		0x40
+&progif.id		0x00
+&vendor.id		pci 0x10a9
+&device.id		pci 0x100a
++driver.module.modprobe	sgiioc4
++baseclass.id		0x001
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # usb controller
 
