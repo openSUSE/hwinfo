@@ -149,11 +149,6 @@
 +driver.xfree		4|ati
 
  vendor.id		pci 0x1002
-&device.id		pci 0x4747
-+device.name		3D Rage Pro
-+driver.xfree		3|FBDev
-
- vendor.id		pci 0x1002
 &device.id		pci 0x4749
 +device.name		Mach64 GI
 +driver.xfree		4|ati
@@ -182,7 +177,6 @@
 &device.id		pci 0x4750
 +device.name		3D Rage Pro 215GP
 +driver.xfree		4|ati
-+driver.xfree		3|FBDev
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4751
@@ -203,7 +197,6 @@
 &device.id		pci 0x4754
 +device.name		3D Rage I/II 215GT [Mach64 GT]
 +driver.xfree		4|ati
-+driver.xfree		3|FBDev|||||15
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4755
@@ -214,7 +207,6 @@
 &device.id		pci 0x4756
 +device.name		3D Rage IIC 215IIC [Mach64 GT IIC]
 +driver.xfree		4|ati
-+driver.xfree		3|FBDev
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4757
@@ -280,20 +272,17 @@
 +device.name		Mobility M3 AGP 2x
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri|dpms,usefbdev|16||switch2xf86_glx
-+driver.xfree		3|FBDev|||||8,15
 +requires		xf86_glx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c47
 +device.name		3D Rage LT-G 215LG
 +driver.xfree		4|ati
-+driver.xfree		3|FBDev
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c49
 +device.name		Mach64 LI
 +driver.xfree		4|ati
-+driver.xfree		3|FBDev
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c4d
@@ -304,13 +293,11 @@
 &device.id		pci 0x4c4e
 +device.name		3D Rage L Mobility AGP 2x
 +driver.xfree		4|ati
-+driver.xfree		3|FBDev
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c50
 +device.name		3D Rage LT Pro
 +driver.xfree		4|ati
-+driver.xfree		3|FBDev|||||15
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c51
@@ -484,7 +471,6 @@
 +device.name		Rage 128 PF
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri|dpms,usefbdev|16,24||switch2xf86_glx
-+driver.xfree		3|FBDev
 +requires		xf86_glx
 
  vendor.id		pci 0x1002
@@ -548,7 +534,6 @@
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri|dpms,usefbdev|16||switch2xf86_glx
 +driver.xfree.config	ati_r128_rl
-+driver.xfree		3|FBDev
 +requires		xf86_glx
 
  vendor.id		pci 0x1002
@@ -671,14 +656,12 @@
 +device.name		Rage 128 RE
 +driver.xfree		4|r128|||||8,15,16,24
 +driver.xfree		4|r128|3d||dri|dpms,usefbdev|16,24||switch2xf86_glx
-+driver.xfree		3|FBDev
 +requires		xf86_glx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5246
 +device.name		Rage 128 RF
 +driver.xfree		4|r128|||||8,15,16,24
-+driver.xfree		3|FBDev
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5247
@@ -694,7 +677,6 @@
 &device.id		pci 0x524c
 +device.name		Rage 128 RL
 +driver.xfree		4|r128|||||8,15,16,24
-+driver.xfree		3|FBDev
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5345
@@ -750,7 +732,6 @@
 &device.id		pci 0x5452
 +device.name		Rage 128 Pro TR (AGP)
 +driver.xfree		4|r128
-+driver.xfree		3|FBDev|||||8,15
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5453
@@ -843,21 +824,18 @@
 &device.id		pci 0x0519
 +device.name		MGA 2064W [Millennium]
 +driver.xfree		4|mga||||DDCInfo,dpms,hw_cursor|8,15,16,24,32
-+driver.xfree		3||||||8,15
 
  vendor.id		pci 0x102b
 &device.id		pci 0x051a
 +device.name		MGA 1064SG [Mystique]
 +driver.xfree		4|fbdev||||dpms,hw_cursor|16,24
 +driver.xfree.config	DacSpeed     200
-+driver.xfree		3|FBDev|||||8,15,16
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0520
 +device.name		MGA G200
 +driver.xfree		4|fbdev||||dpms,hw_cursor|16,24
 +driver.xfree.config	DacSpeed 200 200 200 200
-+driver.xfree		3|FBDev|||||8
 
  vendor.id		pci 0x121a
 +vendor.name		3Dfx Interactive, Inc.
@@ -872,32 +850,4 @@
 
  vendor.id		pci 0x17af
 +vendor.name		ATI Technologies Inc
-
- vendor.id		special 0x4001
-+vendor.name		Sun Microsystems
-
- vendor.id		special 0x4001
-&device.id		special 0x0001
-+device.name		Sun|Monochrome (bwtwo)
-+driver.xfree		3
-
- vendor.id		special 0x4001
-&device.id		special 0x0002
-+device.name		Sun|Color3 (cgthree)
-+driver.xfree		3
-
- vendor.id		special 0x4001
-&device.id		special 0x0003
-+device.name		Sun|CG8/RasterOps (cgeight)
-+driver.xfree		3
-
- vendor.id		special 0x4001
-&device.id		special 0x0004
-+device.name		Sun|GS (cgtwelve)
-+driver.xfree		3|XFB_Dev
-
- vendor.id		special 0x4001
-&device.id		special 0x0005
-+device.name		Sun|Graphics Tower (gt)
-+driver.xfree		3
 

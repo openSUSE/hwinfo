@@ -1746,7 +1746,7 @@ void hd_scan(hd_data_t *hd_data)
 #if defined(__PPC__)
   hd_scan_adb(hd_data);
 #endif
-  hd_scan_kbd(hd_data);
+
 #ifndef LIBHD_TINY
 #if !defined(__sparc__)
   hd_scan_braille(hd_data);
@@ -1757,6 +1757,10 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_sbus(hd_data);
 
   hd_scan_input(hd_data);
+
+#if !defined(__s390__) && !defined(__s390x__)
+  hd_scan_kbd(hd_data);
+#endif
 
   /* must be after hd_scan_monitor() */
   hd_scan_fb(hd_data);
