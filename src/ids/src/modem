@@ -10,13 +10,3 @@
 +subclass.id		0x02
 +requires		Intel-536ep
 
- vendor.id		pci 0x11c1
-&device.id		pci 0x0440+0x001d
-|vendor.id		pci 0x115d
-&device.id		pci 0x0000+0x0400
-|vendor.id		pci 0x115d
-&device.id		pci 0x0440+0x001d
-+baseclass.id		0x102
-+subclass.id		0x03
-+requires		ltmodem
-
