@@ -1,0 +1,59 @@
+1.
+ihw_card_info   *ihw_get_device(ihw_card_info   *ici);
+
+"ihw_card_info" is a struct, which hold all info about the card (see ihw.h)
+The parameter (this is valid for all functions) has to be a pointer to
+a writable ihw_card_info struct variable.
+To get the first record use the following code as example:
+
+        ihw_card_info ici,*icp;
+        icp = &ici;
+        icp->handle = -1;
+	icp =ihw_get_device(icp);
+
+To get the next entry call it again with unmodified icp->handle.
+If here are no entries left, you get NULL as return value.
+
+2.
+ihw_card_info	*ihw_get_device_from_type(ihw_card_info   *ici);
+
+Get card informations  for the card with TYPE (set in ici->type) and SUBTYPE
+(set in ici->subtype). Returns NULL if no card match.
+This function is useful to get the card informations, if you have type and
+subtype from a rc.config, or from hardware probe.
+
+3.
+Get card informations  for the card with VENDOR,DEVICE,SUBVENDOR and
+SUBDEVICE for PCI and ISAPNP cards (set SUBVENDOR and SUBDEVICE 
+to 0xffff for ISAPNP cards). Returns NULL if no card found.
+
+This function will be useful for hardware probe.
+
+4. 
+ihw_para_info	*ihw_get_parameter(int device_handle, ihw_para_info *ipi);
+
+This function provides parameter info for a card (which was given by one of
+the first 3 functions). "device_handle" is the "ihw_card_info->handle" of
+the given card, ipi is a pointer to a writable ihw_para_info variable.
+For the first parameter, set ipi->handle to a negativ value, for next
+entries call the function again with the returned ipi->handle.
+
+
+For examples see at demo/demo.c
+
+Specials:
+
+To make it easy to decide, if an parameter has to be set in a rc.config
+a flag P_DEFINE is set in ihw_para_info->flags, which is set for all
+parameter which have to go into rc.config (for yast1 this parameter has to be
+setable).
+
+Other flags (may be useful for autodetection):
+
+P_HARDSET  - parameter depends on a jumper or switch.
+P_SOFTSET  - parameter is written into a config register (not for PnP/PCI)
+P_READABLE - parameter can be read from a config register (not for PnP/PCI)
+P_ISAPNP   - parameter is set via ISA PnP setup
+P_PCI      - parameter is a PCI one
+
+Karsten

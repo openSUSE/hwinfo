@@ -6,7 +6,7 @@
 #include "hd_int.h"
 #include "hddb.h"
 #include "isa.h"
-
+#include "../isdn/ihw.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * isa cards
@@ -39,13 +39,48 @@ void hd_scan_isa(hd_data_t *hd_data)
 
 void scan_isa_isdn(hd_data_t *hd_data)
 {
-  isa_isdn_t *ii;
+  isa_isdn_t *ii0, *ii;
+  ihw_card_info ici0, *ici;
+  hd_t *hd;
+  hd_res_t *res;
 
   PROGRESS(1, 0, "isdn");
 
-  ii = isdn_detect();
+  ii0 = isdn_detect();
 
-  dump_isa_isdn_data(hd_data, ii);
+  dump_isa_isdn_data(hd_data, ii0);
+
+  PROGRESS(1, 1, "isdn");
+
+  for(ii = ii0; ii; ii = ii->next) {
+    memset(&ici0, 0, sizeof ici0);
+    ici0.type = ii->type;
+    ici0.subtype = ii->subtype;
+    ici = ihw_get_device_from_type(&ici0);
+
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->bus = bus_isa;
+    hd->vend = MAKE_ID(TAG_SPECIAL, 0x3000);
+    hd->dev = MAKE_ID(TAG_SPECIAL, ((ii->type << 8) + (ii->subtype & 0xff)) & 0xffff);
+
+    if(ii->has_io) {
+      res = add_res_entry(&hd->res, new_mem(sizeof *res));
+      res->io.type = res_io;
+      res->io.enabled = 1;
+      res->io.base = ii->io;
+      res->io.access = acc_wo;
+    }
+
+    if(ii->has_irq) {
+      res = add_res_entry(&hd->res, new_mem(sizeof *res));
+      res->irq.type = res_irq;
+      res->irq.enabled = 1;
+      res->irq.base = ii->irq;
+    }
+
+    // #### ask libihw
+
+  }
 
   free_isa_isdn(ii);
 }

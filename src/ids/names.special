@@ -30,3 +30,16 @@ s2001	U.S. Robotics, Inc.
 
 s2002	ZyXEL
 	0001.10200	U1496C
+
+# isa isdn cards
+s3000	Unknown
+	0100	Teles 16.0
+	0101	Teles 16.0 AB
+	0200	Teles 16.3
+	0201	Teles 16.3 AB Video
+	0500	AVM A1 or Fritz!Classic
+	0601	Elsa ML PC
+	0602	Elsa ML PCC-8
+	0603	Elsa ML PCC-16
+	0604	Elsa ML PCF
+	0605	Elsa ML PCF-Pro

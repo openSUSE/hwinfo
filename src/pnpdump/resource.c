@@ -200,7 +200,7 @@ deallocate_resource(char tag, unsigned long start, unsigned long len) {
 void allocate_pci_resources( void )
 {
    char *line = 0;
-   int lineMax = 0;
+   size_t lineMax = 0;
 
    FILE *fp = fopen( PROC_PCI_DEVICES, "rt" );
    if( !fp )

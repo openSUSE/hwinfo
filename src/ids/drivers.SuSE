@@ -17,6 +17,8 @@
 	i	3c59x
 
 # net/3c59x.c && net/3c90x.c
+# there seem to be some problems with the 3c59x?
+# cf. Michael Kleinhenz <kleinhen@linuxtag.de> on suse-beta; 10 Feb 2000
 10b7 9005
 10b7 900a
 10b7 9055
@@ -24,8 +26,8 @@
 10b7 905a
 10b7 9200
 10b7 9800
-	i	3c59x
 	i	3c90x
+	i	3c59x
 
 # net/3c90x.c
 10b7 9004

@@ -19,6 +19,10 @@ ifeq "$(ARCH)" "sparc"
 SUBDIRS	:= $(filter-out pnpdump isdn, $(SUBDIRS))
 endif
 
+ifeq "$(ARCH)" "sparc64"
+SUBDIRS	:= $(filter-out pnpdump isdn, $(SUBDIRS))
+endif
+
 $(LIBHD): $(OBJS)
 	ar r $@ $?
 	@rm -f $(LIBHD_D)

@@ -1,3 +1,8 @@
+11/2/2000:	v0.62
+	- Makefile now knows about sparc64
+	- driver info: 3c90x vs. 3c59x; see comment in drivers.SuSE
+	- worked on ISDN stuff
+
 10/2/2000:	v0.61
 	- added peliminary usb storage device handling
 	- added ISA-PnP memory range decoding
