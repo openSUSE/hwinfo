@@ -320,7 +320,7 @@ void hd_scan_cpu(hd_data_t *hd_data)
         if(model_id) ct->model_name = new_str(model_id);
         if(vendor_id) ct->vend_name = new_str(vendor_id);
         ct->stepping = stepping;
-	hd_data->boot = boot_ia64;
+	hd_data->boot = boot_elilo;
 
         /* round clock to typical values */
         if(mhz >= 38 && mhz <= 42)

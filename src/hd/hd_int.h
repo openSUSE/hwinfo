@@ -16,7 +16,8 @@
 #define PROC_MODULES		"/proc/modules"
 #define PROC_DRIVER_SERIAL	"/proc/tty/driver/serial"
 #define PROC_DRIVER_MACSERIAL	"/proc/tty/driver/macserial"
-#define PROC_PARPORT		"/proc/parport"
+#define PROC_PARPORT_22		"/proc/parport/"			/* Final '/' is essential! */
+#define PROC_PARPORT_24		"/proc/sys/dev/parport/parport"
 #define PROC_KCORE		"/proc/kcore"
 #define PROC_USB_DEVICES	"/proc/bus/usb/devices"
 #define PROC_DAC960		"/proc/rd"
@@ -24,6 +25,7 @@
 #define PROC_PROM		"/proc/device-tree"
 #define PROC_MEMINFO		"/proc/meminfo"
 #define PROC_DASD		"/proc/dasd"
+#define PROC_VERSION		"/proc/version"
 
 #define DEV_USB_DEVICES		"/dev/usb/devices"
 #define DEV_NVRAM		"/dev/nvram"
@@ -45,6 +47,9 @@
 
 #define NAME_LIST		"/var/lib/libhd/hd.names"
 #define DRIVER_LIST		"/var/lib/libhd/hd.drivers"
+
+#define KERNEL_22		0x020200
+#define KERNEL_24		0x020400
 
 #define PROGRESS(a, b, c) progress(hd_data, a, b, c)
 #define ADD2LOG(a...) str_printf(&hd_data->log, -2, a)

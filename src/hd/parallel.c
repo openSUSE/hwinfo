@@ -47,10 +47,17 @@ void do_lp(hd_data_t *hd_data)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class == bc_comm && hd->sub_class == sc_com_par) break;
   }
+
   /* ... if there seems to be a parallel interface, try to load it */
-  if(hd) {
-    unload_module(hd_data, "parport_probe");
-    load_module(hd_data, "parport_probe");
+  if(hd || 1) {		/* always load it */
+    if(hd_data->kernel_version == KERNEL_22) {
+      unload_module(hd_data, "parport_probe");
+      load_module(hd_data, "parport_probe");
+    } else {
+      unload_module(hd_data, "lp");
+      unload_module(hd_data, "parport_pc");
+      load_module(hd_data, "parport_pc");
+    }
   }
 
   for(i = 0; i < 3; i++, unix_dev[sizeof unix_dev - 2]++) {
@@ -58,7 +65,10 @@ void do_lp(hd_data_t *hd_data)
 
     port = 0;
     // ##### read modes as well? (e.g: SPP,ECP,ECPEPP,ECPPS2)
-    str_printf(&pp, 0, "%s/%d/hardware", PROC_PARPORT, i);
+    if(hd_data->kernel_version == KERNEL_22)
+      str_printf(&pp, 0, PROC_PARPORT_22 "%d/hardware", i);
+    else
+      str_printf(&pp, 0, PROC_PARPORT_24 "%d/base-addr", i);
     sl0 = read_file(pp, 0, 0);
     if(!sl0) continue;		/* file doesn't exist -> no parport entry */
     str_printf(&s, 0, "%s\n", pp);
@@ -66,11 +76,18 @@ void do_lp(hd_data_t *hd_data)
     for(sl = sl0; sl; sl = sl->next) {
       str_printf(&s, 0, "  %s", sl->str);
       add_str_list(&log, s);
-      if(sscanf(sl->str, "base: %i", &j) == 1) port = j;
+      if(hd_data->kernel_version == KERNEL_22) {
+        if(sscanf(sl->str, "base: %i", &j) == 1) port = j;
+      } else {
+        if(sscanf(sl->str, "%i", &j) == 1) port = j;
+      }
     }
     free_str_list(sl0);
 
-    str_printf(&pp, 0, "%s/%d/autoprobe", PROC_PARPORT, i);
+    if(hd_data->kernel_version == KERNEL_22)
+      str_printf(&pp, 0, PROC_PARPORT_22 "%d/autoprobe", i);
+    else
+      str_printf(&pp, 0, PROC_PARPORT_24 "%d/autoprobe", i);
     sl0 = read_file(pp, 0, 0);
     str_printf(&s, 0, "%s\n", pp);
     add_str_list(&log, s);

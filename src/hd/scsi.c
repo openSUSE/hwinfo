@@ -29,6 +29,7 @@
 static scsi_t *do_basic_ioctl(hd_data_t *hdata, scsi_t **ioctl_scsi, int fd);
 static scsi_t *get_ioctl_scsi(hd_data_t *hd_data);
 static void get_proc_scsi(hd_data_t *hd_data);
+static void read_more_proc_info(hd_data_t *hd_data, scsi_t *scsi, str_list_t **pl0);
 static scsi_t *add_scsi_entry(scsi_t **scsi, scsi_t *new);
 static void dump_proc_scsi_data(hd_data_t *hd_data, str_list_t *proc_scsi);
 static void dump_scsi_data(hd_data_t *hd_data, scsi_t *scsi, char *text);
@@ -64,6 +65,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
 #endif
   hd_res_t *res;
   scsi_t *ioctl_scsi, *scsi, *scsi2, *scsi3, *next;
+  str_list_t *pl0 = NULL;
   int i, j;
   unsigned found, found_a;
   driver_info_t *di, *di0;
@@ -219,6 +221,8 @@ void hd_scan_scsi(hd_data_t *hd_data)
       continue;
     }
 
+    read_more_proc_info(hd_data, scsi, &pl0);
+
     hd = add_hd_entry(hd_data, __LINE__, 0);
     hd->base_class = bc_storage_device;
     hd->sub_class = scsi->type;
@@ -281,6 +285,8 @@ void hd_scan_scsi(hd_data_t *hd_data)
   hd_data->scsi = NULL;
 
   ioctl_scsi = free_scsi(ioctl_scsi, 1);
+
+  free_str_list(pl0);
 
 }
 
@@ -503,6 +509,15 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
     }
   }
 
+  /* evil hack for usb-storage devices */
+  for(scsi = ioctl_scsi; scsi; scsi = scsi->next) {
+    if(scsi->proc_dir || !scsi->info) continue;
+
+    if(!strcmp(scsi->info, "SCSI emulation for USB Mass Storage devices")) {
+      str_printf(&scsi->proc_dir, 0, "usb-storage-%d", scsi->host);
+    }
+  }
+
   /* get name of /proc/scsi entry */
   if((dir = opendir(PROC_SCSI))) {
     while((de = readdir(dir))) {
@@ -707,6 +722,59 @@ void get_proc_scsi(hd_data_t *hd_data)
 
   if((hd_data->debug & HD_DEB_SCSI)) dump_scsi_data(hd_data, hd_data->scsi, "proc scsi");
 }
+
+
+void read_more_proc_info(hd_data_t *hd_data, scsi_t *scsi, str_list_t **pl0)
+{
+  str_list_t *sl, *sl0;
+  char *pname = NULL;
+
+  if(!scsi->proc_dir) return;
+
+  str_printf(&pname, 0, PROC_SCSI "/%s/%d", scsi->proc_dir, scsi->host);
+
+  sl0 = read_file(pname, 0, 0);
+
+  if(sl0) {
+
+    /* handle usb floppies */
+    if(
+      scsi->driver &&
+      !strcmp(scsi->driver, "usb-storage") &&
+      (
+        scsi->type == sc_sdev_other ||
+        scsi->type == sc_sdev_disk
+      )
+    ) {
+      for(sl = sl0; sl; sl = sl->next) {
+        if(strstr(sl->str, "Protocol:") && strstr(sl->str, "UFI")) {
+          scsi->type = sc_sdev_floppy;
+          break;
+        }
+      }
+    }
+
+    if((hd_data->debug & HD_DEB_SCSI)) {
+      sl = NULL;
+      if(pl0) for(sl = *pl0; sl; sl = sl->next) {
+        if(!strcmp(sl->str, pname)) break;
+      }
+      if(!sl) {
+        ADD2LOG("----- %s -----\n", pname);
+        for(sl = sl0; sl; sl = sl->next) {
+          ADD2LOG("  %s", sl->str);
+        }
+        ADD2LOG("----- %s end -----\n", pname);
+      }
+    }
+  }
+
+  add_str_list(pl0, pname);
+
+  free_str_list(sl0);
+  free_mem(pname);
+}
+
 
 /*
  * Store a raw SCSI entry; just for convenience.

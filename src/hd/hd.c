@@ -113,6 +113,7 @@ static void hd_add_id(hd_t *hd);
 static void hd_copy(hd_t *dst, hd_t *src);
 
 static void test_read_block0_open(void *arg);
+static void get_kernel_version(hd_data_t *hd_data);
 
 /*
  * Names of the probing modules.
@@ -1100,6 +1101,8 @@ void hd_scan(hd_data_t *hd_data)
     ADD2LOG("libhd version %s%s (%s)\n", HD_VERSION, getuid() ? "u" : "", HD_ARCH);
   }
 
+  get_kernel_version(hd_data);
+
   /* needed only on 1st call */
   if(hd_data->last_idx == 0) {
     get_probe_env(hd_data);
@@ -1298,8 +1301,8 @@ void hd_scan(hd_data_t *hd_data)
       case boot_ppc:
         s = "ppc";
         break;
-      case boot_ia64:
-        s = "ia64";
+      case boot_elilo:
+        s = "elilo";
         break;
       case boot_s390:
         s = "s390";
@@ -3225,7 +3228,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 
       case hw_printer:
         hd_set_probe_feature(hd_data, pr_bios);
-        hd_set_probe_feature(hd_data, pr_misc);
+        hd_set_probe_feature(hd_data, pr_misc_par);
         hd_set_probe_feature(hd_data, pr_parallel_lp);
         hd_set_probe_feature(hd_data, pr_usb);
         break;
@@ -4258,3 +4261,28 @@ unsigned char *read_block0(hd_data_t *hd_data, char *dev, int *timeout)
   return buf;
 }
 
+
+void get_kernel_version(hd_data_t *hd_data)
+{
+  unsigned u1, u2;
+  str_list_t *sl;
+
+  if(hd_data->kernel_version) return;
+
+  hd_data->kernel_version = KERNEL_24;
+
+  sl = read_file(PROC_VERSION, 0, 1);
+
+  if(!sl || !sl->str) return;
+
+  if(sscanf(sl->str, "Linux version %u.%u.", &u1, &u2) == 2) {
+    if(hd_data->debug) {
+      ADD2LOG("kernel version is %u.%u\n", u1, u2);
+    }
+    u1 = (u1 << 16) + (u2 << 8);
+
+    if(u1 <= KERNEL_22) hd_data->kernel_version = KERNEL_22;
+  }
+
+  free_str_list(sl);
+}

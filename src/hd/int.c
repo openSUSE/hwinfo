@@ -202,9 +202,7 @@ void int_media_check(hd_data_t *hd_data)
 
 
 /*
- * Turn some SCSI/USB drives into flppies.
- * This is really a mess but until the usb-storage modul works better, we have 
- * to do it this way.
+ * Turn some Zip drives into flppies.
  */
 void int_floppy(hd_data_t *hd_data)
 {
@@ -225,14 +223,6 @@ void int_floppy(hd_data_t *hd_data)
             (hd->dev_name && strstr(hd->dev_name, "ZIP")) ||
             (hd->sub_dev_name && strstr(hd->sub_dev_name, "Zip"))
           )
-        ) ||
-        (
-          (hd->vend_name && !strcasecmp(hd->vend_name, "teac")) &&
-          (hd->dev_name && strstr(hd->dev_name, "FD") == hd->dev_name)
-        ) ||
-        (
-          (hd->vend_name && !strcasecmp(hd->vend_name, "y-e data")) &&
-          (hd->dev_name && strstr(hd->dev_name, "USB-FD") == hd->dev_name)
         )
       ) {
         hd->sub_class = sc_sdev_floppy;

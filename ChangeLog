@@ -1,3 +1,9 @@
+25/4/2001:	v2.06
+	- parport detection updated for kernel 2.4
+	- add scsi hostadapter info to debug output
+	- usb-storage again
+	- boot_ia64 -> boot_elilo
+
 24/4/2001:	v2.05
 	- worked on usb-storage support
 	- no isa-pnp probing in linuxrc
