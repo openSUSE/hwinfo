@@ -5,7 +5,8 @@ CLEANFILES	= *.h *.err hd.names hd.drivers hd.drivers_s
 include $(TOPDIR)/Makefile.common
 
 IDFILES	= names.SuSE names.bus names.class names.special \
-	  names.scanner names.network names.usb names.eisa names.monitor names.x11
+	  names.scanner names.network names.usb names.eisa names.monitor \
+	  names.x11 names.camera
 
 # IDFILES		+= drivers.x11
 
