@@ -65,13 +65,19 @@ void hd_scan_disk(hd_data_t *hd_data)
         hd->slot = u0;
         str_printf(&hd->device.name, 0, "IDE RAID Array %u", u0);
       }
-      else if(sscanf(sl->str, "cciss/d%uc%u", &u0, &u1) == 2) {
+      else if(sscanf(sl->str, "cciss/c%ud%u", &u0, &u1) == 2) {
         hd->slot = (u0 << 8) + u1;
         str_printf(&hd->device.name, 0, "CCISS disk %u/%u", u0, u1);
       }
-      else if(sscanf(sl->str, "rd/d%uc%u", &u0, &u1) == 2) {
+      else if(sscanf(sl->str, "rd/c%ud%u", &u0, &u1) == 2) {
         hd->slot = (u0 << 8) + u1;
+        hd->bus.id = bus_raid;
         str_printf(&hd->device.name, 0, "DAC960 RAID Array %u/%u", u0, u1);
+      }
+      else if(sscanf(sl->str, "i2o/hd%c", &c) == 1) {
+        u0 = c - 'a';
+        hd->slot = u0;
+        str_printf(&hd->device.name, 0, "I2O disk %u", u0);
       }
       else if(sscanf(sl->str, "hd%c", &c) == 1) {
         u0 = c - 'a';
