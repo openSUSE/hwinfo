@@ -74,7 +74,7 @@ C 00c	Serial bus controller
 	01	ACCESS Bus
 	02	SSA
 	03	USB Controller
-	04	Fiber Channel
+	04	Fibre Channel
 C 00e	Intelligent controller
 	00	I2O
 C 0ff	Unclassified device
