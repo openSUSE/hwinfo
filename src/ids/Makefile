@@ -6,7 +6,7 @@ include $(TOPDIR)/Makefile.common
 
 IDFILES = names.SuSE names.bus names.class names.special names.usb\
 	  names.eisa names.monitor names.pciutils names.SaX\
-	  drivers
+	  drivers.SuSE
 
 OBJS	+= names.o names_s.o drivers.o
 
