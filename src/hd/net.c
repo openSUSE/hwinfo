@@ -86,6 +86,10 @@ void hd_scan_net(hd_data_t *hd_data)
         hd->sub_class = sc_nif_escon;
         hd->slot = u;
       }
+      else if(sscanf(sl->str, "sid%u", &u) == 1) {
+        hd->sub_class = sc_nif_sid;	/* ipv6 over ipv4 tunnel */
+        hd->slot = u;
+      }
       /* ##### add more interface names here */
       else {
         hd->sub_class = sc_nif_other;
@@ -94,8 +98,10 @@ void hd_scan_net(hd_data_t *hd_data)
       hd->bus = bus_none;
 
 #if defined(__s390__) || defined(__s390x__) || defined(__powerpc__)
-// temporary hack for s390
-      if(hd->sub_class != sc_nif_loopback) {
+      if(
+        hd->sub_class != sc_nif_loopback &&
+        hd->sub_class != sc_nif_sid
+      ) {
         hd0 = hd;
         hd = add_hd_entry(hd_data, __LINE__, 0);
         hd->base_class = bc_network;
