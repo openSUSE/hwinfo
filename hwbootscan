@@ -14,4 +14,8 @@ if [ -n "$neededchanged" ] ; then
 		/bin/rm /var/lib/hardware/$i
 	done
 fi
+/usr/sbin/hwscan --storage_ctrl
+/usr/sbin/hwscan --network_ctrl
+/usr/sbin/hwscan --tv
+/usr/sbin/hwscan --sound
 exit 0
