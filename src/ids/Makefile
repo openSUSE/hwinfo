@@ -33,6 +33,10 @@ ifeq "$(ARCH)" "ia64"
 IDFILES += src/x11.ia64
 endif
 
+ifeq "$(ARCH)" "x86_64"
+IDFILES += src/x11.x86_64
+endif
+
 IDFILES += src/names.pciutils src/storage src/sound src/mouse src/braille
 
 $(LIBHD_D): hd_ids.o
