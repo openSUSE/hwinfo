@@ -1,3 +1,7 @@
+21/1/2001:	v4.00
+	- increased major version number, as we're incompatible to v3 meanwhile
+	- added function to set hardware config status data directly
+
 20/1/2002:	v3.40
 	- updated hwscan so it does something useful
 	- updated x11 data

@@ -66,7 +66,7 @@ static hash_t hw_items[] = {
 
 typedef enum {
   hw_id_unique = 1, hw_id_parent, hw_id_hwclass, hw_id_model,
-  hw_id_configured, hw_id_available, hw_id_critical
+  hw_id_configured, hw_id_available, hw_id_needed
 } hw_id_t;
 
 #define MAN_SECT_GENERAL	"General"
@@ -84,7 +84,7 @@ static hash_t hw_ids_general[] = {
 static hash_t hw_ids_status[] = {
   { hw_id_configured, "Configured" },
   { hw_id_available,  "Available"  },
-  { hw_id_critical,   "Needed"     },
+  { hw_id_needed,     "Needed"     },
   { 0,                NULL         }
 };
 
@@ -169,12 +169,12 @@ void hd_scan_manual(hd_data_t *hd_data)
     if(
       !hd->status.configured &&
       !hd->status.available &&
-      !hd->status.critical &&
+      !hd->status.needed &&
       !hd->status.invalid
     ) {
       hd->status.configured = status_new;
       hd->status.available = hd->module == mod_manual ? status_unknown : status_yes;
-      hd->status.critical = status_no;
+      hd->status.needed = status_no;
     }
   }
 
@@ -219,7 +219,7 @@ void hd_scan_manual2(hd_data_t *hd_data)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     hd->status.reconfig = status_no;
 
-    if(hd->status.critical != status_yes) continue;
+    if(hd->status.needed != status_yes) continue;
 
     if(hd->status.available == status_no) {
       hd->status.reconfig = status_yes;
@@ -371,9 +371,9 @@ hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, char *id)
           if(!j) err = 1;
           break;
 
-        case hw_id_critical:
+        case hw_id_needed:
           j = value2key(status_names, s);
-          entry->status.critical = j;
+          entry->status.needed = j;
           if(!j) err = 1;
           break;
 
@@ -409,23 +409,23 @@ hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, char *id)
 
   /*
    * if the status info is completely missing, fake some:
-   * new hardware, not autodetectable, not critical
+   * new hardware, not autodetectable, not needed
    */
   if(
     !entry->status.configured &&
     !entry->status.available &&
-    !entry->status.critical &&
+    !entry->status.needed &&
     !entry->status.invalid
   ) {
     entry->status.configured = status_new;
     entry->status.available = status_unknown;
-    entry->status.critical = status_no;
+    entry->status.needed = status_no;
   }
 
   if(
     !entry->status.configured ||
     !entry->status.available ||
-    !entry->status.critical
+    !entry->status.needed
   ) {
     ADD2LOG("  %s: incomplete status\n", id);
     err = 1;
@@ -528,10 +528,10 @@ int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
   ) error = 4;
 
   if(
-    (entry->status.critical && key2value(status_names, entry->status.critical)) &&
+    (entry->status.needed && key2value(status_names, entry->status.needed)) &&
     !fprintf(f, "%s=%s\n",
-      key2value(hw_ids_status, hw_id_critical),
-      key2value(status_names, entry->status.critical)
+      key2value(hw_ids_status, hw_id_needed),
+      key2value(status_names, entry->status.needed)
     )
   ) error = 4;
 
@@ -592,8 +592,8 @@ void dump_manual(hd_data_t *hd_data)
       key2value(status_names, entry->status.available)
     );
     ADD2LOG("    %s=%s\n",
-      key2value(hw_ids_status, hw_id_critical),
-      key2value(status_names, entry->status.critical)
+      key2value(hw_ids_status, hw_id_needed),
+      key2value(status_names, entry->status.needed)
     );
     for(
       sl1 = entry->key, sl2 = entry->value;
@@ -815,12 +815,12 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
   if(
     !entry->status.configured &&
     !entry->status.available &&
-    !entry->status.critical &&
+    !entry->status.needed &&
     !entry->status.invalid
   ) {
     entry->status.configured = status_new;
     entry->status.available = hd->module == mod_manual ? status_unknown : status_yes;
-    entry->status.critical = status_no;
+    entry->status.needed = status_no;
   }
 
   s = NULL;

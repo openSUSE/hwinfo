@@ -204,7 +204,7 @@ int do_scan(hd_hw_item_t item)
         hd1->unique_id,
         hd_status_value_name(hd1->status.configured),
         hd_status_value_name(hd1->status.available),
-        hd_status_value_name(hd1->status.critical)
+        hd_status_value_name(hd1->status.needed)
       );
       if(hd1->unix_dev_name) {
         printf(", dev=%s", hd1->unix_dev_name);
@@ -285,7 +285,7 @@ int do_list(hd_hw_item_t item)
         i++;
       }
 
-      if(hd->status.critical && (s = hd_status_value_name(hd->status.critical))) {
+      if(hd->status.needed && (s = hd_status_value_name(hd->status.needed))) {
         sprintf(status + strlen(status), "%sneed=%s", i ? ", " : "", s);
         i++;
       }
@@ -342,7 +342,7 @@ int do_config(int type, char *val, char *id)
           break;
 
         case 3:
-          hd->status.critical = status;
+          hd->status.needed = status;
           break;
       }
       hd_write_config(hd_data, hd);

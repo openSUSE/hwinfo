@@ -3590,7 +3590,7 @@ hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t sta
       if(
         (status.configured == 0 || status.configured == hd->status.configured) &&
         (status.available == 0 || status.available == hd->status.available) &&
-        (status.critical == 0 || status.critical == hd->status.critical) &&
+        (status.needed == 0 || status.needed == hd->status.needed) &&
         (status.reconfig == 0 || status.reconfig == hd->status.reconfig)
       ) {
         hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
@@ -4917,4 +4917,27 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
   free_mem(dev_class);
   free_mem(hw_class);
 }
-#endif
+#endif		/* !defined(LIBHD_TINY) */
+
+
+int hd_change_status(hd_data_t *hd_data, char *id, hd_status_t status)
+{
+  hd_manual_t *entry;
+  int i;
+
+  entry = hd_manual_read_entry(hd_data, id);
+
+  if(!entry || status.invalid) return 1;
+
+  if(status.configured) entry->status.configured = status.configured;
+  if(status.available) entry->status.available = status.available;
+  if(status.needed) entry->status.needed = status.needed;
+  entry->status.invalid = status.invalid;
+
+  i = hd_manual_write_entry(hd_data, entry);
+  
+  hd_free_manual(entry);
+
+  return i;
+}
+
