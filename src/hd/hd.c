@@ -1155,8 +1155,10 @@ void hd_scan(hd_data_t *hd_data)
    * to be able to read the right parport io,
    * we have to do this before scan_misc()
    */
+#ifndef LIBHD_TINY
 #if defined(__i386__)
   hd_scan_bios(hd_data);
+#endif
 #endif
   
   /* get basic system info */
@@ -1183,12 +1185,16 @@ void hd_scan(hd_data_t *hd_data)
   /* after hd_scan_prom() and hd_scan_bios() */
   hd_scan_monitor(hd_data);
 
+#ifndef LIBHD_TINY
 #if defined(__i386__) || defined(__alpha__)
   hd_scan_isapnp(hd_data);
 #endif
+#endif
 
+#ifndef LIBHD_TINY
 #if defined(__i386__)
   hd_scan_isa(hd_data);
+#endif
 #endif
 
   hd_scan_serial(hd_data);
@@ -1228,8 +1234,10 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_xtra(hd_data);
 
   /* some final fixup's */
+#ifndef LIBHD_TINY
 #if WITH_ISDN
   hd_scan_isdn(hd_data);
+#endif
 #endif
   hd_scan_int(hd_data);
 
@@ -2894,6 +2902,7 @@ int hd_smp_support(hd_data_t *hd_data)
 
   hd = hd_free_hd_list(hd);
 
+#ifndef LIBHD_TINY
 #ifdef __i386__
   if(is_smp < 2) {
     if(!hd_data->bios_ram.data) {
@@ -2905,6 +2914,7 @@ int hd_smp_support(hd_data_t *hd_data)
     is_smp = detect_smp(hd_data);
     if(is_smp < 0) is_smp = 0;
   }
+#endif
 #endif
 
 #ifdef __PPC__

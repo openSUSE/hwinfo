@@ -34,16 +34,16 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(1, 0, "pcmcia");
   int_pcmcia(hd_data);
 
-#if defined(__i386__)
-  PROGRESS(2, 0, "bios");
-  int_bios(hd_data);
-#endif
-
-  PROGRESS(3, 0, "cdrom");
+  PROGRESS(2, 0, "cdrom");
   int_cdrom(hd_data);
 
-  PROGRESS(4, 0, "media");
+  PROGRESS(3, 0, "media");
   int_media_check(hd_data);
+
+#if defined(__i386__)
+  PROGRESS(4, 0, "bios");
+  int_bios(hd_data);
+#endif
 
   PROGRESS(5, 0, "floppy");
   int_floppy(hd_data);

@@ -445,4 +445,3 @@ void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
 
 
 #endif /* defined(__i386__) */
-

@@ -204,6 +204,7 @@ void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
       signal(SIGSEGV, sigsegv_handler);
 
       asm(
+        "push %ebx\n"
         "\tpush %edx\n"
         "\tpush %eax\n"
         "\tpush %ecx\n"
@@ -214,6 +215,7 @@ void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
         "\tpop %ecx\n"
         "\tpop %eax\n"
         "\tpop %edx\n"
+        "\tpop %ebx\n"
       );
 
       exit(66);
