@@ -1,3 +1,7 @@
+18/9/2002:	v5.33
+	- fixed chksum call causing hwinfo to hang in some cases on ia64
+	- don't overwrite vga modelist
+
 10/9/2002:	v5.32
 	- avoid alignment problems on ia64
 	- fixed usb-cdrom probing (#19407, #19440)
