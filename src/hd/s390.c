@@ -22,6 +22,7 @@ void hd_scan_s390(hd_data_t *hd_data)
   struct sysfs_device *curdev = NULL;
   struct dlist *attributes = NULL;
   struct sysfs_attribute *curattr = NULL;
+  struct dlist *devlist = NULL;
 
   unsigned int devtype=0,devmod=0,cutype=0,cumod=0;
 
@@ -44,8 +45,16 @@ void hd_scan_s390(hd_data_t *hd_data)
     return;
   }
 
+  devlist=sysfs_get_bus_devices(bus);
+  
+  if(!devlist)
+  {
+  	ADD2LOG("unable to get devices on bus " BUSNAME);
+  	return;
+  }
+  
   /* build cutypes list */
-  dlist_for_each_data(bus->devices, curdev, struct sysfs_device)
+  dlist_for_each_data(devlist, curdev, struct sysfs_device)
   {
     int channel=strtol(rindex(curdev->bus_id,'.')+1,NULL,16);
     attributes = sysfs_get_device_attributes(curdev);
@@ -72,7 +81,7 @@ void hd_scan_s390(hd_data_t *hd_data)
     }
   }
   
-  dlist_for_each_data(bus->devices, curdev, struct sysfs_device)
+  dlist_for_each_data(devlist, curdev, struct sysfs_device)
   {
 
     res=new_mem(sizeof *res);
