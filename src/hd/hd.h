@@ -2172,6 +2172,7 @@ typedef struct {
   str_list_t *klog;		/**< (Internal) kernel log */
   str_list_t *proc_usb;		/**< (Internal) /proc/bus/usb info */
   usb_t *usb;			/**< (Internal) usb info */
+  hddb_pci_t *hddb_pci_hm;	/**< (Internal) pci module info */
   hddb_pci_t *hddb_pci;		/**< (Internal) pci module info */
   hddb2_data_t *hddb2[2];	/**< (Internal) hardware database */
   str_list_t *kmods;		/**< (Internal) list of active kernel modules */

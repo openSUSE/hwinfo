@@ -1,7 +1,9 @@
+14/3/2004:	v8.18
 	- s390: added two missing DASD device types
 	- added '--root' option (for testing)
 	- added '--db' option for database queries
 	- fixed 'x11i' parameter handling
+	- read pci.handmap
 
 9/3/2004:	v8.17
 	- udevinfo moved to /usr/bin

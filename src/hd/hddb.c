@@ -59,7 +59,8 @@ typedef struct {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 static void hddb_init_pci(hd_data_t *hd_data);
-static driver_info_t *hd_pcidb(hd_data_t *hd_data, hd_t *hd);
+static hddb_pci_t *parse_pcimap(str_list_t *file);
+static driver_info_t *hd_pcidb(hd_data_t *hd_data, hddb_pci_t *pci_db, hd_t *hd);
 static void hddb_init_external(hd_data_t *hd_data);
 
 static line_t *parse_line(char *str);
@@ -91,32 +92,47 @@ static driver_info_t *reorder_x11(driver_info_t *di0, char *info);
 static void expand_driver_info(hd_data_t *hd_data, hd_t *hd);
 static char *module_cmd(hd_t *hd, char *cmd);
 
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 void hddb_init_pci(hd_data_t *hd_data)
 {
-  str_list_t *sl0 = NULL, *sl;
+  str_list_t *sl = NULL;
   char *s = NULL;
   struct utsname ubuf;
-  int len;
-  char buf[64];
-  unsigned u0, u1, u2, u3, u4, u5;
-  hddb_pci_t *p;
 
-  if(hd_data->hddb_pci) return;
+  if(!hd_data->hddb_pci) {
+    if(!uname(&ubuf)) {
+      str_printf(&s, 0, "/lib/modules/%s/modules.pcimap", ubuf.release);
+      sl = read_file(s, 0, 0);
+      s = free_mem(s);
+    }
 
-  /* during installation, the file is in /etc */
-  sl0 = read_file("/etc/modules.pcimap", 1, 0);
-  if(!sl0 && !uname(&ubuf)) {
-    str_printf(&s, 0, "/lib/modules/%s/modules.pcimap", ubuf.release);
-    sl0 = read_file(s, 1, 0);
-    s = free_mem(s);
+    hd_data->hddb_pci = parse_pcimap(sl);
+
+    sl = free_str_list(sl);
   }
 
-  for(len = 1, sl = sl0; sl; sl = sl->next) len++;
+  if(!hd_data->hddb_pci_hm) {
+    sl = read_file("/etc/hotplug/pci.handmap", 0, 0);
+    hd_data->hddb_pci_hm = parse_pcimap(sl);
+    sl = free_str_list(sl);
+  }
+}
 
-  hd_data->hddb_pci = new_mem(len * sizeof *hd_data->hddb_pci);
 
-  for(p = hd_data->hddb_pci, sl = sl0; sl; sl = sl->next) {
+hddb_pci_t *parse_pcimap(str_list_t *file)
+{
+  str_list_t *sl;
+  unsigned len;
+  hddb_pci_t *pci, *p;
+  char buf[64];
+  unsigned u0, u1, u2, u3, u4, u5;
+
+  for(len = 1, sl = file; sl; sl = sl->next) len++;
+
+  pci = new_mem(len * sizeof *pci);
+
+  for(p = pci, sl = file; sl; sl = sl->next) {
     if(sscanf(sl->str, "%63s %x %x %x %x %x %x", buf, &u0, &u1, &u2, &u3, &u4, &u5) == 7) {
       p->module = new_str(buf);
       p->vendor = u0;
@@ -130,27 +146,27 @@ void hddb_init_pci(hd_data_t *hd_data)
     }
   }
 
-  free_str_list(sl0);
-
 #if 0
-  for(p = hd_data->hddb_pci; p->module; p++) {
+  fprintf(stderr, "---  pcimap  ---\n");
+  for(p = pci; p->module; p++) {
     fprintf(stderr, "%s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n",
       p->module, p->vendor, p->device, p->subvendor, p->subdevice,
       p->pciclass, p->classmask
     );
   }
 #endif
+
+  return pci;
 }
 
 
-driver_info_t *hd_pcidb(hd_data_t *hd_data, hd_t *hd)
+driver_info_t *hd_pcidb(hd_data_t *hd_data, hddb_pci_t *pci_db, hd_t *hd)
 {
   unsigned vendor, device, subvendor, subdevice, pciclass;
   driver_info_t *di = NULL, *di0 = NULL;
-  hddb_pci_t *p;
   pci_t *pci;
 
-  if(!(p = hd_data->hddb_pci)) return NULL;
+  if(!pci_db) return NULL;
 
   if(ID_TAG(hd->vendor.id) != TAG_PCI) return NULL;
 
@@ -168,13 +184,13 @@ driver_info_t *hd_pcidb(hd_data_t *hd_data, hd_t *hd)
     pciclass = (pci->base_class << 16) + ((pci->sub_class & 0xff) << 8) + (pci->prog_if & 0xff);
   }
 
-  for(; p->module; p++) {
+  for(; pci_db->module; pci_db++) {
     if(
-      (p->vendor == 0xffffffff || p->vendor == vendor) &&
-      (p->device == 0xffffffff || p->device == device) &&
-      (p->subvendor == 0xffffffff || p->subvendor == subvendor) &&
-      (p->subdevice == 0xffffffff || p->subdevice == subdevice) &&
-      !((p->pciclass ^ pciclass) & p->classmask)
+      (pci_db->vendor == 0xffffffff || pci_db->vendor == vendor) &&
+      (pci_db->device == 0xffffffff || pci_db->device == device) &&
+      (pci_db->subvendor == 0xffffffff || pci_db->subvendor == subvendor) &&
+      (pci_db->subdevice == 0xffffffff || pci_db->subdevice == subdevice) &&
+      !((pci_db->pciclass ^ pciclass) & pci_db->classmask)
     ) {
       if(di) {
         di = di->next = new_mem(sizeof *di);
@@ -184,7 +200,7 @@ driver_info_t *hd_pcidb(hd_data_t *hd_data, hd_t *hd)
       }
       di->any.type = di_module;
       di->module.modprobe = 1;
-      add_str_list(&di->any.hddb0, p->module);
+      add_str_list(&di->any.hddb0, pci_db->module);
     }
   }
 
@@ -1683,6 +1699,10 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
   }
 #endif
 
+  if(!new_driver_info) {
+    new_driver_info = hd_pcidb(hd_data, hd_data->hddb_pci_hm, hd);
+  }
+
   if(!new_driver_info && (hs.value & (1 << he_driver))) {
     new_driver_info = hddb_to_device_driver(hd_data, &hs);
   }
@@ -1715,7 +1735,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
   }
 
   if(!new_driver_info) {
-    new_driver_info = hd_pcidb(hd_data, hd);
+    new_driver_info = hd_pcidb(hd_data, hd_data->hddb_pci, hd);
   }
 
   if(new_driver_info) {
