@@ -831,7 +831,18 @@ void read_partitions(hd_data_t *hd_data)
     }
 
     if(!search_str_list(hd_data->cdroms, name)) {
-      add_str_list(is_disk ? &hd_data->disks : &hd_data->partitions, name);
+      if(
+        strncmp(name, "loop", sizeof "loop" - 1) &&
+        (
+          hd_data->flags.list_md ||
+          (
+            strncmp(name, "md", sizeof "md" - 1) &&
+            strncmp(name, "dm-", sizeof "dm-" - 1)
+          )
+        )
+      ) {
+        add_str_list(is_disk ? &hd_data->disks : &hd_data->partitions, name);
+      }
     }
     free_mem(last_base);
     free_mem(last_name);

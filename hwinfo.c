@@ -74,6 +74,7 @@ struct option options[] = {
   { "root", 1, NULL, 309 },
   { "db", 1, NULL, 310 },
   { "only", 1, NULL, 311 },
+  { "listmd", 0, NULL, 312 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -241,6 +242,10 @@ int main(int argc, char **argv)
 
         case 311:
           if(*optarg) add_str_list(&hd_data->only, optarg);
+          break;
+
+        case 312:
+          hd_data->flags.list_md = 1;
           break;
 
         case 400:
