@@ -410,7 +410,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
             case 2: scsi->type = sc_sdev_tape; break;
           }
 
-          if(!hd_data->flags.fast && scsi->type == sc_sdev_cdrom) {
+          if(scsi->type == sc_sdev_cdrom) {
             if(
               hd_probe_feature(hd_data, pr_scsi_cache) &&
               hd_data->in_vmware != 1		/* VMWare doesn't like this */
@@ -736,7 +736,11 @@ void get_proc_scsi(hd_data_t *hd_data)
       }
       else if(
         strstr(scsi_type, "Processor") == scsi_type &&
-        strstr(scsi->vendor, "HP") == scsi->vendor
+        (
+          strstr(scsi->vendor, "HP") == scsi->vendor ||
+          /* seems Epson learned from HP... */
+          strstr(scsi->vendor, "EPSON") == scsi->vendor
+        )
       ) {
         scsi->type = sc_sdev_scanner;
       }

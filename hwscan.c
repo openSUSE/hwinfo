@@ -16,6 +16,7 @@ struct option options[] = {
   { "need", 1, NULL, 504 },
   { "new", 0, NULL, 505 },
   { "fast", 0, NULL, 506 },
+  { "silent", 0, NULL, 507 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -73,6 +74,7 @@ struct {
   unsigned config_need:1;
   unsigned new:1;
   unsigned fast:1;
+  unsigned silent:1;
 } opt;
 
 void help(void);
@@ -134,6 +136,10 @@ int main(int argc, char **argv)
 
       case 506:
         opt.fast = 1;
+        break;
+
+      case 507:
+        opt.silent = 1;
         break;
 
       case 1000 ... 1100:
@@ -298,7 +304,7 @@ int do_scan(hd_hw_item_t item)
       );
     }
   }
-  else {
+  else if(!opt.silent) {
     for(hd1 = hd; hd1; hd1 = hd1->next) printf("%s\n", hd1->unique_id);
   }
 

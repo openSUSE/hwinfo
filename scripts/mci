@@ -71,7 +71,7 @@ while(<F>) {
 }
 
 for (sort keys %mem) {
-  $total += ${$mem{$_}}[0];
+  $total += oct(${$mem{$_}}[0]);
   $cnt++;
 
 #  $x = `addr2line -s -e $bin ${$mem{$_}}[1]`;
@@ -98,7 +98,7 @@ sub addr2line
 
   return $_[0] unless $bin;
 
-  $y = sprintf "0x%x", $_[0] + $ofs;
+  $y = sprintf "0x%x", oct($_[0]) + $ofs;
 
   return $addr_cache{$y} if exists $addr_cache{$y};
 

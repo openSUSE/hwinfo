@@ -23,6 +23,32 @@
 
 #if defined(__i386__) || defined (__x86_64__) || defined(__ia64__)
 
+static struct {
+  int width;
+  int height;
+  char *vendor;
+  char *name;
+  char *version;
+} panel_data[] = {
+  {  800,  600, "Fujitsu Siemens", "LiteLine", "LF6" },
+  { 1024,  768, "ASUSTEK", "L2000D", NULL },
+  { 1024,  768, "Acer", "TravelMate 720", NULL },
+  { 1024,  768, "COMPAL", "N30T5", NULL },
+  { 1024,  768, "Dell Computer Corporation", "Inspiron 5000", NULL },
+  { 1024,  768, "Dell Computer Corporation", "Latitude C400", NULL },
+  { 1024,  768, "Dell Computer Corporation", "Latitude CPt C400GT", NULL },
+  { 1024,  768, "Hewlett-Packard", "HP OmniBook PC", "HP OmniBook 4150 B" },
+  { 1024,  768, "IBM", "26284UG", NULL },
+  { 1024,  768, "IBM", "26446AG", NULL },
+  { 1024,  768, "IBM", "264721G", NULL },
+  { 1024,  768, "KDST", "KDS6KSUMO", NULL  },
+  { 1024,  768, "Sony Corporation", "PCG-N505SN", NULL },
+  { 1024,  768, "TOSHIBA", "S2400-103", NULL },
+  { 1600, 1200, "Dell Computer Corporation", "Inspiron 8200", NULL },
+  { 1600, 1200, "Dell Computer Corporation", "Latitude C840", NULL }
+};
+
+
 #define BIOS_TEST
 
 typedef struct {
@@ -911,6 +937,7 @@ void add_panel_info(hd_data_t *hd_data, bios_info_t *bt)
   unsigned width, height;
   char *vendor, *name, *version;
   hd_smbios_t *sm;
+  unsigned u;
 
   if(bt->lcd.width || !hd_data->smbios) return;
 
@@ -928,27 +955,20 @@ void add_panel_info(hd_data_t *hd_data, bios_info_t *bt)
 
   if(!vendor || !name) return;
 
-  if(
-    (!strcmp(vendor, "Sony Corporation") && strstr(name, "PCG-N505SN") == name) ||
-    (!strcmp(vendor, "KDST") && !strcmp(name, "KDS6KSUMO"))
-  ) {
-    width = 1024;
-    height = 768;
+  for(u = 0; u < sizeof panel_data / sizeof *panel_data; u++) {
+    if(
+      !strcmp(vendor, panel_data[u].vendor) &&
+      !strcmp(name, panel_data[u].name) &&
+      (version || !panel_data[u].version) &&
+      (!version || !panel_data[u].version || !strcmp(version, panel_data[u].version))
+    ) {
+      bt->lcd.vendor = new_str(vendor);
+      bt->lcd.name = new_str("Notebook LCD");
+      bt->lcd.width = panel_data[u].width;
+      bt->lcd.height = panel_data[u].height;
+      break;
+    }
   }
-
-  if(
-    (!strcmp(vendor, "Fujitsu Siemens") && !strcmp(name, "LiteLine") && !strcmp(version, "LF6"))
-  ) {
-    width = 800;
-    height = 600;
-  }
-
-  if(!width) return;
-
-  bt->lcd.vendor = new_str(vendor);
-  bt->lcd.name = new_str("Notebook LCD");
-  bt->lcd.width = width;
-  bt->lcd.height = height;
 }
 
 

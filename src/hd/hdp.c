@@ -1295,7 +1295,10 @@ char *dump_hid(hd_data_t *hd_data, hd_id_t *hid, int format, char *buf, int buf_
   }
 
   i = strlen(buf);
-  if(i) buf[i++] = ' ';
+  if(i) {
+    buf[i++] = ' ';
+    buf[i] = 0;
+  }
   s = buf + i;
   buf_size -= i;
 
