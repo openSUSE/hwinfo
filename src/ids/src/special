@@ -618,6 +618,17 @@
 &device.id		special 0x1000
 +driver.module.modprobe	ibmveth
 
+# IBM vscsi
+ vendor.id		special 0x6001
+&device.id		special 0x1001
++driver.module.modprobe	ibmvscsic
+
+
+# IBM veth
+ vendor.id		special 0x6001
+&device.id		special 0x1002
++driver.module.modprobe	ibmveth
+
 
 # internal: usb scanner driver list
  vendor.id		special 0xf000

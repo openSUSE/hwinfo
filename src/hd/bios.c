@@ -79,7 +79,7 @@ static void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *
 static int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios32);
 #endif
 
-int detect_smp(hd_data_t *hd_data)
+int detect_smp_bios(hd_data_t *hd_data)
 {
   bios_info_t *bt;
   hd_t *hd;

@@ -178,9 +178,8 @@ unsigned has_something_attached(hd_data_t *hd_data, hd_t *hd);
 
 str_list_t *get_cmdline(hd_data_t *hd_data, char *key);
 
-#if defined(__i386__) || defined(__x86_64__) || defined(__PPC__)
-int detect_smp(hd_data_t *hd_data);
-#endif
+int detect_smp_bios(hd_data_t *hd_data);
+int detect_smp_prom(hd_data_t *hd_data);
 
 unsigned char *read_block0(hd_data_t *hd_data, char *dev, int *timeout);
 

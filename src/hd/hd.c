@@ -485,6 +485,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_network:
       hd_set_probe_feature(hd_data, pr_net);
       hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_prom);
       break;
 
     case hw_display:
@@ -561,9 +562,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_isapnp);
       hd_set_probe_feature(hd_data, pr_isapnp_mod);
       hd_set_probe_feature(hd_data, pr_sbus);
-#ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
-#endif
       break;
 
     case hw_isdn:
@@ -595,8 +594,8 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
         hd_set_probe_feature(hd_data, pr_parallel_zip);
       }
       hd_set_probe_feature(hd_data, pr_s390);
-#ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
+#ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_misc);
 #endif
       break;
@@ -611,13 +610,8 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_sbus);
       hd_set_probe_feature(hd_data, pr_isdn);
       hd_set_probe_feature(hd_data, pr_dsl);
-#ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
-#endif
-#if defined(__s390__) || defined(__s390x__)
       hd_set_probe_feature(hd_data, pr_s390);
-      hd_set_probe_feature(hd_data, pr_net);
-#endif
       break;
 
     case hw_printer:
@@ -700,9 +694,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_net);
       hd_set_probe_feature(hd_data, pr_isdn);
       hd_set_probe_feature(hd_data, pr_dsl);
-#ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
-#endif
       break;
 
     case hw_isapnp:
@@ -2677,7 +2669,7 @@ int hd_smp_support(hd_data_t *hd_data)
     if(!hd_data->bios_ram.data) {
       hd_free_hd_list(hd_list(hd_data, hw_sys, 1, NULL));
     }
-    is_smp = detect_smp(hd_data);
+    is_smp = detect_smp_bios(hd_data);
     // at least 2 processors
     if(is_smp < 2) is_smp = 0;
     if(!is_smp && cpu_threads > 1) is_smp = 2;
@@ -2689,7 +2681,7 @@ int hd_smp_support(hd_data_t *hd_data)
     if(!hd_data->devtree) {
       hd_free_hd_list(hd_list(hd_data, hw_sys, 1, NULL));
     }
-    is_smp = detect_smp(hd_data);
+    is_smp = detect_smp_prom(hd_data);
     if(is_smp < 0) is_smp = 0;
   }
 #endif

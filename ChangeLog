@@ -5,6 +5,7 @@
 	- another de4x5 vs. tulip case (#39127)
 	- fixed cdrom config segfault (might happen while reading inconsistent
 	  cdrom config data)
+	- support pSeries vscsi (#36029)
 
 15/4/2004:	v8.39
 	- bcm5700, not tg3 on ppc* (#38647)
