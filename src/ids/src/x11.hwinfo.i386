@@ -1,7 +1,7 @@
 #
 # x11.hwinfo-file for architecture i386
 #
-# generated at: Mon Aug  5 15:45:06 2002
+# generated at: Thu Aug  8 18:01:49 2002
 # data source:  CDB
 # distribution: Stable
 #
@@ -2545,11 +2545,11 @@ edd8 a099
 
 # Intel Corporation:i830
 8086 3577
-	x	4|i810||||||||
+	x	4|i810||||FixMem||||
 
 # Intel Corporation:i830
 8086 3577
-	x	4|i810|3d|xf86_glx|dri,glx||16||switch2xf86_glx|
+	x	4|i810|3d|xf86_glx|dri,glx|FixMem|16||switch2xf86_glx|
 		VideoRam 16384
 
 # Tseng Labs Inc:ET6000
