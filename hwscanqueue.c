@@ -40,9 +40,9 @@ int main( int argc, char **argv )
 	}
 
 	if ( !strncmp("--cfg=", argv[1], 6) && argc>2 )
-		snprintf( m.mtext, MESSAGE_BUFFER, "C/usr/sbin/hwscan %s %s", argv[1], argv[2]  );
+		snprintf( m.mtext, MESSAGE_BUFFER, "C/sbin/hwscan %s %s", argv[1], argv[2]  );
 	else if ( !strncmp("--avail=", argv[1], 8) && argc>2 )
-		snprintf( m.mtext, MESSAGE_BUFFER, "C/usr/sbin/hwscan %s %s", argv[1], argv[2]  );
+		snprintf( m.mtext, MESSAGE_BUFFER, "C/sbin/hwscan %s %s", argv[1], argv[2]  );
 	else if ( !strncmp("--scan=", argv[1], 7) )
 		snprintf( m.mtext, MESSAGE_BUFFER, "A%s", argv[1]+7 );
 	else if ( !strncmp("--stop=", argv[1], 7) )
@@ -116,7 +116,7 @@ int main( int argc, char **argv )
 				close(1);
 				close(2);
 				/* Start hwscand */
-				execve("/usr/sbin/hwscand", 0, 0);
+				execve("/sbin/hwscand", 0, 0);
 			}
 		}
 	}

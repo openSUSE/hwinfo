@@ -1,3 +1,6 @@
+16/8/2004:	v9.3
+	- move hwscan* to /sbin (#43601)
+
 5/8/2004:	v9.2
 	- push/pop don't work with 32bit regs on amd64 (#43531)
 

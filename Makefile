@@ -59,7 +59,8 @@ doc:
 install:
 	install -d -m 755 $(DESTDIR)/usr/sbin $(DESTDIR)$(LIBDIR) \
 		$(DESTDIR)/usr/include $(DESTDIR)/etc/init.d
-	install -m 755 $(TARGETS) $(DESTDIR)/usr/sbin
+	install -m 755 hwinfo $(DESTDIR)/usr/sbin
+	install -m 755 hwscan hwscand hwscanqueue $(DESTDIR)/usr/sbin
 	install -m 755 -s src/ids/check_hd $(DESTDIR)/usr/sbin
 	install -m 755 src/ids/convert_hd $(DESTDIR)/usr/sbin
 	if [ -f $(LIBHD_SO) ] ; then \
