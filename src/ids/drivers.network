@@ -60,11 +60,13 @@
 
 # net/epic100.c
 10b8	0005+2
+	m	epic100
 	i	mii|epic100
 
 # net/pcnet32.c
 1022 2000
 1022 2001
+	m	pcnet32
 	i	mii|pcnet32
 
 # net/ne2k-pci.c
@@ -87,6 +89,7 @@
 1186 1300
 1500 1360
 4033 1360
+	m	8139too
 	i	mii|8139too
 
 # net/tlan.c
@@ -142,9 +145,9 @@
 # net/ne.c
 AXE 2201
 PNP 80d6
-	i	isa-pnp|8390|ne io=<io0> irq=<irq0>
 	m	ne
 		options ne		io=<io0> irq=<irq0>
+	i	isa-pnp|8390|ne io=<io0> irq=<irq0>
 
 # net/defxx.c
 1011 000f
@@ -180,11 +183,13 @@ PNP 80d6
 1106 6100
 1106 3043
 1106 3065
+	m	via-rhine
 	i	mii|via-rhine
 
 # net/winbond-840.c
 1050 0840
 11f6 2011
+	m	winbond-840
 	i	mii|winbond-840
 
 # net/yellowfin.c

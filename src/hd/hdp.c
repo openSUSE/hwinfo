@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdarg.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -27,6 +28,7 @@ static int ind = 0;		/* output indentation */
 static void dump_normal(hd_data_t *, hd_t *, FILE *);
 static void dump_cpu(hd_data_t *, hd_t *, FILE *);
 static void dump_bios(hd_data_t *, hd_t *, FILE *);
+static void dump_smbios(hd_data_t *hd_data, FILE *f);
 static void dump_prom(hd_data_t *, hd_t *, FILE *);
 static void dump_sys(hd_data_t *, hd_t *, FILE *);
 
@@ -869,6 +871,280 @@ void dump_bios(hd_data_t *hd_data, hd_t *hd, FILE *f)
     dump_line("  Product id: \"%s\"\n",  bt->smp.prod_id);
     dump_line("  %u CPUs (%u disabled)\n",  bt->smp.cpus, bt->smp.cpus - bt->smp.cpus_en);
   }
+
+  if(bt->smbios_ver) {
+    dump_line("SMBIOS Version: %u.%u\n", bt->smbios_ver >> 8, bt->smbios_ver & 0xff);
+  }
+
+  dump_smbios(hd_data, f);
+}
+
+
+/*
+ * print SMBIOS entries
+ */
+void dump_smbios(hd_data_t *hd_data, FILE *f)
+{
+  hd_smbios_t *sm;
+  int data_len;
+  str_list_t *sl;
+  unsigned char *sm_data;
+  char c, *s, *t;
+  unsigned u;
+  int i;
+  static char *wakeups[] = {
+   "Reserved", "Other", "Unknown", "APM Timer",
+   "Modem Ring", "LAN Remote", "Power Switch", "PCI PME#",
+   "AC Power Restored"
+  };
+  static char *chassistypes[] = {
+    "Unknown", "Other", "Unknown", "Desktop",
+    "Low Profile Desktop", "Pizza Box", "Mini Tower", "Tower",
+    "Portable", "LapTop", "Notebook", "Hand Held",
+    "Docking Station", "All in One", "Sub Notebook", "Space Saving",
+    "Lunch Box", "Main Server Chassis", "Expansion Chassis", "SubChassis",
+    "Bus Expansion Chassis", "Peripheral Chassis", "RAID Chassis", "Rack Mount Chassis",
+    "Sealed-case PC"
+  };
+  static char *cpustatus[8] = {
+    "Unknown Status", "CPU Enabled", "CPU Disabled by User", "CPU Disabled by BIOS",
+    "CPU Idle", "Reserved", "Reserved", "Other"
+  };
+  static char *upgrades[] = {
+    NULL, NULL, NULL, "Daughter Board",
+    "ZIF Socket", "Replaceable Piggy Back", NULL, "LIF Socket",
+    "Slot 1", "Slot 2"
+  };
+  static char *eccs[5] = {
+    "No Error Correction", "Parity", "Single-bit ECC", "Multi-bit ECC", "CRC"
+  };
+  static char *memtypes[] = {
+    "Unknown", "Other", "Unknown", "DRAM",
+    "EDRAM", "VRAM", "SRAM", "RAM",
+    "ROM", "FLASH", "EEPROM", "FEPROM",
+    "EPROM", "CDRAM", "3DRAM", "SDRAM",
+    "SGRAM"
+  };
+  static char *memforms[] = {
+    NULL, NULL, NULL, "SIMM",
+    "SIP", "Chip", "DIP", "ZIP",
+    "Proprietary Card", "DIMM", "TSOP", "Row of Chips",
+    "RIMM", "SODIMM"
+  };
+  static char *mice[] = {
+    NULL, NULL, NULL, "Mouse",
+    "Track Ball", "Track Point", "Glide Point", "Touch Pad"
+  };
+  static char *mifaces[] = {
+    NULL, NULL, NULL, "Serial",
+    "PS/2", "Infrared", "HP-HIL", "Bus Mouse",
+    "ADB"
+  };
+  static char *onboards[] = {
+    "Unknown", "Other", "Unknown", "Video",
+    "SCSI Controller", "Ethernet", "Token Ring", "Sound"
+  };
+
+  if(!hd_data->smbios) return;
+
+  for(sm = hd_data->smbios; sm; sm = sm->next) {
+    sm_data = sm->any.data;
+    data_len = sm->any.data_len;
+    switch(sm->any.type) {
+      case sm_biosinfo:
+        fprintf(f, "  BIOS Info:\n");
+        if(sm->biosinfo.vendor) fprintf(f, "    Vendor: \"%s\"\n", sm->biosinfo.vendor);
+        if(sm->biosinfo.version) fprintf(f, "    Version: \"%s\"\n", sm->biosinfo.version);
+        if(sm->biosinfo.date) fprintf(f, "    Date: \"%s\"\n", sm->biosinfo.date);
+        fprintf(f, "    Features: %016"PRIx64" %08x\n", sm->biosinfo.features, sm->biosinfo.xfeatures);
+        u = sm->biosinfo.features;	/* bits > 31 are not specified anyway */
+        if((u & (1 <<  4))) fprintf(f, "      ISA supported\n");
+        if((u & (1 <<  5))) fprintf(f, "      MCA supported\n");
+        if((u & (1 <<  6))) fprintf(f, "      EISA supported\n");
+        if((u & (1 <<  7))) fprintf(f, "      PCI supported\n");
+        if((u & (1 <<  8))) fprintf(f, "      PCMCIA supported\n");
+        if((u & (1 <<  9))) fprintf(f, "      PnP supported\n");
+        if((u & (1 << 10))) fprintf(f, "      APM supported\n");
+        if((u & (1 << 11))) fprintf(f, "      BIOS flashable\n");
+        if((u & (1 << 12))) fprintf(f, "      BIOS shadowing allowed\n");
+        if((u & (1 << 13))) fprintf(f, "      VL-VESA supported\n");
+        if((u & (1 << 14))) fprintf(f, "      ESCD supported\n");
+        if((u & (1 << 15))) fprintf(f, "      CD boot supported\n");
+        if((u & (1 << 16))) fprintf(f, "      Selectable boot supported\n");
+        if((u & (1 << 17))) fprintf(f, "      BIOS ROM socketed\n");
+        if((u & (1 << 18))) fprintf(f, "      PCMCIA boot supported\n");
+        if((u & (1 << 19))) fprintf(f, "      EDD spec supported\n");
+        u = sm->biosinfo.xfeatures;
+        if((u & (1 <<  0))) fprintf(f, "      ACPI supported\n");
+        if((u & (1 <<  1))) fprintf(f, "      USB Legacy supported\n");
+        if((u & (1 <<  2))) fprintf(f, "      AGP supported\n");
+        if((u & (1 <<  3))) fprintf(f, "      I2O boot supported\n");
+        if((u & (1 <<  4))) fprintf(f, "      LS-120 boot supported\n");
+        if((u & (1 <<  5))) fprintf(f, "      ATAPI ZIP boot supported\n");
+        if((u & (1 <<  6))) fprintf(f, "      IEEE1394 boot supported\n");
+        if((u & (1 <<  7))) fprintf(f, "      Smart Battery supported\n");
+        if((u & (1 <<  8))) fprintf(f, "      BIOS Boot Spec supported\n");
+        break;
+
+      case sm_sysinfo:
+        fprintf(f, "  System Info:\n");
+        if(sm->sysinfo.manuf) fprintf(f, "    Manufacturer: \"%s\"\n", sm->sysinfo.manuf);
+        if(sm->sysinfo.product) fprintf(f, "    Product: \"%s\"\n", sm->sysinfo.product);
+        if(sm->sysinfo.version) fprintf(f, "    Version: \"%s\"\n", sm->sysinfo.version);
+        if(sm->sysinfo.serial) fprintf(f, "    Serial: \"%s\"\n", sm->sysinfo.serial);
+        s = wakeups[sm->sysinfo.wake_up < sizeof wakeups / sizeof *wakeups ? sm->sysinfo.wake_up : 0];
+        fprintf(f, "    Wake-up: 0x%02x (%s)\n", sm->sysinfo.wake_up, s);
+        break;
+
+      case sm_boardinfo:
+        fprintf(f, "  Board Info:\n");
+        if(sm->boardinfo.manuf) fprintf(f, "    Manufacturer: \"%s\"\n", sm->boardinfo.manuf);
+        if(sm->boardinfo.product) fprintf(f, "    Product: \"%s\"\n", sm->boardinfo.product);
+        if(sm->boardinfo.version) fprintf(f, "    Version: \"%s\"\n", sm->boardinfo.version);
+        if(sm->boardinfo.serial) fprintf(f, "    Serial: \"%s\"\n", sm->boardinfo.serial);
+        break;
+
+      case sm_chassis:
+        fprintf(f, "  Chassis Info:\n");
+        if(sm->chassis.manuf) fprintf(f, "    Manufacturer: \"%s\"\n", sm->boardinfo.manuf);
+        s = chassistypes[sm->chassis.ch_type < sizeof chassistypes / sizeof *chassistypes ? sm->chassis.ch_type : 0];
+        fprintf(f, "    Type: 0x%02x (%s)\n", sm->chassis.ch_type, s);
+        break;
+
+      case sm_processor:
+        fprintf(f, "  Processor Info:\n");
+        if(sm->processor.socket) {
+          fprintf(f, "    Processor Socket: \"%s\"", sm->processor.socket);
+          s = NULL;
+          if(sm->processor.upgrade < sizeof upgrades / sizeof *upgrades) s = upgrades[sm->processor.upgrade];
+          if(s) fprintf(f, " (%s)", s);
+          fprintf(f, "\n");
+        }
+        if(sm->processor.manuf) fprintf(f, "    Processor Manufacturer: \"%s\"\n", sm->processor.manuf);
+        if(sm->processor.version) fprintf(f, "    Processor Version: \"%s\"\n", sm->processor.version);
+        if(sm->processor.voltage) {
+          fprintf(f, "    Voltage: %u.%u V\n", sm->processor.voltage / 10, sm->processor.voltage % 10);
+        }
+        if(sm->processor.ext_clock) fprintf(f, "    External Clock: %u\n", sm->processor.ext_clock);
+        if(sm->processor.max_speed) fprintf(f, "    Max. Speed: %u\n", sm->processor.max_speed);
+        if(sm->processor.current_speed) fprintf(f, "    Current Speed: %u\n", sm->processor.current_speed);
+        fprintf(f, "    Status: 0x%02x (Socket %s, %s)\n",
+          sm->processor.status,
+          (sm->processor.status & 0x40) ? "Populated" : "Empty",
+          cpustatus[sm->processor.status & 7]
+        );
+        break;
+
+      case sm_onboard:
+        fprintf(f, "  On Board Devices:\n");
+        for(i = 0; i < sizeof sm->onboard.descr / sizeof *sm->onboard.descr; i++) {
+          if(sm->onboard.descr[i]) {
+            u = sm->onboard.dtype[i] & 0x7f;
+            s = onboards[u < sizeof onboards / sizeof *onboards ? u : 0];
+            fprintf(f, "    %s: \"%s\"%s\n",
+              s,
+              sm->onboard.descr[i],
+              (sm->onboard.dtype[i] & 0x80) ? "" : " (disabled)"
+            );
+          }
+        }
+        break;
+
+      case sm_lang:
+        fprintf(f, "  Language Info:\n");
+        if((sl = sm->lang.strings)) {
+          fprintf(f, "    Languages: ");
+          for(; sl; sl = sl->next) {
+            fprintf(f, "%s%s", sl->str, sl->next ? ", " : "");
+          }
+          fprintf(f, "\n");
+        }
+        if(sm->lang.current) fprintf(f, "    Current: %s\n", sm->lang.current);
+        break;
+
+      case sm_memarray:
+        fprintf(f, "  Physical Memory Array:\n");
+        if(sm->memarray.max_size) {
+          u = sm->memarray.max_size;
+          c = 'k';
+          if(!(u & 0x3ff)) { u >>= 10; c = 'M'; }
+          if(!(u & 0x3ff)) { u >>= 10; c = 'G'; }
+          fprintf(f, "    Max. Size: %u %cB", u, c);
+          if(sm->memarray.ecc >= 3 && sm->memarray.ecc < 8) {
+            fprintf(f, " (%s)", eccs[sm->memarray.ecc - 3]);
+          }
+          fprintf(f, "\n");
+        }
+        break;
+
+      case sm_memdevice:
+        fprintf(f, "  Memory Device:\n");
+        if(sm->memdevice.location) fprintf(f, "    Location: \"%s\"\n", sm->memdevice.location);
+        if(sm->memdevice.bank) fprintf(f, "    Bank: \"%s\"\n", sm->memdevice.bank);
+        if(sm->memdevice.size) {
+          u = sm->memdevice.size;
+          c = 'k';
+          if(!(u & 0x3ff)) { u >>= 10; c = 'M'; }
+          if(!(u & 0x3ff)) { u >>= 10; c = 'G'; }
+          fprintf(f, "    Size: %u %cB\n", u, c);
+
+          fprintf(f, "    Type: %u bits", sm->memdevice.width);
+          if(sm->memdevice.eccbits) fprintf(f, " (+%u ecc bits)", sm->memdevice.eccbits);
+          fprintf(f, ",");
+          u = sm->memdevice.type2;
+          if((u & (1 <<  3))) fprintf(f, " Fast-paged");
+          if((u & (1 <<  4))) fprintf(f, " Static column");
+          if((u & (1 <<  5))) fprintf(f, " Pseudo static");
+          if((u & (1 <<  6))) fprintf(f, " RAMBUS");
+          if((u & (1 <<  7))) fprintf(f, " Syncronous");
+          if((u & (1 <<  8))) fprintf(f, " CMOS");
+          if((u & (1 <<  9))) fprintf(f, " EDO");
+          if((u & (1 << 10))) fprintf(f, " Window DRAM");
+          if((u & (1 << 11))) fprintf(f, " Cache DRAM");
+          if((u & (1 << 12))) fprintf(f, " Non-volatile");
+          u = sm->memdevice.type1;
+          fprintf(f, " %s", memtypes[u < sizeof memtypes / sizeof *memtypes ? u : 0]);
+          u = sm->memdevice.form;
+          s = memforms[u < sizeof memforms / sizeof *memforms ? u : 0];
+          if(s) fprintf(f, ", %s", s);
+          fprintf(f, "\n");
+          if(sm->memdevice.speed) fprintf(f, "    Speed: %u MHz", sm->memdevice.speed);
+        }
+        else {
+          fprintf(f, "    Size: No Memory Installed\n");
+        }
+        break;
+
+      case sm_mouse:
+        fprintf(f, "  Pointing Device:\n");
+        s = mice[sm->mouse.mtype < sizeof mice / sizeof *mice ? sm->mouse.mtype : 0];
+        u = sm->mouse.interface;
+        t = mifaces[u < sizeof mifaces / sizeof *mifaces ? u : 0];
+        if(u == 0xa0) t = "DB-9 Bus Mouse";
+        if(u == 0xa1) t = "micro-DIN Bus Mouse";
+        if(u == 0xa2) t = "USB";
+        if(s) {
+          fprintf(f, "    Mouse: %s%s%s%s, %u buttons\n",
+            s,
+            t ? " (" : "", t ?: "", t ? ")" : "",
+            sm->mouse.buttons
+          );
+        }
+        break;
+
+      case sm_oem:
+      case sm_config:
+        fprintf(f,
+          sm->any.type == sm_oem ? "  OEM Strings:\n" : "  System Config Options (Jumpers & Switches):\n"
+        );
+        for(sl = sm->any.strings; sl; sl = sl->next) {
+          if(sl->str && *sl->str) fprintf(f, "    %s\n", sl->str);
+        }
+
+      default:
+    }
+  }
+
 
 }
 

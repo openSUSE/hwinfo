@@ -706,6 +706,8 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->disks = free_str_list(hd_data->disks);
   hd_data->partitions = free_str_list(hd_data->partitions);
 
+  hd_data->smbios = free_smbios_list(hd_data->smbios);
+
   hd_data->last_idx = 0;
 
   return NULL;
@@ -1373,7 +1375,6 @@ hd_res_t *free_res_list(hd_res_t *res)
 }
 
 
-
 /*
  * Note: new_res is directly inserted into the list, so you *must* make sure
  * that new_res points to a malloc'ed pice of memory.
@@ -1383,6 +1384,88 @@ hd_res_t *add_res_entry(hd_res_t **res, hd_res_t *new_res)
   while(*res) res = &(*res)->next;
 
   return *res = new_res;
+}
+
+
+/*
+ * Free the memory allocated by a smbios list.
+ */
+hd_smbios_t *free_smbios_list(hd_smbios_t *sm)
+{
+  hd_smbios_t *next;
+  int i;
+
+  for(; sm; sm = next) {
+    next = sm->next;
+
+    free_mem(sm->any.data);
+    free_str_list(sm->any.strings);
+
+    switch(sm->any.type) {
+      case sm_biosinfo:
+        free_mem(sm->biosinfo.vendor);
+        free_mem(sm->biosinfo.version);
+        free_mem(sm->biosinfo.date);
+        break;
+
+      case sm_sysinfo:
+        free_mem(sm->sysinfo.manuf);
+        free_mem(sm->sysinfo.product);
+        free_mem(sm->sysinfo.version);
+        free_mem(sm->sysinfo.serial);
+        break;
+
+      case sm_boardinfo:
+        free_mem(sm->boardinfo.manuf);
+        free_mem(sm->boardinfo.product);
+        free_mem(sm->boardinfo.version);
+        free_mem(sm->boardinfo.serial);
+        break;
+
+      case sm_chassis:
+        free_mem(sm->chassis.manuf);
+        break;
+
+      case sm_processor:
+        free_mem(sm->processor.socket);
+        free_mem(sm->processor.manuf);
+        free_mem(sm->processor.version);
+        break;
+
+      case sm_onboard:
+        for(i = 0; i < sizeof sm->onboard.descr / sizeof *sm->onboard.descr; i++) {
+          free_mem(sm->onboard.descr[i]);
+        }
+        break;
+
+      case sm_lang:
+        free_mem(sm->lang.current);
+        break;
+
+      case sm_memdevice:
+        free_mem(sm->memdevice.location);
+        free_mem(sm->memdevice.bank);
+        break;
+
+      default:
+    }
+
+    free_mem(sm);
+  }
+
+  return NULL;
+}
+
+
+/*
+ * Note: new_smbios is directly inserted into the list, so you *must* make sure
+ * that new_smbios points to a malloc'ed pice of memory.
+ */
+hd_smbios_t *add_smbios_entry(hd_smbios_t **sm, hd_smbios_t *new_sm)
+{
+  while(*sm) sm = &(*sm)->next;
+
+  return *sm = new_sm;
 }
 
 

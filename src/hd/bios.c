@@ -22,6 +22,8 @@ static void read_memory(memory_range_t *mem);
 static void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *label);
 static void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt);
 static void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt);
+static char *get_string(str_list_t *sl, int index);
+static void parse_smbios(hd_data_t *hd_data, bios_info_t *bt);
 static void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt);
 static unsigned char crc(unsigned char *mem, unsigned len);
 static int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
@@ -352,6 +354,7 @@ void hd_scan_bios(hd_data_t *hd_data)
 void read_memory(memory_range_t *mem)
 {
   int fd;
+  char *s = getenv("LIBHD_MEM");
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -364,7 +367,7 @@ void read_memory(memory_range_t *mem)
   fd = -1;
   if(
     !(
-      (fd = open(DEV_MEM, O_RDWR)) >= 0 &&
+      (fd = open(s ? s : DEV_MEM, O_RDONLY)) >= 0 &&
       lseek(fd, mem->start, SEEK_SET) >= 0 &&
       read(fd, mem->data, mem->size) == mem->size
     )
@@ -441,14 +444,16 @@ unsigned char crc(unsigned char *mem, unsigned len)
 void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
 {
   unsigned u, u1, u2, ok, hlen = 0, ofs;
-  unsigned addr = 0, len = 0;
+  unsigned addr = 0, len = 0, scnt;
   unsigned structs = 0, type, slen;
+  char *s;
   memory_range_t memory;
+  hd_smbios_t *sm;
 
   if(!mem->data || mem->size < 0x100) return;
 
   for(u = ok = 0; u <= mem->size - 0x100; u += 0x10) {
-    if(*(unsigned *) (mem->data + u) == 0x5f4d535f) {	/* "_MP_" */
+    if(*(unsigned *) (mem->data + u) == 0x5f4d535f) {	/* "_SM_" */
       hlen = mem->data[u + 5];
       addr = *(unsigned *) (mem->data + u + 0x18);
       len = *(unsigned short *) (mem->data + u + 0x16);
@@ -460,6 +465,10 @@ void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
   }
 
   if(!ok) return;
+
+  bt->smbios_ver = (mem->data[u + 6] << 8) + mem->data[u + 7];
+
+  hd_data->smbios = free_smbios_list(hd_data->smbios);
 
   memory.start = mem->start + u;
   memory.size = hlen;
@@ -480,22 +489,32 @@ void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
     dump_memory(hd_data, &memory, 0, "SMBIOS Structure Table");
   }
 
-  for(u = 0, ofs = 0; u < structs && ofs + 3 < len; u++) {
+  for(type = 0, u = 0, ofs = 0; u < structs && ofs + 4 < len; u++) {
     type = memory.data[ofs];
     slen = memory.data[ofs + 1];
     if(ofs + slen > len || slen < 4) break;
-    slen -= 4;
-    ofs += 4;
-    ADD2LOG("  %2u [type 0x%02x, ofs 0x%03x]: ", u, type, ofs);
-    if(slen) hexdump(&hd_data->log, 0, slen, memory.data + ofs);
+    sm = add_smbios_entry(&hd_data->smbios, new_mem(sizeof *sm));
+    sm->any.type = type;
+    sm->any.data_len = slen;
+    sm->any.data = new_mem(slen);
+    memcpy(sm->any.data, memory.data + ofs, slen);
+    sm->any.handle = *(uint16_t *) (memory.data + ofs + 2);
+    ADD2LOG("  type 0x%02x [0x%04x]: ", type, sm->any.handle);
+    if(slen) hexdump(&hd_data->log, 0, slen, sm->any.data);
     ADD2LOG("\n");
+    if(type == sm_end) break;
     ofs += slen;
     u1 = ofs;
     u2 = 1;
+    scnt = 0;
     while(ofs + 1 < len) {
       if(!memory.data[ofs]) {
         if(ofs > u1) {
-          ADD2LOG("     str%u: \"%s\"\n", u2, memory.data + u1);
+          s = canon_str(memory.data + u1, strlen(memory.data + u1));
+          add_str_list(&sm->any.strings, s);
+          scnt++;
+          if(*s) ADD2LOG("       str%d: \"%s\"\n", scnt, s);
+          free_mem(s);
           u1 = ofs + 1;
           u2++;
         }
@@ -508,10 +527,194 @@ void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
     }
   }
 
-  if(u != structs) ADD2LOG("  oops: only %d of %d structs found\n", u, structs);
+  if(u != structs) {
+    if(type == sm_end) {
+      ADD2LOG("  smbios: stopped at end tag\n");
+    }
+    else {
+      ADD2LOG("  smbios oops: only %d of %d structs found\n", u, structs);
+    }
+  }
 
   memory.data = free_mem(memory.data);
 
+  parse_smbios(hd_data, bt);
+}
+
+
+char *get_string(str_list_t *sl, int index)
+{
+  if(!sl || !index) return NULL;
+
+  for(; sl; sl = sl->next, index--) {
+    if(index == 1) return new_str(sl->str && *sl->str ? sl->str : NULL);
+  }
+
+  return NULL;
+}
+
+
+void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
+{
+  hd_smbios_t *sm;
+  str_list_t *sl;
+  int cnt, data_len;
+  unsigned char *sm_data;
+  unsigned u, v;
+
+  if(!hd_data->smbios) return;
+
+  for(cnt = 0, sm = hd_data->smbios; sm; sm = sm->next, cnt++) {
+    sm_data = sm->any.data;
+    data_len = sm->any.data_len;
+    sl = sm->any.strings;
+    switch(sm->any.type) {
+      case sm_biosinfo:
+        if(data_len >= 0x12) {
+          sm->biosinfo.vendor = get_string(sl, sm_data[4]);
+          sm->biosinfo.version = get_string(sl, sm_data[5]);
+          sm->biosinfo.date = get_string(sl, sm_data[8]);
+          sm->biosinfo.features = *(uint64_t *) (sm_data + 0xa);
+        }
+        if(data_len >= 0x13) {
+          sm->biosinfo.xfeatures = sm_data[0x12];
+        }
+        if(data_len >= 0x14) {
+          sm->biosinfo.xfeatures |= sm_data[0x13] << 8;
+        }
+        break;
+
+      case sm_sysinfo:
+        if(data_len >= 8) {
+          sm->sysinfo.manuf = get_string(sl, sm_data[4]);
+          sm->sysinfo.product = get_string(sl, sm_data[5]);
+          sm->sysinfo.version = get_string(sl, sm_data[6]);
+          sm->sysinfo.serial = get_string(sl, sm_data[7]);
+        }
+        if(data_len >= 0x19) {
+          sm->sysinfo.wake_up = sm_data[0x18];
+        }
+        break;
+
+      case sm_boardinfo:
+        if(data_len >= 8) {
+          sm->boardinfo.manuf = get_string(sl, sm_data[4]);
+          sm->boardinfo.product = get_string(sl, sm_data[5]);
+          sm->boardinfo.version = get_string(sl, sm_data[6]);
+          sm->boardinfo.serial = get_string(sl, sm_data[7]);
+        }
+        break;
+
+      case sm_chassis:
+        if(data_len >= 6) {
+          sm->chassis.manuf = get_string(sl, sm_data[4]);
+          sm->chassis.ch_type = sm_data[5] & 0x7f;
+        }
+        break;
+
+      case sm_processor:
+        if(data_len >= 0x20) {
+          sm->processor.socket = get_string(sl, sm_data[4]);
+          sm->processor.manuf = get_string(sl, sm_data[7]);
+          sm->processor.version = get_string(sl, sm_data[0x10]);
+          sm->processor.voltage = sm_data[0x11];
+          if(sm->processor.voltage & 0x80) {
+            sm->processor.voltage &= 0x7f;
+          }
+          else {
+            switch(sm->processor.voltage) {
+              case 0x01:
+                sm->processor.voltage = 50;
+                break;
+              case 0x02:
+                sm->processor.voltage = 33;
+                break;
+              case 0x04:
+                sm->processor.voltage = 29;
+                break;
+              default:
+                sm->processor.voltage = 0;
+            }
+          }
+          sm->processor.ext_clock = *(uint16_t *) (sm_data + 0x12);
+          sm->processor.max_speed = *(uint16_t *) (sm_data + 0x14);
+          sm->processor.current_speed = *(uint16_t *) (sm_data + 0x16);
+          sm->processor.status = sm_data[0x18];
+          sm->processor.upgrade = sm_data[0x19];
+        }
+        break;
+
+      case sm_onboard:
+        if(data_len >= 4) {
+          u = data_len - 4;
+          if(!(u & 1)) {
+            u >>= 1;
+            if(u > sizeof sm->onboard.descr / sizeof *sm->onboard.descr) {
+              u = sizeof sm->onboard.descr / sizeof *sm->onboard.descr;
+            }
+            for(v = 0; v < u; v++) {
+              sm->onboard.descr[v] = get_string(sl, sm_data[4 + (v << 1) + 1]);
+              sm->onboard.dtype[v] = sm_data[4 + (v << 1)];
+            }
+          }
+        }
+        break;
+
+      case sm_lang:
+        if(data_len >= 0x16) {
+          sm->lang.current = get_string(sl, sm_data[0x15]);
+        }
+        break;
+
+      case sm_memarray:
+        if(data_len >= 0x0b) {
+          sm->memarray.ecc = sm_data[6];
+          sm->memarray.max_size = *(uint32_t *) (sm_data + 0x7);
+        }
+        break;
+
+      case sm_memdevice:
+        if(data_len >= 0x15) {
+          sm->memdevice.eccbits = *(uint16_t *) (sm_data + 8);
+          sm->memdevice.width = *(uint16_t *) (sm_data + 0xa);
+          if(sm->memdevice.width == 0xffff) sm->memdevice.width = 0;
+          if(sm->memdevice.eccbits == 0xffff) sm->memdevice.eccbits = 0;
+          if(sm->memdevice.eccbits >= sm->memdevice.width) {
+            sm->memdevice.eccbits -= sm->memdevice.width;
+          }
+          else {
+            sm->memdevice.eccbits = 0;
+          }
+          sm->memdevice.size = *(uint16_t *) (sm_data + 0xc);
+          if(sm->memdevice.size == 0xffff) sm->memdevice.size = 0;
+          if((sm->memdevice.size & 0x8000)) {
+            sm->memdevice.size &= 0x7fff;
+          }
+          else {
+            sm->memdevice.size <<= 10;
+          }
+          sm->memdevice.form = sm_data[0xe];
+          sm->memdevice.location = get_string(sl, sm_data[0x10]);
+          sm->memdevice.bank = get_string(sl, sm_data[0x11]);
+          sm->memdevice.type1 = sm_data[0x12];
+          sm->memdevice.type2 = *(uint16_t *) (sm_data + 0x13);
+        }
+        if(data_len >= 0x17) {
+          sm->memdevice.speed = *(uint16_t *) (sm_data + 0x15);
+        }
+        break;
+
+      case sm_mouse:
+        if(data_len >= 7) {
+          sm->mouse.mtype = sm_data[4];
+          sm->mouse.interface = sm_data[5];
+          sm->mouse.buttons = sm_data[6];
+        }
+        break;
+
+      default:
+    }
+  }
 }
 
 

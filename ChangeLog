@@ -1,7 +1,14 @@
+9/3/2002:	v4.16
 	- made hwbootscan an init script again, started after hotplug.
 	- do not delete the reconfig.needed files, but set configured=no
 	  and needed=no to avoid problems with unsupported graphic cards.
 	- added usb ids from usbutils
+	- fixed network module info (#14529)
+	- improved smbios parser
+	- updated x11 driver info
+	- isdn: fix wrong names (AVM) and add more USB devices
+	- disabled pci setup code that caused infinite loops on
+	  some systems with isa gfxcards
 
 4/3/2002:	v4.15
 	- new isdn data

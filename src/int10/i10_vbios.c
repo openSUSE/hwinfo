@@ -88,6 +88,7 @@ InitInt10()
       return -1;
     }
   setup_io();
+#if 0
   iopl(3);
   scan_pci();
   for (; CurrentPci; CurrentPci = CurrentPci->next)
@@ -104,6 +105,7 @@ InitInt10()
 	break;
       }
   iopl(0);
+#endif
   setup_int_vect();
 #if 0
   if (!CurrentPci && !copy_vbios())

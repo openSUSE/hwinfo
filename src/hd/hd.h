@@ -321,6 +321,179 @@ typedef struct {
 
 
 /*
+ * smbios entries
+ */
+typedef enum {
+  sm_biosinfo, sm_sysinfo, sm_boardinfo, sm_chassis,
+  sm_processor, sm_memctrl, sm_memmodule, sm_cache,
+  sm_connect, sm_slot, sm_onboard, sm_oem,
+  sm_config, sm_lang, sm_group, sm_eventlog,
+  sm_memarray, sm_memdevice, sm_memerror, sm_memarraymap,
+  sm_memdevicemap, sm_mouse, sm_battery, sm_reset,
+  sm_secure, sm_power, sm_voltage, sm_cool,
+  sm_temperature, sm_current, sm_outofband, sm_bis,
+  sm_boot, sm_memerror64, sm_mandev, sm_mandevcomp,
+  sm_mdtd, sm_inactive = 126, sm_end = 127
+} hd_smbios_type_t;
+
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+} smbios_any_t;
+
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  char *vendor;
+  char *version;
+  char *date;
+  uint64_t features;
+  unsigned xfeatures;
+} smbios_biosinfo_t;
+
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  char *manuf;
+  char *product;
+  char *version;
+  char *serial;
+  unsigned wake_up;
+} smbios_sysinfo_t;
+
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  char *manuf;
+  char *product;
+  char *version;
+  char *serial;
+} smbios_boardinfo_t;
+
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  char *manuf;
+  unsigned ch_type;
+} smbios_chassis_t;
+
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  char *socket;
+  char *manuf;
+  char *version;
+  unsigned voltage;		/* in 0.1 V */
+  unsigned ext_clock;		/* MHz */
+  unsigned max_speed;		/* MHz */
+  unsigned current_speed;	/* MHz */
+  unsigned status;
+  unsigned upgrade;
+} smbios_processor_t;
+
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  char *descr[8];
+  unsigned dtype[8];
+} smbios_onboard_t;
+
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  char *current;
+} smbios_lang_t;
+
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  unsigned ecc;
+  unsigned max_size;		/* kB */
+} smbios_memarray_t;
+
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  char *location;
+  char *bank;
+  unsigned width;
+  unsigned eccbits;
+  unsigned size;		/* kB */
+  unsigned form;
+  unsigned type1;
+  unsigned type2;
+  unsigned speed;
+} smbios_memdevice_t;
+
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  unsigned mtype;
+  unsigned interface;
+  unsigned buttons;
+} smbios_mouse_t;
+
+typedef union u_hd_smbios_t {
+  union u_hd_smbios_t *next;  
+  smbios_any_t any;
+  smbios_biosinfo_t biosinfo;
+  smbios_sysinfo_t sysinfo;
+  smbios_boardinfo_t boardinfo;
+  smbios_chassis_t chassis;
+  smbios_processor_t processor;
+  smbios_lang_t lang;
+  smbios_memarray_t memarray;
+  smbios_memdevice_t memdevice;
+  smbios_mouse_t mouse;
+  smbios_onboard_t onboard;
+} hd_smbios_t;
+
+
+/*
  * structure holding the (raw) PCI data
  */
 typedef struct s_pci_t {
@@ -518,6 +691,7 @@ typedef struct {
   vbe_info_t vbe;
 
   unsigned fsc_lcd;
+  unsigned smbios_ver;
 
 } bios_info_t;
 
@@ -1188,6 +1362,7 @@ typedef struct {
   hd_manual_t *manual;		/* hardware config info */
   str_list_t *disks;		/* disks according to /proc/partitions */
   str_list_t *partitions;	/* dto, partitions */
+  hd_smbios_t *smbios;		/* smbios data */
 } hd_data_t;
 
 

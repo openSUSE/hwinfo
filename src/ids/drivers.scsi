@@ -23,10 +23,11 @@
 
 # scsi/aic7xxx_old.c
 # see bug #11202
-9005 0080 9005 e220
-9005 008f 9005 008f
-	i	aic7xxx_old
-	i	aic7xxx
+# no longer needed, #14498
+#9005 0080 9005 e220
+#9005 008f 9005 008f
+#	i	aic7xxx_old
+#	i	aic7xxx
 
 # scsi/aic7xxx.c
 9004 1078
