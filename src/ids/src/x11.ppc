@@ -1,31 +1,3 @@
- vendor.id		pci 0x0000
-+vendor.name		Sun Microsystems
-
- vendor.id		pci 0x0000
-&device.id		pci 0x0001
-+device.name		Sun|Monochrome (bwtwo)
-+driver.xfree		3
-
- vendor.id		pci 0x0000
-&device.id		pci 0x0002
-+device.name		Sun|Color3 (cgthree)
-+driver.xfree		3
-
- vendor.id		pci 0x0000
-&device.id		pci 0x0003
-+device.name		Sun|CG8/RasterOps (cgeight)
-+driver.xfree		3
-
- vendor.id		pci 0x0000
-&device.id		pci 0x0004
-+device.name		Sun|GS (cgtwelve)
-+driver.xfree		3|XFB_Dev
-
- vendor.id		pci 0x0000
-&device.id		pci 0x0005
-+device.name		Sun|Graphics Tower (gt)
-+driver.xfree		3
-
  vendor.id		pci 0x1002
 +vendor.name		ATI Technologies Inc
 
@@ -209,4 +181,32 @@
 &device.id		pci 0x0003
 +device.name		Voodoo Banshee
 +driver.xfree		4|fbdev|||||24
+
+ vendor.id		special 0x4001
++vendor.name		Sun Microsystems
+
+ vendor.id		special 0x4001
+&device.id		special 0x0001
++device.name		Sun|Monochrome (bwtwo)
++driver.xfree		3
+
+ vendor.id		special 0x4001
+&device.id		special 0x0002
++device.name		Sun|Color3 (cgthree)
++driver.xfree		3
+
+ vendor.id		special 0x4001
+&device.id		special 0x0003
++device.name		Sun|CG8/RasterOps (cgeight)
++driver.xfree		3
+
+ vendor.id		special 0x4001
+&device.id		special 0x0004
++device.name		Sun|GS (cgtwelve)
++driver.xfree		3|XFB_Dev
+
+ vendor.id		special 0x4001
+&device.id		special 0x0005
++device.name		Sun|Graphics Tower (gt)
++driver.xfree		3
 

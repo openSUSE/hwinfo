@@ -1,5 +1,8 @@
 29/8/2002:	v5.21
 	- braille detection on sparc
+	- fixed script that reads CDB data
+	- log error messages from vm86 code
+	- better chipcard reader support
 
 28/8/2002:	v5.20
 	- got rid of gcc warning

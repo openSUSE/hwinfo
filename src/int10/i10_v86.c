@@ -40,9 +40,6 @@ struct vm86_struct vm86s;
 
 static int vm86_GP_fault(void);
 static int vm86_do_int(int num);
-static void dump_code(void);
-static void dump_registers(void);
-static void stack_trace(void);
 #ifdef __i386__
 static int vm86_rep(struct vm86_struct *ptr);
 #endif
@@ -57,22 +54,6 @@ void log_registers(void);
 #define DF (1 << 10)
 
 struct pio P;
-
-void xoutb(CARD16 a, CARD8 b) {
-  fprintf(stderr, "outb %0x:%0x\n", a, b);
-  sleep(1);
-  outb(a, b);
-}
-void xoutw(CARD16 a, CARD8 b) {
-  fprintf(stderr, "outb %0x:%0x\n", a, b);
-  sleep(1);
-  outw(a, b);
-}
-void xoutl(CARD16 a, CARD8 b) {
-  fprintf(stderr, "outb %0x:%0x\n", a, b);
-  sleep(1);
-  outl(a, b);
-}
 
 void
 setup_io(void) 
@@ -136,13 +117,11 @@ collect_bios_regs(i86biosRegsPtr regs)
 static int
 do_vm86(void)
 {
-	int retval;
+  int retval;
 	
 #ifdef V86BIOS_DEBUG
 	dump_registers();
 #endif
-//    retval = SYS_vm86old(&vm86s);
-//    retval = syscall(SYS_vm86old,&vm86s);
 
 #ifdef __i386__
 	retval = vm86_rep(&vm86s);
@@ -152,17 +131,17 @@ do_vm86(void)
 
 	switch (VM86_TYPE(retval)) {
 	case VM86_UNKNOWN:
-	    if (!vm86_GP_fault()) return 0;
+		if (!vm86_GP_fault())
+			return 0;
 		break;
 	case VM86_STI:
-		fprintf(stderr,"vm86_sti :-((\n");
-		stack_trace();
-		dump_code();
+		log_err("vm86_sti :-((\n");
+		log_registers();
 		return 0;
 	case VM86_INTx:
 		if (!vm86_do_int(VM86_ARG(retval))) {
-			fprintf(stderr,"\nUnknown vm86_int: %X\n\n",VM86_ARG(retval));
-			dump_registers();
+			log_err("Unknown vm86_int: %X\n",VM86_ARG(retval));
+			log_registers();
 			return 0;
 		}
 		/* I'm not sure yet what to do if we can handle ints */
@@ -172,11 +151,9 @@ do_vm86(void)
 		log_registers();
 		return 0;
 	default:
-		fprintf(stderr,"unknown type(0x%x)=0x%x\n",
+		log_err("unknown type(0x%x)=0x%x\n",
 				VM86_ARG(retval),VM86_TYPE(retval));
-		dump_registers();
-		dump_code();
-		stack_trace();
+		log_registers();
 		return 0;
 	}
 	
@@ -345,18 +322,16 @@ vm86_GP_fault(void)
 		return 0;
 
 	case 0x0f: 
-		fprintf(stderr,"CPU 0x0f Trap at eip=0x%lx\n",CPU_REG(eip));
+		log_err("CPU 0x0f Trap at eip=0x%lx\n",CPU_REG(eip));
 		goto op0ferr; 
 		break;
 
 	case 0xf0:                  /* lock */
 	default:
-		fprintf(stderr,"unknown reason for exception\n");
-		dump_registers();
-		stack_trace();
+		log_err("unknown reason for exception\n");
+		log_registers();
 	op0ferr:
-		dump_code();
-		fprintf(stderr,"cannot continue\n");
+		log_err("cannot continue\n");
 		return 0;
 	}                           /* end of switch() */
 	return 1;
@@ -415,59 +390,6 @@ vm86_do_int(int num)
 	return val;
 #undef COPY
 #undef COPY_R
-}
-
-static void
-dump_code(void)
-{
-	int i;
-	unsigned char *lina = SEG_ADR((unsigned char *), cs, ip);
-
-	fprintf(stderr,"code at 0x%8.8x: ",(CARD32)lina);
-	for (i=0; i<0x10; i++) 
-		fprintf(stderr,"%2.2x ",*(lina + i));
-	fprintf(stderr,"\n                    ");
-	for (; i<0x20; i++) 
-		fprintf(stderr,"%2.2x ",*(lina + i));
-	fprintf(stderr,"\n");
-}
-
-#define PRINT(x) fprintf(stderr,#x":%4.4x ",CPU_REG_LW(x))
-#define PRINT_FLAGS(x) fprintf(stderr,#x":%8.8x ",CPU_REG_LW(x))
-static void
-dump_registers(void)
-{
-	PRINT(eip);
-	PRINT(eax);
-	PRINT(ebx);
-	PRINT(ecx);
-	PRINT(edx);
-	PRINT(esi);
-	PRINT(edi);
-	PRINT(ebp);
-	fprintf(stderr,"\n");
-	PRINT(esp);
-	PRINT(cs);
-	PRINT(ss);
-	PRINT(es);
-	PRINT(ds);
-	PRINT(fs);
-	PRINT(gs);
-	PRINT_FLAGS(eflags);
-	fprintf(stderr,"\n");
-}
-
-static void
-stack_trace(void)
-{
-	int i;
-	unsigned char *stack = SEG_ADR((unsigned char *), ss, sp);    
-
-	fprintf(stderr,"stack at 0x%8.8lx:\n",(unsigned long)stack);
-	for (i=0; i < 0x10; i++) 
-		fprintf(stderr,"%2.2x ",*(stack + i));
-	fprintf(stderr,"\n");
-	
 }
 
 #ifdef __i386__

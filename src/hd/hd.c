@@ -494,6 +494,10 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_chipcard:
+      hd_set_probe_feature(hd_data, pr_misc);
+      if(!hd_data->flags.fast) {
+        hd_set_probe_feature(hd_data, pr_serial);
+      }
       hd_set_probe_feature(hd_data, pr_usb);
       break;
 

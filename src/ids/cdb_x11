@@ -35,6 +35,41 @@ my ($subproduct_id,$subproduct_class,$subvendor_class,$subproduct_name,$subvendo
 my (%tooltopics,$tooltopic_name,$vario_name,$charvalue);
 my (@raw,$raw);
 
+# convert to new id format
+sub new_id
+{
+  my ($old_id, $id_class, $tag, $id);
+
+  ($old_id, $id_class) = @_;
+
+  if($old_id =~ /^([us]?)(\S{4})$/) {
+    $tag = $1;
+    $id = $2;
+  }
+  else {
+    die "invalid id format: \"$old_id\"\n";
+  }
+
+  if($tag eq "" && $id_class && $id_class =~ /^([us]?)(\S{4})$/) {
+    $tag = $1;
+  }
+
+  if($tag eq "s") {
+    $tag = "special ";
+  }
+  elsif($tag eq "u") {
+    $tag = "usb ";
+  }
+  elsif($tag eq "") {
+    $tag = "pci ";
+  }
+  else {
+    die "invalid id format: \"$old_id\"\n";
+  }
+
+  return "${tag}0x$id";
+}
+
 
 print "\n\nGenerating x11.hwinfo-files, one for each architecture.\n";
 =head1
@@ -187,17 +222,17 @@ foreach $arch_name (@arch_names) {
 	  }
       }
       if ( ($vendor_class ne "") && ($product_class ne "") ) {
-          print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
+          print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
           print FH "+vendor.name\t\t$vendor_name\n";
 	  if ( ($subvendor_class ne "") && ($subproduct_class ne "") ) {
-	    print FH "\n vendor.id\t\tpci 0x$subvendor_class\n";
-	    print FH "&device.id\t\tpci 0x$subproduct_class\n";
-	    print FH "&subvendor.id\t\tpci 0x$vendor_class\n";
-	    print FH "&subdevice.id\t\tpci 0x$product_class\n";
+	    print FH "\n vendor.id\t\t${\new_id $subvendor_class, $vendor_class}\n";
+	    print FH "&device.id\t\t${\new_id $subproduct_class, $vendor_class}\n";
+	    print FH "&subvendor.id\t\t${\new_id $vendor_class}\n";
+	    print FH "&subdevice.id\t\t${\new_id $product_class, $vendor_class}\n";
 	    print FH "+subdevice.name\t\t$product_name\n";
 	  } else {
-	    print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
-	    print FH "&device.id\t\tpci 0x$product_class\n";
+	    print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
+	    print FH "&device.id\t\t${\new_id $product_class, $vendor_class}\n";
 	    print FH "+device.name\t\t$product_name\n";
 	  }
 	if ($tooltopics{resol} ne "") {
@@ -287,17 +322,17 @@ foreach $arch_name (@arch_names) {
 	}
       }
       if ( ($vendor_class ne "") && ($product_class ne "") ) {
-          print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
+          print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
           print FH "+vendor.name\t\t$vendor_name\n";
 	  if ( ($subvendor_class ne "") && ($subproduct_class ne "") ) {
-	    print FH "\n vendor.id\t\tpci 0x$subvendor_class\n";
-	    print FH "&device.id\t\tpci 0x$subproduct_class\n";
-	    print FH "&subvendor.id\t\tpci 0x$vendor_class\n";
-	    print FH "&subdevice.id\t\tpci 0x$product_class\n";
+	    print FH "\n vendor.id\t\t${\new_id $subvendor_class, $vendor_class}\n";
+	    print FH "&device.id\t\t${\new_id $subproduct_class, $vendor_class}\n";
+	    print FH "&subvendor.id\t\t${\new_id $vendor_class}\n";
+	    print FH "&subdevice.id\t\t${\new_id $product_class, $vendor_class}\n";
 	    print FH "+subdevice.name\t\t$product_name\n";
 	  } else {
-	    print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
-	    print FH "&device.id\t\tpci 0x$product_class\n";
+	    print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
+	    print FH "&device.id\t\t${\new_id $product_class, $vendor_class}\n";
 	    print FH "+device.name\t\t$product_name\n";
 	  }
 	  if ($tooltopics{resol} ne "") {
@@ -385,17 +420,17 @@ foreach $arch_name (@arch_names) {
 	}
 	}
       if ( ($vendor_class ne "") && ($product_class ne "") ) {
-        print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
+        print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
         print FH "+vendor.name\t\t$vendor_name\n";
 	if ( ($subvendor_class ne "") && ($subproduct_class ne "") ) {
-	  print FH "\n vendor.id\t\tpci 0x$subvendor_class\n";
-	  print FH "&device.id\t\tpci 0x$subproduct_class\n";
-	  print FH "&subvendor.id\t\tpci 0x$vendor_class\n";
-	  print FH "&subdevice.id\t\tpci 0x$product_class\n";
+	  print FH "\n vendor.id\t\t${\new_id $subvendor_class, $vendor_class}\n";
+	  print FH "&device.id\t\t${\new_id $subproduct_class, $vendor_class}\n";
+	  print FH "&subvendor.id\t\t${\new_id $vendor_class}\n";
+	  print FH "&subdevice.id\t\t${\new_id $product_class, $vendor_class}\n";
 	  print FH "+subdevice.name\t\t$product_name\n";
 	} else {
-	  print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
-	  print FH "&device.id\t\tpci 0x$product_class\n";
+	  print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
+	  print FH "&device.id\t\t${\new_id $product_class, $vendor_class}\n";
 	  print FH "+device.name\t\t$product_name\n";
 	}
 	if ($tooltopics{resol} ne "") {
@@ -483,17 +518,17 @@ foreach $arch_name (@arch_names) {
 	  }
       }
       if ( ($vendor_class ne "") && ($product_class ne "") ) {
-        print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
+        print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
         print FH "+vendor.name\t\t$vendor_name\n";
 	if ( ($subvendor_class ne "") && ($subproduct_class ne "") ) {
-	  print FH "\n vendor.id\t\tpci 0x$subvendor_class\n";
-	  print FH "&device.id\t\tpci 0x$subproduct_class\n";
-	  print FH "&subvendor.id\t\tpci 0x$vendor_class\n";
-	  print FH "&subdevice.id\t\tpci 0x$product_class\n";
+	  print FH "\n vendor.id\t\t${\new_id $subvendor_class, $vendor_class}\n";
+	  print FH "&device.id\t\t${\new_id $subproduct_class, $vendor_class}\n";
+	  print FH "&subvendor.id\t\t${\new_id $vendor_class}\n";
+	  print FH "&subdevice.id\t\t${\new_id $product_class, $vendor_class}\n";
 	  print FH "+subdevice.name\t\t$product_name\n";
 	} else {
-	  print FH "\n vendor.id\t\tpci 0x$vendor_class\n";
-	  print FH "&device.id\t\tpci 0x$product_class\n";
+	  print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
+	  print FH "&device.id\t\t${\new_id $product_class, $vendor_class}\n";
 	  print FH "+device.name\t\t$product_name\n";
 	}
 	if ($tooltopics{resol} ne "") {

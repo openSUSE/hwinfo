@@ -7,7 +7,7 @@ include $(TOPDIR)/Makefile.common
 
 IDFILES	= src/bus src/class src/extra src/special \
 	  src/scanner src/network src/names.usbutils src/names.usb \
-	  src/isapnp src/monitor src/camera src/tv src/dvb
+	  src/isapnp src/monitor src/camera src/tv src/dvb src/chipcard
 
 ifeq "$(ARCH)" "i386"
 IDFILES += src/x11.i386
