@@ -18,7 +18,7 @@
 
 #if defined(__i386__)
 
-#define BIOS_TEST
+// #define BIOS_TEST
 
 static void read_memory(memory_range_t *mem);
 static void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *label);

@@ -1,3 +1,7 @@
+16/3/2002:	v4.18
+	- fixed bug that caused 'Processor' scsi devices to be treated
+	  as disks (mentioned in #15007)
+
 14/3/2002:	v4.17
 	- udated mptbase driver info (#14732)
 	- better handling of usb-storage devices

@@ -703,9 +703,11 @@ void get_proc_scsi(hd_data_t *hd_data)
       else if(strstr(scsi_type, "Scanner") == scsi_type) {
         scsi->type = sc_sdev_scanner;
       }
-      else if(strstr(scsi_type, "Processor") == scsi_type) {
-      	if (strstr(scsi->vendor,"HP") == scsi->vendor)
-		scsi->type = sc_sdev_scanner;
+      else if(
+        strstr(scsi_type, "Processor") == scsi_type &&
+        strstr(scsi->vendor, "HP") == scsi->vendor
+      ) {
+        scsi->type = sc_sdev_scanner;
       }
       else {
         scsi->type = sc_sdev_other;
