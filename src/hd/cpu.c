@@ -223,6 +223,10 @@ void hd_scan_cpu(hd_data_t *hd_data)
         hd->detail = new_mem(sizeof *hd->detail);
         hd->detail->type = hd_detail_cpu;
         hd->detail->cpu.data = ct;
+
+        if(ct->vend_name && !strcmp(ct->vend_name, "PowerBook") && !hd_data->color_code) {
+          hd_data->color_code = 7;	// black
+        }
         
         *model_id = *vendor_id = 0;
         bogo = mhz = cache = family = model= 0;

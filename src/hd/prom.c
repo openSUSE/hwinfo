@@ -42,6 +42,7 @@ void hd_scan_prom(hd_data_t *hd_data)
     if(fread(buf, 1, 2, f) == 2) {
       pt->has_color = 1;
       pt->color = buf[1];
+      hd_data->color_code = pt->color | 0x10000;
       ADD2LOG("color-code: 0x%04x\n", (buf[0] << 8) + buf[1]);
     }
 

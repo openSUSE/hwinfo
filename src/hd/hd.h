@@ -807,6 +807,7 @@ typedef struct {
   unsigned char *bios_rom;	/* BIOS 0xc0000 - 0xfffff */
   unsigned char *bios_ram;	/* BIOS   0x400 -   0x4ff */
   unsigned display;		/* hd_idx of the active (vga) display */
+  unsigned color_code;		/* color, if any */
 } hd_data_t;
 
 
@@ -849,6 +850,7 @@ int hd_apm_enabled(hd_data_t *hd_data);
 int hd_usb_support(hd_data_t *hd_data);
 int hd_smp_support(hd_data_t *hd_data);
 int hd_mac_color(hd_data_t *hd_data);
+int hd_color(hd_data_t *hd_data);
 unsigned hd_display_adapter(hd_data_t *hd_data);
 unsigned hd_boot_disk(hd_data_t *hd_data, int *matches);
 enum cpu_arch hd_cpu_arch(hd_data_t *hd_data);

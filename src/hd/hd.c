@@ -672,6 +672,10 @@ void hd_scan(hd_data_t *hd_data)
     if(di && di->any.type == di_x11 && di->x11.server) s = di->x11.server;
     ADD2LOG("  display adapter: #%u (%s)\n", u, s);
     hd_free_driver_info(di);
+    i = hd_color(hd_data);
+    if(i != -1) {
+      ADD2LOG("  color code: 0x%02x\n", i);
+    }
   }
 }
 
@@ -1744,9 +1748,9 @@ int hd_smp_support(hd_data_t *hd_data)
 }
 
 
-int hd_mac_color(hd_data_t *hd_data)
+int hd_color(hd_data_t *hd_data)
 {
-#ifdef __PPC__
+#if 0
   hd_t *hd;
   prom_info_t *pt;
 
@@ -1762,7 +1766,15 @@ int hd_mac_color(hd_data_t *hd_data)
   }
 #endif
 
+  if(hd_data->color_code) return hd_data->color_code & 0xffff;
+
   return -1;
+}
+
+
+int hd_mac_color(hd_data_t *hd_data)
+{
+  return hd_color(hd_data);
 }
 
 

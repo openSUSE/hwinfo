@@ -1,3 +1,7 @@
+17/4/2000:	v0.92
+	- ADB mouse driver info extended
+	- color code stuff updated
+
 11/4/2000:	v0.91
 	- fixed XkbModel typo on intel/axp
 	- ia64 patches from Andreas
