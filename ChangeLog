@@ -1,3 +1,6 @@
+15/9/2003:	v7.25
+	- pcmcia data update
+
 15/9/2003:	v7.24
 	- report pci modems (#30887)
 	- don't get fooled by removed pcmcia cards
