@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/types.h>
@@ -600,7 +601,7 @@ void dump_usb_data(hd_data_t *hd_data)
 void add_usb_guid(hd_t *hd)
 {
   unsigned pg[3];
-  char *s;
+  char c, *s;
 
   pg[0] = ((hd->vend & 0xffff) << 16) | (hd->dev & 0xffff);
   pg[1] = pg[2] = 0;
@@ -609,8 +610,9 @@ void add_usb_guid(hd_t *hd)
       pg[1] <<= 4;
       pg[1] |= pg[2] >> 28;
       pg[2] <<= 4;
-      if(*s >= 'a') *s -= 'a' - 'A';
-      pg[2] |= (*s <= '9' && *s >= '0') ? *s - '0' : *s - 'A' + 10;
+      c = toupper(*s);
+      if(c > '9') c -= 'A' - '9' - 1;
+      pg[2] |= c - '0';
     }
   }
 

@@ -99,7 +99,7 @@ typedef enum {
   hwdi_prog_if, hwdi_dev, hwdi_vend, hwdi_sub_dev, hwdi_sub_vend, hwdi_rev,
   hwdi_compat_dev, hwdi_compat_vend, hwdi_dev_name, hwdi_vend_name,
   hwdi_sub_dev_name, hwdi_sub_vend_name, hwdi_rev_name, hwdi_serial,
-  hwdi_unix_dev_name, hwdi_rom_id, hwdi_broken
+  hwdi_unix_dev_name, hwdi_rom_id, hwdi_broken, hwdi_usb_guid
 } hw_hd_items_t;
 
 static hash_t hw_ids_hd_items[] = {
@@ -125,6 +125,7 @@ static hash_t hw_ids_hd_items[] = {
   { hwdi_unix_dev_name, "UnixDevice"     },
   { hwdi_rom_id,        "ROMID"          },
   { hwdi_broken,        "Broken"         },
+  { hwdi_usb_guid,      "USBGUID"        },
   { 0,                  NULL             }
 };
 
@@ -774,6 +775,11 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
       case hwdi_broken:
         hd->broken = strtoul(sl2->str, NULL, 0);
         break;
+
+      case hwdi_usb_guid:
+        hd->usb_guid = new_str(sl2->str);
+        break;
+
     }
   }
 
@@ -966,6 +972,11 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
   if(hd->rom_id) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_rom_id));
     add_str_list(&entry->value, hd->rom_id);
+  }
+
+  if(hd->usb_guid) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_usb_guid));
+    add_str_list(&entry->value, hd->usb_guid);
   }
 
   free_mem(s);
