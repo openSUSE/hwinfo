@@ -1,100 +1,104 @@
-#x11DB
-#hwinfo data from 2001-01-17 15:22:42
-#
 
 
 
-# Matrox:MGA G200 SD PCI
-102B 0520
+
+
+
+
+
+
+
+1002 4c46
+	x	4|r128||||usefbdev,hw_cursor,dpms|3|||
+
+
+
+
+1002 5046
+	x	4|r128||||usefbdev,hw_cursor,dpms|e|||
+
+1002 5046
+	x	4|r128|3d|xf86_glx|glx,dri|usefbdev|e||switch2xf86_glx|
+
+
+
+
+
+
+
+1002 5452
+	x	4|fbdev||||usefbdev,dpms|b|||
+
+
+
+
+
+1013 00b8
+	x	3|FBDEV|||||1|||
+
+s4001 0001
+	x	3|||||||||
+
+s4001 0002
+	x	3|||||||||
+
+s4001 0003
+	x	3|||||||||
+
+s4001 0004
+	x	3|XFB_Dev||||||||
+
+s4001 0005
+	x	3|||||||||
+
+1002 4754
 	x	3|FBDEV||||||||
 
-
-# Matrox:Mystique MGA 1064SG
-102B 051a
+1002 4756
 	x	3|FBDEV||||||||
 
+1002 4c46
+	x	3|FBDEV|||||f|||
 
-# ATI:Mach64 VT4 PCI
-1002 5656
+
+1002 4c4e
 	x	3|FBDEV||||||||
 
-
-# ATI:Rage 128 RL
-1002 524C
+1002 4c50
 	x	3|FBDEV||||||||
 
-
-# ATI:Rage 128 GL AGP 2x
-1002 5246
-	x	3|FBDEV||||||||
-
-
-# ATI:Rage 128 GL PCI
-1002 5245
-	x	3|FBDEV||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x (TMDS)
-1002 5052
-	x	3|FBDEV||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x (TMDS)
 1002 5046
 	x	3|FBDEV||||||||
 
 
-# ATI:Mach64 LP
-1002 4C50
+
+1002 5052
 	x	3|FBDEV||||||||
 
-
-# ATI:Rage L Mobility AGP 2x
-1002 4C4E
+1002 5245
 	x	3|FBDEV||||||||
 
-
-# ATI:Mach64 LI
-1002 4C49
+1002 5246
 	x	3|FBDEV||||||||
 
-
-# ATI:Rage 3D LT-G
-1002 4C47
+1002 524c
 	x	3|FBDEV||||||||
 
-
-# ATI:Mach64 based
-1002 4756
-	x	3|FBDEV||||||||
-
-
-# ATI:Mach64 GT (Rage II)
-1002 4754
-	x	3|FBDEV||||||||
-
-
-# ATI:Rage Mobility M3 AGP 2x
-1002 4c46
-	x	4|r128||||hw_cursor,dpms||||
-
-
-# ATI:Rage Mobility M3 AGP 2x
-1002 4c46
-	x	3|FBDEV||||||||
-
-
-# S3:Vision 864-P
 5333 88c1
+	x	3|FBDEV|||||1|||
+
+1002 5452
+	x	3|FBDEV|||||1b|||
+
+
+102b 0520
+	x	3|FBDEV|||||7|||
+
+102b 051a
+	x	3|FBDEV|||||7|||
+
+1002 5656
 	x	3|FBDEV||||||||
 
-
-# Chips&Technologies:65550
-102c 00e0
+1002 4c47
 	x	3|FBDEV||||||||
-
-
-# Cirrus Logic:GD 5446
-1013 00b8
-	x	3|FBDEV||||||||
-

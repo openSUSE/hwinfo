@@ -1,4 +1,6 @@
+27/8/2001:	v3.14
 	- new qlogic driver info (#9868)
+	- completely new x11 data
 
 23/8/2001:	v3.13
 	- fixed to work with the new cpqarray driver

@@ -1,895 +1,1947 @@
-#x11DB
-#hwinfo data from 2001-03-20 16:36:26
-#
 
 
 
-# Matrox:MGA G200 AGP
-102b 0521
-	x	4|mga||||||||
 
 
-# Matrox:MGA G200 AGP
-102b 0521
-	x	3|svga||||||||
 
 
-# Matrox:Marvel G200 SD
-102b ff04
-	x	4|mga||||||||
 
 
-# Matrox:Marvel G200 SD
-102b ff04
-	x	3|svga||||||||
 
 
-# Matrox:Millennium G200 SG
-102b ff03
-	x	4|mga||||||||
 
 
-# Matrox:Millennium G200 SG
-102b ff03
-	x	3|svga||||||||
+10de 00a0
+	x	4|nv||||||||
 
+10de 00a0
+	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
 
-# Matrox:Mystique G200 SG
-102b ff02
-	x	4|mga||||||||
 
 
-# Matrox:Mystique G200 SG
-102b ff02
-	x	3|svga||||||||
+10de 0103
+	x	4|nv|||||f|||
 
+10de 0103
+	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
 
-# Matrox:Mistral GUI+3D Accelerator
-102B 2007
-	x	4|mga||||||||
 
 
-# Matrox:Mistral GUI+3D Accelerator
-102B 2007
-	x	3|svga||||||||
 
 
-# Matrox:Mystique
-102b 1100
-	x	4|mga||||||||
+102b 051e
+	x	4|mga|||||d|||
 
 
-# Matrox:Mystique
-102b 1100
-	x	3|svga||||||||
 
 
-# Matrox:MGA G100 AGP
-102B 1001
-	x	4|mga||||||||
 
 
-# Matrox:MGA G100 AGP
-102B 1001
-	x	3|svga||||||||
 
 
-# Matrox:MGA G100 PCI
-102B 1000
-	x	4|mga||||||||
 
 
-# Matrox:MGA G100 PCI
-102B 1000
-	x	3|svga||||||||
 
 
-# Matrox:MGA Impression
-102B 0d10
-	x	4|mga||||||||
 
 
-# Matrox:MGA Impression
-102B 0d10
-	x	3|svga||||||||
 
 
-# Matrox:MGA G400
-102B 0525
-	x	4|mga||||||||
 
 
-# Matrox:MGA G400
-102B 0525
-	x	3|svga||||||||
 
-
-# Matrox:MGA G200 SD PCI
-102B 0520
-	x	4|mga||||||||
-
-
-# Matrox:MGA G200 SD PCI
-102B 0520
-	x	3|svga||||||||
-
-
-# Matrox:Millennium II (AGP)
-102B 051F
-	x	4|mga||||||||
-
-
-# Matrox:Millennium II (AGP)
-102B 051F
-	x	3|svga||||||||
-
-
-# Matrox:Mystique 220 (AGP)
-102B 051E
-	x	4|mga||||||||
-
-
-# Matrox:Mystique 220 (AGP)
-102B 051E
-	x	3|svga||||||||
-
-
-# Matrox:MGA 2164W
-102B 051b
-	x	4|mga||||||||
-
-
-# Matrox:MGA 2164W
-102B 051b
-	x	3|svga||||||||
-
-
-# Matrox:Mystique MGA 1064SG
-102B 051a
-	x	4|mga||||||||
-
-
-# Matrox:Mystique MGA 1064SG
-102B 051a
-	x	3|svga||||||||
-
-
-# Matrox:MGA 2064W
-102B 0519
-	x	4|mga||||||||
-
-
-# Matrox:MGA 2064W
-102B 0519
-	x	3|svga||||||||
-
-
-# Matrox:MGA 2085PX
-102B 0518
-	x	4|mga||||||||
-
-
-# Matrox:MGA 2085PX
-102B 0518
-	x	3|svga||||||||
-
-
-# Matrox:Millennium II
-102b 0100
-	x	4|mga||||||||
-
-
-# Matrox:Millennium II
-102b 0100
-	x	3|svga||||||||
-
-
-# Matrox:Matrox G400
-102b 0525 102b 0378
-	x	4|mga||||||||
-
-
-# Matrox:Matrox G400
-102b 0525 102b 0378
-	x	3|svga||||||||
-
-
-# Matrox:MGA G450
-102b 0525 102b 0641
-	x	4|mga||||||||
-
-
-# Matrox:MGA G450
-102b 0525 102b 0641
-	x	3|svga||||||||
-
-
-# Matrox:MGA G450 rev 82
-102b 0525 102b 07c0
-	x	4|mga||||||||
-
-
-# Matrox:MGA G450 rev 82
-102b 0525 102b 07c0
-	x	3|svga||||||||
-
-
-# ATI:Mach64 VT4 PCI
-1002 5656
-	x	4|ati||||||||
-
-
-# ATI:Mach64 VT4 PCI
-1002 5656
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 VT3
-1002 5655
-	x	4|ati||||||||
-
-
-# ATI:Mach64 VT3
-1002 5655
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 VT
-1002 5654
-	x	4|ati||||||||
-
-
-# ATI:Mach64 VT
-1002 5654
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 ST
-1002 5354
-	x	4|ati||||||||
-
-
-# ATI:Mach64 ST
-1002 5354
-	x	3|mach64||||||||
-
-
-# ATI:Rage 128 4x
-1002 534E
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 4x
-1002 534E
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 4x AGP 4x
-1002 534D
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 4x AGP 4x
-1002 534D
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 4x AGP 2x
-1002 534C
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 4x AGP 2x
-1002 534C
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 4x PCI
-1002 534B
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 4x PCI
-1002 534B
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 4x
-1002 5348
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 4x
-1002 5348
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 4x AGP 4x
-1002 5347
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 4x AGP 4x
-1002 5347
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 4x AGP 2x
-1002 5346
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 4x AGP 2x
-1002 5346
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 4x PCI
-1002 5345
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 4x PCI
-1002 5345
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 RL
-1002 524C
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 RL
-1002 524C
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 VR PCI
-1002 524B
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 VR PCI
-1002 524B
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 GL AGP 2x
-1002 5246
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 GL AGP 2x
-1002 5246
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 GL PCI
-1002 5245
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 GL PCI
-1002 5245
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x (TMDS)
-1002 5058
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x (TMDS)
-1002 5058
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x (TMDS)
-1002 5057
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x (TMDS)
-1002 5057
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI (TMDS)
-1002 5056
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI (TMDS)
-1002 5056
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x
-1002 5055
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x
-1002 5055
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x
-1002 5054
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x
-1002 5054
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI
-1002 5053
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI
-1002 5053
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x (TMDS)
-1002 5052
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x (TMDS)
-1002 5052
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x (TMDS)
-1002 5051
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x (TMDS)
-1002 5051
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI (TMDS)
-1002 5050
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI (TMDS)
-1002 5050
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x
-1002 504F
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x
-1002 504F
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x
-1002 504E
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x
-1002 504E
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI
-1002 504D
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI
-1002 504D
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x (TMDS)
-1002 504C
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x (TMDS)
-1002 504C
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x (TMDS)
-1002 504B
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x (TMDS)
-1002 504B
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI (TMDS)
-1002 504A
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI (TMDS)
-1002 504A
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x
-1002 5049
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x
-1002 5049
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x
-1002 5048
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x
-1002 5048
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI
-1002 5047
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI
-1002 5047
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x (TMDS)
-1002 5046
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x (TMDS)
-1002 5046
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x (TMDS)
-1002 5045
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x (TMDS)
-1002 5045
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI (TMDS)
-1002 5044
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI (TMDS)
-1002 5044
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x
-1002 5043
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 4x
-1002 5043
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x
-1002 5042
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro AGP 2x
-1002 5042
-	x	3|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI
-1002 5041
-	x	4|r128||||||||
-
-
-# ATI:Rage 128 Pro PCI
-1002 5041
-	x	3|r128||||||||
-
-
-# ATI:Mach64 LT
-1002 4C54
-	x	4|ati||||||||
-
-
-# ATI:Mach64 LT
-1002 4C54
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 LP
-1002 4C50
-	x	4|ati||||||||
-
-
-# ATI:Mach64 LP
-1002 4C50
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 LI
-1002 4C49
-	x	4|ati||||||||
-
-
-# ATI:Mach64 LI
-1002 4C49
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 LD
-1002 4C44
-	x	4|ati||||||||
-
-
-# ATI:Mach64 LD
-1002 4C44
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 GX (21088)
-1002 4758
-	x	4|ati||||||||
-
-
-# ATI:Mach64 GX (21088)
-1002 4758
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 based
-1002 4757
-	x	4|ati||||||||
-
-
-# ATI:Mach64 based
-1002 4757
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 based
-1002 4756
-	x	4|ati||||||||
-
-
-# ATI:Mach64 based
-1002 4756
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 GT (Rage II)
-1002 4754
-	x	4|ati||||||||
-
-
-# ATI:Mach64 GT (Rage II)
-1002 4754
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 XL or XC
-1002 4752
-	x	4|ati||||||||
-
-
-# ATI:Mach64 XL or XC
-1002 4752
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 XL or XC
-1002 474E
-	x	4|ati||||||||
-
-
-# ATI:Mach64 XL or XC
-1002 474E
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 XL or XC
-1002 474D
-	x	4|ati||||||||
-
-
-# ATI:Mach64 XL or XC
-1002 474D
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 VT
-1002 4654
-	x	4|ati||||||||
-
-
-# ATI:Mach64 VT
-1002 4654
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 ET
-1002 4554
-	x	4|ati||||||||
-
-
-# ATI:Mach64 ET
-1002 4554
-	x	3|mach64||||||||
-
-
-# ATI:Mach64 CX
 1002 4358
+	x	4|ati|||||d|||
+
+
+1002 4554
+	x	4|ati|||||d|||
+
+
+
+
+
+
+1002 474d
+	x	4|ati|||||d|||
+
+
+1002 474e
+	x	4|ati|||||d|||
+
+
+
+
+
+1002 4752
+	x	4|ati|||||d|||
+
+
+
+1002 4754
+	x	4|ati|||||1d|||
+
+
+1002 4756
+	x	4|ati|||||d|||
+
+
+1002 4757
+	x	4|ati|||||1d|||
+
+
+
+1002 475a
+	x	4|ati|||||f|||
+
+
+1002 4c42
 	x	4|ati||||||||
 
 
-# ATI:Mach64 CX
+1002 4c44
+	x	4|ati|||||9|||
+
+1002 4c46
+	x	4|r128||||||||
+
+
+1002 4c4d
+	x	4|ati||||||||
+
+
+
+1002 4c50
+	x	4|ati|||||d|||
+
+
+
+1002 4c52
+	x	4|ati||||||||
+
+
+1002 5041
+	x	4|r128|||||d|||
+
+1002 5042
+	x	4|r128|||||d|||
+
+1002 5043
+	x	4|r128|||||d|||
+
+1002 5044
+	x	4|r128|||||d|||
+
+1002 5045
+	x	4|r128|||||d|||
+
+1002 5046
+	x	4|r128|||||d|||
+
+1002 5047
+	x	4|r128|||||d|||
+
+1002 5048
+	x	4|r128|||||d|||
+
+1002 5049
+	x	4|r128|||||d|||
+
+1002 504a
+	x	4|r128|||||d|||
+
+1002 504b
+	x	4|r128|||||d|||
+
+1002 504c
+	x	4|r128|||||d|||
+
+1002 504d
+	x	4|r128|||||d|||
+
+1002 504e
+	x	4|r128|||||d|||
+
+1002 504f
+	x	4|r128|||||d|||
+
+1002 5050
+	x	4|r128|||||d|||
+
+1002 5051
+	x	4|r128|||||d|||
+
+1002 5052
+	x	4|r128|||||d|||
+
+1002 5053
+	x	4|r128|||||d|||
+
+1002 5054
+	x	4|r128|||||d|||
+
+1002 5055
+	x	4|r128|||||d|||
+
+1002 5056
+	x	4|r128|||||d|||
+
+1002 5057
+	x	4|r128|||||d|||
+
+1002 5058
+	x	4|r128|||||d|||
+
+
+1002 5245
+	x	4|r128|||||f|||
+
+
+1002 5246
+	x	4|r128|||||f|||
+
+1002 5246
+	x	4|none,r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
+
+1002 524b
+	x	4|r128|||||d|||
+
+
+1002 524c
+	x	4|r128|||||f|||
+
+1002 524c
+	x	4|r128,none|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
+
+1002 5345
+	x	4|r128|||||d|||
+
+
+1002 5346
+	x	4|r128|||||d|||
+
+
+1002 5347
+	x	4|r128|||||d|||
+
+
+1002 5348
+	x	4|r128|||||d|||
+
+
+1002 534b
+	x	4|r128|||||d|||
+
+
+1002 534c
+	x	4|r128|||||d|||
+
+
+1002 534d
+	x	4|r128|||||d|||
+
+
+1002 534e
+	x	4|r128|||||d|||
+
+
+1002 5354
+	x	4|ati|||||d|||
+
+
+1002 5354 1002 5654
+	x	4|ati|||||d|||
+
+
+
+
+100c 3206
+	x	4|tseng||||||||
+
+
+
+
+1011 0004
+	x	4|tga|||||1|||
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1014 00b7
+	x	4|firegl1|||||8|||
+		Option "no_accel" "no"
+		Option "NumDMABuffers2D" "4"
+		Option "NumDMABuffers" "24"
+		Option "NumTMBuffers" "4"
+		Option "Capabilities" "0x00000000"
+		Option "Capabilities2" "0x00000000"
+
+1014 00b7
+	x	4|firegl1|3d|xfiregl1,xf86_glx|fgl1,dri,glx|DDCInfo,accel|8||switch2xf86_glx|
+		Option "no_accel" "no"
+		Option "NumDMABuffers2D" "4"
+		Option "NumDMABuffers" "24"
+		Option "NumTMBuffers" "4"
+		Option "Capabilities" "0x00000000"
+		Option "Capabilities2" "0x00000000"
+
+
+
+
+
+1023 8400
+	x	4|trident||||||||
+
+
+
+
+
+
+
+
+
+
+
+
+
+1023 9540
+	x	4|trident||||||||
+
+
+
+
+
+1023 9750
+	x	4|trident|||||f|||
+
+
+
+
+
+
+
+102b 0518
+	x	4|mga|||||d|||
+
+
+102b 051b
+	x	4|mga|||||d|||
+
+
+102b 2007
+	x	4|mga|||||1|||
+
+
+
+102c 00e5
+	x	4|chips||||||||
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+104c 3d07
+	x	4|glint|||||f|||
+
+
+
+
+
+
+
+105d 2309
+	x	4|none||||||||
+
+
+
+
+
+
+
+
+
+
+10c8 0004
+	x	4|neomagic|||||5|||
+
+
+10c8 0005
+	x	4|neomagic|||||d|||
+
+
+10c8 0006
+	x	4|neomagic|||||4|||
+
+
+
+
+10c8 8005 1014 00dd
+	x	4|neomagic|||||5|||
+
+
+
+
+1092 4820
+	x	4|nv|||||f|||
+
+1092 4820
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+
+10de 0029
+	x	4|nv||||||||
+
+10de 0029
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+
+10de 002c
+	x	4|nv|||||d|||
+
+10de 002c
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+
+10de 002d
+	x	4|nv||||||||
+
+10de 002d
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+10de 002e
+	x	4|nv||||||||
+
+10de 002e
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|||4||switch2nvidia_glx|
+
+10de 002f
+	x	4|nv||||||||
+
+10de 002f
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|||4||switch2nvidia_glx|
+
+
+10de 0101
+	x	4|nv||||||||
+
+10de 0101
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+10de 0110
+	x	4|nv||||||||
+
+10de 0110
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+10de 0111
+	x	4|nv||||||||
+
+10de 0111
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+10de 0113
+	x	4|nv||||||||
+
+10de 0113
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+10de 0150
+	x	4|nv||||||||
+
+10de 0150
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+10de 0151
+	x	4|nv||||||||
+
+10de 0151
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+10de 0152
+	x	4|nv||||||||
+
+10de 0152
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+10de 0153
+	x	4|nv||||||||
+
+10de 0153
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+
+
+
+
+
+121a 0001
+	x	4|glide||glide_vg|||4|||
+
+121a 0001
+	x	4|none|3d|glide_vg,dev3dfx,mesa3dfx|||4||switch2mesa3dfx|
+
+
+
+
+
+
+
+
+126f 0710
+	x	4|siliconmotion|||||f|||
+
+
+
+
+
+3d3d 0007
+	x	4|glint|||||f|||
+
+3d3d 000a
+	x	4|glint|||||11|||
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+8086 7121
+	x	4|i810|||||d|||
+
+8086 7121
+	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+		VideoRam 16384
+
+8086 7123
+	x	4|i810|||||d|||
+
+8086 7123
+	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+		VideoRam 16384
+
+8086 7125
+	x	4|i810|||||d|||
+
+8086 7125
+	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+		VideoRam 16384
+
+
+1002 5452
+	x	4||||||d|||
+
+1023 8620
+	x	4|trident||||||||
+
+10C8 0016
+	x	4|neomagic|||||d|||
+		VideoRam 4096
+
+
+
+
+1002 5247
+	x	4|r128|||||d|||
+
+
+1002 4d4c
+	x	4|r128|||||d|||
+
+
+1002 4d46
+	x	4|r128|||||d|||
+
+
+1002 4c45
+	x	4|r128|||||d|||
+
+8086 1132
+	x	4|i810|||||d|||
+
+8086 1132
+	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+		VideoRam 16384
+
+121A 0009
+	x	4|tdfx|||||d|||
+
+121A 0009
+	x	4|tdfx|3d|xf86_glx,gldri_v5|dri,glx||4||switch2xf86_glx|
+
+1002 5145
+	x	4|radeon||||||||
+
+
+102b 0100
+	x	4|mga|||||d|||
+
+
+1002 5144
+	x	4|radeon||||||||
+
+
+1002 0084
+	x	4|ati||||||||
+
+
+
+
+
+
+1002 5146
+	x	4|radeon||||||||
+
+1002 5147
+	x	4|radeon||||||||
+
+
+5333 8a01
+	x	4|s3virge|||||f|||
+
+
+3d3d 0009
+	x	4|glint|||||f|||
+
+
+10de 0020
+	x	4|nv|||||f|||
+
+10de 0020
+	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
+
+
+10de 0028
+	x	4|nv|||||f|||
+
+10de 0028
+	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
+
+
+10de 0100
+	x	4|nv|||||f|||
+
+10de 0100
+	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
+
+
+1002 0088
+	x	4|ati|||||d|||
+
+
+1002 4654
+	x	4|ati|||||9|||
+
+
+1002 4c54
+	x	4|ati|||||d|||
+
+
+1002 4354
+	x	4|ati|||||1d|||
+
+
+1002 5655
+	x	4|ati|||||d|||
+
+
+121a 0003
+	x	4|tdfx|||||d|||
+
+121a 0003
+	x	4|tdfx|3d|glidedri,xf86_glx|glx,dri||4||switch2xf86_glx|
+
+
+
+
+8086 7800
+	x	4|i740||||||||
+
+
+1163 2000
+	x	4|rendition||||||||
+
+
+
+
+1014 0170
+	x	4|firegl23||xfiregl1|||8|||
+		Option "no_accel" "no"
+		Option "enable DVI" "on"
+		Option "NumDMABuffers" "24"
+		Option "NumTMBuffers" "4"
+		Option "Capabilities" "0x00000000"
+		Option "Capabilities2" "0x00000000"
+
+1014 0170
+	x	4|firegl23|3d|xf86_glx,xfiregl1|fgl23,glx,dri||8||switch2xf86_glx|
+		Option "no_accel" "no"
+		Option "enable DVI" "on"
+		Option "NumDMABuffers" "24"
+		Option "NumTMBuffers" "4"
+		Option "Capabilities" "0x00000000"
+		Option "Capabilities2" "0x00000000"
+
+
+102b 0d10
+	x	4|mga|||||d|||
+
+
+102b 0520
+	x	4|mga||||NoHal|d|||
+
+102b 0520
+	x	4|none,mga|3d|xf86_glx|glx,dri|NoHal|4||switch2xf86_glx|
+
+
+102b 0525
+	x	4|mga||||NoHal|f|||
+
+102b 0525
+	x	4|none,mga|3d|xf86_glx|glx,dri|NoHal|4||switch2xf86_glx|
+
+
+102b 0519
+	x	4|mga|||||d|||
+
+
+102b ff03
+	x	4|mga||||sw_cursor|d|||
+
+
+102b 0521
+	x	4|mga||||NoHal|d|||
+		VideoRam 8192
+
+102b 0521
+	x	4|none,mga|3d|xf86_glx|glx,dri|NoHal|4||switch2xf86_glx|
+		VideoRam 8192
+
+
+102b 051f
+	x	4|mga|||||d|||
+
+
+102b 051a 102b 1100
+	x	4|mga|||||d|||
+
+
+102b 051a
+	x	4|mga|||||d|||
+
+
+102b 1000
+	x	4|mga|||||d|||
+
+
+
+
+
+
+12d2 0018
+	x	4|nv|||||f|||
+
+
+1023 9525
+	x	4|trident||||||||
+
+
+121a 0005
+	x	4|tdfx|||||5|||
+
+121a 0005
+	x	4|tdfx|3d|glidedri,xf86_glx|glx,dri||4||switch2xf86_glx|
+
+
+
+
+
+
+
+
+
+1002 5656
+	x	4|ati|||||d|||
+
+
+
+
+
+
+
+
+
+
+1023 9385
+	x	4|trident||||||||
+
+
+
+
+
+
+
+
+5333 8812
+	x	3|S3||||||||
+
+5333 883d
+	x	3|SVGA||||||||
+
+5333 88f0
+	x	3|S3||||||||
+
+5333 8801
+	x	3|S3||||||||
+
+5333 88b0
+	x	3|S3||||||||
+
+5333 8880
+	x	3|S3||||||||
+
+5333 88c0
+	x	3|S3||||||||
+
+5333 8814
+	x	3|S3||||||||
+
+5333 8811
+	x	3|S3||||||||
+
+5333 5631
+	x	3|SVGA|||||1d|||
+
+104e 0111
+	x	3|SVGA||||||||
+
+10de 00a0
+	x	3|SVGA||||||||
+
+
+
+12d2 0019
+	x	3|SVGA||||||||
+
+10de 0103
+	x	3|SVGA|||||15|||
+
+
+
+10c8 0003
+	x	3|SVGA||||||||
+
+10c8 0002
+	x	3|SVGA||||||||
+
+10c8 0001
+	x	3|SVGA||||||||
+
+102b 051e
+	x	3|SVGA|||||d|||
+
+
+1013 0038
+	x	3|SVGA||||||||
+
+1013 1202
+	x	3|SVGA||||||||
+
+1013 1200
+	x	3|SVGA||||||||
+
+1013 00d6
+	x	3|SVGA||||||||
+
+1013 00d0
+	x	3|SVGA||||||||
+
+1013 00b8
+	x	3|SVGA||||||||
+
+1013 00b0
+	x	3|SVGA||||||||
+
+1013 00ac
+	x	3|SVGA||||||||
+
+1013 00a4
+	x	3|SVGA||||||||
+
+1013 00a0
+	x	3|SVGA||||||||
+
+102c 00c0
+	x	3|SVGA||||||||
+
+102c 00f0
+	x	3|SVGA||||||||
+
+102c 00e4
+	x	3|SVGA||||||||
+
+102c 00dc
+	x	3|SVGA||||||||
+
+102c 00d0
+	x	3|SVGA||||||||
+
+102c 00b8
+	x	3|SVGA||||||||
+
+1002 4158
+	x	3|MACH64||||||||
+
 1002 4358
-	x	3|mach64||||||||
+	x	3|MACH64|||||d|||
 
 
-# ATI:Mach64 CT
-1002 4354
-	x	4|ati||||||||
+1002 4554
+	x	3|MACH64|||||d|||
 
 
-# ATI:Mach64 CT
-1002 4354
-	x	3|mach64||||||||
+1002 4744
+	x	3|MACH64||||||||
+
+1002 4747
+	x	3|MACH64||||||||
+
+1002 4749
+	x	3|MACH64||||||||
+
+1002 474c
+	x	3|MACH64||||||||
+
+1002 474d
+	x	3|MACH64|||||d|||
 
 
-# ATI:Mach64
-1002 0088
-	x	4|ati||||||||
+1002 474e
+	x	3|MACH64|||||d|||
 
 
-# ATI:Mach64
-1002 0088
-	x	3|mach64||||||||
+1002 474f
+	x	3|MACH64||||||||
+
+1002 4750
+	x	3|MACH64||||||||
+
+1002 4751
+	x	3|MACH64||||||||
+
+1002 4752
+	x	3|MACH64|||||d|||
 
 
-# ATI:Rage 128 Mobility LE
-1002 4c45
-	x	4|r128||||||||
+1002 4753
+	x	3|MACH64||||||||
+
+1002 4754
+	x	3|MACH64|||||1d|||
 
 
-# ATI:Rage 128 Mobility LE
-1002 4c45
-	x	3|r128||||||||
+1002 4756
+	x	3|MACH64|||||d|||
 
 
-# ATI:Rage 128 Mobility MF
-1002 4d46
-	x	4|r128||||||||
+1002 4757
+	x	3|MACH64|||||1d|||
 
 
-# ATI:Rage 128 Mobility MF
-1002 4d46
-	x	3|r128||||||||
+1002 4758
+	x	3|MACH64|||||d|||
+
+1002 475a
+	x	3|MACH64|||||1d|||
 
 
-# ATI:Rage 128 Mobility ML
-1002 4d4c
-	x	4|r128||||||||
+1002 4c42
+	x	3|MACH64||||||||
 
 
-# ATI:Rage 128 Mobility ML
-1002 4d4c
-	x	3|r128||||||||
+1002 4c44
+	x	3|MACH64|||||d|||
 
 
-# ATI:Rage 128 RG
-1002 5247
-	x	4|r128||||||||
+
+1002 4c4d
+	x	3|MACH64||||||||
 
 
-# ATI:Rage 128 RG
-1002 5247
-	x	3|r128||||||||
+1002 4c4e
+	x	3|SVGA||||||||
+
+1002 4c50
+	x	3|MACH64|||||d|||
 
 
-# ATI:Rage 128 Pro TR (AGP)
-1002 5452
-	x	4|r128||||||||
+1002 4c51
+	x	3|MACH64||||||||
+
+1002 4c52
+	x	3|SVGA||||||||
 
 
-# ATI:Rage 128 Pro TR (AGP)
-1002 5452
-	x	3|r128||||||||
+1002 4c53
+	x	3|SVGA||||||||
 
 
-# Number 9:Imagine 128
-105D 2309
-	x	3|i128||||||||
 
 
-# Number 9:Imagine 128 II
-105D 2339
-	x	3|i128||||||||
 
 
-# Number 9:Imagine 128 T2R
-105D 493D
-	x	3|i128||||||||
 
 
-# Number 9:Imagine 128 T2R4
-105D 5348
-	x	3|i128||||||||
 
 
-# 3DLabs:Permedia2V 2D+3D
-3D3D 0009
-	x	4|glint||||||||
 
 
-# 3DLabs:Permedia2V 2D+3D
-3D3D 0009
-	x	3|glint||||||||
 
 
-# 3DLabs:3D Extreme Permedia II
-3D3D 0007
-	x	4|glint||||||||
 
 
-# 3DLabs:3D Extreme Permedia II
-3D3D 0007
-	x	3|glint||||||||
 
 
-# Texas Instruments:Permedia 2D+3D
-104c 3D04
-	x	4|glint||||||||
 
 
-# Texas Instruments:Permedia 2D+3D
-104c 3D04
-	x	3|glint||||||||
 
 
-# Texas Instruments:Permedia 2
-104c 3d07
-	x	4|glint||||||||
 
 
-# Texas Instruments:Permedia 2
-104c 3d07
-	x	3|glint||||||||
+
+1002 5245
+	x	3|SVGA|||||1d|||
 
 
-# Digital:21030/TGA
+1002 5246
+	x	3|SVGA|||||1d|||
+
+
+
+1002 524b
+	x	3|SVGA|||||d|||
+
+
+1002 524c
+	x	3|SVGA|||||1d|||
+
+
+
+1002 5345
+	x	3|SVGA|||||d|||
+
+
+1002 5346
+	x	3|SVGA|||||d|||
+
+
+1002 5347
+	x	3|SVGA|||||d|||
+
+
+1002 5348
+	x	3|SVGA|||||d|||
+
+
+1002 534b
+	x	3|SVGA|||||d|||
+
+
+1002 534c
+	x	3|SVGA|||||d|||
+
+
+1002 534d
+	x	3|SVGA|||||d|||
+
+
+1002 534e
+	x	3|MACH64,XF86_SVGA|||||d|||
+
+
+1002 5354
+	x	3|MACH64|||||d|||
+
+
+1002 5354 1002 5654
+	x	3|MACH64|||||d|||
+
+
+100b d001
+	x	3|MACH64||||||||
+
+100c 3205
+	x	3|SVGA||||||||
+
+100c 3206
+	x	3|SVGA||||||||
+
+
+100c 3207
+	x	3|SVGA||||||||
+
+100e 9001
+	x	3|P9000||||||||
+
 1011 0004
-	x	4|tga||||||||
+	x	3|tga,TGA|||||1|||
 
 
-# Digital:21030/TGA
-1011 0004
-	x	3|tga||||||||
+1011 000d
+	x	3|TGA||||||||
 
+1013 0040
+	x	3|SVGA||||||||
+
+1013 004c
+	x	3|SVGA||||||||
+
+1013 00a2
+	x	3|SVGA||||||||
+
+1013 00a8
+	x	3|SVGA||||||||
+
+1013 00d2
+	x	3|SVGA||||||||
+
+1013 00d4
+	x	3|SVGA||||||||
+
+1013 00e8
+	x	3|SVGA||||||||
+
+1013 1110
+	x	3|SVGA||||||||
+
+1013 1112
+	x	3|SVGA||||||||
+
+1013 1113
+	x	3|SVGA||||||||
+
+1013 1204
+	x	3|SVGA||||||||
+
+1013 4400
+	x	3|SVGA||||||||
+
+1014 000a
+	x	3|SVGA||||||||
+
+1014 001d
+	x	3|SVGA||||||||
+
+1014 0022
+	x	3|SVGA||||||||
+
+
+
+1017 5343
+	x	3|SVGA||||||||
+
+1023 0194
+	x	3|SVGA||||||||
+
+1023 2000
+	x	3|SVGA||||||||
+
+1023 8400
+	x	3|SVGA||||||||
+
+
+1023 8420
+	x	3|SVGA||||||||
+
+1023 8500
+	x	3|SVGA||||||||
+
+1023 9350
+	x	3|SVGA||||||||
+
+1023 9360
+	x	3|SVGA||||||||
+
+1023 9383
+	x	3|SVGA||||||||
+
+1023 9386
+	x	3|SVGA||||||||
+
+1023 939a
+	x	3|SVGA||||||||
+
+1023 9430
+	x	3|SVGA||||||||
+
+1023 9440
+	x	3|SVGA||||||||
+
+1023 9460
+	x	3|SVGA||||||||
+
+1023 9470
+	x	3|SVGA||||||||
+
+1023 9520
+	x	3|SVGA||||||||
+
+
+1023 9660
+	x	3|SVGA||||||||
+
+1023 9682
+	x	3|SVGA||||||||
+
+1023 9683
+	x	3|SVGA||||||||
+
+1023 9685
+	x	3|SVGA||||||||
+
+
+1023 9753
+	x	3|SVGA||||||||
+
+1023 9754
+	x	3|SVGA||||||||
+
+1023 9759
+	x	3|SVGA||||||||
+
+1023 9783
+	x	3|SVGA||||||||
+
+1023 9785
+	x	3|SVGA||||||||
+
+102b 0518
+	x	3|SVGA|||||d|||
+
+
+102b 051b
+	x	3|SVGA|||||d|||
+
+
+102b 2007
+	x	3|SVGA|||||1|||
+
+
+102c 00d8
+	x	3|SVGA||||||||
+
+102c 00e5
+	x	3|SVGA||||||||
+
+
+102c 00f4
+	x	3|SVGA||||||||
+
+102c 00f5
+	x	3|SVGA||||||||
+
+1031 5601
+	x	3|SVGA||||||||
+
+1031 5607
+	x	3|SVGA||||||||
+
+1031 5631
+	x	3|SVGA||||||||
+
+1031 6057
+	x	3|SVGA||||||||
+
+1033 0009
+	x	3|SVGA||||||||
+
+1039 0001
+	x	3|SVGA||||||||
+
+1039 0200
+	x	3|SVGA||||||||
+
+1039 5300
+	x	3|SVGA||||||||
+
+1039 6300
+	x	3|SVGA||||||||
+
+103c 1030
+	x	3|SVGA||||||||
+
+103c 1031
+	x	3|SVGA||||||||
+
+1042 1000
+	x	3|SVGA||||||||
+
+1042 1001
+	x	3|SVGA||||||||
+
+104a 0008
+	x	3|SVGA||||||||
+
+104c 3d04
+	x	3|3DLABS|||||1d|||
+
+104c 3d07
+	x	3|3DLABS|||||1d|||
+
+
+104e 0017
+	x	3|SVGA||||||||
+
+104e 0107
+	x	3|SVGA||||||||
+
+104e 0109
+	x	3|SVGA||||||||
+
+104e 0217
+	x	3|SVGA||||||||
+
+104e 0317
+	x	3|SVGA||||||||
+
+105d 2309
+	x	3|SVGA|||||15|||
+
+
+105d 493d
+	x	3|SVGA|||||15|||
+
+1074 4e78
+	x	3|SVGA||||||||
+
+1078 0001
+	x	3|SVGA||||||||
+
+1078 0002
+	x	3|SVGA||||||||
+
+1078 0104
+	x	3|SVGA||||||||
+
+1098 0001
+	x	3|SVGA||||||||
+
+1098 0002
+	x	3|SVGA||||||||
+
+10a8 0000
+	x	3|SVGA||||||||
+
+10c8 0004
+	x	3|SVGA||||||||
+
+
+10c8 0005
+	x	3|SVGA||||||||
+
+
+10c8 0006
+	x	3|SVGA||||||||
+
+
+10c8 0083
+	x	3|SVGA||||||||
+
+10c8 8005
+	x	3|SVGA||||||||
+
+10c8 8005 1014 00dd
+	x	3|SVGA||||||||
+
+
+10de 0008
+	x	3|SVGA||||||||
+
+10de 0009
+	x	3|SVGA||||||||
+
+1092 4820
+	x	3|SVGA|||||15|||
+
+
+
+10de 0029
+	x	3|SVGA||||||||
+
+
+
+10de 002c
+	x	3|SVGA||||||||
+
+
+
+10de 002d
+	x	3|SVGA||||||||
+
+
+
+
+
+
+
+10de 0101
+	x	3|SVGA||||||||
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10e3 0000
+	x	3|SVGA||||||||
+
+10ea 1680
+	x	3|SVGA||||||||
+
+10ea 1682
+	x	3|SVGA||||||||
+
+1142 6424
+	x	3|SVGA||||||||
+
+1163 0001
+	x	3|SVGA||||||||
+
+
+
+1236 6401
+	x	3|SVGA||||||||
+
+1255 1110
+	x	3|SVGA||||||||
+
+1255 1210
+	x	3|SVGA||||||||
+
+1255 2110
+	x	3|SVGA||||||||
+
+1255 2120
+	x	3|SVGA||||||||
+
+1255 2130
+	x	3|SVGA||||||||
+
+126f 0710
+	x	3|SVGA||||||||
+
+
+126f 0712
+	x	3|SVGA||||||||
+
+126f 0720
+	x	3|SVGA||||||||
+
+126f 0910
+	x	3|SVGA||||||||
+
+3d3d 0007
+	x	3|3DLABS|||||1d|||
+
+
+
+4005 2064
+	x	3|SVGA||||||||
+
+5333 0551
+	x	3|SVGA||||||||
+
+5333 8810
+	x	3|S3||||||||
+
+5333 8813
+	x	3|S3||||||||
+
+5333 8815
+	x	3|S3||||||||
+
+5333 8870
+	x	3|S3||||||||
+
+5333 8881
+	x	3|S3||||||||
+
+5333 8882
+	x	3|S3||||||||
+
+5333 8883
+	x	3|S3||||||||
+
+5333 88b1
+	x	3|S3||||||||
+
+5333 88b2
+	x	3|S3||||||||
+
+5333 88b3
+	x	3|S3||||||||
+
+5333 88c1
+	x	3|S3||||||||
+
+5333 88c2
+	x	3|S3||||||||
+
+5333 88c3
+	x	3|S3||||||||
+
+5333 88d0
+	x	3|S3||||||||
+
+5333 88d1
+	x	3|S3||||||||
+
+5333 88d2
+	x	3|S3||||||||
+
+5333 88d3
+	x	3|S3||||||||
+
+5333 88f1
+	x	3|S3||||||||
+
+5333 88f2
+	x	3|S3||||||||
+
+5333 88f3
+	x	3|S3||||||||
+
+5333 8901
+	x	3|SVGA||||||||
+
+5333 8902
+	x	3|S3||||||||
+
+5333 8903
+	x	3|S3||||||||
+
+5333 8905
+	x	3|S3||||||||
+
+5333 8906
+	x	3|S3||||||||
+
+5333 8907
+	x	3|S3||||||||
+
+5333 8908
+	x	3|S3||||||||
+
+5333 8909
+	x	3|S3||||||||
+
+5333 890a
+	x	3|S3||||||||
+
+5333 890b
+	x	3|S3||||||||
+
+5333 890c
+	x	3|S3||||||||
+
+5333 890d
+	x	3|S3||||||||
+
+5333 890e
+	x	3|S3||||||||
+
+5333 890f
+	x	3|S3||||||||
+
+5333 8a13
+	x	3|SVGA||||||||
+
+5333 8a20
+	x	3|SVGA||||||||
+
+5333 8c00
+	x	3|SVGA||||||||
+
+5333 8c01
+	x	3|SVGA||||||||
+
+5333 8c02
+	x	3|SVGA||||||||
+
+5333 8c03
+	x	3|SVGA||||||||
+
+5333 8c10
+	x	3|SVGA||||||||
+
+5333 8c12
+	x	3|SVGA||||||||
+
+5333 9102
+	x	3|SVGA||||||||
+
+5333 ca00
+	x	3|S3||||||||
+
+
+
+
+
+
+
+1002 5452
+	x	3||||||d|||
+
+
+
+
+5333 8c13
+	x	3|SVGA||||||||
+
+5333 8c11
+	x	3|SVGA||||||||
+
+1002 5247
+	x	3|SVGA|||||d|||
+
+
+1002 4d4c
+	x	3|SVGA|||||d|||
+
+
+1002 4d46
+	x	3|SVGA|||||d|||
+
+
+1002 4c45
+	x	3|SVGA|||||d|||
+
+
+
+
+
+
+
+102b 0100
+	x	3|SVGA|||||d|||
+
+
+1013 00D5
+	x	3|SVGA||||||||
+
+
+1002 0084
+	x	3|MACH64||||||||
+
+
+1039 0215
+	x	3|SVGA||||||||
+
+1039 0225
+	x	3|SVGA||||||||
+
+1039 1039
+	x	3|SVGA||||||||
+
+1039 0300
+	x	3|SVGA||||||||
+
+10C8 0000
+	x	3|SVGA||||||||
+
+
+
+5333 8a01
+	x	3|SVGA|||||1d|||
+
+
+3d3d 0009
+	x	3|3DLABS|||||1d|||
+
+
+10de 0020
+	x	3|SVGA|||||15|||
+
+
+
+10de 0028
+	x	3|SVGA|||||15|||
+
+
+
+10de 0100
+	x	3|SVGA||||||||
+
+
+
+1002 0088
+	x	3|MACH64|||||d|||
+
+
+1002 4654
+	x	3|MACH64|||||d|||
+
+
+1002 4c54
+	x	3|MACH64|||||d|||
+
+
+1002 4354
+	x	3|MACH64|||||1d|||
+
+
+1002 5655
+	x	3|MACH64|||||d|||
+
+
+121a 0003
+	x	3|SVGA|||||1d|||
+
+
+
+1039 6326
+	x	3|SVGA|||||5|||
+
+5333 8a10
+	x	3|SVGA||||||||
+
+8086 7800
+	x	3|SVGA||||||||
+
+
+1163 2000
+	x	3|SVGA||||||||
+
+
+5333 8a22
+	x	3|SVGA||||||||
+
+1092 1092
+	x	3|SVGA|||||1d|||
+
+1092 0550
+	x	3|SVGA|||||f|||
+
+
+
+102b 0d10
+	x	3|SVGA|||||d|||
+
+
+102b 0520
+	x	3|SVGA|||||1d|||
+
+
+
+102b 0525
+	x	3|SVGA|||||1d|||
+
+
+
+102b 0519
+	x	3|SVGA|||||d|||
+
+
+102b ff03
+	x	3|SVGA|||||d|||
+
+
+102b 0521
+	x	3|SVGA|||||1d|||
+
+
+
+102b 051f
+	x	3|SVGA|||||1d|||
+
+
+102b 051a 102b 1100
+	x	3|SVGA|||||d|||
+
+
+102b 051a
+	x	3|SVGA|||||d|||
+
+
+102b 1000
+	x	3|SVGA|||||d|||
+
+
+1023 9850
+	x	3|SVGA||||||||
+
+105d 2339
+	x	3|SVGA|||||15|||
+
+105d 5348
+	x	3|SVGA|||||15|||
+
+126f 0810
+	x	3|SVGA||||||||
+
+12d2 0018
+	x	3|SVGA|||||15|||
+
+
+1023 9525
+	x	3|SVGA||||||||
+
+
+121a 0005
+	x	3|SVGA|||||1d|||
+
+
+
+3d3d 0002
+	x	3|3DLABS|||||11|||
+
+3d3d 0006
+	x	3|3DLABS|||||11|||
+
+3d3d 0004
+	x	3|3DLABS|||||15|||
+
+1142 6422
+	x	3|SVGA||||||||
+
+edd8 a091
+	x	3|SVGA||||||||
+
+edd8 a0a1
+	x	3|SVGA||||||||
+
+edd8 a099
+	x	3|SVGA||||||||
+
+1002 5656
+	x	3|MACH64|||||d|||
+
+
+1002 4c47
+	x	3|MACH64||||||||
+
+1002 4755
+	x	3|MACH64||||||||
+
+1002 4759
+	x	3|MACH64||||||||
+
+1039 0002
+	x	3|SVGA||||||||
+
+1039 0205
+	x	3|SVGA||||||||
+
+1023 9420
+	x	3|SVGA||||||||
+
+1023 9680
+	x	3|SVGA||||||||
+
+1023 9382
+	x	3|SVGA||||||||
+
+1023 9385
+	x	3|SVGA||||||||
+
+
+1023 9388
+	x	3|SVGA||||||||
+
+1023 9397
+	x	3|SVGA||||||||
+
+100c 3202
+	x	3|SVGA||||||||
+
+100c 3208
+	x	3|SVGA||||||||
+
+100c 4702
+	x	3|SVGA||||||||
+
+100e 9000
+	x	3|P9000||||||||
+
+100e 9100
+	x	3|SVGA||||||||
