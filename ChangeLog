@@ -1,3 +1,6 @@
+26/9/2003:	v5.60
+	- serial mouse probing could hang in some cases (#31440)
+
 22/9/2003:	v5.59
 	- don't read from cd drives that don't exist (#23248)
 
