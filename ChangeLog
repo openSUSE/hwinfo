@@ -1,3 +1,6 @@
+10/4/2003:	v5.53
+	- add fibre channel adapters to storage controller list (#23686)
+
 2/4/2003:	v5.52
 	- updated aic7xxx & aic79xx driver info (#25719)
 

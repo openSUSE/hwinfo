@@ -4192,7 +4192,14 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         )
         ||
         ( /* make i2o storage controllers */
-          item == hw_storage_ctrl && hd->base_class.id == bc_i2o
+          item == hw_storage_ctrl &&
+          hd->base_class.id == bc_i2o
+        )
+        ||
+        ( /* add fibre channel to storage ctrl list */
+          item == hw_storage_ctrl &&
+          hd->base_class.id == bc_serial &&
+          hd->sub_class.id == sc_ser_fiber
         )
       ) {
 
