@@ -1,3 +1,6 @@
+26/2/2000:	v0.74
+	- added alsa isapnp sound cards
+
 25/2/2000:	v0.73
 	- sparc & baud rate fix
 	- new libihw

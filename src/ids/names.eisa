@@ -3,31 +3,116 @@
 # EISA vendor/device ids (ISA Plug & Play)
 #
 # ids with vendor 'PNP' are compatible device ids (e.g. for non-PnP stuff)
-# see devids.txt for a full list
+# (see devids.txt)
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+ACC	Accton
+
+ADD	Addtron
 
 ADP     Adaptec
 	1505.00100	Adaptec AVA-1505AE
 
 ADS	Analog Devices
 
+ADV	Advanced Micro Devices
+	550a.00401
+	55ff.00401
+
+ALN	Acer
+
+ALS	Avance Logic, Inc.
+	0001.00401
+	0110.00401
+	0120.00401
+
 AVM	AVM
 	0900.10300	AVM ISDN-Controller FRITZ!Card
 
+ATI	Allied Telesyn
+
+ATK	Allied Telesyn
+
 AZT	Aztech Systems
+	1008.00401
+	2320.00401
+	3002.00401
+
+BRI	Boca Research
+
+CDC
+	1111.00401
+
+CMI
+	0001.00401
+
+CSC	Crystal Semiconductor
+	0000.00401
+	0437.00401
+	0b35.00401
+	1425.00401
+	1525.00401
+	4236.00401
+	4237.00401
+	4837.00401
+	6835.00401
+	6836.00401
+	7532.00401
+	7537.00401
+	7632.00401
+	9836.00401
+	9837.00401
+	a836.00401
+	d925.00401
+	d937.00401
+	e825.00401
 
 CTL	Creative Technology Ltd.
+	0024.00401
+	0026.00401
+	0027.00401
+	0029.00401
+	002b.00401
+	0039.00401
+	0042.00401
+	0043.00401
+	0044.00401
 	0048.00401	Creative SB32 PnP
+	0051.00401
+	0054.00401
+	0070.00401
+	0080.00401
+	009c.00401
+	009d.00401
 	009e.00401	Creative SB AWE64 Gold
-		CTL 0044	AWE64 Gold 16-bit Audio (SB16 compatible)
-		CTL 7002	Programmable Game Port
+	00c1.00401
+	00c3.00401
+	00c5.00401
+	00c7.00401
+	00e4.00401
 	00f0.00401	Creative ViBRA16X PnP
+
+DLK	D-Link Corporation
+
+DXP
+	3201.00401
 
 ELS	ELSA International
 	0133.10300	ELSA QuickStep 1000
 	0213	MicroLink 33.6TQV
 	0754	MicroLink 56k basic
+
+ESS	ESS Technology, Inc.
+	0003.00401
+	0968.00401
+	1868.00401
+	1869.00401
+	1878.00401
+	1879.00401
+
+GRV
+	0001.00401
 
 GWY	Gateway
 	001c.10201	Telepath for Windows with x2
@@ -35,9 +120,20 @@ GWY	Gateway
 KYE	Genius
 	0001	Genius PnP Mouse
 
+JQE	Cnet
+
 LGI	Logitech
 	8001	Logitech First/Pilot Maus
 	800c	Logitech MouseMan
+
+MDY	Microdyne
+
+NDC	NDC
+
+OPT
+	0924.00401
+	0925.00401
+	0931.00401
 
 PNP	PnP
 	0500	Standard PC COM port
@@ -53,5 +149,27 @@ PNP	PnP
 	b006	MPU401 compatible
 	b02f	Joystick/Game port
 
+RPT	RPTI
+
+RTL	Realtek
+	3000.00401
+
+RWB
+	1688.00401
+
+SKD	SysKonnect
+
+SMC	SMC
+
+STB
+	011a.00401
+
+SVE	SVEC
+
 USR	U.S. Robotics, Inc.
 	9100	U.S. Robotics 56K Message
+
+YMH	Yamaha
+	0020.00401
+	0030.00401
+	0800.00401
