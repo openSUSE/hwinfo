@@ -62,6 +62,7 @@
 #include "s390.h"
 #include "pci.h"
 #include "block.h"
+#include "sysfs_usb.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -1710,7 +1711,14 @@ void hd_scan(hd_data_t *hd_data)
 #if defined(__PPC__)   
   hd_scan_veth(hd_data);
 #endif
-  hd_scan_usb(hd_data);
+
+  if(hd_data->flags.nosysfs) {
+    hd_scan_usb(hd_data);
+  }
+  else {
+    hd_scan_sysfs_usb(hd_data);
+  }
+
 #if defined(__PPC__)
   hd_scan_adb(hd_data);
 #endif
@@ -1728,11 +1736,6 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_fb(hd_data);
 
   /* keep these at the end of the list */
-#if 0
-  if(hd_data->flags.nosysfs) {
-    hd_scan_cdrom(hd_data);
-  }
-#endif
   hd_scan_net(hd_data);
 
   hd_scan_pppoe(hd_data);
@@ -1752,12 +1755,6 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_dsl(hd_data);
 #endif
   hd_scan_int(hd_data);
-
-#if 0
-  if(hd_data->flags.nosysfs) {
-    hd_scan_cdrom2(hd_data);
-  }
-#endif
 
   /* and again... */
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd_data, hd);

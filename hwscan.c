@@ -398,7 +398,23 @@ int do_show(char *id)
 
   hd_data = calloc(1, sizeof *hd_data);
 
-  hd = hd_read_config(hd_data, id);
+  if ( id[0] == '/' ){
+     int nr=0;
+     char *_id = 0;
+     hd_t *hd_manual;
+
+     hd_manual = hd_list(hd_data, hw_manual, 1, NULL);
+     for(hd = hd_manual; hd; hd = hd->next) {
+        if(hd->status.available != status_yes) continue;
+        if(!search_str_list(hd->unix_dev_names, id)) continue;
+	_id = hd->unique_id;
+        nr++;
+     }
+
+     if ( nr == 1 ) /* > 1 means our database is not okay */
+        hd = hd_read_config(hd_data, _id);
+  }else
+    hd = hd_read_config(hd_data, id);
 
   if(hd) {
     hd_data->debug = -1;
@@ -491,7 +507,7 @@ int do_config(int type, char *val, char *id)
 
      hd_manual = hd_list(hd_data, hw_manual, 1, NULL);
      for(hd = hd_manual; hd; hd = hd->next) {
-        if(!hd->status.available) continue;
+        if(hd->status.available != status_yes) continue;
         if(!search_str_list(hd->unix_dev_names, id)) continue;
 	_id = hd->unique_id;
         nr++;

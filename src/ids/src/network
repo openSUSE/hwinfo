@@ -4,6 +4,12 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # pci/isapnp/sbus adapter
 
+# b44 vs. bcm4400, #36763
+ vendor.id		pci 0x14e4
+&device.id		pci 0x4401
++driver.module.modprobe	b44
++driver.module.modprobe	bcm4400
+
 # pcimap
  vendor.id		pci 0x10de
 &device.id		pci 0x0066

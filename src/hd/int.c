@@ -33,6 +33,7 @@ static void new_id(hd_data_t *hd_data, hd_t *hd);
 static void int_modem(hd_data_t *hd_data);
 static void int_wlan(hd_data_t *hd_data);
 static void int_udev(hd_data_t *hd_data);
+static void int_devicenames(hd_data_t *hd_data);
 
 void hd_scan_int(hd_data_t *hd_data)
 {
@@ -81,6 +82,9 @@ void hd_scan_int(hd_data_t *hd_data)
 
   PROGRESS(12, 0, "udev");
   int_udev(hd_data);
+
+  PROGRESS(13, 0, "device names");
+  int_devicenames(hd_data);
 }
 
 /*
@@ -844,6 +848,24 @@ void int_udev(hd_data_t *hd_data)
 
         break;
       }
+    }
+  }
+}
+
+
+/*
+ * If hd->unix_dev_name is not in hd->unix_dev_names, add it.
+ */
+void int_devicenames(hd_data_t *hd_data)
+{
+  hd_t *hd;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->unix_dev_name &&
+      !search_str_list(hd->unix_dev_names, hd->unix_dev_name)
+    ) {
+      add_str_list(&hd->unix_dev_names, hd->unix_dev_name);
     }
   }
 }
