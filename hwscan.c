@@ -62,9 +62,6 @@ struct option options[] = {
   { }
 };
 
-#define HARDWARE_DIR		"/var/lib/hardware"
-#define HARDWARE_UNIQUE_KEYS	HARDWARE_DIR "/unique-keys"
-
 int verbose = 0;
 hd_hw_item_t scan_item = 0;
 int found_items = 0;

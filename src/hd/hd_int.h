@@ -56,8 +56,6 @@
 #define KLOG_BOOT		"/var/log/boot.msg"
 #define ISAPNP_CONF		"/etc/isapnp.conf"
 
-#define HARDWARE_DIR		"/var/lib/hardware"
-#define HARDWARE_UNIQUE_KEYS	HARDWARE_DIR "/unique-keys"
 #define ID_LIST			HARDWARE_DIR "/hd.ids"
 #define LIB_CMDLINE		HARDWARE_DIR "/cmdline"
 

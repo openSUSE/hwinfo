@@ -47,6 +47,12 @@ extern "C" {
 #include <inttypes.h>
 #include <termios.h>
 
+/*
+ * libhd's directory
+ */
+#define HARDWARE_DIR		"/var/lib/hardware"
+#define HARDWARE_UNIQUE_KEYS	HARDWARE_DIR "/unique-keys"
+
 /**
  * \defgroup idmacros Id macros
  * Macros to handle device and vendor ids.

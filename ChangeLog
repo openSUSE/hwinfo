@@ -1,3 +1,6 @@
+11/8/2003:	v7.07
+	- define HARDWARE_DIR in hd.h
+
 8/8/2003:	v7.06
 	- use modprobe instead of insmod for scsi modules
 
