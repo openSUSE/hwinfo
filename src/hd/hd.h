@@ -530,18 +530,23 @@ typedef struct s_ser_modem_t {
   unsigned bits;
 } ser_modem_t;
 
+/*
+ * Notes on isdn_parm_t:
+ *   - def_value is only relevant of alt_values != 0
+ *   - def_value should be a value out of alt_value[]
+ *   - see libihw docu for the meaning of name,type,flags,def_value
+ */
 typedef struct isdn_parm_s {
   struct isdn_parm_s *next;
-  char *name;
-  unsigned valid:1;
-  uint64_t value;
-  unsigned type;
-  unsigned flags;
-  unsigned def_value;
-  int alt_values;
-  unsigned *alt_value;
+  char *name;				/* parameter name */
+  unsigned valid:1;			/* 1: entry is valid, 0: some inconsistencies */
+  uint64_t value;			/* value of the parameter */
+  unsigned type;			/* libihw type (P_...) */
+  unsigned flags;			/* libihw flags (P_...) */
+  unsigned def_value;			/* default value */
+  int alt_values;			/* length of alt_value[] */
+  unsigned *alt_value;			/* possible values */
 } isdn_parm_t;
-
 
 /* device driver info types */
 typedef enum driver_info_type {

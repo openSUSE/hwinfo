@@ -1059,6 +1059,8 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
   di->isdn.i4l_subtype = ici->subtype;
   di->isdn.i4l_name = new_str(ici->name);
 
+  if(hd->bus == bus_pci) return di;
+
   while((ipi = ihw_get_parameter(ici->handle, ipi0))) {
     ip = new_isdn_parm(&di->isdn.params);
     ip->name = new_str(ipi->name);

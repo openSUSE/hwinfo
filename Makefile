@@ -26,3 +26,5 @@ install:
 	install -m 755 -s hw /usr/sbin
 	install -m 644 $(LIBHD) /usr/lib
 	install -m 644 src/hd/hd.h /usr/include
+	install -d -m 755 /usr/lib/YaST
+	install -m 644 src/isdn/ihw_database /usr/lib/YaST
