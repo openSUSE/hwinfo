@@ -133,6 +133,10 @@ void hd_scan_usb(hd_data_t *hd_data)
 
       set_class_entries(hd_data, hd, usb);
 
+      if (usb->driver && !strcmp(usb->driver,"usbscanner")) {
+      	hd->base_class = bc_scanner;
+      }
+
       if(hd->base_class == bc_mouse) {
 #if 0
         mse_cnt = get_next_device(mse_dev, mse_cnt);

@@ -1,3 +1,4 @@
+	- detect USB scanner by just looking if the module is usbscanner
 	- new scanner ids
 	- camera subclass ids were 1 off from enumeration
 	- added some new hardware classes: bios, bridge, hub, usb_ctrl
