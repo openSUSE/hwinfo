@@ -314,7 +314,8 @@ static struct s_pr_flags {
   { pr_fork,          0,                  0, "fork"          },
   { pr_cpuemu,        0,                  0, "cpuemu"        },
   { pr_sysfs,         0,                  0, "sysfs"         },
-  { pr_dsl,           0,              4|2|1, "dsl"           }
+  { pr_dsl,           0,              4|2|1, "dsl"           },
+  { pr_udev,          0,                  0, "udev"          }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -1650,6 +1651,7 @@ void hd_scan(hd_data_t *hd_data)
     hd_set_probe_feature(hd_data, pr_sysfs);
     if(!hd_probe_feature(hd_data, pr_sysfs)) hd_data->flags.nosysfs = 1;
     if(hd_probe_feature(hd_data, pr_cpuemu)) hd_data->flags.cpuemu = 1;
+    if(hd_probe_feature(hd_data, pr_udev)) hd_data->flags.udev = 1;
   }
 
   /* get shm segment, if we didn't do it already */

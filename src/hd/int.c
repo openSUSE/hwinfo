@@ -932,8 +932,11 @@ void int_udev(hd_data_t *hd_data)
         s = free_mem(s);
 
         sl = hd->unix_dev_names;
-        /* use first links as canonical device name */
-        if(ui->links) sl = sl->next;
+
+        if(hd_data->flags.udev) {
+          /* use first link as canonical device name */
+          if(ui->links) sl = sl->next;
+        }
 
         hd->unix_dev_name = new_str(sl->str);
 

@@ -1,5 +1,9 @@
 15/3/2004:	v8.19
+	- do not reverse sysfs order (libsysfs does it)
+	- updated X11 data
+	- return real device name, not udev symlink
 	- DSL hardware detection for none pppoe (kkeil)
+
 14/3/2004:	v8.18
 	- s390: added two missing DASD device types
 	- added '--root' option (for testing)

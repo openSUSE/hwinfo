@@ -404,7 +404,7 @@ void add_driver_info(hd_data_t *hd_data)
 }
 
 
-#if 0
+#if 1
 /*
  * Store a raw PCI entry; just for convenience.
  */
@@ -416,8 +416,8 @@ pci_t *add_pci_entry(hd_data_t *hd_data, pci_t *new_pci)
 
   return *pci = new_pci;
 }
-#endif
 
+#else
 
 /*
  * Store a raw PCI entry; just for convenience.
@@ -430,6 +430,7 @@ pci_t *add_pci_entry(hd_data_t *hd_data, pci_t *new_pci)
 
   return hd_data->pci = new_pci;
 }
+#endif
 
 
 /*
