@@ -1014,7 +1014,7 @@
  vendor.id		pci 0x1013
 &device.id		pci 0x00a0
 +device.name		GD 5430/40 [Alpine]
-+driver.xfree		4|cirrus
++driver.xfree		4|cirrus||||Noaccel
 +driver.xfree		3|SVGA
 
  vendor.id		pci 0x1013

@@ -4947,7 +4947,7 @@ int hd_is_hw_class(hd_t *hd, hd_hw_item_t hw_class)
  * Start subprocess for dangerous things.
  *
  * Stop it after total_timeout seconds or if nothing happens for
- * timeout seonds.
+ * timeout seconds.
  */
 void hd_fork(hd_data_t *hd_data, int timeout, int total_timeout)
 {

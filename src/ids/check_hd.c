@@ -199,6 +199,7 @@ struct option options[] = {
   { "cfile", 1, NULL, 12},
   { "no-compact", 0, NULL, 13},
   { "join-keys-first", 0, NULL, 14},
+  { "combine", 0, NULL, 15},
   { }
 };
 
@@ -218,6 +219,7 @@ struct {
   unsigned split:1;
   unsigned no_compact:1;
   unsigned join_keys_first:1;
+  unsigned combine:1;		/* always combine driver info */
   char *logfile;
   char *outfile;
   char *cfile;
@@ -297,6 +299,10 @@ int main(int argc, char **argv)
 
       case 14:
         opt.join_keys_first = 1;
+        break;
+
+      case 15:
+        opt.combine = 1;
         break;
 
       default:
@@ -2271,9 +2277,10 @@ void combine_driver(list_t *hd)
       if(!(type1 = driver_entry_types(hid1))) continue;
 
       /*
-       * allow only (x11 + x11) & (!any + any)
+       * Allow only (x11 + x11) & (!any + any)
+       * unless --combine option was used.
        */
-      if(((type0 & type1) & 5) || ((type0 | type1) & 6) == 6) {
+      if(!opt.combine && (((type0 & type1) & 5) || ((type0 | type1) & 6) == 6)) {
         fprintf(logfh,
           "%s: can't combine driver info with %s %d %d\n",
           item0->pos, item1->pos, type0, type1

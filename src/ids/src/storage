@@ -370,7 +370,7 @@
 &device.id		pci 0xba56
 +driver.module.modprobe	DAC960
 
-# block/cpqarray.c
+# pcimap
  vendor.id		pci 0x0e11
 &device.id		pci 0xae10
 &subvendor.id		pci 0x0e11
@@ -393,11 +393,11 @@
 &subdevice.id		pci 0x4058
 +driver.module.modprobe	cpqarray
 
-# block/cciss.c
+# pcimap
  vendor.id		pci 0x0e11
 &device.id		pci 0x0046
 &subvendor.id		pci 0x0e11
-&subdevice.id		pci 0x409a+0x0003
+&subdevice.id		pci 0x409a+0x0004
 |vendor.id		pci 0x0e11
 &device.id		pci 0xb060
 &subvendor.id		pci 0x0e11

@@ -492,3 +492,12 @@
 &device.id		special 0x2004
 +driver.module.modprobe	dbri
 
+# pcimap
+ vendor.id		pci 0x10de
+&device.id		pci 0x006a
+|vendor.id		pci 0x10de
+&device.id		pci 0x00da
+|vendor.id		pci 0x10de
+&device.id		pci 0x01b1
++driver.module.modprobe	nvaudio
+

@@ -1,3 +1,10 @@
+8/9/2003:	v7.19
+	- updated driver info (#25457, #29481, #25531)
+	- updated X11 data
+	- added --combine option to check_hd to assist in creating
+	  driver data
+	- fixed minor typos
+
 6/9/2003:	v7.18
 	- updated usb mouse data (#29719)
 	- better touch pad/track point reporting for notebooks

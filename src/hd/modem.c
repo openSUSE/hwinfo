@@ -1033,7 +1033,6 @@ void dump_ser_modem_data(hd_data_t *hd_data)
 {
   int j;
   ser_device_t *sm;
-  str_list_t *sl;
 
   if(!(sm = hd_data->ser_modem)) return;
 
@@ -1073,10 +1072,6 @@ void dump_ser_modem_data(hd_data_t *hd_data)
       ADD2LOG("  bits: %u\n", sm->bits);
       ADD2LOG("  PnP Rev: %u.%02u\n", sm->pnp_rev / 100, sm->pnp_rev % 100);
       ADD2LOG("  PnP ID: \"%s\"\n", sm->pnp_id);
-    }
-
-    for(sl = sm->at_resp; sl; sl = sl->next) {
-      ADD2LOG("  at: %s\n", sl->str);
     }
 
     if(sm->next) ADD2LOG("\n");
