@@ -215,8 +215,17 @@ static int add_vendor(char *v, int card) {
 		if (found) {
 			vendors[ivendor_idx].name = _vendorshortnames[i].lname;
 			vendors[ivendor_idx].shortname = _vendorshortnames[i].sname;
-		} else if (!(vendors[ivendor_idx].name = add_name(v, 1)))
-			return(-1);
+		} else {
+			char *p;
+			if (!(vendors[ivendor_idx].name = add_name(v, 1)))
+				return(-1);
+			p = strtok(v, " ");
+			if (p) {
+				if (!(vendors[ivendor_idx].shortname = add_name(p, 1)))
+					return(-1);
+			} else
+				vendors[ivendor_idx].shortname = vendors[ivendor_idx].name;
+		}
 		vendors[ivendor_idx].vnr = ivendor_idx;
 		vendors[ivendor_idx].refcnt++;
 		ivendor_idx++;
