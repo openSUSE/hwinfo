@@ -18,9 +18,11 @@ AVM	AVM
 AZT	Aztech Systems
 
 CTL	Creative Technology Ltd.
+	0048.00401	Creative SB32 PnP
 	009e.00401	Creative SB AWE64 Gold
 		CTL 0044	AWE64 Gold 16-bit Audio (SB16 compatible)
 		CTL 7002	Programmable Game Port
+	00f0.00401	Creative ViBRA16X PnP
 
 ELS	ELSA International
 	0133.10300	ELSA QuickStep 1000

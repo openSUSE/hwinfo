@@ -5,6 +5,7 @@
 	- better keyboard detection
 	- ressource management for irqs
 	- isdn fixes/improvements
+	- added some sound cards
 
 24/2/2000:	v0.72
 	- libihw used only on ix86 & axp

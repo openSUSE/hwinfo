@@ -6,7 +6,7 @@
 #include "hd_int.h"
 #include "isdn.h"
 
-#define ISDN_TEST
+#undef ISDN_TEST
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * identify isdn cards
