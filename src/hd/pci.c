@@ -459,8 +459,8 @@ unsigned get_pci_addr_range(hd_data_t *hd_data, pci_t *pci, int fd, unsigned add
       u = u1 & mask;
     }
     else {
-#ifdef __i386__
-      /* Intel processors have 16 bit i/o space */
+#if defined(__i386__) || defined (__x86_64__)
+      /* Intel and Hammer processors have 16 bit i/o space */
       if((u0 & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO) u1 |= 0xffff0000;
 #endif
       u = u1 & (

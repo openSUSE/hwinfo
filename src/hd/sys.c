@@ -18,7 +18,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#if defined(__i386__) || defined (__x86_64__)
+#if defined(__i386__)
 int is_txt(char c);
 static int chk_vaio(hd_data_t *hd_data, sys_info_t *st);
 static void sigsegv_handler(int signum);
@@ -105,14 +105,14 @@ void hd_scan_sys(hd_data_t *hd_data)
   }
 #endif
 
-#if defined(__i386__) || defined (__x86_64__)
+#if defined(__i386__)
   chk_vaio(hd_data, st);
   chk_vmware(hd_data, st);
 #endif
 
 }
 
-#if defined(__i386__) || defined (__x86_64__)
+#if defined(__i386__)
 int is_txt(char c)
 {
   if(c < ' ' || c == 0x7f) return 0;
@@ -246,5 +246,5 @@ void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
 }
 
 
-#endif	/* __i386__ || __x86_64__ */
+#endif	/* __i386__ */
 

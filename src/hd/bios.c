@@ -288,8 +288,9 @@ void hd_scan_bios(hd_data_t *hd_data)
     vbe = &bt->vbe;
     vbe->ok = 0;
 
-
+#ifndef __x86_64__
     get_vbe_info(hd_data, vbe);
+#endif
 
     if(vbe->ok) {
       bt->vbe_ver = vbe->version;
@@ -733,6 +734,7 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
         break;
 
       default:
+	break;
     }
   }
 }
