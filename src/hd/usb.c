@@ -46,7 +46,7 @@ void hd_scan_usb(hd_data_t *hd_data)
 
   /* some clean-up */
   remove_hd_entries(hd_data);
-  hd_data->proc_usb = NULL;
+  hd_data->proc_usb = free_str_list(hd_data->proc_usb);
   hd_data->usb = NULL;
 
   PROGRESS(1, 0, "check");
@@ -187,6 +187,19 @@ void hd_scan_usb(hd_data_t *hd_data)
       }
     }
   }
+
+  /* remove potentially dangling 'next' links */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->bus == bus_usb &&
+      hd->detail &&
+      hd->detail->type == hd_detail_usb
+    ) {
+      hd->detail->usb.data->next = NULL;
+    }
+  }
+
+  hd_data->usb = NULL;
 
 }
 

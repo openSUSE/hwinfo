@@ -84,7 +84,6 @@ void do_lp(hd_data_t *hd_data)
     }
     free_str_list(sl0);
 
-    pp = free_mem(pp);
     s = free_mem(s);
 
 //    fprintf(stderr, "port <0x%x\n", port);
@@ -144,6 +143,8 @@ void do_lp(hd_data_t *hd_data)
     free_mem(vendor);
     free_mem(cmd_set);
   }
+
+  pp = free_mem(pp);
 
   if((hd_data->debug & HD_DEB_PARALLEL)) dump_parallel_data(hd_data, log);
 

@@ -40,7 +40,7 @@ void hd_scan_floppy(hd_data_t *hd_data)
 
    /* some clean-up */
   remove_hd_entries(hd_data);
-  hd_data->floppy = NULL;
+  hd_data->floppy = free_str_list(hd_data->floppy);
 
   PROGRESS(1, 0, "get nvram");
 

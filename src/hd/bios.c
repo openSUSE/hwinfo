@@ -78,6 +78,7 @@ void hd_scan_bios(hd_data_t *hd_data)
    */
   PROGRESS(2, 0, "ram");
 
+  if(hd_data->bios_ram) free_mem(hd_data->bios_ram);
   hd_data->bios_ram = new_mem(BIOS_RAM_SIZE);
   fd = -1;
   if(
@@ -106,6 +107,7 @@ void hd_scan_bios(hd_data_t *hd_data)
    */
   PROGRESS(2, 0, "rom");
 
+  if(hd_data->bios_rom) free_mem(hd_data->bios_rom);
   hd_data->bios_rom = new_mem(BIOS_ROM_SIZE);
   fd = -1;
   if(

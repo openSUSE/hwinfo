@@ -40,6 +40,8 @@ static void get_sunmouse(hd_data_t *hd_data);
 
 void hd_scan_mouse(hd_data_t *hd_data)
 {
+  ser_mouse_t *sm, *sm_next;
+
   if(!hd_probe_feature(hd_data, pr_mouse)) return;
 
   hd_data->module = mod_mouse;
@@ -56,6 +58,14 @@ void hd_scan_mouse(hd_data_t *hd_data)
 
   get_serial_mouse(hd_data);
   if((hd_data->debug & HD_DEB_MOUSE)) dump_ser_mouse_data(hd_data);
+
+  for(sm = hd_data->ser_mouse; sm; sm = sm_next) {
+    sm_next = sm->next;
+
+    free_mem(sm->dev_name);
+    free_mem(sm);
+  }
+  hd_data->ser_mouse = NULL;
 
   PROGRESS(3, 0, "sunmouse");
 

@@ -52,7 +52,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#define LIBHD_MEMCHECK
+#undef LIBHD_MEMCHECK
 
 #ifdef __i386__
 #define HD_ARCH "ix86"
@@ -352,21 +352,22 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
 {
   add_hd_entry2(&hd_data->old_hd, hd_data->hd); hd_data->hd = NULL;
   hd_data->log = free_mem(hd_data->log);
-  free_old_hd_entries(hd_data);		// hd_data->old_hd
-  // hd_data->pci is always NULL
-  // hd_data->isapnp
+  free_old_hd_entries(hd_data);		/* hd_data->old_hd */
+  /* hd_data->pci is always NULL */
+  /* hd_data->isapnp->card is always NULL */
+  hd_data->isapnp = free_mem(hd_data->isapnp);
   hd_data->cdrom = free_str_list(hd_data->cdrom);
   hd_data->net = free_str_list(hd_data->net);
   hd_data->floppy = free_str_list(hd_data->floppy);
   hd_data->misc = free_misc(hd_data->misc);
-  // hd_data->serial
+  // hd_data->serial is always NULL
   // hd_data->scsi is always NULL
-  // hd_data->ser_mouse
-  // hd_data->ser_modem
+  // hd_data->ser_mouse is always NULL
+  // hd_data->ser_modem is always NULL
   hd_data->cpu = free_str_list(hd_data->cpu);
   hd_data->klog = free_str_list(hd_data->klog);
   hd_data->proc_usb = free_str_list(hd_data->proc_usb);
-  // hd_data->usb
+  /* hd_data->usb is always NULL */
 
   if(hd_data->hddb_dev) {
     free_mem(hd_data->hddb_dev->data);
@@ -487,6 +488,138 @@ hd_t *hd_free_hd_list(hd_t *hd)
   return NULL;
 }
 
+hd_detail_t *free_hd_detail(hd_detail_t *d)
+{
+  if(!d) return NULL;
+
+  switch(d->type) {
+    case hd_detail_pci: {
+        pci_t *p = d->pci.data;
+
+        free_mem(p->log);
+        free_mem(p);
+      }
+      break;
+
+    case hd_detail_usb:
+      {
+        usb_t *u = d->usb.data;
+
+        free_str_list(u->b);
+        free_str_list(u->c);
+        free_str_list(u->ci);
+        free_str_list(u->d);
+        free_str_list(u->e);
+        free_str_list(u->i);
+        free_str_list(u->p);
+        free_str_list(u->s);
+        free_str_list(u->t);
+
+        free_mem(u->manufact);
+        free_mem(u->product);
+        free_mem(u->serial);
+        free_mem(u->driver);
+
+        free_mem(u);
+      }
+      break;
+
+    case hd_detail_isapnp:
+      {
+        isapnp_dev_t *i = d->isapnp.data;
+        int j;
+
+        free_mem(i->card->serial);
+        free_mem(i->card->card_regs);
+        free_mem(i->card->ldev_regs);
+        for(j = 0; j < i->card->res_len; j++) {
+          free_mem(i->card->res[j].data);
+        }
+        if(i->card->res) free_mem(i->card->res);
+        free_mem(i->card);
+        free_mem(i);
+      }
+      break;
+
+    case hd_detail_cdrom:
+      {
+        cdrom_info_t *c = d->cdrom.data;
+
+        free_mem(c->volume);
+        free_mem(c->publisher);
+        free_mem(c->preparer);
+        free_mem(c->application);
+        free_mem(c->creation_date);
+
+        free_mem(c);
+      }
+      break;
+
+    case hd_detail_floppy:
+      free_mem(d->floppy.data);
+      break;
+
+    case hd_detail_bios:
+      free_mem(d->bios.data);
+      break;
+
+    case hd_detail_cpu:
+      {
+        cpu_info_t *c = d->cpu.data;
+
+        free_mem(c->vend_name);
+        free_mem(c->model_name);
+        free_mem(c->platform);
+        free_str_list(c->features);
+        free_mem(c);
+      }
+      break;
+
+    case hd_detail_prom:
+      free_mem(d->prom.data);
+      break;
+
+    case hd_detail_monitor:
+      {
+        monitor_info_t *m = d->monitor.data;
+
+        free_mem(m->vendor);
+        free_mem(m->name);
+        free_mem(m->serial);
+
+        free_mem(m);
+      }
+      break;
+
+    case hd_detail_sys:
+      {
+        sys_info_t *s = d->sys.data;
+
+        free_mem(s->system_type);
+        free_mem(s->generation);
+        free_mem(s->vendor);
+        free_mem(s->model);
+        free_mem(s->serial);
+        free_mem(s->lang);
+
+        free_mem(s);
+      }
+      break;
+
+    case hd_detail_scsi:
+      free_scsi(d->scsi.data, 1);
+      break;
+
+    case hd_detail_devtree:
+      free_mem(d->devtree.data);
+      break;
+  }
+
+  free_mem(d);
+
+  return NULL;
+}
+
 
 hd_t *free_hd_entry(hd_t *hd)
 {
@@ -502,71 +635,7 @@ hd_t *free_hd_entry(hd_t *hd)
 
   free_res_list(hd->res);
 
-  if(hd->detail) {
-    switch(hd->detail->type) {
-      case hd_detail_pci: {
-          pci_t *p = hd->detail->pci.data;
-
-          free_mem(p->log);
-          free_mem(p);
-        }
-        break;
-
-      case hd_detail_usb:
-        free_mem(hd->detail->usb.data);
-        break;
-
-      case hd_detail_isapnp:
-        free_mem(hd->detail->isapnp.data);
-        break;
-
-      case hd_detail_cdrom:
-        free_mem(hd->detail->cdrom.data);
-        break;
-
-      case hd_detail_floppy:
-        free_mem(hd->detail->floppy.data);
-        break;
-
-      case hd_detail_bios:
-        free_mem(hd->detail->bios.data);
-        break;
-
-      case hd_detail_cpu:
-        {
-          cpu_info_t *c = hd->detail->cpu.data;
-
-          free_mem(c->vend_name);
-          free_mem(c->model_name);
-          free_mem(c->platform);
-          free_str_list(c->features);
-          free_mem(c);
-        }
-        break;
-
-      case hd_detail_prom:
-        free_mem(hd->detail->prom.data);
-        break;
-
-      case hd_detail_monitor:
-        free_mem(hd->detail->monitor.data);
-        break;
-
-      case hd_detail_sys:
-        free_mem(hd->detail->sys.data);
-        break;
-
-      case hd_detail_scsi:
-        free_scsi(hd->detail->scsi.data, 1);
-        break;
-
-      case hd_detail_devtree:
-        free_mem(hd->detail->devtree.data);
-        break;
-    }
-
-    free_mem(hd->detail);
-  }
+  free_hd_detail(hd->detail);
 
   memset(hd, 0, sizeof *hd);
 
@@ -1247,6 +1316,13 @@ char *canon_str(char *s, int len)
   char *m2, *m1, *m0 = new_mem(len + 1);
   int i;
 
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &s)[-1] - 5;
+    if(libhd_log) fprintf(libhd_log, ">%p\n", f);
+  }
+#endif
+
   for(m1 = m0, i = 0; i < len; i++) {
     if(m1 == m0 && s[i] <= ' ') continue;
     *m1++ = s[i];
@@ -1258,6 +1334,13 @@ char *canon_str(char *s, int len)
 
   m2 = new_str(m0);
   free_mem(m0);
+
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &s)[-1] - 5;
+    if(libhd_log) fprintf(libhd_log, "<%p\n", f);
+  }
+#endif
 
   return m2;
 }
@@ -1725,14 +1808,13 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
   di->kbd.type = di_kbd;
   ki = &(di->kbd);
 
-  ki->XkbRules = new_str(arch == arch_sparc || arch == arch_sparc64 ? "sun" : "xfree86");
-
   switch(arch) {
     case arch_intel:
     case arch_alpha:
       ki->XkbRules = new_str("xfree86");
       ki->XkbModel = new_str("pc104");
       break;
+
     case arch_ppc:
       ki->XkbRules = new_str("xfree86");
       ki->XkbModel = new_str("macintosh");
@@ -1745,6 +1827,7 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
         }
       }
       break;
+
     case arch_sparc:
     case arch_sparc64:
       if(hd->vend == MAKE_ID(TAG_SPECIAL, 0x0202)) {
@@ -1850,12 +1933,14 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
         ki->XkbLayout = new_str(s1);
         ki->keymap = new_str(s2);
       }
-      else
-	{
-	  ki->XkbRules = new_str ("xfree86");
-	  ki->XkbModel = new_str ("pc104");
-	}
+      else {
+        ki->XkbRules = new_str("xfree86");
+        ki->XkbModel = new_str("pc104");
+      }
       break;
+
+    default:
+      ki->XkbRules = new_str("xfree86");
   }
 
   return di;
@@ -2004,6 +2089,8 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
     }
 
   }
+
+  free_mem(ipi0);
 
   return di;
 }
@@ -2154,6 +2241,7 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 #if WITH_ISDN
   if((ici = get_isdn_info(hd))) {
     di0 = isdn_driver(hd_data, hd, ici);
+    free_mem(ici);
     if(di0) return di0;
   }
 #endif
@@ -3493,6 +3581,7 @@ int run_cmd(hd_data_t *hd_data, char *cmd)
     str_printf(&xcmd, 0, "|%s 2>&1", cmd);
     sl0 = read_file(xcmd, 0, 0);
     for(sl = sl0; sl; sl = sl->next) ADD2LOG("  %s", sl->str);
+    sl0 = free_str_list(sl0);
   }
 
   ADD2LOG("----- return code: ? -----\n");
@@ -3505,23 +3594,33 @@ int run_cmd(hd_data_t *hd_data, char *cmd)
 int load_module(hd_data_t *hd_data, char *module)
 {
   char *cmd = NULL;
+  int i;
 
   if(hd_module_is_active(hd_data, module)) return 0;
 
   str_printf(&cmd, 0, "/sbin/insmod %s", module);
 
-  return run_cmd(hd_data, cmd);
+  i = run_cmd(hd_data, cmd);
+
+  free_mem(cmd);
+
+  return i;
 }
 
 int unload_module(hd_data_t *hd_data, char *module)
 {
   char *cmd = NULL;
+  int i;
 
   if(!hd_module_is_active(hd_data, module)) return 0;
 
   str_printf(&cmd, 0, "/sbin/rmmod %s", module);
 
-  return run_cmd(hd_data, cmd);
+  i = run_cmd(hd_data, cmd);
+
+  free_mem(cmd);
+  
+  return i;
 }
 
 /*

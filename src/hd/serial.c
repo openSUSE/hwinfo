@@ -28,7 +28,7 @@ static void dump_serial_data(hd_data_t *hd_data);
 void hd_scan_serial(hd_data_t *hd_data)
 {
   hd_t *hd;
-  serial_t *ser;
+  serial_t *ser, *next;
   hd_res_t *res;
   int i;
   char *s, *skip_dev[2] = { NULL, NULL }, buf[4];
@@ -109,6 +109,15 @@ void hd_scan_serial(hd_data_t *hd_data)
     res->irq.enabled = 1;
     res->irq.base = ser->irq;
   }  
+
+  for(ser = hd_data->serial; ser; ser = next) {
+    next = ser->next;
+
+    free_mem(ser->name);
+    free_mem(ser->device);
+    free_mem(ser);
+  }
+  hd_data->serial = NULL;
 }
 
 void get_serial_info(hd_data_t *hd_data)

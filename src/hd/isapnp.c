@@ -44,19 +44,28 @@ void hd_scan_isapnp(hd_data_t *hd_data)
 
   /* some clean-up */
   remove_hd_entries(hd_data);
-  hd_data->isapnp = NULL;
 
   PROGRESS(1, 0, "read port");
-  
-  hd_data->isapnp = new_mem(sizeof *hd_data->isapnp);
 
-  get_read_port(hd_data->isapnp);
+  if(!hd_data->isapnp) {
+    hd_data->isapnp = new_mem(sizeof *hd_data->isapnp);
+  }
+  else {
+    hd_data->isapnp->cards = 0;
+    /* just in case... */
+    hd_data->isapnp->card = free_mem(hd_data->isapnp->card);
+    /* keep the port */
+  }
+
+  if(!hd_data->isapnp->read_port) get_read_port(hd_data->isapnp);
 
   PROGRESS(2, 0, "get pnp data");
   
   hd_data->module = mod_pnpdump;
   pnpdump(hd_data, 0);
   hd_data->module = mod_isapnp;
+
+  if(!hd_data->isapnp->cards) hd_data->isapnp->read_port = 0;
 
   if((hd_data->debug & HD_DEB_ISAPNP)) dump_raw_isapnp(hd_data);
 
@@ -100,7 +109,8 @@ void hd_scan_isapnp(hd_data_t *hd_data)
       hd->detail = new_mem(sizeof *hd->detail);
       hd->detail->type = hd_detail_isapnp;
       dev = hd->detail->isapnp.data = new_mem(sizeof *hd->detail->isapnp.data);
-      dev->card = c;
+      dev->card = new_mem(sizeof *dev->card);
+      *dev->card = *c;
       dev->dev = j;
 
       if(c->broken) hd->broken = 1;
@@ -287,6 +297,8 @@ void hd_scan_isapnp(hd_data_t *hd_data)
 
     }
   }
+
+  hd_data->isapnp->card = free_mem(hd_data->isapnp->card);
 
 }
 

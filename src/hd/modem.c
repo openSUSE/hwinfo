@@ -64,6 +64,8 @@ static void dump_ser_modem_data(hd_data_t *hd_data);
 
 void hd_scan_modem(hd_data_t *hd_data)
 {
+  ser_modem_t *sm, *sm_next;
+
   if(!hd_probe_feature(hd_data, pr_modem)) return;
 
   hd_data->module = mod_modem;
@@ -75,8 +77,24 @@ void hd_scan_modem(hd_data_t *hd_data)
   PROGRESS(1, 0, "serial");
 
   get_serial_modem(hd_data);
-
   if((hd_data->debug & HD_DEB_MODEM)) dump_ser_modem_data(hd_data);
+
+  for(sm = hd_data->ser_modem; sm; sm = sm_next) {
+    sm_next = sm->next;
+
+    free_str_list(sm->at_resp);
+
+    free_mem(sm->dev_name);
+    free_mem(sm->serial);
+    free_mem(sm->class_name);
+    free_mem(sm->dev_id);
+    free_mem(sm->user_name);
+    free_mem(sm->vend);
+
+    free_mem(sm);
+  }
+  hd_data->ser_modem = NULL;
+
 }
 
 void get_serial_modem(hd_data_t *hd_data)

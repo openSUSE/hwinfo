@@ -78,6 +78,7 @@ hd_res_t *add_res_entry(hd_res_t **res, hd_res_t *new_res);
 hd_t *add_hd_entry(hd_data_t *hd_data, unsigned line, unsigned count);
 misc_t *free_misc(misc_t *m);
 scsi_t *free_scsi(scsi_t *scsi, int free_all);
+hd_detail_t *free_hd_detail(hd_detail_t *d);
 
 char *isa_id2str(unsigned);
 char *eisa_vendor_str(unsigned);

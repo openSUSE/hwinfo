@@ -75,7 +75,7 @@ void scan_isa_isdn(hd_data_t *hd_data)
 
   }
 
-  free_isa_isdn(ii);
+  free_isa_isdn(ii0);
 }
 
 isa_isdn_t *new_isa_isdn(isa_isdn_t **ii)

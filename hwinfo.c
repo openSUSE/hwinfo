@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <mcheck.h>
+// #include <mcheck.h>
 
 #include "hd.h"
 
@@ -33,7 +33,7 @@ int main(int argc, char **argv)
   int i;
   unsigned first_probe = 1;
 
-  mtrace();
+  // mtrace();
 
   argc--; argv++;
 

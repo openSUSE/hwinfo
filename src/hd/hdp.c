@@ -667,7 +667,11 @@ void dump_bios(hd_data_t *hd_data, hd_t *hd, FILE *f)
   if(bt->par_port1) dump_line("Parallel Port 1: 0x%x\n", bt->par_port1);
   if(bt->par_port2) dump_line("Parallel Port 2: 0x%x\n", bt->par_port2);
 
-  if(bt->is_pnp_bios) dump_line("PnP BIOS: %s\n", isa_id2str(bt->pnp_id));
+  if(bt->is_pnp_bios) {
+    char *s = isa_id2str(bt->pnp_id);
+    dump_line("PnP BIOS: %s\n", s);
+    free_mem(s);
+  }
 }
 
 

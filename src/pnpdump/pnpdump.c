@@ -193,6 +193,8 @@ void dumpregs(int);
 
 char *devidstr(unsigned char, unsigned char, unsigned char, unsigned char);
 
+static hd_data_t *hd_data;
+
 /*
  * Single argument is initial readport
  * Two arguments is no-of-boards and the readport to use

@@ -47,7 +47,7 @@ void hd_scan_cdrom(hd_data_t *hd_data)
 
   /* some clean-up */
   remove_hd_entries(hd_data);
-  hd_data->cdrom = NULL;
+  hd_data->cdrom = free_str_list(hd_data->cdrom);
 
   PROGRESS(1, 0, "get devices");
 
@@ -123,18 +123,7 @@ cdrom_info_t *hd_read_cdrom_info(hd_t *hd)
   struct iso_primary_descriptor iso_desc;
 
   /* free existing entry */
-  if(hd->detail) {
-    if(hd->detail->type == hd_detail_cdrom) {
-      ci = hd->detail->cdrom.data;
-      if(ci->volume) free_mem(ci->volume);
-      if(ci->publisher) free_mem(ci->publisher);
-      if(ci->preparer) free_mem(ci->preparer);
-      if(ci->application) free_mem(ci->application);
-      if(ci->creation_date) free_mem(ci->creation_date);
-      free_mem(ci);
-    }
-    hd->detail = free_mem(hd->detail);
-  }
+  hd->detail = free_hd_detail(hd->detail);
 
   if((fd = open(hd->unix_dev_name, O_RDONLY)) < 0) {
     /* we are here if there is no CD in the drive */

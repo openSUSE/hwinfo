@@ -40,7 +40,7 @@ void hd_scan_net(hd_data_t *hd_data)
 
   /* some clean-up */
   remove_hd_entries(hd_data);
-  hd_data->net = NULL;
+  hd_data->net = free_str_list(hd_data->net);
 
   PROGRESS(1, 0, "get net-if data");
 
