@@ -2381,6 +2381,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 
       case hw_sound:
         hd_set_probe_feature(hd_data, pr_pci);
+        hd_set_probe_feature(hd_data, pr_isapnp);
         hd_set_probe_feature(hd_data, pr_sbus);
         break;
 

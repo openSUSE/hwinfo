@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-07-12 12:17:46
+#hwinfo data from 2000-07-12 18:59:41
 #
 
 
@@ -1331,7 +1331,7 @@
 
 # Nvidia:Quadro
 10de 0103  
-	x	4|nvidia||nv_glx|||4
+	x	4|nv|||||4
 
 
 # Nvidia:Quadro
@@ -1421,7 +1421,7 @@
 
 # Nvidia:Riva TNT2
 10DE 0028  
-	x	4|nvidia||nv_glx||sw_cursor|1f
+	x	4|nv||||sw_cursor|1f
 
 
 # Nvidia:Riva TNT2
@@ -1441,7 +1441,7 @@
 
 # Nvidia:Riva TNT
 10DE 0020  
-	x	4|nvidia||nv_glx|||f
+	x	4|nv|||||f
 
 
 # Nvidia:Riva TNT

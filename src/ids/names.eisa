@@ -15,6 +15,8 @@ ADP     Adaptec
 	1505.00100	Adaptec AVA-1505AE
 
 ADS	Analog Devices
+	7150.00401
+	7181.00401
 
 ADV	Advanced Micro Devices
 	550a.00401
@@ -37,6 +39,7 @@ ATK	Allied Telesyn
 AZT	Aztech Systems
 	1008.00401
 	2320.00401
+	3000.00401
 	3002.00401
 
 BRI	Boca Research
@@ -55,6 +58,7 @@ CSC	Crystal Semiconductor
 	1525.00401
 	4236.00401
 	4237.00401
+	4336.00401
 	4837.00401
 	6835.00401
 	6836.00401
@@ -67,31 +71,36 @@ CSC	Crystal Semiconductor
 	d925.00401
 	d937.00401
 	e825.00401
+	f032.00401
+	f235.00401
 
 CTL	Creative Technology Ltd.
-	0024.00401
-	0026.00401
-	0027.00401
-	0029.00401
-	002b.00401
-	0039.00401
-	0042.00401
-	0043.00401
-	0044.00401
-	0048.00401	Creative SB32 PnP
-	0051.00401
-	0054.00401
-	0070.00401
-	0080.00401
-	009c.00401
-	009d.00401
+	0024.00401	Sound Blaster 16
+	0026.00401	Sound Blaster 16
+	0027.00401	Sound Blaster 16
+	0028.00401	Sound Blaster 16
+	0029.00401	Sound Blaster 16
+	002b.00401	Sound Blaster 16
+	0039.00401	Sound Blaster AWE 32
+	0042.00401	Sound Blaster AWE 32
+	0043.00401	Sound Blaster AWE 32
+	0044.00401	Sound Blaster AWE 32
+	0047.00401	Sound Blaster AWE 32
+	0048.00401	Creative SB32
+	0051.00401	Sound Blaster Vibra16S
+	0054.00401	Sound Blaster AWE 32
+	0070.00401	Sound Blaster Vibra16C
+	0080.00401	Sound Blaster Vibra16CL
+	009c.00401	Sound Blaster AWE 32
+	009d.00401	Sound Blaster AWE 64
 	009e.00401	Creative SB AWE64 Gold
-	00c1.00401
-	00c3.00401
-	00c5.00401
-	00c7.00401
-	00e4.00401
-	00f0.00401	Creative ViBRA16X PnP
+	00b2.00401	Creative SB AWE64 Gold
+	00c1.00401	Sound Blaster AWE 64
+	00c3.00401	Sound Blaster AWE 64
+	00c5.00401	Sound Blaster AWE 64
+	00c7.00401	Sound Blaster AWE 64
+	00e4.00401	Sound Blaster AWE 64
+	00f0.00401	Creative ViBRA16X
 
 DLK	D-Link Corporation
 
@@ -128,6 +137,9 @@ LGI	Logitech
 
 LWC
 	1060.00401
+
+MDK
+	1605.00401
 
 MDY	Microdyne
 
@@ -168,6 +180,9 @@ STB
 	011a.00401
 
 SVE	SVEC
+
+TER
+	1411.00401
 
 USR	U.S. Robotics, Inc.
 	9100	U.S. Robotics 56K Message

@@ -1,3 +1,8 @@
+12/7/2000:	v1.18
+	- updated alsa driver info
+	- updated minicdb id data
+	- fixed missing isapnp sound cards bug
+
 11/7/2000:	v1.17
 	- added Sony Vaio detection
 	- changed lance driver entry
