@@ -525,11 +525,17 @@ void do_test(hd_data_t *hd_data)
 void help()
 {
   fprintf(stderr,
-    "usage: hwinfo [--short] [--log log_file] [--debug debug_level] [--<hardware_item1> --<hardware_item2> ...]\n"
-    "  <hardware_item> is one of:\n"
-    "    cdrom, floppy, disk, network, display, monitor, mouse, keyboard,\n"
-    "    sound, isdn, modem, storage_ctrl, netcards, printer, tv,\n"
-    "    scanner, braille, sys, cpu, smp, usb, pci, isapnp, ide, scsi,\n"
+    "Usage: hwinfo [options]\n"
+    "Probe for hardware.\n"
+    "  --short        just a short listing\n"
+    "  --log logfile  write info to logfile\n"
+    "  --debug level  set debuglevel\n"
+    "  --hw_item      probe for hw_item\n"
+    "  hw_item is one of:\n"
+    "    cdrom, floppy, disk, network, gfxcard, framebuffer, monitor, camera,\n"
+    "    mouse, joystick, keyboard, chipcard, sound, isdn, modem, storage_ctrl,\n"
+    "    netcard, printer, tv, scanner, braille, sys, bios, cpu, partition, usb_ctrl,\n"
+    "    usb, pci, isapnp, ide, scsi, bridge, hub, memory, smp,\n"
     "    all, reallyall\n\n"
     "  Note: debug info is shown only in the log file. (If you specify a\n"
     "  log file the debug level is implicitly set to a reasonable value.)\n"

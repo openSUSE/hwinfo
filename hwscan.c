@@ -184,7 +184,22 @@ int main(int argc, char **argv)
 
 void help()
 {
-  fprintf(stderr, "usage: hwscan [options]\n");
+  fprintf(stderr,
+    "Usage: hwscan [options]\n"
+    "Show information about currently known hardware.\n"
+    "  --list            show list of known hardware\n"
+    "  --cfg=state id    change 'configured' status; id is one of the\n"
+    "                    ids from 'hwscan --list'\n"
+    "                    state is one of new, no, yes\n"
+    "  --avail=state id  change 'available' status\n"
+    "  --need=state id   change 'needed' status\n"
+    "  --hw_item         probe for hw_item and update status info\n"
+    "  hw_item is one of:\n"
+    "    cdrom, floppy, disk, mouse, gfxcard, monitor, network, sound, modem,\n"
+    "    printer, storage_ctrl, netcard, camera, isdn, tv, scanner, joystick,\n"
+    "    usb, pci, isapnp, framebuffer, keyboard, chipcard, braille, partition,\n"
+    "    usb_ctrl, sys, cpu, bios, bridge, hub, memory\n"
+  );
 }
 
 #ifndef LIBHD_TINY
