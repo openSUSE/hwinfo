@@ -1,3 +1,4 @@
+1/3/2002:	v4.14
 	- detect USB scanner by just looking if the module is usbscanner
 	- new scanner ids
 	- camera subclass ids were 1 off from enumeration
@@ -7,6 +8,7 @@
 	- added '--fast' option to hwscan: don't check for tricky hardware
 	  as serial mice or parport zips unless they had been found
 	  previously
+	- boot.hwscan: probe for mice & pci hardware only (to be faster)
 
 25/2/2002:	v4.13
 	- meissner: boot.hwscan:
