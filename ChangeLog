@@ -1,3 +1,4 @@
+	- ppc: use TIOCGDEV to find out about hvc0.
 	- s390: set is.notready flag on unformatted DASDs (bug #39174)
 
 20/4/2004:	v8.41
