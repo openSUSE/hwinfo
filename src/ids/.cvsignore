@@ -5,3 +5,8 @@ mk_ids.err
 hd.names
 names.h
 names_s.h
+drivers.h
+drivers_s.h
+hd.drivers_s
+drivers.network.usb
+drop_xf4
