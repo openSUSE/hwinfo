@@ -34,16 +34,29 @@ static hash_t status_names[] = {
   { 0,              NULL      }
 };
 
-/* corresponds to hd_hw_item_t, but not all items are allowed */
+/* corresponds to hd_hw_item_t (not all are allowed) */
 static hash_t hw_items[] = {
-  { hw_disk,         "disk"      },
-  { hw_partition,    "partition" },
-  { hw_cdrom,        "cdrom"     },
-  { hw_mouse,        "mouse"     },
-  { hw_display,      "gfxcard"   },
-  { hw_storage_ctrl, "storage"   },
-  { hw_network_ctrl, "network"   },
-  { 0,               NULL        }
+  { hw_cdrom,        "cdrom"             },
+  { hw_floppy,       "floppy"            },
+  { hw_disk,         "disk"              },
+  { hw_network,      "network interface" },
+  { hw_display,      "graphics card"     },
+  { hw_monitor,      "monitor"           },
+  { hw_mouse,        "mouse"             },
+  { hw_keyboard,     "keyboard"          },
+  { hw_sound,        "sound"             },
+  { hw_isdn,         "isdn adapter"      },
+  { hw_modem,        "modem"             },
+  { hw_storage_ctrl, "storage"           },
+  { hw_network_ctrl, "network"           },
+  { hw_printer,      "printer"           },
+  { hw_tv,           "tv card"           },
+  { hw_scanner,      "scanner"           },
+  { hw_braille,      "braille"           },
+  { hw_sys,          "system"            },
+  { hw_cpu,          "cpu"               },
+  { hw_partition,    "partition"         },
+  { 0,               NULL                }
 };
 
 typedef enum {

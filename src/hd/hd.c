@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <ctype.h>
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -118,6 +119,9 @@ static void hd_add_id(hd_t *hd);
 
 static void test_read_block0_open(void *arg);
 static void get_kernel_version(hd_data_t *hd_data);
+static void assign_hw_class(hd_data_t *hd_data, hd_t *hd);
+static void short_vendor(char *vendor);
+static void create_model_name(hd_data_t *hd_data, hd_t *hd);
 
 /*
  * Names of the probing modules.
@@ -1288,6 +1292,13 @@ void hd_scan(hd_data_t *hd_data)
 
   /* and again... */
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd);
+
+  /* assign a hw_class & build a useful model string */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    assign_hw_class(hd_data, hd);
+    /* create model name _after_ hw_class */
+    create_model_name(hd_data, hd);
+  }
 
   /* we are done... */
   hd_data->module = mod_none;
@@ -3191,13 +3202,8 @@ void hd_copy(hd_t *dst, hd_t *src)
 
 hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 {
-  hd_t *hd, *hd1, *hd_list = NULL, *bridge_hd;
+  hd_t *hd, *hd1, *hd_list = NULL;
   unsigned char probe_save[sizeof hd_data->probe];
-  int sc;		/* compare sub_class too */
-  int xtra;		/* some special test */
-  int add_it, ok;
-  unsigned base_class, sub_class;
-  driver_info_t *di;
 
 #ifdef LIBHD_MEMCHECK
 #ifndef __PPC__
@@ -3212,6 +3218,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
     memcpy(probe_save, hd_data->probe, sizeof probe_save);
     hd_clear_probe_feature(hd_data, pr_all);
     hd_set_probe_feature(hd_data, pr_int);
+    hd_set_probe_feature(hd_data, pr_manual);
     switch(items) {
       case hw_cdrom:
         hd_set_probe_feature(hd_data, pr_ide);
@@ -3375,168 +3382,15 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
     memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
   }
 
-  sc = 0;
-  sub_class = 0;
-  xtra = 0;
-  switch(items) {
-    case hw_cdrom:
-      base_class = bc_storage_device;
-      sub_class = sc_sdev_cdrom;
-      sc = 1;
-      break;
-
-    case hw_floppy:
-      base_class = bc_storage_device;
-      sub_class = sc_sdev_floppy;
-      sc = 1;
-      break;
-
-    case hw_disk:
-      base_class = bc_storage_device;
-      sub_class = sc_sdev_disk;
-      sc = 1;
-      break;
-
-    case hw_network:
-      base_class = bc_network_interface;
-      break;
-
-    case hw_display:
-      base_class = bc_display;
-      break;
-
-    case hw_monitor:
-      base_class = bc_monitor;
-      break;
-
-    case hw_mouse:
-      base_class = bc_mouse;
-      break;
-
-    case hw_keyboard:
-      base_class = bc_keyboard;
-      break;
-
-    case hw_sound:
-      base_class = bc_multimedia;
-      sub_class = sc_multi_audio;
-      sc = 1;
-      break;
-
-    case hw_isdn:
-      base_class = bc_isdn;
-      break;
-
-    case hw_modem:
-      base_class = bc_modem;
-      break;
-
-    case hw_storage_ctrl:
-      base_class = bc_storage;
-      break;
-
-    case hw_network_ctrl:
-      base_class = bc_network;
-      break;
-
-    case hw_printer:
-      base_class = bc_printer;
-      break;
-
-    case hw_tv:
-      base_class = bc_multimedia;
-      sub_class = sc_multi_video;
-      sc = 1;
-      xtra = 1;
-      break;
-
-    case hw_scanner:
-      base_class = bc_scanner;
-      break;
-
-    case hw_braille:
-      base_class = bc_braille;
-      break;
-
-    case hw_sys:
-      base_class = bc_internal;
-      sub_class = sc_int_sys;
-      sc = 1;
-      break;
-
-    case hw_cpu:
-      base_class = bc_internal;
-      sub_class = sc_int_cpu;
-      sc = 1;
-      break;
-
-    default:
-      base_class = -1;
-  }
-
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(
-      (
-        hd->base_class == base_class &&
-        (sc == 0 || hd->sub_class == sub_class)
-      )
-      ||
-      ( /* list other display adapters, too */
-        base_class == bc_display &&
-        hd->base_class == bc_multimedia &&
-        hd->sub_class == sc_multi_video
-      )
-      ||
-      ( /* make i2o controllers appear in the storage_ctrl list */
-        items == hw_storage_ctrl &&
-        hd->base_class == bc_i2o
-      )
-    ) {
-      /* ##### fix? card bus magic: don't list card bus devices */
-      if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
-        if(
-          bridge_hd->base_class == bc_bridge &&
-          bridge_hd->sub_class == sc_bridge_cardbus
-        ) continue;
+    if(hd->hw_class == items) {
+      /* don't report old entries again */
+      for(hd1 = hd_old; hd1; hd1 = hd1->next) {
+        if(!cmp_hd(hd1, hd)) break;
       }
-
-      /* ISA-PnP sound cards: just one entry per card */
-      if(
-        items == hw_sound &&
-        hd->bus == bus_isa &&
-        hd->is.isapnp &&
-        hd->func
-      ) continue;
-
-      ok = 0;
-      switch(xtra) {
-        case 1:		/* tv cards */
-          di = hd_driver_info(hd_data, hd);
-          if(
-            di && di->any.type == di_any &&
-            di->any.hddb0 && di->any.hddb0->str &&
-            !strcmp(di->any.hddb0->str, "bttv")
-          ) {
-            ok = 1;
-          }
-          hd_free_driver_info(di);
-          break;
-
-        default:
-          ok = 1;
-      }
-      if(ok) {
-        add_it = 1;
-        for(hd1 = hd_old; hd1; hd1 = hd1->next) {
-          if(!cmp_hd(hd1, hd)) {
-            add_it = 0;
-            break;
-          }
-        }
-        if(add_it) {
-          hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-          hd_copy(hd1, hd);
-        }
+      if(!hd1) {
+        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+        hd_copy(hd1, hd);
       }
     }
   }
@@ -4422,5 +4276,329 @@ char *vend_id2str(unsigned vend)
   }
 
   return buf;
+}
+
+
+
+void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
+{
+  int sc;		/* compare sub_class too */
+  int xtra;		/* some special test */
+  int ok;
+  unsigned base_class, sub_class;
+  driver_info_t *di = NULL;
+  hd_hw_item_t item;
+  hd_t *bridge_hd;
+
+  /* skip if we've already done it */
+  if(!hd || hd->hw_class) return;
+
+  for(item = 1; item < hw_all; item++) {
+
+    sc = 0;
+    sub_class = 0;
+    xtra = 0;
+    di = hd_free_driver_info(di);
+
+    switch(item) {
+      case hw_cdrom:
+        base_class = bc_storage_device;
+        sub_class = sc_sdev_cdrom;
+        sc = 1;
+        break;
+
+      case hw_floppy:
+        base_class = bc_storage_device;
+        sub_class = sc_sdev_floppy;
+        sc = 1;
+        break;
+
+      case hw_disk:
+        base_class = bc_storage_device;
+        sub_class = sc_sdev_disk;
+        sc = 1;
+        break;
+
+      case hw_network:
+        base_class = bc_network_interface;
+        break;
+
+      case hw_display:
+        base_class = bc_display;
+        break;
+
+      case hw_monitor:
+        base_class = bc_monitor;
+        break;
+
+      case hw_mouse:
+        base_class = bc_mouse;
+        break;
+
+      case hw_keyboard:
+        base_class = bc_keyboard;
+        break;
+
+      case hw_sound:
+        base_class = bc_multimedia;
+        sub_class = sc_multi_audio;
+        sc = 1;
+        break;
+
+      case hw_isdn:
+        base_class = bc_isdn;
+        break;
+
+      case hw_modem:
+        base_class = bc_modem;
+        break;
+
+      case hw_storage_ctrl:
+        base_class = bc_storage;
+        break;
+
+      case hw_network_ctrl:
+        base_class = bc_network;
+        break;
+
+      case hw_printer:
+        base_class = bc_printer;
+        break;
+
+      case hw_tv:
+        base_class = bc_multimedia;
+        sub_class = sc_multi_video;
+        sc = 1;
+        xtra = 1;
+        break;
+
+      case hw_scanner:
+        base_class = bc_scanner;
+        break;
+
+      case hw_braille:
+        base_class = bc_braille;
+        break;
+
+      case hw_sys:
+        base_class = bc_internal;
+        sub_class = sc_int_sys;
+        sc = 1;
+        break;
+
+      case hw_cpu:
+        base_class = bc_internal;
+        sub_class = sc_int_cpu;
+        sc = 1;
+        break;
+
+      default:
+        base_class = -1;
+    }
+
+    if(
+      (
+        hd->base_class == base_class &&
+        (sc == 0 || hd->sub_class == sub_class)
+      )
+      ||
+      ( /* list other display adapters, too */
+        base_class == bc_display &&
+        hd->base_class == bc_multimedia &&
+        hd->sub_class == sc_multi_video
+      )
+      ||
+      ( /* make i2o controllers a storage controller */
+        item == hw_storage_ctrl &&
+        hd->base_class == bc_i2o
+      )
+    ) {
+      /* ##### fix? card bus magic: don't list card bus devices */
+      if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
+        if(
+          bridge_hd->base_class == bc_bridge &&
+          bridge_hd->sub_class == sc_bridge_cardbus
+        ) continue;
+      }
+
+      /* ISA-PnP sound cards: just one entry per card */
+      if(
+        item == hw_sound &&
+        hd->bus == bus_isa &&
+        hd->is.isapnp &&
+        hd->func
+      ) continue;
+
+      ok = 0;
+
+      switch(xtra) {
+        case 1:		/* tv cards */
+          if(!di) di = hd_driver_info(hd_data, hd);
+          if(
+            di && di->any.type == di_any &&
+            di->any.hddb0 && di->any.hddb0->str &&
+            !strcmp(di->any.hddb0->str, "bttv")
+          ) {
+            ok = 1;
+          }
+          break;
+
+        default:
+          ok = 1;
+      }
+
+      if(ok) {
+        hd->hw_class = item;
+        break;
+      }
+    }
+  }
+
+  hd_free_driver_info(di);
+}
+
+
+void short_vendor(char *vendor)
+{
+  static char *remove[] = {
+    ".", ",", "-", "&", " inc", "corporation", " corp", " system", "
+    systems", "technology", "technologies", "multimedia", "communications",
+    "computer", " ltd", "(formerly ncr)", " group", " labs", "research",
+    "equipment", " ag", "personal", " canada", "data", "products", "
+    america", " co", " of", "solutions", " as", "publishing", "(old)", "
+    usa", " gmbh", "electronic", "components", "(matsushita)", " ab", "
+    pte", " north", " japan", "limited", "microcomputer", " kg",
+    "incorporated", "semiconductor"
+  };
+  int i, j;
+  int len, len1, len2;
+
+  if(!vendor) return;
+
+  len2 = strlen(vendor);
+
+  if(!len2) return;
+
+  do {
+    len = len2;
+    for(i = 0; i < sizeof remove / sizeof *remove; i++) {
+      len1 = strlen(remove[i]);
+      if(len > len1 && !strcasecmp(vendor + len - len1, remove[i])) {
+        vendor[j = len - len1] = 0;
+        for(j--; j >= 0; vendor[j--] = 0) {
+          if(!isspace(vendor[j])) break;
+        }
+      }
+    }
+    len2 = strlen(vendor);
+  } while(len2 != len);
+
+}
+
+
+void create_model_name(hd_data_t *hd_data, hd_t *hd)
+{
+  char *vend, *dev;
+  char *compat, *dev_class, *hw_class;
+  char *part1, *part2;
+
+  /* early out */
+  if(!hd || hd->model) return;
+
+  part1 = part2 = NULL;
+
+  compat = dev_class = hw_class = NULL;
+
+  vend = new_str(hd->sub_vend_name);
+
+  dev = new_str(hd->sub_dev_name);
+
+  if(!vend) vend = new_str(hd_vendor_name(hd_data, hd->sub_vend));
+
+  if(!dev)
+    dev = new_str(hd_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev));
+
+  if(!vend) vend = new_str(hd->vend_name);
+
+  if(!dev) dev = new_str(hd->dev_name);
+
+  if(!vend) vend = new_str(hd_vendor_name(hd_data, hd->vend));
+
+  if(!dev) dev = new_str(hd_device_name(hd_data, hd->vend, hd->dev));
+
+
+  if(dev) {
+    if(vend) {
+      part1 = vend; part2 = dev;
+    }
+    else {
+      part1 = dev;
+    }
+  }
+
+  if(!part1 && !part2) {
+    if(hd->compat_vend || hd->compat_dev) {
+      compat = new_str(hd_device_name(hd_data, hd->compat_vend, hd->compat_dev));
+    }
+
+    dev_class = new_str(hd_class_name(hd_data, 2, hd->base_class, hd->sub_class, 0));
+
+    hw_class = new_str(hd_hw_item_name(hd->hw_class));
+
+    if(vend) {
+      if(compat) {
+        part1 = vend; part2 = compat;
+      }
+      else if(dev_class) {
+        part1 = vend; part2 = dev_class;
+      }
+    }
+    else {
+      if(compat && dev_class) {
+        part1 = compat; part2 = dev_class;
+      }
+      else if(compat) {
+        part1 = compat;
+      }
+      else if(dev_class) {
+        part1 = dev_class;
+        if(hw_class && !index(part1, ' ') && index(hw_class, ' ')) {
+          part2 = hw_class;
+        }
+      }
+    }
+  }
+
+  if(part1 && part2) {
+    short_vendor(part1);
+  }
+
+  if(part1 && !strcasecmp(part1, "unknown")) {
+    part1 = part2;
+    part2 = NULL;
+  }
+
+  if(part1 && part2) {
+    /* maybe the vendor name is already part of the device name... */
+    if(strstr(part2, part1) || !strcasecmp(part1, part2)) {
+      part1 = part2;
+      part2 = NULL;
+    }
+  }
+
+  if(!part1 && !part2 && hw_class) {
+    str_printf(&part1, 0, "unknown %s", hw_class);
+    if(index(hw_class, ' ')) {
+      str_printf(&part1, -1, " hardware");
+    }
+  }
+
+  str_printf(&hd->model, 0, "%s%s%s", part1, part2 ? " " : "", part2 ? part2 : "");
+
+  free_mem(vend);
+  free_mem(dev);
+  free_mem(compat);
+  free_mem(dev_class);
+  free_mem(hw_class);
 }
 

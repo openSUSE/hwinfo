@@ -78,7 +78,7 @@ typedef enum probe_feature {
   pr_sbus, pr_int, pr_braille, pr_braille_alva, pr_braille_fhp,
   pr_braille_ht, pr_ignx11, pr_sys, pr_dasd, pr_i2o, pr_cciss, pr_bios_vbe,
   pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
-  pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be the last */
+  pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
 /*
@@ -87,10 +87,11 @@ typedef enum probe_feature {
  * if you want to modify this: cf. manual.c::hw_items[]
  */
 typedef enum hw_item {
-  hw_all = 1, hw_cdrom, hw_floppy, hw_disk, hw_network, hw_display,
-  hw_monitor, hw_mouse, hw_keyboard, hw_sound, hw_isdn, hw_modem,
-  hw_storage_ctrl, hw_network_ctrl, hw_printer, hw_tv, hw_scanner,
-  hw_braille, hw_sys, hw_cpu, hw_manual, hw_partition
+  hw_cdrom = 1, hw_floppy, hw_disk, hw_network, hw_display, hw_monitor,
+  hw_mouse, hw_keyboard, hw_sound, hw_isdn, hw_modem, hw_storage_ctrl,
+  hw_network_ctrl, hw_printer, hw_tv, hw_scanner, hw_braille, hw_sys,
+  hw_cpu, hw_manual, hw_partition,
+  hw_all					/* hw_all must be last */
 } hd_hw_item_t;
 
 /*
