@@ -17,7 +17,7 @@
 #include "init_message.h"
 
 #define TIMEOUT 2
-#define LONG_TIMEOUT 20
+#define LONG_TIMEOUT 10
 #define BUFFERS 1024
 
 
