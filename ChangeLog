@@ -1,3 +1,8 @@
+18/2/2002:	v4.11
+	- added new scanner
+	- updated x11 data
+	- experimental support for hpt3* ideraid
+
 12/2/2002:	v4.10
 	- meissner: mouse probing is in choose_mouse
 	- meissner: added arguments for light probing '(.reprobe)' as suggested by tom

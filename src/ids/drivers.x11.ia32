@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Sun Jan 20 15:15:15 2002
+# generated at: Mon Feb 18 18:24:54 2002
 
 # data source:  CDB
 
@@ -180,10 +180,6 @@
 # ATI Technologies Inc:3D Rage IIC AGP
 1002 475a
 	x	4|ati|||||f|||
-
-# ATI Technologies Inc:3D Rage LT Pro AGP-133
-1002 4c42
-	x	4|ati||||||||
 
 # ATI Technologies Inc:3D Rage LT Pro AGP-66
 1002 4c44
@@ -419,7 +415,7 @@
 
 # nVidia Corporation:NV11
 10de 0110
-	x	4|nv||||sw_cursor||||
+	x	4|nv||||||||
 
 # nVidia Corporation:NV11
 10de 0110
@@ -427,7 +423,7 @@
 
 # nVidia Corporation:NV11 DDR
 10de 0111
-	x	4|nv||||||||
+	x	4|nv||||sw_cursor||||
 
 # nVidia Corporation:NV11 DDR
 10de 0111
@@ -476,6 +472,10 @@
 # Alliance Semiconductor Corporation:ProVideo 6424
 1142 6424
 	x	4|apm||||||||
+
+# Rendition:Verite 1000
+1163 0001
+	x	4|rendition||||||||
 
 # 3Dfx Interactive, Inc.:Voodoo
 121a 0001
@@ -726,6 +726,10 @@
 8086 7800
 	x	4|i740||||||||
 
+# Rendition:Verite V2000/V2100/V2200
+1163 2000
+	x	4|rendition||||||||
+
 # S3 Inc.:Savage 4
 5333 8a22
 	x	4|savage||||||||
@@ -752,6 +756,8 @@
 		Option "Capabilities" "0x00000000"
 		Option "Capabilities2" "0x00000000"
 		Option "Overlay" "off"
+		 Option "Qbs" "off"
+		 Option "PBuffer" "0"
 
 # IBM:fgl2
 1014 0170
@@ -763,6 +769,8 @@
 		Option "Capabilities" "0x00000000"
 		Option "Capabilities2" "0x00000000"
 		Option "Overlay" "off"
+		 Option "Qbs" "off"
+		 Option "PBuffer" "0"
 
 # Matrox Graphics, Inc.:MGA G200
 102b 0520
@@ -958,14 +966,6 @@ edd8 a099
 10de 0250
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:IGeForce2
-10de 01a0
-	x	4|nv||||||||
-
-# nVidia Corporation:IGeForce2
-10de 01a0
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
-
 # nVidia Corporation:0x017c
 10de 017c
 	x	4|nv||||||||
@@ -1126,6 +1126,10 @@ edd8 a099
 1002 5157
 	x	4|radeon||||||||
 
+# ATI Technologies Inc:RV200 QW
+1002 5157
+	x	4|radeon|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
 # ATI Technologies Inc:R200 QL
 1002 514c
 	x	4|radeon||||||||
@@ -1278,7 +1282,7 @@ edd8 a099
 
 #
 
-# generated at: Sun Jan 20 15:15:15 2002
+# generated at: Mon Feb 18 18:24:54 2002
 
 # data source:  CDB
 
@@ -1317,6 +1321,10 @@ edd8 a099
 # S3 Inc.:86c767 [Trio 64UV+]
 5333 8814
 	x	3|S3||||||||
+
+# IBM:IBM Integrated Trio3D
+5333 8904 1014 00db
+	x	3|SVGA||||||||
 
 # S3 Inc.:86c764/765 [Trio32/64/64V+]
 5333 8811
@@ -1505,10 +1513,6 @@ edd8 a099
 # ATI Technologies Inc:3D Rage IIC AGP
 1002 475a
 	x	3|MACH64|||||1d|||
-
-# ATI Technologies Inc:3D Rage LT Pro AGP-133
-1002 4c42
-	x	3|MACH64||||||||
 
 # ATI Technologies Inc:3D Rage LT Pro AGP-66
 1002 4c44

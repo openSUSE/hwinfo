@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Sun Jan 20 15:15:15 2002
+# generated at: Mon Feb 18 18:24:54 2002
 
 # data source:  CDB
 
@@ -15,7 +15,15 @@
 
 # ATI Technologies Inc:Rage 128 PF
 1002 5046
-	x	4|r128|||||8|||
+	x	4|r128||||||||
+
+# ATI Technologies Inc:Rage 128 PF
+1002 5046
+	x	4|r128|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
+
+# ATI Technologies Inc:Rage 128 RE
+1002 5245
+	x	4|r128||||||||
 
 #
 
@@ -23,7 +31,7 @@
 
 #
 
-# generated at: Sun Jan 20 15:15:15 2002
+# generated at: Mon Feb 18 18:24:54 2002
 
 # data source:  CDB
 

@@ -27,6 +27,11 @@
 s0401 0040
 	i	swim3
 
-# look at ../hd/int.c::int_driver() before changing anything
+# ide/hpt3*.c
+1103 0003+2
+	i	ataraid|hptraid
+
+# look at ../hd/pci.c::add_driver_info() before changing anything
 105a 6268
 	i	ataraid|pdcraid
+

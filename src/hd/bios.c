@@ -305,6 +305,7 @@ void hd_scan_bios(hd_data_t *hd_data)
         }
       }
 
+#if 0
       if(
         hd->vend_name &&
         !strcmp(hd->vend_name, "Matrox") &&
@@ -317,6 +318,7 @@ void hd_scan_bios(hd_data_t *hd_data)
       ) {
         hd->broken = 1;
       }
+#endif
 
     }
 
