@@ -873,6 +873,7 @@ typedef struct s_hd_t {
   unsigned attached_to;		/* idx field of 'parent' entry */
   char *unix_dev_name;		/* name of special device file, if any */
   char *rom_id;			/* BIOS/PROM device name (if any), chpid on s390 */
+  char *unique_id;		/* some id identifying this entry */
 
   unsigned module, line, count;	/* place where the entry was created */
   hd_res_t *res;

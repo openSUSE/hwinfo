@@ -107,6 +107,7 @@ static char *module_cmd(hd_t *, char *);
 static void timeout_alarm_handler(int signal);
 static void get_probe_env(hd_data_t *hd_data);
 static void hd_scan_xtra(hd_data_t *hd_data);
+static void hd_add_id(hd_t *hd);
 
 /*
  * Names of the probing modules.
@@ -722,6 +723,8 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_isdn(hd_data);
 #endif
   hd_scan_int(hd_data);
+
+  for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd);
 
   /* we are done... */
   hd_data->module = mod_none;
@@ -3512,3 +3515,139 @@ unsigned has_something_attached(hd_data_t *hd_data, hd_t *hd)
 
   return 0;
 }
+
+
+/* ##### FIX: replace with a real crc later ##### */
+void crc64(uint64_t *id, void *p, int len)
+{
+  unsigned char uc;
+
+  for(; len; len--, p++) {
+    uc = *(unsigned char *) p;
+    *id += uc + ((uc + 57) << 27);
+    *id *= 73;
+    *id *= 65521;
+  }
+}
+
+char *numid2str(uint64_t id, int len)
+{
+  static char buf[32];
+
+#ifdef NUMERIC_UNIQUE_ID
+  /* numeric */
+
+  if(len < (sizeof id << 3)) id &= ~(-1LL << len);
+  sprintf(buf, "%0*"PRIx64, len >> 2, id);
+
+#else
+  /* base64 like */
+
+  int i;
+  unsigned char u;
+
+  memset(buf, 0, sizeof buf);
+  for(i = 0; len > 0 && i < sizeof buf - 1; i++, len -= 6, id >>= 6) {
+    u = id & 0x3f;
+    if(u < 10) {
+      u += '0';			/* 0..9 */
+    }
+    else if(u < 10 + 26) {
+      u += 'A' - 10;		/* A..Z */
+    }
+    else if(u < 10 + 26 + 26) {
+      u += 'a' - 10 - 26;	/* a..z */
+    }
+    else if(u == 63) {
+      u = '+';
+    }
+    else {
+      u = '/';
+    }
+    buf[i] = u;
+  }
+
+#endif
+
+  return buf;
+}
+
+/*
+ * calculate unique ids
+ */
+#define INT_CRC(a, b)	crc64(&a, &hd->b, sizeof hd->b);
+#define STR_CRC(a, b)	if(hd->b) crc64(&a, hd->b, strlen(hd->b) + 1);
+
+void hd_add_id(hd_t *hd)
+{
+  uint64_t id0 = 0, id1 = 0;
+
+  if(hd->unique_id) return;
+
+  INT_CRC(id0, bus);
+  INT_CRC(id0, slot);
+  INT_CRC(id0, func);
+  INT_CRC(id0, base_class);
+  INT_CRC(id0, sub_class);
+  INT_CRC(id0, prog_if);
+  STR_CRC(id0, unix_dev_name);
+  STR_CRC(id0, rom_id);
+
+  INT_CRC(id1, base_class);
+  INT_CRC(id1, sub_class);
+  INT_CRC(id1, prog_if);
+  INT_CRC(id1, dev);
+  INT_CRC(id1, vend);
+  INT_CRC(id1, sub_dev);
+  INT_CRC(id1, sub_vend);
+  INT_CRC(id1, rev);
+  INT_CRC(id1, compat_dev);
+  INT_CRC(id1, compat_vend);
+  STR_CRC(id1, dev_name);
+  STR_CRC(id1, vend_name);
+  STR_CRC(id1, sub_dev_name);
+  STR_CRC(id1, sub_vend_name);
+  STR_CRC(id1, rev_name);
+  STR_CRC(id1, serial);
+
+  id0 += (id0 >> 32);
+  str_printf(&hd->unique_id, 0, "%s", numid2str(id0, 24));
+  str_printf(&hd->unique_id, -1, ".%s", numid2str(id1, 64));
+}
+#undef INT_CRC
+#undef STR_CRC
+
+
+#if 0
+  if(!hd1 || !hd2) return 1;
+
+  if(
+    hd1->bus != hd2->bus ||
+    hd1->slot != hd2->slot ||
+    hd1->func != hd2->func ||
+    hd1->base_class != hd2->base_class ||
+    hd1->sub_class != hd2->sub_class ||
+    hd1->prog_if != hd2->prog_if ||
+    hd1->dev != hd2->dev ||
+    hd1->vend != hd2->vend ||
+    hd1->sub_vend != hd2->sub_vend ||
+    hd1->rev != hd2->rev ||
+    hd1->compat_dev != hd2->compat_dev ||
+
+    hd1->module != hd2->module ||
+    hd1->line != hd2->line
+  ) {
+    return 1;
+  }
+
+  if(hd1->unix_dev_name || hd2->unix_dev_name) {
+    if(hd1->unix_dev_name && hd2->unix_dev_name) {
+      if(strcmp(hd1->unix_dev_name, hd2->unix_dev_name)) return 1;
+    }
+    else {
+      return 1;
+    }
+  }
+
+#endif
+

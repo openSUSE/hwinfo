@@ -76,6 +76,10 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("[Created at %s.%u%s]\n", s, h->line, buf2);
   }
 
+  if((hd_data->debug & HD_DEB_CREATION) && h->unique_id) {
+    dump_line("Unique ID: %s\n", h->unique_id);
+  }
+
   if(h->base_class == bc_internal && h->sub_class == sc_int_cpu)
     dump_cpu(hd_data, h, f);
   else if(h->base_class == bc_internal && h->sub_class == sc_int_bios)

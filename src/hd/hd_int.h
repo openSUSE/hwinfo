@@ -48,6 +48,12 @@
 #define ADD2LOG(a...) str_printf(&hd_data->log, -2, a)
 
 /*
+ * define to make (hd_t).unique_id a hex string, otherwise it is a
+ * base64-like string
+ */
+#undef NUMERIC_UNIQUE_ID
+
+/*
  * Internal probing module numbers. Use mod_name_by_idx() outside of libhd.
  */
 enum mod_idx {
