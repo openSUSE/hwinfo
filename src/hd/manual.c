@@ -103,34 +103,48 @@ typedef enum {
   hwdi_prog_if, hwdi_dev, hwdi_vend, hwdi_sub_dev, hwdi_sub_vend, hwdi_rev,
   hwdi_compat_dev, hwdi_compat_vend, hwdi_dev_name, hwdi_vend_name,
   hwdi_sub_dev_name, hwdi_sub_vend_name, hwdi_rev_name, hwdi_serial,
-  hwdi_unix_dev_name, hwdi_rom_id, hwdi_broken, hwdi_usb_guid
+  hwdi_unix_dev_name, hwdi_rom_id, hwdi_broken, hwdi_usb_guid, hwdi_res_mem,
+  hwdi_res_phys_mem, hwdi_res_io, hwdi_res_irq, hwdi_res_dma, hwdi_res_size,
+  hwdi_res_baud, hwdi_res_cache, hwdi_res_disk_geo, hwdi_res_monitor,
+  hwdi_res_framebuffer
 } hw_hd_items_t;
 
 static hash_t hw_ids_hd_items[] = {
-  { hwdi_bus,           "Bus"            },
-  { hwdi_slot,          "Slot"           },
-  { hwdi_func,          "Function"       },
-  { hwdi_base_class,    "BaseClass"      },
-  { hwdi_sub_class,     "SubClass"       },
-  { hwdi_prog_if,       "ProgIF"         },
-  { hwdi_dev,           "DeviceID"       },
-  { hwdi_vend,          "VendorID"       },
-  { hwdi_sub_dev,       "SubDeviceID"    },
-  { hwdi_sub_vend,      "SubVendorID"    },
-  { hwdi_rev,           "RevisionID"     },
-  { hwdi_compat_dev,    "CompatDeviceID" },
-  { hwdi_compat_vend,   "CompatVendorID" },
-  { hwdi_dev_name,      "DeviceName"     },
-  { hwdi_vend_name,     "VendorName"     },
-  { hwdi_sub_dev_name,  "SubDeviceName"  },
-  { hwdi_sub_vend_name, "SubVendorName"  },
-  { hwdi_rev_name,      "RevisionName"   },
-  { hwdi_serial,        "Serial"         },
-  { hwdi_unix_dev_name, "UnixDevice"     },
-  { hwdi_rom_id,        "ROMID"          },
-  { hwdi_broken,        "Broken"         },
-  { hwdi_usb_guid,      "USBGUID"        },
-  { 0,                  NULL             }
+  { hwdi_bus,             "Bus"              },
+  { hwdi_slot,            "Slot"             },
+  { hwdi_func,            "Function"         },
+  { hwdi_base_class,      "BaseClass"        },
+  { hwdi_sub_class,       "SubClass"         },
+  { hwdi_prog_if,         "ProgIF"           },
+  { hwdi_dev,             "DeviceID"         },
+  { hwdi_vend,            "VendorID"         },
+  { hwdi_sub_dev,         "SubDeviceID"      },
+  { hwdi_sub_vend,        "SubVendorID"      },
+  { hwdi_rev,             "RevisionID"       },
+  { hwdi_compat_dev,      "CompatDeviceID"   },
+  { hwdi_compat_vend,     "CompatVendorID"   },
+  { hwdi_dev_name,        "DeviceName"       },
+  { hwdi_vend_name,       "VendorName"       },
+  { hwdi_sub_dev_name,    "SubDeviceName"    },
+  { hwdi_sub_vend_name,   "SubVendorName"    },
+  { hwdi_rev_name,        "RevisionName"     },
+  { hwdi_serial,          "Serial"           },
+  { hwdi_unix_dev_name,   "UnixDevice"       },
+  { hwdi_rom_id,          "ROMID"            },
+  { hwdi_broken,          "Broken"           },
+  { hwdi_usb_guid,        "USBGUID"          },
+  { hwdi_res_phys_mem,    "Res.PhysMemory"   },
+  { hwdi_res_mem,         "Res.Memory"       },
+  { hwdi_res_io,          "Res.IO"           },
+  { hwdi_res_irq,         "Res.Interrupts"   },
+  { hwdi_res_dma,         "Res.DMA"          },
+  { hwdi_res_size,        "Res.Size"         },
+  { hwdi_res_baud,        "Res.Baud"         },
+  { hwdi_res_cache,       "Res.Cache"        },
+  { hwdi_res_disk_geo,    "Res.DiskGeometry" },
+  { hwdi_res_monitor,     "Res.Monitor"      },
+  { hwdi_res_framebuffer, "Res.Framebuffer"  },
+  { 0,                    NULL               }
 };
 
 static char *key2value(hash_t *hash, int id);
@@ -705,7 +719,9 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
 {
   str_list_t *sl1, *sl2;
   hw_hd_items_t item;
-  unsigned tag;
+  unsigned tag, u0, u1, u2, u3, u4;
+  hd_res_t *res;
+  uint64_t u64_0, u64_1;
 
   if(!hd || !entry) return;
 
@@ -816,6 +832,119 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
         hd->usb_guid = new_str(sl2->str);
         break;
 
+      case hwdi_res_mem:
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_mem;
+        if(sscanf(sl2->str, "0x%"SCNx64",0x%"SCNx64",%u,%u,%u", &u64_0, &u64_1, &u0, &u1, &u2) == 5) {
+          res->mem.base = u64_0;
+          res->mem.range = u64_1;
+          res->mem.enabled = u0;
+          res->mem.access = u1;
+          res->mem.prefetch = u2;
+        }
+        break;
+
+      case hwdi_res_phys_mem:
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_phys_mem;
+        if(sscanf(sl2->str, "0x%"SCNx64"", &u64_0) == 1) {
+          res->phys_mem.range = u64_0;
+        }
+        break;
+
+      case hwdi_res_io:
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_io;
+        if(sscanf(sl2->str, "0x%"SCNx64",0x%"SCNx64",%u,%u", &u64_0, &u64_1, &u0, &u1) == 4) {
+          res->io.base = u64_0;
+          res->io.range = u64_1;
+          res->io.enabled = u0;
+          res->io.access = u1;
+        }
+        break;
+
+      case hwdi_res_irq:
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_irq;
+        if(sscanf(sl2->str, "%u,%u,%u", &u0, &u1, &u2) == 3) {
+          res->irq.base = u0;
+          res->irq.triggered = u1;
+          res->irq.enabled = u2;
+        }
+        break;
+
+      case hwdi_res_dma:
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_dma;
+        if(sscanf(sl2->str, "%u,%u", &u0, &u1) == 2) {
+          res->dma.base = u0;
+          res->dma.enabled = u1;
+        }
+        break;
+
+      case hwdi_res_size:
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_size;
+        if(sscanf(sl2->str, "%u,%u,%u", &u0, &u1, &u2) == 3) {
+          res->size.unit = u0;
+          res->size.val1 = u1;
+          res->size.val2 = u2;
+        }
+        break;
+
+      case hwdi_res_baud:
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_baud;
+        if(sscanf(sl2->str, "%u,%u,%u,%u,%u", &u0, &u1, &u2, &u3, &u4) == 5) {
+          res->baud.speed = u0;
+          res->baud.bits = u1;
+          res->baud.stopbits = u2;
+          res->baud.parity = (char) u3;
+          res->baud.handshake = (char) u4;
+        }
+        break;
+
+      case hwdi_res_cache:
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_cache;
+        if(sscanf(sl2->str, "%u", &u0) == 1) {
+          res->cache.size = u0;
+        }
+        break;
+
+      case hwdi_res_disk_geo:
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_disk_geo;
+        if(sscanf(sl2->str, "%u,%u,%u,%u", &u0, &u1, &u2, &u3) == 4) {
+          res->disk_geo.cyls = u0;
+          res->disk_geo.heads = u1;
+          res->disk_geo.sectors = u2;
+          res->disk_geo.logical = u3;
+        }
+        break;
+
+      case hwdi_res_monitor:
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_monitor;
+        if(sscanf(sl2->str, "%u,%u,%u,%u", &u0, &u1, &u2, &u3) == 4) {
+          res->monitor.width = u0;
+          res->monitor.height = u1;
+          res->monitor.vfreq = u2;
+          res->monitor.interlaced = u3;
+        }
+        break;
+
+      case hwdi_res_framebuffer:
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_framebuffer;
+        if(sscanf(sl2->str, "%u,%u,%u,%u,%u", &u0, &u1, &u2, &u3, &u4) == 5) {
+          res->framebuffer.width = u0;
+          res->framebuffer.height = u1;
+          res->framebuffer.bytes_p_line = u2;
+          res->framebuffer.colorbits = u3;
+          res->framebuffer.mode = u4;
+        }
+        break;
     }
   }
 
@@ -874,7 +1003,9 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
 
 void hd2manual(hd_t *hd, hd_manual_t *entry)
 {
-  char *s;
+  char *s, *t;
+  hd_res_t *res;
+  str_list_t *sl;
 
   if(!hd || !entry) return;
 
@@ -1015,6 +1146,139 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
   if(hd->usb_guid) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_usb_guid));
     add_str_list(&entry->value, hd->usb_guid);
+  }
+
+  for(res = hd->res; res; res = res->next) {
+    sl = NULL;
+    switch(res->any.type) {
+      case res_mem:
+        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_mem));
+        str_printf(&s, 0, "0x%"PRIx64"", res->mem.base);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "0x%"PRIx64"", res->mem.range);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->mem.enabled);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->mem.access);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->mem.prefetch);
+        add_str_list(&sl, s);
+        break;
+
+      case res_phys_mem:
+        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_phys_mem));
+        str_printf(&s, 0, "0x%"PRIx64"", res->phys_mem.range);
+        add_str_list(&sl, s);
+        break;
+
+      case res_io:
+        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_io));
+        str_printf(&s, 0, "0x%"PRIx64"", res->io.base);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "0x%"PRIx64"", res->io.range);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->io.enabled);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->io.access);
+        add_str_list(&sl, s);
+        break;
+
+      case res_irq:
+        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_irq));
+        str_printf(&s, 0, "%u", res->irq.base);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->irq.triggered);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->irq.enabled);
+        add_str_list(&sl, s);
+        break;
+
+      case res_dma:
+        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_dma));
+        str_printf(&s, 0, "%u", res->dma.base);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->dma.enabled);
+        add_str_list(&sl, s);
+        break;
+
+      case res_size:
+        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_size));
+        str_printf(&s, 0, "%u", res->size.unit);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->size.val1);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->size.val2);
+        add_str_list(&sl, s);
+        break;
+
+      case res_baud:
+        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_baud));
+        str_printf(&s, 0, "%u", res->baud.speed);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->baud.bits);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->baud.stopbits);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "0x%02x", (unsigned) res->baud.parity);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "0x%02x", (unsigned) res->baud.handshake);
+        add_str_list(&sl, s);
+        break;
+
+      case res_cache:
+        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_cache));
+        str_printf(&s, 0, "%u", res->cache.size);
+        add_str_list(&sl, s);
+        break;
+
+      case res_disk_geo:
+        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_disk_geo));
+        str_printf(&s, 0, "%u", res->disk_geo.cyls);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->disk_geo.heads);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->disk_geo.sectors);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->disk_geo.logical);
+        add_str_list(&sl, s);
+        break;
+
+      case res_monitor:
+        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_monitor));
+        str_printf(&s, 0, "%u", res->monitor.width);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->monitor.height);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->monitor.vfreq);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->monitor.interlaced);
+        add_str_list(&sl, s);
+        break;
+
+      case res_framebuffer:
+        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_framebuffer));
+        str_printf(&s, 0, "%u", res->framebuffer.width);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->framebuffer.height);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->framebuffer.bytes_p_line);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->framebuffer.colorbits);
+        add_str_list(&sl, s);
+        str_printf(&s, 0, "%u", res->framebuffer.mode);
+        add_str_list(&sl, s);
+        break;
+
+      default:
+        break;
+    }
+    /* keep entry->key & entry->value symmetrical! */
+    if(sl) {
+      t = hd_join(',', sl);
+      add_str_list(&entry->value, t);
+      free_mem(t);
+      free_str_list(sl);
+    }
   }
 
   free_mem(s);

@@ -628,6 +628,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_pcmcia_ctrl:
     case hw_ieee1394_ctrl:
     case hw_hotplug_ctrl:
+      hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_pci);
       break;
 
@@ -639,6 +640,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_pci:
+      hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_isdn);
       break;
@@ -651,6 +653,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_bridge:
+      hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_pci);
       break;
 
@@ -4506,6 +4509,31 @@ str_list_t *hd_split(char del, char *str)
   free_mem(str);
 
   return sl;
+}
+
+
+char *hd_join(char del, str_list_t *str)
+{
+  char *s, t[2];
+  str_list_t *str0;
+  int len = 0;
+
+  for(str0 = str; str0; str0 = str0->next) {
+    len += strlen(str0->str) + 1;
+  }
+
+  if(!len) return NULL;
+
+  s = new_mem(len);
+
+  t[0] = del; t[1] = 0;
+
+  for(; str; str = str->next) {
+    strcat(s, str->str);
+    if(str->next) strcat(s, t);
+  }
+
+  return s;
 }
 
 

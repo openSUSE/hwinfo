@@ -490,6 +490,21 @@ void hd_scan_misc2(hd_data_t *hd_data)
     }
   }
 
+  /* look for entries with matching start address */
+  m = hd_data->misc;
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    for(res = hd->res; res; res = res->next) {
+      if(res->io.type == res_io) {
+        for(i = 0; i < m->io_len; i++) {
+          if(res->io.base == m->io[i].addr && res->io.range < m->io[i].size) {
+            res->io.range = m->io[i].size;
+            break;
+          }
+        }
+      }
+    }
+  }
+
   if((hd_data->debug & HD_DEB_MISC)) dump_misc_data(hd_data);
 }
 
