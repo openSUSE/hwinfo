@@ -27134,7 +27134,7 @@
 &device.id		pci 0x1645
 &subvendor.id		pci 0x10a9
 &subdevice.id		pci 0x8010
-+subdevice.name		SGI IO9 Gigabit Ethernet (Copper)
++subdevice.name		SGI IO9/IO10 Gigabit Ethernet (Copper)
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x1645
@@ -27250,7 +27250,7 @@
 &device.id		pci 0x1647
 &subvendor.id		pci 0x10a9
 &subdevice.id		pci 0x8010
-+subdevice.name		SGI IO9 Gigabit Ethernet (Copper)
++subdevice.name		SGI IO9/IO10 Gigabit Ethernet (Copper)
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x1647
