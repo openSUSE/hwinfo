@@ -31,6 +31,7 @@
 static void get_driverinfo(hd_data_t *hd_data, hd_t *hd);
 static void add_xpnet(hd_data_t *hdata);
 static void add_iseries(hd_data_t *hdata);
+static void add_uml(hd_data_t *hdata);
 
 /*
  * This is independent of the other scans.
@@ -214,6 +215,7 @@ void hd_scan_net(hd_data_t *hd_data)
 
   if(hd_is_sgi_altix(hd_data)) add_xpnet(hd_data);
   if(hd_is_iseries(hd_data)) add_iseries(hd_data);
+  add_uml(hd_data);
 
 #if 0
 
@@ -368,6 +370,47 @@ void add_iseries(hd_data_t *hd_data)
       hd_card->slot = card_cnt++;
       str_printf(&hd_card->device.name, 0, "Virtual Ethernet card %d", hd_card->slot);
       add_str_list(&hd_card->drivers, "veth");
+
+      hd->attached_to = hd_card->idx;
+
+      for(res = hd->res; res; res = res->next) {
+        if(res->any.type == res_hwaddr) break;
+      }
+
+      if(res) {
+        res2 = new_mem(sizeof *res2);
+        res2->hwaddr.type = res_hwaddr;
+        res2->hwaddr.addr = new_str(res->hwaddr.addr);
+        add_res_entry(&hd_card->res, res2);
+      }
+    }
+  }
+}
+
+
+/*
+ * UML veth devices.
+ */
+void add_uml(hd_data_t *hd_data)
+{
+  hd_t *hd, *hd_card;
+  hd_res_t *res, *res2;
+  unsigned card_cnt = 0;
+
+  for(hd = hd_data->hd ; hd; hd = hd->next) {
+    if(
+      hd->module == hd_data->module &&
+      hd->base_class.id == bc_network_interface &&
+      !search_str_list(hd->drivers, "uml virtual ethernet")
+    ) {
+      hd_card = add_hd_entry(hd_data, __LINE__, 0);
+      hd_card->base_class.id = bc_network;
+      hd_card->sub_class.id = 0x00;
+      hd_card->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6010);	// UML
+      hd_card->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
+      hd_card->slot = card_cnt++;
+      str_printf(&hd_card->device.name, 0, "Virtual Ethernet card %d", hd_card->slot);
+//      add_str_list(&hd_card->drivers, "veth");
 
       hd->attached_to = hd_card->idx;
 

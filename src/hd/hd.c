@@ -2889,6 +2889,7 @@ int hd_is_uml(hd_data_t *hd_data)
   hd_t *hd;
   cpu_info_t *ct;
   unsigned u;
+  unsigned saved_mod = hd_data->module;
 
   u = hd_data->flags.internal;
   hd_data->flags.internal = 1;
@@ -2908,6 +2909,8 @@ int hd_is_uml(hd_data_t *hd_data)
   }
 
   hd = hd_free_hd_list(hd);
+
+  hd_data->module = saved_mod;
 
   return is_uml;
 }

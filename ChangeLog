@@ -1,6 +1,8 @@
 28/4/2004:	v8.44
 	- add bus.name for bus.id == bus_ccw
 	- avoid unspecific network types (#38874)
+	- fixed memory size detection (#34895, #38758)
+	- report UML network (#39521)
 
 27/4/2004:	v8.43
 	- 'hwinfo --map' returns mapping new -> old block
