@@ -6,7 +6,7 @@
 &device.id		special 0x1731
 &subdevice.id		special 0x1732
 &detail.ccw.data.cu_model 1
-+device.name		OSA Express Ethernet card
++device.name		OSA Express Network card
 +baseclass.id		2
 +subclass.id		0x86
 +driver.module.modprobe	qeth
