@@ -1,15 +1,13 @@
 TOPDIR		= $(CURDIR)
 SUBDIRS		= src
-TARGETS		= hwinfo
-CLEANFILES	= hwinfo hwinfo.static
+TARGETS		= hwinfo hwscan
+CLEANFILES	= hwinfo hwinfo.static hwscan
 
 include Makefile.common
 
 OBJS_NO_TINY	= names.o parallel.o modem.o
 
 .PNONY:	static tiny
-
-all: hwinfo hwscan
 
 hwscan: hwscan.o $(LIBHD)
 	$(CC) hwscan.o $(LDFLAGS) -lhd -o $@
