@@ -718,6 +718,8 @@ void dump_bios(hd_data_t *hd_data, hd_t *hd, FILE *f)
   if(bt->par_port1) dump_line("Parallel Port 1: 0x%x\n", bt->par_port1);
   if(bt->par_port2) dump_line("Parallel Port 2: 0x%x\n", bt->par_port2);
 
+  if(bt->low_mem_size) dump_line("Base Memory: %uk\n", bt->low_mem_size >> 10);
+
   if(bt->is_pnp_bios) {
     char *s = isa_id2str(bt->pnp_id);
     dump_line("PnP BIOS: %s\n", s);
@@ -727,6 +729,14 @@ void dump_bios(hd_data_t *hd_data, hd_t *hd, FILE *f)
   if(bt->lba_support) {
     dump_line_str("BIOS: extended read supported\n");
   }
+
+  if(bt->smp.ok) {
+    dump_line("MP spec rev 1.%u info:\n", bt->smp.rev);
+    dump_line("  OEM id: \"%s\"\n",  bt->smp.oem_id);
+    dump_line("  Product id: \"%s\"\n",  bt->smp.prod_id);
+    dump_line("  %u CPUs (%u disabled)\n",  bt->smp.cpus, bt->smp.cpus - bt->smp.cpus_en);
+  }
+
 }
 
 

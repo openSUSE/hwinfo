@@ -404,8 +404,9 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
     hd_data->hddb_drv = free_mem(hd_data->hddb_drv);
   }
   hd_data->kmods = free_str_list(hd_data->kmods);
-  hd_data->bios_rom = free_mem(hd_data->bios_rom);
-  hd_data->bios_ram = free_mem(hd_data->bios_ram);
+  hd_data->bios_rom.data = free_mem(hd_data->bios_rom.data);
+  hd_data->bios_ram.data = free_mem(hd_data->bios_ram.data);
+  hd_data->bios_ebda.data = free_mem(hd_data->bios_ebda.data);
   hd_data->cmd_line = free_mem(hd_data->cmd_line);
   hd_data->xtra_hd = free_str_list(hd_data->xtra_hd);
   hd_data->devtree = free_devtree(hd_data);
@@ -1846,15 +1847,15 @@ int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len)
   unsigned u;
   unsigned char c;
 
-  addr -= BIOS_ROM_START;
+  addr -= hd_data->bios_rom.start;
   if(
-    !hd_data->bios_rom ||
-    addr > BIOS_ROM_SIZE ||
-    addr + len > BIOS_ROM_SIZE
+    !hd_data->bios_rom.data ||
+    addr >= hd_data->bios_rom.size ||
+    addr + len > hd_data->bios_rom.size
   ) return 0;
 
   for(c = 0xff, u = addr; u < addr + len; u++) {
-    c &= hd_data->bios_rom[u];
+    c &= hd_data->bios_rom.data[u];
   }
 
   return c == 0xff ? 1 : 0;
@@ -2103,7 +2104,7 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
           }
           break;
         case P_MEM:
-          if(!hd_data->bios_rom) {
+          if(!hd_data->bios_rom.data) {
             if(ip->def_value) {
               ip->value = ip->def_value;
             }
@@ -2855,7 +2856,7 @@ int hd_smp_support(hd_data_t *hd_data)
 
 #ifdef __i386__
   if(is_smp < 2) {
-    if(!hd_data->bios_ram) {
+    if(!hd_data->bios_ram.data) {
       int bf = hd_probe_feature(hd_data, pr_bios);
       if(!bf) hd_set_probe_feature(hd_data, pr_bios);
       hd_scan_bios(hd_data);

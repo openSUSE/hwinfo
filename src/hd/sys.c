@@ -7,7 +7,6 @@
 #include "hd.h"
 #include "hd_int.h"
 #include "sys.h"
-#include "bios.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * general system info
@@ -141,9 +140,9 @@ int chk_vaio(hd_data_t *hd_data, sys_info_t *st)
   int i;
   unsigned char *data, *s, *s0, *s1;
 
-  if(!hd_data->bios_rom) return 0;
+  if(!hd_data->bios_rom.data) return 0;
 
-  data = hd_data->bios_rom + 0xf0000 - BIOS_ROM_START;
+  data = hd_data->bios_rom.data + 0xf0000 - hd_data->bios_rom.start;
 
   if(!(s = memmem(data, 0x8000, "Sony Corp", sizeof "Sony Corp" - 1))) return 0;
 

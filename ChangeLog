@@ -1,3 +1,7 @@
+5/4/2001:	v2.00
+	- new major version due to incompatible interface changes
+	- integrated experimental changes (split was after v1.90)
+
 3/4/2001:	v1.99
 	- fixed segfault bug in alpha smp code
 

@@ -25,25 +25,42 @@ static unsigned char crc(unsigned char *mem, unsigned len);
 static int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
 static void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
 
-static memory_range_t bios_rom, bios_ram, bios_ebda;
-static smp_info_t smp;
-
 int detect_smp(hd_data_t *hd_data)
 {
-  if(!hd_data->bios_ram) return -1;	/* hd_scan_bios() not called */
+  bios_info_t *bt;
+  hd_t *hd;
 
-  return smp.ok ? smp.cpus_en ? smp.cpus_en : 1 : 0;
+  if(!hd_data->bios_ram.data) return -1;	/* hd_scan_bios() not called */
+
+  for(bt = NULL, hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class == bc_internal &&
+      hd->sub_class == sc_int_bios &&
+      hd->detail &&
+      hd->detail->type == hd_detail_bios &&
+      (bt = hd->detail->bios.data)
+    ) {
+      break;
+    }
+  }
+
+  if(!bt) return -1;
+
+  return bt->smp.ok ? bt->smp.cpus_en ? bt->smp.cpus_en : 1 : 0;
+
+  return 0;
 }
+
 
 void hd_scan_bios(hd_data_t *hd_data)
 {
   hd_t *hd;
   char *s;
   bios_info_t *bt;
+  unsigned char *bios_ram;
   unsigned u, u1;
   memory_range_t mem;
   unsigned smp_ok;
-  unsigned low_mem_size;
 
   if(!hd_probe_feature(hd_data, pr_bios)) return;
 
@@ -51,10 +68,6 @@ void hd_scan_bios(hd_data_t *hd_data)
 
   /* some clean-up */
   remove_hd_entries(hd_data);
-  memset(&bios_rom, 0, sizeof bios_rom);
-  memset(&bios_ram, 0, sizeof bios_ram);
-  memset(&bios_ebda, 0, sizeof bios_ebda);
-  memset(&smp, 0, sizeof smp);
 
   PROGRESS(1, 0, "cmdline");
 
@@ -107,54 +120,53 @@ void hd_scan_bios(hd_data_t *hd_data)
    */
   PROGRESS(2, 0, "ram");
 
-  bios_ram.start = BIOS_RAM_START;
-  bios_ram.size = BIOS_RAM_SIZE;
-  read_memory(&bios_ram);
-  hd_data->bios_ram = bios_ram.data;
+  hd_data->bios_ram.start = BIOS_RAM_START;
+  hd_data->bios_ram.size = BIOS_RAM_SIZE;
+  read_memory(&hd_data->bios_ram);
 
-  bios_rom.start = BIOS_ROM_START;
-  bios_rom.size = BIOS_ROM_SIZE;
-  read_memory(&bios_rom);
-  hd_data->bios_rom = bios_rom.data;
+  hd_data->bios_rom.start = BIOS_ROM_START;
+  hd_data->bios_rom.size = BIOS_ROM_SIZE;
+  read_memory(&hd_data->bios_rom);
 
-  if(bios_ram.data) {
-    bt->ser_port0 = (bios_ram.data[1] << 8) + bios_ram.data[0];
-    bt->ser_port1 = (bios_ram.data[3] << 8) + bios_ram.data[2];
-    bt->ser_port2 = (bios_ram.data[5] << 8) + bios_ram.data[4];
-    bt->ser_port3 = (bios_ram.data[7] << 8) + bios_ram.data[6];
+  if(hd_data->bios_ram.data) {
+    bios_ram = hd_data->bios_ram.data;
 
-    bt->par_port0 = (bios_ram.data[  9] << 8) + bios_ram.data[  8];
-    bt->par_port1 = (bios_ram.data[0xb] << 8) + bios_ram.data[0xa];
-    bt->par_port2 = (bios_ram.data[0xd] << 8) + bios_ram.data[0xc];
+    bt->ser_port0 = (bios_ram[1] << 8) + bios_ram[0];
+    bt->ser_port1 = (bios_ram[3] << 8) + bios_ram[2];
+    bt->ser_port2 = (bios_ram[5] << 8) + bios_ram[4];
+    bt->ser_port3 = (bios_ram[7] << 8) + bios_ram[6];
 
-    ADD2LOG("  bios: %u disks\n", bios_ram.data[0x75]);
+    bt->par_port0 = (bios_ram[  9] << 8) + bios_ram[  8];
+    bt->par_port1 = (bios_ram[0xb] << 8) + bios_ram[0xa];
+    bt->par_port2 = (bios_ram[0xd] << 8) + bios_ram[0xc];
 
-    low_mem_size = ((bios_ram.data[0x14] << 8) + bios_ram.data[0x13]) << 10;
-    ADD2LOG("  bios: low mem = %uk\n", low_mem_size >> 10);
+    ADD2LOG("  bios: %u disks\n", bios_ram[0x75]);
 
-    bios_ebda.start = bios_ebda.size = 0;
-    bios_ebda.data = free_mem(bios_ebda.data);
-    u = ((bios_ram.data[0x0f] << 8) + bios_ram.data[0x0e]) << 4;
+    bt->low_mem_size = ((bios_ram[0x14] << 8) + bios_ram[0x13]) << 10;
+
+    hd_data->bios_ebda.start = hd_data->bios_ebda.size = 0;
+    hd_data->bios_ebda.data = free_mem(hd_data->bios_ebda.data);
+    u = ((bios_ram[0x0f] << 8) + bios_ram[0x0e]) << 4;
     if(u) {
-      bios_ebda.start = u;
-      bios_ebda.size = 1;	/* just one byte */
-      read_memory(&bios_ebda);
-      if(bios_ebda.data) {
-        u1 = bios_ebda.data[0];
+      hd_data->bios_ebda.start = u;
+      hd_data->bios_ebda.size = 1;	/* just one byte */
+      read_memory(&hd_data->bios_ebda);
+      if(hd_data->bios_ebda.data) {
+        u1 = hd_data->bios_ebda.data[0];
         if(u1 > 0 && u1 <= 64) {	/* be sensible, typically only 1k */
           u1 <<= 10;
           if(u + u1 <= (1 << 20)) {
-            bios_ebda.size = u1;
-            read_memory(&bios_ebda);
+            hd_data->bios_ebda.size = u1;
+            read_memory(&hd_data->bios_ebda);
           }
         }
       }
     }
 
-    if(bios_ebda.data) {
+    if(hd_data->bios_ebda.data) {
       ADD2LOG(
-        "  bios: EBDA 0x%05x at 0x%05x\n",
-        bios_ebda.size, bios_ebda.start
+        "  bios: EBDA 0x%05x bytes at 0x%05x\n",
+        hd_data->bios_ebda.size, hd_data->bios_ebda.start
       );
     }
   }
@@ -164,24 +176,24 @@ void hd_scan_bios(hd_data_t *hd_data)
    */
   PROGRESS(2, 0, "rom");
 
-  if(bios_rom.data) {
-    get_pnp_support_status(&bios_rom, bt);
+  if(hd_data->bios_rom.data) {
+    get_pnp_support_status(&hd_data->bios_rom, bt);
   }
 
   PROGRESS(3, 0, "smp");
 
   smp_ok = 0;
 
-  mem = bios_ebda;
-  smp_ok = get_smp_info(hd_data, &mem, &smp);
+  mem = hd_data->bios_ebda;
+  smp_ok = get_smp_info(hd_data, &mem, &bt->smp);
 
   if(!smp_ok) {
-    mem = bios_rom;
+    mem = hd_data->bios_rom;
     if(mem.data) {
       mem.size -= 0xf0000 - mem.start;
       mem.data += 0xf0000 - mem.start;
       mem.start = 0xf0000;
-      if(mem.size < (1 << 20)) smp_ok = get_smp_info(hd_data, &mem, &smp);
+      if(mem.size < (1 << 20)) smp_ok = get_smp_info(hd_data, &mem, &bt->smp);
     }
   }
 
@@ -190,26 +202,26 @@ void hd_scan_bios(hd_data_t *hd_data)
     mem.start = 639 << 10;
     mem.data = NULL;
     read_memory(&mem);
-    if(mem.data) smp_ok = get_smp_info(hd_data, &mem, &smp);
+    if(mem.data) smp_ok = get_smp_info(hd_data, &mem, &bt->smp);
     mem.data = free_mem(mem.data);
   }
 
-  if(smp.ok && smp.mpconfig) {
-    mem.start = smp.mpconfig;
+  if(bt->smp.ok && bt->smp.mpconfig) {
+    mem.start = bt->smp.mpconfig;
     mem.size = 1 << 10;
     mem.data = NULL;
     read_memory(&mem);
-    parse_mpconfig(hd_data, &mem, &smp);
+    parse_mpconfig(hd_data, &mem, &bt->smp);
     mem.data = free_mem(mem.data);
   }
   
   if((hd_data->debug & HD_DEB_BIOS)) {
-    dump_memory(hd_data, &bios_ram, 0, "BIOS data");
-    dump_memory(hd_data, &bios_ebda, bios_ebda.size <= (4 << 10) ? 0 : 1, "EBDA");
-    dump_memory(hd_data, &bios_rom, 1, "BIOS ROM");
+    dump_memory(hd_data, &hd_data->bios_ram, 0, "BIOS data");
+    dump_memory(hd_data, &hd_data->bios_ebda, hd_data->bios_ebda.size <= (8 << 10) ? 0 : 1, "EBDA");
+    dump_memory(hd_data, &hd_data->bios_rom, 1, "BIOS ROM");
 
-    if(smp.ok && smp.mpfp) {
-      mem.start = smp.mpfp;
+    if(bt->smp.ok && bt->smp.mpfp) {
+      mem.start = bt->smp.mpfp;
       mem.size = 0x10;
       mem.data = NULL;
       read_memory(&mem);
@@ -217,9 +229,9 @@ void hd_scan_bios(hd_data_t *hd_data)
       mem.data = free_mem(mem.data);
     }
 
-    if(smp.ok && smp.mpconfig && smp.mpconfig_size) {
-      mem.start = smp.mpconfig;
-      mem.size = smp.mpconfig_size;
+    if(bt->smp.ok && bt->smp.mpconfig && bt->smp.mpconfig_size) {
+      mem.start = bt->smp.mpconfig;
+      mem.size = bt->smp.mpconfig_size;
       mem.data = NULL;
       read_memory(&mem);
       dump_memory(hd_data, &mem, 0, "MP config table");
@@ -227,7 +239,6 @@ void hd_scan_bios(hd_data_t *hd_data)
     }
   }
 
-  free_mem(bios_ebda.data);
 }
 
 

@@ -213,6 +213,33 @@ typedef struct s_str_list_t {
   char *str;  					/* some string  */
 } str_list_t;
 
+
+/*
+ * for memory areas
+ */
+typedef struct {
+  unsigned start, size;		/* base address & size */
+  unsigned char *data;		/* actual data */
+} memory_range_t;
+
+
+/*
+ * smp info according to Intel smp spec (ia32)
+ */
+typedef struct {
+  unsigned ok:1;		/* data are valid */
+  unsigned rev;			/* MP spec revision */
+  unsigned mpfp;		/* MP Floating Pointer struct */
+  unsigned mpconfig_ok:1;	/* MP config table valid */
+  unsigned mpconfig;		/* MP config table */
+  unsigned mpconfig_size;	/* dto, size */
+  unsigned char feature[5];	/* MP feature info */
+  char oem_id[9];		/* oem id */
+  char prod_id[13];		/* product id */
+  unsigned cpus, cpus_en;	/* number of cpus & ennabled cpus */
+} smp_info_t;
+
+
 /*
  * structure holding the (raw) PCI data
  */
@@ -403,6 +430,10 @@ typedef struct {
   unsigned is_pnp_bios:1;
   unsigned pnp_id;
   unsigned lba_support:1;
+
+  unsigned low_mem_size;
+  smp_info_t smp;
+
 } bios_info_t;
 
 
@@ -988,8 +1019,9 @@ typedef struct {
   str_list_t *kmods;		/* list of active kernel modules */
   uint64_t used_irqs;		/* irq usage */
   uint64_t assigned_irqs;	/* irqs automatically assigned by libhd (for driver info) */
-  unsigned char *bios_rom;	/* BIOS 0xc0000 - 0xfffff */
-  unsigned char *bios_ram;	/* BIOS   0x400 -   0x4ff */
+  memory_range_t bios_rom;	/* BIOS 0xc0000 - 0xfffff */
+  memory_range_t bios_ram;	/* BIOS 0x00400 - 0x004ff */
+  memory_range_t bios_ebda;	/* EBDA */
   unsigned display;		/* hd_idx of the active (vga) display */
   unsigned color_code;		/* color, if any */
   char *cmd_line;		/* kernel command line */
