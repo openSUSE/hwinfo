@@ -15,7 +15,12 @@ sub getit
   $arch = shift;
 
   if($arch ne 'susedb') {
-    system "~adrian/bin/x11DB $arch 7.1 tmp";
+    if($arch =~ /^ia32|ppc|sparc$/) {
+      system "~adrian/bin/x11DB_$arch 7.1 tmp";
+    }
+    else {
+      system "~adrian/bin/x11DB $arch 7.1 tmp";
+    }
     system "rm -f tmp.sax1 tmp.sax2";
     system "mv tmp.names names.x11.$arch";
     die "oops" unless open F, "tmp.hwinfo";

@@ -1,22 +1,22 @@
 #x11DB
-#hwinfo data from 2001-01-17 15:21:12
+#hwinfo data from 2001-01-21 16:55:31
 #
 
 
 
 # ATI:Rage 3D II+
 1002 4755
-	x	3|MACH64||||||||
+	x	3|MACH64|||||5|||
 
 
 # ATI:Rage 3D Pro PCI
 1002 4750
-	x	3|MACH64||||||||
+	x	3|MACH64|||||1|||
 
 
 # 3DLabs:Permedia2V 2D+3D
 3D3D 0009
-	x	3|3DLABS||||||||
+	x	3|3DLABS|||||5|||
 
 
 # Sun:Sun - Monochrome (bwtwo)
@@ -26,7 +26,7 @@ s4001 0001
 
 # Sun:Sun - Color3 (cgthree)
 s4001 0002
-	x	4|suncg3||||||||
+	x	4|suncg3|||||1|||
 
 
 # Sun:Sun - Color3 (cgthree)
@@ -61,37 +61,37 @@ s4001 0007
 
 # Sun:Sun - Double width GX (cgsix)
 s4001 0008
-	x	4|suncg6||||||||
+	x	4|suncg6|||||1|||
 
 
 # Sun:Sun - Double width GX (cgsix)
 s4001 0008
-	x	3|SUN||||||||
+	x	3|SUN|||||1|||
 
 
 # Sun:Sun - Single width GX (cgsix)
 s4001 0009
-	x	4|suncg6||||||||
+	x	4|suncg6|||||1|||
 
 
 # Sun:Sun - Single width GX (cgsix)
 s4001 0009
-	x	3|SUN||||||||
+	x	3|SUN|||||1|||
 
 
 # Sun:Sun - Turbo GX with 1M VSIMM (cgsix)
 s4001 000a
-	x	4|suncg6||||||||
+	x	4|suncg6|||||1|||
 
 
 # Sun:Sun - Turbo GX with 1M VSIMM (cgsix)
 s4001 000a
-	x	3|SUN||||||||
+	x	3|SUN|||||1|||
 
 
 # Sun:Sun - Turbo GX Plus (cgsix)
 s4001 000b
-	x	4|suncg6||||||||
+	x	4|suncg6|||||1|||
 
 
 # Sun:Sun - Turbo GX Plus (cgsix)
@@ -111,12 +111,12 @@ s4001 000c
 
 # Sun:Sun - Unknown GX (cgsix)
 s4001 000d
-	x	4|suncg6||||||||
+	x	4|suncg6|||||1|||
 
 
 # Sun:Sun - Unknown GX (cgsix)
 s4001 000d
-	x	3|SUN||||||||
+	x	3|SUN|||||1|||
 
 
 # Sun:Sun - SX with 4M VSIMM (cgfourteen)
@@ -131,7 +131,7 @@ s4001 000f
 
 # Sun:Sun - SX (cgfourteen)
 s4001 0010
-	x	3|SUN24||||||||
+	x	3|SUN24|||||8|||
 
 
 # Sun:Sun - ZX or Turbo ZX (leo)
@@ -166,7 +166,7 @@ s4001 0016
 
 # Sun:Sun - FFB 67MHz Creator (ffb)
 s4001 0017
-	x	4|sunffb||||||||
+	x	4|sunffb|||||9|||
 
 
 # Sun:Sun - FFB 67MHz Creator (ffb)
@@ -176,120 +176,120 @@ s4001 0017
 
 # Sun:Sun - FFB 67MHz Creator 3D (ffb)
 s4001 0018
-	x	4|||||||||
+	x	4||||||9|||
 
 
 # Sun:Sun - FFB 67MHz Creator 3D (ffb)
 s4001 0018
-	x	4|sunffb|3d|xf86_glx|dri,glx||||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
 
 # Sun:Sun - FFB 67MHz Creator 3D (ffb)
 s4001 0018
-	x	3|SUN24||||||||
+	x	3|SUN24|||||8|||
 
 
 # Sun:Sun - FFB 75MHz Creator 3D (ffb)
 s4001 0019
-	x	4|sunffb||||||||
+	x	4|sunffb|||||9|||
 
 
 # Sun:Sun - FFB 75MHz Creator 3D (ffb)
 s4001 0019
-	x	4|sunffb|3d||dri,glx||||switch2xf86_glx|
+	x	4|sunffb|3d||dri,glx||9||switch2xf86_glx|
 
 
 # Sun:Sun - FFB 75MHz Creator 3D (ffb)
 s4001 0019
-	x	3|SUN24||||||||
+	x	3|SUN24|||||8|||
 
 
 # Sun:Sun - FFB2 Vertical Creator (ffb)
 s4001 001a
-	x	4|sunffb||||||||
+	x	4|sunffb|||||9|||
 
 
 # Sun:Sun - FFB2 Vertical Creator (ffb)
 s4001 001a
-	x	3|SUN24||||||||
+	x	3|SUN24|||||8|||
 
 
 # Sun:Sun - FFB2 Vertical Creator 3D (ffb)
 s4001 001b
-	x	4|sunffb||||||||
+	x	4|sunffb|||||9|||
 
 
 # Sun:Sun - FFB2 Vertical Creator 3D (ffb)
 s4001 001b
-	x	4|sunffb|3d|xf86_glx|dri,glx||||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
 
 # Sun:Sun - FFB2 Vertical Creator 3D (ffb)
 s4001 001b
-	x	3|SUN24||||||||
+	x	3|SUN24|||||1|||
 
 
 # Sun:Sun - FFB2+ Vertical Creator (ffb)
 s4001 001c
-	x	4|sunffb||||||||
+	x	4|sunffb|||||9|||
 
 
 # Sun:Sun - FFB2+ Vertical Creator (ffb)
 s4001 001c
-	x	3|SUN24||||||||
+	x	3|SUN24|||||8|||
 
 
 # Sun:Sun - FFB2+ Vertical Creator 3D (ffb)
 s4001 001d
-	x	4|sunffb||||||||
+	x	4|sunffb|||||9|||
 
 
 # Sun:Sun - FFB2+ Vertical Creator 3D (ffb)
 s4001 001d
-	x	4|sunffb|3d|xf86_glx|dri,glx||||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
 
 # Sun:Sun - FFB2+ Vertical Creator 3D (ffb)
 s4001 001d
-	x	3|SUN24||||||||
+	x	3|SUN24|||||8|||
 
 
 # Sun:Sun - FFB2 Horizontal Creator (ffb)
 s4001 001e
-	x	4|sunffb||||||||
+	x	4|sunffb|||||9|||
 
 
 # Sun:Sun - FFB2 Horizontal Creator (ffb)
 s4001 001e
-	x	3|SUN24||||||||
+	x	3|SUN24|||||8|||
 
 
 # Sun:Sun - FFB2 Horizontal Creator 3D (ffb)
 s4001 001f
-	x	4|sunffb||||||||
+	x	4|sunffb|||||9|||
 
 
 # Sun:Sun - FFB2 Horizontal Creator 3D (ffb)
 s4001 001f
-	x	4|sunffb|3d|xf86_glx|dri,glx||||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
 
 # Sun:Sun - FFB2 Horizontal Creator 3D (ffb)
 s4001 001f
-	x	3|SUN24||||||||
+	x	3|SUN24|||||8|||
 
 
 # Sun:Sun - FFB [unknown type] (ffb)
 s4001 0020
-	x	4|sunffb||||||||
+	x	4|sunffb|||||9|||
 
 
 # Sun:Sun - FFB [unknown type] (ffb)
 s4001 0020
-	x	4|sunffb|3d|xf86_glx|dri,glx||||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
 
 # Sun:Sun - FFB [unknown type] (ffb)
 s4001 0020
-	x	3|SUN24||||||||
+	x	3|SUN24|||||8|||
 

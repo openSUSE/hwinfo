@@ -1,4 +1,4 @@
-#hwinfo names data from 2001-01-17 15:21:12
+#hwinfo names data from 2001-01-21 16:55:31
 #
 
 
@@ -63,6 +63,10 @@
 102b
 	0525
 		102b 0641	Matrox MGA G450
+
+102b
+	0525
+		102b 07c0	Matrox MGA G450 rev 82
 
 1031
 	5607	Miro Video I/O & motion JPEG compressor
