@@ -1,4 +1,8 @@
-03/3/2003:	v6.04
+4/3/2003:	v6.05
+	- fixed ataraid detection (format of /proc/ide/ide?/config
+	  changed, #23057, #24528)
+
+3/3/2003:	v6.04
 	- bcm instead of tg3 (request by ak)
 	- reenable mouse probing, but without serial mice and no dialog (#20309)
 	- support some winmodems

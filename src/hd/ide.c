@@ -64,7 +64,12 @@ void hd_scan_ide(hd_data_t *hd_data)
     str_printf(&t, 0, "ide%u", i);
     sl0 = read_file(s, 0, 1);
     if(sl0 && sl0->str) {
-      if(sscanf(sl0->str, "pci bus %x device %x vid %x did %x", &u0, &u1, &u2, &u3) == 4) {
+      if(
+        /* old format */
+        sscanf(sl0->str, "pci bus %x device %x vid %x did %x", &u0, &u1, &u2, &u3) == 4 ||
+        /* new format */
+        sscanf(sl0->str, "pci bus %x device %x vendor %x device %x", &u0, &u1, &u2, &u3) == 4
+      ) {
         slot = PCI_SLOT(u1 & 0xff) + (u0 << 8);
         func = PCI_FUNC(u1 & 0xff);
         vend = MAKE_ID(TAG_PCI, u2);

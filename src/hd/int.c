@@ -29,6 +29,7 @@ static void int_fix_ide_scsi(hd_data_t *hd_data);
 static void int_fix_usb_scsi(hd_data_t *hd_data);
 static void int_mouse(hd_data_t *hd_data);
 static void new_id(hd_data_t *hd_data, hd_t *hd);
+static void int_modem(hd_data_t *hd_data);
 
 void hd_scan_int(hd_data_t *hd_data)
 {

@@ -36,8 +36,7 @@ void hd_scan_ataraid(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class.id == bc_storage &&
-      hd->sub_class.id == sc_sto_raid
+      hd->base_class.id == bc_storage
     ) {
       if(!hd->driver_info) hddb_add_info(hd_data, hd);
       for(di = hd->driver_info; di; di = di->next) {
