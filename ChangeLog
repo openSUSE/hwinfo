@@ -1,4 +1,6 @@
+22/3/2004:	v8.22
 	- removed Intel-v92ham support (#36667)
+	- worked on new sysfs block code
 
 21/3/2004:	v8.21
 	- use sysfs for block devices

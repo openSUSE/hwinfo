@@ -492,8 +492,7 @@ int do_config(int type, char *val, char *id)
      hd_manual = hd_list(hd_data, hw_manual, 1, NULL);
      for(hd = hd_manual; hd; hd = hd->next) {
         if(!hd->status.available) continue;
-        if(!hd->unix_dev_name || strlen(hd->unix_dev_name)<1) continue;
-        if(strcmp(hd->unix_dev_name, id)) continue;
+        if(!search_str_list(hd->unix_dev_names, id)) continue;
 	_id = hd->unique_id;
         nr++;
      }

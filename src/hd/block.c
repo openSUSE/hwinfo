@@ -390,7 +390,7 @@ void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_
   hd_res_t *geo, *size;
   int fd;
   unsigned u0, u1;
-  char c;
+  char c, *pr_str;
 
   if(hd->sysfs_id) {
     if(
@@ -428,6 +428,8 @@ void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_
   }
 
 
+  pr_str = NULL;
+
   if(
     hd->unix_dev_name &&
     hd->sub_class.id == sc_sdev_disk
@@ -436,7 +438,8 @@ void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_
     fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK);
     if(fd >= 0) {
 
-      PROGRESS(5, 1, "size");
+      str_printf(&pr_str, 0, "%s geo", hd->unix_dev_name);
+      PROGRESS(5, 1, pr_str);
 
       hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size);
       if(geo) add_res_entry(&hd->res, geo);
@@ -446,6 +449,7 @@ void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_
     }
   }
 
+  pr_str = free_mem(pr_str);
 
 }
 
@@ -587,7 +591,7 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_de
 void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev)
 {
   hd_t *hd1;
-  char *s, *t, *cs;
+  char *s, *t, *cs, *pr_str;
   unsigned u0, u1, u2, u3;
   int fd, k;
   unsigned char scsi_cmd_buf[0x300];
@@ -679,6 +683,8 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
     str_printf(&hd->rom_id, 0, "%s/@%u", hd1->rom_id, (hd->slot & 0xf));
   }
 
+  pr_str = NULL;
+
   if(
     hd_report_this(hd_data, hd) &&
     hd->unix_dev_name &&
@@ -688,7 +694,9 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
     PROGRESS(5, 0, hd->unix_dev_name);
     fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK);
     if(fd >= 0) {
-      PROGRESS(5, 1, "cache");
+
+      str_printf(&pr_str, 0, "%s cache", hd->unix_dev_name);
+      PROGRESS(5, 1, pr_str);
 
       memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
       // ###### FIXME: smaller!
@@ -726,13 +734,15 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
     fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK);
     if(fd >= 0) {
 
-      PROGRESS(5, 1, "size");
+      str_printf(&pr_str, 0, "%s geo", hd->unix_dev_name);
+      PROGRESS(5, 1, pr_str);
 
       hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size);
       if(geo) add_res_entry(&hd->res, geo);
       if(size) add_res_entry(&hd->res, size);
 
-      PROGRESS(5, 2, "serial");
+      str_printf(&pr_str, 0, "%s serial", hd->unix_dev_name);
+      PROGRESS(5, 2, pr_str);
 
       memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
       // ###### FIXME: smaller!
@@ -756,6 +766,8 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
       close(fd);
     }
   }
+
+  pr_str = free_mem(pr_str);
 
 
   if(
@@ -849,50 +861,6 @@ void read_partitions(hd_data_t *hd_data)
     for(sl = hd_data->partitions; sl; sl = sl->next) ADD2LOG("  %s\n", sl->str);
   }
 }
-
-
-#if 0
-
-static void add_partition(hd_data_t *hd_data);
-
-
-void hd_scan_partition2(hd_data_t *hd_data)
-{
-  if(!hd_probe_feature(hd_data, pr_partition_add)) return;
-
-  hd_data->module = mod_partition;
-
-  PROGRESS(2, 0, "partition");
-
-  add_partition(hd_data);
-}
-
-
-void add_partition(hd_data_t *hd_data)
-{
-  hd_t *hd, *hd1;
-  str_list_t *sl;
-
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(
-      hd->base_class.id == bc_storage_device &&
-      hd->sub_class.id == sc_sdev_disk &&
-      hd->unix_dev_name &&
-      !strncmp(hd->unix_dev_name, "/dev/", sizeof "/dev/" - 1)
-    ) {
-      for(sl = hd_data->partitions; sl; sl = sl->next) {
-        if(strstr(sl->str, hd->unix_dev_name + sizeof "/dev/" - 1) == sl->str) {
-          hd1 = add_hd_entry(hd_data, __LINE__, 0);
-          hd1->base_class.id = bc_partition;
-          str_printf(&hd1->unix_dev_name, 0, "/dev/%s", sl->str);
-          hd1->attached_to = hd->idx;
-        }
-      }
-    }
-  }
-}
-
-#endif
 
 
 /*
