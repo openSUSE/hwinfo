@@ -711,7 +711,7 @@ typedef struct {
   enum driver_info_type type;		/* driver info type */
   str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
   char *server;				/* the server name */
-  char *x3d;				/* 3D info */
+  str_list_t *x3d;			/* 3D info (list of packages to install) */
   struct {
     unsigned all:5;			/* the next 5 entries combined */
     unsigned c8:1, c15:1, c16:1, c24:1, c32:1;

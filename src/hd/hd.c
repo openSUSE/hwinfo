@@ -1121,9 +1121,10 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
           if(i == 0) {
             di->x11.server = new_str(sl->str);
           }
-          else if(i == 1) {
-            di->x11.x3d = new_str(sl->str);
+          else {
+            add_str_list(&di->x11.x3d, sl->str);
           }
+#if 0
           else if(i == 2) {
             di->x11.colors.all = strtol(sl->str, NULL, 16);
             if(di->x11.colors.all & (1 << 0)) di->x11.colors.c8 = 1;
@@ -1135,6 +1136,7 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
           else if(i == 3) {
             di->x11.dacspeed = strtol(sl->str, NULL, 10);
           }
+#endif
         }
         break;
     

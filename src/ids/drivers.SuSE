@@ -334,20 +334,20 @@ ADP 1505
 
 # 3dfx voodoo rush (with AT3D chip)
 1142 643d
-	x	SVGA|glide_vr
+	x	RUSH|glide_vr|rushlibs|mesa|mesa3dfx|dev3dfx|glidesdk
 
 # 3dfx voodoo 1
 121a 0001
-	x	|glide_vg
+	x	|glide_vg|mesa|mesa3dfx|dev3dfx|glidesdk
 
 # 3dfx voodo 2
 121a 0002
-	x	|glide_v2
+	x	|glide_v2|mesa|mesa3dfx|dev3dfx|glidesdk
 
 # 3dfx voodoo banshee & voodoo 3
 121a 0003
 121a 0005
-	x	SVGA|glide_v3
+	x	SVGA|glide_v3|mesa|mesa3dfx|dev3dfx|glidesdk
 
 # ati rage pro
 1002 4742
@@ -355,7 +355,7 @@ ADP 1505
 1002 4749
 1002 4750+2
 1002 4c4d
-	x	MACH64|glx
+	x	MACH64|glx|mesa
 
 # matrox g200/g400
 102b 0520+2
@@ -372,7 +372,6 @@ ADP 1505
 8086 7121
 8086 7123
 8086 7125
-	x	SVGA|glx
 
 # nvidia riva 128/tnt
 10de 0020
@@ -381,7 +380,7 @@ ADP 1505
 10de 00a0
 10de 0100
 12d2 0018+2
-	x	SVGA|glx|17
+	x	SVGA|glx|mesa
 
 # vmware's emulated card
 15ad 0710

@@ -91,6 +91,7 @@ void get_serial_info(hd_data_t *hd_data)
    */
   if(!(sl0 = read_file(PROC_DRIVER_SERIAL, 1, 44))) return;
 
+  // ########## FIX !!!!!!!! ########
   for(sl = sl0; sl; sl = sl->next) {
     i = 0;
     if(

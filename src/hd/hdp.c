@@ -400,7 +400,13 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 
       case di_x11:
         if(di->x11.server) dump_line("XFree Server: %s\n", di->x11.server);
-        if(di->x11.x3d) dump_line("3D-Accel: %s\n", di->x11.x3d);
+        if(di->x11.x3d) {
+          dump_line("3D-Info: %s", di->x11.x3d->str);
+          for(sl = di->x11.x3d->next; sl; sl = sl->next) {
+            dump_line0(", %s", sl->str);
+          }
+          dump_line0("\n");
+        }
         if(di->x11.colors.all) {
           dump_line_str("Color Depths: ");
           j = 0;

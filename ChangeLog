@@ -1,3 +1,6 @@
+22/2/2000:	v0.70
+	- changed x11/3d driver info
+
 18/2/2000:	v0.69
 	- mouse code now resets serial lines
 
