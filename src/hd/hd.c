@@ -600,7 +600,7 @@ void hd_scan(hd_data_t *hd_data)
 
   fix_probe_features(hd_data);
 
-  if(hd_data->debug) {
+  if(hd_data->debug && !hd_data->flags.internal) {
     for(i = sizeof hd_data->probe - 1; i >= 0; i--) {
       str_printf(&s, -1, "%02x", hd_data->probe[i]);
     }
@@ -686,7 +686,7 @@ void hd_scan(hd_data_t *hd_data)
   /* we are done... */
   hd_data->module = mod_none;
 
-  if(hd_data->debug) {
+  if(hd_data->debug && !hd_data->flags.internal) {
     sl0 = read_file(PROC_MODULES, 0, 0);
     ADD2LOG("----- /proc/modules -----\n");
     for(sl = sl0; sl; sl = sl->next) {
@@ -698,7 +698,7 @@ void hd_scan(hd_data_t *hd_data)
 
   update_irq_usage(hd_data);
 
-  if(hd_data->debug) {
+  if(hd_data->debug && !hd_data->flags.internal) {
     irqs = hd_data->used_irqs;
 
     ADD2LOG("  used irqs:");
@@ -711,7 +711,7 @@ void hd_scan(hd_data_t *hd_data)
     ADD2LOG("\n");
   }
 
-  if(hd_data->debug) {
+  if(hd_data->debug && !hd_data->flags.internal) {
     i = hd_usb_support(hd_data);
     ADD2LOG("  usb support: %s\n", i == 2 ? "ohci" : i == 1 ? "uhci" : "none");
     ADD2LOG("  pcmcia support: %d\n", hd_has_pcmcia(hd_data));
@@ -2055,6 +2055,7 @@ int hd_usb_support(hd_data_t *hd_data)
 int hd_smp_support(hd_data_t *hd_data)
 {
   int i;
+  unsigned u;
   hd_t *hd;
   cpu_info_t *ct;
   str_list_t *sl;
@@ -2062,8 +2063,11 @@ int hd_smp_support(hd_data_t *hd_data)
   i = detectSMP() > 0 ? 1 : 0;
   if(i) return i;
 
+  u = hd_data->flags.internal;
+  hd_data->flags.internal = 1;
   hd = hd_list(hd_data, hw_cpu, 0, NULL);
   if(!hd) hd = hd_list(hd_data, hw_cpu, 1, NULL);
+  hd_data->flags.internal = u;
 
   if(!hd || !hd->detail || hd->detail->type != hd_detail_cpu) return i;
   if(!(ct = hd->detail->cpu.data)) return i;
@@ -2150,7 +2154,7 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
     }
   }
 
-#ifdef __i386_
+#ifdef __i386__
   return arch_intel;
 #else
 #ifdef __alpha__

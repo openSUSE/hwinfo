@@ -842,6 +842,9 @@ typedef struct {
   unsigned char probe_clr[(pr_all + 7) / 8];	/* bitmask of probing features that will always be reset */
   unsigned last_idx;		/* index of the last hd entry generated */
   unsigned module;		/* the current probing module we are in */
+  struct {
+    unsigned internal:1;	/* hd_scan was called internally */
+  } flags;			/* special flags */
   enum boot_arch boot;		/* boot method */
   hd_t *old_hd;			/* old (outdated) entries (if you scan more than once) */
   pci_t *pci;			/* raw PCI data */

@@ -17,6 +17,8 @@ static int listplus = 0;
 
 static int test = 0;
 
+static int find_braille(hd_data_t *hd_data);
+
 /*
  * Just scan the hardware and dump all info.
  */
@@ -34,6 +36,10 @@ int main(int argc, char **argv)
   hd_data = calloc(1, sizeof *hd_data);
   hd_data->progress = progress;
   hd_data->debug=~(HD_DEB_DRIVER_INFO);
+
+  if(argc == 1 && !strcmp(*argv, "--special=braille")) {
+    return find_braille(hd_data);
+  }
 
   do {
     if(first_probe)				/* only for the 1st probing */
@@ -98,6 +104,7 @@ int main(int argc, char **argv)
     if(!strcmp(list, "scanner")) i = hw_scanner;
     if(!strcmp(list, "braille")) i = hw_braille;
     if(!strcmp(list, "sys")) i = hw_sys;
+    if(!strcmp(list, "cpu")) i = hw_cpu;
 
     if(i >= 0) {
       hd = hd_list(hd_data, i, listplus, NULL);
@@ -185,5 +192,37 @@ void progress(char *pos, char *msg)
   printf("> %s: %s", pos, msg);
   if(test) printf("\n");
   fflush(stdout);
+}
+
+
+int find_braille(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  int ok = 1;
+  char *s;
+
+  printf("Looking for a braille display...\n");
+
+  hd = hd_list(hd_data, hw_braille, 1, NULL);
+
+  if(hd_data->progress) {
+    printf("\r%64s\r", "");
+    fflush(stdout);
+  }
+
+  for(; hd; hd = hd->next) {
+    if(
+      hd->base_class == bc_braille &&		/* is a braille display */
+      hd->unix_dev_name &&			/* and has a device name */
+      (s = hd_device_name(hd_data, hd->vend, hd->dev))
+    ) {
+      fprintf(stderr, "Braille: %s\n", s);
+      fprintf(stderr, "Brailledevice: %s\n", hd->unix_dev_name);
+      ok = 0;
+      break;
+    }
+  }
+
+  return ok;
 }
 
