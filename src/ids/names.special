@@ -36,13 +36,19 @@ s1004	HEWLETT-PACKARD
 	0001.10900	DESKJET 810C
 
 # modem
+s2000	Unknown
+	0001.10200	AT Modem
+
 s2001	U.S. Robotics, Inc.
 	0001.10200	USRobotics Sportster Vi 33600 Faxmodem
 
-s2002	ZyXEL
+s2002	3Com U.S. Robotics, Inc.
+	0001.10200	3Com U.S. Robotics ISDN Pro TA
+
+s2003	ZyXEL
 	0001.10200	U1496C
 
-s2003	Zoom Telephonics, Inc.
+s2004	Zoom Telephonics, Inc.
 	0001.10200	Zoom FaxModem V.34X Plus Model 2836
 
 # isa isdn cards

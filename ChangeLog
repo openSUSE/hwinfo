@@ -1,3 +1,6 @@
+	- modem fix: give default name if none could be determined
+	- added 3Com Robotics recognition
+
 28/2/2000:	v0.76
 	- automatic usb module loading
 	- rewrite of the probing flags stuff; new probing flags

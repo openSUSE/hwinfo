@@ -195,6 +195,7 @@ void get_serial_modem(hd_data_t *hd_data)
 
     PROGRESS(8, 0, "testing");
 
+    at_cmd(hd_data, "ATI\r", 0, 1);
     for(i = 0; i < sizeof cmds / sizeof *cmds; i++) {
       sprintf(at, "ATI%d\r", cmds[i]);
       at_cmd(hd_data, at, 0, 1);
@@ -250,9 +251,12 @@ void get_serial_modem(hd_data_t *hd_data)
           hd->vend_name = new_str(sm->vend);
         }
       }
+      if(!(hd->dev || hd->dev_name || hd->vend || hd->vend_name)) {
+        hd->vend = MAKE_ID(TAG_SPECIAL, 0x2000);
+        hd->dev = MAKE_ID(TAG_SPECIAL, 0x0001);
+      }
     }
   }
-
 }
 
 int dev_name_duplicate(hd_data_t *hd_data, char *dev_name)
@@ -286,6 +290,15 @@ void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
     sm->vend = new_str("U.S. Robotics, Inc.");
     /* strip revision code */
     if((s = strstr(sl->str, " Rev. "))) *s = 0;
+    sm->user_name = canon_str(sl->str, strlen(sl->str));
+
+    return;
+  }
+
+  if(strstr(sl->str, "3Com U.S. Robotics ") == sl->str) {
+    /* looks like an 3Com U.S. Robotics... */
+
+    sm->vend = new_str("3Com U.S. Robotics, Inc.");
     sm->user_name = canon_str(sl->str, strlen(sl->str));
 
     return;
