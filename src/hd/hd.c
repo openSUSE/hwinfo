@@ -378,14 +378,14 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   /* hd_data->pci is always NULL */
   /* hd_data->isapnp->card is always NULL */
   hd_data->isapnp = free_mem(hd_data->isapnp);
-  hd_data->cdrom = free_str_list(hd_data->cdrom);
+  /* hd_data->cdrom is always NULL */
   hd_data->net = free_str_list(hd_data->net);
   hd_data->floppy = free_str_list(hd_data->floppy);
   hd_data->misc = free_misc(hd_data->misc);
-  // hd_data->serial is always NULL
-  // hd_data->scsi is always NULL
-  // hd_data->ser_mouse is always NULL
-  // hd_data->ser_modem is always NULL
+  /* hd_data->serial is always NULL */
+  /* hd_data->scsi is always NULL */
+  /* hd_data->ser_mouse is always NULL */
+  /* hd_data->ser_modem is always NULL */
   hd_data->cpu = free_str_list(hd_data->cpu);
   hd_data->klog = free_str_list(hd_data->klog);
   hd_data->proc_usb = free_str_list(hd_data->proc_usb);
@@ -568,11 +568,14 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
       {
         cdrom_info_t *c = d->cdrom.data;
 
-        free_mem(c->volume);
-        free_mem(c->publisher);
-        free_mem(c->preparer);
-        free_mem(c->application);
-        free_mem(c->creation_date);
+        free_mem(c->name);
+        free_mem(c->iso9660.volume);
+        free_mem(c->iso9660.publisher);
+        free_mem(c->iso9660.preparer);
+        free_mem(c->iso9660.application);
+        free_mem(c->iso9660.creation_date);
+        free_mem(c->el_torito.id_string);
+        free_mem(c->el_torito.label);
 
         free_mem(c);
       }
@@ -2897,6 +2900,8 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
     hd_clear_probe_feature(hd_data, pr_all);
     switch(items) {
       case hw_cdrom:
+        hd_set_probe_feature(hd_data, pr_ide);
+        hd_set_probe_feature(hd_data, pr_scsi_cache);
         hd_set_probe_feature(hd_data, pr_cdrom_info);
         break;
 
@@ -2907,7 +2912,8 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 
       case hw_disk:
         hd_set_probe_feature(hd_data, pr_ide);
-        hd_set_probe_feature(hd_data, pr_scsi);
+        hd_set_probe_feature(hd_data, pr_scsi_cache);
+        hd_set_probe_feature(hd_data, pr_scsi_geo);
         hd_set_probe_feature(hd_data, pr_dac960);
         hd_set_probe_feature(hd_data, pr_smart);
         hd_set_probe_feature(hd_data, pr_i2o);

@@ -190,6 +190,11 @@ typedef enum pif_usb_e {
   pif_usb_uhci = 0, pif_usb_ohci = 0x10, pif_usb_other = 0x80, pif_usb_device = 0xfe
 } hd_pif_usb_t;
 
+/* CD-ROM  prog_if values */
+typedef enum pif_cdrom {
+  pif_cdrom, pif_cdr, pif_cdrw, pif_dvd, pif_dvdr, pif_dvdram
+} hd_pif_cdrom_t ;
+
 /* bus type values similar to PCI bridge subclasses */
 typedef enum bus_types {
   bus_none, bus_isa, bus_eisa, bus_mc, bus_pci, bus_pcmcia, bus_nubus,
@@ -346,9 +351,32 @@ typedef struct devtree_s {
 /*
  * special CDROM entry
  */
-// ###### rename these! (cf. mouse_info_t!!!)
-typedef struct {
-  char *volume, *publisher, *preparer, *application, *creation_date;
+typedef struct cdrom_info_s {
+  struct cdrom_info_s *next;
+  char *name;
+  unsigned speed;
+  unsigned cdr:1, cdrw:1, dvd:1, dvdr:1, dvdram:1;
+  unsigned cdrom:1;		/* cdrom in drive */
+  struct {
+    unsigned ok:1;
+    char *volume, *publisher, *preparer, *application, *creation_date;
+  } iso9660;
+  struct {
+    unsigned ok:1;
+    unsigned platform;
+    char *id_string;
+    unsigned bootable:1;
+    unsigned media_type;	/* boot emulation type */
+    unsigned load_address;
+    unsigned load_count;	/* sectors to load */
+    unsigned start;		/* start sector */
+    struct {
+      unsigned c, h, s;
+      unsigned size;
+    } geo;
+    char *label;
+  } el_torito;
+
 } cdrom_info_t;
 
 typedef struct {
@@ -921,7 +949,7 @@ typedef struct {
   hd_t *old_hd;			/* old (outdated) entries (if you scan more than once) */
   pci_t *pci;			/* raw PCI data */
   isapnp_t *isapnp;		/* raw ISA-PnP data */
-  str_list_t *cdrom;		/* list of CDROM devs from PROC_CDROM_INFO */
+  cdrom_info_t *cdrom;		/* CDROM devs from PROC_CDROM_INFO */
   str_list_t *net;		/* list of network interfaces */
   str_list_t *floppy;		/* contents of PROC_NVRAM, used by the floppy module */
   misc_t *misc;			/* data gathered in the misc module */
@@ -1010,7 +1038,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *hd, FILE *f);
 
 /* implemented in cdrom.c */
 
-cdrom_info_t *hd_read_cdrom_info(hd_t *hd);
+cdrom_info_t *hd_read_cdrom_info(hd_data_t *hd_data, hd_t *hd);
 
 #ifdef __cplusplus
 }

@@ -267,7 +267,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
     }
 
     if((scsi->cache & 4) && scsi->type == sc_sdev_cdrom) {
-      hd->prog_if = 1;
+      hd->prog_if = pif_cdr;
     }
 
     hd->detail = new_mem(sizeof *hd->detail);

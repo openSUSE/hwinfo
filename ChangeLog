@@ -1,4 +1,8 @@
+8/12/200:	v1.56
 	- new alva detection code
+	- added cd-r/dvd detection
+	- read "el torito" boot info
+	- updated x11 info
 
 7/12/2000:	v1.55
 	- fixed evil hddb bug

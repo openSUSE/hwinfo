@@ -109,15 +109,54 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
   ) {
     cdrom_info_t *ci = h->detail->cdrom.data;
 
-    if(ci) {
-      if(ci->volume) dump_line("Volume ID: \"%s\"\n", ci->volume);
-      if(ci->application) dump_line("Application: \"%s\"\n", ci->application);
-      if(ci->publisher) dump_line("Publisher: \"%s\"\n", ci->publisher);
-      if(ci->preparer) dump_line("Preparer: \"%s\"\n", ci->preparer);
-      if(ci->creation_date) dump_line("Creation date: \"%s\"\n", ci->creation_date);
+    if(ci->speed) {
+      dump_line("Drive Speed: %u\n", ci->speed);
+    }
+
+    if(ci->iso9660.ok) {
+      if(ci->iso9660.volume) dump_line("Volume ID: \"%s\"\n", ci->iso9660.volume);
+      if(ci->iso9660.application) dump_line("Application: \"%s\"\n", ci->iso9660.application);
+      if(ci->iso9660.publisher) dump_line("Publisher: \"%s\"\n", ci->iso9660.publisher);
+      if(ci->iso9660.preparer) dump_line("Preparer: \"%s\"\n", ci->iso9660.preparer);
+      if(ci->iso9660.creation_date) dump_line("Creation date: \"%s\"\n", ci->iso9660.creation_date);
     }
     else {
-      dump_line_str("Drive status: no cdrom found\n");
+      if(ci->cdrom) {
+        dump_line_str("Drive status: non-ISO9660 cdrom\n");
+      }
+      else {
+        dump_line_str("Drive status: no cdrom found\n");
+      }
+    }
+    if(ci->el_torito.ok) {
+      dump_line(
+        "El Torito info: platform %u, %sbootable\n",
+        ci->el_torito.platform,
+        ci->el_torito.bootable ? "" : "not "
+      );
+      if(ci->el_torito.id_string) dump_line("  Id String: \"%s\"\n",  ci->el_torito.id_string);
+      if(ci->el_torito.label) dump_line("  Volume Label: \"%s\"\n",  ci->el_torito.label);
+      {
+        static char *media[] = {
+          "none", "1.2MB Floppy", "1.44MB Floppy", "2.88MB Floppy", "Hard Disk"
+        };
+        dump_line(
+          "  Media: %s starting at sector 0x%04x\n",
+          media[ci->el_torito.media_type < sizeof media / sizeof *media ? ci->el_torito.media_type : 0],
+          ci->el_torito.start
+        );
+      }
+      if(ci->el_torito.geo.size) dump_line(
+        "  Geometry (CHS): %u/%u/%u (%u blocks)\n",
+        ci->el_torito.geo.c, ci->el_torito.geo.h, ci->el_torito.geo.s, ci->el_torito.geo.size
+      );
+      dump_line("  Load: %u bytes", ci->el_torito.load_count * 0x200);
+      if(ci->el_torito.load_address) {
+        dump_line0(" at 0x%04x\n", ci->el_torito.load_address);
+      }
+      else {
+        dump_line0("\n");
+      }
     }
   }
 

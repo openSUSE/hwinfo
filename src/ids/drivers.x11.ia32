@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-12-07 15:23:22
+#hwinfo data from 2000-12-08 17:49:41
 #
 
 
@@ -457,6 +457,11 @@
 # ATI:Mach64 VT
 1002 5654  
 	x	4|ati|||||||
+
+
+# ATI:Mach64 VT
+1002 5654  
+	x	4||3d||||||
 
 
 # ATI:Mach64 VT
@@ -2016,7 +2021,27 @@
 
 # S3:Savage3D+MacroVision
 5333 8A21  
+	x	4|savage|||||||
+
+
+# S3:Savage3D+MacroVision
+5333 8A21  
+	x	4||3d||||||
+
+
+# S3:Savage3D+MacroVision
+5333 8A21  
 	x	3|SVGA|||||||
+
+
+# S3:Savage3D (86E391)
+5333 8A20  
+	x	4|savage|||||||
+
+
+# S3:Savage3D (86E391)
+5333 8A20  
+	x	4||3d||||||
 
 
 # S3:Savage3D (86E391)
@@ -2047,6 +2072,16 @@
 # S3:PLATO/PX
 5333 0551  
 	x	3|SVGA|||||||
+
+
+# S3:SAVAGE2000
+5333 9102  
+	x	4|savage|||||||
+
+
+# S3:SAVAGE2000
+5333 9102  
+	x	4||3d||||||
 
 
 # S3:SAVAGE2000
@@ -2306,7 +2341,27 @@
 
 # S3:Savage 4
 5333 8a22  
+	x	4|savage|||||||
+
+
+# S3:Savage 4
+5333 8a22  
+	x	4||3d||||||
+
+
+# S3:Savage 4
+5333 8a22  
 	x	3|SVGA|||||||
+
+
+# S3:Savage 4
+5333 8a23  
+	x	4|savage|||||||
+
+
+# S3:Savage 4
+5333 8a23  
+	x	4||3d||||||
 
 
 # S3:Savage 4
@@ -2341,7 +2396,7 @@
 
 # S3:Savage IX8
 5333 8c12  
-	x	4||||||||
+	x	4|savage|||||||
 
 
 # S3:Savage IX8
@@ -3556,7 +3611,7 @@
 
 # Cirrus Logic:GD 5446
 1013 00b8  
-	x	4|cirrus|||||||
+	x	4||3d||||||
 
 
 # Cirrus Logic:GD 5446
