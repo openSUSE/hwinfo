@@ -3899,6 +3899,22 @@ int run_cmd(hd_data_t *hd_data, char *cmd)
   return 0;
 }
 
+int probe_module(hd_data_t *hd_data, char *module)
+{
+  char *cmd = NULL;
+  int i;
+
+  if(hd_module_is_active(hd_data, module)) return 0;
+
+  str_printf(&cmd, 0, "/sbin/modprobe %s", module);
+
+  i = run_cmd(hd_data, cmd);
+
+  free_mem(cmd);
+
+  return i;
+}
+
 int load_module_with_params(hd_data_t *hd_data, char *module, char *params)
 {
   char *cmd = NULL;
@@ -4724,7 +4740,7 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
         }
         else if(dev_class) {
           part1 = dev_class;
-          if(hw_class && !index(part1, ' ') && index(hw_class, ' ')) {
+          if(hw_class && !strchr(part1, ' ') && strchr(hw_class, ' ')) {
             part2 = hw_class;
           }
         }
@@ -4751,7 +4767,7 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
 
   if(!part1 && !part2 && hw_class) {
     str_printf(&part1, 0, "unknown %s", hw_class);
-    if(index(hw_class, ' ')) {
+    if(strchr(hw_class, ' ')) {
       str_printf(&part1, -1, " hardware");
     }
   }

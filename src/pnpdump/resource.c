@@ -15,6 +15,10 @@
 #include <ctype.h>
 #include <string.h>
 
+#ifndef _IO_ssize_t
+#define _IO_ssize_t size_t
+#endif
+
 extern _IO_ssize_t getdelim(char **, size_t *, int, FILE *);
 
 #ifndef __DJGPP__

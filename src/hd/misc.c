@@ -568,11 +568,12 @@ void read_irqs(misc_t *m)
 
   for(sl = m->proc_irq; sl; sl = sl->next) {
     /* irq */
-    if(sscanf(sl->str, " %u : %n", &u, &i) < 1) continue;
+    if(sscanf(sl->str, " %u: %n", &u, &i) < 1) continue;
     v = 0;
     j = i;
     /* add up all event counters */
     while(j < strlen(sl->str) && sscanf(sl->str + j, " %u %n", &k, &i) >= 1) {
+      if(!i) break;
       v += k;
       j += i;
     }

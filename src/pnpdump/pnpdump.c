@@ -37,7 +37,7 @@
 /*
  * Code to set scheduler to Realtime, Round-Robin, so usleeps right etc
  */
-#if defined __GLIBC__ && __GLIBC__ >= 2
+#if (defined __GLIBC__ && __GLIBC__ >= 2) || defined(__dietlibc__)
 #  include <sched.h>
 #  include <time.h>
 #else

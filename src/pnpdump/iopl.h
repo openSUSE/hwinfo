@@ -1,7 +1,7 @@
 /*****************************************************************************
 **
 ** iopl.h
-** $Header: /abuild/poeml/svn-convert/hwinfo/../libhd-cvs/src/pnpdump/Attic/iopl.h,v 1.2 2000/07/06 12:56:26 snwint Exp $
+** $Header: /abuild/poeml/svn-convert/hwinfo/../libhd-cvs/src/pnpdump/Attic/iopl.h,v 1.3 2001/09/10 13:09:12 snwint Exp $
 **
 ** Acquire/Relinquish I/O port access privileges.
 ** This header file also provides platform-independent inb/outb declarations.
@@ -52,7 +52,7 @@ extern "C" {
 #include <dos.h>
 #else
 #ifndef _OS2_
-#  if defined __GLIBC__ && __GLIBC__ >= 2 && !defined __powerpc__
+#  if (defined __GLIBC__ && __GLIBC__ >= 2 && !defined __powerpc__) || defined(__dietlibc__)
 #    include <sys/io.h>
 #  else
 #    ifdef _AXP_

@@ -20,12 +20,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sys/vm86.h>
 #include <unistd.h>
 #include <errno.h>
 #include <asm/unistd.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/vm86.h>
 #include <signal.h>
 #include "v86bios.h"
 #include "AsmMacros.h"

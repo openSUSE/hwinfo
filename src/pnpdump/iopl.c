@@ -2,7 +2,7 @@
 **
 ** iopl.c
 */
-static char rcsid[] __attribute__((unused)) = "$Id: iopl.c,v 1.1 2000/02/12 12:36:27 snwint Exp $";
+static char rcsid[] __attribute__((unused)) = "$Id: iopl.c,v 1.2 2001/09/10 13:09:12 snwint Exp $";
 /*
 **
 ** Acquire/Relinquish I/O port access privileges.
@@ -39,6 +39,7 @@ static char rcsid[] __attribute__((unused)) = "$Id: iopl.c,v 1.1 2000/02/12 12:3
 *****************************************************************************/
 
 #include <unistd.h>
+#include <sys/io.h>
 #include <errno.h>
 #include "iopl.h"
 

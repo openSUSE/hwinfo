@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Tue Sep  4 15:55:00 2001
+# generated at: Mon Sep 10 13:43:50 2001
 
 # data source:  CDB
 
@@ -87,7 +87,7 @@ s4001 0017
 
 # Sun Microsystems:Sun|FFB 67MHz Creator (ffb)
 s4001 0017
-	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|glx||9||switch2xf86_glx|
 
 # Sun Microsystems:Sun|FFB 67MHz Creator 3D (ffb)
 s4001 0018
@@ -95,7 +95,7 @@ s4001 0018
 
 # Sun Microsystems:Sun|FFB 67MHz Creator 3D (ffb)
 s4001 0018
-	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|glx||9||switch2xf86_glx|
 
 # Sun Microsystems:Sun|FFB 75MHz Creator 3D (ffb)
 s4001 0019
@@ -103,7 +103,7 @@ s4001 0019
 
 # Sun Microsystems:Sun|FFB 75MHz Creator 3D (ffb)
 s4001 0019
-	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|glx||9||switch2xf86_glx|
 
 # Sun Microsystems:Sun|FFB2 Vertical Creator (ffb)
 s4001 001a
@@ -111,7 +111,7 @@ s4001 001a
 
 # Sun Microsystems:Sun|FFB2 Vertical Creator (ffb)
 s4001 001a
-	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|glx||9||switch2xf86_glx|
 
 # Sun Microsystems:Sun|FFB2 Vertical Creator 3D (ffb)
 s4001 001b
@@ -119,7 +119,7 @@ s4001 001b
 
 # Sun Microsystems:Sun|FFB2 Vertical Creator 3D (ffb)
 s4001 001b
-	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|glx||9||switch2xf86_glx|
 
 # Sun Microsystems:Sun|FFB2+ Vertical Creator (ffb)
 s4001 001c
@@ -127,7 +127,7 @@ s4001 001c
 
 # Sun Microsystems:Sun|FFB2+ Vertical Creator (ffb)
 s4001 001c
-	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|glx||9||switch2xf86_glx|
 
 # Sun Microsystems:Sun|FFB2+ Vertical Creator 3D (ffb)
 s4001 001d
@@ -135,7 +135,7 @@ s4001 001d
 
 # Sun Microsystems:Sun|FFB2+ Vertical Creator 3D (ffb)
 s4001 001d
-	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|glx||9||switch2xf86_glx|
 
 # Sun Microsystems:Sun|FFB2 Horizontal Creator (ffb)
 s4001 001e
@@ -143,7 +143,7 @@ s4001 001e
 
 # Sun Microsystems:Sun|FFB2 Horizontal Creator (ffb)
 s4001 001e
-	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|glx||9||switch2xf86_glx|
 
 # Sun Microsystems:Sun|FFB2 Horizontal Creator 3D (ffb)
 s4001 001f
@@ -151,7 +151,7 @@ s4001 001f
 
 # Sun Microsystems:Sun|FFB2 Horizontal Creator 3D (ffb)
 s4001 001f
-	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|glx||9||switch2xf86_glx|
 
 # Sun Microsystems:Sun|FFB [unknown type] (ffb)
 s4001 0020
@@ -159,7 +159,7 @@ s4001 0020
 
 # Sun Microsystems:Sun|FFB [unknown type] (ffb)
 s4001 0020
-	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|glx||9||switch2xf86_glx|
 
 # ATI Technologies Inc:68800AX [Mach32]
 1002 4158
@@ -307,7 +307,7 @@ s4001 0020
 
 #
 
-# generated at: Tue Sep  4 15:55:00 2001
+# generated at: Mon Sep 10 13:43:50 2001
 
 # data source:  CDB
 

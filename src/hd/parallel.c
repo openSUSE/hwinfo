@@ -52,11 +52,11 @@ void do_lp(hd_data_t *hd_data)
   if(hd || 1) {		/* always load it */
     if(hd_data->kernel_version == KERNEL_22) {
       unload_module(hd_data, "parport_probe");
-      load_module(hd_data, "parport_probe");
+      probe_module(hd_data, "parport_probe");
     } else {
       unload_module(hd_data, "lp");
       unload_module(hd_data, "parport_pc");
-      load_module(hd_data, "parport_pc");
+      probe_module(hd_data, "parport_pc");
     }
   }
 
