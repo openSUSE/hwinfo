@@ -16,7 +16,7 @@
 
 #include "init_message.h"
 
-#define TIMEOUT 1
+#define TIMEOUT 2
 #define LONG_TIMEOUT 0
 #define BUFFERS 1024
 
@@ -81,14 +81,19 @@ int main( int argc, char **argv )
 	commands = (char**) malloc( BUFFERS * sizeof(char*) );
 	devices  = (char**) malloc( BUFFERS * sizeof(char*) );
 
+	msgid = msgget(key, IPC_CREAT | 0600);
+        if (msgid < 0) {
+		perror("msgget");
+		exit(1);
+        }
+
 	while (1) {
 		if ( last || dev_nr )
 			mode = IPC_NOWAIT;
 		else
 			mode = 0;
 
-		msgid = msgget(key, 0);
-		if( (msgid >= 0) && msgrcv(msgid, &m, MESSAGE_BUFFER, 1, mode) >= 0 ){
+		if( msgrcv(msgid, &m, MESSAGE_BUFFER, 1, mode) >= 0 ){
 			char *p = m.mtext;
 
 			if ( p == 0 ){
@@ -182,41 +187,55 @@ int main( int argc, char **argv )
 			}
 		}
 		
-		if ( last && (last+TIMEOUT < time(0L)) ){
-			for ( i=0; i<NR_COMMANDS; i++ ){
-				int j;
-				int run_really = 0;
-				char buf[MESSAGE_BUFFER];
+		if ( last && (last+TIMEOUT <= time(0L)) ){
+			char buf[MESSAGE_BUFFER * NR_COMMANDS];
+			int run_really = 0;
 
-				strcpy( buf, "/sbin/hwscan --fast --boot --silent --" );
-				strcat( buf, command_args[i] );
+			last=0;
+			strcpy( buf, "/sbin/hwscan --fast --boot --silent" );
+			for ( i=0; i<NR_COMMANDS; i++ ){
 				if ( command_with_device[i] == 0 &&
 				     command_device_last[i][0] == 0 ){
 					command_device_last[i][0] = time(0L);
+					strcat( buf, " --");
+					strcat( buf, command_args[i] );
 				 	run_really = 1;
-				}else
-				for ( j=0; j<BUFFERS; j++ ){
-					if ( !command_device[i][j] )
-						break;
-					if ( command_device_last[i][j] == 0 ){
-						strcat( buf, " --only=" );
-						strcat( buf, command_device[i][j] );
-						command_device_last[i][j] = time(0L);
-				 		run_really = 1;
+				} else {
+					int j;
+					int commappended = 0;
+
+					for ( j=0; j<BUFFERS; j++ ){
+						if ( !command_device[i][j] )
+							break;
+						if ( command_device_last[i][j] == 0 ){
+							if (!commappended) {
+								strcat( buf, " --");
+								strcat( buf, command_args[i] );
+								commappended = 1;
+						        }
+							strcat( buf, " --only=" );
+							strcat( buf, command_device[i][j] );
+							command_device_last[i][j] = time(0L);
+							run_really = 1;
+							if (strlen(buf) > sizeof(buf) - MESSAGE_BUFFER)
+								break;
+						}
 					}
 				}
-
-				if ( run_really ){
-#if DEBUG
-					printf("RUN %s\n", buf);
-#endif
-					system(buf);
-#if DEBUG				
-					printf("RUN quit %s\n", buf);
-				}else{
-					printf("SKIPPED %s\n", buf);
-#endif
+				if (strlen(buf) > sizeof(buf) - MESSAGE_BUFFER) {
+					last = time(0L);	/* call me again */
+					break;
 				}
+			}
+
+			if ( run_really ){
+#if DEBUG
+				printf("RUN %s\n", buf);
+#endif
+				system(buf);
+#if DEBUG				
+				printf("RUN quit %s\n", buf);
+#endif
 			}
 			if ( lines ){
 				for (i=0; i<lines; i++){
@@ -231,7 +250,6 @@ int main( int argc, char **argv )
 				}
 				lines=0;
 			}
-			last=0;
 		}
 	}
 
