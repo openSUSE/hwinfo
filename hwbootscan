@@ -12,10 +12,7 @@ kbd_ok=
 
 rm -f /var/lib/hardware/LOCK
 
-neededchanged=`/usr/sbin/hwscan --mouse`
-if [ -n "$neededchanged" ] ; then
-  has_keyboard && /sbin/yast2 mouse reprobe
-fi
+/usr/sbin/hwscan --mouse
 
 neededchanged=`/usr/sbin/hwscan --gfxcard`
 if [ -n "$neededchanged" ] ; then

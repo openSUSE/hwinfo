@@ -1,3 +1,7 @@
+29/7/2003:	v5.56
+	- no yast dialog for mouse config changes in hwscan boot script
+	  (#27505, #20309)
+
 13/5/2003:	v5.55
 	- scan for partitions (backport from SL 8.3 needed by linuxrc
 	  for #26906)
