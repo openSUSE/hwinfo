@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2001-01-17 15:18:37
+#hwinfo data from 2001-01-19 17:09:42
 #
 
 
@@ -181,7 +181,22 @@
 
 # Matrox:MGA G450
 102b 0525 102b 0641
-	x	4|mga||||SwappedHead||||
+	x	4|mga||||||||
+
+
+# Matrox:MGA G450
+102b 0525 102b 0641
+	x	4|mga|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
+
+# Matrox:MGA G450 rev 82
+102b 0525 102b 07c0
+	x	4|mga||||||||
+
+
+# Matrox:MGA G450 rev 82
+102b 0525 102b 07c0
+	x	4|mga|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 
 # Miro:Video I/O & motion JPEG compressor
