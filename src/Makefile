@@ -23,8 +23,7 @@ $(LIBHD): $(OBJS)
 
 ifdef SHARED_FLAGS
 $(LIBHD_SO): $(LIBHD)
-	echo $(SHARED_FLAGS)
-	$(CC) -shared -lsysfs -Wl,--whole-archive $(LIBHD) -Wl,--no-whole-archive \
+	$(CC) -shared $(SO_LIBS) -Wl,--whole-archive $(LIBHD) -Wl,--no-whole-archive \
 		-Wl,-soname=$(LIBHD_SONAME) \
 		-o $(LIBHD_SO) 
 	ln -snf $(LIBHD_NAME) $(LIBHD_SONAME)

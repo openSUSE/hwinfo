@@ -7,6 +7,10 @@ ULIBDIR		= /usr$(LIBDIR)
 LIBS		= -lhd
 SLIBS		= -lhd -lsysfs -liw
 TLIBS		= -lhd_tiny -lsysfs
+SO_LIBS		= -lsysfs -liw
+TSO_LIBS	= -lsysfs
+
+export SO_LIBS
 
 include Makefile.common
 
@@ -32,13 +36,13 @@ shared:
 	@make
 
 tiny:
-	@make EXTRA_FLAGS=-DLIBHD_TINY LIBHD_BASE=libhd_tiny LIBS="$(TLIBS)"
+	@make EXTRA_FLAGS=-DLIBHD_TINY LIBHD_BASE=libhd_tiny LIBS="$(TLIBS)" SO_LIBS="$(TSO_LIBS)"
 
 tinyinstall:
-	@make EXTRA_FLAGS=-DLIBHD_TINY LIBHD_BASE=libhd_tiny LIBS="$(TLIBS)" install
+	@make EXTRA_FLAGS=-DLIBHD_TINY LIBHD_BASE=libhd_tiny LIBS="$(TLIBS)" SO_LIBS="$(TSO_LIBS)" install
 
 tinystatic:
-	@make EXTRA_FLAGS=-DLIBHD_TINY LIBHD_BASE=libhd_tiny SHARED_FLAGS= LIBS="$(TLIBS)"
+	@make EXTRA_FLAGS=-DLIBHD_TINY LIBHD_BASE=libhd_tiny SHARED_FLAGS= LIBS="$(TLIBS)" SO_LIBS="$(TSO_LIBS)"
 
 diet:
 	@make CC="diet gcc" EXTRA_FLAGS="-fno-pic -DDIET" SHARED_FLAGS= LIBS="$(SLIBS)"
