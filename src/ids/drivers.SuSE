@@ -148,10 +148,25 @@ PNP 80d6
 11B0 0002
 	i	sdla
 
-#net/via_rhine.c
+# net/via_rhine.c
 1106 6100
 1106 3043
 	i	via-rhine
+
+# net/sktr.c
+1148 4200
+0e11 0508
+	i	sktr
+
+# net/rl100a.c
+1050 0840
+11F6 2011
+	i	rl100a
+
+# net/yellowfin.c
+1000 0702
+1000 0701
+	i	yellowfin
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
