@@ -2094,6 +2094,38 @@ hd_t *hd_keyboard_list(hd_data_t *hd_data, int rescan)
 }
 
 
+hd_t *hd_display_list(hd_data_t *hd_data, int rescan)
+{
+  hd_t *hd, *hd1, *hd_list = NULL;
+  unsigned char probe_save[sizeof hd_data->probe];
+
+  if(rescan) {
+    memcpy(probe_save, hd_data->probe, sizeof probe_save);
+    hd_clear_probe_feature(hd_data, pr_all);
+    hd_set_probe_feature(hd_data, pr_pci);
+    hd_set_probe_feature(hd_data, pr_sbus);
+    hd_set_probe_feature(hd_data, pr_misc);	// for isa cards
+    hd_scan(hd_data);
+    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
+  }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_display) {
+      if(!((rescan == 2 || rescan == 3) && search_str_list(hd_data->floppy_list, hd->unix_dev_name))) {
+        if(rescan == 2) {
+          add_str_list(&hd_data->floppy_list, hd->unix_dev_name);
+        }
+        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+        *hd1 = *hd;
+        hd1->next = NULL;
+      }
+    }
+  }
+
+  return hd_list;
+}
+
+
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
 {
   hd_t *hd, *hd1, *hd_list = NULL;

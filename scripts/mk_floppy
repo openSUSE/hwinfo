@@ -37,13 +37,13 @@ devs="tty1 console null zero ram0 ttyS[0-3] lp[0-2] nvram psaux mem\
 
 # required programs (*without* the shell, see below)
 # (they are *all* copied to /bin)
-bins="/sbin/insmod /usr/bin/compress hwinfo"
+bins=""
 
 # the shell to use
-our_shell=/bin/ash
+our_shell=/bin/xsh
 
 # required libraries
-libs="/lib/ld-2.1.2.so /lib/libc.so.6"
+libs=""
 
 # modules we need
 mods=/lib/modules/2.2.14/misc/{\
@@ -87,16 +87,18 @@ dos_image_144 () {
 
 write_init () {
   cat <<-blubber >$mnt/sbin/init
-	#! /bin/sh
+	#! /bin/sh -q
 
-	export PATH=/bin:/sbin
-	export HOME=/
+	aliasall
+
+	setenv PATH /bin:/sbin
+	setenv HOME /
 
 	echo "mounting filesystems..."
-	mount -tproc none /proc
+	mount -t proc none /proc
 	echo "1 4 1 7" >/proc/sys/kernel/printk
 
-	export MODPATH=/lib
+	setenv MODPATH /lib
 	echo "installing some modules..."
 
 	cd /lib
@@ -108,7 +110,7 @@ write_init () {
 	insmod parport_pc.o
 	insmod lp.o
 
-	if insmod usbcore.o ; then
+	insmod usbcore.o
 	  insmod usb-uhci.o 2>/dev/null
 	  insmod usb-ohci-hcd.o 2>/dev/null
 	  insmod input.o
@@ -117,7 +119,6 @@ write_init () {
 	  insmod keybdev.o
 	  insmod printer.o
 	  insmod acm.o
-	fi
 	cd /
 
 	sleep 1
@@ -127,24 +128,11 @@ write_init () {
 	echo "log was written to /hw_log"
 
 	echo "writing the compressed log to the floppy..."
-	mount -tmsdos /dev/fd0 /mnt
-	if compress -c hw_log >/mnt/hw_log.Z ; then
-	  umount /mnt
-	  echo "ok, that's it"
-	else
-	  echo "Oops, not enough free space on floppy?"
-	  umount /mnt
-	  echo "Please insert a new one. Then press <Enter> to continue..."
-	  read blubber
-	  mount -tmsdos /dev/fd0 /mnt
-	  if compress -c hw_log >/mnt/hw_log.Z ; then
-	    echo "... ok, seems to have worked this time :-)"
-	  else
-	    echo "... nope, didn't work this time either :-("
-	  fi
-	  umount /mnt
-	fi
-	sh
+	mount -t msdos /dev/fd0 /mnt
+	cp hw_log /mnt/hw_log
+	umount /mnt
+	echo "ok, that's it"
+	sh -a
 
 	blubber
 }
@@ -199,10 +187,10 @@ for i in $libs ; do
 done
 
 cp_and_strip $our_shell $mnt/bin/sh
-cp_and_strip scripts/cmu $mnt/bin/cat
-ln $mnt/bin/cat $mnt/bin/mount
-ln $mnt/bin/cat $mnt/bin/sleep
-ln $mnt/bin/cat $mnt/bin/umount
+# cp_and_strip scripts/cmu $mnt/bin/cat
+# ln $mnt/bin/cat $mnt/bin/mount
+# ln $mnt/bin/cat $mnt/bin/sleep
+# ln $mnt/bin/cat $mnt/bin/umount
 
 for i in $mods ; do
   xxx=`basename $i`

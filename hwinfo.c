@@ -62,6 +62,11 @@ int main(int argc, char **argv)
   if(*log_file) f = fopen(log_file, "w+");
 
   if((hd_data->debug & HD_DEB_SHOW_LOG) && hd_data->log) {
+    if(*log_file) {
+      fprintf(f ? f : stdout,
+        "============ start hardware log ============\n"
+      );
+    }
     fprintf(f ? f : stdout,
       "============ start debug info ============\n%s=========== end debug info ============\n",
       hd_data->log
@@ -72,6 +77,12 @@ int main(int argc, char **argv)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     hd_dump_entry(hd_data, hd, f ? f : stdout);
+  }
+
+  if(*log_file) {
+    fprintf(f ? f : stdout,
+      "============ end hardware log ============\n"
+    );
   }
 
 #if 0
@@ -111,6 +122,7 @@ int main(int argc, char **argv)
     if(!strcmp(list, "floppy")) hd = hd_floppy_list(hd_data, 1);
     if(!strcmp(list, "mouse")) hd = hd_mouse_list(hd_data, 1);
     if(!strcmp(list, "keyboard")) hd = hd_keyboard_list(hd_data, 1);
+    if(!strcmp(list, "display")) hd = hd_display_list(hd_data, 1);
 
     printf("\n");
     printf("-- %s list --\n", list);

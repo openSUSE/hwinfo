@@ -815,6 +815,7 @@ typedef struct {
   str_list_t *mouse_list;	/* dto, hd_mouse_list() */
   str_list_t *floppy_list;	/* dto, hd_floppy_list() */
   str_list_t *keyboard_list;	/* dto, hd_keyboard_list() */
+  str_list_t *display_list;	/* dto, hd_display_list() */
   uint64_t used_irqs;		/* irq usage */
   uint64_t assigned_irqs;	/* irqs automatically assigned by libhd (for driver info) */
   unsigned char *bios_rom;	/* BIOS 0xc0000 - 0xfffff */
@@ -856,6 +857,7 @@ hd_t *hd_net_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_mouse_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_keyboard_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_floppy_list(hd_data_t *hd_data, int rescan);
+hd_t *hd_display_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class);
 hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_class);
 hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus);
