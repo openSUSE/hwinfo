@@ -272,7 +272,7 @@ close_intefaces (int n, PPPoEConnection* conns)
 
 
 int
-send_packet (int fd, PPPoEPacket* pkt, int size)
+send_packet (int fd, PPPoEPacket* pkt, size_t size)
 {
     if (send (fd, pkt, size, 0) < 0) {
 	ADD2LOG ("send failed: %m\n");
@@ -284,13 +284,15 @@ send_packet (int fd, PPPoEPacket* pkt, int size)
 
 
 int
-receive_packet (int fd, PPPoEPacket* pkt, int* size)
+receive_packet (int fd, PPPoEPacket* pkt, size_t* size)
 {
-    if ((*size = recv (fd, pkt, sizeof (PPPoEPacket), 0)) < 0) {
+    int r = recv (fd, pkt, sizeof (PPPoEPacket), 0);
+    if (r < 0) {
 	ADD2LOG ("recv failed: %m\n");
 	return 0;
     }
 
+    *size = r;
     return 1;
 }
 
@@ -421,7 +423,8 @@ send_padi (int n, PPPoEConnection* conns)
 int
 wait_for_pado (int n, PPPoEConnection* conns)
 {
-    int r, i, all, len;
+    int r, i, all;
+    size_t len;
     PPPoEPacket packet;
     PacketCriteria pc;
 
