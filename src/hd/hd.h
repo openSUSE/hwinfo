@@ -78,7 +78,7 @@ typedef enum probe_feature {
   pr_sbus, pr_int, pr_braille, pr_braille_alva, pr_braille_fhp,
   pr_braille_ht, pr_ignx11, pr_sys, pr_dasd, pr_i2o, pr_cciss, pr_bios_vbe,
   pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
-  pr_fb,
+  pr_fb, pr_bios_vbe2,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
@@ -301,6 +301,7 @@ typedef struct {
   char *product_revision;	/* product revision */
   unsigned modes;		/* number of supported video modes */
   vbe_mode_info_t *mode;	/* video mode list */
+  unsigned current_mode;	/* current video mode */
   unsigned char ddc[0x80];	/* ddc monitor info */
 } vbe_info_t;
 

@@ -203,6 +203,7 @@ static struct s_pr_flags {
   { pr_misc_floppy,  pr_misc,     8|4|2|1, "misc.floppy"  },
   { pr_bios,         0,           8|4|2|1, "bios"         },
   { pr_bios_vbe,     pr_bios,       4|2|1, "bios.vbe"     },
+  { pr_bios_vbe2,    pr_bios,           0, "bios.vbe2"    },
   { pr_cpu,          0,           8|4|2|1, "cpu"          },
   { pr_monitor,      0,           8|4|2|1, "monitor"      },
   { pr_serial,       0,             4|2|1, "serial"       },

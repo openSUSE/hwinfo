@@ -18,6 +18,7 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 {
   int i;
   unsigned char vbeinfo[0x200];
+  int ax, bx, cx;
 
   if(InitInt10()) {
     ADD2LOG("VBE: Could not init Int10\n");
@@ -28,10 +29,12 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 
   PROGRESS(4, 1, "vbe info");
 
-  i = CallInt10(0x4f00, 0, 0, vbeinfo, sizeof vbeinfo) & 0xffff;
+  ax = 0x4f00; bx = 0; cx = 0;
+  i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo) & 0xffff;
 
   if(i != 0x4f) {
     ADD2LOG("VBE: Error (0x4f00): 0x%04x\n", i);
+    FreeInt10();
     return;
   }
 
@@ -41,10 +44,12 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 
   PROGRESS(4, 3, "ddc info");
 
-  i = CallInt10(0x4f15, 1, 0, vbeinfo, sizeof vbeinfo) & 0xffff;
+  ax = 0x4f15; bx = 1; cx = 0;
+  i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo) & 0xffff;
 
   if(i != 0x4f) {
     ADD2LOG("Error (0x4f15): 0x%04x\n", i);
+    FreeInt10();
     return;
   }
 
@@ -55,6 +60,19 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
     ADD2LOG("  ");
     hexdump(&hd_data->log, 1, 0x10, vbe->ddc + i);
     ADD2LOG("\n");
+  }
+
+  if(hd_probe_feature(hd_data, pr_bios_vbe2)) {
+    ax = 0x4f03; bx = 0; cx = 0;
+    i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo) & 0xffff;
+
+    if(i != 0x4f) {
+      ADD2LOG("Error (0x4f03): 0x%04x\n", i);
+      FreeInt10();
+      return;
+    }
+
+    vbe->current_mode = bx;
   }
 
   FreeInt10();
@@ -99,6 +117,7 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v)
   unsigned modelist[0x100];
   unsigned bpp, res_bpp, fb, clock;
   vbe_mode_info_t *mi;
+  int ax, bx;
 
   vbe->ok = 1;
 
@@ -151,7 +170,8 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v)
 
     mi->number =  modelist[i];
     
-    l = CallInt10(0x4f01, 0, modelist[i], tmp, sizeof tmp) & 0xffff;
+    ax = 0x4f01; bx = 0;
+    l = CallInt10(&ax, &bx, modelist + i, tmp, sizeof tmp) & 0xffff;
 
     if(l != 0x4f) {
       ADD2LOG("0x%04x: no mode info\n", modelist[i]);

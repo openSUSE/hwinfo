@@ -1,3 +1,7 @@
+11/9/2001:	v3.19
+	- updated X11 data
+	- get current video mode
+
 10/9/2001:	v3.18
 	- updated X11 data
 	- make it work with diet-libc

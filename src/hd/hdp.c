@@ -787,11 +787,15 @@ void dump_bios(hd_data_t *hd_data, hd_t *hd, FILE *f)
   if(!(bt = hd->detail->bios.data)) return;
 
   if(bt->vbe_ver) {
-    dump_line("VESA BIOS Version: %u.%u\n", bt->vbe_ver >> 4, bt->vbe_ver & 0x0f);
+    dump_line("VESA BIOS Version: %u.%u\n", bt->vbe_ver >> 8, bt->vbe_ver & 0xff);
   }
 
   if(bt->vbe_video_mem) {
     dump_line("Video Memory: %u kb\n", bt->vbe_video_mem >> 10);
+  }
+
+  if(bt->vbe.ok && bt->vbe.current_mode) {
+    dump_line("Current VESA Mode: 0x%04x\n", bt->vbe.current_mode);
   }
 
   if(bt->apm_supported) {

@@ -106,6 +106,7 @@ void hd_scan_bios(hd_data_t *hd_data)
       bt->apm_enabled = (bt->apm_bios_flags & 8) ? 0 : 1;
 
       bt->vbe_ver = hex(s + 4, 2);
+      bt->vbe_ver = (((bt->vbe_ver >> 4) & 0xf) << 8) + (bt->vbe_ver & 0xf);
       bt->vbe_video_mem = hex(s + 6, 4) << 16;
     }
 
@@ -253,6 +254,10 @@ void hd_scan_bios(hd_data_t *hd_data)
 
 
     get_vbe_info(hd_data, vbe);
+
+    if(vbe->ok) {
+      bt->vbe_ver = vbe->version;
+    }
 
     if(vbe->ok && vbe->fb_start) {
       hd = add_hd_entry(hd_data, __LINE__, 0);

@@ -129,16 +129,16 @@ FreeInt10()
 }
 
 int
-CallInt10(int ax, int bx, int cx, unsigned char *buf, int len)
+CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
 {
   i86biosRegs bRegs;
 
   if (!int10inited)
     return -1;
   memset(&bRegs, 0, sizeof bRegs);
-  bRegs.ax = ax;
-  bRegs.bx = bx;
-  bRegs.cx = cx;
+  bRegs.ax = *ax;
+  bRegs.bx = *bx;
+  bRegs.cx = *cx;
   bRegs.dx = 0;
   bRegs.es = 0x7e0;
   bRegs.di = 0x0;
@@ -149,6 +149,11 @@ CallInt10(int ax, int bx, int cx, unsigned char *buf, int len)
   iopl(0);
   if (buf)
     memcpy(buf, (unsigned char *)0x7e00, len);
+
+  *ax = bRegs.ax;
+  *bx = bRegs.bx;
+  *cx = bRegs.cx;
+
   return bRegs.ax;
 }
 
