@@ -350,6 +350,20 @@
 +requires		xf86_glx
 
  vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1002
+&subdevice.id		pci 0x010a
++subdevice.name		Radeon VE (0x010a)
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1002
+&subdevice.id		pci 0x013a
++subdevice.name		Radeon VE (0x013a)
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x515a
 +device.name		Radeon QZ
 +driver.xfree		4|radeon

@@ -1,3 +1,6 @@
+6/12/2002:	v5.47
+	- ia64: updated x11 data (#21054)
+
 28/11/2002:	v5.46
 	- cleanup ISDN ids, remove unsupported protocols (#22179)
 
