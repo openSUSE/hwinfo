@@ -346,25 +346,44 @@
 &device.id		pci 0x0005+0x0002
 +driver.module.modprobe	epic100
 
-# pcimap
- vendor.id		pci 0x10ec
+# modules.alias
+ vendor.id		pci 0x018a
+&device.id		pci 0x0106
+|vendor.id		pci 0x021b
+&device.id		pci 0x8139
+|vendor.id		pci 0x02ac
+&device.id		pci 0x1012
+|vendor.id		pci 0x10ec
 &device.id		pci 0x8129
 |vendor.id		pci 0x10ec
 &device.id		pci 0x8138
+|vendor.id		pci 0x10ec
+&device.id		pci 0x8139
+&rev.id			0x0000+0x0020
 |vendor.id		pci 0x1113
 &device.id		pci 0x1211
 |vendor.id		pci 0x1186
 &device.id		pci 0x1300
 |vendor.id		pci 0x1186
 &device.id		pci 0x1340
+|vendor.id		pci 0x11db
+&device.id		pci 0x1234
 |vendor.id		pci 0x1259
 &device.id		pci 0xa117
+|vendor.id		pci 0x1259
+&device.id		pci 0xa11e
+|vendor.id		pci 0x126c
+&device.id		pci 0x1211
 |vendor.id		pci 0x13d1
 &device.id		pci 0xab06
+|vendor.id		pci 0x1432
+&device.id		pci 0x9130
 |vendor.id		pci 0x14ea
 &device.id		pci 0xab06+0x0002
 |vendor.id		pci 0x1500
 &device.id		pci 0x1360
+|vendor.id		pci 0x1743
+&device.id		pci 0x8139
 |vendor.id		pci 0x4033
 &device.id		pci 0x1360
 |device.id		pci 0x8139
@@ -378,10 +397,10 @@
 &subdevice.id		pci 0xab06
 +driver.module.modprobe	8139too
 
-# pcimap
+# modules.alias
  vendor.id		pci 0x10ec
 &device.id		pci 0x8139
-+driver.module.modprobe	8139too
+&rev.id			0x0020+0x00e0
 +driver.module.modprobe	8139cp
 
 # net/via_rhine.c

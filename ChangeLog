@@ -1,3 +1,6 @@
+15/3/2004:	v8.20
+	- fixed 8139cp/too module info (#36028)
+
 15/3/2004:	v8.19
 	- do not reverse sysfs order (libsysfs does it)
 	- updated X11 data
