@@ -72,7 +72,7 @@ typedef enum probe_feature {
   pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide,
   pr_scsi, pr_scsi_geo, pr_usb, pr_usb_mods, pr_adb, pr_modem, pr_modem_usb,
   pr_parallel, pr_isa, pr_isa_isdn, pr_dac960, pr_smart, pr_isdn, pr_kbd,
-  pr_prom,
+  pr_prom, pr_sbus,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
@@ -142,7 +142,7 @@ typedef enum sc_internal {
 
 /* subclass values of bc_mouse */
 typedef enum sc_mouse {
-  sc_mou_ps2, sc_mou_ser, sc_mou_bus, sc_mou_usb
+  sc_mou_ps2, sc_mou_ser, sc_mou_bus, sc_mou_usb, sc_mou_sun
 } hd_sc_mouse_t;
 
 /* subclass values of bc_storage_device */
@@ -183,7 +183,7 @@ typedef enum bus_types {
 
   /* outside the range of the PCI values */
   bus_ps2 = 0x80, bus_serial, bus_parallel, bus_floppy, bus_scsi, bus_ide, bus_usb,
-  bus_adb, bus_raid
+  bus_adb, bus_raid, bus_sbus
 } hd_bus_types_t;
 
 /*

@@ -189,6 +189,22 @@ PNP 80d6
 1039 7016
 	i	sis900
 
+# net/sunhme.c (pci)
+108e 1001
+	i	sunhme
+
+# net/sunhme.c (sbus)
+s4001 3001
+	i	sunhme
+
+# net/sunqe.c (sbus)
+s4001 3003
+	i	sunqe
+
+# net/myri_sbus.c (sbus)
+s4001 3004
+	i	myri_sbus
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # scsi
@@ -313,7 +329,7 @@ PNP 80d6
 	i	advansys
 
 # scsi/dpt_i2o.c
-1044 a501 
+1044 a501
 	i	dpt_i2o
 
 # scsi/aha152x.c
@@ -322,6 +338,10 @@ ADP 1505
 		options aha152x		aha152x=<io0>,<irq0>
 	i	aha152x|aha152x=<io0>,<irq0>
 
+# scsi/qlogicpti.c
+s4001 1003
+s4001 1004
+	i	qlogicpti
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -394,9 +414,10 @@ ADP 1505
 5333 8c01+3
 
 # intel i810
-8086 7121
-8086 7123
-8086 7125
+# don't offer 3d support for these (cf .sndirsch)
+# 8086 7121
+# 8086 7123
+# 8086 7125
 
 # nvidia riva 128/tnt
 10de 0020
@@ -414,6 +435,44 @@ ADP 1505
 # netfinity's card is other as other cards...
 5333 8904 1014 00db
 	x	VGA16
+
+s4001 0001
+	x	SUNMONO
+
+s4001 0002
+s4001 0003
+s4001 0008
+s4001 0009
+s4001 000a
+s4001 000b
+s4001 000c
+s4001 000d
+s4001 0013
+	x	SUN
+
+s4001 0004
+s4001 0005
+s4001 0006
+s4001 0007
+s4001 000e
+s4001 000f
+s4001 0010
+s4001 0011
+s4001 0012
+s4001 0014
+s4001 0015
+s4001 0016
+s4001 0017
+s4001 0018
+s4001 0019
+s4001 001a
+s4001 001b
+s4001 001c
+s4001 001d
+s4001 001e
+s4001 001f
+s4001 0020
+	x	SUN24
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -463,9 +522,32 @@ PNP   0f0e
 s0200 0002
 	p	ps/2|ps2
 
+# Sun Mouse (/dev/sunmouse)
+s0202 0000
+	p	mousesystems|sun
+
 # USB mice
 s0200 0001
 	p	imps/2|ps2
 
 s0100 0300+100
 	p	busmouse|bm
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# audio
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# AMD7930
+s4001 2001
+	m	amd7930
+
+# CS4231
+s4001 2002
+s4001 2003
+	m	cs4231
+
+# SS10/SS20 DBRI
+s4001 2004
+	m	dbri

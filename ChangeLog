@@ -1,3 +1,7 @@
+15/5/2000:	v0.93
+	- integrated Thorsten Kukuk's patches (mostly SPARC stuff)
+	- some minor other fixes
+
 17/4/2000:	v0.92
 	- ADB mouse driver info extended
 	- color code stuff updated

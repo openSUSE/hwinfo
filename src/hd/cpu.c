@@ -20,7 +20,7 @@ static void dump_cpu_data(hd_data_t *hd_data);
 void hd_scan_cpu(hd_data_t *hd_data)
 {
   hd_t *hd;
-  unsigned cpus = 0;
+  unsigned int cpus = 0;
   cpu_info_t *ct;
   str_list_t *sl;
 
@@ -38,6 +38,11 @@ void hd_scan_cpu(hd_data_t *hd_data)
 #ifdef __PPC__
   char model_id[80], vendor_id[80], motherboard[80];
   unsigned bogo, mhz, cache, family, model, stepping;
+#endif
+
+#ifdef __sparc__
+  char cpu_id[80], fpu_id[80], promlib[80], prom[80], type[80], mmu[80];
+  unsigned int bogo, cpus_active;
 #endif
 
   if(!hd_probe_feature(hd_data, pr_cpu)) return;
@@ -112,6 +117,43 @@ void hd_scan_cpu(hd_data_t *hd_data)
 #endif
 
 #ifdef __sparc__
+  *cpu_id = *fpu_id = *promlib = *prom = *type = *mmu = 0;
+  cpus = cpus_active = bogo = 0;
+
+  for(sl = hd_data->cpu; sl; sl = sl->next)
+    {
+      if(sscanf(sl->str, "cpu             : %79[^\n]", cpu_id) == 1);
+      if(sscanf(sl->str, "fpu             : %79[^\n]", fpu_id) == 1);
+      if(sscanf(sl->str, "promlib         : %79[^\n]", promlib) == 1);
+      if(sscanf(sl->str, "prom            : %79[^\n]", prom) == 1);
+      if(sscanf(sl->str, "type            : %79[^\n]", type) == 1);
+      if(sscanf(sl->str, "ncpus probed    : %u", &cpus) == 1);
+      if(sscanf(sl->str, "ncpus active    : %u", &cpus_active) == 1);
+      if(sscanf(sl->str, "BogoMips        : %u", &bogo) == 1);
+      if(sscanf(sl->str, "MMU Type        : %79[^\n]", mmu) == 1);
+    }
+
+  if (*cpu_id)
+    {
+      ct = new_mem(sizeof *ct);
+      ct->platform = new_str (type);
+      if (strcmp (type, "sun4u") == 0)
+	ct->architecture = arch_sparc64;
+      else
+	ct->architecture = arch_sparc;
+
+      if (cpu_id)
+	ct->model_name = new_str (cpu_id);
+      hd_data->boot = boot_silo;
+
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class = bc_internal;
+      hd->sub_class = sc_int_cpu;
+      hd->slot = cpus;
+      hd->detail = new_mem(sizeof *hd->detail);
+      hd->detail->type = hd_detail_cpu;
+      hd->detail->cpu.data = ct;
+    }
 #endif
 
 

@@ -62,12 +62,16 @@ void hd_scan_misc(hd_data_t *hd_data)
 
   /* this is enough to load the module */
   fd_ser0 = fd_ser1 = -1;
+
+#if !defined(__sparc__)
+  /* On sparc, the close needs to long */
   if(hd_probe_feature(hd_data, pr_misc_serial)) {
     PROGRESS(1, 1, "open serial");
     fd_ser0 = open("/dev/ttyS0", O_RDONLY | O_NONBLOCK);
     fd_ser1 = open("/dev/ttyS1", O_RDONLY | O_NONBLOCK);
     /* keep the devices open until the resources have been read */
   }
+#endif
 
   /* this is enough to load the module */
   if(hd_probe_feature(hd_data, pr_misc_par)) {
@@ -126,7 +130,7 @@ void hd_scan_misc(hd_data_t *hd_data)
   PROGRESS(2, 2, "dma");
   read_dmas(hd_data->misc);
 
-  PROGRESS(2, 2, "irq");
+  PROGRESS(2, 3, "irq");
   read_irqs(hd_data->misc);
 
   if((hd_data->debug & HD_DEB_MISC)) dump_misc_proc_data(hd_data);
@@ -137,6 +141,7 @@ void hd_scan_misc(hd_data_t *hd_data)
   /* now create some system generic entries */
 
   /* FPU */
+  PROGRESS(3, 0, "FPU");
   res = NULL;
   gather_resources(hd_data->misc, &res, "fpu", 0);
   if(res) {
@@ -147,6 +152,7 @@ void hd_scan_misc(hd_data_t *hd_data)
   }
 
   /* DMA */
+  PROGRESS(3, 1, "DMA");
   res = NULL;
   gather_resources(hd_data->misc, &res, "dma1", 0);
   gather_resources(hd_data->misc, &res, "dma2", 0);
@@ -160,6 +166,7 @@ void hd_scan_misc(hd_data_t *hd_data)
   }
 
   /* PIC */
+  PROGRESS(3, 2, "PIC");
   res = NULL;
   gather_resources(hd_data->misc, &res, "pic1", 0);
   gather_resources(hd_data->misc, &res, "pic2", 0);
@@ -172,6 +179,7 @@ void hd_scan_misc(hd_data_t *hd_data)
   }
 
   /* timer */
+  PROGRESS(3, 3, "timer");
   res = NULL;
   gather_resources(hd_data->misc, &res, "timer", 0);
   if(res) {
@@ -182,6 +190,7 @@ void hd_scan_misc(hd_data_t *hd_data)
   }
 
   /* real time clock */
+  PROGRESS(3, 4, "RTC");
   res = NULL;
   gather_resources(hd_data->misc, &res, "rtc", 0);
   if(res) {
@@ -661,4 +670,3 @@ void dump_misc_data(hd_data_t *hd_data)
 
   ADD2LOG("----- misc resources end -----\n");
 }
-

@@ -17,6 +17,7 @@ s0201	Unknown
 	0001	PS/2 Keyboard
 	41ab	MF2 Keyboard
 s0202	Sun Microsystems
+	0000	Sun Mouse
 	0002	Type-2 Keyboard
 	0003	Type-3 Keyboard
 	0004	Type-4 Keyboard
@@ -85,3 +86,56 @@ s3006	Elsa
 	0603	Elsa ML PCC-16
 	0604	Elsa ML PCF
 	0605	Elsa ML PCF-Pro
+
+# sbus cards
+s4001	Sun Microsystems
+	# Grafik cards
+	0001	Sun|Monochrome (bwtwo)
+	0002	Sun|Color3 (cgthree)
+	0003	Sun|CG8/RasterOps (cgeight)
+	0004	Sun|GS (cgtwelve)
+	0005	Sun|Graphics Tower (gt)
+	0006	Quantum 3D MGXplus with 4M VRAM (mgx)
+	0007	Quantum 3D MGXplus (mgx)
+	0008	Sun|Double width GX (cgsix)
+	0009	Sun|Single width GX (cgsix)
+	000a	Sun|Turbo GX with 1M VSIMM (cgsix)
+	000b	Sun|Turbo GX Plus (cgsix)
+	000c	Sun|Turbo GX (cgsix)
+	000d	Sun|Unknown GX (cgsix)
+	000e	Sun|SX with 4M VSIMM (cgfourteen)
+	000f	Sun|SX with 8M VSIMM (cgfourteen)
+	0010	Sun|SX (cgfourteen)
+	0011	Sun|ZX or Turbo ZX (leo)
+	0012	Sun|Turbo ZX (leo)
+	0013	Sun|TCX (8bit)
+	0014	Sun|TCX (S24)
+	0015	Sun|Elite3D-M6 Horizontal (afb)
+	0016	Sun|Elite3D (afb)
+	0017	Sun|FFB 67MHz Creator (ffb)
+	0018	Sun|FFB 67MHz Creator 3D (ffb)
+	0019	Sun|FFB 75MHz Creator 3D (ffb)
+	001a	Sun|FFB2 Vertical Creator (ffb)
+	001b	Sun|FFB2 Vertical Creator 3D (ffb)
+	001c	Sun|FFB2+ Vertical Creator (ffb)
+	001d	Sun|FFB2+ Vertical Creator 3D (ffb)
+	001e	Sun|FFB2 Horizontal Creator (ffb)
+	001f	Sun|FFB2 Horizontal Creator 3D (ffb)
+	0020	Sun|FFB [unknown type] (ffb)
+	# SCSI cards
+	1001	Sun Enhanced SCSI Processor (ESP)
+	1002	Sun Swift (ESP)
+	1003	Performance Technologies ISP
+	1004	QLogic ISP
+	1101	Sun SPARCStorage Array (fc4)
+	1102	Sun Enterprise Network Array (fc4)
+	# audio chips
+	2001	AMD7930
+	2002	CS4231 EB2 DMA
+	2003	CS4231 APC DMA
+	2004	SS10/SS20 DBRI
+	# Network cards
+	3001	Sun Happy Meal Ethernet
+	3002	Sun Lance Ethernet
+	3003	Sun Quad Ethernet
+	3004	MyriCOM MyriNET Gigabit Ethernet

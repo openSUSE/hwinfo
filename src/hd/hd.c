@@ -39,6 +39,7 @@
 #include "isdn.h"
 #include "kbd.h"
 #include "prom.h"
+#include "sbus.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -112,7 +113,8 @@ static struct s_mod_names {
   { mod_smart, "smart" },
   { mod_isdn, "isdn" },
   { mod_kbd, "kbd" },
-  { mod_prom, "prom" }
+  { mod_prom, "prom" },
+  { mod_sbus, "sbus" }
 };
 
 /*
@@ -146,7 +148,12 @@ static struct s_pr_flags {
   { pr_cpu,          0,        8|4|2|1, "cpu"         },
   { pr_monitor,      0,        8|4|2|1, "monitor"     },
   { pr_serial,       0,          4|2|1, "serial"      },
+#if defined(__sparc__)
+  /* Probe for mouse on SPARC */
+  { pr_mouse,        0,        8|4|2|1, "mouse"       },
+#else
   { pr_mouse,        0,          4|2|1, "mouse"       },
+#endif
   { pr_ide,          0,        8|4|2|1, "ide"         },
   { pr_scsi,         0,        8|4|2|1, "scsi"        },
   { pr_scsi_geo,     0,          4|2  , "scsi.geo"    },
@@ -162,7 +169,8 @@ static struct s_pr_flags {
   { pr_smart,        0,        8|4|2|1, "smart"       },
   { pr_isdn,         0,          4|2|1, "isdn"        },
   { pr_kbd,          0,        8|4|2|1, "kbd"         },
-  { pr_prom,         0,        8|4|2|1, "prom"        }
+  { pr_prom,         0,        8|4|2|1, "prom"        },
+  { pr_sbus,         0,        8|4|2|1, "sbus"        }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -577,6 +585,7 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_modem(hd_data);	/* do it before hd_scan_mouse() */
 #endif
   hd_scan_mouse(hd_data);
+  hd_scan_sbus(hd_data);
 
   /* keep these at the end of the list */
   hd_scan_cdrom(hd_data);
@@ -745,7 +754,7 @@ char *canon_str(char *s, int len)
   while(m1 > m0 && m1[-1] <= ' ') {
     *--m1 = 0;
   }
-  
+
   m2 = new_str(m0);
   free(m0);
 
@@ -756,7 +765,7 @@ char *canon_str(char *s, int len)
 /*
  * Convert a n-digit hex number to its numerical value.
  */
-int hex(char *s, int n)     
+int hex(char *s, int n)
 {
   int i = 0, j;
 
@@ -765,7 +774,7 @@ int hex(char *s, int n)
     i = (i << 4) + j;
   }
 
-  return i; 
+  return i;
 }
 
 
@@ -827,7 +836,7 @@ char *float2str(int f, int n)
 /*
  * find hardware entry with given index
  */
-hd_t *hd_get_device_by_idx(hd_data_t *hd_data, int idx)  
+hd_t *hd_get_device_by_idx(hd_data_t *hd_data, int idx)
 {
   hd_t *hd;
 
@@ -1534,9 +1543,9 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 #endif
         }
         break;
-    
+
       default:
-        break; 
+        break;
     }
   }
 
@@ -1951,7 +1960,7 @@ hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
     /* ###### fix later: card bus magic */
     if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
       if(
-        bridge_hd->base_class == bc_bridge && 
+        bridge_hd->base_class == bc_bridge &&
         bridge_hd->sub_class == sc_bridge_cardbus
       ) continue;
     }
@@ -2005,7 +2014,7 @@ hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus)
 }
 
 /*
- * Check if the execution of (*func)() takes longer than timeout seconds. 
+ * Check if the execution of (*func)() takes longer than timeout seconds.
  * This is useful to work around long kernel-timeouts as in the floppy
  * detection and ps/2 mosue detection.
  */
@@ -2135,14 +2144,14 @@ void get_disk_crc(int fd, disk_t *dl)
   fd_set set, set0;
   struct timeval to;
   unsigned crc;
-  
+
   FD_ZERO(&set0);
   FD_SET(fd, &set0);
 
   for(;;) {
     to.tv_sec = 0; to.tv_usec = 500000;
     set = set0;
-    
+
     if((sel = select(fd + 1, &set, NULL, NULL, &to)) > 0) {
 //    fprintf(stderr, "sel: %d\n", sel);
       if(FD_ISSET(fd, &set)) {
@@ -2206,7 +2215,7 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
   if(!(s = get_cmd_param(2))) return 0;
 
   i = strlen(s);
-  
+
   if(i > 0 && i <= 8) {
     crc = hex(s, i);
   }
@@ -2333,4 +2342,3 @@ int load_module(hd_data_t *hd_data, char *module)
 
   return run_cmd(hd_data, cmd);
 }
-

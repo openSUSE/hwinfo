@@ -31,8 +31,8 @@ vga=
 prompt=15
 
 # devices we need on the floppy
-devs="tty1 console null zero ram0 ttyS[0-3] lp[0-2] nvram psaux\
-      fd[0-1] hd[a-h]* sd[a-h]* sr[0-7]* hidbp-kbd-[0-3] hidbp-mse-[0-3]\
+devs="tty1 console null zero ram0 ttyS[0-3] lp[0-2] nvram psaux mem\
+      fd[0-1] hd[a-p]* sd[a-h]* sr[0-7]* usbmouse[0-3]\
       ttyACM[0-3] usblp[0-3]"
 
 # required programs (*without* the shell, see below)
@@ -106,7 +106,6 @@ write_init () {
 
 	insmod parport.o
 	insmod parport_pc.o
-	insmod parport_probe.o
 	insmod lp.o
 
 	if insmod usbcore.o ; then
@@ -124,7 +123,7 @@ write_init () {
 	sleep 1
 	echo "starting hardware probing..."
 	hwinfo -all +usb log=/dev/null
-	hwinfo debug=-1 log=hw_log
+	hwinfo log=hw_log
 	echo "log was written to /hw_log"
 
 	echo "writing the compressed log to the floppy..."
@@ -185,7 +184,7 @@ mount -oloop $tmp_root $mnt 2>/dev/null || {
 }
 is_mounted=1
 
-mkdir $mnt/{bin,dev,etc,lib,mnt,proc,sbin}
+mkdir $mnt/{bin,dev,etc,lib,mnt,proc,sbin,tmp}
 
 for i in $devs ; do cp -a /dev/$i $mnt/dev ; done
 

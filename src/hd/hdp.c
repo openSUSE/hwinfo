@@ -398,12 +398,12 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
       break;
 
       case di_mouse:
-        if(di->mouse.xf86) dump_line("XFree Protocol: %s\n", di->mouse.xf86);
+        if(di->mouse.xf86) dump_line("XFree86 Protocol: %s\n", di->mouse.xf86);
         if(di->mouse.gpm) dump_line("GPM Protocol: %s\n", di->mouse.gpm);
         break;
 
       case di_x11:
-        if(di->x11.server) dump_line("XFree Server: %s\n", di->x11.server);
+        if(di->x11.server) dump_line("XFree86 Server: %s\n", di->x11.server);
         if(di->x11.x3d) {
           dump_line("3D-Info: %s", di->x11.x3d->str);
           for(sl = di->x11.x3d->next; sl; sl = sl->next) {

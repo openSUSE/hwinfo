@@ -36,6 +36,7 @@ static int is_pnpinfo(ser_mouse_t *mi, int ofs);
 static unsigned chk4id(ser_mouse_t *mi);
 static ser_mouse_t *add_ser_mouse_entry(ser_mouse_t **sm, ser_mouse_t *new_sm);
 static void dump_ser_mouse_data(hd_data_t *hd_data);
+static void get_sunmouse(hd_data_t *hd_data);
 
 void hd_scan_mouse(hd_data_t *hd_data)
 {
@@ -55,6 +56,10 @@ void hd_scan_mouse(hd_data_t *hd_data)
 
   get_serial_mouse(hd_data);
   if((hd_data->debug & HD_DEB_MOUSE)) dump_ser_mouse_data(hd_data);
+
+  PROGRESS(3, 0, "sunmouse");
+
+  get_sunmouse(hd_data);
 }
 
 /*
@@ -79,7 +84,7 @@ void hd_scan_mouse(hd_data_t *hd_data)
  *        (Typically the mouse driver will get it (and choke on it).)
  */
 
-void get_ps2_mouse(hd_data_t *hd_data)
+static void get_ps2_mouse(hd_data_t *hd_data)
 {
   hd_t *hd, *hd1;
   hd_res_t *res;
@@ -192,9 +197,9 @@ void get_ps2_mouse(hd_data_t *hd_data)
             tv.tv_sec = 0; tv.tv_usec = 1;
             if(select(fd + 1, &set, NULL, NULL, &tv) == 1) {
               PROGRESS(1, 11, "ps/2");
-    
+
               read(fd, buf, sizeof buf);
-    
+
               PROGRESS(1, 12, "ps/2");
             }
             PROGRESS(1, 13, "ps/2");
@@ -218,6 +223,45 @@ void get_ps2_mouse(hd_data_t *hd_data)
 void test_ps2_open(void *arg)
 {
   open(DEV_PSAUX, O_RDWR | O_NONBLOCK);
+}
+
+static void get_sunmouse(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  int fd;
+  int found;
+
+  found = 0;
+
+  /* Only search for Sun mouse if we have a Sun keyboard */
+  for(hd = hd_data->hd; hd; hd = hd->next)
+    {
+      if(hd->base_class == bc_keyboard &&
+	 hd->sub_class == sc_keyboard_kbd &&
+	 ID_TAG(hd->vend) == TAG_SPECIAL && ID_VALUE(hd->vend) == 0x0202)
+	found = 1;
+    }
+
+  if (found)
+    {
+      if ((fd = open(DEV_SUNMOUSE, O_RDONLY)) != -1)
+	{
+	  /* FIXME: Should probably talk to the mouse to see
+	     if the connector is not empty. */
+	  close (fd);
+
+	  PROGRESS(1, 1, "Sun Mouse");
+
+	  hd = add_hd_entry (hd_data, __LINE__, 0);
+	  hd->base_class = bc_mouse;
+	  hd->sub_class = sc_mou_sun;
+	  hd->bus = bus_serial;
+	  hd->unix_dev_name = new_str(DEV_SUNMOUSE);
+
+	  hd->vend = MAKE_ID(TAG_SPECIAL, 0x0202);
+	  hd->dev = MAKE_ID(TAG_SPECIAL, 0x0000);
+	}
+    }
 }
 
 #if 0
@@ -274,7 +318,7 @@ void get_serial_mouse(hd_data_t *hd_data)
    * 200 ms seems to be too fast for some mice...
    */
   usleep(300000);		/* PnP protocol */
-  
+
   for(sm = hd_data->ser_mouse; sm; sm = sm->next) {
     modem_info = TIOCM_DTR | TIOCM_RTS;
     ioctl(sm->fd, TIOCMBIS, &modem_info);
@@ -342,7 +386,7 @@ int _setspeed(int fd, int old, int new, int needtowrite, unsigned short flags)
   flags |= CREAD | CLOCAL | HUPCL;
 
   if(tcgetattr(fd, &tty)) return errno;
-  
+
   tty.c_iflag = IGNBRK | IGNPAR;
   tty.c_oflag = 0;
   tty.c_lflag = 0;
@@ -544,7 +588,7 @@ void dump_ser_mouse_data(hd_data_t *hd_data)
     if(sm->garbage) {
       ADD2LOG("  garbage[%u]: ", sm->garbage);
       hexdump(&hd_data->log, 1, sm->garbage, sm->buf);
-      ADD2LOG("\n");  
+      ADD2LOG("\n");
     }
 
     if(sm->non_pnp) {
@@ -578,4 +622,3 @@ void dump_ser_mouse_data(hd_data_t *hd_data)
 
   ADD2LOG("----- serial mice end -----\n");
 }
-
