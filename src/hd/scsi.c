@@ -184,7 +184,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
           }
 
 
-          if(secs) {
+          if(hd_probe_feature(hd_data, pr_scsi_geo) && secs) {
             memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
             *((unsigned *) (scsi_cmd_buf + 4)) = sizeof scsi_cmd_buf - 0x100;
             scsi_cmd_buf[8 + 0] = 0x1a;
@@ -213,7 +213,6 @@ void hd_scan_scsi(hd_data_t *hd_data)
               }
             }
           }
-
 
         }
 

@@ -1,3 +1,7 @@
+4/3/2000:	v0.80
+	- new probing flag pr_scsi_geo: defaults to off due to
+          problems on scsi-Zip's
+
 3/3/2000:	v0.79
 	- tuned probing flags
 	- renamed drivers file
