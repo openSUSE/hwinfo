@@ -1,3 +1,6 @@
+15/1/2001:	v1.0.76
+	- updated scsi driver info
+
 15/1/2001:	v1.0.75
 	- new x11 data
 	- make XF 4 default if no X11 info is found (ia32 only)

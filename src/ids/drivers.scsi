@@ -82,6 +82,7 @@
 
 # scsi/ips.c
 1014 002e
+1014 01bd
 	i	ips
 
 # scsi/megaraid.c

@@ -2373,7 +2373,8 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
           }
         }
         for(i = 0, sl = di->module.hddb1; sl; sl = sl->next, i++) {
-          str_printf(&di->module.conf, -1, "%s\n", module_cmd(hd, sl->str));
+          s = module_cmd(hd, sl->str);
+          if(s) str_printf(&di->module.conf, -1, "%s\n", s);
         }
         break;
 
