@@ -4,6 +4,10 @@
 
 libhd is a hardware detection lib.
 
+<h2>Changes</h2>
+
+\ref libhd_5_12
+
 <h2>Examples</h2>
 
 \ref example1
@@ -30,6 +34,78 @@ libhd is a hardware detection lib.
 \subsection example2 Get primary display controller
 
 \include example2.c
+
+*/
+
+/*! \page changes Changes
+
+\ref libhd_5_12
+
+<hr>
+
+\subsection libhd_5_12 Changes in libhd-5.12
+
+There have been some changes to libhd's interface:
+
+<ul>
+
+  <li>changes in \ref hd_t
+
+    <ul>
+
+    <li>\ref hd_t::bus is now a struct, use bus.id instead
+
+    <li>\ref hd_t::base_class is now a struct, use base_class.id instead
+
+    <li>\ref hd_t::sub_class is now a struct, use sub_class.id instead
+
+    <li>\ref hd_t::prog_if is now a struct, use prog_if.id instead
+
+    <li>\ref hd_t::vendor is a struct replacing vend and vend_name.
+      Use vendor.id and vendor.name now.
+
+    <li>\ref hd_t::device is a struct replacing dev and dev_name.
+      Use device.id and device.name now.
+
+    <li>\ref hd_t::sub_vendor is a struct replacing sub_vend and sub_vend_name.
+      Use sub_vendor.id and sub_vendor.name now.
+
+    <li>\ref hd_t::sub_device is a struct replacing sub_dev and sub_dev_name.
+      Use sub_device.id and sub_device.name now.
+
+    <li>\ref hd_t::revision is a struct replacing rev and rev_name.
+      Use revision.id and revision.name now.
+
+    <li>\ref hd_t::compat_vendor is a struct replacing compat_vend.
+      Use compat_vendor.id now.
+
+    <li>\ref hd_t::compat_device is a struct replacing compat_dev.
+      Use compat_device.id now.
+
+    </ul>
+
+  <li>interface functions removed
+
+    <ul>
+
+    <li>hd_bus_name is gone. Use hd_t::bus.name instead.
+
+    <li>hd_class_name is gone. Use hd_t::base_class.name,
+      hd_t::sub_class.name or hd_t::prog_if.name instead.
+
+    <li>hd_vendor_name is gone. Use hd_t::vendor.name instead.
+
+    <li>hd_device_name is gone. Use hd_t::device.name instead.
+
+    <li>hd_sub_device_name is gone. Use hd_t::sub_device.name instead.
+
+    <li>hd_find_device_by_name is gone.
+
+    </ul>
+
+</ul>
+
+<hr>
 
 */
 

@@ -1399,7 +1399,7 @@ typedef struct s_hd_t {
   unsigned broken:1;
 
   /**
-   * Bus type.
+   * Bus type (id and name).
    */ 
   hd_id_t bus;
 
@@ -1415,17 +1415,17 @@ typedef struct s_hd_t {
   unsigned func;
 
   /**
-   * Base class.
+   * Base class (id and name).
    */
   hd_id_t base_class;
 
   /**
-   * Sub class.
+   * Sub class (id and name).
    */
   hd_id_t sub_class;
 
   /**
-   * (PCI) programming interface.
+   * (PCI) programming interface (id and name).
    */
   hd_id_t prog_if;
 
@@ -1510,7 +1510,8 @@ typedef struct s_hd_t {
   /**
    * Model name.
    * This is a combination of vendor and %device names. Some heuristics is used
-   * to make it more presentable. Use this instead of \ref vend_name and \ref dev_name.
+   * to make it more presentable. Use this instead of \ref vendor and
+   * \ref device.
    */
   char *model;
 
