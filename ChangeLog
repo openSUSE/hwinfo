@@ -1,3 +1,60 @@
+6/5/2004:	v8.46
+	- detect IUCV pseudodevices (bug #39456)
+	- added hd_busid_to_hwcfg() (bug #39456)
+	- updated X11 data (#39767)
+	- fixed strange side effect of UML detection (#39946)
+
+29/4/2004:	v8.45
+	- s390: enhance grouped channel detection using ccwgroup bus
+	- use *last* console parameter for serial console
+	- look for usb network cards (#37870)
+	- network class id cleanup (#39456)
+
+28/4/2004:	v8.44
+	- add bus.name for bus.id == bus_ccw
+	- avoid unspecific network types (#38874)
+	- fixed memory size detection (#34895, #38758)
+	- report UML network (#39521)
+
+27/4/2004:	v8.43
+	- 'hwinfo --map' returns mapping new -> old block
+	  device names (#39437)
+
+22/4/2004:	v8.42
+	- s390: set is.notready flag on unformatted DASDs (bug #39174)
+	- rewrote serial console handling (#39029, #23322, #35824)
+	- updated X11 data (#39282)
+	- subclass 0x83 for xpnet card (#35867)
+	- add UML keyboard (#38922)
+
+20/4/2004:	v8.41
+	- s390: add bus id bus_ccw
+	- s390: set bus.id, sysfs_bus_id and sysfs_device_link for all devices
+	- s390: do not do pr_s390disks by default, and run it after pr_s390
+	  to keep already detected non-disk devices from being deleted
+	- s390: implement rw/ro info properly
+	- s390: fake geometry and size of unformatted DASDs to most likely
+	  values
+	- removed veth.* (not needed)
+
+19/4/2004:	v8.40
+	- fixed bug in modules.alias conversion script (#38800)
+	- fixed linmodem data (#38800)
+	- handle veth devices on iSeries (#38696, #37981)
+	- another de4x5 vs. tulip case (#39127)
+	- fixed cdrom config segfault (might happen while reading inconsistent
+	  cdrom config data)
+	- support pSeries vscsi (#36029)
+
+15/4/2004:	v8.39
+	- bcm5700, not tg3 on ppc* (#38647)
+	- add Acer TravelMate 660 & Asus S5200N LCD sizes (#38149)
+	- make SGI IOC4 known as storage controller (#38628)
+	- support SGI XPNET (#35867)
+
+6/4/2004:	v8.38
+	- do call --partion with --fast in hwscand polling code
+
 6/4/2004:	v8.37
 	- fixed unique ids for pci devs (#37570)
 

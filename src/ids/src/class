@@ -77,6 +77,34 @@
 &subclass.id		0x82
 +subclass.name		WLAN controller
 
+ baseclass.id		0x002
+&subclass.id		0x83
++subclass.name		XPNET controller
+
+ baseclass.id		0x002
+&subclass.id		0x86
++subclass.name		OSA-Express controller
+
+ baseclass.id		0x002
+&subclass.id		0x87
++subclass.name		HiperSocket controller
+
+ baseclass.id		0x002
+&subclass.id		0x88
++subclass.name		CTC controller
+
+ baseclass.id		0x002
+&subclass.id		0x89
++subclass.name		OSA-2 controller
+
+ baseclass.id		0x002
+&subclass.id		0x8e
++subclass.name		FICON controller
+
+ baseclass.id		0x002
+&subclass.id		0x8f
++subclass.name		ESCON controller
+
  baseclass.id		0x003
 +baseclass.name		Display controller
 
@@ -823,6 +851,10 @@
  baseclass.id		0x107
 &subclass.id		0x0a
 +subclass.name		WLAN
+
+ baseclass.id		0x107
+&subclass.id		0x0b
++subclass.name		XPNET
 
  baseclass.id		0x107
 &subclass.id		0x80
