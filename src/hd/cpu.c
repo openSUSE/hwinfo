@@ -64,7 +64,7 @@ void hd_scan_cpu(hd_data_t *hd_data)
 
   /* some clean-up */
   remove_hd_entries(hd_data);
-  hd_data->cpu = NULL;
+  hd_data->cpu = free_str_list(hd_data->cpu);
 
   PROGRESS(1, 0, "cpuinfo");
 

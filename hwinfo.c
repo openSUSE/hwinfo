@@ -5,6 +5,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include <mcheck.h>
+
 #include "hd.h"
 
 static int get_probe_flags(int, char **, hd_data_t *);
@@ -30,6 +32,8 @@ int main(int argc, char **argv)
   long l = 0;
   int i;
   unsigned first_probe = 1;
+
+  mtrace();
 
   argc--; argv++;
 
@@ -112,6 +116,7 @@ int main(int argc, char **argv)
       printf("-- %s list --\n", list);
       for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
       printf("-- %s list end --\n", list);
+      hd = hd_free_hd_list(hd);
     }
   }
 

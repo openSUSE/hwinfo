@@ -46,10 +46,10 @@ void read_klog(hd_data_t *hd_data)
 {
   char buf[0x2000 + 1], *s;
   int i, j, len, n;
-  str_list_t *sl, *sl1, *sl2, *sl_last, **ssl;
+  str_list_t *sl, *sl1, *sl2, *sl_last, **ssl, *sl_next;
 
   /* some clean-up */
-  hd_data->klog = NULL;
+  hd_data->klog = free_str_list(hd_data->klog);
 
   sl1 = read_file(KLOG_BOOT, 0, 0);
   sl2 = NULL;
@@ -102,8 +102,10 @@ void read_klog(hd_data_t *hd_data)
 
   /* the 1st line may be incomplete */
   if(sl2 && !str_ok(sl2)) {
-    free_mem(sl2->str);
-    sl2 = sl2->next;
+    sl_next = sl2->next;
+    sl2->next = NULL;
+    free_str_list(sl2);
+    sl2 = sl_next;
   }
 
   if(!sl1) {

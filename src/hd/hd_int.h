@@ -76,6 +76,8 @@ void join_res_dma(hd_res_t **res1, hd_res_t *res2);
 hd_res_t *free_res_list(hd_res_t *res);
 hd_res_t *add_res_entry(hd_res_t **res, hd_res_t *new_res);
 hd_t *add_hd_entry(hd_data_t *hd_data, unsigned line, unsigned count);
+misc_t *free_misc(misc_t *m);
+scsi_t *free_scsi(scsi_t *scsi, int free_all);
 
 char *isa_id2str(unsigned);
 char *eisa_vendor_str(unsigned);

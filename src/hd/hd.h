@@ -885,6 +885,13 @@ typedef struct s_hd_t {
     unsigned ser_device:2;	/* if != 0: info about attached serial device; see serial.c */
   } tag;
 
+  /*
+   * These are used internally for memory management.
+   * Do not even _think_ of modifying these!
+   */
+  unsigned ref_cnt;
+  struct s_hd_t *ref;
+
 } hd_t;
 
 typedef struct {
@@ -926,13 +933,6 @@ typedef struct {
   hddb_data_t *hddb_dev;	/* device name database */
   hddb_data_t *hddb_drv;	/* driver info database */
   str_list_t *kmods;		/* list of active kernel modules */
-  str_list_t *cd_list;		/* used by hd_cd_list() */
-  str_list_t *disk_list;	/* dto, hd_disk_list() */
-  str_list_t *net_list;		/* dto, hd_net_list() */
-  str_list_t *mouse_list;	/* dto, hd_mouse_list() */
-  str_list_t *floppy_list;	/* dto, hd_floppy_list() */
-  str_list_t *keyboard_list;	/* dto, hd_keyboard_list() */
-  str_list_t *display_list;	/* dto, hd_display_list() */
   uint64_t used_irqs;		/* irq usage */
   uint64_t assigned_irqs;	/* irqs automatically assigned by libhd (for driver info) */
   unsigned char *bios_rom;	/* BIOS 0xc0000 - 0xfffff */

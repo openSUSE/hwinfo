@@ -31,7 +31,7 @@ static pci_t *add_pci_entry(hd_data_t *hd_data, pci_t *new_pci);
 void hd_scan_pci(hd_data_t *hd_data)
 {
   hd_t *hd;
-  pci_t *p;
+  pci_t *p, *pnext;
   hd_res_t *res;
   int j;
   unsigned u, bus;
@@ -59,7 +59,8 @@ void hd_scan_pci(hd_data_t *hd_data)
   bridges = 0;
   memset(bridge, 0, sizeof bridge);
 
-  for(p = hd_data->pci; p; p = p->next) {
+  for(p = hd_data->pci; p; p = pnext) {
+    pnext = p->next;
     hd = add_hd_entry(hd_data, __LINE__, 0);
 
     hd->bus = bus_pci;
@@ -142,7 +143,9 @@ void hd_scan_pci(hd_data_t *hd_data)
     hd->detail = new_mem(sizeof *hd->detail);
     hd->detail->type = hd_detail_pci;
     hd->detail->pci.data = p;
+    p->next = NULL;
   }
+  hd_data->pci = NULL;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->bus == bus_pci) {

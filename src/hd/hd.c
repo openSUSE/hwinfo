@@ -52,6 +52,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+#define LIBHD_MEMCHECK
 
 #ifdef __i386__
 #define HD_ARCH "ix86"
@@ -96,6 +97,7 @@ typedef struct disk_s {
 static struct s_pr_flags *get_pr_flags(enum probe_feature feature);
 static void fix_probe_features(hd_data_t *hd_data);
 static void set_probe_feature(hd_data_t *hd_data, enum probe_feature feature, unsigned val);
+static void free_old_hd_entries(hd_data_t *hd_data);
 static hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd);
 static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
 #if WITH_ISDN
@@ -108,6 +110,14 @@ static void timeout_alarm_handler(int signal);
 static void get_probe_env(hd_data_t *hd_data);
 static void hd_scan_xtra(hd_data_t *hd_data);
 static void hd_add_id(hd_t *hd);
+
+#ifndef __i386__
+#undef LIBHD_MEMCHECK
+#endif
+
+#ifdef LIBHD_MEMCHECK
+static FILE *libhd_log = NULL;
+#endif
 
 /*
  * Names of the probing modules.
@@ -340,6 +350,40 @@ int hd_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
  */
 hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
 {
+  add_hd_entry2(&hd_data->old_hd, hd_data->hd); hd_data->hd = NULL;
+  hd_data->log = free_mem(hd_data->log);
+  free_old_hd_entries(hd_data);		// hd_data->old_hd
+  // hd_data->pci is always NULL
+  // hd_data->isapnp
+  hd_data->cdrom = free_str_list(hd_data->cdrom);
+  hd_data->net = free_str_list(hd_data->net);
+  hd_data->floppy = free_str_list(hd_data->floppy);
+  hd_data->misc = free_misc(hd_data->misc);
+  // hd_data->serial
+  // hd_data->scsi is always NULL
+  // hd_data->ser_mouse
+  // hd_data->ser_modem
+  hd_data->cpu = free_str_list(hd_data->cpu);
+  hd_data->klog = free_str_list(hd_data->klog);
+  hd_data->proc_usb = free_str_list(hd_data->proc_usb);
+  // hd_data->usb
+
+  if(hd_data->hddb_dev) {
+    free_mem(hd_data->hddb_dev->data);
+    free_mem(hd_data->hddb_dev->names);
+    hd_data->hddb_dev = free_mem(hd_data->hddb_dev);
+  }
+  if(hd_data->hddb_drv) {
+    free_mem(hd_data->hddb_drv->data);
+    free_mem(hd_data->hddb_drv->names);
+    hd_data->hddb_drv = free_mem(hd_data->hddb_drv);
+  }
+  hd_data->kmods = free_str_list(hd_data->kmods);
+  hd_data->bios_rom = free_mem(hd_data->bios_rom);
+  hd_data->bios_ram = free_mem(hd_data->bios_ram);
+  hd_data->cmd_line = free_mem(hd_data->cmd_line);
+  hd_data->xtra_hd = free_str_list(hd_data->xtra_hd);
+  // hd_data->devtree
 
   return NULL;
 }
@@ -350,8 +394,81 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
  */
 driver_info_t *hd_free_driver_info(driver_info_t *di)
 {
+  driver_info_t *next;
+
+  for(; di; di = next) {
+    next = di->next;
+
+    switch(di->any.type) {
+      case di_any:
+      case di_display:
+        break;
+
+      case di_module:
+        free_mem(di->module.name);
+        free_mem(di->module.mod_args);
+        free_mem(di->module.conf);
+        break;
+
+      case di_mouse:
+        free_mem(di->mouse.xf86);
+        free_mem(di->mouse.gpm);
+        break;
+
+      case di_x11:
+        free_mem(di->x11.server);
+        free_mem(di->x11.xf86_ver);
+        free_str_list(di->x11.packages);
+        free_str_list(di->x11.extensions);
+        free_str_list(di->x11.options);
+        free_str_list(di->x11.raw);
+        break;
+
+      case di_isdn:
+        free_mem(di->isdn.i4l_name);
+        if(di->isdn.params) {
+          isdn_parm_t *p = di->isdn.params, *next;
+          for(; p; p = next) {
+            next = p->next;
+            free_mem(p->name);
+            free_mem(p->alt_value);
+            free_mem(p);
+          }
+        }
+        break;
+
+      case di_kbd:
+        free_mem(di->kbd.XkbRules);
+        free_mem(di->kbd.XkbModel);
+        free_mem(di->kbd.XkbLayout);
+        free_mem(di->kbd.keymap);
+        break;
+    }
+
+    free_str_list(di->any.hddb0);
+    free_str_list(di->any.hddb1);
+
+    free_mem(di);
+  }
 
   return NULL;
+}
+
+
+int exists_hd_entry(hd_data_t *hd_data, hd_t *hd_ex)
+{
+  hd_t *hd;
+
+  if(!hd_ex) return 0;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd == hd_ex) return 1;
+  }
+  for(hd = hd_data->old_hd; hd; hd = hd->next) {
+    if(hd == hd_ex) return 1;
+  }
+
+  return 0;
 }
 
 
@@ -362,9 +479,183 @@ hd_t *hd_free_hd_list(hd_t *hd)
 {
   hd_t *h;
 
+  /* do nothing unless the list holds only copies of hd_t entries */
+  for(h = hd; h; h = h->next) if(!h->ref) return NULL;
+
   for(; hd; hd = (h = hd)->next, free_mem(h));
 
   return NULL;
+}
+
+
+hd_t *free_hd_entry(hd_t *hd)
+{
+  free_mem(hd->dev_name);
+  free_mem(hd->vend_name);
+  free_mem(hd->sub_dev_name);
+  free_mem(hd->sub_vend_name);
+  free_mem(hd->rev_name);
+  free_mem(hd->serial);
+  free_mem(hd->unix_dev_name);
+  free_mem(hd->rom_id);
+  free_mem(hd->unique_id);
+
+  free_res_list(hd->res);
+
+  if(hd->detail) {
+    switch(hd->detail->type) {
+      case hd_detail_pci: {
+          pci_t *p = hd->detail->pci.data;
+
+          free_mem(p->log);
+          free_mem(p);
+        }
+        break;
+
+      case hd_detail_usb:
+        free_mem(hd->detail->usb.data);
+        break;
+
+      case hd_detail_isapnp:
+        free_mem(hd->detail->isapnp.data);
+        break;
+
+      case hd_detail_cdrom:
+        free_mem(hd->detail->cdrom.data);
+        break;
+
+      case hd_detail_floppy:
+        free_mem(hd->detail->floppy.data);
+        break;
+
+      case hd_detail_bios:
+        free_mem(hd->detail->bios.data);
+        break;
+
+      case hd_detail_cpu:
+        {
+          cpu_info_t *c = hd->detail->cpu.data;
+
+          free_mem(c->vend_name);
+          free_mem(c->model_name);
+          free_mem(c->platform);
+          free_str_list(c->features);
+          free_mem(c);
+        }
+        break;
+
+      case hd_detail_prom:
+        free_mem(hd->detail->prom.data);
+        break;
+
+      case hd_detail_monitor:
+        free_mem(hd->detail->monitor.data);
+        break;
+
+      case hd_detail_sys:
+        free_mem(hd->detail->sys.data);
+        break;
+
+      case hd_detail_scsi:
+        free_scsi(hd->detail->scsi.data, 1);
+        break;
+
+      case hd_detail_devtree:
+        free_mem(hd->detail->devtree.data);
+        break;
+    }
+
+    free_mem(hd->detail);
+  }
+
+  memset(hd, 0, sizeof *hd);
+
+  return NULL;
+}
+
+misc_t *free_misc(misc_t *m)
+{
+  int i, j;
+
+  if(!m) return NULL;
+
+  for(i = 0; i < m->io_len; i++) {
+    free_mem(m->io[i].dev);
+  }
+  free_mem(m->io);
+
+  for(i = 0; i < m->dma_len; i++) {
+    free_mem(m->dma[i].dev);
+  }
+  free_mem(m->dma);
+
+  for(i = 0; i < m->irq_len; i++) {
+    for(j = 0; j < m->irq[i].devs; j++) {
+      free_mem(m->irq[i].dev[j]);
+    }
+    free_mem(m->irq[i].dev);
+  }
+  free_mem(m->irq);
+
+  free_str_list(m->proc_io);
+  free_str_list(m->proc_dma);
+  free_str_list(m->proc_irq);
+
+  free_mem(m);
+
+  return NULL;
+}
+
+scsi_t *free_scsi(scsi_t *scsi, int free_all)
+{
+  scsi_t *next;
+
+  for(; scsi; scsi = next) {
+    next = scsi->next;
+
+    free_mem(scsi->dev_name);
+    free_mem(scsi->guessed_dev_name);
+    free_mem(scsi->vendor);
+    free_mem(scsi->model);
+    free_mem(scsi->rev);
+    free_mem(scsi->type_str);
+    free_mem(scsi->serial);
+    free_mem(scsi->proc_dir);
+    free_mem(scsi->driver);
+    free_mem(scsi->info);
+
+    if(!free_all) {
+      next = scsi->next;
+      memset(scsi, 0, sizeof scsi);
+      scsi->next = next;
+      break;
+    }
+
+    free_mem(scsi);
+  }
+
+  return NULL;
+}
+
+
+/*
+ * Removes all hd_data->old_hd entries and frees their memory.
+ */
+void free_old_hd_entries(hd_data_t *hd_data)
+{
+  hd_t *hd, *next;
+
+  for(hd = hd_data->old_hd; hd; hd = next) {
+    next = hd->next;
+
+    if(exists_hd_entry(hd_data, hd->ref) && hd->ref->ref_cnt) hd->ref->ref_cnt--;
+
+    if(!hd->ref) free_hd_entry(hd);
+
+    free_mem(hd);
+  }
+
+  hd_data->old_hd = NULL;
 }
 
 
@@ -374,7 +665,16 @@ void *new_mem(size_t size)
 
   if(size == 0) return NULL;
 
-  if((p = calloc(size, 1))) return p;
+  p = calloc(size, 1);
+
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &size)[-1] - 5;
+    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", f, p, size);
+  }
+#endif
+
+  if(p) return p;
 
   fprintf(stderr, "memory oops 1\n");
   exit(11);
@@ -384,7 +684,21 @@ void *new_mem(size_t size)
 
 void *resize_mem(void *p, size_t n)
 {
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &p)[-1] - 5;
+    if(libhd_log && p) fprintf(libhd_log, "%p\t%p\n", f, p);
+  }
+#endif
+
   p = realloc(p, n);
+
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &p)[-1] - 5;
+    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", f, p, n);
+  }
+#endif
 
   if(!p) {
     fprintf(stderr, "memory oops 7\n");
@@ -396,7 +710,21 @@ void *resize_mem(void *p, size_t n)
 
 void *add_mem(void *p, size_t elem_size, size_t n)
 {
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &p)[-1] - 5;
+    if(libhd_log && p) fprintf(libhd_log, "%p\t%p\n", f, p);
+  }
+#endif
+
   p = realloc(p, (n + 1) * elem_size);
+
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &p)[-1] - 5;
+    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", f, p, (n + 1) * elem_size);
+  }
+#endif
 
   if(!p) {
     fprintf(stderr, "memory oops 7\n");
@@ -414,7 +742,16 @@ char *new_str(const char *s)
 
   if(!s) return NULL;
 
-  if((t = strdup(s))) return t;
+  t = strdup(s);
+
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &s)[-1] - 5;
+    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", f, t, strlen(t) + 1);
+  }
+#endif
+
+  if(t) return t;
 
   fprintf(stderr, "memory oops 2\n");
   /*NOTREACHED*/
@@ -425,6 +762,13 @@ char *new_str(const char *s)
 
 void *free_mem(void *p)
 {
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &p)[-1] - 5;
+    if(libhd_log && p) fprintf(libhd_log, "%p\t%p\n", f, p);
+  }
+#endif
+
   if(p) free(p);
 
   return NULL;
@@ -609,6 +953,17 @@ void hd_scan(hd_data_t *hd_data)
   uint64_t irqs;
   str_list_t *sl, *sl0;
   driver_info_t *di;
+
+#ifdef LIBHD_MEMCHECK
+  if(!libhd_log) {
+    char *s = getenv("LIBHD_MEMCHECK");
+
+    if(s && *s) {
+      libhd_log = fopen(s, "w");
+      if(libhd_log) setlinebuf(libhd_log);
+    }
+  }
+#endif
 
   /* log the debug & probe flags */
   if(hd_data->debug && !hd_data->flags.internal) {
@@ -902,7 +1257,7 @@ char *canon_str(char *s, int len)
   }
 
   m2 = new_str(m0);
-  free(m0);
+  free_mem(m0);
 
   return m2;
 }
@@ -1030,6 +1385,13 @@ void str_printf(char **buf, int offset, char *format, ...)
   char b[1024];
   va_list args;
 
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &buf)[-1] - 5;
+    if(libhd_log) fprintf(libhd_log, ">%p\n", f);
+  }
+#endif
+
   use_cache = offset == -2 ? 1 : 0;
 
   if(*buf) {
@@ -1058,6 +1420,13 @@ void str_printf(char **buf, int offset, char *format, ...)
     last_buf = *buf;
     last_len = len;
   }
+
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &buf)[-1] - 5;
+    if(libhd_log) fprintf(libhd_log, "<%p\n", f);
+  }
+#endif
 }
 
 
@@ -1102,10 +1471,24 @@ str_list_t *search_str_list(str_list_t *sl, char *str)
  */
 str_list_t *add_str_list(str_list_t **sl, char *str)
 {
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &sl)[-1] - 5;
+    if(libhd_log) fprintf(libhd_log, ">%p\n", f);
+  }
+#endif
+
   while(*sl) sl = &(*sl)->next;
 
   *sl = new_mem(sizeof **sl);
   (*sl)->str = new_str(str);
+
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &sl)[-1] - 5;
+    if(libhd_log) fprintf(libhd_log, "<%p\n", f);
+  }
+#endif
 
   return *sl;
 }
@@ -1138,13 +1521,36 @@ str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines)
   int pipe = 0;
   str_list_t *sl_start = NULL, *sl_end = NULL, *sl;
 
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &file_name)[-1] - 5;
+    if(libhd_log) fprintf(libhd_log, ">%p\n", f);
+  }
+#endif
+
   if(*file_name == '|') {
     pipe = 1;
     file_name++;
-    if(!(f = popen(file_name, "r"))) return NULL;
+    if(!(f = popen(file_name, "r"))) {
+#ifdef LIBHD_MEMCHECK
+      {
+        void *f = (void *) ((unsigned *) &file_name)[-1] - 5;
+        if(libhd_log) fprintf(libhd_log, "<%p\n", f);
+      }
+#endif
+      return NULL;
+    }
   }
   else {
-    if(!(f = fopen(file_name, "r"))) return NULL;
+    if(!(f = fopen(file_name, "r"))) {
+#ifdef LIBHD_MEMCHECK
+      {
+        void *f = (void *) ((unsigned *) &file_name)[-1] - 5;
+        if(libhd_log) fprintf(libhd_log, "<%p\n", f);
+      }
+#endif
+      return NULL;
+    }
   }
 
   while(fgets(buf, sizeof buf, f)) {
@@ -1168,6 +1574,13 @@ str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines)
     pclose(f);
   else
     fclose(f);
+
+#ifdef LIBHD_MEMCHECK
+  {
+    void *f = (void *) ((unsigned *) &file_name)[-1] - 5;
+    if(libhd_log) fprintf(libhd_log, "<%p\n", f);
+  }
+#endif
 
   return sl_start;
 }
@@ -2347,234 +2760,6 @@ enum boot_arch hd_boot_arch(hd_data_t *hd_data)
   return hd_data->boot;
 }
 
-
-#if 0
-hd_t *hd_cd_list(hd_data_t *hd_data, int rescan)
-{
-  hd_t *hd, *hd1, *hd_list = NULL;
-  unsigned char probe_save[sizeof hd_data->probe];
-
-  if(rescan) {
-    memcpy(probe_save, hd_data->probe, sizeof probe_save);
-    hd_clear_probe_feature(hd_data, pr_all);
-    hd_set_probe_feature(hd_data, pr_cdrom);
-    hd_set_probe_feature(hd_data, pr_cdrom_info);
-    hd_scan(hd_data);
-    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
-  }
-
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_storage_device && hd->sub_class == sc_sdev_cdrom) {
-      if(!((rescan == 2 || rescan == 3) && search_str_list(hd_data->cd_list, hd->unix_dev_name))) {
-        if(rescan == 2) {
-          add_str_list(&hd_data->cd_list, hd->unix_dev_name);
-        }
-        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-        *hd1 = *hd;
-        hd1->next = NULL;
-      }
-    }
-  }
-
-  return hd_list;
-}
-
-
-hd_t *hd_disk_list(hd_data_t *hd_data, int rescan)
-{
-  hd_t *hd, *hd1, *hd_list = NULL;
-  unsigned char probe_save[sizeof hd_data->probe];
-
-  if(rescan) {
-    memcpy(probe_save, hd_data->probe, sizeof probe_save);
-    hd_clear_probe_feature(hd_data, pr_all);
-    hd_set_probe_feature(hd_data, pr_ide);
-    hd_set_probe_feature(hd_data, pr_scsi);
-    hd_set_probe_feature(hd_data, pr_dac960);
-    hd_set_probe_feature(hd_data, pr_smart);
-    hd_set_probe_feature(hd_data, pr_int);
-    hd_scan(hd_data);
-    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
-  }
-
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_storage_device && hd->sub_class == sc_sdev_disk) {
-      if(!((rescan == 2 || rescan == 3) && search_str_list(hd_data->disk_list, hd->unix_dev_name))) {
-        if(rescan == 2) {
-          add_str_list(&hd_data->disk_list, hd->unix_dev_name);
-        }
-        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-        *hd1 = *hd;
-        hd1->next = NULL;
-      }
-    }
-  }
-
-  return hd_list;
-}
-
-
-hd_t *hd_net_list(hd_data_t *hd_data, int rescan)
-{
-  hd_t *hd, *hd1, *hd_list = NULL;
-  unsigned char probe_save[sizeof hd_data->probe];
-
-  if(rescan) {
-    memcpy(probe_save, hd_data->probe, sizeof probe_save);
-    hd_clear_probe_feature(hd_data, pr_all);
-    hd_set_probe_feature(hd_data, pr_net);
-    hd_scan(hd_data);
-    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
-  }
-
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_network_interface) {
-      if(!((rescan == 2 || rescan == 3) && search_str_list(hd_data->net_list, hd->unix_dev_name))) {
-        if(rescan == 2) {
-          add_str_list(&hd_data->net_list, hd->unix_dev_name);
-        }
-        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-        *hd1 = *hd;
-        hd1->next = NULL;
-      }
-    }
-  }
-
-  return hd_list;
-}
-
-
-hd_t *hd_floppy_list(hd_data_t *hd_data, int rescan)
-{
-  hd_t *hd, *hd1, *hd_list = NULL;
-  unsigned char probe_save[sizeof hd_data->probe];
-
-  if(rescan) {
-    memcpy(probe_save, hd_data->probe, sizeof probe_save);
-    hd_clear_probe_feature(hd_data, pr_all);
-    hd_set_probe_feature(hd_data, pr_floppy);
-    hd_set_probe_feature(hd_data, pr_misc_floppy);
-    hd_scan(hd_data);
-    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
-  }
-
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_storage_device && hd->sub_class == sc_sdev_floppy) {
-      if(!((rescan == 2 || rescan == 3) && search_str_list(hd_data->floppy_list, hd->unix_dev_name))) {
-        if(rescan == 2) {
-          add_str_list(&hd_data->floppy_list, hd->unix_dev_name);
-        }
-        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-        *hd1 = *hd;
-        hd1->next = NULL;
-      }
-    }
-  }
-
-  return hd_list;
-}
-
-
-hd_t *hd_mouse_list(hd_data_t *hd_data, int rescan)
-{
-  hd_t *hd, *hd1, *hd_list = NULL;
-  unsigned char probe_save[sizeof hd_data->probe];
-
-  if(rescan) {
-    memcpy(probe_save, hd_data->probe, sizeof probe_save);
-    hd_clear_probe_feature(hd_data, pr_all);
-    hd_set_probe_feature(hd_data, pr_misc);
-    hd_set_probe_feature(hd_data, pr_serial);
-    hd_set_probe_feature(hd_data, pr_adb);
-    hd_set_probe_feature(hd_data, pr_usb);
-    hd_set_probe_feature(hd_data, pr_kbd);
-    hd_set_probe_feature(hd_data, pr_mouse);
-    hd_scan(hd_data);
-    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
-  }
-
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_mouse) {
-      if(!((rescan == 2 || rescan == 3) && search_str_list(hd_data->mouse_list, hd->unix_dev_name))) {
-        if(rescan == 2) {
-          add_str_list(&hd_data->mouse_list, hd->unix_dev_name);
-        }
-        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-        *hd1 = *hd;
-        hd1->next = NULL;
-      }
-    }
-  }
-
-  return hd_list;
-}
-
-
-hd_t *hd_keyboard_list(hd_data_t *hd_data, int rescan)
-{
-  hd_t *hd, *hd1, *hd_list = NULL;
-  unsigned char probe_save[sizeof hd_data->probe];
-
-  if(rescan) {
-    memcpy(probe_save, hd_data->probe, sizeof probe_save);
-    hd_clear_probe_feature(hd_data, pr_all);
-    hd_set_probe_feature(hd_data, pr_misc);
-    hd_set_probe_feature(hd_data, pr_adb);
-    hd_set_probe_feature(hd_data, pr_usb);
-    hd_set_probe_feature(hd_data, pr_kbd);
-    hd_scan(hd_data);
-    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
-  }
-
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_keyboard) {
-      if(!((rescan == 2 || rescan == 3) && search_str_list(hd_data->keyboard_list, hd->unix_dev_name))) {
-        if(rescan == 2) {
-          add_str_list(&hd_data->keyboard_list, hd->unix_dev_name);
-        }
-        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-        *hd1 = *hd;
-        hd1->next = NULL;
-      }
-    }
-  }
-
-  return hd_list;
-}
-
-
-hd_t *hd_display_list(hd_data_t *hd_data, int rescan)
-{
-  hd_t *hd, *hd1, *hd_list = NULL;
-  unsigned char probe_save[sizeof hd_data->probe];
-
-  if(rescan) {
-    memcpy(probe_save, hd_data->probe, sizeof probe_save);
-    hd_clear_probe_feature(hd_data, pr_all);
-    hd_set_probe_feature(hd_data, pr_pci);
-    hd_set_probe_feature(hd_data, pr_sbus);
-    hd_set_probe_feature(hd_data, pr_misc);	// for isa cards
-    hd_scan(hd_data);
-    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
-  }
-
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_display) {
-      if(!((rescan == 2 || rescan == 3) && search_str_list(hd_data->floppy_list, hd->unix_dev_name))) {
-        if(rescan == 2) {
-          add_str_list(&hd_data->floppy_list, hd->unix_dev_name);
-        }
-        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-        *hd1 = *hd;
-        hd1->next = NULL;
-      }
-    }
-  }
-
-  return hd_list;
-}
-#endif	/* 0 */
-
 hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 {
   hd_t *hd, *hd1, *hd_list = NULL, *bridge_hd;
@@ -2876,6 +3061,8 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         if(add_it) {
           hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
           *hd1 = *hd;
+          hd->ref_cnt++;
+          hd1->ref = hd;
           hd1->next = NULL;
         }
       }
@@ -2912,6 +3099,8 @@ hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
     ) {
       hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
       *hd1 = *hd;
+      hd->ref_cnt++;
+      hd1->ref = hd;
       hd1->next = NULL;
     }
   }
@@ -2927,6 +3116,8 @@ hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_cl
     if(hd->base_class == base_class && hd->sub_class == sub_class) {
       hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
       *hd1 = *hd;
+      hd->ref_cnt++;
+      hd1->ref = hd;
       hd1->next = NULL;
     }
   }
@@ -2942,6 +3133,8 @@ hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus)
     if(hd->bus == bus) {
       hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
       *hd1 = *hd;
+      hd->ref_cnt++;
+      hd1->ref = hd;
       hd1->next = NULL;
     }
   }
@@ -2962,6 +3155,9 @@ int timeout(void(*func)(void *), void *arg, int timeout)
   child1 = fork();
   if(child1 == -1) return -1;
 
+#ifdef LIBHD_MEMCHECK
+#endif
+
   if(child1) {
     if(waitpid(child1, &status, 0) == -1) return -1;
 //    fprintf(stderr, ">child1 status: 0x%x\n", status);
@@ -2977,6 +3173,12 @@ int timeout(void(*func)(void *), void *arg, int timeout)
   }
   else {
     /* fork again */
+
+#ifdef LIBHD_MEMCHECK
+    /* stop logging in child process */
+    if(libhd_log) fclose(libhd_log);
+    libhd_log = NULL;
+#endif
 
     child2 = fork();
     if(child2 == -1) return -1;

@@ -51,7 +51,7 @@ void hd_scan_misc(hd_data_t *hd_data)
 
   /* some clean-up */
   remove_hd_entries(hd_data);
-  hd_data->misc = NULL;
+  hd_data->misc = free_misc(hd_data->misc);
 
   PROGRESS(9, 0, "kernel log");
   read_klog(hd_data);

@@ -63,7 +63,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
   hd_t *hd2;
 #endif
   hd_res_t *res;
-  scsi_t *ioctl_scsi, *scsi, *scsi2, *scsi3;
+  scsi_t *ioctl_scsi, *scsi, *scsi2, *scsi3, *next;
   int i, j;
   unsigned found, found_a;
   driver_info_t *di, *di0;
@@ -94,14 +94,20 @@ void hd_scan_scsi(hd_data_t *hd_data)
         scsi2->id == scsi->id &&
         scsi2->lun == scsi->lun
       ) {
-        scsi2->vendor = scsi->vendor;
-        scsi2->model = scsi->model;
-        scsi2->rev = scsi->rev;
-        scsi2->type_str = scsi->type_str;
-        scsi2->guessed_dev_name = scsi->guessed_dev_name;
+        free_mem(scsi2->vendor);
+        free_mem(scsi2->model);
+        free_mem(scsi2->rev);
+        free_mem(scsi2->type_str);
+        free_mem(scsi2->guessed_dev_name);
+        scsi2->vendor = new_str(scsi->vendor);
+        scsi2->model = new_str(scsi->model);
+        scsi2->rev = new_str(scsi->rev);
+        scsi2->type_str = new_str(scsi->type_str);
+        scsi2->guessed_dev_name = new_str(scsi->guessed_dev_name);
         if(scsi2->type == sc_sdev_other) scsi2->type = scsi->type;
 
         scsi3 = scsi->next;
+        free_scsi(scsi, 0);
         *scsi = *scsi2;
         scsi->next = scsi3;
 
@@ -201,8 +207,14 @@ void hd_scan_scsi(hd_data_t *hd_data)
   /*
    * finally, create the hardware entries
    */
-  for(scsi = hd_data->scsi; scsi; scsi = scsi->next) {
-    if(scsi->fake) continue;
+  for(scsi = hd_data->scsi; scsi; scsi = next) {
+    next = scsi->next;
+
+    if(scsi->fake) {
+      scsi->next = NULL;
+      free_scsi(scsi, 1);
+      continue;
+    }
 
     hd = add_hd_entry(hd_data, __LINE__, 0);
     hd->base_class = bc_storage_device;
@@ -257,7 +269,12 @@ void hd_scan_scsi(hd_data_t *hd_data)
     hd->detail = new_mem(sizeof *hd->detail);
     hd->detail->type = hd_detail_scsi;
     hd->detail->scsi.data = scsi;
+    scsi->next = NULL;
   }
+  hd_data->scsi = NULL;
+
+  ioctl_scsi = free_scsi(ioctl_scsi, 1);
+
 }
 
 scsi_t *do_basic_ioctl(hd_data_t *hd_data, scsi_t **ioctl_scsi, int fd)
@@ -434,6 +451,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
       if(errno == ENOENT) break;	/* stop on non-existent devices */
     }
   }
+  dev_name = free_mem(dev_name);
 
   for(scsi = ioctl_scsi; scsi; scsi = scsi->next) {
     if(scsi->deleted) continue;
