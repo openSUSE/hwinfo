@@ -74,10 +74,10 @@ CDEBUGFLAGS = -DDEBUG
 	gcc -c $(CFLAGS) $(INCS) $*.cpp
 
 distclean: clean
-	rm -f *~
+	@rm -f *~
 
 clean:
-	rm -f *.o *.d $(TARGETLIB) $(TARGETDEBUGLIB)
+	@rm -f *.o *.d $(TARGETLIB) $(TARGETDEBUGLIB)
 
 validate:	validate.o ../libx86emu.a
 	gcc -o validate validate.o -lx86emu -L..
