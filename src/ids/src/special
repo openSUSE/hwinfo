@@ -653,6 +653,6 @@
 # iSeries network
  vendor.id		special 0x6001
 &device.id		special 0x1000
-+device.name		Ethernet card
++device.name		Virtual Ethernet card
 +driver.module.insmod	veth
 
