@@ -1052,6 +1052,7 @@ char *hd_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device);
 char *hd_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned subvendor, unsigned subdevice);
 
 int hd_find_device_by_name(hd_data_t *hd_data, unsigned base_class, char *vendor, char *device, unsigned *vendor_id, unsigned *device_id);
+str_list_t *get_hddb_packages(hd_data_t *hd_data);
 
 /* implemented in hdp.c */
 

@@ -23,6 +23,8 @@ static int test = 0;
 
 int braille_install_info(hd_data_t *hd_data);
 int x11_install_info(hd_data_t *hd_data);
+int oem_install_info(hd_data_t *hd_data);
+int dump_packages(hd_data_t *hd_data);
 
 void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item);
 void help(void);
@@ -33,6 +35,7 @@ struct option options[] = {
   { "help", 1, NULL, 'h' },
   { "debug", 1, NULL, 'd' },
   { "log", 1, NULL, 'l' },
+  { "packages", 0, NULL, 'p' },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -81,7 +84,7 @@ int main(int argc, char **argv)
 
     opterr = 0;
 
-    while((i = getopt_long(argc, argv, "hd:l:", options, NULL)) != -1) {
+    while((i = getopt_long(argc, argv, "hd:l:p", options, NULL)) != -1) {
       switch(i) {
         case 1:
           if(!strcmp(optarg, "braille")) {
@@ -89,6 +92,9 @@ int main(int argc, char **argv)
           }
           else if(!strcmp(optarg, "x11")) {
             x11_install_info(hd_data);
+          }
+          else if(!strcmp(optarg, "oem")) {
+            oem_install_info(hd_data);
           }
           else {
             help();
@@ -104,6 +110,10 @@ int main(int argc, char **argv)
           log_file = optarg;
           if(*log_file) f = fopen(log_file, "w+");
           break;
+
+        case 'p':
+          dump_packages(hd_data);
+	  break;
 
         case 1000 ... 1100:
           do_hw(hd_data, f, i - 1000);
@@ -632,3 +642,96 @@ int x11_install_info(hd_data_t *hd_data)
   return 0;
 }
 
+int dump_packages(hd_data_t *hd_data)
+{
+  str_list_t *sl;
+
+  hd_data->progress = NULL;
+  hd_scan(hd_data);
+  for(sl = get_hddb_packages(hd_data); sl; sl = sl->next) {
+    printf("%s\n", sl->str);
+  }
+  return 0;
+}
+
+struct x11pack {
+  struct x11pack *next;
+  char *pack;
+};
+
+int oem_install_info(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  str_list_t *str;
+  struct x11pack *x11packs = 0, *xp, *xpn;
+  str_list_t *sl0, *sl;
+  FILE *f;
+  int pcmcia;
+
+  driver_info_x11_t *di, *drvinfo;
+
+  hd_set_probe_feature(hd_data, pr_pci);
+  hd_scan(hd_data);
+  pcmcia = hd_has_pcmcia(hd_data);
+
+  for(hd = hd_list(hd_data, hw_display, 1, NULL); hd; hd = hd->next) {
+    drvinfo = (driver_info_x11_t *)hd_driver_info(hd_data, hd);
+    for (di = drvinfo; di; di = (driver_info_x11_t *)di->next) {
+      if (di->type != di_x11)
+	continue;
+      for (str = di->packages; str; str = str->next) {
+	for (xp = x11packs; xp; xp = xp->next)
+	  if (!strcmp(xp->pack, str->str))
+	    break;
+	if (xp == 0) {
+	  xp = calloc(1, sizeof *xp);
+	  if (xp) {
+	    xp->pack = strdup(str->str);
+	    xp->next = x11packs;
+	    x11packs = xp;
+	  }
+	}
+      }
+    }
+    hd_free_driver_info((driver_info_t *)drvinfo);
+  }
+
+  if(hd_data->progress) {
+    printf("\r%64s\r", "");
+    fflush(stdout);
+  }
+
+  sl0 = read_file(INSTALL_INF, 0, 0);
+  f = fopen(INSTALL_INF, "w");
+  if(!f) {
+    perror(INSTALL_INF);
+    return 1;
+  }
+  for(sl = sl0; sl; sl = sl->next) {
+    if(
+      strstr(sl->str, "X11Packages:") != sl->str &&
+      strstr(sl->str, "Pcmcia:") != sl->str
+    ) {
+      fprintf(f, "%s", sl->str);
+    }
+  }
+  if (x11packs) {
+    fprintf(f, "X11Packages: ");
+    for (xp = x11packs; xp; xp = xpn) {
+      xpn = xp->next;
+      if (xp->pack) {
+	if (xp != x11packs)
+	  fputc(',', f);
+        fprintf(f, "%s", xp->pack);
+        free(xp->pack);
+      }
+      free(xp);
+    }
+    fputc('\n', f);
+    x11packs = 0;
+  }
+  if (pcmcia)
+    fprintf(f, "Pcmcia: %d\n", pcmcia);
+  fclose(f);
+  return 0;
+}

@@ -880,6 +880,45 @@ int hd_find_device_by_name(hd_data_t *hd_data, unsigned base_class, char *vendor
   return u;
 }
 
+str_list_t *get_hddb_packages(hd_data_t *hd_data)
+{
+  unsigned u, u0, u1;
+  str_list_t *sl = 0;
+  char *s, *t, *t0;
+  char *s2, *t2, *t02;
+  int i, j;
+
+  hddb_data_t *x;
+  for (j = 0; j < 2; j++) {
+    x = j ? &HDDB_DRV : hd_data->hddb_drv;
+    if (x == 0)
+      continue;
+    for(u = 0; u < x->data_len; u++) {
+      u0 = DATA_FLAG(x->data[u]);
+      u1 = DATA_VALUE(x->data[u]);
+      if (u0 != FL_VAL1 || u1 != 'x')
+	continue;
+      if (++u >= x->data_len)
+	break;
+      u0 = DATA_FLAG(x->data[u]);
+      u1 = DATA_VALUE(x->data[u]);
+      if (u0 != FL_VAL0)
+	continue;
+      s = new_str(x->names + u1);
+      for(i = 0, t0 = s; (t = strsep(&t0, "|")); i++) {
+	if (i == 3 && *t) {
+	  s2 = new_str(t);
+	  for(t02 = s2; (t2 = strsep(&t02, ",")); )
+	    if (!search_str_list(sl, t2))
+	      add_str_list(&sl, t2);
+	  free_mem(s2);
+	}
+      }
+      free_mem(s);
+    }
+  }
+  return sl;
+}
 
 #ifdef DEBUG_HDDB
 static char *id2str(unsigned id, int vend);
