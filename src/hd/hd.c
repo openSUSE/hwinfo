@@ -2896,7 +2896,11 @@ int hd_is_uml(hd_data_t *hd_data)
   u = hd_data->flags.internal;
   hd_data->flags.internal = 1;
   hd = hd_list(hd_data, hw_cpu, 0, NULL);
-  if(!hd) hd = hd_list(hd_data, hw_cpu, 1, NULL);
+  if(!hd) {
+    /* Do *not* run hd_list(,, 1,) here! */
+    hd_scan_cpu(hd_data);
+    hd = hd_list(hd_data, hw_cpu, 0, NULL);
+  }
   hd_data->flags.internal = u;
 
   if(
