@@ -76,7 +76,7 @@ void hd_scan_floppy(hd_data_t *hd_data)
   if(!hd_data->klog) read_klog(hd_data);
 
   for(sl = hd_data->klog; sl; sl = sl->next) {
-    if(sscanf(sl->str, "<4>floppy%u: no floppy controllers found", &u) == 1) {
+    if(sscanf(sl->str, "<4>floppy%u: no floppy controllers foun%c", &u, &c) == 2) {
       if(u < sizeof floppy_stat / sizeof *floppy_stat) {
         floppy_stat[u] = 0;
       }
