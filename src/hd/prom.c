@@ -401,6 +401,7 @@ void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent
             hd->dev = MAKE_ID(TAG_SPECIAL, 0x0013);
           }
           else if(!strcmp(dt2->compatible, "CRUS,CS4236B")) {
+            hd->vend = MAKE_ID(TAG_SPECIAL, 0x402);	/* IBM */
             hd->dev = MAKE_ID(TAG_SPECIAL, 0x0014);
           }
         }

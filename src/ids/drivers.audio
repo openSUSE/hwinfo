@@ -7,7 +7,7 @@
 # ppc audio
 s0401 0010+4
 	i	dmasound
-s0401 0014
+s0402 0014
 	i	cs4232
 
 # AMD7930

@@ -1,5 +1,5 @@
 # adb devices
-s0100	Apple Computer, Inc.
+s0100	Apple
 	0201	ADB Keyboard 1
 	0203	ADB Keyboard 3
 	0302	ADB Mouse
@@ -38,13 +38,12 @@ s0300
 # Strawberry, Grape
 # Ruby, Indigo, Sage
 
-# special ppc hardware
-s0401	Apple Computer, Inc.
+# special ppc hardware; ids shared with s0402
+s0401	Apple
 	0010	Integrated Sound (awacs)
 	0011	Integrated Sound (screamer)
 	0012	Integrated Sound (burgundy)
 	0013	Integrated Sound (daca)
-	0014	CS4236B
 	0020	MACE Ethernet Controller
 	0021	BMAC Ethernet Controller
 	0022	BMAC+ Ethernet Controller
@@ -74,6 +73,10 @@ s0401	Apple Computer, Inc.
 	2001	1024x768 LCD
 	3000	Valkyrie
 	3001	Platinum
+
+# chrp hardware; ids shared with s0401
+s0402	IBM
+	0014	CS4236B
 
 # printer
 s1001	Minolta Co., Ltd.
