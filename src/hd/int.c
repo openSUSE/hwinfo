@@ -58,7 +58,7 @@ void hd_scan_int(hd_data_t *hd_data)
 
 #if defined(__i386__) || defined (__x86_64__)
   PROGRESS(5, 0, "bios");
-//  int_bios(hd_data);
+  int_bios(hd_data);
 #endif
 
   PROGRESS(6, 0, "mouse");
@@ -288,6 +288,9 @@ void int_bios(hd_data_t *hd_data)
   unsigned *sctrl, *sctrl2;
   int sctrl_len, i, j;
   int bios_id, list_sorted;
+
+  /* don't do anything if there is useful edd info */
+  if(hd_data->flags.edd_used) return;
 
   for(i = 0, hd = hd_data->hd; hd; hd = hd->next) {
     if(

@@ -4,6 +4,7 @@
 	- lt modem (#36552)
 	- fixed some module names (#37285, #37518)
 	- added dvb cards (#32730)
+	- use old bios disk assign code if there's no edd info
 
 1/4/2004:	v8.30
 	- wlan card detection fix (#37872)

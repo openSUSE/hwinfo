@@ -28,6 +28,8 @@ void hd_scan_sysfs_edd(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
 
+  hd_data->flags.edd_used = 0;
+
   if(hd_probe_feature(hd_data, pr_edd_mod)) {
     PROGRESS(1, 0, "edd mod");
     load_module(hd_data, "edd");
@@ -118,6 +120,7 @@ void get_edd_info(hd_data_t *hd_data)
         !hd->rom_id
       ) {
         str_printf(&hd->rom_id, 0, "0x%02x", u + 0x80);
+        hd_data->flags.edd_used = 1;
         break;
       }
     }

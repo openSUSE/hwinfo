@@ -2182,6 +2182,7 @@ typedef struct {
     unsigned forked:1;		/**< we're running in a subprocess */
     unsigned cpuemu:1;		/**< use CPU emulation to run BIOS code (i386 only) */
     unsigned udev:1;		/**< return first udev symlink as device name */
+    unsigned edd_used:1;	/**< internal: edd info has been used  */
   } flags;
 
 
