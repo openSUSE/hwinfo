@@ -2889,14 +2889,20 @@ int hd_is_uml(hd_data_t *hd_data)
   cpu_info_t *ct;
   unsigned u;
   unsigned saved_mod = hd_data->module;
+  unsigned char probe_save[sizeof hd_data->probe];
 
   u = hd_data->flags.internal;
   hd_data->flags.internal = 1;
   hd = hd_list(hd_data, hw_cpu, 0, NULL);
   if(!hd) {
     /* Do *not* run hd_list(,, 1,) here! */
+    memcpy(probe_save, hd_data->probe, sizeof probe_save);
+    hd_set_probe_feature(hd_data, pr_cpu);
     hd_scan_cpu(hd_data);
-    hd = hd_list(hd_data, hw_cpu, 0, NULL);
+    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      if(hd->base_class.id == bc_internal && hd->sub_class.id == sc_int_cpu) break;
+    }
   }
   hd_data->flags.internal = u;
 
