@@ -496,7 +496,7 @@ driver_info_t *hd_free_driver_info(driver_info_t *di)
 }
 
 
-int exists_hd_entry(hd_data_t *hd_data, hd_t *hd_ex)
+int exists_hd_entry(hd_data_t *hd_data, hd_t *old_hd, hd_t *hd_ex)
 {
   hd_t *hd;
 
@@ -505,7 +505,7 @@ int exists_hd_entry(hd_data_t *hd_data, hd_t *hd_ex)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd == hd_ex) return 1;
   }
-  for(hd = hd_data->old_hd; hd; hd = hd->next) {
+  for(hd = old_hd; hd; hd = hd->next) {
     if(hd == hd_ex) return 1;
   }
 
@@ -780,7 +780,7 @@ void free_old_hd_entries(hd_data_t *hd_data)
   for(hd = hd_data->old_hd; hd; hd = next) {
     next = hd->next;
 
-    if(exists_hd_entry(hd_data, hd->ref) && hd->ref->ref_cnt) hd->ref->ref_cnt--;
+    if(exists_hd_entry(hd_data, next, hd->ref) && hd->ref->ref_cnt) hd->ref->ref_cnt--;
 
     if(!hd->ref) free_hd_entry(hd);
 

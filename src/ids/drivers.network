@@ -37,14 +37,26 @@
 10b7 9805
 	i	3c59x
 
+# net/e100.c
+8086 1029
+8086 2449
+	i	e100
+
 # net/eepro100.c
 8086 1209
+	i	e100
 	i	eepro100
 
 # net/eepro100.c && net/eepro100-old.c
 8086 1229
+	i	e100
 	i	eepro100
 	i	eepro100-old
+
+# net/e1000_main.c
+8086 1000+2
+8086 1004
+	i	e1000
 
 # net/epic100.c
 10b8	0005+2
@@ -224,18 +236,6 @@ s0401 0021+2
 # net/sk98lin/
 1148 4300
 	i	sk98lin
-
-# net/e100.c
-8086 1029
-8086 1209
-8086 1229
-8086 2449
-	i	e100
-
-# net/e1000_main.c
-8086 1000+2
-8086 1004
-	i	e1000
 
 # net/starfire.c
 9004 6915

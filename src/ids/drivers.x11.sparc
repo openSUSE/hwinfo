@@ -1,7 +1,17 @@
 #x11DB
-#hwinfo data from 2001-02-07 17:00:59
+#hwinfo data from 2001-06-05 09:58:20
 #
 
+
+
+# ATI:Mach64 based
+1002 4757
+	x	3|MACH64|||||1d|||
+
+
+# ATI:Mach64 based
+1002 4756
+	x	3|MACH64|||||d|||
 
 
 # ATI:Rage 3D II+
@@ -9,8 +19,28 @@
 	x	3|MACH64|||||5|||
 
 
+# ATI:Mach64 XL or XC
+1002 4752
+	x	3|MACH64|||||d|||
+
+
+# ATI:Rage 3D Pro PCI
+1002 4751
+	x	3|MACH64|||||1|||
+
+
 # ATI:Rage 3D Pro PCI
 1002 4750
+	x	3|MACH64|||||1|||
+
+
+# ATI:Rage 3D Pro PCI
+1002 4749
+	x	3|MACH64|||||1|||
+
+
+# ATI:Rage 3D Pro
+1002 4747
 	x	3|MACH64|||||1|||
 
 

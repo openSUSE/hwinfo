@@ -106,19 +106,44 @@ o module info (modprobe)
 
 o mouse protocol info
 
-	p	<xfree>|<gpm>
+	p	<xfree>|<gpm>|<buttons>|<wheels>
   - <xfree>: XF86Config entry
   - <gpm>: GPM mouse protocol name
+  - <buttons>: number of mouse buttons
+  - <wheels>: number of wheels
   - example:
-	p	mouseman|mman
+
+# Razer Boomslang USB Mouse
+u05e3 000b
+	p	imps/2|ps2|5|1
 
 
 o X11 server info
 
-	x	<server_id>|<3d_package_1>|<3d_package_2>|...
-  - <server_id>: X server info; this is *not* the server name but some tag for YaST
-    (see SaX's Identity file for tag names)
-  - <3d_paket>: 3D info; packet to install
-  - example (glx & mesa package):
-	x	SVGA|glx|mesa
+	x	<xfree_version>|<server>|<3d>|<packages>|<extensions>|<options>|<colors>|<dac_speed>|<3d_script>
+		<raw_entry_1>
+		<raw_entry_2>
+		...
+
+  - <xfree_version>: either 3 or 4
+  - <server>: XF3 server or XF4 module name (without "_drv")
+  - <3d>: 3D hardware support, either "3d" or empty
+  - <packages>: comma separated list of packages required
+  - <extensions>: comma separated list of extensions to load
+  - <options>: comma separated list of options to enable
+  - <colors>: comma separated list of supported color depths
+  - <dac_speed>: max pixel clock in MHz
+  - <3d_script>: script to run to enable 3D support
+  - <raw_entry_x>: lines to add to XF86Config
+
+# Diamond:Fire GL3
+1014 0170 1092 1073
+	x	4|firegl23|3d|xfiregl1,xf86_glx|dri,glx,fgl23||24||switch2xf86_glx|
+		Option "NoDDC"
+		Option "no_accel" "no"
+		Option "enable DVI" "on"
+		Option "NumDMABuffers" "24"
+		Option "NumTMBuffers" "4"
+		Option "Capabilities" "0x00000000"
+		Option "Capabilities2" "0x00000000"
 

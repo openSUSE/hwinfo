@@ -1,5 +1,14 @@
+13/6/2001:	v2.18
+	- schwab: don't dereference free'd pointer
+	- prefer e100.o over eepro100.o (#8797)
+	- fixed framebuffer mode detection bug (#8620)
+
+7/6/2001:	v2.17
+	- fixed keyboard detection on sparc
+
 22/5/2001:	v2.16
 	- dan: fix usb modem bug (#8490)
+	- remove 3d & xf_v3 driver info for ia64
 
 14/5/2001:	v2.15
 	- use isapnp_reset=0 for loading isa-pnp.o

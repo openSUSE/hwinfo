@@ -525,10 +525,11 @@ int get_fb_mode()
   int i, fb_mode = 0;
 
   if((f = fopen("/proc/cmdline", "r"))) {
-    if(fread(buf, 1, sizeof buf, f)) {
+    if(fgets(buf, sizeof buf, f)) {
       t = buf;
       while((s = strsep(&t, " "))) {
         if(sscanf(s, "vga=%i", &i) == 1) fb_mode = i;
+        if(strstr(s, "vga=normal") == s) fb_mode = 0;
       }
     }
     fclose(f);
@@ -550,7 +551,7 @@ char *get_x11i()
   if(!*x11i) return x11i;
 
   if((f = fopen("/proc/cmdline", "r"))) {
-    if(fread(buf, 1, sizeof buf, f)) {
+    if(fgets(buf, sizeof buf, f)) {
       t = buf;
       while((s = strsep(&t, " "))) {
         if(sscanf(s, "x11i=%60s", x11i) == 1) break;

@@ -1,4 +1,4 @@
-#hwinfo names data from 2001-02-07 17:00:59
+#hwinfo names data from 2001-06-05 09:58:20
 #
 
 
@@ -95,6 +95,10 @@
 1014
 	0170
 		1092 1073	Diamond Fire GL3
+
+1014
+	0170
+		1092 0174	Diamond Fire GL4
 
 1048
 	0a32	Elsa Gloria Synergy
@@ -369,6 +373,9 @@
 1002
 	5247	ATI Rage 128 RG
 
+1002
+	5452	ATI Rage 128 Pro TR (AGP)
+
 105D
 	2309	Number 9 Imagine 128
 
@@ -490,7 +497,7 @@
 	0194	Trident 82c194 CardBus Controller
 
 1023
-	8620	Trident Generic
+	8620	Trident CyberBlade/DSTN/Ai1
 
 121A
 	0009	3Dfx Voodoo5 5500
@@ -713,6 +720,18 @@
 	8c12
 		1179 0001	S3 Savage IX8 Toshiba Notebook
 
+5333
+	8d01	S3 S3Twister_P
+
+5333
+	8d02	S3 S3Twister_K
+
+5333
+	8a25	S3 ProSavage PM 133
+
+5333
+	8a26	S3 ProSavage KM 133
+
 3D3D
 	0009	3DLabs Permedia2V 2D+3D
 
@@ -846,6 +865,12 @@
 	0028
 		1092 4a00	Nvidia Riva TNT2 Elsa
 
+10de
+	002e	Nvidia TNT2-A
+
+10de
+	002f	Nvidia TNT2-B
+
 10C8
 	8005	Neomagic MagicMedia 256AV
 
@@ -900,10 +925,10 @@
 	6300	SiS SIS630
 
 1039
-	0300	SiS SIS630
+	0300	SiS SIS300
 
 1039
-	1039	SiS SIS300
+	1039	SiS SIS_not_exist
 
 1039
 	6326	SiS SiS6326
@@ -1294,4 +1319,7 @@ edd8
 
 4001
 	0020	Sun Sun - FFB [unknown type] (ffb)
+
+15ad
+	0710	vmware Vmware Dummy Device
 

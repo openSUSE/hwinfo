@@ -291,13 +291,18 @@ void hd_scan_kbd(hd_data_t *hd_data)
     }
   else
     {
-      /* We must have a PS/2 Keyboard */
-      hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_keyboard;
-      hd->sub_class = sc_keyboard_kbd;
-      hd->bus = bus_ps2;
-      hd->vend = MAKE_ID(TAG_SPECIAL, 0x0201);
-      hd->dev = MAKE_ID(TAG_SPECIAL, 1);
+      for(hd = hd_data->hd; hd; hd = hd->next) {
+        if(hd->base_class == bc_keyboard) break;
+      }
+      if(!hd) {
+        /* We must have a PS/2 Keyboard */
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+        hd->base_class = bc_keyboard;
+        hd->sub_class = sc_keyboard_kbd;
+        hd->bus = bus_ps2;
+        hd->vend = MAKE_ID(TAG_SPECIAL, 0x0201);
+        hd->dev = MAKE_ID(TAG_SPECIAL, 1);
+      }
     }
 }
 
