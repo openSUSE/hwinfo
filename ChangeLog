@@ -1,3 +1,6 @@
+4/9/2002:	v5.25
+	- fix usb isdn adapter detection (#18829)
+
 3/9/2002:	v5.24
 	- fixed ata raid code
 	- new usb mouse (#18296)
