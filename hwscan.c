@@ -20,6 +20,7 @@ struct option options[] = {
   { "disk", 0, NULL, 1000 + hw_disk },
   { "mouse", 0, NULL, 1000 + hw_mouse },
   { "gfxcard", 0, NULL, 1000 + hw_display },
+  { "monitor", 0, NULL, 1000 + hw_monitor },
   { "network", 0, NULL, 1000 + hw_network },
   { "sound", 0, NULL, 1000 + hw_sound },
   { "modem", 0, NULL, 1000 + hw_modem },
