@@ -24,6 +24,7 @@ static void add_monitor(hd_data_t *hd_data, devtree_t *dt);
 static int chk_edid_info(hd_data_t *hd_data, unsigned char *edid);
 static void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid);
 static void add_monitor_res(hd_t *hd, unsigned x, unsigned y, unsigned hz, unsigned il);
+static void fix_edid_info(hd_data_t *hd_data, unsigned char *edid);
 
 #if !defined(__PPC__)
 void hd_scan_monitor(hd_data_t *hd_data)
@@ -361,6 +362,8 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
   int i;
   unsigned u, u1, u2;
 
+  fix_edid_info(hd_data, edid);
+
   u = (edid[8] << 8) + edid[9];
   hd->vend = MAKE_ID(TAG_EISA, u);
   u = (edid[0xb] << 8) + edid[0xa];
@@ -416,7 +419,10 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
     if(!(edid[i] || edid[i + 1] || edid[i + 2])) {
       switch(edid[i + 3]) {
         case 0xfc:
-          if(!mi->name && edid[i + 5]) mi->name = canon_str(edid + i + 5, 0xd);
+          if(edid[i + 5]) {
+            /* the name entry is splitted some times */
+            str_printf(&mi->name, -1, "%s%s", mi->name ? " " : "", canon_str(edid + i + 5, 0xd));
+          }
           break;
 
         case 0xfd:
@@ -510,3 +516,30 @@ void add_monitor_res(hd_t *hd, unsigned width, unsigned height, unsigned vfreq, 
   res->monitor.vfreq = vfreq;
   res->monitor.interlaced = il;
 }
+
+/*
+ * This looks evil, but some Mac displays really lie at us.
+ */
+void fix_edid_info(hd_data_t *hd_data, unsigned char *edid)
+{
+  unsigned vend, dev;
+  unsigned timing;
+  int fix = 0;
+
+  vend = (edid[8] << 8) + edid[9];
+  dev = (edid[0xb] << 8) + edid[0xa];
+
+  timing = (edid[0x24] << 8) + edid[0x23];
+
+  /* APP9214: Apple Studio Display */
+  if(vend == 0x0610 && dev == 0x9214 && timing == 0x0800) {
+    timing = 0x1000;
+    fix = 1;
+  }
+
+  if(fix) {
+    edid[0x23] = timing & 0xff;
+    edid[0x24] = (timing >> 8) & 0xff;
+  }
+}
+

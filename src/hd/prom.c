@@ -210,6 +210,7 @@ void read_devtree_entry(hd_data_t *hd_data, devtree_t *parent, char *dirname)
   read_int(path, "revision-id", &devtree->revision_id);
 
   read_mem(path, "EDID", &devtree->edid, 0x80);
+  if(!devtree->edid) read_mem(path, "DFP,EDID", &devtree->edid, 0x80);
 
   if(
     devtree->class_code != -1 && devtree->vendor_id != -1 &&
