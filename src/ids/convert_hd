@@ -11,8 +11,10 @@ sub help;
 sub read_name_file;
 sub read_driver_file;
 sub read_id_file;
+sub read_pcimap_file;
 sub eisa_id;
 sub eisa_str;
+
 
 sub remove_nops;
 sub remove_duplicates;
@@ -144,6 +146,10 @@ for $f (@ARGV) {
         $format = 'xml';
         last;
       }
+      if(/^#\s+pci\s+module\s+vendor\s+device\s+subvendor\s+subdevice\s+class\s+class_mask\s+driver_data\s*$/) {
+        $format = 'pcimap';
+        last;
+      }
     }
 
     if(!$format) {
@@ -190,6 +196,12 @@ for $f (@ARGV) {
 
       print STDERR "======  \"$f\": id info  ======\n";
       read_id_file $f, \@f;
+
+    }
+    elsif($format eq 'pcimap') {
+
+      print STDERR "======  \"$f\": pcimap info  ======\n";
+      read_pcimap_file $f, \@f;
 
     }
   }
@@ -842,6 +854,68 @@ sub read_id_file
   }
 
   $rif_save_item->();
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# read pcimap file
+#
+
+sub read_pcimap_file
+{
+  my (@l, $id, $n, $key, $val, $mask);
+  local $_;
+
+  ( $file_name, $file ) = @_;
+
+  for (@$file) {
+    $line++;
+    chomp;
+    s/\s*$//;
+    next if /^\s*#/;
+    next if /^$/;
+
+    @l = split;
+
+    die "invalid line: $file_name($line)\n" unless @l == 8;
+
+    $val = [];
+
+    $val->[$he_driver] = [ $flag_string, "m\t$l[0]" ];
+
+    $key = [];
+
+    $key->[$he_vendor_id] = [ $flag_id, $tag_pci, $n ] if ($n = num $l[1]) != 0xffffffff;
+    $key->[$he_device_id] = [ $flag_id, $tag_pci, $n ] if ($n = num $l[2]) != 0xffffffff;
+    $key->[$he_subvendor_id] = [ $flag_id, $tag_pci, $n ] if ($n = num $l[3]) != 0xffffffff;
+    $key->[$he_subdevice_id] = [ $flag_id, $tag_pci, $n ] if ($n = num $l[4]) != 0xffffffff;
+
+    $n = num $l[6];
+
+    if($mask = ($n >> 16) & 0xff) {
+      $key->[$he_baseclass_id] = [ $flag_id, $tag_pci, (num($l[5]) >> 16) & 0xff ];
+      if($mask != 0xff) {
+        $key->[$he_baseclass_id][4] = (~$mask & 0xff);
+      }
+    }
+
+    if($mask = ($n >> 8) & 0xff) {
+      $key->[$he_subclass_id] = [ $flag_id, $tag_pci, (num($l[5]) >> 8) & 0xff ];
+      if($mask != 0xff) {
+        $key->[$he_subclass_id][4] = (~$mask & 0xff);
+      }
+    }
+
+    if($mask = $n & 0xff) {
+      $key->[$he_progif_id] = [ $flag_id, $tag_pci, num($l[5]) & 0xff ];
+      if($mask != 0xff) {
+        $key->[$he_progif_id][4] = (~$mask & 0xff);
+      }
+    }
+
+    push @hd, [ "$file_name($line)", [ $key ], $val ];
+  }
 }
 
 
