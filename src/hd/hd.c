@@ -449,8 +449,8 @@ driver_info_t *hd_free_driver_info(driver_info_t *di)
         break;
 
       case di_module:
-        free_mem(di->module.name);
-        free_mem(di->module.mod_args);
+        free_str_list(di->module.names);
+        free_str_list(di->module.mod_args);
         free_mem(di->module.conf);
         break;
 
@@ -1090,11 +1090,9 @@ void hd_scan(hd_data_t *hd_data)
 {
   char *s = NULL;
   int i, j;
-//  unsigned u;
   hd_t *hd;
   uint64_t irqs;
   str_list_t *sl, *sl0;
-//  driver_info_t *di;
 
 #ifdef LIBHD_MEMCHECK
   if(!libhd_log) {
@@ -2410,16 +2408,24 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
         break;
 
       case di_module:
-        for(i = 0, sl = di->module.hddb0; sl; sl = sl->next, i++) {
-          if(i == 0) {
-            di->module.name = new_str(sl->str);
-            di->module.active = hd_module_is_active(hd_data, di->module.name);
+        for(di->module.active = 1, sl = di->module.hddb0; sl; sl = sl->next) {
+          t0 = s = new_str(sl->str);
+
+          t = strsep(&t0, " ");
+
+          add_str_list(&di->module.names, t);
+          di->module.active &= hd_module_is_active(hd_data, t);
+
+          if(t0) {
+            add_str_list(&di->module.mod_args, module_cmd(hd, t0));
           }
-          else if(i == 1) {
-            di->module.mod_args = new_str(module_cmd(hd, sl->str));
+          else {
+            add_str_list(&di->module.mod_args, NULL);
           }
+
+          free_mem(s);
         }
-        for(i = 0, sl = di->module.hddb1; sl; sl = sl->next, i++) {
+        for(sl = di->module.hddb1; sl; sl = sl->next) {
           s = module_cmd(hd, sl->str);
           if(s) str_printf(&di->module.conf, -1, "%s\n", s);
         }
@@ -2860,6 +2866,7 @@ int hd_apm_enabled(hd_data_t *hd_data)
 int hd_usb_support(hd_data_t *hd_data)
 {
   hd_t *hd;
+  hd_res_t *res;
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -2870,7 +2877,10 @@ int hd_usb_support(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class == bc_serial && hd->sub_class == sc_ser_usb) {
-      return hd->prog_if == pif_usb_ohci ? 2 : 1;	/* 2: ohci, 1: uhci */
+      for(res = hd->res; res; res = res->next) {
+        if(res->any.type == res_irq)
+          return hd->prog_if == pif_usb_ohci ? 2 : 1;	/* 2: ohci, 1: uhci */
+      }
     }
   }
 

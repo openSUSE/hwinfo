@@ -185,7 +185,7 @@
 ADP 1505
 	m	aha152x
 		options aha152x		aha152x=<io0>,<irq0>
-	i	aha152x|aha152x=<io0>,<irq0>
+	i	aha152x aha152x=<io0>,<irq0>
 
 # scsi/qlogicpti.c
 s4001 1003

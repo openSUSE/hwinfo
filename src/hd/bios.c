@@ -46,7 +46,10 @@ int detect_smp(hd_data_t *hd_data)
 
   if(!bt) return -1;
 
-  return bt->smp.ok ? bt->smp.cpus_en ? bt->smp.cpus_en : 1 : 0;
+//  return bt->smp.ok ? bt->smp.cpus_en ? bt->smp.cpus_en : 1 : 0;
+// Dell Dimension 8100 has a MP table with 0 cpus!
+
+  return bt->smp.ok ? bt->smp.cpus_en : 0;
 
   return 0;
 }

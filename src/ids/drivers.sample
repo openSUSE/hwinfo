@@ -52,7 +52,7 @@ PNP 80d6
 ADP 1505
 	m	aha152x
 		options aha152x		aha152x=<io0>,<irq0>
-	i	aha152x|aha152x=<io0>,<irq0>
+	i	aha152x aha152x=<io0>,<irq0>
 
 
 # block/cpqarray.c

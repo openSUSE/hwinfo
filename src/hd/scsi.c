@@ -65,7 +65,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
 #endif
   hd_res_t *res;
   scsi_t *ioctl_scsi, *scsi, *scsi2, *scsi3, *next;
-  str_list_t *pl0 = NULL;
+  str_list_t *pl0 = NULL, *sl;
   int i, j;
   unsigned found, found_a;
   driver_info_t *di, *di0;
@@ -188,11 +188,15 @@ void hd_scan_scsi(hd_data_t *hd_data)
       for(di = di0; di; di = di->next) {
         if(
           di->any.type == di_module &&
-          di->module.name &&
-          !strcmp(di->module.name, scsi_ctrl[i].driver)
+          di->module.names
         ) {
-          if(!found) found = hd->idx;
-          if(di->module.active && !found_a) found_a = hd->idx;
+          for(sl = di->module.names; sl; sl = sl->next) {
+            if(!strcmp(sl->str, scsi_ctrl[i].driver)) {
+              if(!found) found = hd->idx;
+              if(di->module.active && !found_a) found_a = hd->idx;
+              break;
+            }
+          }
         }
       }
       di0 = hd_free_driver_info(di0);

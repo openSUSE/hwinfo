@@ -813,8 +813,8 @@ typedef struct {
   str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
   unsigned active:1;			/* if module is currently active */
   unsigned modprobe:1;			/* modprobe or insmod  */
-  char *name;				/* module name */
-  char *mod_args;			/* additional module args */
+  str_list_t *names;			/* (ordered) list of module names */
+  str_list_t *mod_args;			/* list of module args (corresponds to the module name list) */
   char *conf;				/* conf.modules entry, if any (e.g. for sb.o) */
 } driver_info_module_t;
 
@@ -1004,6 +1004,7 @@ typedef struct s_hd_t {
     unsigned cardbus:1;		/* cardbus card */
     unsigned pcmcia:1;		/* pcmcia card */
     unsigned notready:1;	/* for (removeable) block devices: no medium */
+    unsigned manual:1;		/* undetectable, manually configured hardware */
   } is;
 
   struct {			/* this struct is for internal purposes only */

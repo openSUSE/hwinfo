@@ -212,7 +212,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
   hd_res_t *res;
   char buf[256];
   driver_info_t *di, *di0;
-  str_list_t *sl;
+  str_list_t *sl, *sl1, *sl2;
   isdn_parm_t *ip;
 
   if(h->vend || h->dev || h->dev_name || h->vend_name) {
@@ -482,18 +482,27 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
         break;
 
       case di_module:
-        dump_line(
-          "Driver Status: %s is %sactive\n",
-          di->module.name, di->module.active ? "" : "not "
+        dump_line_str("Driver Status: ");
+        for(sl1 = di->module.names; sl1; sl1 = sl1->next) {
+          dump_line0("%s%c", sl1->str, sl1->next ? ',' : ' ');
+        }
+        dump_line0("%s %sactive\n",
+          di->module.names->next ? "are" : "is",
+          di->module.active ? "" : "not "
         );
 
-        dump_line(
-          "Driver Activation Cmd: \"%s %s%s%s\"\n",
-          di->module.modprobe ? "modprobe" : "insmod",
-          di->module.name,
-          di->module.mod_args ? " " : "",
-          di->module.mod_args ? di->module.mod_args : ""
-        );
+        dump_line_str("Driver Activation Cmd: \"");
+        for(sl1 = di->module.names, sl2 = di->module.mod_args; sl1 && sl2; sl1 = sl1->next, sl2 = sl2->next) {
+          dump_line0("%s %s%s%s%s",
+            di->module.modprobe ? "modprobe" : "insmod",
+            sl1->str,
+            sl2->str ? " " : "",
+            sl2->str ? sl2->str : "",
+            (sl1->next && sl2->next) ? "; " : ""
+          );
+        }
+
+        dump_line0("\"\n");
 
         if(di->module.conf) {
           char *s = di->module.conf;
