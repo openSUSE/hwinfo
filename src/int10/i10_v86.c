@@ -48,7 +48,7 @@ static int vm86_rep(struct vm86_struct *ptr);
 #endif
 void log_registers(void);
 
-#define CPU_REG(x) (vm86s.regs.##x)
+#define CPU_REG(x) (vm86s.regs.x)
 #define CPU_REG_LW(reg)      (*((CARD16 *)&CPU_REG(reg)))
 #define CPU_REG_HW(reg)      (*((CARD16 *)&CPU_REG(reg) + 1))
 #define CPU_REG_LB(reg)      (*(CARD8 *)&CPU_REG(e##reg))
