@@ -1,3 +1,6 @@
+23/6/2004:	v8.61
+	- updated aic7?xx info (#42061)
+
 23/6/2004:	v8.60
 	- major 229, minors >= 128 are hvsi%u devies (host virtual
           serial interface) (requested by IBM)
