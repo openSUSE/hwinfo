@@ -1,3 +1,6 @@
+	- updated X11 data
+	- added display sizes for a number of IBM notebooks
+
 18/8/2004:	v9.4
 	- new wlan data (#42759, #39481, #43921)
 	- hwscan now really moved to /sbin 
