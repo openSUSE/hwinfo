@@ -104,7 +104,7 @@ typedef enum probe_feature {
   pr_braille_ht, pr_ignx11, pr_sys, pr_dasd, pr_i2o, pr_cciss, pr_bios_vbe,
   pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
   pr_fb, pr_bios_vbe2, pr_veth, pr_partition, pr_disk, pr_ataraid, pr_pppoe,
-  pr_scan, pr_partition_add, pr_pcmcia,
+  pr_scan, pr_partition_add, pr_pcmcia, pr_fork,
   /* pr_bios_32, */
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
@@ -1777,6 +1777,8 @@ typedef struct {
     unsigned list_all:1;	/**< Return even devices with status 'not available'. */
     unsigned fast:1;		/**< Don't check tricky hardware. */
     unsigned list_md:1;		/**< Report md & lvm devices from /proc/partitions */
+    unsigned nofork:1;		/**< don't run potentially hanging code in a subprocess */
+    unsigned forked:1;		/**< we're running in a subprocess */
   } flags;
 
 
@@ -1824,6 +1826,14 @@ typedef struct {
   str_list_t *disks;		/**< (Internal) disks according to /proc/partitions */
   str_list_t *partitions;	/**< (Internal) dto, partitions */
   hd_smbios_t *smbios;		/**< (Internal) smbios data */
+  struct {
+    unsigned ok:1;
+    unsigned size;
+    unsigned used;
+    void *data;
+    int id;
+    int updated;
+  } shm;			/**< (Internal) our shm segment */
 } hd_data_t;
 
 

@@ -27,11 +27,9 @@
 static unsigned read_data(hd_data_t *hd_data, int fd, unsigned char *buf, unsigned buf_size);
 static void get_ps2_mouse(hd_data_t *hd_data);
 static void test_ps2_open(void *arg);
-#if 0
-static void test_serial_open(void *arg);
-#endif
 
 static void get_serial_mouse(hd_data_t* hd_data);
+static void add_serial_mouse(hd_data_t* hd_data);
 static int _setspeed(int fd, int old, int new, int needtowrite, unsigned short flags);
 static void setspeed(int fd, int new, int needtowrite, unsigned short flags);
 static unsigned chk4id(ser_device_t *mi);
@@ -57,8 +55,24 @@ void hd_scan_mouse(hd_data_t *hd_data)
 
   PROGRESS(2, 0, "serial");
 
-  get_serial_mouse(hd_data);
-  if((hd_data->debug & HD_DEB_MOUSE)) dump_ser_mouse_data(hd_data);
+  hd_fork(hd_data, 20, 20);
+
+  if(hd_data->flags.forked) {
+    get_serial_mouse(hd_data);
+    hd_move_to_shm(hd_data);
+    if((hd_data->debug & HD_DEB_MOUSE)) dump_ser_mouse_data(hd_data);
+  }
+  else {
+    /* take data from shm */
+    hd_data->ser_mouse = ((hd_data_t *) (hd_data->shm.data))->ser_mouse;
+    if((hd_data->debug & HD_DEB_MOUSE)) dump_ser_mouse_data(hd_data);
+  }
+
+  hd_fork_done(hd_data);
+
+  add_serial_mouse(hd_data);
+
+  hd_shm_clean(hd_data);
 
   for(sm = hd_data->ser_mouse; sm; sm = sm_next) {
     sm_next = sm->next;
@@ -344,13 +358,10 @@ static void get_sunmouse(hd_data_t *hd_data)
     }
 }
 
-#if 0
-void test_serial_open(void *arg)
-{
-  open((char *) arg, O_RDWR | O_NONBLOCK);
-}
-#endif
 
+/*
+ * Gather serial mouse data and put it into hd_data->ser_mouse.
+ */
 void get_serial_mouse(hd_data_t *hd_data)
 {
   hd_t *hd;
@@ -358,7 +369,6 @@ void get_serial_mouse(hd_data_t *hd_data)
   unsigned modem_info;
   fd_set set, set0;
   struct timeval to;
-  char buf[4];
   ser_device_t *sm;
   struct termios tio;
 
@@ -372,12 +382,6 @@ void get_serial_mouse(hd_data_t *hd_data)
       !hd->tag.ser_skip &&
       !has_something_attached(hd_data, hd)
     ) {
-#if 0
-      if(hd_timeout(test_serial_open, hd->unix_dev_name, 3) > 0) {
-        ADD2LOG("serial: open(%s) timed out\n", hd->unix_dev_name);
-      }
-      else
-#endif
       if((fd = open(hd->unix_dev_name, O_RDWR | O_NONBLOCK)) >= 0) {
         if(tcgetattr(fd, &tio)) continue;
         sm = add_ser_mouse_entry(&hd_data->ser_mouse, new_mem(sizeof *sm));
@@ -439,7 +443,20 @@ void get_serial_mouse(hd_data_t *hd_data)
     tcflush(sm->fd, TCIOFLUSH);
     tcsetattr(sm->fd, TCSAFLUSH, &sm->tio);
     close(sm->fd);
+  }
+}
 
+
+/*
+ * Go through serial mouse data and add hd entries.
+ */
+void add_serial_mouse(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  char buf[4];
+  ser_device_t *sm;
+
+  for(sm = hd_data->ser_mouse; sm; sm = sm->next) {
     if(sm->is_mouse) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class.id = bc_mouse;

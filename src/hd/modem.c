@@ -62,6 +62,7 @@ static char *init_strings[] = {
 #define MAX_INIT_STRING	(sizeof init_strings / sizeof *init_strings)
 
 static void get_serial_modem(hd_data_t* hd_data);
+static void add_serial_modem(hd_data_t* hd_data);
 static int dev_name_duplicate(hd_data_t *hd_data, char *dev_name);
 static void guess_modem_name(hd_data_t *hd_data, ser_device_t *sm);
 static void at_cmd(hd_data_t *hd_data, char *at, int raw, int log_it);
@@ -87,8 +88,24 @@ void hd_scan_modem(hd_data_t *hd_data)
 
   PROGRESS(1, 0, "serial");
 
-  get_serial_modem(hd_data);
-  if((hd_data->debug & HD_DEB_MODEM)) dump_ser_modem_data(hd_data);
+  hd_fork(hd_data, 15, 120);
+
+  if(hd_data->flags.forked) {
+    get_serial_modem(hd_data);
+    hd_move_to_shm(hd_data);
+    if((hd_data->debug & HD_DEB_MODEM)) dump_ser_modem_data(hd_data);
+  }
+  else {
+    /* take data from shm */
+    hd_data->ser_modem = ((hd_data_t *) (hd_data->shm.data))->ser_modem;
+    if((hd_data->debug & HD_DEB_MODEM)) dump_ser_modem_data(hd_data);
+  }
+
+  hd_fork_done(hd_data);
+
+  add_serial_modem(hd_data);
+
+  hd_shm_clean(hd_data);
 
   for(sm = hd_data->ser_modem; sm; sm = sm_next) {
     sm_next = sm->next;
@@ -135,10 +152,8 @@ void get_serial_modem(hd_data_t *hd_data)
   hd_t *hd;
   int i, j, fd;
   unsigned modem_info, baud;
-  char buf[4];
   char *command;
   ser_device_t *sm;
-  hd_res_t *res;
   int chk_usb = hd_probe_feature(hd_data, pr_modem_usb);
 
   /* serial modems & usb modems */
@@ -375,7 +390,7 @@ void get_serial_modem(hd_data_t *hd_data)
     }
   }
 
-#if 1
+#if 0
   /* just for testing */
   if((hd_data->debug & HD_DEB_MODEM)) {
     int i;
@@ -408,7 +423,18 @@ void get_serial_modem(hd_data_t *hd_data)
     tcflush(sm->fd, TCIOFLUSH);
     tcsetattr(sm->fd, TCSAFLUSH, &sm->tio);
     close(sm->fd);
+  }
+}
 
+
+void add_serial_modem(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  char buf[4];
+  ser_device_t *sm;
+  hd_res_t *res;
+
+  for(sm = hd_data->ser_modem; sm; sm = sm->next) {
     if(!sm->is_modem) continue;
 
     hd = hd_get_device_by_idx(hd_data, sm->hd_idx);
@@ -467,6 +493,7 @@ void get_serial_modem(hd_data_t *hd_data)
     res->init_strings.init2 = new_str(sm->init_string2);
   }
 }
+
 
 int dev_name_duplicate(hd_data_t *hd_data, char *dev_name)
 {
@@ -1006,6 +1033,7 @@ void dump_ser_modem_data(hd_data_t *hd_data)
 {
   int j;
   ser_device_t *sm;
+  str_list_t *sl;
 
   if(!(sm = hd_data->ser_modem)) return;
 
@@ -1045,6 +1073,10 @@ void dump_ser_modem_data(hd_data_t *hd_data)
       ADD2LOG("  bits: %u\n", sm->bits);
       ADD2LOG("  PnP Rev: %u.%02u\n", sm->pnp_rev / 100, sm->pnp_rev % 100);
       ADD2LOG("  PnP ID: \"%s\"\n", sm->pnp_id);
+    }
+
+    for(sl = sm->at_resp; sl; sl = sl->next) {
+      ADD2LOG("  at: %s\n", sl->str);
     }
 
     if(sm->next) ADD2LOG("\n");

@@ -215,6 +215,15 @@ int is_pnpinfo(ser_device_t *mi, int ofs);
 
 int is_pcmcia_ctrl(hd_data_t *hd_data, hd_t *hd);
 
+void hd_fork(hd_data_t *hd_data, int timeout, int total_timeout);
+void hd_fork_done(hd_data_t *hd_data);
+void hd_shm_init(hd_data_t *hd_data);
+void hd_shm_clean(hd_data_t *hd_data);
+void hd_shm_done(hd_data_t *hd_data);
+void *hd_shm_add(hd_data_t *hd_data, void *ptr, unsigned len);
+int hd_is_shm_ptr(hd_data_t *hd_data, void *ptr);
+void hd_move_to_shm(hd_data_t *hd_data);
+
 #ifdef __cplusplus
 }
 #endif

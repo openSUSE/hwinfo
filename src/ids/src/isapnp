@@ -324,7 +324,7 @@
 
  vendor.id		LGI
 &device.id		eisa 0x8001
-+device.name		Logitech First/Pilot Maus
++device.name		Logitech First/Pilot Mouse
 
  vendor.id		LGI
 &device.id		eisa 0x800b+0x0002

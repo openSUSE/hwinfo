@@ -8,12 +8,15 @@
 #include <ctype.h>
 #include <errno.h>
 #include <dirent.h>
+#include <time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <sys/ioctl.h>
 #include <sys/mount.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 #include <linux/pci.h>
 #include <linux/hdreg.h>
 #include <linux/fs.h>
@@ -143,6 +146,11 @@ static void assign_hw_class(hd_data_t *hd_data, hd_t *hd);
 static void short_vendor(char *vendor);
 static void create_model_name(hd_data_t *hd_data, hd_t *hd);
 #endif
+
+static void sigchld_handler(int);
+static pid_t child_id;
+static char *hd_shm_add_str(hd_data_t *hd_data, char *str);
+static str_list_t *hd_shm_add_str_list(hd_data_t *hd_data, str_list_t *sl);
 
 
 /*
@@ -289,7 +297,8 @@ static struct s_pr_flags {
   { pr_pppoe,         0,            8|4|2|1, "pppoe"         },
   /* dummy, used to turn off hwscan */
   { pr_scan,          0,                  0, "scan"          },
-  { pr_pcmcia,        0,            8|4|2|1, "pcmcia"        }
+  { pr_pcmcia,        0,            8|4|2|1, "pcmcia"        },
+  { pr_fork,          0,                  0, "fork"          }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -794,6 +803,8 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->smbios = free_smbios_list(hd_data->smbios);
 
   hd_data->last_idx = 0;
+
+  hd_shm_done(hd_data);
 
   return NULL;
 }
@@ -1658,6 +1669,15 @@ void hd_scan(hd_data_t *hd_data)
   /* init driver info database */
   hddb_init(hd_data);
 
+  /* only first time */
+  if(hd_data->last_idx == 0) {
+    hd_set_probe_feature(hd_data, pr_fork);
+    if(!hd_probe_feature(hd_data, pr_fork)) hd_data->flags.nofork = 1;
+  }
+
+  /* get shm segment, if we didn't do it already */
+  hd_shm_init(hd_data);
+
 #ifndef LIBHD_TINY
   /*
    * There might be old 'manual' entries left from an earlier scan. Remove
@@ -2365,6 +2385,10 @@ char *hd_read_symlink(char *link_name)
 void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg)
 {
   char buf1[32], buf2[32], buf3[128], *fn;
+
+  if(hd_data->shm.ok && hd_data->flags.forked) {
+    ((hd_data_t *) (hd_data->shm.data))->shm.updated++;
+  }
 
   if(!msg) msg = "";
 
@@ -4914,5 +4938,313 @@ int hd_is_hw_class(hd_t *hd, hd_hw_item_t hw_class)
   }
 
   return 0;
+}
+
+
+/*
+ * Start subprocess for dangerous things.
+ *
+ * Stop it after total_timeout seconds or if nothing happens for
+ * timeout seonds.
+ */
+void hd_fork(hd_data_t *hd_data, int timeout, int total_timeout)
+{
+  void (*old_sigchld_handler)(int);
+  pid_t child;
+  struct timespec wait_time;
+  int i, j, sleep_intr = 1;
+  hd_data_t *hd_data_shm;
+  time_t stop_time;
+  int updated, rem_time;
+
+  if(hd_data->flags.forked) return;
+
+  if(hd_data->flags.nofork) {
+    hd_data->flags.forked = 1;
+    return;
+  }
+
+  hd_data_shm = hd_data->shm.data;
+
+  stop_time = time(NULL) + total_timeout;
+  rem_time = total_timeout;
+
+  child_id = 0;
+
+  old_sigchld_handler = signal(SIGCHLD, sigchld_handler);
+
+  wait_time.tv_sec = timeout;
+  wait_time.tv_nsec = 0;
+
+  updated = hd_data_shm->shm.updated;
+
+  child = fork();
+
+  if(child != -1) {
+    if(child) {
+      ADD2LOG(
+        "******  started child process %d (%ds/%ds)  ******\n",
+        (int) child, timeout, total_timeout
+      );
+
+      while(child_id != child && sleep_intr) {
+        sleep_intr = nanosleep(&wait_time, &wait_time);
+//        fprintf(stderr, "woke up %d\n", sleep_intr);
+        rem_time = stop_time - time(NULL);
+        if(updated != hd_data_shm->shm.updated && rem_time >= 0) {
+          /* reset time if there was some progress and we've got some time left  */
+          rem_time++;
+          wait_time.tv_sec = rem_time > timeout ? timeout : rem_time;
+          wait_time.tv_nsec = 0;
+
+          sleep_intr = 1;
+        }
+        updated = hd_data_shm->shm.updated;
+      }
+
+      if(child_id != child) {
+        ADD2LOG("******  killed child process %d (%ds) ******\n", (int) child, rem_time);
+        kill(child, SIGKILL);
+        for(i = 10; i && !waitpid(child, NULL, WNOHANG); i--) {
+          wait_time.tv_sec = 0;
+          wait_time.tv_nsec = 10*1000000;
+          nanosleep(&wait_time, NULL);
+        }
+      }
+
+      i = hd_data->log ? strlen(hd_data->log) : 0;
+
+      if(hd_data_shm->log) {
+        j = strlen(hd_data_shm->log);
+        hd_data->log = resize_mem(hd_data->log, i + j + 1);
+        memcpy(hd_data->log + i, hd_data_shm->log, j + 1);
+      }
+
+      ADD2LOG("******  stopped child process %d (%ds)  ******\n", (int) child, rem_time);
+    }
+    else {
+#ifdef LIBHD_MEMCHECK
+      /* stop logging in child process */
+      if(libhd_log) fclose(libhd_log);
+      libhd_log = NULL;
+#endif
+      hd_data->log = free_mem(hd_data->log);
+
+      hd_data->flags.forked = 1;
+    }
+  }
+
+  signal(SIGCHLD, old_sigchld_handler);
+}
+
+
+/*
+ * Stop subprocess.
+ */
+void hd_fork_done(hd_data_t *hd_data)
+{
+  int len;
+  void *p;
+  hd_data_t *hd_data_shm;
+
+  if(!hd_data->flags.forked || hd_data->flags.nofork) return;
+
+  hd_data_shm = hd_data->shm.data;
+
+  if(hd_data->log) {
+    len = strlen(hd_data->log) + 1;
+    p = hd_shm_add(hd_data, hd_data->log, len);
+    hd_data_shm->log = p;
+  }
+
+  _exit(0);
+}
+
+
+/*
+ * SIGCHLD handler while we're waiting for our child.
+ */
+void sigchld_handler(int num)
+{
+  pid_t p = waitpid(-1, NULL, WNOHANG);
+
+  if(p && p != -1) child_id = p;
+}
+
+
+/*
+ * Get a sufficiently large shm segment.
+ */
+void hd_shm_init(hd_data_t *hd_data)
+{
+  void *p;
+
+  if(hd_data->shm.ok || hd_data->flags.nofork) return;
+
+  memset(&hd_data->shm, 0, sizeof hd_data->shm);
+
+  hd_data->shm.size = 256*1024;
+
+  hd_data->shm.id = shmget(IPC_PRIVATE, hd_data->shm.size, IPC_CREAT | 0600);
+
+  if(hd_data->shm.id == -1) return;
+
+  p = shmat(hd_data->shm.id, NULL, 0);
+
+  shmctl(hd_data->shm.id, IPC_RMID, NULL);
+
+  if(p == (void *) -1) return;
+
+  hd_data->shm.data = p;
+
+  ADD2LOG("shm: attached segment %d at %p\n", hd_data->shm.id, hd_data->shm.data);
+
+  hd_data->shm.ok = 1;
+
+  hd_shm_clean(hd_data);
+}
+
+
+/*
+ * Reset shm usage, remove references to shm area.
+ */
+void hd_shm_clean(hd_data_t *hd_data)
+{
+  hd_data_t *hd_data_shm;
+
+  if(!hd_data->shm.ok) return;
+
+  if(hd_is_shm_ptr(hd_data, hd_data->ser_mouse)) hd_data->ser_mouse = NULL;
+  if(hd_is_shm_ptr(hd_data, hd_data->ser_modem)) hd_data->ser_modem = NULL;
+
+
+  hd_data->shm.used = sizeof *hd_data;
+  hd_data->shm.updated = 0;
+
+  memcpy(hd_data_shm = hd_data->shm.data, hd_data, sizeof *hd_data);
+
+  hd_data_shm->log = NULL;
+}
+
+
+/*
+ * Release shm segment.
+ */
+void hd_shm_done(hd_data_t *hd_data)
+{
+  if(!hd_data->shm.ok) return;
+
+  shmdt(hd_data->shm.data);
+
+  hd_data->shm.ok = 0;
+}
+
+
+/*
+ * Copy into shm area. If ptr is NULL return a shm area of size len.
+ */
+void *hd_shm_add(hd_data_t *hd_data, void *ptr, unsigned len)
+{
+  if(!hd_data->shm.ok || !len) return NULL;
+
+  hd_data = hd_data->shm.data;
+
+  if(hd_data->shm.size - hd_data->shm.used < len) return NULL;
+
+  if(ptr) {
+    ptr = memcpy(hd_data->shm.data + hd_data->shm.used, ptr, len);
+  }
+  else {
+    ptr = memset(hd_data->shm.data + hd_data->shm.used, 0, len);
+  }
+
+  hd_data->shm.used += len;
+
+  return ptr;
+}
+
+
+/*
+ * Check if ptr points to a valid shm address.
+ */
+int hd_is_shm_ptr(hd_data_t *hd_data, void *ptr)
+{
+  if(!hd_data->shm.ok || !ptr) return 0;
+
+  hd_data = hd_data->shm.data;
+
+  if(
+    ptr < hd_data->shm.data ||
+    ptr >= hd_data->shm.data + hd_data->shm.used
+  ) return 0;
+  
+  return 1;
+}
+
+
+char *hd_shm_add_str(hd_data_t *hd_data, char *str)
+{
+  return hd_shm_add(hd_data, str, str ? strlen(str) + 1 : 0);
+}
+
+
+str_list_t *hd_shm_add_str_list(hd_data_t *hd_data, str_list_t *sl)
+{
+  str_list_t *sl0 = NULL, **sl_shm;
+
+  for(sl_shm = &sl0; sl; sl = sl->next, sl_shm = &(*sl_shm)->next) {
+    *sl_shm = hd_shm_add(hd_data, NULL, sizeof **sl_shm);
+    (*sl_shm)->str = hd_shm_add_str(hd_data, sl->str);
+  }
+
+  return sl0;
+}
+
+
+void hd_move_to_shm(hd_data_t *hd_data)
+{
+  hd_data_t *hd_data_shm;
+  ser_device_t *ser, **ser_shm;
+  struct {
+    ser_device_t **src, **dst;
+  } ser_dev[2];
+  unsigned u;
+
+  if(!hd_data->shm.ok) return;
+
+  hd_data_shm = hd_data->shm.data;
+
+  ser_dev[0].src = &hd_data->ser_mouse;
+  ser_dev[0].dst = &hd_data_shm->ser_mouse;
+  ser_dev[1].src = &hd_data->ser_modem;
+  ser_dev[1].dst = &hd_data_shm->ser_modem;
+
+  for(u = 0; u < sizeof ser_dev / sizeof *ser_dev; u++) {
+    if(*ser_dev[u].src) {
+      /* copy serial mouse data */
+      for(
+        ser = *ser_dev[u].src, ser_shm = ser_dev[u].dst;
+        ser;
+        ser = ser->next, ser_shm = &(*ser_shm)->next
+      ) {
+        *ser_shm = hd_shm_add(hd_data, ser, sizeof *ser);
+      }
+
+      for(ser = *ser_dev[u].dst; ser; ser = ser->next) {
+        ser->dev_name = hd_shm_add_str(hd_data, ser->dev_name);
+        ser->serial = hd_shm_add_str(hd_data, ser->serial);
+        ser->class_name = hd_shm_add_str(hd_data, ser->class_name);
+        ser->dev_id = hd_shm_add_str(hd_data, ser->dev_id);
+        ser->user_name = hd_shm_add_str(hd_data, ser->user_name);
+        ser->vend = hd_shm_add_str(hd_data, ser->vend);
+        ser->init_string1 = hd_shm_add_str(hd_data, ser->init_string1);
+        ser->init_string2 = hd_shm_add_str(hd_data, ser->init_string2);
+        ser->pppd_option = hd_shm_add_str(hd_data, ser->pppd_option);
+
+        ser->at_resp = hd_shm_add_str_list(hd_data, ser->at_resp);
+      }
+    }
+  }
+
 }
 
