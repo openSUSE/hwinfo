@@ -41,8 +41,10 @@ static unsigned char crc(unsigned char *mem, unsigned len);
 static int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
 static void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
 static int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios32);
+#if defined(__i386__)
 static void get_compaq_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios32);
 static void bios32_call(bios32_regs_t *regs);
+#endif
 #endif
 
 int detect_smp(hd_data_t *hd_data)
@@ -446,6 +448,7 @@ void hd_scan_bios(hd_data_t *hd_data)
       ADD2LOG("  bios32: compaq machine\n");
     }
 
+#ifdef __i386__
     if(bt->bios32.compaq) {
       /* work on a copy, just in case */
       mem.data = new_mem(mem.size);
@@ -453,6 +456,8 @@ void hd_scan_bios(hd_data_t *hd_data)
 
       get_compaq_info(hd_data, &mem, &bt->bios32);
     }
+#endif
+
   }
 
 
@@ -1150,6 +1155,8 @@ int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios
 }
 
 
+#if defined(__i386__)
+
 /*
  * call some 32 bit code in BIOS
  *
@@ -1270,6 +1277,8 @@ void get_compaq_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bio
     }
   }
 }
+
+#endif		/* defined(__i386__) */
 
 
 #endif		/* !defined(LIBHD_TINY) */
