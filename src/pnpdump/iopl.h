@@ -1,7 +1,7 @@
 /*****************************************************************************
 **
 ** iopl.h
-** $Header: /abuild/poeml/svn-convert/hwinfo/../libhd-cvs/src/pnpdump/Attic/iopl.h,v 1.1 2000/02/12 12:36:27 snwint Exp $
+** $Header: /abuild/poeml/svn-convert/hwinfo/../libhd-cvs/src/pnpdump/Attic/iopl.h,v 1.2 2000/07/06 12:56:26 snwint Exp $
 **
 ** Acquire/Relinquish I/O port access privileges.
 ** This header file also provides platform-independent inb/outb declarations.

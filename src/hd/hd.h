@@ -75,6 +75,7 @@ typedef enum probe_feature {
   pr_parallel, pr_parallel_lp, pr_parallel_zip, pr_isa, pr_isa_isdn,
   pr_dac960, pr_smart, pr_isdn, pr_kbd, pr_prom, pr_sbus, pr_int,
   pr_braille, pr_braille_alva, pr_braille_fhp, pr_braille_ht, pr_ignx11,
+  pr_sys,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
@@ -84,7 +85,7 @@ typedef enum probe_feature {
 typedef enum hw_item {
   hw_cdrom = 1, hw_floppy, hw_disk, hw_network, hw_display, hw_monitor,
   hw_mouse, hw_keyboard, hw_sound, hw_isdn, hw_modem, hw_storage_ctrl,
-  hw_network_ctrl, hw_printer, hw_tv, hw_scanner, hw_braille
+  hw_network_ctrl, hw_printer, hw_tv, hw_scanner, hw_braille, hw_sys
 } hd_hw_item_t;
 
 /*
@@ -144,10 +145,10 @@ typedef enum sc_serial {
   sc_ser_smbus, sc_ser_other = 0x80
 } hd_sc_serial_t;
 
-/* internal sub class values */
+/* internal sub class values (bc_internal) */
 typedef enum sc_internal {
-  sc_int_none, sc_int_isapnp_if, sc_int_main_mem, sc_int_cpu, sc_int_fpu, sc_int_bios,
-  sc_int_prom
+  sc_int_none, sc_int_isapnp_if, sc_int_main_mem, sc_int_cpu, sc_int_fpu,
+  sc_int_bios, sc_int_prom, sc_int_sys
 } hd_sc_internal_t;
 
 /* subclass values of bc_mouse */
@@ -336,6 +337,14 @@ typedef struct {
   unsigned has_color:1;
   unsigned color;
 } prom_info_t;
+
+
+/*
+ * general system data
+ */
+typedef struct {
+  char *system_type;
+} sys_info_t;
 
 
 /*
@@ -712,7 +721,7 @@ typedef union driver_info_u {
 typedef enum hd_detail_type {
   hd_detail_pci, hd_detail_usb, hd_detail_isapnp, hd_detail_cdrom,
   hd_detail_floppy, hd_detail_bios, hd_detail_cpu, hd_detail_prom,
-  hd_detail_monitor
+  hd_detail_monitor, hd_detail_sys
 } hd_detail_type_t;
 
 typedef struct {
@@ -760,6 +769,11 @@ typedef struct {
   monitor_info_t *data;
 } hd_detail_monitor_t;
 
+typedef struct {
+  enum hd_detail_type type;
+  sys_info_t *data;
+} hd_detail_sys_t;
+
 typedef union {
   enum hd_detail_type type;
   hd_detail_pci_t pci;
@@ -771,6 +785,7 @@ typedef union {
   hd_detail_cpu_t cpu;
   hd_detail_prom_t prom;
   hd_detail_monitor_t monitor;
+  hd_detail_sys_t sys;
 } hd_detail_t;
 
 

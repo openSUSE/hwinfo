@@ -42,6 +42,7 @@
 #include "sbus.h"
 #include "int.h"
 #include "braille.h"
+#include "sys.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -134,7 +135,8 @@ static struct s_mod_names {
   { mod_sbus, "sbus" },
   { mod_int, "int" },
   { mod_braille, "braille" },
-  { mod_xtra, "hd" }
+  { mod_xtra, "hd" },
+  { mod_sys, "sys" }
 };
 
 /*
@@ -198,7 +200,8 @@ static struct s_pr_flags {
   { pr_braille_alva, pr_braille,    4|2|1, "braille.alva" },
   { pr_braille_fhp,  pr_braille,    4|2|1, "braille.fhp"  },
   { pr_braille_ht,   pr_braille,    4|2|1, "braille.ht"   },
-  { pr_ignx11,       0,                 0, "ignx11"       }
+  { pr_ignx11,       0,                 0, "ignx11"       },
+  { pr_sys,          0,           8|4|2|1, "sys"          }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -635,6 +638,8 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_prom(hd_data);
 #endif
 #endif	/* LIBHD_TINY */
+
+  hd_scan_sys(hd_data);
 
 #if defined(__i386__) || defined(__alpha__) || defined(__PPC__)
   hd_scan_isapnp(hd_data);
@@ -2424,6 +2429,10 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_braille_fhp);
         hd_set_probe_feature(hd_data, pr_braille_ht);
         break;
+
+      case hw_sys:
+        hd_set_probe_feature(hd_data, pr_sys);
+        break;
     }
     hd_scan(hd_data);
     memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
@@ -2509,6 +2518,11 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 
     case hw_braille:
       base_class = bc_braille;
+      break;
+
+    case hw_sys:
+      base_class = bc_internal;
+      sub_class = sc_int_sys;
       break;
 
     default:

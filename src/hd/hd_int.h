@@ -50,7 +50,7 @@ enum mod_idx {
   mod_net, mod_floppy, mod_misc, mod_bios, mod_cpu, mod_monitor, mod_mouse,
   mod_ide, mod_scsi, mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel,
   mod_isa, mod_dac960, mod_smart, mod_isdn, mod_kbd, mod_prom, mod_sbus,
-  mod_int, mod_braille, mod_xtra
+  mod_int, mod_braille, mod_xtra, mod_sys
 };
 
 void *new_mem(size_t size);

@@ -27,6 +27,7 @@ static void dump_normal(hd_data_t *, hd_t *, FILE *);
 static void dump_cpu(hd_data_t *, hd_t *, FILE *);
 static void dump_bios(hd_data_t *, hd_t *, FILE *);
 static void dump_prom(hd_data_t *, hd_t *, FILE *);
+static void dump_sys(hd_data_t *, hd_t *, FILE *);
 
 static char *make_device_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size);
 static char *make_sub_device_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size);
@@ -81,6 +82,8 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_bios(hd_data, h, f);
   else if(h->base_class == bc_internal && h->sub_class == sc_int_prom)
     dump_prom(hd_data, h, f);
+  else if(h->base_class == bc_internal && h->sub_class == sc_int_sys)
+    dump_sys(hd_data, h, f);
   else
     dump_normal(hd_data, h, f);
 
@@ -658,6 +661,22 @@ void dump_prom(hd_data_t *hd_data, hd_t *hd, FILE *f)
       dump_line("Color: %s (0x%02x)\n", s, pt->color);
     else
       dump_line("Color: 0x%02x\n", pt->color);
+  }
+}
+
+
+/*
+ * print System entries
+ */
+void dump_sys(hd_data_t *hd_data, hd_t *hd, FILE *f)
+{
+  sys_info_t *st;
+
+  if(!hd->detail || hd->detail->type != hd_detail_sys) return;
+  if(!(st = hd->detail->sys.data)) return;
+
+  if(st->system_type) {
+    dump_line("SystemType: \"%s\"\n", st->system_type);
   }
 }
 

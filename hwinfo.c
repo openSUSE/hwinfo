@@ -97,6 +97,7 @@ int main(int argc, char **argv)
     if(!strcmp(list, "tv")) i = hw_tv;
     if(!strcmp(list, "scanner")) i = hw_scanner;
     if(!strcmp(list, "braille")) i = hw_braille;
+    if(!strcmp(list, "sys")) i = hw_sys;
 
     if(i >= 0) {
       hd = hd_list(hd_data, i, listplus, NULL);
