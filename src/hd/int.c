@@ -34,7 +34,9 @@ static void int_modem(hd_data_t *hd_data);
 static void int_wlan(hd_data_t *hd_data);
 static void int_udev(hd_data_t *hd_data);
 static void int_devicenames(hd_data_t *hd_data);
+#if defined(__i386__) || defined (__x86_64__)
 static void int_softraid(hd_data_t *hd_data);
+#endif
 
 void hd_scan_int(hd_data_t *hd_data)
 {
@@ -87,8 +89,10 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(13, 0, "device names");
   int_devicenames(hd_data);
 
+#if defined(__i386__) || defined (__x86_64__)
   PROGRESS(14, 0, "soft raid");
   int_softraid(hd_data);
+#endif
 }
 
 /*
@@ -948,6 +952,7 @@ void int_devicenames(hd_data_t *hd_data)
 }
 
 
+#if defined(__i386__) || defined (__x86_64__)
 /*
  * Tag ide soft raid disks.
  */
@@ -988,5 +993,5 @@ void int_softraid(hd_data_t *hd_data)
   free_str_list(raid_sysfs);
 
 }
-
+#endif
 
