@@ -1,3 +1,5 @@
+	- updated X11 data (#39767)
+
 29/4/2004:	v8.45
 	- s390: enhance grouped channel detection using ccwgroup bus
 	- use *last* console parameter for serial console

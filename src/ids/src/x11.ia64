@@ -1868,7 +1868,7 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x031a
-+device.name		0x031a
++device.name		FX Go5600
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
@@ -1943,7 +1943,7 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x032b
-+device.name		0x032B
++device.name		Quadro FX 500
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
