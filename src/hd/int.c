@@ -786,7 +786,7 @@ void int_modem(hd_data_t *hd_data)
           dev_num.minor = 1;
           break;
         case sc_mod_win2:
-          s = new_str("/dev/536ep");
+          s = new_str("/dev/536ep0");
           dev_num.major = 240;
           dev_num.minor = 1;
           break;

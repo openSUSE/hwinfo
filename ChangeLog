@@ -1,3 +1,5 @@
+	- win modem dev name change (#44253)
+
 30/8/2004:	v9.6
 	- changed hwbootscan to use bash (#44199)
 	- fixed hd.ids parser bug
