@@ -1593,6 +1593,17 @@ void hd_scan(hd_data_t *hd_data)
   /* init driver info database */
   init_hddb(hd_data);
 
+#ifndef LIBHD_TINY
+  /*
+   * There might be old 'manual' entries left from an earlier scan. Remove
+   * them, they will confuse us.
+   */
+  if(hd_probe_feature(hd_data, pr_manual)) {
+    hd_data->module = mod_manual;
+    remove_hd_entries(hd_data);
+  }
+#endif
+
   /*
    * for various reasons, do it befor scan_misc()
    */
