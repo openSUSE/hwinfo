@@ -789,6 +789,26 @@
 +subclass.name		FDDI
 
  baseclass.id		0x107
+&subclass.id		0x04
++subclass.name		CTC
+
+ baseclass.id		0x107
+&subclass.id		0x05
++subclass.name		IUCV
+
+ baseclass.id		0x107
+&subclass.id		0x06
++subclass.name		HSI
+
+ baseclass.id		0x107
+&subclass.id		0x06
++subclass.name		QETH
+
+ baseclass.id		0x107
+&subclass.id		0x03
++subclass.name		FDDI
+
+ baseclass.id		0x107
 &subclass.id		0x80
 +subclass.name		Network Interface
 

@@ -626,6 +626,22 @@
 +device.name		Token ring card
 
  vendor.id		special 0x6001
+&device.id		special 0x0004
++device.name		CTC
+
+ vendor.id		special 0x6001
+&device.id		special 0x0005
++device.name		IUCV
+
+ vendor.id		special 0x6001
+&device.id		special 0x0006
++device.name		HSI
+
+ vendor.id		special 0x6001
+&device.id		special 0x0007
++device.name		QETH
+
+ vendor.id		special 0x6001
 &device.id		special 0x0070
 +device.name		ESCON
 

@@ -82,6 +82,22 @@ void hd_scan_net(hd_data_t *hd_data)
         hd->sub_class.id = sc_nif_fddi;
         hd->slot = u;
       }
+      else if(sscanf(sl->str, "ctc%u", &u) == 1) {
+        hd->sub_class.id = sc_nif_ctc;
+        hd->slot = u;
+      }
+      else if(sscanf(sl->str, "iucv%u", &u) == 1) {
+        hd->sub_class.id = sc_nif_iucv;
+        hd->slot = u;
+      }
+      else if(sscanf(sl->str, "hsi%u", &u) == 1) {
+        hd->sub_class.id = sc_nif_hsi;
+        hd->slot = u;
+      }
+      else if(sscanf(sl->str, "qeth%u", &u) == 1) {
+        hd->sub_class.id = sc_nif_qeth;
+        hd->slot = u;
+      }
       else if(sscanf(sl->str, "escon%u", &u) == 1) {
         hd->sub_class.id = sc_nif_escon;
         hd->slot = u;
@@ -118,6 +134,26 @@ void hd_scan_net(hd_data_t *hd_data)
             hd->sub_class.id = 1;
             hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
             str_printf(&hd->device.name, 0, "Token ring card %d", hd->slot);
+            break;
+          case sc_nif_ctc:
+            hd->sub_class.id = 0x04;
+            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0070);
+            str_printf(&hd->device.name, 0, "CTC %d", hd->slot);
+            break;
+          case sc_nif_iucv:
+            hd->sub_class.id = 0x05;
+            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0070);
+            str_printf(&hd->device.name, 0, "IUCV %d", hd->slot);
+            break;
+          case sc_nif_hsi:
+            hd->sub_class.id = 0x06;
+            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0070);
+            str_printf(&hd->device.name, 0, "HSI %d", hd->slot);
+            break;
+          case sc_nif_qeth:
+            hd->sub_class.id = 0x07;
+            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0070);
+            str_printf(&hd->device.name, 0, "QETH %d", hd->slot);
             break;
           case sc_nif_escon:
             hd->sub_class.id = 0x70;
