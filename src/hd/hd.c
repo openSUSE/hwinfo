@@ -1377,12 +1377,9 @@ void hd_scan(hd_data_t *hd_data)
   init_hddb(hd_data);
 
   /*
-   * for various reasons, do it befor scan_misc(); but on
-   * ppc, do it after scan_prom()
+   * for various reasons, do it befor scan_misc()
    */
-#ifndef __PPC__
   hd_scan_floppy(hd_data);
-#endif
 
   /*
    * to be able to read the right parport io,
@@ -1406,11 +1403,6 @@ void hd_scan(hd_data_t *hd_data)
   /* do it _after_ hd_scan_pci() */
 #if defined(__PPC__)
   hd_scan_prom(hd_data);
-#endif
-
-#ifdef __PPC__
-  /* see comment above */
-  hd_scan_floppy(hd_data);
 #endif
 
   hd_scan_sys(hd_data);
