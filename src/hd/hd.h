@@ -794,6 +794,20 @@ typedef struct {
 
 
 /*
+ * pci module info
+ */
+typedef struct {
+  char *module;
+  unsigned vendor;
+  unsigned device;
+  unsigned subvendor;
+  unsigned subdevice;
+  unsigned pciclass;
+  unsigned classmask;
+} hddb_pci_t;
+
+
+/*
  * resource types
  */
 typedef enum resource_types {
@@ -1365,6 +1379,7 @@ typedef struct {
   usb_t *usb;			/* usb info */
   hddb_data_t *hddb_dev;	/* device name database */
   hddb_data_t *hddb_drv;	/* driver info database */
+  hddb_pci_t *hddb_pci;		/* pci module info */
   str_list_t *kmods;		/* list of active kernel modules */
   uint64_t used_irqs;		/* irq usage */
   uint64_t assigned_irqs;	/* irqs automatically assigned by libhd (for driver info) */

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/utsname.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -46,6 +47,8 @@ static char *read_str(char *s);
 static void store_data(hddb_data_t *x, unsigned val);
 static unsigned store_name(hddb_data_t *x, char *name);
 static void store_id(hddb_data_t *x, hwid_t *id, unsigned tag, unsigned level, char *name);
+
+static void init_hddb_pci(hd_data_t *hd_data);
 
 #ifdef DEBUG_HDDB
 void dump_hddb_data(hd_data_t *hd_data, hddb_data_t *x, char *name);
@@ -673,6 +676,8 @@ void init_hddb(hd_data_t *hd_data)
   unsigned u, tag, last_ids;
   unsigned id0, id1, id2;
 
+  init_hddb_pci(hd_data);
+
   if(hd_data->hddb_dev && hd_data->hddb_drv) return;
 
   hd_data->hddb_dev = new_mem(sizeof *hd_data->hddb_dev);
@@ -860,9 +865,56 @@ void init_hddb(hd_data_t *hd_data)
     dump_hddb_data(hd_data, hd_data->hddb_drv, "hddb_drv, loaded");
   }
 #endif
-
 }
 
+
+void init_hddb_pci(hd_data_t *hd_data)
+{
+  str_list_t *sl0 = NULL, *sl;
+  char *s = NULL;
+  struct utsname ubuf;
+  int len;
+  char buf[64];
+  unsigned u0, u1, u2, u3, u4, u5;
+  hddb_pci_t *p;
+
+  if(hd_data->hddb_pci) return;
+
+  if(!uname(&ubuf)) {
+    str_printf(&s, 0, "/lib/modules/%s/modules.pcimap", ubuf.release);
+    sl0 = read_file(s, 1, 0);
+    s = free_mem(s);
+  }
+
+  for(len = 1, sl = sl0; sl; sl = sl->next) len++;
+
+  hd_data->hddb_pci = new_mem(len * sizeof *hd_data->hddb_pci);
+
+  for(p = hd_data->hddb_pci, sl = sl0; sl; sl = sl->next) {
+    if(sscanf(sl->str, "%63s %x %x %x %x %x %x", buf, &u0, &u1, &u2, &u3, &u4, &u5) == 7) {
+      p->module = new_str(buf);
+      p->vendor = u0;
+      p->device = u1;
+      p->subvendor = u2;
+      p->subdevice = u3;
+      p->pciclass = u4;
+      p->classmask = u5;
+
+      p++;
+    }
+  }
+
+  free_str_list(sl0);
+
+#if 0
+  for(p = hd_data->hddb_pci; p->module; p++) {
+    fprintf(stderr, "%s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n",
+      p->module, p->vendor, p->device, p->subvendor, p->subdevice,
+      p->pciclass, p->classmask
+    );
+  }
+#endif
+}
 
 /*
  * Should we remove a potentially existing old entry? At the moment the new
@@ -994,6 +1046,54 @@ str_list_t *get_hddb_packages(hd_data_t *hd_data)
     }
   }
   return sl;
+}
+
+driver_info_t *hd_pcidb(hd_data_t *hd_data, hd_t *hd)
+{
+  unsigned vendor, device, subvendor, subdevice, pciclass;
+  driver_info_t *di = NULL, *di0 = NULL;
+  hddb_pci_t *p;
+  pci_t *pci;
+
+  if(!(p = hd_data->hddb_pci)) return NULL;
+
+  if(ID_TAG(hd->vend) != TAG_PCI) return NULL;
+
+  vendor = ID_VALUE(hd->vend);
+  device = ID_VALUE(hd->dev);
+  subvendor = ID_VALUE(hd->sub_vend);
+  subdevice = ID_VALUE(hd->sub_dev);
+  pciclass = (hd->base_class << 16) + ((hd->sub_class & 0xff) << 8) + (hd->prog_if & 0xff);
+
+  if(
+    hd->detail &&
+    hd->detail->type == hd_detail_pci &&
+    (pci = hd->detail->pci.data)
+  ) {
+    pciclass = (pci->base_class << 16) + ((pci->sub_class & 0xff) << 8) + (pci->prog_if & 0xff);
+  }
+
+  for(; p->module; p++) {
+    if(
+      (p->vendor == 0xffffffff || p->vendor == vendor) &&
+      (p->device == 0xffffffff || p->device == device) &&
+      (p->subvendor == 0xffffffff || p->subvendor == subvendor) &&
+      (p->subdevice == 0xffffffff || p->subdevice == subdevice) &&
+      !((p->pciclass ^ pciclass) & p->classmask)
+    ) {
+      if(di) {
+        di = di->next = new_mem(sizeof *di);
+      }
+      else {
+        di = di0 = new_mem(sizeof *di);
+      }
+      di->any.type = di_module;
+      di->module.modprobe = 1;
+      add_str_list(&di->any.hddb0, p->module);
+    }
+  }
+
+  return di0;
 }
 
 #ifdef DEBUG_HDDB

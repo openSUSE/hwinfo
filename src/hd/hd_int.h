@@ -194,6 +194,8 @@ char *vend_id2str(unsigned vend);
 
 void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res_t **size);
 
+driver_info_t *hd_pcidb(hd_data_t *hd_data, hd_t *hd);
+
 #ifdef __cplusplus
 }
 #endif

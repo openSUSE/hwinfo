@@ -678,6 +678,8 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
  */
 hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
 {
+  hddb_pci_t *p;
+
 #ifdef LIBHD_MEMCHECK
   {
     if(libhd_log)
@@ -714,6 +716,10 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
     free_mem(hd_data->hddb_drv->names);
     hd_data->hddb_drv = free_mem(hd_data->hddb_drv);
   }
+  if((p = hd_data->hddb_pci)) {
+    for(; p->module; p++) free_mem(p->module);
+  }
+  hd_data->hddb_pci = free_mem(hd_data->hddb_pci);
   hd_data->kmods = free_str_list(hd_data->kmods);
   hd_data->bios_rom.data = free_mem(hd_data->bios_rom.data);
   hd_data->bios_ram.data = free_mem(hd_data->bios_ram.data);
@@ -3010,6 +3016,8 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
     di0 = monitor_driver(hd_data, hd);
     if(di0) return di0;
   }
+
+  if(!di0) di0 = hd_pcidb(hd_data, hd);
 
   if(!di0) return hd_free_driver_info(di0);
 

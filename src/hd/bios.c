@@ -734,8 +734,19 @@ void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
 {
   unsigned u, mtype, fsc_id;
   unsigned x, y;
+  hd_smbios_t *sm;
+  char *vendor = NULL;
 
   if(!mem->data || mem->size < 0x20) return;
+
+  for(sm = hd_data->smbios; sm; sm = sm->next) {
+    if(sm->any.type == sm_sysinfo) {
+      vendor = sm->sysinfo.manuf;
+      break;
+    }
+  }
+
+  vendor = vendor && !strcasecmp(vendor, "Fujitsu") ? "Fujitsu" : "Fujitsu Siemens";
 
   for(u = 0; u <= mem->size - 0x20; u += 0x10) {
     if(
@@ -784,7 +795,7 @@ void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
         }
 
         if(x) {
-          bt->lcd.vendor = new_str("Fujitsu Siemens");
+          bt->lcd.vendor = new_str(vendor);
           bt->lcd.name = new_str("Notebook LCD");
           bt->lcd.width = x;
           bt->lcd.height = y;
@@ -801,18 +812,20 @@ void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
 void add_panel_info(hd_data_t *hd_data, bios_info_t *bt)
 {
   unsigned width, height;
-  char *vendor, *name;
+  char *vendor, *name, *version;
   hd_smbios_t *sm;
 
   if(bt->lcd.width || !hd_data->smbios) return;
 
-  vendor = name = NULL;
+  vendor = name = version = NULL;
   width = height = 0;
 
   for(sm = hd_data->smbios; sm; sm = sm->next) {
     if(sm->any.type == sm_sysinfo) {
       vendor = sm->sysinfo.manuf;
       name = sm->sysinfo.product;
+      version = sm->sysinfo.version;
+      break;
     }
   }
 
@@ -824,6 +837,13 @@ void add_panel_info(hd_data_t *hd_data, bios_info_t *bt)
   ) {
     width = 1024;
     height = 768;
+  }
+
+  if(
+    (!strcmp(vendor, "Fujitsu Siemens") && !strcmp(name, "LiteLine") && !strcmp(version, "LF6"))
+  ) {
+    width = 800;
+    height = 600;
   }
 
   if(!width) return;
