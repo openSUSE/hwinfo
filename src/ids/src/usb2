@@ -1,0 +1,1427 @@
+# some more usb info
+
+
+ vendor.id		usb 0x03e8
++vendor.name		AOX Inc.
+
+ vendor.id		usb 0x03e9
++vendor.name		Thesys Microelectronics
+
+ vendor.id		usb 0x03ea
++vendor.name		Data Broadcasting Corp.
+
+ vendor.id		usb 0x03eb
++vendor.name		Atmel Corporation
+
+ vendor.id		usb 0x03ec
++vendor.name		Iwatsu America Inc.
+
+ vendor.id		usb 0x03ed
++vendor.name		Mitel Corporation
+
+ vendor.id		usb 0x03ee
++vendor.name		Mitsumi
+
+ vendor.id		usb 0x03f0
++vendor.name		Hewlett Packard
+
+ vendor.id		usb 0x03f1
++vendor.name		Genoa Technology
+
+ vendor.id		usb 0x03f2
++vendor.name		Oak Technology, Inc
+
+ vendor.id		usb 0x03f3
++vendor.name		Adaptec, Inc.
+
+ vendor.id		usb 0x03f4
++vendor.name		Diebold, Inc.
+
+ vendor.id		usb 0x03f5
++vendor.name		Siemens Electromechanical
+
+ vendor.id		usb 0x03f8
++vendor.name		Epson Research Center
+
+ vendor.id		usb 0x03f9
++vendor.name		KeyTronic Corp.
+
+ vendor.id		usb 0x03fb
++vendor.name		OPTi Inc.
+
+ vendor.id		usb 0x03fc
++vendor.name		Elitegroup Computer Systems
+
+ vendor.id		usb 0x03fd
++vendor.name		Xilinx Inc.
+
+ vendor.id		usb 0x03fe
++vendor.name		Farallon
+
+ vendor.id		usb 0x0400
++vendor.name		National Semiconductor
+
+ vendor.id		usb 0x0401
++vendor.name		National Registry Inc.
+
+ vendor.id		usb 0x0402
++vendor.name		Acer Labs Inc.
+
+ vendor.id		usb 0x0403
++vendor.name		Future Technology Devices
+
+ vendor.id		usb 0x0404
++vendor.name		NCR Corporation
+
+ vendor.id		usb 0x0405
++vendor.name		Sand Microelectronics Inc.
+
+ vendor.id		usb 0x0406
++vendor.name		Fujitsu-ICL Computers
+
+ vendor.id		usb 0x0407
++vendor.name		Fujitsu Personal Systems, Inc.
+
+ vendor.id		usb 0x0408
++vendor.name		Quanta Computer Inc.
+
+ vendor.id		usb 0x0409
++vendor.name		NEC
+
+ vendor.id		usb 0x040a
++vendor.name		Eastman Kodak Co.
+
+ vendor.id		usb 0x040b
++vendor.name		Weltrend Semiconductor
+
+ vendor.id		usb 0x040c
++vendor.name		VTech Computers Ltd
+
+ vendor.id		usb 0x040d
++vendor.name		VIA Technologies, Inc.
+
+ vendor.id		usb 0x040e
++vendor.name		MCCI
+
+ vendor.id		usb 0x040f
++vendor.name		Echo Speech Corporation
+
+ vendor.id		usb 0x0411
++vendor.name		Melco, Inc.
+
+ vendor.id		usb 0x0412
++vendor.name		Award Software International
+
+ vendor.id		usb 0x0413
++vendor.name		Leadtek Research Inc.
+
+ vendor.id		usb 0x0414
++vendor.name		Giga-Byte Technology Co., Ltd.
+
+ vendor.id		usb 0x0416
++vendor.name		Winbond Electronics Corp.
+
+ vendor.id		usb 0x0417
++vendor.name		Symbios Logic
+
+ vendor.id		usb 0x0418
++vendor.name		AST Research
+
+ vendor.id		usb 0x0419
++vendor.name		Samsung Info. Systems America Inc.
+
+ vendor.id		usb 0x041a
++vendor.name		Phoenix Technologies, Ltd.
+
+ vendor.id		usb 0x041b
++vendor.name		d'TV
+
+ vendor.id		usb 0x041d
++vendor.name		S3, Inc.
+
+ vendor.id		usb 0x041e
++vendor.name		Creative Labs
+
+ vendor.id		usb 0x041f
++vendor.name		LCS Telegraphics
+
+ vendor.id		usb 0x0420
++vendor.name		Chips and Technologies
+
+ vendor.id		usb 0x0421
++vendor.name		Nokia Mobile Phones
+
+ vendor.id		usb 0x0422
++vendor.name		ADI Systems
+
+ vendor.id		usb 0x0423
++vendor.name		Computer Access Technology Corp.
+
+ vendor.id		usb 0x0424
++vendor.name		Standard Microsystems Corp.
+
+ vendor.id		usb 0x0425
++vendor.name		Motorola Semiconductors HK, Ltd.
+
+ vendor.id		usb 0x0426
++vendor.name		Integrated Device Technology
+
+ vendor.id		usb 0x0427
++vendor.name		Motorola Electronics Taiwan Ltd.
+
+ vendor.id		usb 0x0428
++vendor.name		Gravis
+
+ vendor.id		usb 0x0428
+&device.id		usb 0x4001
++baseclass.id		0x10d
++subclass.id		0x01
+
+ vendor.id		usb 0x0429
++vendor.name		Cirrus Logic
+
+ vendor.id		usb 0x042a
++vendor.name		Ericsson Austrian, AG
+
+ vendor.id		usb 0x042b
++vendor.name		Intel Corporation
+
+ vendor.id		usb 0x042c
++vendor.name		Innovative Semiconductors, Inc.
+
+ vendor.id		usb 0x042d
++vendor.name		Micronics
+
+ vendor.id		usb 0x042e
++vendor.name		Acer, Inc.
+
+ vendor.id		usb 0x042f
++vendor.name		Molex, Inc.
+
+ vendor.id		usb 0x0430
++vendor.name		Fujitsu Takamisawa America
+
+ vendor.id		usb 0x0431
++vendor.name		Itac Systems, Inc.
+
+ vendor.id		usb 0x0432
++vendor.name		Unisys Corp.
+
+ vendor.id		usb 0x0433
++vendor.name		Alps Electric Inc.
+
+ vendor.id		usb 0x0434
++vendor.name		Samsung Info. Systems America Inc.
+
+ vendor.id		usb 0x0435
++vendor.name		Hyundai Electronics America
+
+ vendor.id		usb 0x0436
++vendor.name		Taugagreining HF
+
+ vendor.id		usb 0x0437
++vendor.name		Framatome Connectors USA
+
+ vendor.id		usb 0x0438
++vendor.name		Advanced Micro Devices
+
+ vendor.id		usb 0x0439
++vendor.name		Voice Technologies Group
+
+ vendor.id		usb 0x043d
++vendor.name		Lexmark International Inc.
+
+ vendor.id		usb 0x043e
++vendor.name		LG Electronics USA Inc.
+
+ vendor.id		usb 0x043f
++vendor.name		RadiSys Corporation
+
+ vendor.id		usb 0x0440
++vendor.name		NANAO Corporation
+
+ vendor.id		usb 0x0441
++vendor.name		Winbond Systems Lab.
+
+ vendor.id		usb 0x0442
++vendor.name		Ericsson Inc.
+
+ vendor.id		usb 0x0443
++vendor.name		Gateway 2000
+
+ vendor.id		usb 0x0445
++vendor.name		Lucent Technologies
+
+ vendor.id		usb 0x0446
++vendor.name		NMB Technologies, Inc.
+
+ vendor.id		usb 0x0447
++vendor.name		Momentum Microsystems
+
+ vendor.id		usb 0x044a
++vendor.name		Shamrock Tech. Co., Ltd
+
+ vendor.id		usb 0x044b
++vendor.name		WSI
+
+ vendor.id		usb 0x044c
++vendor.name		CCL/ITRI
+
+ vendor.id		usb 0x044d
++vendor.name		Siemens Nixdorf
+
+ vendor.id		usb 0x044e
++vendor.name		Alps Electric Co.
+
+ vendor.id		usb 0x044f
++vendor.name		ThrustMaster, Inc.
+
+ vendor.id		usb 0x0450
++vendor.name		DFI Inc.
+
+ vendor.id		usb 0x0451
++vendor.name		Texas Instruments
+
+ vendor.id		usb 0x0452
++vendor.name		Mitsubishi Electronics America, Inc.
+
+ vendor.id		usb 0x0453
++vendor.name		CMD Technology
+
+ vendor.id		usb 0x0454
++vendor.name		Vobis Microcomputer AG
+
+ vendor.id		usb 0x0455
++vendor.name		Telematics International, Inc.
+
+ vendor.id		usb 0x0456
++vendor.name		Analog Devices, Inc.
+
+ vendor.id		usb 0x0457
++vendor.name		Silicon Integrated Systems Corp.
+
+ vendor.id		usb 0x0458
++vendor.name		KYE Systems Corp.
+
+ vendor.id		usb 0x0458
+&device.id		usb 0x0002
++device.name		Genius NetMouse Pro
+
+ vendor.id		usb 0x0459
++vendor.name		Adobe Systems, Inc.
+
+ vendor.id		usb 0x045a
++vendor.name		Diamond Multimedia Systems
+
+ vendor.id		usb 0x045b
++vendor.name		Hitachi, Ltd
+
+ vendor.id		usb 0x045d
++vendor.name		Northern Telecom
+
+ vendor.id		usb 0x045e
++vendor.name		Microsoft
+
+ vendor.id		usb 0x0460
++vendor.name		Ace Cad Enterprise Co., Ltd.
+
+ vendor.id		usb 0x0461
++vendor.name		Primax Electronics
+
+ vendor.id		usb 0x0463
++vendor.name		MGE UPS Systems
+
+ vendor.id		usb 0x0464
++vendor.name		AMP Incorporated
+
+ vendor.id		usb 0x0467
++vendor.name		AT&T Paradyne
+
+ vendor.id		usb 0x0468
++vendor.name		Wieson Electronic Co., Ltd.
+
+ vendor.id		usb 0x046a
++vendor.name		Cherry Mikroschalter GmbH
+
+ vendor.id		usb 0x046a
+&device.id		usb 0x0001
++device.name		RS 6000 M
+
+ vendor.id		usb 0x046b
++vendor.name		American Megatrends
+
+ vendor.id		usb 0x046c
++vendor.name		Toshiba
+
+ vendor.id		usb 0x046d
++vendor.name		Logitech Inc.
+
+ vendor.id		usb 0x046d
+&device.id		usb 0x0840
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Webcam USB
+
+ vendor.id		usb 0x046d
+&device.id		usb 0xc001
++device.name		Wheelmouse Model M-BB48
+
+ vendor.id		usb 0x046e
++vendor.name		Behavior Tech. Computer
+
+ vendor.id		usb 0x046f
++vendor.name		Crystal Semiconductor
+
+ vendor.id		usb 0x0471
++vendor.name		Philips
+
+ vendor.id		usb 0x0472
++vendor.name		Sun Microsystems
+
+ vendor.id		usb 0x0473
++vendor.name		Sanyo Information Business Co., Ltd.
+
+ vendor.id		usb 0x0474
++vendor.name		Sanyo Electric Co. Ltd.
+
+ vendor.id		usb 0x0475
++vendor.name		Relisys/TECO Information System
+
+ vendor.id		usb 0x0476
++vendor.name		AESP
+
+ vendor.id		usb 0x0477
++vendor.name		Seagate Technology
+
+ vendor.id		usb 0x0478
++vendor.name		Connectix Corp.
+
+ vendor.id		usb 0x0479
++vendor.name		Advanced Peripheral Laboratories
+
+ vendor.id		usb 0x047a
++vendor.name		USAR Systems
+
+ vendor.id		usb 0x047b
++vendor.name		Silitek Corp.
+
+ vendor.id		usb 0x047c
++vendor.name		Dell Computer Corp.
+
+ vendor.id		usb 0x047d
++vendor.name		Kensington
+
+ vendor.id		usb 0x047d
+&device.id		usb 0x4008
++baseclass.id		0x10d
++subclass.id		0x01
+
+ vendor.id		usb 0x047e
++vendor.name		Lucent Microelectronics Technologies
+
+ vendor.id		usb 0x047f
++vendor.name		Plantronics, Inc.
+
+ vendor.id		usb 0x0480
++vendor.name		Toshiba America Info. Systems, Inc.
+
+ vendor.id		usb 0x0481
++vendor.name		Zenith Data Systems
+
+ vendor.id		usb 0x0482
++vendor.name		Kyocera Electronics, Inc.
+
+ vendor.id		usb 0x0483
++vendor.name		SGS Thomson Microelectronics
+
+ vendor.id		usb 0x0484
++vendor.name		Specialix
+
+ vendor.id		usb 0x0485
++vendor.name		Nokia Monitors
+
+ vendor.id		usb 0x0486
++vendor.name		ASUS Computers Inc.
+
+ vendor.id		usb 0x0487
++vendor.name		Stewart Connector
+
+ vendor.id		usb 0x0488
++vendor.name		Cirque Corp.
+
+ vendor.id		usb 0x0489
++vendor.name		Foxconn / Hon Hai
+
+ vendor.id		usb 0x048a
++vendor.name		S-MOS Systems, Inc.
+
+ vendor.id		usb 0x048c
++vendor.name		Alps Electric Ireland Ltd.
+
+ vendor.id		usb 0x048d
++vendor.name		Integrated Technology Express
+
+ vendor.id		usb 0x048f
++vendor.name		Eicon Tech.
+
+ vendor.id		usb 0x0490
++vendor.name		United Microelectronics Corp.
+
+ vendor.id		usb 0x0491
++vendor.name		Capetronic
+
+ vendor.id		usb 0x0492
++vendor.name		Samsung SemiConductor, Inc.
+
+ vendor.id		usb 0x0493
++vendor.name		MAG Technology Co., Ltd.
+
+ vendor.id		usb 0x0495
++vendor.name		ESS Technology, Inc.
+
+ vendor.id		usb 0x0496
++vendor.name		Micron Electronics
+
+ vendor.id		usb 0x0497
++vendor.name		Smile International
+
+ vendor.id		usb 0x0498
++vendor.name		Capetronic (Kaohsiung) Corp.
+
+ vendor.id		usb 0x0499
++vendor.name		Yamaha Corporation
+
+ vendor.id		usb 0x049a
++vendor.name		Gandalf Technologies Ltd.
+
+ vendor.id		usb 0x049b
++vendor.name		System Connection
+
+ vendor.id		usb 0x049c
++vendor.name		Acer Advanced Labs, Inc.
+
+ vendor.id		usb 0x049d
++vendor.name		VLSI Technology
+
+ vendor.id		usb 0x049f
++vendor.name		Compaq Computers
+
+ vendor.id		usb 0x04a0
++vendor.name		Digital Equipment Corp.
+
+ vendor.id		usb 0x04a1
++vendor.name		SystemSoft Corporation
+
+ vendor.id		usb 0x04a2
++vendor.name		FirePower Systems
+
+ vendor.id		usb 0x04a3
++vendor.name		Trident Microsystems Inc.
+
+ vendor.id		usb 0x04a4
++vendor.name		Hitachi, Ltd.
+
+ vendor.id		usb 0x04a5
++vendor.name		Acer Peripheral Inc.
+
+ vendor.id		usb 0x04a6
++vendor.name		Nokia Display Products (Salcomp Oy)
+
+ vendor.id		usb 0x04a7
++vendor.name		Visioneer
+
+ vendor.id		usb 0x04a8
++vendor.name		Multivideo Labs, Inc.
+
+ vendor.id		usb 0x04a9
++vendor.name		Canon Inc.
+
+ vendor.id		usb 0x04aa
++vendor.name		DaeWoo Telecom, Ltd.
+
+ vendor.id		usb 0x04ab
++vendor.name		Chromatic Research
+
+ vendor.id		usb 0x04ac
++vendor.name		Micro Audiometrics Corp.
+
+ vendor.id		usb 0x04ad
++vendor.name		Dooin Electronics
+
+ vendor.id		usb 0x04af
++vendor.name		Winnov L.P.
+
+ vendor.id		usb 0x04b0
++vendor.name		Nikon Corporation
+
+ vendor.id		usb 0x04b1
++vendor.name		Pan International
+
+ vendor.id		usb 0x04b3
++vendor.name		IBM Corp.
+
+ vendor.id		usb 0x04b4
++vendor.name		Cypress Semiconductor
+
+ vendor.id		usb 0x04b5
++vendor.name		ROHM LSI Systems, Inc.
+
+ vendor.id		usb 0x04b6
++vendor.name		Hint Corporation
+
+ vendor.id		usb 0x04b7
++vendor.name		Compal Electronics, Inc.
+
+ vendor.id		usb 0x04b8
++vendor.name		Seiko Epson Corp.
+
+ vendor.id		usb 0x04b9
++vendor.name		Rainbow Technologies, Inc.
+
+ vendor.id		usb 0x04ba
++vendor.name		Toucan Systems Ltd.
+
+ vendor.id		usb 0x04bb
++vendor.name		I-O Data Device, Inc.
+
+ vendor.id		usb 0x04bd
++vendor.name		Toshiba Electronics Taiwan Corp.
+
+ vendor.id		usb 0x04be
++vendor.name		Telia Research AB
+
+ vendor.id		usb 0x04bf
++vendor.name		TDK USA Corporation
+
+ vendor.id		usb 0x04c1
++vendor.name		U.S. Robotics
+
+ vendor.id		usb 0x04c2
++vendor.name		Methode Electronics Far East Pte Ltd.
+
+ vendor.id		usb 0x04c3
++vendor.name		Maxi Switch, Inc.
+
+ vendor.id		usb 0x04c4
++vendor.name		Lockheed Martin Energy Research
+
+ vendor.id		usb 0x04c5
++vendor.name		Fujitsu Limited
+
+ vendor.id		usb 0x04c6
++vendor.name		Toshiba America Electronic Components
+
+ vendor.id		usb 0x04c7
++vendor.name		Micro Macro Technologies
+
+ vendor.id		usb 0x04c8
++vendor.name		Konica Corporation
+
+ vendor.id		usb 0x04ca
++vendor.name		Lite-On Technology Corp.
+
+ vendor.id		usb 0x04cb
++vendor.name		Fuji Photo Film Co., Ltd.
+
+ vendor.id		usb 0x04cc
++vendor.name		Philips Semiconductors
+
+ vendor.id		usb 0x04cd
++vendor.name		Tatung Co. Of America
+
+ vendor.id		usb 0x04ce
++vendor.name		ScanLogic Corporation
+
+ vendor.id		usb 0x04cf
++vendor.name		Myson Technology Inc.
+
+ vendor.id		usb 0x04d0
++vendor.name		Digi International
+
+ vendor.id		usb 0x04d1
++vendor.name		ITT Canon
+
+ vendor.id		usb 0x04d2
++vendor.name		Altec Lansing Technologies
+
+ vendor.id		usb 0x04d3
++vendor.name		VidUS, Inc.
+
+ vendor.id		usb 0x04d4
++vendor.name		LSI Logic Corporation
+
+ vendor.id		usb 0x04d5
++vendor.name		Forte Technologies, Inc.
+
+ vendor.id		usb 0x04d6
++vendor.name		CAE Technology
+
+ vendor.id		usb 0x04d7
++vendor.name		Oki Semiconductor
+
+ vendor.id		usb 0x04d8
++vendor.name		Micro Chip Technology, Inc.
+
+ vendor.id		usb 0x04d9
++vendor.name		Holtek Microelectronics Inc.
+
+ vendor.id		usb 0x04da
++vendor.name		Panasonic (Matsushita)
+
+ vendor.id		usb 0x04db
++vendor.name		Hypertec Pty Ltd.
+
+ vendor.id		usb 0x04dc
++vendor.name		Huan Hsin C., SDN.BHD
+
+ vendor.id		usb 0x04dd
++vendor.name		Sharp Corporation
+
+ vendor.id		usb 0x04de
++vendor.name		MindShare, Inc.
+
+ vendor.id		usb 0x04df
++vendor.name		Interlink Electronics
+
+ vendor.id		usb 0x04e1
++vendor.name		Iiyama North America Inc.
+
+ vendor.id		usb 0x04e2
++vendor.name		Exar Corporation
+
+ vendor.id		usb 0x04e3
++vendor.name		Zilog
+
+ vendor.id		usb 0x04e4
++vendor.name		ACC Microelectronics
+
+ vendor.id		usb 0x04e5
++vendor.name		Promise Technology
+
+ vendor.id		usb 0x04e6
++vendor.name		Shuttle Technology
+
+ vendor.id		usb 0x04e7
++vendor.name		ELO TouchSystems
+
+ vendor.id		usb 0x04e8
++vendor.name		Samsung Electronics Co., Ltd.
+
+ vendor.id		usb 0x04e9
++vendor.name		PC-Tel Inc.
+
+ vendor.id		usb 0x04ea
++vendor.name		Brooktree Corporation
+
+ vendor.id		usb 0x04eb
++vendor.name		Northstar Systems, Inc
+
+ vendor.id		usb 0x04ec
++vendor.name		Tokyo Electron Limited
+
+ vendor.id		usb 0x04ed
++vendor.name		Annabooks
+
+ vendor.id		usb 0x04ef
++vendor.name		Pacific Electronic International, Inc.
+
+ vendor.id		usb 0x04f0
++vendor.name		Daewoo Electronics Co., Ltd.
+
+ vendor.id		usb 0x04f1
++vendor.name		Victor Company of Japan
+
+ vendor.id		usb 0x04f2
++vendor.name		Chicony Electronics Co., Ltd.
+
+ vendor.id		usb 0x04f3
++vendor.name		Elan Microelectronics Corportation
+
+ vendor.id		usb 0x04f4
++vendor.name		Harting Elektronik Inc.
+
+ vendor.id		usb 0x04f5
++vendor.name		Fujitsu-ICL Systems, Inc.
+
+ vendor.id		usb 0x04f6
++vendor.name		Norand Corporation
+
+ vendor.id		usb 0x04f7
++vendor.name		Newnex Technology Corp.
+
+ vendor.id		usb 0x04f8
++vendor.name		FuturePlus Systems
+
+ vendor.id		usb 0x04f9
++vendor.name		Brother International Corp.
+
+ vendor.id		usb 0x04fa
++vendor.name		Dallas Semiconductor
+
+ vendor.id		usb 0x04fb
++vendor.name		Biostar Microtech Int'l Corp.
+
+ vendor.id		usb 0x04fc
++vendor.name		Sunplus Technology Co.
+
+ vendor.id		usb 0x04fd
++vendor.name		Soliton Systems, K.K.
+
+ vendor.id		usb 0x04fe
++vendor.name		PFU Limited
+
+ vendor.id		usb 0x04ff
++vendor.name		E-CMOS Corp.
+
+ vendor.id		usb 0x0500
++vendor.name		Siam United Hi-Tech
+
+ vendor.id		usb 0x0501
++vendor.name		DDK Electronics, Inc.
+
+ vendor.id		usb 0x0502
++vendor.name		Acer, Inc.
+
+ vendor.id		usb 0x0503
++vendor.name		Hitachi America Ltd.
+
+ vendor.id		usb 0x0504
++vendor.name		Hayes Microcomputer Products
+
+ vendor.id		usb 0x0506
++vendor.name		3Com Corporation
+
+ vendor.id		usb 0x0507
++vendor.name		Hosiden Corporation
+
+ vendor.id		usb 0x0508
++vendor.name		Clarion Co., Ltd.
+
+ vendor.id		usb 0x0509
++vendor.name		Aztech Systems Ltd
+
+ vendor.id		usb 0x050a
++vendor.name		Cinch Connectors
+
+ vendor.id		usb 0x050b
++vendor.name		Cable System International
+
+ vendor.id		usb 0x050c
++vendor.name		InnoMedia, Inc.
+
+ vendor.id		usb 0x050d
++vendor.name		Belkin Components
+
+ vendor.id		usb 0x050e
++vendor.name		Neon Technology, Inc.
+
+ vendor.id		usb 0x050f
++vendor.name		Kawatsu Semiconductor, Inc.
+
+ vendor.id		usb 0x0510
++vendor.name		Sejin Electron Inc.
+
+ vendor.id		usb 0x0511
++vendor.name		N'ABLE Technologies, Inc (Data Book)
+
+ vendor.id		usb 0x0512
++vendor.name		Hualon Microelectronics Corp.
+
+ vendor.id		usb 0x0513
++vendor.name		digital-X, Inc.
+
+ vendor.id		usb 0x0514
++vendor.name		Berg Electronics, Inc.
+
+ vendor.id		usb 0x0515
++vendor.name		ACTC
+
+ vendor.id		usb 0x0516
++vendor.name		Longwell Electronics
+
+ vendor.id		usb 0x0517
++vendor.name		Butterfly Communications
+
+ vendor.id		usb 0x0518
++vendor.name		EzKEY Corp.
+
+ vendor.id		usb 0x0519
++vendor.name		Star Micronics America, Inc.
+
+ vendor.id		usb 0x051a
++vendor.name		WYSE Technology
+
+ vendor.id		usb 0x051b
++vendor.name		Silicon Graphics
+
+ vendor.id		usb 0x051c
++vendor.name		Holco Enterprise Co., Ltd./Shuttle Computer
+
+ vendor.id		usb 0x051d
++vendor.name		American Power Conversion
+
+ vendor.id		usb 0x051e
++vendor.name		Scientific Atlanta
+
+ vendor.id		usb 0x051f
++vendor.name		Elite Electronics, Inc.
+
+ vendor.id		usb 0x0520
++vendor.name		Taiwan Semiconductor Manufacturing Co.
+
+ vendor.id		usb 0x0521
++vendor.name		Airborn Connectors
+
+ vendor.id		usb 0x0522
++vendor.name		Advanced Connectek USA Inc.
+
+ vendor.id		usb 0x0523
++vendor.name		ATEN GMBH
+
+ vendor.id		usb 0x0524
++vendor.name		Micro Devices Technology
+
+ vendor.id		usb 0x0525
++vendor.name		Net Chip Technology, Inc.
+
+ vendor.id		usb 0x0526
++vendor.name		Temic Matra.mhs
+
+ vendor.id		usb 0x0527
++vendor.name		ALTRA
+
+ vendor.id		usb 0x0528
++vendor.name		ATI Technologies, Inc.
+
+ vendor.id		usb 0x0529
++vendor.name		Fast Security AG
+
+ vendor.id		usb 0x052a
++vendor.name		Crescent Heart Software
+
+ vendor.id		usb 0x052b
++vendor.name		Tekom Development
+
+ vendor.id		usb 0x052c
++vendor.name		Canon Information System
+
+ vendor.id		usb 0x052d
++vendor.name		Avid Electronics Corp.
+
+ vendor.id		usb 0x052e
++vendor.name		Standard Microsystems Corp.
+
+ vendor.id		usb 0x052f
++vendor.name		Unicore Software, Inc.
+
+ vendor.id		usb 0x0530
++vendor.name		American Microsystems Inc.
+
+ vendor.id		usb 0x0531
++vendor.name		Wacom Technology Corp.
+
+ vendor.id		usb 0x0532
++vendor.name		Systech Corporation
+
+ vendor.id		usb 0x0533
++vendor.name		Alcatel Mobile Phones
+
+ vendor.id		usb 0x0534
++vendor.name		Motorola
+
+ vendor.id		usb 0x0535
++vendor.name		LIH TZU Electric Co., Ltd.
+
+ vendor.id		usb 0x0536
++vendor.name		Welch Allyn Inc.
+
+ vendor.id		usb 0x0537
++vendor.name		Inventec Corporation
+
+ vendor.id		usb 0x0538
++vendor.name		Santa Cruz Operation
+
+ vendor.id		usb 0x0539
++vendor.name		Shyh Shiun Terminals Co. LTD
+
+ vendor.id		usb 0x053a
++vendor.name		Preh Werke Gmbh & Co. KG
+
+ vendor.id		usb 0x053b
++vendor.name		Global Village Communication
+
+ vendor.id		usb 0x053c
++vendor.name		Institut of Microelectronic & Mechatronic Systems
+
+ vendor.id		usb 0x053d
++vendor.name		Silicon Architect
+
+ vendor.id		usb 0x053e
++vendor.name		Electronic Accessory Specialists Int.
+
+ vendor.id		usb 0x053f
++vendor.name		Synopsys
+
+ vendor.id		usb 0x0540
++vendor.name		Universal Access
+
+ vendor.id		usb 0x0541
++vendor.name		Sirf Technology, Inc
+
+ vendor.id		usb 0x0543
++vendor.name		View Sonic Corporation
+
+ vendor.id		usb 0x0544
++vendor.name		Cristie Electronics Ltd.
+
+ vendor.id		usb 0x0545
++vendor.name		Xirlink, Inc.
+
+ vendor.id		usb 0x0546
++vendor.name		Polaroid Corporation
+
+ vendor.id		usb 0x0547
++vendor.name		Anchor Chips Inc.
+
+ vendor.id		usb 0x0548
++vendor.name		Tyan Computer Corp.
+
+ vendor.id		usb 0x0549
++vendor.name		Pixera Corporation
+
+ vendor.id		usb 0x054a
++vendor.name		Fujitsu Microelectronics, Inc.,
+
+ vendor.id		usb 0x054b
++vendor.name		New Media Corporation
+
+ vendor.id		usb 0x054c
++vendor.name		Sony Corporation
+
+ vendor.id		usb 0x054d
++vendor.name		Try Corporation
+
+ vendor.id		usb 0x054e
++vendor.name		Proside Corporation
+
+ vendor.id		usb 0x054f
++vendor.name		WYSE Technology Taiwan
+
+ vendor.id		usb 0x0550
++vendor.name		Fuji Xerox Co., Ltd.
+
+ vendor.id		usb 0x0551
++vendor.name		CompuTrend Systems, Inc.
+
+ vendor.id		usb 0x0552
++vendor.name		Philips Monitors
+
+ vendor.id		usb 0x0553
++vendor.name		VLSI Vision Ltd.
+
+ vendor.id		usb 0x0554
++vendor.name		Dictaphone Corp.
+
+ vendor.id		usb 0x0555
++vendor.name		ANAM S&T Co., Ltd.
+
+ vendor.id		usb 0x0556
++vendor.name		Asahi Kasei Microsystems Co., Ltd
+
+ vendor.id		usb 0x0557
++vendor.name		ATEN International Co. ltd.
+
+ vendor.id		usb 0x0558
++vendor.name		Truevision, Inc.
+
+ vendor.id		usb 0x0559
++vendor.name		Cadence Design Systems
+
+ vendor.id		usb 0x055a
++vendor.name		Kenwood USA
+
+ vendor.id		usb 0x055b
++vendor.name		KnowledgeTek, Inc.
+
+ vendor.id		usb 0x055c
++vendor.name		Proton Electronic Ind.
+
+ vendor.id		usb 0x055d
++vendor.name		Samsung Electro-Mechanics Co.
+
+ vendor.id		usb 0x055e
++vendor.name		CTX Opto-Electronics Corp.
+
+ vendor.id		usb 0x055f
++vendor.name		Mustek Systems Inc.
+
+ vendor.id		usb 0x0560
++vendor.name		Interface Co., Ltd.
+
+ vendor.id		usb 0x0561
++vendor.name		Oasis Design, Inc.
+
+ vendor.id		usb 0x0562
++vendor.name		Telex Communications Inc.
+
+ vendor.id		usb 0x0563
++vendor.name		Immersion Corporation
+
+ vendor.id		usb 0x0564
++vendor.name		Chinon Industries, Inc.
+
+ vendor.id		usb 0x0565
++vendor.name		Peracom Networks, Inc.
+
+ vendor.id		usb 0x0567
++vendor.name		Xyratex Int'l Ltd.
+
+ vendor.id		usb 0x0568
++vendor.name		Quartz Ingenierie
+
+ vendor.id		usb 0x0569
++vendor.name		SegaSoft
+
+ vendor.id		usb 0x056a
++vendor.name		WACOM Co., Ltd.
+
+ vendor.id		usb 0x056b
++vendor.name		Decicon Incorporated
+
+ vendor.id		usb 0x056c
++vendor.name		e-TEK Labs
+
+ vendor.id		usb 0x056e
++vendor.name		Elecom Co., Ltd.
+
+ vendor.id		usb 0x056f
++vendor.name		Korea Data Systems Co., Ltd.
+
+ vendor.id		usb 0x0570
++vendor.name		Epson America
+
+ vendor.id		usb 0x0571
++vendor.name		Interex, Inc.
+
+ vendor.id		usb 0x0572
++vendor.name		EEH Datalink Gmbh
+
+ vendor.id		usb 0x0573
++vendor.name		Nogatech Ltd.
+
+ vendor.id		usb 0x0574
++vendor.name		City University of Hong Kong
+
+ vendor.id		usb 0x0575
++vendor.name		Swets & Zeitlinger BV
+
+ vendor.id		usb 0x0576
++vendor.name		BAFO/Quality Computer Accessories
+
+ vendor.id		usb 0x0577
++vendor.name		ELSA
+
+ vendor.id		usb 0x0578
++vendor.name		Intrinsix Corp.
+
+ vendor.id		usb 0x0579
++vendor.name		GVC Corporation
+
+ vendor.id		usb 0x057a
++vendor.name		Samsung Electronics America
+
+ vendor.id		usb 0x057b
++vendor.name		Y-E Data, Inc.
+
+ vendor.id		usb 0x057c
++vendor.name		AVM Gmbh
+
+ vendor.id		usb 0x057d
++vendor.name		Shark Multimedia Inc.
+
+ vendor.id		usb 0x057e
++vendor.name		Nintendo Co.,
+
+ vendor.id		usb 0x057f
++vendor.name		Quickshot Technology Inc.
+
+ vendor.id		usb 0x0580
++vendor.name		Denron Inc.
+
+ vendor.id		usb 0x0581
++vendor.name		Racal Data Group
+
+ vendor.id		usb 0x0582
++vendor.name		Roland Corporation
+
+ vendor.id		usb 0x0583
++vendor.name		Padix Co. Ltd.
+
+ vendor.id		usb 0x0584
++vendor.name		RATOC System Inc.
+
+ vendor.id		usb 0x0585
++vendor.name		FlashPoint Technology, Inc.
+
+ vendor.id		usb 0x0586
++vendor.name		ZyXEL Communications Corp.
+
+ vendor.id		usb 0x0587
++vendor.name		America Kotobuki Electronics Ind.
+
+ vendor.id		usb 0x0588
++vendor.name		Sapien Design
+
+ vendor.id		usb 0x0589
++vendor.name		Victron
+
+ vendor.id		usb 0x058a
++vendor.name		Nohau Corporation
+
+ vendor.id		usb 0x058b
++vendor.name		Siemens Semiconductor
+
+ vendor.id		usb 0x058c
++vendor.name		In Focus Systems
+
+ vendor.id		usb 0x058d
++vendor.name		Micrel Semiconductor
+
+ vendor.id		usb 0x058e
++vendor.name		Tripath Technology Inc.
+
+ vendor.id		usb 0x058f
++vendor.name		Alcor Micro, Inc.
+
+ vendor.id		usb 0x0590
++vendor.name		OMRON Corporation
+
+ vendor.id		usb 0x0591
++vendor.name		Questra Consulting
+
+ vendor.id		usb 0x0592
++vendor.name		Exide Electronics
+
+ vendor.id		usb 0x0593
++vendor.name		Incite
+
+ vendor.id		usb 0x0594
++vendor.name		Princeton Graphic Systems
+
+ vendor.id		usb 0x0595
++vendor.name		Zoran Microelectronics Ltd.
+
+ vendor.id		usb 0x0596
++vendor.name		Microtouch Systems
+
+ vendor.id		usb 0x0597
++vendor.name		Trisignal Communications
+
+ vendor.id		usb 0x0598
++vendor.name		Nigata Canotec Co., Inc.
+
+ vendor.id		usb 0x0599
++vendor.name		Brilliance Semiconductor Inc.
+
+ vendor.id		usb 0x059a
++vendor.name		Spectrum Signal Processing Inc.
+
+ vendor.id		usb 0x059b
++vendor.name		Iomega Corporation
+
+ vendor.id		usb 0x059b
+&device.id		usb 0x0030
++device.name		USB Zip 250
+
+ vendor.id		usb 0x059c
++vendor.name		A-Trend Technology Co., Ltd.
+
+ vendor.id		usb 0x059d
++vendor.name		Advanced Input Devices
+
+ vendor.id		usb 0x059e
++vendor.name		Intelligent Instrumentation
+
+ vendor.id		usb 0x059f
++vendor.name		Electronique D2
+
+ vendor.id		usb 0x05a0
++vendor.name		Vetronix Corporation
+
+ vendor.id		usb 0x05a1
++vendor.name		USC Corporation
+
+ vendor.id		usb 0x05a2
++vendor.name		Fuji Film Microdevices Co. Ltd.
+
+ vendor.id		usb 0x05a3
++vendor.name		VAutomation Inc.
+
+ vendor.id		usb 0x05a4
++vendor.name		Ortek Technology, Inc.
+
+ vendor.id		usb 0x05a5
++vendor.name		Sampo Technology Corp.
+
+ vendor.id		usb 0x05a6
++vendor.name		Cisco Systems
+
+ vendor.id		usb 0x05a7
++vendor.name		Bose Corporation
+
+ vendor.id		usb 0x05a8
++vendor.name		Spacetec IMC Corporation
+
+ vendor.id		usb 0x05a9
++vendor.name		OmniVision Technologies, Inc.
+
+ vendor.id		usb 0x05aa
++vendor.name		Utilux South China Ltd.
+
+ vendor.id		usb 0x05ab
++vendor.name		In-System Design
+
+ vendor.id		usb 0x05ac
++vendor.name		Apple Computer, Inc.
+
+ vendor.id		usb 0x05ac
+&device.id		usb 0x0202
++device.name		Apple USB Keyboard
+
+ vendor.id		usb 0x05ac
+&device.id		usb 0x0301
++device.name		Apple USB Mouse
+
+ vendor.id		usb 0x05ac
+&device.id		usb 0x1001
++device.name		Apple USB Hub
+
+ vendor.id		usb 0x05ad
++vendor.name		Y.C.Cable U.S.A., Inc
+
+ vendor.id		usb 0x05ae
++vendor.name		Synopsys, Inc.
+
+ vendor.id		usb 0x05af
++vendor.name		Jing-Mold Enterprise Co., Ltd.
+
+ vendor.id		usb 0x05b0
++vendor.name		Fountain Technologies, Inc
+
+ vendor.id		usb 0x05b1
++vendor.name		First International Computer, Inc
+
+ vendor.id		usb 0x05b4
++vendor.name		LG Semicon Co., Ltd.
+
+ vendor.id		usb 0x05b5
++vendor.name		Dialogic Corp
+
+ vendor.id		usb 0x05b6
++vendor.name		Proxima Corporation
+
+ vendor.id		usb 0x05b7
++vendor.name		Medianix Semiconductor, Inc.
+
+ vendor.id		usb 0x05b9
++vendor.name		Philips Research Laboratories
+
+ vendor.id		usb 0x05ba
++vendor.name		Digital Persona
+
+ vendor.id		usb 0x05be
++vendor.name		Raychem Corporation
+
+ vendor.id		usb 0x05bf
++vendor.name		S & S Research
+
+ vendor.id		usb 0x05c1
++vendor.name		Kawasaki Steel
+
+ vendor.id		usb 0x05c2
++vendor.name		Mediaphonics S.A.
+
+ vendor.id		usb 0x05c5
++vendor.name		Central Data Corporation
+
+ vendor.id		usb 0x05c6
++vendor.name		Qualcomm, Inc
+
+ vendor.id		usb 0x05c7
++vendor.name		Qtronix Corp
+
+ vendor.id		usb 0x05c8
++vendor.name		Cheng Uei Precision Industry Co., Ltd
+
+ vendor.id		usb 0x05c9
++vendor.name		Semtech Corporation
+
+ vendor.id		usb 0x05ca
++vendor.name		Ricoh Company Ltd.
+
+ vendor.id		usb 0x05cb
++vendor.name		Powerchip Semiconductor Co.
+
+ vendor.id		usb 0x05cc
++vendor.name		ELSA Gmbh
+
+ vendor.id		usb 0x05cd
++vendor.name		Silicom LTD.
+
+ vendor.id		usb 0x05ce
++vendor.name		SICAN Gmbh
+
+ vendor.id		usb 0x05cf
++vendor.name		Sung Forn Co. LTD.
+
+ vendor.id		usb 0x05d0
++vendor.name		Lunar Corporation
+
+ vendor.id		usb 0x05e3
+&device.id		usb 0x000b
++device.name		Razer Boomslang USB Mouse
+
+ vendor.id		usb 0x0698
++vendor.name		Chuntex (CTX)
+
+ vendor.id		usb 0x0c4b
++vendor.name		Reiner SCT
+
+ vendor.id		usb 0x0c4b
+&device.id		usb 0x0100
++baseclass.id		0x10e
++subclass.id		0x00
++device.name		Cyberjack USB
+
+ vendor.id		usb 0x0ef7
++vendor.name		Tulip Computers International
+
+ vendor.id		usb 0x1606
++vendor.name		UMAX Data Systems, Inc.
+
+ vendor.id		usb 0x1606
+&device.id		usb 0x0010
++device.name		Astra 1220U
+
+ vendor.id		usb 0x1606
+&device.id		usb 0x0030
++device.name		Astra 2000U
+
+ vendor.id		usb 0x1606
+&device.id		usb 0x0130
++device.name		Astra 2100U
+
+ vendor.id		usb 0x1606
+&device.id		usb 0x0230
++device.name		Astra 2200 (USB)
+
+ vendor.id		usb 0x1606
+&device.id		usb 0x1030
++device.name		Astra 4000U
+
+ vendor.id		usb 0x8086
++vendor.name		Intel Corporation
+
+ vendor.id		usb 0xc251
++vendor.name		Keil Software
+
