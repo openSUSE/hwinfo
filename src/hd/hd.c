@@ -4201,9 +4201,9 @@ char *numid2str(uint64_t id, int len)
 #define INT_CRC(a, b)	crc64(&a, &hd->b, sizeof hd->b);
 #define STR_CRC(a, b)	if(hd->b) crc64(&a, hd->b, strlen(hd->b) + 1);
 
-#if 0
+
 // old method
-void hd_add_id(hd_t *hd)
+void hd_add_old_id(hd_t *hd)
 {
   uint64_t id0 = 0, id1 = 0;
 
@@ -4239,13 +4239,16 @@ void hd_add_id(hd_t *hd)
   str_printf(&hd->unique_id, 0, "%s", numid2str(id0, 24));
   str_printf(&hd->unique_id, -1, ".%s", numid2str(id1, 64));
 }
-#endif
 
 void hd_add_id(hd_t *hd)
 {
   uint64_t id0 = 0, id1 = 0;
 
   if(hd->unique_id) return;
+
+  hd_add_old_id(hd);
+  hd->old_unique_id = hd->unique_id;
+  hd->unique_id = NULL;
 
   INT_CRC(id0, bus);
   // usb likes to re-attach devices at different places

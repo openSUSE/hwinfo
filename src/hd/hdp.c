@@ -90,6 +90,10 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("Unique ID: %s\n", h->unique_id);
   }
 
+  if((hd_data->debug == -1) && h->old_unique_id) {
+    dump_line("Old Unique ID: %s\n", h->old_unique_id);
+  }
+
   if(h->hw_class && (s = hd_hw_item_name(h->hw_class))) {
     dump_line("Hardware Class: %s\n", s);
   }

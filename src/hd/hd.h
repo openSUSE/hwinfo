@@ -1088,6 +1088,7 @@ typedef struct s_hd_t {
 
   char *driver;			/* currently active driver */
 
+  char *old_unique_id;		/* the id before v3.17 */
   char *parent_id;		/* unique_id of our parent, please do not use it for now */
 
   /*
