@@ -36,6 +36,7 @@ static struct {
   {  800,  600, "Fujitsu Siemens", "LiteLine", "LF6" },
   { 1024,  768, "ASUSTEK", "L2000D", NULL },
   { 1024,  768, "ASUSTeK Computer Inc.", "L8400C series Notebook PC", NULL },
+  { 1024,  768, "ASUSTeK Computer Inc.", "S5N", NULL },
   { 1024,  768, "Acer", "TravelMate 720", NULL },
   { 1024,  768, "COMPAL", "N30T5", NULL },
   { 1024,  768, "Dell Computer Corporation", "Inspiron 5000", NULL },
@@ -51,6 +52,7 @@ static struct {
   { 1024,  768, "Sony Corporation", "PCG-F370(UC)", NULL },
   { 1024,  768, "Sony Corporation", "PCG-N505SN", NULL },
   { 1024,  768, "TOSHIBA", "S2400-103", NULL },
+  { 1400, 1050, "Acer", "TravelMate 660", NULL },
   { 1400, 1050, "Dell Computer Corporation", "Inspiron 8000", NULL },
   { 1600, 1200, "Dell Computer Corporation", "Inspiron 8200", NULL },
   { 1600, 1200, "Dell Computer Corporation", "Latitude C840", NULL }
@@ -77,7 +79,7 @@ static void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *
 static int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios32);
 #endif
 
-int detect_smp(hd_data_t *hd_data)
+int detect_smp_bios(hd_data_t *hd_data)
 {
   bios_info_t *bt;
   hd_t *hd;
@@ -121,13 +123,12 @@ void hd_scan_bios(hd_data_t *hd_data)
   vbe_mode_info_t *mi;
   hd_res_t *res;
 #endif
-  struct stat sbuf;
   str_list_t *sl;
 
   if(!hd_probe_feature(hd_data, pr_bios)) return;
 
   /* we better do nothing on a SGI Altix machine */
-  if(!stat("/proc/sgi_sn", &sbuf)) return;
+  if(hd_is_sgi_altix(hd_data)) return;
 
   hd_data->module = mod_bios;
 

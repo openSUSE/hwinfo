@@ -1,3 +1,21 @@
+19/4/2004:	v8.40
+	- fixed bug in modules.alias conversion script (#38800)
+	- fixed linmodem data (#38800)
+	- handle veth devices on iSeries (#38696, #37981)
+	- another de4x5 vs. tulip case (#39127)
+	- fixed cdrom config segfault (might happen while reading inconsistent
+	  cdrom config data)
+	- support pSeries vscsi (#36029)
+
+15/4/2004:	v8.39
+	- bcm5700, not tg3 on ppc* (#38647)
+	- add Acer TravelMate 660 & Asus S5200N LCD sizes (#38149)
+	- make SGI IOC4 known as storage controller (#38628)
+	- support SGI XPNET (#35867)
+
+6/4/2004:	v8.38
+	- do call --partion with --fast in hwscand polling code
+
 6/4/2004:	v8.37
 	- fixed unique ids for pci devs (#37570)
 
