@@ -1,3 +1,4 @@
+5/8/2004:	v9.2
 	- push/pop don't work with 32bit regs on amd64 (#43531)
 
 4/8/2004:	v9.1
