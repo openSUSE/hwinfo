@@ -120,6 +120,7 @@ void hd_scan_cpu(hd_data_t *hd_data)
         *ct1 = *ct;
         ct1->model_name = new_str(ct1->model_name);
         ct1->vend_name = new_str(ct1->vend_name);
+        ct1->platform = new_str(ct1->platform);
       }
       else {
         hd->detail->cpu.data = ct;

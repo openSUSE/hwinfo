@@ -2829,7 +2829,7 @@ int hd_smp_support(hd_data_t *hd_data)
 {
   int is_smp = 0;
   unsigned u;
-  hd_t *hd;
+  hd_t *hd, *hd0;
 #if 0
   cpu_info_t *ct;
   str_list_t *sl;
@@ -2848,7 +2848,8 @@ int hd_smp_support(hd_data_t *hd_data)
   if(!hd) hd = hd_list(hd_data, hw_cpu, 1, NULL);
   hd_data->flags.internal = u;
 
-  if(hd && hd->next) is_smp = 1;
+  for(is_smp = 0, hd0 = hd; hd0; hd0 = hd0->next) is_smp++;
+  if(is_smp == 1) is_smp = 0;
 
   hd = hd_free_hd_list(hd);
 
@@ -4131,7 +4132,7 @@ char *numid2str(uint64_t id, int len)
       u = '+';
     }
     else {
-      u = '/';
+      u = '_';
     }
     buf[i] = u;
   }

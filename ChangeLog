@@ -1,3 +1,9 @@
+3/4/2001:	v1.99
+	- fixed segfault bug in alpha smp code
+
+26/3/2001:	v1.98
+	- unique id format changed
+
 21/3/2001:	v1.97
 	- fixed src/ids/Makefile for axp
 	- slightly changed display detection code on axp
