@@ -1,4 +1,4 @@
-02/9/2002	v5.22
+02/9/2002:	v5.22
 	- code for detekting configured CTC, IUCV, HSI and QETH
 	  adapters on s390/s390x
 	- fixed iSeries network id
