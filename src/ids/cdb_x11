@@ -9,6 +9,7 @@
 use DBI;
 use strict;
 use IO::Handle;
+use Getopt::Long;
 
 # MySQL-Host / MySQL-User
 my $hostname     = "Jackson.suse.de";
@@ -25,15 +26,15 @@ STDOUT->autoflush();
 
 
 my $dist_name = "Stable";
-#my $PATH      = '/suse/dhess/Export/';
-my $PATH      = $ENV{HOME}."/";
 my $date      = localtime();
 
 my (@query,$x,$result,$arch_name,@arch_names,$filename,$count);
-my ($product_id,$product_name,$product_class,$vendor_name,$vendor_class,$bus_name,$subclass_name);
-my ($subproduct_id,$subproduct_class,$subvendor_class,$subproduct_name,$subvendor_name);
+my ($product_id,$product_name,$vendor_name,$bus_name,$subclass_name);
+my ($vId,$dId,$sdId,$svId);
 my (%tooltopics,$tooltopic_name,$vario_name,$charvalue);
-my (@raw,$raw);
+
+my $opt_dir = "tmp";
+
 
 # convert to new id format
 sub new_id
@@ -71,29 +72,153 @@ sub new_id
 }
 
 
-print "\n\nGenerating x11.hwinfo-files, one for each architecture.\n";
-=head1
-print "\nStoring files under $PATH [Y|n]? ";
-$result = <STDIN>;
-chop($result);
-if (($result eq "n") || ($result eq "N")) {
-  print "\n\nPlease enter directory for storing the generated files (e.g. ~/Test): ";
-  $result = <STDIN>;
-  chop($result);
-  if (!($result =~ /\/$/)) {
-    $result .= "/";
-  }
-  if ($result =~ /^\~/) {
-    $PATH =~ s/\/$//;
-    $result =~ s/\~/$PATH/;
-  }
-  $PATH = $result;
-}
-=cut
-$PATH = "tmp/";
-mkdir $PATH, 0755;
+# write data to FH
+sub write_info
+{
+  my ($arch, $xfree, $has3d, $vId, $dId, $svId, $sdId, $vName, $dName, $tt, $raw, @raw);
 
-print "\nStoring files under $PATH\n\n";
+  ($arch, $xfree, $has3d, $vId, $dId, $svId, $sdId, $vName, $dName, $tt) = @_;
+
+  return unless $vId ne "" && $dId ne "";
+
+  # print FH "# vId = $vId, dId = $dId, svId = $svId, sdId = $sdId, vName = \"$vName\", dName = \"$dName\"\n";
+
+  if($svId ne "" && $sdId ne "") {
+    print FH "\n vendor.id\t\t${\new_id $svId, $vId}\n";
+    print FH "+vendor.name\t\t$vName\n";
+
+    print FH "\n vendor.id\t\t${\new_id $vId}\n";
+    print FH "&device.id\t\t${\new_id $dId, $vId}\n";
+    print FH "&subvendor.id\t\t${\new_id $svId, $vId}\n";
+    print FH "&subdevice.id\t\t${\new_id $sdId, $vId}\n";
+    print FH "+subdevice.name\t\t$dName\n";
+  }
+  else {
+    print FH "\n vendor.id\t\t${\new_id $vId}\n";
+    print FH "+vendor.name\t\t$vName\n";
+
+    print FH "\n vendor.id\t\t${\new_id $vId}\n";
+    print FH "&device.id\t\t${\new_id $dId, $vId}\n";
+    print FH "+device.name\t\t$dName\n";
+  }
+
+  if($$tt{resol} ne "") {
+    $$tt{resol} =~ s/bpp//g;
+  }
+	
+  # Teste ob mehr als ein driver- oder installscript-topic vorhanden ist:
+  if(($$tt{driver} =~ /,/) || ($$tt{installscript} =~ /,/)) {
+    warn
+      "\nMore than one driver- or installscript-topic.\n" .
+      "  Product-id = $product_id, Vario = $vario_name, Arch = $arch\n" .
+      "  Id = (${\new_id $vId}, ${\new_id $dId, $vId}), Name = $dName\n" .
+      "  Driver = \"$$tt{driver}\", script = \"$$tt{installscript}\"\n";
+  }
+
+  print FH
+    "+driver.xfree\t\t$xfree|$$tt{driver}|" .
+    ($has3d ? "3d" : "") .
+    "|$$tt{package}|$$tt{extension}|$$tt{option}|$$tt{resol}||$$tt{installscript}|\n";
+
+  if ($$tt{raw} ne "") {
+    @raw = (split(',',$$tt{raw}));
+    foreach $raw (@raw) {
+      print FH "+driver.xfree.config\t$raw\n";
+    }
+  }
+}
+
+
+# get product info and write everything to FH
+sub get_info
+{
+  my ($arch_name, $xfree, $has3d);
+
+  ($arch_name, $vario_name) = @_;
+
+  $xfree = $vario_name =~ /XFree3/ ? 3 : 4;
+  $has3d = $vario_name =~ /3D/ ? 1 : 0;
+
+  $tooltopics{driver} = "";
+  $tooltopics{package} = "";
+  $tooltopics{extension} = "";
+  $tooltopics{option} = "";
+  $tooltopics{resol} = "";
+  $tooltopics{installscript} = "";
+  $tooltopics{raw} = "";
+
+  # Product supported=full?
+  $query[2] = $dbh->prepare("SELECT toolproperty.charvalue FROM toolproperty
+                                 LEFT JOIN tooltopic ON toolproperty.tooltopic_id=tooltopic.id
+                                 LEFT JOIN arch_dist_l_vario ON toolproperty.arch_dist_l_vario_id=arch_dist_l_vario.id
+                                 LEFT JOIN arch ON arch_dist_l_vario.arch_id=arch.id
+                                 LEFT JOIN distribution ON arch_dist_l_vario.distribution_id=distribution.id
+                                 LEFT JOIN vario ON arch_dist_l_vario.vario_id=vario.id
+                                 WHERE toolproperty.product_id=$product_id
+                                   AND tooltopic.name='supported'
+                                   AND arch.name='$arch_name'
+                                   AND distribution.name='$dist_name'
+                                   AND vario.name='$vario_name'
+                                   AND toolproperty.valid=1
+                                   AND tooltopic.valid=1
+                                   AND arch_dist_l_vario.valid=1")
+    or die "Can\'t select table toolproperty";
+  $query[2]->execute or die "Can\'t select table toolproperty";
+
+  undef $result;
+  $count = 0;
+  while ($x = $query[2]->fetchrow_array) {
+    $result = $x if defined $x;
+    multiple_supportedtopics($dbh,$product_id,$product_name,$arch_name,$dist_name,$vario_name) if $count > 0;
+    $count++;
+  }
+  $result = "" if not defined $result;
+
+  if ($result eq "full") {
+    $query[2] = $dbh->prepare("SELECT tooltopic.name,toolproperty.charvalue FROM toolproperty
+                                 LEFT JOIN tooltopic ON toolproperty.tooltopic_id=tooltopic.id
+                                 LEFT JOIN arch_dist_l_vario ON toolproperty.arch_dist_l_vario_id=arch_dist_l_vario.id
+                                 LEFT JOIN arch ON arch_dist_l_vario.arch_id=arch.id
+                                 LEFT JOIN distribution ON arch_dist_l_vario.distribution_id=distribution.id
+                                 LEFT JOIN language ON arch_dist_l_vario.lang_id=language.id
+                                 LEFT JOIN vario ON arch_dist_l_vario.vario_id=vario.id
+                                   WHERE arch.name='$arch_name'
+                                     AND distribution.name='$dist_name'
+                                     AND vario.name='$vario_name'
+                                     AND toolproperty.product_id=$product_id
+                                     AND tooltopic.name != 'supported'
+                                     AND toolproperty.valid=1
+                                     AND tooltopic.valid=1
+                                     AND arch_dist_l_vario.valid=1")
+      or die "Can\'t select table toolproperty";
+    $query[2]->execute or die "Can\'t select table toolproperty"; 
+
+    while ( ($tooltopic_name,$charvalue) = ($query[2]->fetchrow_array) ) {
+      if (($charvalue eq "none") || ($charvalue eq "None")) {
+	  $charvalue = "";
+      }
+      next if $charvalue eq "";
+      if (!$tooltopics{"$tooltopic_name"}) {
+        $tooltopics{"$tooltopic_name"} = $charvalue;
+      } else {
+        $tooltopics{"$tooltopic_name"} .= ",".$charvalue;
+      }
+    }
+
+    write_info $arch_name, $xfree, $has3d, $vId, $dId, $svId, $sdId, $vendor_name, $product_name, \%tooltopics;
+  }
+}
+
+
+GetOptions(
+  'dir=s' => \$opt_dir
+) ;
+
+
+print "\n\nGenerating x11.hwinfo-files, one for each architecture.\n";
+mkdir($opt_dir, 0755) || die "\nmkdir: $opt_dir: $!\n" unless -d $opt_dir;
+
+print "\nStoring files in \"$opt_dir\"\n\n";
 
 $query[0] = $dbh->prepare("SELECT name FROM arch WHERE valid=1")
   or die "Can\'t select table arch";
@@ -104,7 +229,7 @@ while ($result = $query[0]->fetchrow_array) {
 
 # Für jede Architektur wird eine eigene Datei geschrieben
 foreach $arch_name (@arch_names) {
-  $filename = $PATH.'x11.hwinfo.'.$arch_name;
+  $filename = "$opt_dir/x11.hwinfo.$arch_name";
   open(FH,"> $filename") or die "Can\'t open $filename";
   print FH "#\n";
   print FH "# x11.hwinfo-file for architecture $arch_name\n";
@@ -114,13 +239,13 @@ foreach $arch_name (@arch_names) {
   print FH "# distribution: $dist_name\n";
   print FH "#\n\n\n";
 
-  $query[0] = $dbh->prepare("SELECT product.id,product.name,product.deviceclass,
-                                    vendor.longname,vendorclass.class,
+  $query[0] = $dbh->prepare("SELECT product.id,product.name,
+                                    product.vId,product.dId,product.svId,product.sdId,
+                                    vendor.longname,product.vId,
                                     bus.name,subclass.name FROM product
                                LEFT JOIN product_area ON product.id=product_area.product_id
                                LEFT JOIN groups ON product_area.group_id=groups.id
                                LEFT JOIN vendor ON product.vendor_id=vendor.id
-                               LEFT JOIN vendorclass ON product.vendorclass_id=vendorclass.id
                                LEFT JOIN bus ON product.bus_id=bus.id
                                LEFT JOIN subclass ON product.subclass_id=subclass.id
                                 WHERE groups.name='graphic-developer'
@@ -128,427 +253,30 @@ foreach $arch_name (@arch_names) {
                                   AND product.valid=1")
     or die "Can\'t select table product";
   $query[0]->execute or die "Can\'t select table product";
-  while ( ($product_id,$product_name,$product_class,
-	   $vendor_name,$vendor_class,
-	     $bus_name,$subclass_name) = ($query[0]->fetchrow_array) ) {
-    $subproduct_class = $subvendor_class = "";
-    $query[1] = $dbh->prepare("SELECT product_id FROM product_subproduct 
-                                 WHERE subproduct_id=$product_id
-                                   AND valid=1")
-      or die "Can\'t select table product_subproduct";
-    $query[1]->execute or die "Can\'t select table product_subproduct";
-    if ( ($subproduct_id = $query[1]->fetchrow_array)) {
-      $query[2] = $dbh->prepare("SELECT product.deviceclass,vendorclass.class,product.name,vendor.longname FROM product
-                                   LEFT JOIN vendorclass ON product.vendorclass_id=vendorclass.id
-                                   LEFT JOIN vendor ON product.vendor_id=vendor.id
-                                   WHERE product.id=$subproduct_id
-                                     AND product.valid=1
-                                     AND vendorclass.valid=1")
-	or die "Can\'t select table product";
-      $query[2]->execute or die "Can\'t select table product";
-      ($subproduct_class,$subvendor_class,$subproduct_name,$subvendor_name) = ($query[2]->fetchrow_array);
-      if (($subproduct_class eq "") || ($subvendor_class eq "")) {
-	$subproduct_class = '????' if $subproduct_class eq "";
-	$subvendor_class = '????' if $subvendor_class eq "";
-	print "\n\n!!No valid vendor and/or deviceID for maindevice:\n";
-	print "\nMaindevice: $subvendor_class $subproduct_class $subvendor_name $subproduct_name (primary index = $subproduct_id)\n";
-	die "Subdevice: $vendor_class $product_class $vendor_name $product_name (primary index = $product_id)\n\n";
-      }
-    }
+  while ( ($product_id,$product_name,$vId,$dId,$svId,$sdId,$vendor_name,$vId,$bus_name,$subclass_name) = ($query[0]->fetchrow_array) ) {
+    # Postinitialisierung, falls undefinierte Werte
+    $vId = "----" if !defined($vId);
+    $dId = "----" if !defined($dId);
+    $svId = "----" if !defined($svId);
+    $sdId = "----" if !defined($sdId);
+
+    $vId = "" if $vId eq "----";
+    $dId = "" if $dId eq "----";
+    $svId = "" if $svId eq "----";
+    $sdId = "" if $sdId eq "----";
 
     # Step 1: Erzeuge Zeilen für XFree 3 ohne 3D
-    $vario_name = 'XFree3';
-    $tooltopics{driver} = "";
-    $tooltopics{package} = "";
-    $tooltopics{extension} = "";
-    $tooltopics{option} = "";
-    $tooltopics{resol} = "";
-    $tooltopics{installscript} = "";
-    $tooltopics{raw} = "";
+    get_info $arch_name, "XFree3";
 
-    # Product supported=full?
-    $query[2] = $dbh->prepare("SELECT toolproperty.charvalue FROM toolproperty
-                                   LEFT JOIN tooltopic ON toolproperty.tooltopic_id=tooltopic.id
-                                   LEFT JOIN arch_dist_l_vario ON toolproperty.arch_dist_l_vario_id=arch_dist_l_vario.id
-                                   LEFT JOIN arch ON arch_dist_l_vario.arch_id=arch.id
-                                   LEFT JOIN distribution ON arch_dist_l_vario.distribution_id=distribution.id
-                                   LEFT JOIN vario ON arch_dist_l_vario.vario_id=vario.id
-                                   WHERE toolproperty.product_id=$product_id
-                                     AND tooltopic.name='supported'
-                                     AND arch.name='$arch_name'
-                                     AND distribution.name='$dist_name'
-                                     AND vario.name='$vario_name'
-                                     AND toolproperty.valid=1
-                                     AND tooltopic.valid=1
-                                     AND arch_dist_l_vario.valid=1")
-      or die "Can\'t select table toolproperty";
-    $query[2]->execute or die "Can\'t select table toolproperty";
-    undef $result;
-    $count = 0;
-    while ($x = $query[2]->fetchrow_array) {
-      $result = $x if defined $x;
-      multiple_supportedtopics($dbh,$product_id,$product_name,$arch_name,$dist_name,$vario_name) if $count > 0;
-      $count++;
-    }
-    $result = "" if not defined $result;
-    
-    if ($result eq "full") {
-      $query[2] = $dbh->prepare("SELECT tooltopic.name,toolproperty.charvalue FROM toolproperty
-                                   LEFT JOIN tooltopic ON toolproperty.tooltopic_id=tooltopic.id
-                                   LEFT JOIN arch_dist_l_vario ON toolproperty.arch_dist_l_vario_id=arch_dist_l_vario.id
-                                   LEFT JOIN arch ON arch_dist_l_vario.arch_id=arch.id
-                                   LEFT JOIN distribution ON arch_dist_l_vario.distribution_id=distribution.id
-                                   LEFT JOIN language ON arch_dist_l_vario.lang_id=language.id
-                                   LEFT JOIN vario ON arch_dist_l_vario.vario_id=vario.id
-                                     WHERE arch.name='$arch_name'
-                                       AND distribution.name='$dist_name'
-                                       AND vario.name='$vario_name'
-				       AND toolproperty.product_id=$product_id
-                                       AND tooltopic.name != 'supported'
-                                       AND toolproperty.valid=1
-                                       AND tooltopic.valid=1
-                                       AND arch_dist_l_vario.valid=1")
-	or die "Can\'t select table toolproperty";
-	$query[2]->execute or die "Can\'t select table toolproperty"; 
-      while ( ($tooltopic_name,$charvalue) = ($query[2]->fetchrow_array) ) {
-	if (($charvalue eq "none") || ($charvalue eq "None")){
-	  $charvalue = "";
-	}
-	next if $charvalue eq "";
-	if ($tooltopics{"$tooltopic_name"} eq "") {
-	  $tooltopics{"$tooltopic_name"} = $charvalue;
-	  } else {
-	    $tooltopics{"$tooltopic_name"} .= ",".$charvalue;
-	  }
-      }
-      if ( ($vendor_class ne "") && ($product_class ne "") ) {
-          print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
-          print FH "+vendor.name\t\t$vendor_name\n";
-	  if ( ($subvendor_class ne "") && ($subproduct_class ne "") ) {
-	    print FH "\n vendor.id\t\t${\new_id $subvendor_class, $vendor_class}\n";
-	    print FH "&device.id\t\t${\new_id $subproduct_class, $vendor_class}\n";
-	    print FH "&subvendor.id\t\t${\new_id $vendor_class}\n";
-	    print FH "&subdevice.id\t\t${\new_id $product_class, $vendor_class}\n";
-	    print FH "+subdevice.name\t\t$product_name\n";
-	  } else {
-	    print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
-	    print FH "&device.id\t\t${\new_id $product_class, $vendor_class}\n";
-	    print FH "+device.name\t\t$product_name\n";
-	  }
-	if ($tooltopics{resol} ne "") {
-	  $tooltopics{resol} =~ s/bpp//g;
-	  }
-	
-	# Teste ob mehr als ein driver- oder installscript-topic vorhanden ist:
-	if (($tooltopics{driver} =~ /,/) || ($tooltopics{installscript} =~ /,/)) {
-	  
-	  die "\nMore than one driver- or installscript-topic. Product-id=$product_id. Vario=$vario_name. Arch=$arch_name.\n";
-	}
-	
-	print FH "+driver.xfree\t\t3|$tooltopics{driver}||$tooltopics{package}|$tooltopics{extension}|$tooltopics{option}|$tooltopics{resol}||$tooltopics{installscript}|\n";
-	if ($tooltopics{raw} ne "") {
-	  @raw = (split(',',$tooltopics{raw}));
-	  foreach $raw (@raw) {
-	    print FH "+driver.xfree.config\t$raw\n";
-	  }
-	}
-	
-      }
-    } # Ende XFree3 ohne 3D
-# ----------------------------------------------------------------------------------------------------------------------------
     # Step 2: Erzeuge Zeilen für XFree 3 mit 3D
-    $vario_name = 'XFree3 with 3D';
-    $tooltopics{driver} = "";
-    $tooltopics{package} = "";
-    $tooltopics{extension} = "";
-    $tooltopics{option} = "";
-    $tooltopics{resol} = "";
-    $tooltopics{installscript} = "";
-    $tooltopics{raw} = "";
+    get_info $arch_name, "XFree3 with 3D";
 
-    # Product supported=full?
-    $query[2] = $dbh->prepare("SELECT toolproperty.charvalue FROM toolproperty
-                                   LEFT JOIN tooltopic ON toolproperty.tooltopic_id=tooltopic.id
-                                   LEFT JOIN arch_dist_l_vario ON toolproperty.arch_dist_l_vario_id=arch_dist_l_vario.id
-                                   LEFT JOIN arch ON arch_dist_l_vario.arch_id=arch.id
-                                   LEFT JOIN distribution ON arch_dist_l_vario.distribution_id=distribution.id
-                                   LEFT JOIN vario ON arch_dist_l_vario.vario_id=vario.id
-                                   WHERE toolproperty.product_id=$product_id
-                                     AND tooltopic.name='supported'
-                                     AND arch.name='$arch_name'
-                                     AND distribution.name='$dist_name'
-                                     AND vario.name='$vario_name'
-                                     AND toolproperty.valid=1
-                                     AND tooltopic.valid=1
-                                     AND arch_dist_l_vario.valid=1")
-      or die "Can\'t select table toolproperty";
-    $query[2]->execute or die "Can\'t select table toolproperty";
-    undef $result;
-    $count = 0;
-    while ($x = $query[2]->fetchrow_array) {
-      $result = $x if defined $x;
-      multiple_supportedtopics($dbh,$product_id,$product_name,$arch_name,$dist_name,$vario_name) if $count > 0;
-	$count++;
-    }
-    $result = "" if not defined $result;
-    
-    if ($result eq "full") {
-      $query[2] = $dbh->prepare("SELECT tooltopic.name,toolproperty.charvalue FROM toolproperty
-                                   LEFT JOIN tooltopic ON toolproperty.tooltopic_id=tooltopic.id
-                                   LEFT JOIN arch_dist_l_vario ON toolproperty.arch_dist_l_vario_id=arch_dist_l_vario.id
-                                   LEFT JOIN arch ON arch_dist_l_vario.arch_id=arch.id
-                                   LEFT JOIN distribution ON arch_dist_l_vario.distribution_id=distribution.id
-                                   LEFT JOIN language ON arch_dist_l_vario.lang_id=language.id
-                                   LEFT JOIN vario ON arch_dist_l_vario.vario_id=vario.id
-                                     WHERE arch.name='$arch_name'
-                                       AND distribution.name='$dist_name'
-                                       AND vario.name='$vario_name'
-				       AND toolproperty.product_id=$product_id
-                                       AND tooltopic.name != 'supported'
-                                       AND toolproperty.valid=1
-                                       AND tooltopic.valid=1
-                                       AND arch_dist_l_vario.valid=1")
-	or die "Can\'t select table toolproperty";
-      $query[2]->execute or die "Can\'t select table toolproperty"; 
-      while ( ($tooltopic_name,$charvalue) = ($query[2]->fetchrow_array) ) {
-	if (($charvalue eq "none") || ($charvalue eq "None")){
-	    $charvalue = "";
-	  }
-	next if $charvalue eq "";
-	if ($tooltopics{"$tooltopic_name"} eq "") {
-	  $tooltopics{"$tooltopic_name"} = $charvalue;
-	} else {
-	  $tooltopics{"$tooltopic_name"} .= ",".$charvalue;
-	}
-      }
-      if ( ($vendor_class ne "") && ($product_class ne "") ) {
-          print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
-          print FH "+vendor.name\t\t$vendor_name\n";
-	  if ( ($subvendor_class ne "") && ($subproduct_class ne "") ) {
-	    print FH "\n vendor.id\t\t${\new_id $subvendor_class, $vendor_class}\n";
-	    print FH "&device.id\t\t${\new_id $subproduct_class, $vendor_class}\n";
-	    print FH "&subvendor.id\t\t${\new_id $vendor_class}\n";
-	    print FH "&subdevice.id\t\t${\new_id $product_class, $vendor_class}\n";
-	    print FH "+subdevice.name\t\t$product_name\n";
-	  } else {
-	    print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
-	    print FH "&device.id\t\t${\new_id $product_class, $vendor_class}\n";
-	    print FH "+device.name\t\t$product_name\n";
-	  }
-	  if ($tooltopics{resol} ne "") {
-	    $tooltopics{resol} =~ s/bpp//g;
-	  }
-
-	  # Teste ob mehr als ein driver- oder installscript-topic vorhanden ist:
-	  if (($tooltopics{driver} =~ /,/) || ($tooltopics{installscript} =~ /,/)) {
-	    die "\nMore than one driver- or installscript-topic. Product-id=$product_id. Vario=$vario_name. Arch=$arch_name.\n";
-	  }
-	  
-	  print FH "+driver.xfree\t\t3|$tooltopics{driver}|3d|$tooltopics{package}|$tooltopics{extension}|$tooltopics{option}|$tooltopics{resol}||$tooltopics{installscript}|\n";
-	  if ($tooltopics{raw} ne "") {
-	    @raw = (split(',',$tooltopics{raw}));
-	    foreach $raw (@raw) {
-	      print FH "+driver.xfree.config\t$raw\n";
-	    }
-	  }
-	}
-    } # Ende XFree3 + 3D
-# ----------------------------------------------------------------------------------------------------------------------------
     # Step 2: Erzeuge Zeilen für XFree 4 ohne 3D
-    $vario_name = 'XFree4';
-    $tooltopics{driver} = "";
-    $tooltopics{package} = "";
-    $tooltopics{extension} = "";
-    $tooltopics{option} = "";
-    $tooltopics{resol} = "";
-    $tooltopics{installscript} = "";
-    $tooltopics{raw} = "";
-    
-    # Product supported=full?
-      $query[2] = $dbh->prepare("SELECT toolproperty.charvalue FROM toolproperty
-                                   LEFT JOIN tooltopic ON toolproperty.tooltopic_id=tooltopic.id
-                                   LEFT JOIN arch_dist_l_vario ON toolproperty.arch_dist_l_vario_id=arch_dist_l_vario.id
-                                   LEFT JOIN arch ON arch_dist_l_vario.arch_id=arch.id
-                                   LEFT JOIN distribution ON arch_dist_l_vario.distribution_id=distribution.id
-                                   LEFT JOIN vario ON arch_dist_l_vario.vario_id=vario.id
-                                   WHERE toolproperty.product_id=$product_id
-                                     AND tooltopic.name='supported'
-                                     AND arch.name='$arch_name'
-                                     AND distribution.name='$dist_name'
-                                     AND vario.name='$vario_name'
-                                     AND toolproperty.valid=1
-                                     AND tooltopic.valid=1
-                                     AND arch_dist_l_vario.valid=1")
-	or die "Can\'t select table toolproperty";
-    $query[2]->execute or die "Can\'t select table toolproperty";
-    undef $result;
-    $count = 0;
-    while ($x = $query[2]->fetchrow_array) {
-      $result = $x if defined $x;
-      multiple_supportedtopics($dbh,$product_id,$product_name,$arch_name,$dist_name,$vario_name) if $count > 0;
-      $count++;
-    }
-    $result = "" if not defined $result;
-    
-    if ($result eq "full") {
-      $query[2] = $dbh->prepare("SELECT tooltopic.name,toolproperty.charvalue FROM toolproperty
-                                   LEFT JOIN tooltopic ON toolproperty.tooltopic_id=tooltopic.id
-                                   LEFT JOIN arch_dist_l_vario ON toolproperty.arch_dist_l_vario_id=arch_dist_l_vario.id
-                                   LEFT JOIN arch ON arch_dist_l_vario.arch_id=arch.id
-                                   LEFT JOIN distribution ON arch_dist_l_vario.distribution_id=distribution.id
-                                   LEFT JOIN language ON arch_dist_l_vario.lang_id=language.id
-                                   LEFT JOIN vario ON arch_dist_l_vario.vario_id=vario.id
-                                     WHERE arch.name='$arch_name'
-                                       AND distribution.name='$dist_name'
-                                       AND vario.name='$vario_name'
-				       AND toolproperty.product_id=$product_id
-                                       AND tooltopic.name != 'supported'
-                                       AND toolproperty.valid=1
-                                       AND tooltopic.valid=1
-                                       AND arch_dist_l_vario.valid=1")
-	or die "Can\'t select table toolproperty";
-      $query[2]->execute or die "Can\'t select table toolproperty"; 
-      while ( ($tooltopic_name,$charvalue) = ($query[2]->fetchrow_array) ) {
-	if (($charvalue eq "none") || ($charvalue eq "None")){
-	  $charvalue = "";
-	}
-	next if $charvalue eq "";
-	if ($tooltopics{"$tooltopic_name"} eq "") {
-	  $tooltopics{"$tooltopic_name"} = $charvalue;
-	} else {
-	  $tooltopics{"$tooltopic_name"} .= ",".$charvalue;
-	}
-	}
-      if ( ($vendor_class ne "") && ($product_class ne "") ) {
-        print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
-        print FH "+vendor.name\t\t$vendor_name\n";
-	if ( ($subvendor_class ne "") && ($subproduct_class ne "") ) {
-	  print FH "\n vendor.id\t\t${\new_id $subvendor_class, $vendor_class}\n";
-	  print FH "&device.id\t\t${\new_id $subproduct_class, $vendor_class}\n";
-	  print FH "&subvendor.id\t\t${\new_id $vendor_class}\n";
-	  print FH "&subdevice.id\t\t${\new_id $product_class, $vendor_class}\n";
-	  print FH "+subdevice.name\t\t$product_name\n";
-	} else {
-	  print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
-	  print FH "&device.id\t\t${\new_id $product_class, $vendor_class}\n";
-	  print FH "+device.name\t\t$product_name\n";
-	}
-	if ($tooltopics{resol} ne "") {
-	  $tooltopics{resol} =~ s/bpp//g;
-	}
-	
-	# Teste ob mehr als ein driver- oder installscript-topic vorhanden ist:
-	if (($tooltopics{driver} =~ /,/) || ($tooltopics{installscript} =~ /,/)) {
-	    die "\nMore than one driver- or installscript-topic. Product-id=$product_id. Vario=$vario_name. Arch=$arch_name.\n";
-	  }
-	
-	print FH "+driver.xfree\t\t4|$tooltopics{driver}||$tooltopics{package}|$tooltopics{extension}|$tooltopics{option}|$tooltopics{resol}||$tooltopics{installscript}|\n";
-	if ($tooltopics{raw} ne "") {
-	  @raw = (split(',',$tooltopics{raw}));
-	  foreach $raw (@raw) {
-	    print FH "+driver.xfree.config\t$raw\n";
-	  }
-	}
-      }
-    } # Ende XFree4 ohne 3D
-# ----------------------------------------------------------------------------------------------------------------------------
+    get_info $arch_name, "XFree4";
+
     # Step 2: Erzeuge Zeilen für XFree 4 mit 3D
-    $vario_name = 'XFree4 with 3D';
-    $tooltopics{driver} = "";
-    $tooltopics{package} = "";
-    $tooltopics{extension} = "";
-    $tooltopics{option} = "";
-    $tooltopics{resol} = "";
-    $tooltopics{installscript} = "";
-    $tooltopics{raw} = "";
-    
-    # Product supported=full?
-    $query[2] = $dbh->prepare("SELECT toolproperty.charvalue FROM toolproperty
-                                   LEFT JOIN tooltopic ON toolproperty.tooltopic_id=tooltopic.id
-                                   LEFT JOIN arch_dist_l_vario ON toolproperty.arch_dist_l_vario_id=arch_dist_l_vario.id
-                                   LEFT JOIN arch ON arch_dist_l_vario.arch_id=arch.id
-                                   LEFT JOIN distribution ON arch_dist_l_vario.distribution_id=distribution.id
-                                   LEFT JOIN vario ON arch_dist_l_vario.vario_id=vario.id
-                                   WHERE toolproperty.product_id=$product_id
-                                     AND tooltopic.name='supported'
-                                     AND arch.name='$arch_name'
-                                     AND distribution.name='$dist_name'
-                                     AND vario.name='$vario_name'
-                                     AND toolproperty.valid=1
-                                     AND tooltopic.valid=1
-                                     AND arch_dist_l_vario.valid=1")
-      or die "Can\'t select table toolproperty";
-    $query[2]->execute or die "Can\'t select table toolproperty";
-    undef $result;
-    $count = 0;
-    while ($x = $query[2]->fetchrow_array) {
-      $result = $x if defined $x;
-      multiple_supportedtopics($dbh,$product_id,$product_name,$arch_name,$dist_name,$vario_name) if $count > 0;
-      $count++;
-    }
-      $result = "" if not defined $result;
-    
-    if ($result eq "full") {
-      $query[2] = $dbh->prepare("SELECT tooltopic.name,toolproperty.charvalue FROM toolproperty
-                                   LEFT JOIN tooltopic ON toolproperty.tooltopic_id=tooltopic.id
-                                   LEFT JOIN arch_dist_l_vario ON toolproperty.arch_dist_l_vario_id=arch_dist_l_vario.id
-                                   LEFT JOIN arch ON arch_dist_l_vario.arch_id=arch.id
-                                   LEFT JOIN distribution ON arch_dist_l_vario.distribution_id=distribution.id
-                                   LEFT JOIN language ON arch_dist_l_vario.lang_id=language.id
-                                   LEFT JOIN vario ON arch_dist_l_vario.vario_id=vario.id
-                                     WHERE arch.name='$arch_name'
-                                       AND distribution.name='$dist_name'
-                                       AND vario.name='$vario_name'
-				       AND toolproperty.product_id=$product_id
-                                       AND tooltopic.name != 'supported'
-                                       AND toolproperty.valid=1
-                                       AND tooltopic.valid=1
-                                       AND arch_dist_l_vario.valid=1")
-	or die "Can\'t select table toolproperty";
-      $query[2]->execute or die "Can\'t select table toolproperty"; 
-      while ( ($tooltopic_name,$charvalue) = ($query[2]->fetchrow_array) ) {
-	if (($charvalue eq "none") || ($charvalue eq "None")){
-	  $charvalue = "";
-	}
-	next if $charvalue eq "";
-	if ($tooltopics{"$tooltopic_name"} eq "") {
-	  $tooltopics{"$tooltopic_name"} = $charvalue;
-	} else {
-	  $tooltopics{"$tooltopic_name"} .= ",".$charvalue;
-	  }
-      }
-      if ( ($vendor_class ne "") && ($product_class ne "") ) {
-        print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
-        print FH "+vendor.name\t\t$vendor_name\n";
-	if ( ($subvendor_class ne "") && ($subproduct_class ne "") ) {
-	  print FH "\n vendor.id\t\t${\new_id $subvendor_class, $vendor_class}\n";
-	  print FH "&device.id\t\t${\new_id $subproduct_class, $vendor_class}\n";
-	  print FH "&subvendor.id\t\t${\new_id $vendor_class}\n";
-	  print FH "&subdevice.id\t\t${\new_id $product_class, $vendor_class}\n";
-	  print FH "+subdevice.name\t\t$product_name\n";
-	} else {
-	  print FH "\n vendor.id\t\t${\new_id $vendor_class}\n";
-	  print FH "&device.id\t\t${\new_id $product_class, $vendor_class}\n";
-	  print FH "+device.name\t\t$product_name\n";
-	}
-	if ($tooltopics{resol} ne "") {
-	  $tooltopics{resol} =~ s/bpp//g;
-	}
-	
-	# Teste ob mehr als ein driver- oder installscript-topic vorhanden ist:
-	  if (($tooltopics{driver} =~ /,/) || ($tooltopics{installscript} =~ /,/)) {
-	    die "\nMore than one driver- or installscript-topic. Product-id=$product_id. Vario=$vario_name. Arch=$arch_name.\n";
-	  }
-	
-	print FH "+driver.xfree\t\t4|$tooltopics{driver}|3d|$tooltopics{package}|$tooltopics{extension}|$tooltopics{option}|$tooltopics{resol}||$tooltopics{installscript}|\n";
-	if ($tooltopics{raw} ne "") {
-	  @raw = (split(',',$tooltopics{raw}));
-	  foreach $raw (@raw) {
-	    print FH "+driver.xfree.config\t$raw\n";
-	  }
-	}
-      }
-    } # Ende XFree4 + 3D
+    get_info $arch_name, "XFree4 with 3D";
+
   } # Ende der Produktschleife
   close(FH);
 } # Ende der Arch-Schleife

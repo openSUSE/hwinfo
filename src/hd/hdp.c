@@ -323,6 +323,13 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("Hotplug: %s\n", s);
   }
 
+  if(
+    (h->hotplug == hp_pcmcia || h->hotplug == hp_cardbus) &&
+    h->hotplug_slot
+  ) {
+    dump_line("Socket: %u\n", h->hotplug_slot - 1);
+  }
+
   if(h->vendor.id || h->vendor.name || h->device.id || h->device.name) {
     if(h->vendor.id || h->vendor.name) {
       dump_line("Vendor: %s\n", dump_hid(hd_data, &h->vendor, 1, buf, sizeof buf));
@@ -380,8 +387,25 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line_str("Warning: might be broken\n");
   }
 
-  if(h->unix_dev_name) {
-    dump_line("Device File: %s\n", h->unix_dev_name);
+  if(hd_data->flags.dformat == 1) {
+    if(h->unix_dev_name) {
+      dump_line("Device File: %s\n", h->unix_dev_name);
+    }
+    if(h->unix_dev_name2) {
+      dump_line("Alternative Device File: %s\n", h->unix_dev_name2);
+    }
+  }
+  else {
+    s = h->unix_dev_name;
+    if(!s) s = h->unix_dev_name2;
+    if(s) {
+      dump_line("Device File: %s", s);
+      if(h->unix_dev_name2) {
+        dump_line0(" (%s)", h->unix_dev_name2);
+      }
+      dump_line0("\n");
+    }
+
   }
 
   if(h->rom_id) {

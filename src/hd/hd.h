@@ -65,8 +65,7 @@ extern "C" {
 #define TAG_EISA	2	/**< EISA ids (monitors, ISA-PnP, modems, mice etc). */
 #define TAG_USB		3	/**< USB ids. */
 #define TAG_SPECIAL	4	/**< Internally used ids. */
-#define TAG_BUS		5	/**< (obsolete) purely internal, you should never see this tag. */
-#define TAG_CLASS	6	/**< (obsolete) dto. */
+#define TAG_PCMCIA	5	/**< PCMCIA ids. */
 
 /**
  * Get the real id value.
@@ -99,7 +98,7 @@ typedef enum probe_feature {
   pr_braille_ht, pr_ignx11, pr_sys, pr_dasd, pr_i2o, pr_cciss, pr_bios_vbe,
   pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
   pr_fb, pr_bios_vbe2, pr_veth, pr_partition, pr_disk, pr_ataraid, pr_pppoe,
-  pr_scan, pr_partition_add,
+  pr_scan, pr_partition_add, pr_pcmcia,
   /* pr_bios_32, */
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
@@ -1556,6 +1555,14 @@ typedef struct s_hd_t {
   char *unix_dev_name;
 
   /**
+   * Special %device file.
+   * Device file name to acces this hardware. Most hardware only has one
+   * %device name stored in \ref hd_t::unix_dev_name. But in some cases
+   * there's an alternative name.
+   */
+  char *unix_dev_name2;
+
+  /**
    * BIOS/PROM id.
    * Where appropriate, this is a special BIOS/PROM id (e.g. "0x80" for
    * the first harddisk on Intel-PCs).
@@ -1629,11 +1636,15 @@ typedef struct s_hd_t {
    */
   hd_hotplug_t hotplug;
 
+   /**
+    * Slot the hotplug device is connected to (e.g. PCMCIA socket).
+    * \note \ref hotplug_slot counts 1-based (0: no information available).
+    */
+  unsigned hotplug_slot;
+
   struct is_s {
     unsigned agp:1;		/* AGP device */
     unsigned isapnp:1;		/* ISA-PnP device */
-    unsigned cardbus:1;		/* cardbus card *obsolete*! */
-    unsigned pcmcia:1;		/* pcmcia card *obsolete*! */
     unsigned notready:1;	/* block devices: no medium, other: device not configured */
     unsigned manual:1;		/* undetectable, manually configured hardware */
     unsigned softraiddisk:1;	/* disk belongs to some soft raid array */

@@ -8,58 +8,19 @@
 #include <time.h>
 #include <getopt.h>
 
+#include "../hd/hddb_int.h"
 
 #define TAG_PCI		1	/* pci ids */
 #define TAG_EISA	2	/* eisa ids */
 #define TAG_USB		3	/* usb ids */
 #define TAG_SPECIAL	4	/* internally used ids */
+#define TAG_PCMCIA	5	/* pcmcia ids */
 
 #define ID_VALUE(id)		((id) & 0xffff)
 #define ID_TAG(id)		(((id) >> 16) & 0xf)
 #define MAKE_ID(tag, id_val)	((tag << 16) | (id_val))
 
-#define DATA_VALUE(a)		((a) & ~(-1 << 28))
-#define DATA_FLAG(a)		(((a) >> 28) & 0xf)
-#define MAKE_DATA(a, b)		((a << 28) | (b))
-
-#define FLAG_ID		0
-#define FLAG_RANGE	1
-#define FLAG_MASK	2
-#define FLAG_STRING	3
-#define FLAG_REGEXP	4
-/* 5 - 7 reserved */
-#define FLAG_CONT	8	/* bit mask, _must_ be bit 31 */
-
-typedef uint32_t entry_mask_t;
-
-typedef enum entry_e {
-  he_other, he_bus_id, he_baseclass_id, he_subclass_id, he_progif_id,
-  he_vendor_id, he_device_id, he_subvendor_id, he_subdevice_id, he_rev_id,
-  he_bus_name, he_baseclass_name, he_subclass_name, he_progif_name,
-  he_vendor_name, he_device_name, he_subvendor_name, he_subdevice_name,
-  he_rev_name, he_serial, he_driver, he_requires /* 21 */,
-  /* add new entries _here_! */
-  he_nomask,
-  he_class_id = he_nomask, he_driver_module_insmod, he_driver_module_modprobe,
-  he_driver_module_config, he_driver_xfree, he_driver_xfree_config,
-  he_driver_mouse, he_driver_display, he_driver_any
-} entry_t;
-
-static entry_t entry_is_numeric[] = {
-  he_bus_id, he_baseclass_id, he_subclass_id, he_progif_id, he_vendor_id,
-  he_device_id, he_subvendor_id, he_subdevice_id, he_rev_id
-};
-
-static char *entry_strings[] = {
-  "other", "bus.id", "baseclass.id", "subclass.id", "progif.id",
-  "vendor.id", "device.id", "subvendor.id", "subdevice.id", "rev.id",
-  "bus.name", "baseclass.name", "subclass.name", "progif.name",
-  "vendor.name", "device.name", "subvendor.name", "subdevice.name",
-  "rev.name", "serial", "driver", "requires",
-  "class.id", "driver.module.insmod", "driver.module.modprobe",
-  "driver.module.config", "driver.xfree", "driver.xfree.config",
-  "driver.mouse", "driver.display", "driver.any"
-};
+typedef uint32_t hddb_entry_mask_t;
 
 typedef enum {
   match_any, match_all
@@ -71,7 +32,7 @@ typedef enum {
 
 typedef struct line_s {
   prefix_t prefix;
-  entry_t key;
+  hddb_entry_t key;
   char *value;
 } line_t;
 
@@ -134,8 +95,8 @@ typedef struct item_s {
 
 
 typedef struct hddb_list_s {   
-  entry_mask_t key_mask;
-  entry_mask_t value_mask;
+  hddb_entry_mask_t key_mask;
+  hddb_entry_mask_t value_mask;
   unsigned key;
   unsigned value;
 } hddb_list_t;
@@ -165,13 +126,13 @@ void write_stats(FILE *f);
 
 void read_items(char *file);
 line_t *parse_line(char *str);
-entry_mask_t add_entry(skey_t *skey, entry_t idx, char *val);
+hddb_entry_mask_t add_entry(skey_t *skey, hddb_entry_t idx, char *val);
 
 void write_items(char *file, list_t *hd);
 void write_item(FILE *f, item_t *item);
 void write_skey(FILE *f, prefix_t pre, skey_t *skey);
-void write_ent_name(FILE *f, hid_t *hid, char pre, entry_t ent);
-void write_id(FILE *f, entry_t ent, hid_t *hid);
+void write_ent_name(FILE *f, hid_t *hid, char pre, hddb_entry_t ent);
+void write_id(FILE *f, hddb_entry_t ent, hid_t *hid);
 void write_drv(FILE *f, char pre, hid_t *hid);
 void write_drv1(FILE *f, hid_t *hid, char pre, char *val);
 void log_items(FILE *f, item_t *item0, item_t *item1);
@@ -588,7 +549,7 @@ void read_items(char *file)
   FILE *f;
   char buf[1024], fpos[256];
   unsigned u, state, l_nr;
-  entry_mask_t entry_mask = 0;
+  hddb_entry_mask_t entry_mask = 0;
   line_t *l;
   item_t *item;
   skey_t *skey;
@@ -754,14 +715,14 @@ line_t *parse_line(char *str)
   if(*str) *str++ = 0;
   while(isspace(*str)) str++;
 
-  for(i = 0; (unsigned) i < sizeof entry_strings / sizeof *entry_strings; i++) {
-    if(!strcmp(s, entry_strings[i])) {
+  for(i = 0; (unsigned) i < sizeof hddb_entry_strings / sizeof *hddb_entry_strings; i++) {
+    if(!strcmp(s, hddb_entry_strings[i])) {
       l.key = i;
       break;
     }
   }
 
-  if((unsigned) i >= sizeof entry_strings / sizeof *entry_strings) return NULL;
+  if((unsigned) i >= sizeof hddb_entry_strings / sizeof *hddb_entry_strings) return NULL;
 
   l.value = str;
 
@@ -809,6 +770,7 @@ int parse_id(char *str, unsigned *id, unsigned *tag, unsigned *range, unsigned *
     else if(!strcmp(s, "special")) *tag = TAG_SPECIAL;
     else if(!strcmp(s, "eisa")) *tag = TAG_EISA;
     else if(!strcmp(s, "isapnp")) *tag = TAG_EISA;
+    else if(!strcmp(s, "pcmcia")) *tag = TAG_PCMCIA;
     else {
       str = s;
       if(t) *t = c;	/* restore */
@@ -850,22 +812,22 @@ int parse_id(char *str, unsigned *id, unsigned *tag, unsigned *range, unsigned *
 }
 
 
-entry_mask_t add_entry(skey_t *skey, entry_t idx, char *val)
+hddb_entry_mask_t add_entry(skey_t *skey, hddb_entry_t idx, char *val)
 {
-  entry_mask_t e_mask = 0;
+  hddb_entry_mask_t e_mask = 0;
   int i;
   unsigned id, tag, range, mask;
   char *s, *s1, *s2, c;
   hid_t *hid;
   str_t *str;
 
-  for(i = 0; (unsigned) i < sizeof entry_is_numeric / sizeof *entry_is_numeric; i++) {
-    if(idx == entry_is_numeric[i]) break;
+  for(i = 0; (unsigned) i < sizeof hddb_is_numeric / sizeof *hddb_is_numeric; i++) {
+    if(idx == hddb_is_numeric[i]) break;
   }
 
   // printf("i = %d, idx = %d, val = >%s<\n", i, idx, val);
 
-  if((unsigned) i < sizeof entry_is_numeric / sizeof *entry_is_numeric) {
+  if((unsigned) i < sizeof hddb_is_numeric / sizeof *hddb_is_numeric) {
     /* numeric id */
     e_mask |= 1 << idx;
 
@@ -1074,12 +1036,12 @@ void write_skey(FILE *f, prefix_t pre, skey_t *skey)
 }
 
 
-void write_ent_name(FILE *f, hid_t *hid, char pre, entry_t ent)
+void write_ent_name(FILE *f, hid_t *hid, char pre, hddb_entry_t ent)
 {
   int len, tab_ind = 24;
   char c;
 
-  if(ent >= sizeof entry_strings / sizeof *entry_strings) {
+  if(ent >= sizeof hddb_entry_strings / sizeof *hddb_entry_strings) {
     fprintf(stderr, "internal oops\n");
     exit(2);
   }
@@ -1087,16 +1049,16 @@ void write_ent_name(FILE *f, hid_t *hid, char pre, entry_t ent)
   len = item_ind ? strlen(item_ind) : 0;
 
   if(!len) {
-    fprintf(f, "%c%s\t", pre, entry_strings[ent]);
+    fprintf(f, "%c%s\t", pre, hddb_entry_strings[ent]);
   }
   else {
     c = hid->any.remove ? '*' : ':';
-    fprintf(f, "%s%c %c%s\t", item_ind, c, pre, entry_strings[ent]);
+    fprintf(f, "%s%c %c%s\t", item_ind, c, pre, hddb_entry_strings[ent]);
     len += 2;
     tab_ind += 8;
   }
 
-  len += strlen(entry_strings[ent]) + 1;
+  len += strlen(hddb_entry_strings[ent]) + 1;
 
   for(len = (len & ~7) + 8; len < tab_ind; len += 8) {
     fputc('\t', f);
@@ -1104,9 +1066,9 @@ void write_ent_name(FILE *f, hid_t *hid, char pre, entry_t ent)
 }
 
 
-void write_id(FILE *f, entry_t ent, hid_t *hid)
+void write_id(FILE *f, hddb_entry_t ent, hid_t *hid)
 {
-  static char *tag_name[5] = { "", "pci ", "eisa ", "usb ", "special " };
+  static char *tag_name[6] = { "", "pci ", "eisa ", "usb ", "special ", "pcmcia " };
   int tag;
   unsigned u;
   char c;
@@ -2673,7 +2635,7 @@ unsigned hddb_store_value(hddb_data_t *hddb, unsigned val)
 }
 
 
-unsigned hddb_store_hid(hddb_data_t *hddb, hid_t *hid, entry_t entry)
+unsigned hddb_store_hid(hddb_data_t *hddb, hid_t *hid, hddb_entry_t entry)
 {
   unsigned u, idx = -1;
   str_t *str, *str0, *str1;

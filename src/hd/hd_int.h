@@ -49,6 +49,11 @@
 #define DEV_CCISS		"/dev/cciss"
 #define DEV_FB			"/dev/fb"
 
+#define PROG_INSMOD		"/sbin/insmod"
+#define PROG_MODPROBE		"/sbin/modprobe"
+#define PROG_RMMOD		"/sbin/rmmod"
+#define PROG_CARDCTL		"/sbin/cardctl"
+
 #define KLOG_BOOT		"/var/log/boot.msg"
 #define ISAPNP_CONF		"/etc/isapnp.conf"
 
@@ -110,7 +115,8 @@ enum mod_idx {
   mod_ide, mod_scsi, mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel,
   mod_isa, mod_dac960, mod_smart, mod_isdn, mod_kbd, mod_prom, mod_sbus,
   mod_int, mod_braille, mod_xtra, mod_sys, mod_dasd, mod_i2o, mod_cciss,
-  mod_manual, mod_fb, mod_veth, mod_partition, mod_disk, mod_ataraid, mod_pppoe
+  mod_manual, mod_fb, mod_veth, mod_partition, mod_disk, mod_ataraid, mod_pppoe,
+  mod_pcmcia
 };
 
 void *new_mem(size_t size);
@@ -208,6 +214,8 @@ char *hd_join(char del, str_list_t *str);
 void hddb_add_info(hd_data_t *hd_data, hd_t *hd);
 
 int is_pnpinfo(ser_device_t *mi, int ofs);
+
+int is_pcmcia_ctrl(hd_data_t *hd_data, hd_t *hd);
 
 #ifdef __cplusplus
 }

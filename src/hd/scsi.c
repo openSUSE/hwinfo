@@ -8,13 +8,20 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
-#include <scsi/scsi.h>
 #include <sys/mount.h>
 #include <linux/hdreg.h>
 
 #include "hd.h"
 #include "hd_int.h"
 #include "scsi.h"
+
+#if !defined(UCLIBC)
+#include <scsi/scsi.h>
+#else
+#define SCSI_IOCTL_GET_BUS_NUMBER	0x5386
+#define SCSI_IOCTL_GET_IDLUN		0x5382
+#define SCSI_IOCTL_PROBE_HOST		0x5385
+#endif
 
 #ifndef SCSI_IOCTL_SEND_COMMAND
 #define SCSI_IOCTL_SEND_COMMAND		1

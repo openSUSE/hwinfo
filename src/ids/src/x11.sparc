@@ -42,11 +42,6 @@
 +driver.xfree		4|ati|||||8,15,16,24
 
  vendor.id		pci 0x1002
-&device.id		pci 0x4749
-+device.name		3D Rage Pro
-+driver.xfree		4|ati|||||8,15,16,24
-
- vendor.id		pci 0x1002
 &device.id		pci 0x474c
 +device.name		Rage XC
 +driver.xfree		4|ati|||||8,15,16,24
@@ -65,16 +60,6 @@
  vendor.id		pci 0x1002
 &device.id		pci 0x4751
 +device.name		3D Rage Pro 215GQ
-+driver.xfree		4|ati|||||8,15,16,24
-
- vendor.id		pci 0x1002
-&device.id		pci 0x4752
-+device.name		Rage XL
-+driver.xfree		4|ati|||||8,15,16,24
-
- vendor.id		pci 0x1002
-&device.id		pci 0x4753
-+device.name		Rage XC
 +driver.xfree		4|ati|||||8,15,16,24
 
  vendor.id		pci 0x1002
@@ -109,7 +94,7 @@
 +driver.xfree		4|ati|||||8,15,16,24
 
  vendor.id		pci 0x1002
-&device.id		pci 0x4c50+0x0002
+&device.id		pci 0x4c50
 +device.name		3D Rage LT Pro
 +driver.xfree		4|ati|||||8,15,16,24
 

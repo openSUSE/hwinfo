@@ -2,7 +2,7 @@
 +vendor.name		ATI Technologies Inc
 
  vendor.id		pci 0x1002
-&device.id		pci 0x4749
+&device.id		pci 0x4747
 +device.name		3D Rage Pro
 +driver.xfree		4|ati||||dpms|15,24
 +driver.xfree		3|FBDev

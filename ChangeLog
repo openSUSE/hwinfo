@@ -1,3 +1,7 @@
+16/7/2003:	v7.00
+	- detect pcmcia cards
+	- updated x11 data
+
 16/4/2003:	v6.20
 	- fixed megaraid info (#26325)
 

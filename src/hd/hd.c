@@ -63,6 +63,7 @@
 #include "disk.h"
 #include "ataraid.h"
 #include "pppoe.h"
+#include "pcmcia.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -137,8 +138,6 @@ static void short_vendor(char *vendor);
 static void create_model_name(hd_data_t *hd_data, hd_t *hd);
 #endif
 
-static int is_pcmcia_ctrl(hd_data_t *hd_data, hd_t *hd);
-
 
 /*
  * Names of the probing modules.
@@ -188,7 +187,8 @@ static struct s_mod_names {
   { mod_partition, "partition" },
   { mod_disk, "disk" },
   { mod_ataraid, "ataraid" },
-  { mod_pppoe, "pppoe" }
+  { mod_pppoe, "pppoe" },
+  { mod_pcmcia, "pcmcia" }
 };
 
 /*
@@ -282,7 +282,8 @@ static struct s_pr_flags {
   { pr_ataraid,       0,            8|4|2|1, "ataraid"       },
   { pr_pppoe,         0,            8|4|2|1, "pppoe"         },
   /* dummy, used to turn off hwscan */
-  { pr_scan,          0,                  0, "scan"          }
+  { pr_scan,          0,                  0, "scan"          },
+  { pr_pcmcia,        0,            8|4|2|1, "pcmcia"        }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -707,9 +708,13 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pppoe);
       break;
 
+    case hw_pcmcia:
+      hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_pcmcia);
+      break;
+
     case hw_all:
     case hw_unknown:
-    case hw_pcmcia:
     case hw_ieee1394:
     case hw_hotplug:
     case hw_zip:
@@ -1071,6 +1076,7 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->compat_device.name);
   free_mem(hd->model);
   free_mem(hd->unix_dev_name);
+  free_mem(hd->unix_dev_name2);
   free_mem(hd->rom_id);
   free_mem(hd->unique_id);
   free_mem(hd->block0);
@@ -1695,6 +1701,9 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_isa(hd_data);
 #endif
 #endif
+
+  /* after pci & isa */
+  hd_scan_pcmcia(hd_data);
 
   hd_scan_serial(hd_data);
 
@@ -3477,7 +3486,7 @@ int probe_module(hd_data_t *hd_data, char *module)
 
   if(hd_module_is_active(hd_data, module)) return 0;
 
-  str_printf(&cmd, 0, "/sbin/modprobe %s", module);
+  str_printf(&cmd, 0, PROG_MODPROBE " %s", module);
 
   i = run_cmd(hd_data, cmd);
 
@@ -3493,7 +3502,7 @@ int load_module_with_params(hd_data_t *hd_data, char *module, char *params)
 
   if(hd_module_is_active(hd_data, module)) return 0;
 
-  str_printf(&cmd, 0, "/sbin/insmod %s %s", module, params ? params : "");
+  str_printf(&cmd, 0, PROG_INSMOD " %s %s", module, params ? params : "");
 
   i = run_cmd(hd_data, cmd);
 
@@ -3514,7 +3523,7 @@ int unload_module(hd_data_t *hd_data, char *module)
 
   if(!hd_module_is_active(hd_data, module)) return 0;
 
-  str_printf(&cmd, 0, "/sbin/rmmod %s", module);
+  str_printf(&cmd, 0, PROG_RMMOD " %s", module);
 
   i = run_cmd(hd_data, cmd);
 
@@ -4202,7 +4211,8 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         case hw_scsi:
         case hw_ide:
 
-        case hw_pcmcia:		/* not handled */
+        case hw_pcmcia:		/* special */
+
         case hw_ieee1394:	/* not handled */
         case hw_hotplug:	/* not handled */
         case hw_hotplug_ctrl:	/* not handled */
@@ -4279,17 +4289,14 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 
   if(!hd->hw_class3) {
     if(hd->usb_guid) {
-#if 0
-      if(hd->bus.id == bus_usb) {
-        hd->hw_class3 = hw_scsi;
-      }
-      else
-#endif
       if(hd->bus.id == bus_scsi) {
         hd->hw_class3 = hw_usb;
       }
     }
-    if(hd->is.wlan) {
+    else if(hd->hotplug == hp_pcmcia || hd->hotplug == hp_cardbus) {
+      hd->hw_class3 = hw_pcmcia;
+    }
+    else if(hd->is.wlan) {
       hd->hw_class3 = hw_wlan;
     }
   }
