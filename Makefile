@@ -23,7 +23,7 @@ shared:
 tiny:
 	@make EXTRA_FLAGS=-DLIBHD_TINY SHARED_FLAGS=
 
-diet:
+tinydiet:
 	@make CC="diet gcc" EXTRA_FLAGS=-DLIBHD_TINY SHARED_FLAGS=
 
 static:
