@@ -1,0 +1,242 @@
+<html>
+<head>
+<title>Hardware Probing Library</title>
+</head>
+
+<body>
+<h1>Hardware Probing Library</h1>
+
+Author: Steffen Winterfeldt <a href="wfeldt@suse.de">wfeldt@suse.de</a><p>
+
+Current version (15 Dec 1999): 0.28<p>
+
+<h2>Simple Expample</h2>
+
+<pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;hd.h&gt;
+
+int main()
+{
+  hd_t *hd;
+
+  /* create and initialize the probing data structue */
+  hd_data_t *hd_data = calloc(1, sizeof *hd_data);
+
+  /* go for a 'default' probing */
+  hd_set_probe_feature(hd_data, pr_default);
+
+  /* do the actual probing */
+  hd_scan(hd_data);  
+
+  /* print all hardware data to the terminal */
+  for(hd = hd_data-&gt;hd; hd; hd = hd-&gt;next) hd_dump_entry(hd_data, hd, stdout);
+
+  return 0;
+}
+</pre>
+
+<h2>Reference</h2>
+
+<h3>General Remarks</h3>
+
+The probing library allocates a lot of memory during the probing process. To
+not confuse it, it is assumed that you do not free any memory allocated by
+the library except using the <code>hd_free_*</code> functions described
+below.<p>
+
+<h3>Functions</h3>
+
+<code><strong>void hd_scan(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
+
+Do the actual hardware probing. <code>*hd_data</code> must be properly
+initialized before.<br>
+The hardware data is returned as a linked list of <a href="#hd_t"><code>hd_t</code></a>
+elements. The start of the list is in <code>hd_data-&gt;hd</code>.<p>
+
+<code><strong>void hd_set_probe_feature(<a href="#hd_data_t">hd_data_t</a> *hd_data, <a href="#enum@probe_feature">enum probe_feature</a> feature)</strong></code><br>
+<code><strong>void hd_clear_probe_feature(<a href="#hd_data_t">hd_data_t</a> *hd_data, <a href="#enum@probe_feature">enum probe_feature</a> feature)</strong></code><p>
+
+Activate resp. deactivate a probing feature.<p>
+
+<code><strong>void hd_probe_feature(<a href="#hd_data_t">hd_data_t</a> *hd_data, <a href="#enum@probe_feature">enum probe_feature</a> feature)</strong></code><p>
+
+Tests if a probing feature is activated.<br>
+Returns 1 if and 0 if it is not.<p>
+
+<code><strong>char *hd_probe_feature_by_value(<a href="#enum@probe_feature">enum probe_feature</a> feature)</strong></code><br>
+<code><strong><a href="#enum@probe_feature">enum probe_feature</a> hd_probe_feature_by_name(char *name)</strong></code><p>
+
+Gives the name of a probing feature resp. converts a string to the internal
+representation of a feature. These functions are useful if you want to
+interactively (de-)activate some features.<br>
+They return <code>NULL</code> resp. <code>0</code> if the argument is not valid.<p>
+<p>
+
+<code><strong><a href="#hd_t">hd_t</a> *hd_cd_list(<a href="#hd_data_t">hd_data_t</a> *hd_data, int rescan)</strong></code><br>
+<code><strong><a href="#hd_t">hd_t</a> *hd_disk_list(<a href="#hd_data_t">hd_data_t</a> *hd_data, int rescan)</strong></code><br>
+<code><strong><a href="#hd_t">hd_t</a> *hd_net_list(<a href="#hd_data_t">hd_data_t</a> *hd_data, int rescan)</strong></code><p>
+
+Return a list of CDROM/disk/network entries only. If <code>rescan</code> is
+set, re-probe the hardware first.<p>
+
+<code><strong>int hd_has_special_eide(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
+
+Return 1 or 0 depending on whether we need a kernel with special eide
+chipset support or not.<p>
+
+<code><strong>int hd_has_pcmcia(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
+
+Return 1 or 0 depending on wheter we have PCMCIA support or not.<p>
+
+<code><strong><a href="#enum@boot_arch">enum boot_arch</a> hd_boot_arch(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
+
+Return info about the boot method to use.<p>
+
+<code><strong><a href="#driver_info_t">driver_info_t</a> *hd_driver_info(<a href="#hd_t">hd_t</a> *hd)</strong></code><p>
+
+Return the driver info for a particular hardware item or <code>NULL</code>
+if no info is available.<p>
+
+<code><strong>void hd_dump_entry(<a href="#hd_data_t">hd_data_t</a> *hd_data, <a href="#hd_t">hd_t</a> *hd, FILE *f)</strong></code><p>
+
+Write (a text version of) the hardware entry to a file.<p>
+
+<code><strong><a href="#hd_data_t">hd_data_t</a> *hd_free_hd_data(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
+
+Free all memory associated with <code>*hd_data</code>, but
+<strong>not</strong> <code>*hd_data</code> itself.<br>
+Returns <code>NULL</code> just for convenience.<p>
+
+<code><strong><a href="#hd_t">hd_t</a> *hd_free_hd_list(<a href="#hd_t">hd_t</a> *hd)</strong></code><p>
+
+Free all memory associated with the list starting at <code>*hd</code> (including
+<code>*hd</code> itself).<br>
+Returns <code>NULL</code> just for convenience.<p>
+
+<code><strong><a href="#driver_info_t">driver_info_t</a> *hd_free_driver_info(<a href="#driver_info_t">driver_info_t</a> *di)</strong></code><p>
+
+Free all memory associated with the driver info data (including
+<code>*di</code> itself).<br>
+Returns <code>NULL</code> just for convenience.<p>
+
+<h3>Data Structures</h3>
+
+<a name=hd_data_t></a>
+<pre>
+typedef struct {
+  enum probe_feature probe;     /* bitmask of probing features */
+  hd_t *hd;                     /* the hardware list */
+
+  /* a callback to indicate that we are still doing something... */
+  void (*progress)(char *pos, char *msg);
+  
+  char *log;                    /* log messages */
+  unsigned debug;               /* debug flags */
+} hd_data_t
+</pre>
+
+<a name=hd_t></a>
+<pre>
+typedef struct s_hd_t {
+  struct s_hd_t *next;          /* pointer to next hd_t entry */
+  unsigned idx;                         /* unique index, starting at 1 */
+  unsigned bus, slot, func;
+  unsigned base_class, sub_class, prog_if;
+  unsigned dev, vend, sub_dev, sub_vend, rev;
+  unsigned compat_dev, compat_vend;
+
+  char *dev_name, *vend_name, *sub_dev_name, *sub_vend_name,
+       *rev_name, *serial;
+
+  unsigned attached_to;         /* idx field of 'parent' entry */
+  char *unix_dev_name;          /* name of special device file, if any */
+
+  unsigned module, line, count; /* place where the entry was created */
+
+  hd_res_t *res;
+  hd_detail_t *detail;
+} hd_t
+</pre>
+
+<a name=enum@probe_feature></a>
+<pre>
+enum probe_feature {
+  pr_default = 1, pr_memory, pr_pci, pr_pci_range, pr_isapnp, pr_cdrom,
+  pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial, pr_misc_par,
+  pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide,
+  pr_scsi,
+  pr_all        /* pr_all must be the last */
+}
+</pre>
+
+<a name=enum@boot_arch></a>
+<pre>
+enum boot_arch {
+  boot_unknown = 0,
+  boot_lilo, boot_milo, boot_aboot, boot_silo, boot_ppc
+}
+</pre>
+
+<pre>
+// driver info types (module, mouse info, ...)
+enum driver_info_type {
+  di_none, di_module, di_mouse, di_x11, di_display
+};
+
+// module info
+typedef struct {
+  enum driver_info_type type;   // driver info type
+  unsigned is_active:1;         // if module is already active
+  unsigned autoload:1;          // if it is automatically loaded (via conf.modules)
+  char *name;                   // the actual module name
+  char *load_cmd;               // the command line to run ("insmod xyz")
+  char *conf;                   // the conf.modules entry (e.g. for sb.o)
+} module_info_t;
+
+// mouse protocol info
+typedef struct {
+  enum driver_info_type type;   // driver info type
+  char *xf86;                   // the XF86 protocol name
+  char *gpm;                    // dto, gpm
+} mouse_info_t;
+
+// X server info
+typedef struct {
+  enum driver_info_type type;   // driver info type
+  char *server;                 // the XF86 server name
+  char *x3d;                    // 3D info
+  struct {
+    unsigned all:5;             // the next 5 entries combined
+    unsigned c8:1, c15:1, c16:1, c24:1, c32:1;
+  } colors;                     // supported color depths
+  unsigned dacspeed;            // max. ramdac clock
+} x11_info_t;
+
+// display info
+typedef struct {
+  enum driver_info_type type;           // driver info type
+  unsigned width, height;               // max. useful display geometry
+  unsigned min_vsync, max_vsync;        // vsync range
+  unsigned min_hsync, max_hsync;        // hsync range
+  unsigned bandwidth;                   // max. pixel clock
+} display_info_t;
+
+<a name=driver_info_t></a>
+// describes the device drivers; either:
+// - the actions needed to load a module
+// - or the mouse protocol
+typedef union {
+  enum driver_info_type type;   // driver info type
+  module_info_t module;
+  mouse_info_t mouse;
+  x11_info_t x11;
+  display_info_t display;
+} driver_info_t;
+</pre>
+
+
+</body>
+</html>
+

@@ -87,7 +87,7 @@ static struct s_mod_names {
  * hw.c. Cf. enum probe_feature, hd_data_t.probe.
  */
 static struct s_pr_flags {
-  unsigned val;
+  enum probe_feature val;
   char *name;
 } pr_flags[] = {
   { pr_default, "default"},			/* magic */
@@ -118,7 +118,7 @@ static struct s_pr_flags {
 #define ALL_PR_FEATURE		((1 << (pr_all - PR_OFS)) - 1)
 #define DEFAULT_PR_FEATURE	(ALL_PR_FEATURE - (1 << (pr_pci_range - PR_OFS)))
 
-void hd_set_probe_feature(hd_data_t *hd_data, int feature)
+void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
   if(feature == pr_all)
     hd_data->probe |= ALL_PR_FEATURE;
@@ -128,7 +128,7 @@ void hd_set_probe_feature(hd_data_t *hd_data, int feature)
     hd_data->probe |= (1 << feature);
 }
 
-void hd_clear_probe_feature(hd_data_t *hd_data, int feature)
+void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
   if(feature == pr_all)
     hd_data->probe &= ~ALL_PR_FEATURE;
@@ -138,7 +138,7 @@ void hd_clear_probe_feature(hd_data_t *hd_data, int feature)
     hd_data->probe &= ~(1 << feature);
 }
 
-int hd_probe_feature(hd_data_t *hd_data, int feature)
+int hd_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
   feature -= PR_OFS;			/* skip 0, default, all */
 
@@ -824,7 +824,7 @@ void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg)
  * If name is not a valid probe feature, 0 is returned.
  *
  */
-int hd_probe_feature_by_name(char *name)
+enum probe_feature hd_probe_feature_by_name(char *name)
 {
   int u;
 
@@ -839,7 +839,7 @@ int hd_probe_feature_by_name(char *name)
  * Coverts a enum probe_feature to a string.
  * If it fails, NULL is returned.
  */
-char *hd_probe_feature_by_value(int feature)
+char *hd_probe_feature_by_value(enum probe_feature feature)
 {
   int u;
 

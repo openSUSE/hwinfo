@@ -612,12 +612,12 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data);
 hd_t *hd_free_hd_list(hd_t *hd);
 driver_info_t *hd_free_driver_info(driver_info_t *di);
 
-void hd_set_probe_feature(hd_data_t *hd_data, int feature);
-void hd_clear_probe_feature(hd_data_t *hd_data, int feature);
-int hd_probe_feature(hd_data_t *hd_data, int feature);
+void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature);
+void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature);
+int hd_probe_feature(hd_data_t *hd_data, enum probe_feature feature);
 
-int hd_probe_feature_by_name(char *name);
-char *hd_probe_feature_by_value(int feature);
+enum probe_feature hd_probe_feature_by_name(char *name);
+char *hd_probe_feature_by_value(enum probe_feature feature);
 
 driver_info_t *hd_driver_info(hd_t *hd);
 
