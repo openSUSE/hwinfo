@@ -591,7 +591,12 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pci);
       break;
 
+    case hw_usb:
+      hd_set_probe_feature(hd_data, pr_usb);
+      break;
+
     case hw_all:
+    case hw_unknown:
     case hw_partition:
       break;
   }
@@ -1522,7 +1527,7 @@ void hd_scan(hd_data_t *hd_data)
   }
 
 #ifndef LIBHD_TINY
-  /* must be _after_ we have valid hw_class enries */
+  /* must be _after_ we have valid hw_class entries */
   hd_scan_manual2(hd_data);
 #endif
 
@@ -3534,7 +3539,11 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
   }
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->hw_class == item) {
+    if(
+      hd->hw_class == item ||
+      hd->hw_class2 == item ||
+      item == hw_manual
+    ) {
       /* don't report old entries again */
       for(hd1 = hd_old; hd1; hd1 = hd1->next) {
         if(!cmp_hd(hd1, hd)) break;
@@ -3543,6 +3552,12 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
         hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
         hd_copy(hd1, hd);
       }
+    }
+  }
+
+  if(item == hw_manual) {
+    for(hd = hd_list; hd; hd = hd->next) {
+      hd->status.available = hd->status.available_orig;
     }
   }
 
@@ -3571,7 +3586,7 @@ hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t sta
   memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->hw_class == item) {
+    if(hd->hw_class == item || hd->hw_class2 == item) {
       if(
         (status.configured == 0 || status.configured == hd->status.configured) &&
         (status.available == 0 || status.available == hd->status.available) &&
@@ -4541,195 +4556,203 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
   hd_hw_item_t item;
   hd_t *bridge_hd;
 
-  /* skip if we've already done it */
-  if(!hd || hd->hw_class) return;
+  if(!hd) return;
 
-  for(item = 1; item < hw_all; item++) {
+  if(!hd->hw_class) {		/* skip if we've already done it */
+    for(item = 1; item < hw_all; item++) {
 
-    sc = 0;
-    sub_class = 0;
-    xtra = 0;
-    di = hd_free_driver_info(di);
+      sc = 0;
+      sub_class = 0;
+      xtra = 0;
+      di = hd_free_driver_info(di);
 
-    switch(item) {
-      case hw_cdrom:
-        base_class = bc_storage_device;
-        sub_class = sc_sdev_cdrom;
-        sc = 1;
-        break;
+      switch(item) {
+        case hw_cdrom:
+          base_class = bc_storage_device;
+          sub_class = sc_sdev_cdrom;
+          sc = 1;
+          break;
 
-      case hw_floppy:
-        base_class = bc_storage_device;
-        sub_class = sc_sdev_floppy;
-        sc = 1;
-        break;
+        case hw_floppy:
+          base_class = bc_storage_device;
+          sub_class = sc_sdev_floppy;
+          sc = 1;
+          break;
 
-      case hw_disk:
-        base_class = bc_storage_device;
-        sub_class = sc_sdev_disk;
-        sc = 1;
-        break;
+        case hw_disk:
+          base_class = bc_storage_device;
+          sub_class = sc_sdev_disk;
+          sc = 1;
+          break;
 
-      case hw_network:
-        base_class = bc_network_interface;
-        break;
+        case hw_network:
+          base_class = bc_network_interface;
+          break;
 
-      case hw_display:
-        base_class = bc_display;
-        break;
+        case hw_display:
+          base_class = bc_display;
+          break;
 
-      case hw_monitor:
-        base_class = bc_monitor;
-        break;
+        case hw_monitor:
+          base_class = bc_monitor;
+          break;
 
-      case hw_mouse:
-        base_class = bc_mouse;
-        break;
+        case hw_mouse:
+          base_class = bc_mouse;
+          break;
 
-      case hw_joystick:
-        base_class = bc_joystick;
-        break;
+        case hw_joystick:
+          base_class = bc_joystick;
+          break;
 
-      case hw_keyboard:
-        base_class = bc_keyboard;
-        break;
+        case hw_keyboard:
+          base_class = bc_keyboard;
+          break;
 
-      case hw_camera:
-        base_class = bc_camera;
-        break;
+        case hw_camera:
+          base_class = bc_camera;
+          break;
 
-      case hw_framebuffer:
-        base_class = bc_framebuffer;
-        break;
+        case hw_framebuffer:
+          base_class = bc_framebuffer;
+          break;
 
-      case hw_chipcard:
-        base_class = bc_chipcard;
-        break;
+        case hw_chipcard:
+          base_class = bc_chipcard;
+          break;
 
-      case hw_sound:
-        base_class = bc_multimedia;
-        sub_class = sc_multi_audio;
-        sc = 1;
-        break;
+        case hw_sound:
+          base_class = bc_multimedia;
+          sub_class = sc_multi_audio;
+          sc = 1;
+          break;
 
-      case hw_isdn:
-        base_class = bc_isdn;
-        break;
+        case hw_isdn:
+          base_class = bc_isdn;
+          break;
 
-      case hw_modem:
-        base_class = bc_modem;
-        break;
+        case hw_modem:
+          base_class = bc_modem;
+          break;
 
-      case hw_storage_ctrl:
-        base_class = bc_storage;
-        break;
+        case hw_storage_ctrl:
+          base_class = bc_storage;
+          break;
 
-      case hw_network_ctrl:
-        base_class = bc_network;
-        break;
+        case hw_network_ctrl:
+          base_class = bc_network;
+          break;
 
-      case hw_printer:
-        base_class = bc_printer;
-        break;
+        case hw_printer:
+          base_class = bc_printer;
+          break;
 
-      case hw_tv:
-        base_class = bc_multimedia;
-        sub_class = sc_multi_video;
-        sc = 1;
-        xtra = 1;
-        break;
+        case hw_tv:
+          base_class = bc_multimedia;
+          sub_class = sc_multi_video;
+          sc = 1;
+          xtra = 1;
+          break;
 
-      case hw_scanner:
-        base_class = bc_scanner;
-        break;
+        case hw_scanner:
+          base_class = bc_scanner;
+          break;
 
-      case hw_braille:
-        base_class = bc_braille;
-        break;
+        case hw_braille:
+          base_class = bc_braille;
+          break;
 
-      case hw_sys:
-        base_class = bc_internal;
-        sub_class = sc_int_sys;
-        sc = 1;
-        break;
+        case hw_sys:
+          base_class = bc_internal;
+          sub_class = sc_int_sys;
+          sc = 1;
+          break;
 
-      case hw_cpu:
-        base_class = bc_internal;
-        sub_class = sc_int_cpu;
-        sc = 1;
-        break;
+        case hw_cpu:
+          base_class = bc_internal;
+          sub_class = sc_int_cpu;
+          sc = 1;
+          break;
 
-      case hw_usb_ctrl:
-        base_class = bc_serial;
-        sub_class = sc_ser_usb;
-        sc = 1;
-        break;
-
-      default:
-        base_class = -1;
-    }
-
-    if(
-      (
-        hd->base_class == base_class &&
-        (sc == 0 || hd->sub_class == sub_class)
-      )
-      ||
-      ( /* list other display adapters, too */
-        base_class == bc_display &&
-        hd->base_class == bc_multimedia &&
-        hd->sub_class == sc_multi_video
-      )
-      ||
-      ( /* make i2o controllers a storage controller */
-        item == hw_storage_ctrl &&
-        hd->base_class == bc_i2o
-      )
-    ) {
-      /* ##### fix? card bus magic: don't list card bus devices */
-      if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
-        if(
-          bridge_hd->base_class == bc_bridge &&
-          bridge_hd->sub_class == sc_bridge_cardbus
-        ) continue;
-      }
-
-      /* ISA-PnP sound cards: just one entry per card */
-      if(
-        item == hw_sound &&
-        hd->bus == bus_isa &&
-        hd->is.isapnp &&
-        hd->func
-      ) continue;
-
-      ok = 0;
-
-      switch(xtra) {
-        case 1:		/* tv cards */
-          if(!di) di = hd_driver_info(hd_data, hd);
-          if(
-            di &&
-            (di->any.type == di_any || di->any.type == di_module) &&
-            di->any.hddb0 && di->any.hddb0->str &&
-            !strcmp(di->any.hddb0->str, "bttv")
-          ) {
-            ok = 1;
-          }
+        case hw_usb_ctrl:
+          base_class = bc_serial;
+          sub_class = sc_ser_usb;
+          sc = 1;
           break;
 
         default:
-          ok = 1;
+          base_class = -1;
       }
 
-      if(ok) {
-        hd->hw_class = item;
-        break;
+      if(
+        (
+          hd->base_class == base_class &&
+          (sc == 0 || hd->sub_class == sub_class)
+        )
+        ||
+        ( /* list other display adapters, too */
+          base_class == bc_display &&
+          hd->base_class == bc_multimedia &&
+          hd->sub_class == sc_multi_video
+        )
+        ||
+        ( /* make i2o controllers a storage controller */
+          item == hw_storage_ctrl &&
+          hd->base_class == bc_i2o
+        )
+      ) {
+        /* ##### fix? card bus magic: don't list card bus devices */
+        if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
+          if(
+            bridge_hd->base_class == bc_bridge &&
+            bridge_hd->sub_class == sc_bridge_cardbus
+          ) continue;
+        }
+
+        /* ISA-PnP sound cards: just one entry per card */
+        if(
+          item == hw_sound &&
+          hd->bus == bus_isa &&
+          hd->is.isapnp &&
+          hd->func
+        ) continue;
+
+        ok = 0;
+
+        switch(xtra) {
+          case 1:		/* tv cards */
+            if(!di) di = hd_driver_info(hd_data, hd);
+            if(
+              di &&
+              (di->any.type == di_any || di->any.type == di_module) &&
+              di->any.hddb0 && di->any.hddb0->str &&
+              !strcmp(di->any.hddb0->str, "bttv")
+            ) {
+              ok = 1;
+            }
+            break;
+
+          default:
+            ok = 1;
+        }
+
+        if(ok) {
+          hd->hw_class = item;
+          break;
+        }
       }
     }
 
+    if(!hd->hw_class) hd->hw_class = hw_unknown;
+
+    hd_free_driver_info(di);
   }
 
-  hd_free_driver_info(di);
+  if(!hd->hw_class2) {
+    if(hd->bus == bus_usb) {
+      hd->hw_class2 = hw_usb;
+    }
+  }
 }
 
 

@@ -9,6 +9,12 @@
 struct option options[] = {
   { "help", 0, NULL, 'h' },
   { "verbose", 0, NULL, 'v' },
+  { "show", 1, NULL, 500 },
+  { "list", 0, NULL, 501 },
+  { "cfg", 1, NULL, 502 },
+  { "avail", 1, NULL, 503 },
+  { "need", 1, NULL, 504 },
+  { "new", 0, NULL, 505 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -24,18 +30,39 @@ struct option options[] = {
   { "isdn", 0, NULL, 1000 + hw_isdn },
   { "tv", 0, NULL, 1000 + hw_tv },
   { "scanner", 0, NULL, 1000 + hw_scanner },
+  { "joystick", 0, NULL, 1000 + hw_joystick },
+  { "usb", 0, NULL, 1000 + hw_usb },
   { }
 };
 
 int verbose = 0;
 hd_hw_item_t scan_item = 0;
+int opt_show = 0;
+int opt_scan = 0;
+int opt_list = 0;
+int opt_config_cfg = 0;
+int opt_config_avail = 0;
+int opt_config_need = 0;
+int opt_new = 0;
 
 void help(void);
 int do_scan(hd_hw_item_t item);
+int do_show(char *id);
+int do_list(hd_hw_item_t item);
+int do_config(int type, char *val, char *id);
 
 int main(int argc, char **argv)
 {
-  int i, rc = 0;
+  int rc = 0;
+
+#ifndef LIBHD_TINY
+
+  char *id = NULL;
+  char *config_cfg = NULL;
+  char *config_avail = NULL;
+  char *config_need = NULL;
+  int i;
+  int ok = 0;
 
   opterr = 0;
 
@@ -45,7 +72,36 @@ int main(int argc, char **argv)
         verbose = 1;
         break;
 
+      case 500:
+        opt_show = 1;
+        id = optarg;
+        break;
+
+      case 501:
+        opt_list = 1;
+        break;
+
+      case 502:
+        opt_config_cfg = 1;
+        config_cfg = optarg;
+        break;
+
+      case 503:
+        opt_config_avail = 1;
+        config_avail = optarg;
+        break;
+
+      case 504:
+        opt_config_need = 1;
+        config_need = optarg;
+        break;
+
+      case 505:
+        opt_new = 1;
+        break;
+
       case 1000 ... 1100:
+        opt_scan = 1;
         scan_item = i - 1000;
         break;
 
@@ -55,14 +111,43 @@ int main(int argc, char **argv)
     }
   }
 
-  if(argv[optind] || !scan_item) {
-    help();
-    return 1;
+  if(opt_scan && !opt_list) {
+    if(argv[optind] || !scan_item) return help(), 1;
+    rc = do_scan(scan_item);
+    ok = 1;
   }
 
-#ifndef LIBHD_TINY
-  do_scan(scan_item);
-#endif
+  if(opt_show) {
+    do_show(id);
+    ok = 1;
+  }
+
+  if(opt_list) {
+    do_list(scan_item);
+    ok = 1;
+  }
+
+  if(opt_config_cfg) {
+    if(!argv[optind]) return help(), 1;
+    do_config(1, config_cfg, argv[optind]);
+    ok = 1;
+  }
+
+  if(opt_config_avail) {
+    if(!argv[optind]) return help(), 1;
+    do_config(2, config_avail, argv[optind]);
+    ok = 1;
+  }
+
+  if(opt_config_need) {
+    if(!argv[optind]) return help(), 1;
+    do_config(3, config_need, argv[optind]);
+    ok = 1;
+  }
+
+  if(!ok) help();
+
+#endif		/* !defined(LIBHD_TINY) */
 
   return rc;
 }
@@ -77,7 +162,7 @@ void help()
 int do_scan(hd_hw_item_t item)
 {
   int run_config = 0;
-  hd_status_t status = {};
+  hd_status_t status = { };
   hd_data_t *hd_data;
   hd_t *hd, *hd1;
   int err = 0;
@@ -102,14 +187,20 @@ int do_scan(hd_hw_item_t item)
 
   hd = hd_free_hd_list(hd);
 
-  status.reconfig = status_yes;
+  if(opt_new) {
+    status.configured = status_new;
+  }
+  else {
+    status.reconfig = status_yes;
+  }
+
   hd = hd_list_with_status(hd_data, item, status);
   if(hd) run_config = 1;
 
   if(verbose) {
     for(hd1 = hd; hd1; hd1 = hd1->next) {
       printf(
-        "%s [cfg=%s, avail=%s, crit=%s",
+        "%s: (cfg=%s, avail=%s, need=%s",
         hd1->unique_id,
         hd_status_value_name(hd1->status.configured),
         hd_status_value_name(hd1->status.available),
@@ -119,11 +210,13 @@ int do_scan(hd_hw_item_t item)
         printf(", dev=%s", hd1->unix_dev_name);
       }
       printf(
-        "]: %s\n",
+        ") %s\n",
         hd1->model
       );
     }
-    printf("run config: %s\n", run_config ? "yes" : "no");
+  }
+  else {
+    for(hd1 = hd; hd1; hd1 = hd1->next) printf("%s\n", hd1->unique_id);
   }
 
   hd = hd_free_hd_list(hd);
@@ -131,7 +224,140 @@ int do_scan(hd_hw_item_t item)
   hd_free_hd_data(hd_data);
   free(hd_data);
 
-  return run_config;
+  return run_config ^ 1;
 }
 
-#endif	/* LIBHD_TINY */
+
+int do_show(char *id)
+{
+  hd_data_t *hd_data;
+  hd_t *hd;
+
+  hd_data = calloc(1, sizeof *hd_data);
+
+  hd = hd_read_config(hd_data, id);
+
+  if(hd) {
+    hd_data->debug = -1;
+    hd_dump_entry(hd_data, hd, stdout);
+    hd = hd_free_hd_list(hd);
+  }
+  else {
+    printf("no such hardware item: %s\n", id);
+  }
+
+  hd_free_hd_data(hd_data);
+  free(hd_data);
+
+  return 0;
+}
+
+
+int do_list(hd_hw_item_t item)
+{
+  hd_data_t *hd_data;
+  hd_t *hd, *hd_manual;
+  char *s;
+  char status[64];
+  int i;
+
+  hd_data = calloc(1, sizeof *hd_data);
+
+  hd_manual = hd_list(hd_data, hw_manual, 1, NULL);
+
+  if(opt_scan) {
+    hd = hd_list(hd_data, item, 0, NULL);
+    for(hd = hd; hd; hd = hd->next) printf("%s\n", hd->unique_id);
+    hd = hd_free_hd_list(hd);
+  }
+  else {
+    for(hd = hd_manual; hd; hd = hd->next) {
+      strcpy(status, "(");
+
+      i = 0;
+      if(hd->status.configured && (s = hd_status_value_name(hd->status.configured))) {
+        sprintf(status + strlen(status), "%scfg=%s", i ? ", " : "", s);
+        i++;
+      }
+
+      if(hd->status.available && (s = hd_status_value_name(hd->status.available))) {
+        sprintf(status + strlen(status), "%savail=%s", i ? ", " : "", s);
+        i++;
+      }
+
+      if(hd->status.critical && (s = hd_status_value_name(hd->status.critical))) {
+        sprintf(status + strlen(status), "%sneed=%s", i ? ", " : "", s);
+        i++;
+      }
+
+      strcat(status, ")");
+
+      s = hd_hw_item_name(hd->hw_class);
+      if(!s) s = "???";
+
+      printf("%s: %-32s %-16s %s\n", hd->unique_id, status, s, hd->model);
+    }
+  }
+
+  hd_free_hd_list(hd_manual);
+
+  hd_free_hd_data(hd_data);
+  free(hd_data);
+
+  return 0;
+}
+
+
+int do_config(int type, char *val, char *id)
+{
+  hd_data_t *hd_data;
+  hd_t *hd;
+  hd_status_value_t status = 0;
+  int i;
+  char *s;
+
+  hd_data = calloc(1, sizeof *hd_data);
+
+  hd = hd_read_config(hd_data, id);
+
+  if(hd) {
+    for(i = 1; i < 8; i++) {
+      s = hd_status_value_name(i);
+      if(s && !strcmp(val, s)) {
+        status = i;
+        break;
+      }
+    }
+    if(!status) {
+      printf("invalid status: %s\n", val);
+    }
+    else {
+      switch(type) {
+        case 1:
+          hd->status.configured = status;
+          break;
+
+        case 2:
+          hd->status.available = status;
+          break;
+
+        case 3:
+          hd->status.critical = status;
+          break;
+      }
+      hd_write_config(hd_data, hd);
+    }
+    hd = hd_free_hd_list(hd);
+  }
+  else {
+    printf("no such hardware item: %s\n", id);
+  }
+
+  hd_free_hd_data(hd_data);
+  free(hd_data);
+
+  return 0;
+}
+
+
+#endif		/* !defined(LIBHD_TINY) */

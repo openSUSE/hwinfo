@@ -151,7 +151,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     }
 
     if(h->status.critical && (s = hd_status_value_name(h->status.critical))) {
-      dump_line0("%scrit=%s", i ? ", " : "", s);
+      dump_line0("%sneed=%s", i ? ", " : "", s);
       i++;
     }
 

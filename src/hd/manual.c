@@ -60,6 +60,7 @@ static hash_t hw_items[] = {
   { hw_sys,          "system"            },
   { hw_cpu,          "cpu"               },
   { hw_partition,    "partition"         },
+  { hw_unknown,      "unknown"           },
   { 0,               NULL                }
 };
 
@@ -83,7 +84,7 @@ static hash_t hw_ids_general[] = {
 static hash_t hw_ids_status[] = {
   { hw_id_configured, "Configured" },
   { hw_id_available,  "Available"  },
-  { hw_id_critical,   "Critical"   },
+  { hw_id_critical,   "Needed"     },
   { 0,                NULL         }
 };
 
@@ -365,6 +366,7 @@ hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, char *id)
 
         case hw_id_available:
           j = value2key(status_names, s);
+          entry->status.available_orig =
           entry->status.available = j;
           if(!j) err = 1;
           break;

@@ -1,3 +1,9 @@
+20/1/2002:	v3.40
+	- updated hwscan so it does something useful
+
+14/1/2002:	v3.39
+	- next try with dietlibc on sparc
+
 14/1/2002:	v3.38
 	- olh: assume veth always present
 	- make it work with dietlibc on sparc

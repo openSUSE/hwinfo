@@ -11,6 +11,10 @@
 
 #ifdef __sparc__
 
+#ifdef DIET
+typedef unsigned int u_int;
+#endif
+
 #include <asm/openpromio.h>
 
 #define MAX_VAL (4096-128-4)

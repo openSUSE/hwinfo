@@ -94,8 +94,8 @@ typedef enum hw_item {
   hw_printer, hw_scanner, hw_chipcard, hw_monitor, hw_tv, hw_display,
   hw_framebuffer, hw_camera, hw_sound, hw_storage_ctrl, hw_network_ctrl,
   hw_isdn, hw_modem, hw_network, hw_disk, hw_partition, hw_cdrom, hw_floppy,
-  hw_manual, hw_usb_ctrl,
-  hw_all					/* hw_all must be last */
+  hw_manual, hw_usb_ctrl, hw_usb,
+  hw_unknown, hw_all					/* hw_all must be last */
 } hd_hw_item_t;
 
 /*
@@ -227,6 +227,7 @@ typedef struct {
   unsigned configured:3;
   unsigned available:3;
   unsigned critical:3;
+  unsigned available_orig:3;
 } hd_status_t;
 
 /* hardware config status values */
@@ -1059,6 +1060,7 @@ typedef struct s_hd_t {
        *rev_name, *serial;
 
   hd_hw_item_t hw_class;	/* not to confuse with base_class */
+  hd_hw_item_t hw_class2;	/* it may belong to more than one class (e.g., mouse vs. usb  */
   char *model;			/* combined vendor & device names */
 
   unsigned attached_to;		/* idx field of 'parent' entry */

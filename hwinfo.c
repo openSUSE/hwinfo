@@ -77,15 +77,15 @@ struct option options[] = {
   { "cpu", 0, NULL, 1000 + hw_cpu },
   { "partition", 0, NULL, 1000 + hw_partition },
   { "usb_ctrl", 0, NULL, 1000 + hw_usb_ctrl },
+  { "usb", 0, NULL, 1000 + hw_usb },
+  { "manual", 0, NULL, 1000 + hw_manual },
   { "all", 0, NULL, 2000 },
   { "reallyall", 0, NULL, 2001 },
   { "smp", 0, NULL, 3000 },
-  { "usb", 0, NULL, 3001 },
   { "pci", 0, NULL, 3002 },
   { "isapnp", 0, NULL, 3003 },
   { "ide", 0, NULL, 3004 },
   { "scsi", 0, NULL, 3005 },
-  { "manual", 0, NULL, 3006 },
   { }
 };
 
@@ -173,12 +173,10 @@ int main(int argc, char **argv)
         case 2000:
         case 2001:
         case 3000:
-        case 3001:
         case 3002:
         case 3003:
         case 3004:
         case 3005:
-        case 3006:
           if(hw_items < sizeof hw_item / sizeof *hw_item)
             hw_item[hw_items++] = i;
           break;
@@ -344,22 +342,18 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
 
     case 2000:
     case 2001:
-    case 3001:
     case 3002:
     case 3003:
     case 3004:
     case 3005:
-    case 3006:
       i = j = -1;
       switch((int) hw_item) {
         case 2000: i = pr_default; break;
         case 2001: i = pr_all; break;
-        case 3001: i = pr_usb; j = bus_usb; break;
         case 3002: i = pr_pci; j = bus_pci; break;
         case 3003: i = pr_isapnp; j = bus_isa; break;
         case 3004: i = pr_ide; j = bus_ide; break;
         case 3005: i = pr_scsi; j = bus_scsi; break;
-        case 3006: i = pr_manual; break;
       }
       if(i != -1) {
         hd_clear_probe_feature(hd_data, pr_all);
