@@ -1,3 +1,7 @@
+4/11/2002:	v5.42
+	- check for REDIRECT in hwscan init script (in case it gets called
+	  from the commandline). #17773
+
 4/11/2002:	v5.41
 	- do some consistency checks on legacy data from BIOS area (#21462)
 
