@@ -1,4 +1,7 @@
-4/12/2033:	v8.03
+	- sysfs includes moved
+	- usb modules renamed
+
+4/12/2003:	v8.03
 	- proper multichannel device detection (finally...)
 	- identify virtual reader/punch/printer
 

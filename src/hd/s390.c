@@ -9,8 +9,8 @@
 
 #if defined(__s390__) || defined(__s390x__)
 
-#include <libsysfs.h>
-#include <dlist.h>
+#include <sysfs/libsysfs.h>
+#include <sysfs/dlist.h>
 
 #define BUSNAME "ccw"
 
