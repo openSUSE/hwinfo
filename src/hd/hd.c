@@ -1444,6 +1444,7 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 {
   int i;
   unsigned u1, u2;
+  char *s, *t, *t0;
   driver_info_t *di, *di0 = NULL;
   ihw_card_info *ici;
   str_list_t *sl;
@@ -1534,13 +1535,36 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
       case di_x11:
         for(i = 0, sl = di->x11.hddb0; sl; sl = sl->next, i++) {
           if(i == 0) {
+            di->x11.xf86_ver = new_str(sl->str);
+          }
+          else if(i == 1) {
             di->x11.server = new_str(sl->str);
           }
-          else {
-            add_str_list(&di->x11.x3d, sl->str);
-          }
-#if 0
           else if(i == 2) {
+            if(!strcmp(sl->str, "3d")) di->x11.x3d = 1;
+          }
+          else if(i == 3) {
+            s = new_str(sl->str);
+            for(t0 = s; (t = strsep(&t0, ",")); ) {
+              add_str_list(&di->x11.packages, t);
+            }
+            free_mem(s);
+          }
+          else if(i == 4) {
+            s = new_str(sl->str);
+            for(t0 = s; (t = strsep(&t0, ",")); ) {
+              add_str_list(&di->x11.extensions, t);
+            }
+            free_mem(s);
+          }
+          else if(i == 5) {
+            s = new_str(sl->str);
+            for(t0 = s; (t = strsep(&t0, ",")); ) {
+              add_str_list(&di->x11.options, t);
+            }
+            free_mem(s);
+          }
+          else if(i == 6) {
             di->x11.colors.all = strtol(sl->str, NULL, 16);
             if(di->x11.colors.all & (1 << 0)) di->x11.colors.c8 = 1;
             if(di->x11.colors.all & (1 << 1)) di->x11.colors.c15 = 1;
@@ -1548,10 +1572,12 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
             if(di->x11.colors.all & (1 << 3)) di->x11.colors.c24 = 1;
             if(di->x11.colors.all & (1 << 4)) di->x11.colors.c32 = 1;
           }
-          else if(i == 3) {
+          else if(i == 7) {
             di->x11.dacspeed = strtol(sl->str, NULL, 10);
           }
-#endif
+        }
+        for(i = 0, sl = di->x11.hddb1; sl; sl = sl->next, i++) {
+          str_printf(&di->x11.raw, -1, "%s\n", sl->str);
         }
         break;
 
@@ -2005,6 +2031,7 @@ hd_t *hd_mouse_list(hd_data_t *hd_data, int rescan)
     hd_set_probe_feature(hd_data, pr_serial);
     hd_set_probe_feature(hd_data, pr_adb);
     hd_set_probe_feature(hd_data, pr_usb);
+    hd_set_probe_feature(hd_data, pr_kbd);
     hd_set_probe_feature(hd_data, pr_mouse);
     hd_scan(hd_data);
     memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);

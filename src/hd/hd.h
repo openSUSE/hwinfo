@@ -452,7 +452,9 @@ typedef struct {
   union u_hd_res_t *next;
   enum resource_types type;
   unsigned speed;
-  unsigned bits, parity;
+  unsigned bits, stopbits;
+  char parity;				/* n, e, o, s, m */
+  char handshake;			/* -, h, s */
 } res_baud_t;
 
 typedef struct {
@@ -629,13 +631,18 @@ typedef struct {
   union driver_info_u *next;
   enum driver_info_type type;		/* driver info type */
   str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
-  char *server;				/* the server name */
-  str_list_t *x3d;			/* 3D info (list of packages to install) */
+  char *server;				/* the server/module name */
+  char *xf86_ver;			/* XFree86 version (3 or 4) */
+  unsigned x3d:1;			/* has 3D support */
   struct {
     unsigned all:5;			/* the next 5 entries combined */
     unsigned c8:1, c15:1, c16:1, c24:1, c32:1;
   } colors;				/* supported color depths */
   unsigned dacspeed;			/* max. ramdac clock */
+  str_list_t *packages;			/* extra packages to install */
+  str_list_t *extensions;		/* additional X extensions to load ('Module' section) */
+  str_list_t *options;			/* special server options */
+  char *raw;				/* extra info to add to XF86Config */
 } driver_info_x11_t;
 
 /* isdn info */

@@ -1,0 +1,94 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# graphics cards
+#
+# NOTE:
+#   Most info comes from SaX's Identity file, it is not included here.
+#   But we must add 3d driver info.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# 3dfx voodoo rush (with AT3D chip)
+1142 643d
+	x	3|RUSH|3d|glide_vr,rushlibs,mesa,mesa3dfx,dev3dfx
+
+# 3dfx voodoo 1
+121a 0001
+	x	4||3d|glide_vg,mesa,mesa3dfx,dev3dfx
+	x	3||3d|glide_vg,mesa,mesa3dfx,dev3dfx
+
+# 3dfx voodo 2
+121a 0002
+	x	4||3d|glide_v2,mesa,mesa3dfx,dev3dfx
+	x	3||3d|glide_v2,mesa,mesa3dfx,dev3dfx
+
+# 3dfx voodoo banshee & voodoo 3
+121a 0003
+121a 0005
+	x	4|tdfx|3d|glide_v3,mesa,mesa3dfx,dev3dfx
+	x	3|SVGA|3d|glide_v3,mesa,mesa3dfx,dev3dfx
+
+# ati rage pro
+1002 4742
+1002 4744
+1002 4749
+1002 4750+2
+1002 4c42
+	x	3|MACH64|3d|glx,mesa|glx.so
+
+# matrox g200/g400
+102b 0520+2
+102b 0525
+	x	3|SVGA|3d|glx,mesa|glx.so
+
+# s3 virge (3d too unstable)
+#5333 5631
+#5333 883d
+#5333 8a01
+#5333 8a10
+#5333 8c01+3
+#	x	3|SVGA|3d|glx,mesa|glx.so
+
+# intel i810
+8086 7121
+8086 7123
+8086 7125
+	x	3|SVGA|3d|glx,mesa|glx.so
+
+# nvidia riva 128/tnt
+#10de 0020
+#10de 0028+2
+#10de 002c+2
+#10de 00a0
+#10de 0100
+12d2 0018+2
+	x	3|SVGA|3d|glx,mesa|glx.so
+10de 0020
+10de 0028+2
+10de 002c+2
+10de 00a0
+10de 0100+2
+10de 0103
+	x	4|nvidia|3d|nv_glx|glx
+
+# vmware's emulated card
+15ad 0710
+	x	3|VMWARE
+
+# netfinity's card is other as other cards...
+5333 8904 1014 00db
+	x	3|VGA16
+
+s4001 0001
+	x	3|SUNMONO
+
+s4001 0002+2
+s4001 0008+6
+s4001 0013
+	x	3|SUN
+
+s4001 0004+4
+s4001 000e+5
+s4001 0014+d
+	x	3|SUN24
+

@@ -1,0 +1,35 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# mice
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+LGI   800c
+	p	mouseman|mman
+
+PNP   0f04
+	p	mousesystems|msc
+
+# KYE 0001: protocol info not verified
+KYE   0001
+LGI   8001
+PNP   0f0a
+PNP   0f0c
+s0200 0003
+	p	microsoft|ms
+
+PNP   0f0e
+s0200 0002
+	p	ps/2|ps2
+
+# Sun Mouse (/dev/sunmouse)
+s0202 0000
+	p	mousesystems|sun
+
+# USB mice
+s0200 0001
+	p	imps/2|ps2
+
+s0100 0300+100
+	p	busmouse|bm
+

@@ -338,11 +338,24 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
         else {
           dump_line("Speed: %s Mbps\n", float2str(res->baud.speed, 6));
         }
-        if(res->baud.bits) {
-          dump_line(
-            "Bits: %u bits, %sparity\n",
-            res->baud.bits, res->baud.parity ? "" : "no "
-          );
+        if(res->baud.bits || res->baud.stopbits || res->baud.parity || res->baud.handshake) {
+          int i = 0;
+
+          dump_line_str("Config: ");
+          if(res->baud.bits) {
+            dump_line0("%u bits", res->baud.bits);
+            i++;
+          }
+          if(res->baud.parity) {
+            dump_line0("%sparity %c", i++ ? ", " : "", res->baud.parity);
+          }
+          if(res->baud.stopbits) {
+            dump_line0("%s%u stopbits", i++ ? ", " : "", res->baud.stopbits);
+          }
+          if(res->baud.handshake) {
+            dump_line0("%shandshake %c", i++ ? ", " : "", res->baud.handshake);
+          }
+          dump_line0("\n");
         }
         break;
 
@@ -409,14 +422,13 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
         break;
 
       case di_x11:
-        if(di->x11.server) dump_line("XFree86 Server: %s\n", di->x11.server);
-        if(di->x11.x3d) {
-          dump_line("3D-Info: %s", di->x11.x3d->str);
-          for(sl = di->x11.x3d->next; sl; sl = sl->next) {
-            dump_line0(", %s", sl->str);
-          }
-          dump_line0("\n");
+        if(di->x11.server) {
+          dump_line(
+            "XFree86 v%s Server%s: %s\n",
+            di->x11.xf86_ver, strcmp(di->x11.xf86_ver, "4") ? "" : " Module", di->x11.server
+          );
         }
+        if(di->x11.x3d) dump_line_str("3D Support: yes\n");
         if(di->x11.colors.all) {
           dump_line_str("Color Depths: ");
           j = 0;
@@ -428,6 +440,46 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
           dump_line0("\n");
         }
         if(di->x11.dacspeed) dump_line("Max. DAC Clock: %u MHz\n", di->x11.dacspeed);
+        if(di->x11.extensions) {
+          dump_line("Extensions: %s", di->x11.extensions->str);
+          for(sl = di->x11.extensions->next; sl; sl = sl->next) {
+            dump_line0(", %s", sl->str);
+          }
+          dump_line0("\n");
+        }
+        if(di->x11.options) {
+          dump_line("Options: %s", di->x11.options->str);
+          for(sl = di->x11.options->next; sl; sl = sl->next) {
+            dump_line0(", %s", sl->str);
+          }
+          dump_line0("\n");
+        }
+        if(di->x11.raw) {
+          char *s = di->x11.raw;
+
+          dump_line_str("XF86Config Entry: \"");
+          for(; *s; s++) {
+            if(isprint(*s)) {
+              dump_line0("%c", *s);
+            }
+            else {
+              switch(*s) {
+                case '\n': dump_line0("\\n"); break;
+                case '\r': dump_line0("\\r"); break;
+                case '\t': dump_line0("\t"); break;	/* *no* typo! */
+                default: dump_line0("\\%03o", *s); 
+              }
+            }
+          }
+          dump_line0("\"\n");
+        }
+        if(di->x11.packages) {
+          dump_line("Packages: %s", di->x11.packages->str);
+          for(sl = di->x11.packages->next; sl; sl = sl->next) {
+            dump_line0(", %s", sl->str);
+          }
+          dump_line0("\n");
+        }
         break;
 
       case di_isdn:

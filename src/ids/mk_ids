@@ -11,7 +11,7 @@ sub dump_names;
 sub dump_nums;
 sub mk_short_num;
 sub dump_drivers;
-sub merge_sax;
+sub merge_x;
 
 %tag = (
   'pci'     => 1,
@@ -34,7 +34,7 @@ if($ARGV[0] eq "-d") { $get_names = undef; shift }
 # name info only
 if($ARGV[0] eq "-n") { $get_drivers = undef; shift }
 
-
+$lline = 0;
 for $f (@ARGV) {
   if(open F, $f) {
     @f = (<F>);
@@ -49,19 +49,21 @@ for $f (@ARGV) {
     }
 
     $l = 0;
+    undef $sax_version;
     if($format eq 'names') {
       print STDERR "***\n*** \"$f\" has name info\n***\n";
 
       for (@f) {
         $l++;
+        $lline++;
         chomp;
         s/\s*$//;
         next if /^\s*[#;]/;
         next if /^$/;
 
         # SaX Identity file
-        if(/^NAME=(.+?)§DEVICE=(.+?)§VID=0x([0-9a-fA-F]+?)§DID=0x([0-9a-fA-F]+?)§SERVER=([^§]+)$/) {
-
+        if(/^NAME=(.+?)§DEVICE=(.+?)§VID=0x([0-9a-fA-F]+?)§DID=0x([0-9a-fA-F]+?)§SERVER=([^§]+)(§EXT=([^§]*))?(§OPT=([^§]*))?(§RAW=([^§]*))?$/) {
+          #       1            2           3                     4                      5      6     7        8     9        10    11
           $tag = $tag{'pci'};
           $id0 = [ $tag, hex($3) ];
           $id1 = [ $tag, hex($4) ];
@@ -71,7 +73,26 @@ for $f (@ARGV) {
           add_name $val1, $id0;
           add_name $val2, $id0, $id1;
 
-          $sax{sprintf "%04x %04x", $id0->[1], $id1->[1]} = $5;
+          ( $srv, $ext, $opt, $raw ) = ( $5, $7, $9, $11 );
+          $sax_tmp = $srv =~ /^3DLABS|MACH64|P9000|RUSH|S3|SVGA|TGA$/ ? 1 : 2;
+          $sax_version = $sax_tmp unless defined $sax_version;
+          die "line has SaX$sax_tmp format (expected SaX$sax_version): $f($l)\n" if $sax_tmp != $sax_version;
+
+          if($new_drv_idx) { $drv_idx++; undef $new_drv_idx }
+        
+          push @{$driver[$drv_idx][0]}, [ $id0, $id1 ];
+          if($opt) {
+            push @{$driver[$drv_idx][1]}, [ 'x', [ $sax_version == 1 ? 3 : 4, $srv, undef, undef, $ext, $opt ] ];
+          }
+          elsif($ext) {
+            push @{$driver[$drv_idx][1]}, [ 'x', [ $sax_version == 1 ? 3 : 4, $srv, undef, undef, $ext ] ];
+          }
+          else {
+            push @{$driver[$drv_idx][1]}, [ 'x', [ $sax_version == 1 ? 3 : 4, $srv ] ];
+          }
+          push @{$driver[$drv_idx][1][-1][2]}, (split /,/, $raw) if $raw;
+          $driver[$drv_idx][1][-1][3] = [ $lline, $l, $f ];
+          $drv_idx++;
         }
 
         elsif(/^B\s+([0-9a-fA-F]+)\s+(.*?)\s*$/) {
@@ -204,6 +225,7 @@ for $f (@ARGV) {
 
       for (@f) {
         $l++;
+        $lline++;
         chomp;
         s/\s*$//;
         next if /^[#;]/;
@@ -270,6 +292,7 @@ for $f (@ARGV) {
         elsif(/^\t([a-z])\s+(.*?)\s*$/) {
 
           push @{$driver[$drv_idx][1]}, [ $1, [ (split /\|/, $2) ] ];
+          $driver[$drv_idx][1][-1][3] = [ $lline, $l, $f ];
           $new_drv_idx = 1;
         }
 
@@ -281,6 +304,7 @@ for $f (@ARGV) {
           die "invalid line: $f($l)\n";
         }
       }
+      $new_drv_idx = 1;
     }
 
   }
@@ -313,7 +337,7 @@ if($get_names) {
   close F;
 }
 
-select STDOUT;
+~select STDOUT;
 
 undef $short;
 undef @name_str;
@@ -323,7 +347,7 @@ undef %name_ofs;
 if($get_drivers) {
   $struct = "drv";
 
-  merge_sax;
+  merge_x;
 
   open F, ">hd.drivers";
   select F;
@@ -896,6 +920,8 @@ sub dump_drivers
 
   for $d (@driver) {
 
+    next unless defined $d;
+
     # first the device ids
 
     @i = @{$d->[0]};
@@ -966,70 +992,205 @@ sub dump_drivers
 }
 
 
-=head1
-# sax info: $sax{"$id0 $id1"} = $5;
-# driver info structure:
-# @{$driver[$drv_idx]->[0]}: array of refs to [ $id0, $id1, $id2, $id3 ]
-# @{$driver[$drv_idx]->[1]}: array of refs to [ info_type , [ info0, ... ], [ xtra_info0, ... ] ]
 #
-=cut
+# suitable for sort of driver info entries
+#
+sub cmp_drv_ent
+{
+  my ($i);
 
-sub merge_sax
+  $i = cmp_id $a->[0][0][0], $b->[0][0][0];
+  return $i if $i;
+  
+  $i = cmp_id $a->[0][0][1], $b->[0][0][1];
+  return $i if $i;
+  
+  $i = cmp_id $a->[0][0][2], $b->[0][0][2];
+  return $i if $i;
+  
+  $i = cmp_id $a->[0][0][3], $b->[0][0][3];
+  return $i if $i;
+
+  $i = $a->[1][0][3][0] <=> $b->[1][0][3][0];
+  
+  return $i;
+}
+
+sub cmp_drv_ent_ns
+{
+  my ($i, $a, $b);
+
+  ( $a, $b ) = @_;
+
+  $i = cmp_id $a->[0][0][0], $b->[0][0][0];
+  return $i if $i;
+  
+  $i = cmp_id $a->[0][0][1], $b->[0][0][1];
+  return $i if $i;
+  
+  $i = cmp_id $a->[0][0][2], $b->[0][0][2];
+  return $i if $i;
+  
+  $i = cmp_id $a->[0][0][3], $b->[0][0][3];
+  
+  return $i;
+}
+
+sub cmp_drv_ent_info
 {
   local ( $_ );
-  my ( $d, $i, $v, $s, $t, %d );
+  my ($i, $a, $b, $x, $y);
 
+  ( $a, $b ) = @_;
+
+  if(!defined($a) || !defined($b)) { return 1 }
+
+  $x = $y = "";
+  for ( @{$a->[1]} ) {
+    $x .= "$_->[0]\x01\n";
+    $x .= join '|', @{$_->[1]};
+    $x .= "\x01\n";
+    $x .= join "\n", @{$_->[2]};
+  }
+  for ( @{$b->[1]} ) {
+    $y .= "$_->[0]\x01\n";
+    $y .= join '|', @{$_->[1]};
+    $y .= "\x01\n";
+    $y .= join "\n", @{$_->[2]};
+  }
+#  print ">>$x--$y<<\n";
+
+  return $x eq $y ? 0 : 1;
+}
+
+# driver info structure:
+# @{$driver[$drv_idx]->[0]}: array of refs to [ $id0, $id1, $id2, $id3 ]
+# @{$driver[$drv_idx]->[1]}: array of refs to [ info_type , [ info0, ... ], [ xtra_info0, ... ], [ lline, line_nr, file ] ]
+
+sub merge_x
+{
+  local ( $_ );
+  my ( $d, @xdrv, $id, $id1, $idlist, $idlist1, $x, @x, $y, $i, $j, $k, $dl, @x3, @x4 );
+
+  # step 1: make separate entries
   for $d (@driver) {
-    for $i (@{$d->[0]}) {
-      die "format oops" unless defined($i->[0]) && defined($i->[1]);
+    if($d->[1][0][0] eq 'x') {
+      for $idlist (@{$d->[0]}) {
+        $idlist1 = [ @$idlist ];
+        $id = $idlist1->[1];
+        $i = $id->[2];
+        $i = 1 if $i <= 1;
+        $j = 0;
+        while($i--) {
+          $id1 = [ $id->[0], $id->[1] + $j ];
+          $j++;
+          $idlist1->[1] = $id1;
+          $x = [ @$idlist1 ];
+          push @xdrv, [ [ $x ] , [ @{$d->[1]} ] ]
+        }
+      }
+      undef $d;
+    }
+  }
+
+  # step 2: sort them by id
+  @xdrv = sort cmp_drv_ent @xdrv;
+
+  # step 3: join info for identical ids
+  undef $dl;
+  for $d (@xdrv) {
+    if(defined $dl) {
+      if(cmp_drv_ent_ns($dl, $d) == 0) {
+        push @{$dl->[1]}, @{$d->[1]};
+        undef $d;
+      }
+    }
+    $dl = $d if defined $d;
+  }
+  @xdrv = grep { defined } @xdrv;
+
+  # step 4: check entries for consistency
+  for $d ( @xdrv ) {
+    $i = $j = $k = 0;
+    undef @x3;
+    undef @x4;
+    for $x ( @{$d->[1]} ) {
+      ( $i++, push(@x3, $x), next ) if $x->[1][0] eq '3';
+      ( $j++, push(@x4, $x), next ) if $x->[1][0] eq '4';
+      $k++;
+    }
+    for $x (@x3) {
+      $k = 3 if ($x->[1][1] ne $x3[0]->[1][1]) && ($x->[1][2] eq $x3[0]->[1][2])
+    }
+    for $x (@x4) {
+      $k = 4 if ($x->[1][1] ne $x4[0]->[1][1]) && ($x->[1][2] eq $x4[0]->[1][2])
+    }
+    if($i > 2 || $j > 2 || $k) {
+      print "*** invalid X11 info: ***:\n";
+      @driver = ( $d );
+      dump_drivers;
+      die "*** Fix it! ***\n";
+    }
+    # step 4a: fix some entries
+    @x = @{$d->[1]};
+    $k = "";
+    for ( @x ) {
+      $k .= "\t$_->[0]\t";
+      $k .= join '|', @{$_->[1]};
+      $k .= "\t# $_->[3][2]($_->[3][1])\n"
+    }
+
+    for($i = 0; $i < @x; $i++) {
+      for($j = $i + 1; $j < @x; $j++) {
+        if(
+          defined($x[$i]) && defined($x[$j]) &&
+          ($x[$i][1][0] eq $x[$j][1][0]) &&
+          ($x[$i][1][1] eq $x[$j][1][1])
+        ) {
+          printf STDERR
+            "x11 info conflict/duplicate:\n  %s %s\n$k  removing: %s  # %s(%d)\n",
+            id2str(0, $d->[0][0][0]), id2str(1, $d->[0][0][1]),
+            join("|", @{$x[$j][1]}), $x[$j][3][2], $x[$j][3][1];
+          $x[$j] = undef;
+        }
+      }
+    }
+    @{$d->[1]} = grep { defined } @x;
+  }
+
+  # step 5: re-join entries
+  for($i = 0; $i < @xdrv; $i++) {
+    for($j = $i + 1; $j < @xdrv; $j++) {
       if(
-        $i->[0][0] == $tag{'pci'} &&
-        !defined($i->[2]) &&
-        !defined($i->[0][2]) &&
-        !defined($i->[1][2])
+        defined($xdrv[$i]) && defined($xdrv[$j]) &&
+        cmp_drv_ent_info($xdrv[$i], $xdrv[$j]) == 0
       ) {
-        $v = sprintf "%04x %04x", $i->[0][1], $i->[1][1];
-        $s = exists($sax{$v}) ? $sax{$v} : undef;
-        $t = $s && $d->[1][0][0] eq 'x' ? $d->[1][0][1][0] : undef;
-        if($s) {
-          if($s ne $t) {
-            printf STDERR "SaX driver info conflict: pci id %04x %04x: \"%s\"(SaX) != \"%s\"\n", $i->[0][1], $i->[1][1], $s, $t
+        # unite ids!
+        $x = $xdrv[$i][0][-1];
+        $y = $xdrv[$j][0][-1];
+        $k = 0;
+        if($x->[0][0] == $y->[0][0] && !$x->[0][2] && !defined($x[2])) {
+          if($x->[1][2]) {
+            if($x->[1][1] + $x->[1][2] == $y->[1][1]) {
+              $x->[1][2]++;
+              $k = 1;
+            }
           }
           else {
-            delete $sax{$s};
+            if($x->[1][1] + 1 == $y->[1][1]) {
+              $x->[1][2] = 2;
+              $k = 1;
+            }
           }
         }
-      }
-
-    }
-  }
-
-  for (sort keys %sax) {
-    ( $v, $d ) = split;
-    $v = hex $v; $d = hex $d;
-    if(exists($d{$sax{$_}})) {
-      # see if we can simply extend the range of the previous id
-      if($d{$sax{$_}}[0][-1][0][1] == $v) {
-        if($d{$sax{$_}}[0][-1][1][2]) {
-          if($d{$sax{$_}}[0][-1][1][1] + $d{$sax{$_}}[0][-1][1][2] == $d) {
-            $d{$sax{$_}}[0][-1][1][2]++;
-            next;
-          }
-        }
-        else {
-          if($d{$sax{$_}}[0][-1][1][1] + 1 == $d) {
-            $d{$sax{$_}}[0][-1][1][2] = 2;
-            next;
-          }
-        }
+        push @{$xdrv[$i][0]}, @{$xdrv[$j][0]} unless $k;
+        $xdrv[$j] = undef;
       }
     }
-    push @{$d{$sax{$_}}[0]}, [ [ $tag{'pci'}, $v ], [ $tag{'pci'}, $d ] ];
   }
+  @xdrv = grep { defined } @xdrv;
 
-  for (sort keys %d) {
-    $d{$_}[1][0] = [ 'x', [ $_ ] ];
-    push @driver, $d{$_}
-  }
+  push @driver, @xdrv;
+
 }
 

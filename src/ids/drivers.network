@@ -1,0 +1,207 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# network
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# net/dmfe.c
+1282 9100
+1282 9102
+	i	dmfe
+
+# net/3c59x.c
+10b7 5055
+10b7 5057
+10b7 5157
+10b7 5900
+10b7 5950+3
+10b7 6560
+10b7 7646
+10b7 9000+2
+10b7 9050+2
+	i	3c59x
+
+# net/3c59x.c && net/3c90x.c
+# there seem to be some problems with the 3c59x?
+# cf. Michael Kleinhenz <kleinhen@linuxtag.de> on suse-beta; 10 Feb 2000
+10b7 900a
+10b7 9055
+10b7 9058
+10b7 905a
+10b7 9200
+10b7 9800
+	i	3c90x
+	i	3c59x
+# cf. bugzilla #2567
+10b7 9005
+	i	3c59x
+	i	3c90x
+
+# net/3c90x.c
+10b7 9004
+10b7 9006
+10b7 9805
+	i	3c90x
+
+# net/eepro100.c
+8086 1209
+	i	eepro100
+
+# net/eepro100.c && net/eepro100-old.c
+8086 1229
+	i	eepro100
+	i	eepro100-old
+
+# net/epic100.c
+10b8	0005+2
+	i	epic100
+
+# net/pcnet32.c
+# net/lance.c
+1022 2000
+	i	pcnet32
+	i	lance
+
+1022 2001
+	i	pcnet32
+
+# net/ne2k-pci.c
+10ec 8029
+1050 0940
+1050 5a5a
+10bd 0e34
+1106 0926
+11f6 1401
+12c3 0058
+12c3 5598
+4a14 5000
+8e2e 3000
+	i	ne2k-pci
+
+# net/rtl8139.c
+1039 0900
+1039 7016
+10ec 8129
+10ec 8138+2
+1113 1211
+	i	rtl8139
+
+# net/tlan.c
+0e11 ae32
+0e11 ae34+2
+0e11 ae40
+0e11 ae43
+0e11 b011+2
+0e11 b030
+0e11 f130
+0e11 f150
+108d 0012+3
+	i	tlan
+
+# net/de4x5.c
+# prefer those over tulip
+1011 0002
+1011 0009
+1011 0014
+1011 0019
+	i	de4x5
+	i	tulip
+
+# net/tulip.c
+10d9 0512
+10d9 0531
+115d 0003
+11ad 0002
+11ad c115
+11f6 9881
+125b 1400
+1317 0981
+8086 0039
+	i	tulip
+
+# net/ne.c
+AXE 2201
+PNP 80d6
+	m	ne
+		options ne		io=<io0> irq=<irq0>
+
+# net/defxx.c	not modular due to makefile
+#define PCI_VENDOR_ID_DEC               0x1011
+#define PCI_DEVICE_ID_DEC_FDDI          0x000F
+
+# net/dgrs.c
+114F 0003
+	i	dgrs
+
+# net/hp100.c
+101a 0005
+103c 1030+2
+103c 11f6
+103c 0112
+	i	hp100
+
+# net/olympic.c
+1014 003e
+	i	olympic
+
+# net/rcpci.c
+4916 1960
+	i	rcpci
+
+# net/rrunner.c
+120f 0001
+	i	rrunner
+
+# net/sdla.c
+11B0 0002
+	i	sdla
+
+# net/via_rhine.c
+1106 6100
+1106 3043
+	i	via-rhine
+
+# net/sktr.c
+1148 4200
+0e11 0508
+	i	sktr
+
+# net/rl100a.c
+1050 0840
+11F6 2011
+	i	rl100a
+
+# net/yellowfin.c
+1000 0702
+1000 0701
+	i	yellowfin
+
+# net/acenic.c
+12ae 0001
+10b7 0001
+1385 620a
+1011 001a
+10a9 0009
+	i	acenic
+
+# net/sis900.c
+1039 0900
+1039 7016
+	i	sis900
+
+# net/sunhme.c (pci)
+108e 1001
+	i	sunhme
+
+# net/sunhme.c (sbus)
+s4001 3001
+	i	sunhme
+
+# net/sunqe.c (sbus)
+s4001 3003
+	i	sunqe
+
+# net/myri_sbus.c (sbus)
+s4001 3004
+	i	myri_sbus
+

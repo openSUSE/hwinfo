@@ -548,7 +548,7 @@ void store_id(hddb_data_t *x, hwid_t *id, unsigned tag, unsigned level, char *na
   store_data(x, MAKE_DATA(level, MAKE_ID(tag, id->val)));
 
   if(id->range_ok) {
-    store_data(x, MAKE_DATA(FL_RANGE, MAKE_ID(tag, id->range)));
+    store_data(x, MAKE_DATA(FL_RANGE, id->range));
   }
 
   if(id->xtra_ok) {
@@ -743,31 +743,6 @@ void init_hddb(hd_data_t *hd_data)
     dump_hddb_data(hd_data, hd_data->hddb_dev, "hddb_dev, loaded");
     dump_hddb_data(hd_data, &HDDB_DRV, "hddb_drv, static");
     dump_hddb_data(hd_data, hd_data->hddb_drv, "hddb_drv, loaded");
-  }
-#endif
-
-#if 0
-  {
-    unsigned ids[4] = { 0x10de, 0x20, 0x1043, 0x200 };
-    driver_info_t *di;
-    str_list_t *sl;
-
-    u = find_entry(hd_data->hddb_dev, 0, 3, ids);
-    ADD2LOG(">>%d\n", u);
-
-    di = device_driver(hd_data, 0x10de, 0x20);
-
-    for(; di; di = di->next) {
-      ADD2LOG("type %d\n", di->any.type);
-
-      for(sl = di->any.hddb0; sl; sl = sl->next) {
-        ADD2LOG("  >%s<\n", sl->str);
-      }
-
-      for(sl = di->any.hddb1; sl; sl = sl->next) {
-        ADD2LOG("  \"%s\"\n", sl->str);
-      }
-    }
   }
 #endif
 

@@ -316,14 +316,6 @@ NAME=SGS-THOMSON§DEVICE=STG2000§VID=0x104A§DID=0x0008§SERVER=SVGA
 NAME=TEXAS INSTRUMENTS§DEVICE=Permedia§VID=0x104C§DID=0x3d04§SERVER=3DLABS
 NAME=Texas Instruments§DEVICE=TVP4020 Permedia 2§VID=0x104c§DID=0x3d07§SERVER=3DLABS
 
-
-#------------------------#
-# Texas Instruments Cards           
-#------------------------#
-NAME=Texas Instruments§DEVICE=PCI1130§VID=0x104c§DID=0xac12§SERVER=SVGA
-NAME=Texas Instruments§DEVICE=PCI1131§VID=0x104c§DID=0xac15§SERVER=SVGA
-
-
 #--------------------------#
 # Oak Technology Inc Cards           
 #--------------------------#
