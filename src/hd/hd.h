@@ -368,6 +368,14 @@ typedef struct s_str_list_t {
 } str_list_t;
 
 
+typedef struct {
+  unsigned char bitmap[16];	/* large enough for all uses */
+  unsigned bits;		/* real bitmap length in bits */
+  unsigned not_empty:1;		/* at least 1 bit is set */
+  str_list_t *str;		/* interpreted bitmask */
+} hd_bitmap_t;
+
+
 /*
  * for memory areas
  */
@@ -487,14 +495,12 @@ typedef struct {
   unsigned char *data;
   str_list_t *strings;
   int handle;
-  char *vendor;			/* BIOS vendor name */
-  char *version;		/* BIOS version (free form!) */
-  char *date;			/* BIOS date mm/dd/yyyy (old: yy) */
-  uint64_t features;		/* BIOS characteristics (bitmask) */
-  unsigned xfeatures;		/* BIOS characteristics extension (bitmask) */
-  str_list_t *feature_str;	/* the above two, interpreted */
-  unsigned start;		/* BIOS start address */
-  unsigned rom_size;		/* BIOS ROM size (in bytes) */
+  char *vendor;			/* vendor name */
+  char *version;		/* version (free form) */
+  char *date;			/* date mm/dd/yyyy (old: yy) */
+  hd_bitmap_t feature;		/* BIOS characteristics */
+  unsigned start;		/* start address */
+  unsigned rom_size;		/* ROM size (in bytes) */
 } smbios_biosinfo_t;
 
 
@@ -529,8 +535,7 @@ typedef struct {
   char *serial;			/* serial number */
   char *asset;			/* asset tag */
   hd_id_t board_type;		/* board type */
-  unsigned features;		/* feature flags (bitmask) */
-  str_list_t *feature_str;	/* the above, interpreted */
+  hd_bitmap_t feature;		/* board features */
   char *location;		/* location in chassis */
   int chassis;			/* handle of chassis */
   int objects_len;		/* number of contained objects */
@@ -610,10 +615,8 @@ typedef struct {
   hd_id_t ecc;			/* error correction type */
   hd_id_t cache_type;		/* logical cache type */
   hd_id_t assoc;		/* cache associativity */
-  unsigned supp_sram;		/* supported SRAM types (bitmask) */
-  str_list_t *supp_sram_str;	/* the above, interpreted */
-  unsigned sram;		/* current SRAM type (bitmask) */
-  str_list_t *sram_str;		/* the above, interpreted */
+  hd_bitmap_t supp_sram;	/* supported SRAM types */
+  hd_bitmap_t sram;		/* current SRAM type */
 } smbios_cache_t;
 
 
@@ -647,11 +650,11 @@ typedef struct {
   hd_id_t usage;		/* current usage */
   hd_id_t length;		/* slot length */
   unsigned id;			/* slot id */
-  unsigned features;		/* slot characteristics (bitmask) */
-  str_list_t *feature_str;	/* the above, interpreted */
+  hd_bitmap_t feature;		/* slot characteristics */
 } smbios_slot_t;
 
 
+/* on board devices information */
 typedef struct {
   union u_hd_smbios_t *next;
   hd_smbios_type_t type;
@@ -659,9 +662,16 @@ typedef struct {
   unsigned char *data;
   str_list_t *strings;
   int handle;
-  char *descr[8];
-  unsigned dtype[8];
+  unsigned dev_len;		/* device list length */
+  struct {
+    char *name;			/* device name */
+    hd_id_t type;		/* device type */
+    unsigned status;		/* 0: disabled, 1: enabled */
+  } *dev;			/* device list  */
 } smbios_onboard_t;
+
+/* smbios_oem_t: same as smbios_any_t, just use the 'strings' field */
+/* smbios_config_t: same as smbios_any_t, just use the 'strings' field */
 
 typedef struct {
   union u_hd_smbios_t *next;
@@ -725,11 +735,13 @@ typedef union u_hd_smbios_t {
   smbios_cache_t cache;
   smbios_connect_t connect;
   smbios_slot_t slot;
+  smbios_onboard_t onboard;
+  /* oem: same as 'any' */
+  /* config same as 'any' */
   smbios_lang_t lang;
   smbios_memarray_t memarray;
   smbios_memdevice_t memdevice;
   smbios_mouse_t mouse;
-  smbios_onboard_t onboard;
 } hd_smbios_t;
 
 

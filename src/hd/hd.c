@@ -30,6 +30,7 @@
 #include "hd.h"
 #include "hddb.h"
 #include "hd_int.h"
+#include "smbios.h"
 #include "memory.h"
 #include "isapnp.h"
 #include "monitor.h"
@@ -810,7 +811,7 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->disks = free_str_list(hd_data->disks);
   hd_data->partitions = free_str_list(hd_data->partitions);
 
-  hd_data->smbios = free_smbios_list(hd_data->smbios);
+  hd_data->smbios = smbios_free(hd_data->smbios);
 
   hd_data->last_idx = 0;
 
@@ -1515,139 +1516,6 @@ hd_res_t *add_res_entry(hd_res_t **res, hd_res_t *new_res)
   while(*res) res = &(*res)->next;
 
   return *res = new_res;
-}
-
-
-/*
- * Free the memory allocated by a smbios list.
- */
-hd_smbios_t *free_smbios_list(hd_smbios_t *sm)
-{
-  hd_smbios_t *next;
-  int i;
-
-  for(; sm; sm = next) {
-    next = sm->next;
-
-    free_mem(sm->any.data);
-    free_str_list(sm->any.strings);
-
-    switch(sm->any.type) {
-      case sm_biosinfo:
-        free_mem(sm->biosinfo.vendor);
-        free_mem(sm->biosinfo.version);
-        free_mem(sm->biosinfo.date);
-        free_str_list(sm->biosinfo.feature_str);
-        break;
-
-      case sm_sysinfo:
-        free_mem(sm->sysinfo.manuf);
-        free_mem(sm->sysinfo.product);
-        free_mem(sm->sysinfo.version);
-        free_mem(sm->sysinfo.serial);
-        free_mem(sm->sysinfo.wake_up.name);
-        break;
-
-      case sm_boardinfo:
-        free_mem(sm->boardinfo.manuf);
-        free_mem(sm->boardinfo.product);
-        free_mem(sm->boardinfo.version);
-        free_mem(sm->boardinfo.serial);
-        free_mem(sm->boardinfo.asset);
-        free_mem(sm->boardinfo.location);
-        free_mem(sm->boardinfo.board_type.name);
-        free_str_list(sm->boardinfo.feature_str);
-        free_mem(sm->boardinfo.objects);
-        break;
-
-      case sm_chassis:
-        free_mem(sm->chassis.manuf);
-        free_mem(sm->chassis.version);
-        free_mem(sm->chassis.serial);
-        free_mem(sm->chassis.asset);
-        free_mem(sm->chassis.ch_type.name);
-        free_mem(sm->chassis.bootup.name);
-        free_mem(sm->chassis.power.name);
-        free_mem(sm->chassis.thermal.name);
-        free_mem(sm->chassis.security.name);
-        break;
-
-      case sm_processor:
-        free_mem(sm->processor.socket);
-        free_mem(sm->processor.manuf);
-        free_mem(sm->processor.version);
-        free_mem(sm->processor.serial);
-        free_mem(sm->processor.asset);
-        free_mem(sm->processor.part);
-        free_mem(sm->processor.upgrade.name);
-        free_mem(sm->processor.pr_type.name);
-        free_mem(sm->processor.family.name);
-        free_mem(sm->processor.cpu_status.name);
-        break;
-
-      case sm_cache:
-        free_mem(sm->cache.socket);
-        free_mem(sm->cache.mode.name);
-        free_mem(sm->cache.location.name);
-        free_mem(sm->cache.ecc.name);
-        free_mem(sm->cache.cache_type.name);
-        free_mem(sm->cache.assoc.name);
-        free_str_list(sm->cache.supp_sram_str);
-        free_str_list(sm->cache.sram_str);
-        break;
-
-      case sm_connect:
-        free_mem(sm->connect.port_type.name);
-        free_mem(sm->connect.i_des);
-        free_mem(sm->connect.x_des);
-        free_mem(sm->connect.i_type.name);
-        free_mem(sm->connect.x_type.name);
-        break;
-
-      case sm_slot:
-        free_mem(sm->slot.desig);
-        free_mem(sm->slot.slot_type.name);
-        free_mem(sm->slot.bus_width.name);
-        free_mem(sm->slot.usage.name);
-        free_mem(sm->slot.length.name);
-        free_str_list(sm->slot.feature_str);
-        break;
-
-      case sm_onboard:
-        for(i = 0; (unsigned) i < sizeof sm->onboard.descr / sizeof *sm->onboard.descr; i++) {
-          free_mem(sm->onboard.descr[i]);
-        }
-        break;
-
-      case sm_lang:
-        free_mem(sm->lang.current);
-        break;
-
-      case sm_memdevice:
-        free_mem(sm->memdevice.location);
-        free_mem(sm->memdevice.bank);
-        break;
-
-      default:
-	break;
-    }
-
-    free_mem(sm);
-  }
-
-  return NULL;
-}
-
-
-/*
- * Note: new_smbios is directly inserted into the list, so you *must* make sure
- * that new_smbios points to a malloc'ed pice of memory.
- */
-hd_smbios_t *add_smbios_entry(hd_smbios_t **sm, hd_smbios_t *new_sm)
-{
-  while(*sm) sm = &(*sm)->next;
-
-  return *sm = new_sm;
 }
 
 
