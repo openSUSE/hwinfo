@@ -40,7 +40,8 @@ doc:
 	@cd doc ; doxygen libhd.doxy
 
 install:
-	install -d -m 755 $(DESTDIR)/usr/sbin $(DESTDIR)$(LIBDIR) $(DESTDIR)/usr/include
+	install -d -m 755 $(DESTDIR)/usr/sbin $(DESTDIR)$(LIBDIR) \
+		$(DESTDIR)/usr/include $(DESTDIR)/etc/init.d
 	install -m 755 -s hwinfo $(DESTDIR)/usr/sbin
 	install -m 755 -s hwscan $(DESTDIR)/usr/sbin
 	install -m 755 -s src/ids/check_hd $(DESTDIR)/usr/sbin

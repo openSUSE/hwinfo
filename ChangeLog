@@ -1,4 +1,7 @@
-	- get isdn model name from isdn data base
+13/8/2002:	v5.10
+	- get isdn model name from isdn database
+	- updated megaraid info
+	- make install creates /etc/init.d
 
 13/8/2002:	v5.09
 	- added info for firewire module

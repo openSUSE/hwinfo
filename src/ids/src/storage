@@ -70,6 +70,8 @@
 &device.id		pci 0x9010
 |vendor.id		pci 0x101e
 &device.id		pci 0x9060
+|vendor.id		pci 0x101e
+&device.id		pci 0x1960
 |vendor.id		pci 0x8086
 &device.id		pci 0x1960
 +driver.module.insmod	megaraid
