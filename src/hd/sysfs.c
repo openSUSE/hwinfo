@@ -9,9 +9,6 @@
 #include <sys/types.h>
 #include <sys/pci.h>
 
-#include <sysfs/dlist.h>
-#include <sysfs/libsysfs.h>
-
 #include "hd.h"
 #include "hd_int.h"
 #include "hddb.h"
@@ -42,7 +39,6 @@ static void get_pci_data(hd_data_t *hd_data);
 static void get_pci_drivers(hd_data_t *hd_data);
 static int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u);
 static str_list_t *hd_attr_list(struct sysfs_attribute *attr);
-static char *hd_attr_str(struct sysfs_attribute *attr);
 static void add_pci_data(hd_data_t *hd_data);
 static void add_driver_info(hd_data_t *hd_data);
 static pci_t *add_pci_entry(hd_data_t *hd_data, pci_t *new_pci);
@@ -51,9 +47,9 @@ static void dump_pci_data(hd_data_t *hd_data);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
 {
-  if(!hd_probe_feature(hd_data, pr_sysfs)) return;
+  if(!hd_probe_feature(hd_data, pr_pci)) return;
 
-  hd_data->module = mod_sysfs;
+  hd_data->module = mod_pci;
 
   /* some clean-up */
   remove_hd_entries(hd_data);
@@ -237,7 +233,6 @@ void get_pci_data(hd_data_t *hd_data)
 void get_pci_drivers(hd_data_t *hd_data)
 {
   hd_t *hd;
-  char *s;
 
   struct sysfs_bus *sf_bus;
   struct sysfs_device *sf_dev;
@@ -261,59 +256,15 @@ void get_pci_drivers(hd_data_t *hd_data)
         sf_dev->driver_name, sf_dev->path
       );
 
-      if(sf_dev->path && *sf_dev->path && (s = strchr(sf_dev->path + 1, '/'))) {
-        hd = hd_find_sysfs_id(hd_data, s);
-        if(hd) {
-          free_mem(hd->driver);
-          hd->driver = new_str(sf_dev->driver_name);
-        }
+      hd = hd_find_sysfs_id(hd_data, hd_sysfs_id(sf_dev->path));
+      if(hd) {
+        free_mem(hd->driver);
+        hd->driver = new_str(sf_dev->driver_name);
       }
     }
   }
 
   sysfs_close_bus(sf_bus);
-}
-
-
-/*
- * Parse attribute and return integer value.
- */
-int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u)
-{
-  char *s;
-  uint64_t u2;
-  int ok;
-
-  if(!(s = hd_attr_str(attr))) return 0;
-
-  u2 = strtoull(s, &s, 0);
-  ok = !*s || isspace(*s) ? 1 : 0;
-
-  if(ok && u) *u = u2;
-
-  return ok;
-}
-
-
-/*
- * Return attribute as string list.
- */
-str_list_t *hd_attr_list(struct sysfs_attribute *attr)
-{
-  static str_list_t *sl = NULL;
-
-  free_str_list(sl);
-
-  return sl = hd_split('\n', hd_attr_str(attr));
-}
-
-
-/*
- * Return attribute as string.
- */
-char *hd_attr_str(struct sysfs_attribute *attr)
-{
-  return attr ? attr->value : NULL;
 }
 
 
@@ -331,9 +282,8 @@ void add_pci_data(hd_data_t *hd_data)
     pnext = pci->next;
     hd = add_hd_entry(hd_data, __LINE__, 0);
 
-    if(pci->sysfs_id && *pci->sysfs_id && (s = strchr(pci->sysfs_id + 1, '/'))) {
-      hd->sysfs_id = new_str(s);
-    }
+    hd->sysfs_id = new_str(hd_sysfs_id(pci->sysfs_id));
+
     if(pci->sysfs_bus_id && *pci->sysfs_bus_id) {
       hd->sysfs_bus_id = new_str(pci->sysfs_bus_id);
     }
@@ -557,4 +507,56 @@ void dump_pci_data(hd_data_t *hd_data)
   ADD2LOG("---------- PCI raw data end ----------\n");
 }
 
+
+/*
+ * Parse attribute and return integer value.
+ */
+int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u)
+{
+  char *s;
+  uint64_t u2;
+  int ok;
+
+  if(!(s = hd_attr_str(attr))) return 0;
+
+  u2 = strtoull(s, &s, 0);
+  ok = !*s || isspace(*s) ? 1 : 0;
+
+  if(ok && u) *u = u2;
+
+  return ok;
+}
+
+
+/*
+ * Return attribute as string list.
+ */
+str_list_t *hd_attr_list(struct sysfs_attribute *attr)
+{
+  static str_list_t *sl = NULL;
+
+  free_str_list(sl);
+
+  return sl = hd_split('\n', hd_attr_str(attr));
+}
+
+
+/*
+ * Return attribute as string.
+ */
+char *hd_attr_str(struct sysfs_attribute *attr)
+{
+  return attr ? attr->value : NULL;
+}
+
+
+/*
+ * Remove leading "/sys" from path.
+ */
+char *hd_sysfs_id(char *path)
+{
+  if(!path || !*path) return NULL;
+
+  return strchr(path + 1, '/');
+}
 

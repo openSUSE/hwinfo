@@ -1297,7 +1297,7 @@ typedef struct {
 typedef enum resource_types {
   res_any, res_phys_mem, res_mem, res_io, res_irq, res_dma, res_monitor,
   res_size, res_disk_geo, res_cache, res_baud, res_init_strings, res_pppd_option,
-  res_framebuffer
+  res_framebuffer, res_hwaddr
 } hd_resource_types_t;
 
 
@@ -1428,6 +1428,12 @@ typedef struct {
   unsigned mode;			/* mode number for kernel */
 } res_framebuffer_t;
 
+typedef struct {
+  union u_hd_res_t *next;
+  enum resource_types type;
+  char *addr;
+} res_hwaddr_t;
+
 typedef union u_hd_res_t {
   union u_hd_res_t *next;  
   res_any_t any;
@@ -1444,6 +1450,7 @@ typedef union u_hd_res_t {
   res_init_strings_t init_strings;
   res_pppd_option_t pppd_option;
   res_framebuffer_t framebuffer;
+  res_hwaddr_t hwaddr;
 } hd_res_t;
 
 

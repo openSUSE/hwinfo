@@ -695,6 +695,10 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
         );
         break;
 
+      case res_hwaddr:
+	dump_line("HW Addr: %s\n", res->hwaddr.addr);
+        break;
+
       default:
         dump_line("Unkown resource type %d\n", res->any.type);
     }

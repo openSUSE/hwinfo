@@ -491,6 +491,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_network:
       hd_set_probe_feature(hd_data, pr_net);
+      hd_set_probe_feature(hd_data, pr_pci);
       break;
 
     case hw_display:
@@ -609,6 +610,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_network_ctrl:
       hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_net);
       hd_set_probe_feature(hd_data, pr_pcmcia);
       hd_set_probe_feature(hd_data, pr_isapnp);
       hd_set_probe_feature(hd_data, pr_isapnp_mod);
@@ -695,6 +697,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_pci:
       hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_net);
       hd_set_probe_feature(hd_data, pr_isdn);
 #ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
@@ -1512,6 +1515,10 @@ hd_res_t *free_res_list(hd_res_t *res)
 
     if(res->any.type == res_pppd_option) {
       free_mem(res->pppd_option.option);
+    }
+
+    if(res->any.type == res_hwaddr) {
+      free_mem(res->hwaddr.addr);
     }
 
     free_mem(res);

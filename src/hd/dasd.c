@@ -8,9 +8,6 @@
 #include <sys/ioctl.h>
 #include <linux/hdreg.h>
 
-#include <sysfs/dlist.h>
-#include <sysfs/libsysfs.h>
-
 #include "hd.h"
 #include "hd_int.h"
 #include "dasd.h"

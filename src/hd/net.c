@@ -10,9 +10,6 @@
 #include "hd_int.h"
 #include "net.h"
 
-static void read_net_ifs(hd_data_t *hd_data);
-static void dump_net_data(hd_data_t *hd_data);
-
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * gather network interface info
  *
@@ -26,13 +23,21 @@ static void dump_net_data(hd_data_t *hd_data);
 
 void hd_scan_net(hd_data_t *hd_data)
 {
-  int found;
   unsigned u;
-  hd_t *hd;
+  hd_t *hd, *hd2;
+#if 0
 #if defined(__s390__) || defined(__s390x__)
   hd_t *hd0;
 #endif
-  str_list_t *sl;
+#endif
+  char *s, *hw_addr;
+  hd_res_t *res, *res1;
+
+  struct sysfs_class *sf_class;
+  struct sysfs_class_device *sf_cdev;
+  struct sysfs_device *sf_dev;
+  struct sysfs_driver *sf_drv;
+  struct dlist *sf_cdev_list;
 
   if(!hd_probe_feature(hd_data, pr_net)) return;
 
@@ -42,84 +47,147 @@ void hd_scan_net(hd_data_t *hd_data)
   remove_hd_entries(hd_data);
   hd_data->net = free_str_list(hd_data->net);
 
-  PROGRESS(1, 0, "get net-if data");
+  PROGRESS(1, 0, "get network data");
 
-  read_net_ifs(hd_data);
-  if((hd_data->debug & HD_DEB_NET)) dump_net_data(hd_data);
+  sf_class = sysfs_open_class("net");
 
-  PROGRESS(2, 0, "build list");
+  if(!sf_class) {
+    ADD2LOG("sysfs: no such class: net\n");
+    return;
+  }
 
-  for(sl = hd_data->net; sl; sl = sl->next) {
-    found = 0;
-    for(hd = hd_data->hd; hd; hd = hd->next) {
-      if(
-        hd->base_class.id == bc_network_interface &&
-        hd->unix_dev_name &&
-        !strcmp(hd->unix_dev_name, sl->str)
-      ) {
-        found = 1;
-        break;
+  sf_cdev_list = sysfs_get_class_devices(sf_class);
+  if(sf_cdev_list) dlist_for_each_data(sf_cdev_list, sf_cdev, struct sysfs_class_device) {
+    ADD2LOG(
+      "name = %s, classname = %s, path = %s\n",
+      sf_cdev->name,
+      sf_cdev->classname,
+      sf_cdev->path
+    );
+
+    hw_addr = NULL;
+    if((s = hd_attr_str(sysfs_get_classdev_attr(sf_cdev, "address")))) {
+      hw_addr = canon_str(s, strlen(s));
+      ADD2LOG("  hw_addr = %s\n", hw_addr);
+    }
+
+    sf_dev = sysfs_get_classdev_device(sf_cdev);
+    if(sf_dev) {
+      ADD2LOG("  net device: path = %s\n", sf_dev->path);
+    }
+
+    sf_drv = sysfs_get_classdev_driver(sf_cdev);
+    if(sf_drv) {
+      ADD2LOG(
+        "  net driver: name = %s, path = %s\n",
+        sf_drv->name,
+        sf_drv->path
+      );
+    }
+
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->base_class.id = bc_network_interface;
+
+    res1 = NULL;
+    if(hw_addr && sf_dev) {
+      res1 = new_mem(sizeof *res1);
+      res1->hwaddr.type = res_hwaddr;
+      res1->hwaddr.addr = new_str(hw_addr);
+      add_res_entry(&hd->res, res1);
+    }
+
+    hw_addr = free_mem(hw_addr);
+
+    hd->unix_dev_name = new_str(sf_cdev->name);
+    hd->sysfs_id = new_str(hd_sysfs_id(sf_cdev->path));
+
+    if(sf_drv) hd->driver = new_str(sf_drv->name);
+
+    if(sf_dev) {
+      hd2 = hd_find_sysfs_id(hd_data, hd_sysfs_id(sf_dev->path));
+      if(hd2) {
+        hd->attached_to = hd2->idx;
+        /* add hw addr to network card */
+        if(res1) {
+          u = 0;
+          for(res = hd2->res; res; res = res->next) {
+            if(
+              res->any.type == res_hwaddr &&
+              !strcmp(res->hwaddr.addr, res1->hwaddr.addr)
+            ) {
+              u = 1;
+              break;
+            }
+          }
+          if(!u) {
+            res = new_mem(sizeof *res);
+            res->hwaddr.type = res_hwaddr;
+            res->hwaddr.addr = new_str(res1->hwaddr.addr);
+            add_res_entry(&hd2->res, res);
+          }
+        }
       }
     }
 
-    if(!found) {
-      hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class.id = bc_network_interface;
-      hd->unix_dev_name = new_str(sl->str);
+    if(!strcmp(hd->unix_dev_name, "lo")) {
+      hd->sub_class.id = sc_nif_loopback;
+    }
+    else if(sscanf(hd->unix_dev_name, "eth%u", &u) == 1) {
+      hd->sub_class.id = sc_nif_ethernet;
+      hd->slot = u;
+    }
+    else if(sscanf(hd->unix_dev_name, "tr%u", &u) == 1) {
+      hd->sub_class.id = sc_nif_tokenring;
+      hd->slot = u;
+    }
+    else if(sscanf(hd->unix_dev_name, "fddi%u", &u) == 1) {
+      hd->sub_class.id = sc_nif_fddi;
+      hd->slot = u;
+    }
+    else if(sscanf(hd->unix_dev_name, "ctc%u", &u) == 1) {
+      hd->sub_class.id = sc_nif_ctc;
+      hd->slot = u;
+    }
+    else if(sscanf(hd->unix_dev_name, "iucv%u", &u) == 1) {
+      hd->sub_class.id = sc_nif_iucv;
+      hd->slot = u;
+    }
+    else if(sscanf(hd->unix_dev_name, "hsi%u", &u) == 1) {
+      hd->sub_class.id = sc_nif_hsi;
+      hd->slot = u;
+    }
+    else if(sscanf(hd->unix_dev_name, "qeth%u", &u) == 1) {
+      hd->sub_class.id = sc_nif_qeth;
+      hd->slot = u;
+    }
+    else if(sscanf(hd->unix_dev_name, "escon%u", &u) == 1) {
+      hd->sub_class.id = sc_nif_escon;
+      hd->slot = u;
+    }
+    else if(sscanf(hd->unix_dev_name, "myri%u", &u) == 1) {
+      hd->sub_class.id = sc_nif_myrinet;
+      hd->slot = u;
+    }
+    else if(sscanf(hd->unix_dev_name, "sit%u", &u) == 1) {
+      hd->sub_class.id = sc_nif_sit;	/* ipv6 over ipv4 tunnel */
+      hd->slot = u;
+    }
+    else if(sscanf(hd->unix_dev_name, "wlan%u", &u) == 1) {
+      hd->sub_class.id = sc_nif_wlan;
+      hd->slot = u;
+    }
+    /* ##### add more interface names here */
+    else {
+      hd->sub_class.id = sc_nif_other;
+    }
 
-      if(!strcmp(sl->str, "lo")) {
-        hd->sub_class.id = sc_nif_loopback;
-      }
-      else if(sscanf(sl->str, "eth%u", &u) == 1) {
-        hd->sub_class.id = sc_nif_ethernet;
-        hd->slot = u;
-      }
-      else if(sscanf(sl->str, "tr%u", &u) == 1) {
-        hd->sub_class.id = sc_nif_tokenring;
-        hd->slot = u;
-      }
-      else if(sscanf(sl->str, "fddi%u", &u) == 1) {
-        hd->sub_class.id = sc_nif_fddi;
-        hd->slot = u;
-      }
-      else if(sscanf(sl->str, "ctc%u", &u) == 1) {
-        hd->sub_class.id = sc_nif_ctc;
-        hd->slot = u;
-      }
-      else if(sscanf(sl->str, "iucv%u", &u) == 1) {
-        hd->sub_class.id = sc_nif_iucv;
-        hd->slot = u;
-      }
-      else if(sscanf(sl->str, "hsi%u", &u) == 1) {
-        hd->sub_class.id = sc_nif_hsi;
-        hd->slot = u;
-      }
-      else if(sscanf(sl->str, "qeth%u", &u) == 1) {
-        hd->sub_class.id = sc_nif_qeth;
-        hd->slot = u;
-      }
-      else if(sscanf(sl->str, "escon%u", &u) == 1) {
-        hd->sub_class.id = sc_nif_escon;
-        hd->slot = u;
-      }
-      else if(sscanf(sl->str, "myri%u", &u) == 1) {
-        hd->sub_class.id = sc_nif_myrinet;
-        hd->slot = u;
-      }
-      else if(sscanf(sl->str, "sit%u", &u) == 1) {
-        hd->sub_class.id = sc_nif_sit;	/* ipv6 over ipv4 tunnel */
-        hd->slot = u;
-      }
-      else if(sscanf(sl->str, "wlan%u", &u) == 1) {
-        hd->sub_class.id = sc_nif_wlan;
-        hd->slot = u;
-      }
-      /* ##### add more interface names here */
-      else {
-        hd->sub_class.id = sc_nif_other;
-      }
+    hd->bus.id = bus_none;
+  }
 
-      hd->bus.id = bus_none;
+  sysfs_close_class(sf_class);
+
+
+#if 0
 
 #if defined(__s390__) || defined(__s390x__)
       if(
@@ -166,60 +234,8 @@ void hd_scan_net(hd_data_t *hd_data)
       }
 #endif
 
-    }
-  }
-}
-
-
-#if 0
-  char buf1[256] = "eth0", *buf = buf1;
-  struct stat sbuf;
-  struct utsname ubuf;
-
-  so = socket(PF_INET, SOCK_DGRAM, 0);
-
-  if(so >= 0) {
-    if((i = ioctl(so, SIOCGIFHWADDR, buf)) == 0) {
-      len = 6;
-      buf = buf1+18;
-    }
-    close(so);
-  }
 #endif
 
 
-
-/*
- * Read the list of network interfaces. The info is taken from PROC_NET_IF_INFO.
- */
-void read_net_ifs(hd_data_t *hd_data)
-{
-  char buf[16];
-  str_list_t *sl, *sl0;
-
-  if(!(sl0 = read_file(PROC_NET_IF_INFO, 2, 0))) return;
-
-  for(sl = sl0; sl; sl = sl->next) {
-    if(sscanf(sl->str, " %15[^:]:", buf) == 1) {
-      add_str_list(&hd_data->net, buf);
-    }
-  }
-
-  free_str_list(sl0);
-}
-
-
-/*
- * Add some network interface data to the global log.
- */
-void dump_net_data(hd_data_t *hd_data)
-{
-  str_list_t *sl;
-
-  ADD2LOG("-----  network interfaces -----\n");
-  for(sl = hd_data->net; sl; sl = sl->next) {
-    ADD2LOG("  %s\n", sl->str);
-  }
-  ADD2LOG("-----  network interfaces end -----\n");
 }
 
