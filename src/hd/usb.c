@@ -39,7 +39,7 @@ void hd_scan_usb(hd_data_t *hd_data)
 #if 0
   char *mse_dev = "/dev/usbmouse";
 #endif
-  char *lp_dev = "/dev/usblp", *acm_dev = "/dev/ttyACM";
+  char *lp_dev = "/dev/usb/lp", *acm_dev = "/dev/ttyACM";
 
   if(!hd_probe_feature(hd_data, pr_usb)) return;
 
