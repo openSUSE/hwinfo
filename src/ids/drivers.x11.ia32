@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2001-01-08 17:01:15
+#hwinfo data from 2001-01-10 18:06:08
 #
 
 
@@ -301,6 +301,16 @@
 # Elsa:Winner 2000 Office
 104c 3d07 1048 0a31
 	x	3|3DLABS|||||1d|||
+
+
+# ATI:Radeon QG
+1002 5147
+	x	4|radeon||||||||
+
+
+# ATI:Radeon QF
+1002 5146
+	x	4|radeon||||||||
 
 
 # ATI:Mach64 VT4 PCI
@@ -640,7 +650,7 @@
 
 # ATI:Rage 3D IIC AGP
 1002 475A
-	x	3|MACH64||||||||
+	x	3|MACH64|||||1d|||
 
 
 # ATI:Rage 3D IIC
@@ -740,12 +750,17 @@
 
 # ATI:Rage 3D Pro AGP
 1002 4742
-	x	4|ati||||||||
+	x	4|ati|||||f|||
 
 
 # ATI:Rage 3D Pro AGP
 1002 4742
-	x	3|MACH64||||||||
+	x	3|MACH64|||||1d|||
+
+
+# ATI:Rage 3D Pro AGP
+1002 4742
+	x	3|MACH64|3d|glx|glx.so|no_pixmap_cache,no_font_cache|4||switch2glx|
 
 
 # ATI:Mach64 VT
@@ -791,6 +806,16 @@
 # ATI:RageIIC
 1002 0084
 	x	3|MACH64||||||||
+
+
+# ATI:Radeon QD
+1002 5144
+	x	4|radeon||||||||
+
+
+# ATI:Radeon QE
+1002 5145
+	x	4|radeon||||||||
 
 
 # ATI:Rage Mobility M3 AGP 2x
@@ -1085,7 +1110,12 @@
 
 # Intel:I810_E
 8086 7125
-	x	3|SVGA||||||||
+	x	4|i810|||||d|||
+
+
+# Intel:I810_E
+8086 7125
+	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 
 # Intel:I810_DC100
@@ -1095,12 +1125,17 @@
 
 # Intel:I810_DC100
 8086 7123
-	x	3|SVGA||||||||
+	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 
 # Intel:i810
 8086 7121
-	x	3|SVGA||||||||
+	x	4|i810|||||d|||
+
+
+# Intel:i810
+8086 7121
+	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 
 # Intel:i740 (AGP)
@@ -1116,6 +1151,11 @@
 # Intel:I815
 8086 1132
 	x	4|i810|||||d|||
+
+
+# Intel:I815
+8086 1132
+	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 
 # S3:ViRGE
@@ -1150,7 +1190,12 @@
 
 # S3:ViRGE/DX or /GX
 5333 8a01
-	x	3|SVGA||||||||
+	x	4|s3virge|||||f|||
+
+
+# S3:ViRGE/DX or /GX
+5333 8a01
+	x	3|SVGA|||||1d|||
 
 
 # S3:PLATO/PX
@@ -1395,7 +1440,7 @@
 
 # S3:Trio3D/2X (C368)
 5333 8A13
-	x	3|S3||||||||
+	x	3|SVGA||||||||
 
 
 # S3:Savage 4
@@ -1931,12 +1976,7 @@
 
 # SiS:SiS6326
 1039 6326
-	x	4|sis||||sw_cursor|1|||
-
-
-# SiS:SiS6326
-1039 6326
-	x	3|SVGA|||||1|||
+	x	3|SVGA|||||5|||
 
 
 # SiS:530

@@ -1,4 +1,4 @@
-#hwinfo names data from 2001-01-08 17:06:04
+#hwinfo names data from 2001-01-11 12:03:21
 #
 
 
@@ -98,6 +98,12 @@
 104c
 	3d07
 		1048 0a31	Elsa Winner 2000 Office
+
+1002
+	5147	ATI Radeon QG
+
+1002
+	5146	ATI Radeon QF
 
 1002
 	5656	ATI Mach64 VT4 PCI
@@ -329,6 +335,12 @@
 
 1002
 	0084	ATI RageIIC
+
+1002
+	5144	ATI Radeon QD
+
+1002
+	5145	ATI Radeon QE
 
 1002
 	4C4D
@@ -1037,9 +1049,6 @@
 1014
 	0022	IBM 82351
 
-1017
-	5343	Spea Software AG SPEA 3D Acccelerator
-
 1033
 	0009	NEC PC-98 PCI to Core Graph Bridge
 
@@ -1242,7 +1251,7 @@ edd8
 	001c	Sun Sun - FFB2+ Vertical Creator (ffb)
 
 4001
-	001d	Sun Sun - FFB2+ Vertical Creator 3D (ff)
+	001d	Sun Sun - FFB2+ Vertical Creator 3D (ffb)
 
 4001
 	001e	Sun Sun - FFB2 Horizontal Creator (ffb)

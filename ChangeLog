@@ -1,11 +1,14 @@
 11/1/2001:	v1.0.71
-	- fixed detection of terminal adapters (arvin@suse.de)
+	- arvin: made res_pppd_option work
+	- arvin: fixed detection of terminal adapters
+	- sped up new modem stuff if no modem is connected
 
-10/1/2001:	v1.0.70
-	- made res_pppd_option work (arvin@suse.de)
+11/1/2001:	v1.0.70:
+	- new x11 data (sparc)
 
 10/1/2001:	v1.0.69
 	- introduced res_pppd_option
+	- new x11 data (ia32)
 
 9/1/2001:	v1.0.68
 	- smid@suse.cz: improved modem init string code

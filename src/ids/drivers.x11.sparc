@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2001-01-08 17:06:04
+#hwinfo data from 2001-01-11 12:03:21
 #
 
 
@@ -166,7 +166,22 @@ s4001 0016
 
 # Sun:Sun - FFB 67MHz Creator (ffb)
 s4001 0017
+	x	4|sunffb||||||||
+
+
+# Sun:Sun - FFB 67MHz Creator (ffb)
+s4001 0017
 	x	3|SUN24||||||||
+
+
+# Sun:Sun - FFB 67MHz Creator 3D (ffb)
+s4001 0018
+	x	4|||||||||
+
+
+# Sun:Sun - FFB 67MHz Creator 3D (ffb)
+s4001 0018
+	x	4|sunffb|3d|xf86_glx|dri,glx||||switch2xf86_glx|
 
 
 # Sun:Sun - FFB 67MHz Creator 3D (ffb)
@@ -176,7 +191,22 @@ s4001 0018
 
 # Sun:Sun - FFB 75MHz Creator 3D (ffb)
 s4001 0019
+	x	4|sunffb||||||||
+
+
+# Sun:Sun - FFB 75MHz Creator 3D (ffb)
+s4001 0019
+	x	4|sunffb|3d||dri,glx||||switch2xf86_glx|
+
+
+# Sun:Sun - FFB 75MHz Creator 3D (ffb)
+s4001 0019
 	x	3|SUN24||||||||
+
+
+# Sun:Sun - FFB2 Vertical Creator (ffb)
+s4001 001a
+	x	4|sunffb||||||||
 
 
 # Sun:Sun - FFB2 Vertical Creator (ffb)
@@ -186,7 +216,22 @@ s4001 001a
 
 # Sun:Sun - FFB2 Vertical Creator 3D (ffb)
 s4001 001b
+	x	4|sunffb||||||||
+
+
+# Sun:Sun - FFB2 Vertical Creator 3D (ffb)
+s4001 001b
+	x	4|sunffb|3d|xf86_glx|dri,glx||||switch2xf86_glx|
+
+
+# Sun:Sun - FFB2 Vertical Creator 3D (ffb)
+s4001 001b
 	x	3|SUN24||||||||
+
+
+# Sun:Sun - FFB2+ Vertical Creator (ffb)
+s4001 001c
+	x	4|sunffb||||||||
 
 
 # Sun:Sun - FFB2+ Vertical Creator (ffb)
@@ -194,9 +239,24 @@ s4001 001c
 	x	3|SUN24||||||||
 
 
-# Sun:Sun - FFB2+ Vertical Creator 3D (ff)
+# Sun:Sun - FFB2+ Vertical Creator 3D (ffb)
+s4001 001d
+	x	4|sunffb||||||||
+
+
+# Sun:Sun - FFB2+ Vertical Creator 3D (ffb)
+s4001 001d
+	x	4|sunffb|3d|xf86_glx|dri,glx||||switch2xf86_glx|
+
+
+# Sun:Sun - FFB2+ Vertical Creator 3D (ffb)
 s4001 001d
 	x	3|SUN24||||||||
+
+
+# Sun:Sun - FFB2 Horizontal Creator (ffb)
+s4001 001e
+	x	4|sunffb||||||||
 
 
 # Sun:Sun - FFB2 Horizontal Creator (ffb)
@@ -206,7 +266,27 @@ s4001 001e
 
 # Sun:Sun - FFB2 Horizontal Creator 3D (ffb)
 s4001 001f
+	x	4|sunffb||||||||
+
+
+# Sun:Sun - FFB2 Horizontal Creator 3D (ffb)
+s4001 001f
+	x	4|sunffb|3d|xf86_glx|dri,glx||||switch2xf86_glx|
+
+
+# Sun:Sun - FFB2 Horizontal Creator 3D (ffb)
+s4001 001f
 	x	3|SUN24||||||||
+
+
+# Sun:Sun - FFB [unknown type] (ffb)
+s4001 0020
+	x	4|sunffb||||||||
+
+
+# Sun:Sun - FFB [unknown type] (ffb)
+s4001 0020
+	x	4|sunffb|3d|xf86_glx|dri,glx||||switch2xf86_glx|
 
 
 # Sun:Sun - FFB [unknown type] (ffb)

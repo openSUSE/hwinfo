@@ -586,10 +586,16 @@ void at_cmd(hd_data_t *hd_data, char *at, int raw, int log_it)
   char *s, *s0;
   ser_modem_t *sm;
   str_list_t *sl;
+  int modems = 0;
 
   for(sm = hd_data->ser_modem; sm; sm = sm->next) {
-    if(sm->do_io) sm->buf_len = 0;
+    if(sm->do_io) {
+      sm->buf_len = 0;
+      modems++;
+    }
   }
+
+  if(modems == 0) return;
 
   PROGRESS(9, u, "write at cmd");
   write_modem(hd_data, at);

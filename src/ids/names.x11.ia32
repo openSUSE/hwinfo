@@ -1,4 +1,4 @@
-#hwinfo names data from 2001-01-08 17:01:15
+#hwinfo names data from 2001-01-10 18:06:08
 #
 
 
@@ -98,6 +98,12 @@
 104c
 	3d07
 		1048 0a31	Elsa Winner 2000 Office
+
+1002
+	5147	ATI Radeon QG
+
+1002
+	5146	ATI Radeon QF
 
 1002
 	5656	ATI Mach64 VT4 PCI
@@ -329,6 +335,12 @@
 
 1002
 	0084	ATI RageIIC
+
+1002
+	5144	ATI Radeon QD
+
+1002
+	5145	ATI Radeon QE
 
 1002
 	4C4D
