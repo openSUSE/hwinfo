@@ -2,6 +2,7 @@
 	- better handling of usb-storage devices
 	- add mouse info we got from smbios
 	- use info from modules.pcimap
+	- detect memory size > 4GB
 
 9/3/2002:	v4.16
 	- made hwbootscan an init script again, started after hotplug.

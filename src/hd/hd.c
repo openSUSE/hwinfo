@@ -655,6 +655,10 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_usb); 
       break;
 
+    case hw_memory:
+      hd_set_probe_feature(hd_data, pr_memory); 
+      break;
+
     case hw_scsi:
       hd_set_probe_feature(hd_data, pr_scsi);
       hd_set_probe_feature(hd_data, pr_usb);
@@ -5006,6 +5010,12 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 
         case hw_hub:
           base_class = bc_hub;
+          break;
+
+        case hw_memory:
+          base_class = bc_internal;
+          sub_class = sc_int_main_mem;
+          sc = 1;
           break;
 
         default:

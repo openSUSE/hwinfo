@@ -17,12 +17,13 @@
 
 uint64_t kcore_mem(hd_data_t *hd_data);
 uint64_t klog_mem(hd_data_t *hd_data, uint64_t *alt);
+uint64_t klog_mem2(hd_data_t *hd_data);
 uint64_t meminfo_mem(hd_data_t *hd_data);
 
 void hd_scan_memory(hd_data_t *hd_data)
 {
   hd_t *hd;
-  uint64_t kcore, klog, klog_alt, meminfo, msize0, msize1, u;
+  uint64_t kcore, klog, klog_alt, klog2, meminfo, msize0, msize1, u;
   hd_res_t *res;
   int i;
   int exact;
@@ -38,6 +39,8 @@ void hd_scan_memory(hd_data_t *hd_data)
 
   kcore = kcore_mem(hd_data);
   klog = klog_mem(hd_data, &klog_alt);
+  klog2 = klog_mem2(hd_data);
+  if(klog2 > klog) klog = klog2;
   meminfo = meminfo_mem(hd_data);
 
   msize0 = klog ? klog : kcore;
@@ -154,6 +157,32 @@ uint64_t klog_mem(hd_data_t *hd_data, uint64_t *alt)
   *alt = mem1;
 
   return u;
+}
+
+uint64_t klog_mem2(hd_data_t *hd_data)
+{
+  uint64_t u0, u1, mem = 0;
+  str_list_t *sl;
+  char buf[64];
+
+  if(!hd_data->klog) read_klog(hd_data);
+
+  for(sl = hd_data->klog; sl; sl = sl->next) {
+    if(strstr(sl->str, "<6>BIOS-provided physical RAM map:") == sl->str) {
+      for(sl = sl->next ; sl; sl = sl->next) {
+        ADD2LOG(" -- %s\n", sl->str);
+        if(sscanf(sl->str, "<4> BIOS-e820: %"SCNx64" - %"SCNx64" (%63s", &u0, &u1, buf) != 3) break;
+        if(strcmp(buf, "usable)")) continue;
+        if(u1 < u0) break;
+        mem += u1 - u0;
+      }
+      break;
+    }
+  }
+
+  ADD2LOG("  bios mem:   0x%"PRIx64"\n", mem);
+
+  return mem;
 }
 
 uint64_t meminfo_mem(hd_data_t *hd_data)

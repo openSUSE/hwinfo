@@ -284,7 +284,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
   char *s, *a0;
   uint64_t u64;
   hd_res_t *res;
-  char buf[256];
+  char buf[256], c0, c1;
   driver_info_t *di, *di0;
   str_list_t *sl, *sl1, *sl2;
   isdn_parm_t *ip;
@@ -367,11 +367,17 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
   for(res = h->res; res; res = res->next) {
     switch(res->any.type) {
       case res_phys_mem:
-        if((u64 = (res->phys_mem.range >> 10) & ~(-1 << 10))) {
-          dump_line("Memory Size: %"PRId64"M + %"PRId64"k\n", res->phys_mem.range >> 20, u64);
+        u64 = res->phys_mem.range >> 10;
+        c0 = 'M'; c1 = 'k';
+        if(u64 >> 20) {
+          u64 >>= 10;
+          c0 = 'G'; c1 = 'M';
+        }
+        if((u64 & 0x3ff)) {
+          dump_line("Memory Size: %"PRId64" %cB + %"PRId64" %cB\n", u64 >> 10, c0, u64 & 0x3ff, c1);
         }
         else {
-          dump_line("Memory Size: %"PRId64"M\n", res->phys_mem.range >> 20);
+          dump_line("Memory Size: %"PRId64" %cB\n", u64 >> 10, c0);
         }
         break;
 

@@ -89,6 +89,7 @@ struct option options[] = {
   { "ide", 0, NULL, 1000 + hw_ide },
   { "bridge", 0, NULL, 1000 + hw_bridge },
   { "hub", 0, NULL, 1000 + hw_hub },
+  { "memory", 0, NULL, 1000 + hw_memory },
   { "manual", 0, NULL, 1000 + hw_manual },
   { "all", 0, NULL, 2000 },
   { "reallyall", 0, NULL, 2001 },

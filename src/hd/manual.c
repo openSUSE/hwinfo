@@ -64,6 +64,7 @@ static hash_t hw_items[] = {
   { hw_usb_ctrl,     "usb controller"    },
   { hw_bridge,       "bridge"            },
   { hw_hub,          "hub"               },
+  { hw_memory,       "memory"            },
   { hw_unknown,      "unknown"           },
   { 0,               NULL                }
 };

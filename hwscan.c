@@ -48,6 +48,7 @@ struct option options[] = {
   { "bios", 0, NULL, 1000 + hw_bios },
   { "bridge", 0, NULL, 1000 + hw_bridge },
   { "hub", 0, NULL, 1000 + hw_hub },
+  { "memory", 0, NULL, 1000 + hw_memory },
   { }
 };
 
