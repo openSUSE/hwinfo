@@ -1,0 +1,26 @@
+Essential interface changes in libhd 2 --> libhd 3
+
+  - there is a new 'model' entry in hd_t:
+    'model' is a one-line string that combines the vendor and device name
+    (e.g 'Diamond Multimedia Systems' + 'Viper 770' --> 'Diamond Viper 770').
+    Try 'hwinfo --short' so see some examples.
+    'model' will contain a useful name even if no vendor and device name could be
+    found.
+    The idea is to have _one_ string that identfies the hardware.
+
+o mostly relevant for automatic hardware configuration:
+
+  - hd_t data (most of it) can be saved/restored in /var/lib/harware/
+  
+  - It is possible to fill out a hd_t struct for manually entered hardware
+    (e.g. ISA cards or old mice) and store it. Future hardware detection
+    runs will automatically include this hardware (tagged as 'manual',
+    though, via (hd_t).is.manual.
+
+      hd_t *hd_read_config(hd_data_t *hd_data, char *unique_id);
+      int hd_write_config(hd_data_t *hd_data, hd_t *hd);
+
+    Try 'hwinfo --all --save-config <unique_id>'. <unique_id> must be an id of
+    some hardware from the hardware list that '--all' produces.
+    'hwinfo --manual' shows all saved hardware items.
+
