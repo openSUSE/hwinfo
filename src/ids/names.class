@@ -130,4 +130,8 @@ C 10b	Braille Display
 C 10c	Scanner
 C 10d	Joystick
 	01	Gamepad
-
+C 10e	Chipcard Reader
+C 10f	Camera
+	01	WebCam
+C 110	Framebuffer
+	01	VESA Framebuffer

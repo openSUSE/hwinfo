@@ -496,6 +496,16 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 	dump_line("PPPD Option: %s\n", res->pppd_option.option);
         break;
 
+      case res_framebuffer:
+        dump_line("Mode 0x%04x: %ux%u (+%u), %u bits\n",
+          res->framebuffer.mode,
+          res->framebuffer.width,
+          res->framebuffer.height,
+          res->framebuffer.bytes_p_line,
+          res->framebuffer.colorbits
+        );
+        break;
+
       default:
         dump_line("Unkown resource type %d\n", res->any.type);
     }

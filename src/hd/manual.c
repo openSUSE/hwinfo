@@ -42,9 +42,12 @@ static hash_t hw_items[] = {
   { hw_network,      "network interface" },
   { hw_display,      "graphics card"     },
   { hw_monitor,      "monitor"           },
+  { hw_framebuffer,  "framebuffer"       },
+  { hw_camera,       "camera"            },
   { hw_mouse,        "mouse"             },
   { hw_joystick,     "joystick"          },
   { hw_keyboard,     "keyboard"          },
+  { hw_chipcard,     "chipcard"          },
   { hw_sound,        "sound"             },
   { hw_isdn,         "isdn adapter"      },
   { hw_modem,        "modem"             },
@@ -90,7 +93,7 @@ typedef enum {
   hwdi_prog_if, hwdi_dev, hwdi_vend, hwdi_sub_dev, hwdi_sub_vend, hwdi_rev,
   hwdi_compat_dev, hwdi_compat_vend, hwdi_dev_name, hwdi_vend_name,
   hwdi_sub_dev_name, hwdi_sub_vend_name, hwdi_rev_name, hwdi_serial,
-  hwdi_unix_dev_name, hwdi_rom_id
+  hwdi_unix_dev_name, hwdi_rom_id, hwdi_broken
 } hw_hd_items_t;
 
 static hash_t hw_ids_hd_items[] = {
@@ -115,6 +118,7 @@ static hash_t hw_ids_hd_items[] = {
   { hwdi_serial,        "Serial"         },
   { hwdi_unix_dev_name, "UnixDevice"     },
   { hwdi_rom_id,        "ROMID"          },
+  { hwdi_broken,        "Broken"         },
   { 0,                  NULL             }
 };
 
@@ -685,6 +689,10 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
       case hwdi_rom_id:
         hd->rom_id = new_str(sl2->str);
         break;
+
+      case hwdi_broken:
+        hd->broken = strtoul(sl2->str, NULL, 0);
+        break;
     }
   }
 
@@ -763,6 +771,12 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
   }
 
   s = NULL;
+
+  if(hd->broken) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_broken));
+    str_printf(&s, 0, "0x%x", hd->broken);
+    add_str_list(&entry->value, s);
+  }
 
   if(hd->bus) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_bus));

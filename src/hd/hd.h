@@ -78,6 +78,7 @@ typedef enum probe_feature {
   pr_sbus, pr_int, pr_braille, pr_braille_alva, pr_braille_fhp,
   pr_braille_ht, pr_ignx11, pr_sys, pr_dasd, pr_i2o, pr_cciss, pr_bios_vbe,
   pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
+  pr_fb,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
@@ -88,9 +89,10 @@ typedef enum probe_feature {
  */
 typedef enum hw_item {
   hw_sys = 1, hw_cpu, hw_keyboard, hw_braille, hw_mouse, hw_joystick,
-  hw_printer, hw_scanner, hw_monitor, hw_display, hw_tv, hw_sound,
-  hw_storage_ctrl, hw_network_ctrl, hw_isdn, hw_modem, hw_network, hw_disk,
-  hw_partition, hw_cdrom, hw_floppy, hw_manual,
+  hw_printer, hw_scanner, hw_chipcard, hw_monitor, hw_display, hw_tv,
+  hw_framebuffer, hw_camera, hw_sound, hw_storage_ctrl, hw_network_ctrl,
+  hw_isdn, hw_modem, hw_network, hw_disk, hw_partition, hw_cdrom, hw_floppy,
+  hw_manual,
   hw_all					/* hw_all must be last */
 } hd_hw_item_t;
 
@@ -109,7 +111,8 @@ typedef enum base_classes {
   // add our own classes here (starting at 0x100 as PCI values are 8 bit)
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,
   bc_storage_device, bc_network_interface, bc_keyboard, bc_printer,
-  bc_hub, bc_braille, bc_scanner, bc_joystick
+  bc_hub, bc_braille, bc_scanner, bc_joystick, bc_chipcard, bc_camera,
+  bc_framebuffer
 } hd_base_classes_t;
 
 /* subclass values of bc_storage */
@@ -122,6 +125,11 @@ typedef enum sc_storage {
 typedef enum sc_display {
   sc_dis_vga, sc_dis_xga, sc_dis_other = 0x80
 } hd_sc_display_t;
+
+/* subclass values of bc_framebuffer */
+typedef enum sc_framebuffer {
+  sc_fb_vesa = 1
+} hd_sc_framebuffer_t;
 
 /* subclass values of bc_bridge */
 typedef enum sc_bridge { 
@@ -283,6 +291,7 @@ typedef struct {
   unsigned version;		/* vbe version */
   unsigned oem_version;		/* oem version info */
   unsigned memory;		/* in bytes */
+  unsigned fb_start;		/* != 0 if framebuffer is supported */
   char *oem_name;		/* oem name */
   char *vendor_name;		/* vendor name */
   char *product_name;		/* product name */
@@ -575,7 +584,8 @@ typedef struct {
  */
 typedef enum resource_types {
   res_any, res_phys_mem, res_mem, res_io, res_irq, res_dma, res_monitor,
-  res_size, res_disk_geo, res_cache, res_baud, res_init_strings, res_pppd_option
+  res_size, res_disk_geo, res_cache, res_baud, res_init_strings, res_pppd_option,
+  res_framebuffer
 } hd_resource_types_t;
 
 
@@ -697,6 +707,15 @@ typedef struct {
   char *option;
 } res_pppd_option_t;
 
+typedef struct {
+  union u_hd_res_t *next;
+  enum resource_types type;
+  unsigned width, height;		/* in pixel */
+  unsigned bytes_p_line;		/* line length in bytes (do not confuse with 'width') */
+  unsigned colorbits;			/* 4, 8, 15, 16, 24, 32 */
+  unsigned mode;			/* mode number for kernel */
+} res_framebuffer_t;
+
 typedef union u_hd_res_t {
   union u_hd_res_t *next;  
   res_any_t any;
@@ -712,6 +731,7 @@ typedef union u_hd_res_t {
   res_monitor_t monitor;
   res_init_strings_t init_strings;
   res_pppd_option_t pppd_option;
+  res_framebuffer_t framebuffer;
 } hd_res_t;
 
 

@@ -49,6 +49,7 @@
 #include "i2o.h"
 #include "cciss.h"
 #include "manual.h"
+#include "fb.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -120,8 +121,10 @@ static void hd_add_id(hd_t *hd);
 static void test_read_block0_open(void *arg);
 static void get_kernel_version(hd_data_t *hd_data);
 static void assign_hw_class(hd_data_t *hd_data, hd_t *hd);
+#ifndef LIBHD_TINY
 static void short_vendor(char *vendor);
 static void create_model_name(hd_data_t *hd_data, hd_t *hd);
+#endif
 
 /*
  * Names of the probing modules.
@@ -165,7 +168,8 @@ static struct s_mod_names {
   { mod_dasd, "dasd" },
   { mod_i2o, "i2o" },
   { mod_cciss, "cciss" },
-  { mod_manual, "manual" }
+  { mod_manual, "manual" },
+  { mod_fb, "fb" }
 };
 
 /*
@@ -248,7 +252,8 @@ static struct s_pr_flags {
   { pr_dasd,         0,           8|4|2|1, "dasd"         },
   { pr_i2o,          0,           8|4|2|1, "i2o"          },
   { pr_cciss,        0,           8|4|2|1, "cciss"        },
-  { pr_manual,       0,           8|4|2|1, "manual"       }
+  { pr_manual,       0,           8|4|2|1, "manual"       },
+  { pr_fb,           0,           8|4|2|1, "fb"           }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -1267,6 +1272,8 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_mouse(hd_data);
   hd_scan_sbus(hd_data);
 
+  hd_scan_fb(hd_data);
+
   /* keep these at the end of the list */
   hd_scan_cdrom(hd_data);
   hd_scan_net(hd_data);
@@ -1296,8 +1303,10 @@ void hd_scan(hd_data_t *hd_data)
   /* assign a hw_class & build a useful model string */
   for(hd = hd_data->hd; hd; hd = hd->next) {
     assign_hw_class(hd_data, hd);
+#ifndef LIBHD_TINY
     /* create model name _after_ hw_class */
     create_model_name(hd_data, hd);
+#endif
   }
 
   /* we are done... */
@@ -3262,6 +3271,13 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_monitor);
         break;
 
+      case hw_framebuffer:
+        hd_set_probe_feature(hd_data, pr_misc);
+        hd_set_probe_feature(hd_data, pr_prom);
+        hd_set_probe_feature(hd_data, pr_bios_vbe);
+        hd_set_probe_feature(hd_data, pr_fb);
+        break;
+
       case hw_mouse:
         hd_set_probe_feature(hd_data, pr_misc);
         hd_set_probe_feature(hd_data, pr_serial);
@@ -3273,6 +3289,14 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         break;
 
       case hw_joystick:
+        hd_set_probe_feature(hd_data, pr_usb);
+        break;
+
+      case hw_chipcard:
+        hd_set_probe_feature(hd_data, pr_usb);
+        break;
+
+      case hw_camera:
         hd_set_probe_feature(hd_data, pr_usb);
         break;
 
@@ -4347,6 +4371,18 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         base_class = bc_keyboard;
         break;
 
+      case hw_camera:
+        base_class = bc_camera;
+        break;
+
+      case hw_framebuffer:
+        base_class = bc_framebuffer;
+        break;
+
+      case hw_chipcard:
+        base_class = bc_chipcard;
+        break;
+
       case hw_sound:
         base_class = bc_multimedia;
         sub_class = sc_multi_audio;
@@ -4466,6 +4502,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 }
 
 
+#ifndef LIBHD_TINY
 void short_vendor(char *vendor)
 {
   static char *remove[] = {
@@ -4626,4 +4663,4 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
   free_mem(dev_class);
   free_mem(hw_class);
 }
-
+#endif

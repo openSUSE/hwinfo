@@ -115,6 +115,7 @@ u046a	Cherry Mikroschalter GmbH
 u046b	American Megatrends
 u046c	Toshiba
 u046d	Logitech Inc.
+	0840.10f01	Webcam USB
 	c001	Wheelmouse Model M-BB48
 u046e	Behavior Tech. Computer
 u046f	Crystal Semiconductor
@@ -454,6 +455,8 @@ u05d0	Lunar Corporation
 u05e3
 	000b	Razer Boomslang USB Mouse
 u0698	Chuntex (CTX)
+u0c4b	Reiner SCT
+	0100.10e00	Cyberjack USB
 u0ef7	Tulip Computers International
 u1606	UMAX Data Systems, Inc.
 	0010	Astra 1220U

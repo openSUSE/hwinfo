@@ -57,10 +57,13 @@ struct option options[] = {
   { "disk", 0, NULL, 1000 + hw_disk },
   { "network", 0, NULL, 1000 + hw_network },
   { "display", 0, NULL, 1000 + hw_display },
+  { "framebuffer", 0, NULL, 1000 + hw_framebuffer },
   { "monitor", 0, NULL, 1000 + hw_monitor },
+  { "camera", 0, NULL, 1000 + hw_camera },
   { "mouse", 0, NULL, 1000 + hw_mouse },
   { "joystick", 0, NULL, 1000 + hw_joystick },
   { "keyboard", 0, NULL, 1000 + hw_keyboard },
+  { "chipcard", 0, NULL, 1000 + hw_chipcard },
   { "sound", 0, NULL, 1000 + hw_sound },
   { "isdn", 0, NULL, 1000 + hw_isdn },
   { "modem", 0, NULL, 1000 + hw_modem },
@@ -432,6 +435,7 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
 
 void do_short(hd_data_t *hd_data, hd_t *hd, FILE *f)
 {
+#ifndef LIBHD_TINY
   hd_hw_item_t item;
   hd_t *hd1;
   int i;
@@ -454,7 +458,7 @@ void do_short(hd_data_t *hd_data, hd_t *hd, FILE *f)
       }
     }
   }
-
+#endif
 }
 
 

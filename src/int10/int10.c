@@ -215,6 +215,12 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v)
       ADD2LOG("  0x%04x[%02x]: %ux%u, text\n", mi->number, mi->attributes, mi->width, mi->height);
     }
     else {
+      if(
+        (mi->attributes & 1) &&		/* mode is supported */
+        mi->fb_start
+      ) {
+        if(!vbe->fb_start) vbe->fb_start = mi->fb_start;
+      }
       ADD2LOG(
         "  0x%04x[%02x]: %ux%u+%u, %u bpp",
         mi->number, mi->attributes, mi->width, mi->height, mi->bytes_p_line, mi->pixel_size

@@ -43,6 +43,7 @@
 #define DEV_MICE		"/dev/input/mice"
 #define DEV_I2O			"/dev/i2o"
 #define DEV_CCISS		"/dev/cciss"
+#define DEV_FB			"/dev/fb"
 
 #define KLOG_BOOT		"/var/log/boot.msg"
 #define ISAPNP_CONF		"/etc/isapnp.conf"
@@ -98,7 +99,7 @@ enum mod_idx {
   mod_ide, mod_scsi, mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel,
   mod_isa, mod_dac960, mod_smart, mod_isdn, mod_kbd, mod_prom, mod_sbus,
   mod_int, mod_braille, mod_xtra, mod_sys, mod_dasd, mod_i2o, mod_cciss,
-  mod_manual
+  mod_manual, mod_fb
 };
 
 void *new_mem(size_t size);

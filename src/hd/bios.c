@@ -65,6 +65,8 @@ void hd_scan_bios(hd_data_t *hd_data)
   memory_range_t mem;
   unsigned smp_ok;
   vbe_info_t *vbe;
+  vbe_mode_info_t *mi;
+  hd_res_t *res;
 
   if(!hd_probe_feature(hd_data, pr_bios)) return;
 
@@ -251,6 +253,67 @@ void hd_scan_bios(hd_data_t *hd_data)
 
 
     get_vbe_info(hd_data, vbe);
+
+    if(vbe->ok && vbe->fb_start) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class = bc_framebuffer;
+      hd->sub_class = sc_fb_vesa;
+
+#if 0
+      hd->detail = new_mem(sizeof *hd->detail);
+      hd->detail->type = hd_detail_bios;
+      hd->detail->bios.data = bt = new_mem(sizeof *bt);
+#endif
+
+      hd->vend_name = new_str(vbe->vendor_name);
+      hd->dev_name = new_str(vbe->product_name);
+      hd->sub_vend_name = new_str(vbe->oem_name);
+      hd->rev_name = new_str(vbe->product_revision);
+
+      res = add_res_entry(&hd->res, new_mem(sizeof *res));
+      res->phys_mem.type = res_phys_mem;
+      res->phys_mem.range = vbe->memory;
+
+      res = add_res_entry(&hd->res, new_mem(sizeof *res));
+      res->mem.type = res_mem;
+      res->mem.base = vbe->fb_start;
+      res->mem.range = vbe->memory;
+      res->mem.access = acc_rw;
+      res->mem.enabled = 1;
+
+      if(vbe->mode) {
+        for(u = 0; u < vbe->modes; u++) {
+          mi = vbe->mode + u;
+          if(
+            (mi->attributes & 1) &&	/* mode supported */
+            mi->fb_start &&
+            mi->pixel_size != -1	/* text mode */
+          ) {
+            res = add_res_entry(&hd->res, new_mem(sizeof *res));
+            res->framebuffer.type = res_framebuffer;
+            res->framebuffer.width = mi->width;
+            res->framebuffer.bytes_p_line = mi->bytes_p_line;
+            res->framebuffer.height = mi->height;
+            res->framebuffer.colorbits = mi->pixel_size;
+            res->framebuffer.mode = mi->number + 0x200;
+          }
+        }
+      }
+
+      if(
+        hd->vend_name &&
+        !strcmp(hd->vend_name, "Matrox") &&
+        hd->dev_name &&
+        (
+          strstr(hd->dev_name, "G200") ||
+          strstr(hd->dev_name, "G400") ||
+          strstr(hd->dev_name, "G450")
+        )
+      ) {
+        hd->broken = 1;
+      }
+
+    }
 
   }
 

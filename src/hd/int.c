@@ -81,7 +81,7 @@ void int_cdrom(hd_data_t *hd_data)
       !hd->prog_if
     ) {
       if(hd->dev_name && strstr(hd->dev_name, "DVD")) {
-        hd->prog_if = 2;
+        hd->prog_if = 3;
       }
     }
   }
