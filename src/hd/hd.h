@@ -39,6 +39,7 @@ extern "C" {
 #define HD_DEB_PARALLEL		(1 << 20)
 #define HD_DEB_ISA		(1 << 21)
 #define HD_DEB_BOOT		(1 << 22)
+#define HD_DEB_HDDB		(1 << 23)
 
 #include <inttypes.h>
 #include <termios.h>

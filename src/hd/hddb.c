@@ -7,7 +7,7 @@
 #include "hddb.h"
 
 /* activate special data base debug code */
-#undef DEBUG_HDDB
+#define DEBUG_HDDB
 
 #ifdef LIBHD_TINY
 #define HDDB_DEV	hddb_dev_s
@@ -738,7 +738,7 @@ void init_hddb(hd_data_t *hd_data)
   no_init = 0;
 
 #ifdef DEBUG_HDDB
-  if(hd_data->debug) {
+  if((hd_data->debug & HD_DEB_HDDB)) {
     dump_hddb_data(hd_data, &HDDB_DEV, "hddb_dev, static");
     dump_hddb_data(hd_data, hd_data->hddb_dev, "hddb_dev, loaded");
     dump_hddb_data(hd_data, &HDDB_DRV, "hddb_drv, static");
@@ -824,9 +824,38 @@ int hd_find_device_by_name(hd_data_t *hd_data, unsigned base_class, char *vendor
 
 
 #ifdef DEBUG_HDDB
+static char *id2str(unsigned id, int vend);
+
+char *id2str(unsigned id, int vend)
+{
+  static char buf[32];
+  char *s;
+
+  *(s = buf) = 0;
+
+  if(vend && ID_TAG(id) == TAG_EISA) {
+    strcpy(s, eisa_vendor_str(id));
+  }
+  else {
+    if(ID_TAG(id) == TAG_PCI) *s++ = 'p', *s = 0;
+    if(ID_TAG(id) == TAG_EISA) *s++ = 'i', *s = 0;
+    if(ID_TAG(id) == TAG_USB) *s++ = 'u', *s = 0;
+    if(ID_TAG(id) == TAG_SPECIAL) *s++ = 's', *s = 0;
+    if(ID_TAG(id) == TAG_BUS) *s++ = 'b', *s = 0;
+    if(ID_TAG(id) == TAG_CLASS) *s++ = 'c', *s = 0;
+    sprintf(s, "%04x", ID_VALUE(id));
+  }
+
+  return buf;
+}
+
+
 void dump_hddb_data(hd_data_t *hd_data, hddb_data_t *x, char *name)
 {
   unsigned u, u0, u1;
+  static char *flags[8] = {
+    "#0   ", "#1   ", "#2   ", "#3   ", "range", "   v0", "   v1", "  res"
+  };
 
   ADD2LOG(
     "%s: data 0x%x/0x%x, names 0x%x/0x%x\n",
@@ -836,8 +865,15 @@ void dump_hddb_data(hd_data_t *hd_data, hddb_data_t *x, char *name)
   for(u = 0; u < x->data_len; u++) {
     u0 = DATA_FLAG(x->data[u]);
     u1 = DATA_VALUE(x->data[u]);
-    ADD2LOG("%3d\t%x:%05x", u, u0, u1);
+    ADD2LOG("%3d\t%x:%05x\t%s:", u, u0, u1, flags[u0]);
+    if(u0 < 4) {
+      ADD2LOG("\t%-5s", id2str(u1, 1 ^ (u0 & 1)));
+    }
+    else {
+    }
+    if(u0 == FL_RANGE) ADD2LOG("  +0x%04x", u1);
     if(u0 == FL_VAL0) ADD2LOG("  \"%s\"", x->names + u1);
+    if(u0 == FL_VAL1) ADD2LOG("  '%c'", u1 & 0xff);
     ADD2LOG("\n");
   }
   ADD2LOG("----\n");

@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 
   hd_data = calloc(1, sizeof *hd_data);
   hd_data->progress = progress;
-  hd_data->debug=~(HD_DEB_DRIVER_INFO);
+  hd_data->debug=~(HD_DEB_DRIVER_INFO | HD_DEB_HDDB);
 
   if(argc == 1 && !strcmp(*argv, "--special=braille")) {
     return find_braille(hd_data);

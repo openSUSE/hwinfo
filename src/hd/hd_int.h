@@ -125,6 +125,7 @@ unsigned has_something_attached(hd_data_t *hd_data, hd_t *hd);
 
 char *get_cmdline(hd_data_t *hd_data, char *key);
 
+
 #ifdef __cplusplus
 }
 #endif
