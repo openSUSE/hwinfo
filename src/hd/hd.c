@@ -427,6 +427,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_ide);
       hd_set_probe_feature(hd_data, pr_scsi_cache);
       hd_set_probe_feature(hd_data, pr_cdrom_info);
+      hd_set_probe_feature(hd_data, pr_partition);
       break;
 
     case hw_floppy:
@@ -436,6 +437,8 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_misc_floppy);
       hd_set_probe_feature(hd_data, pr_prom);
       hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_usb);
+      hd_set_probe_feature(hd_data, pr_partition);
       break;
 
     case hw_disk:
@@ -590,6 +593,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_scanner:
       hd_set_probe_feature(hd_data, pr_usb); 
       hd_set_probe_feature(hd_data, pr_scsi); 
+      hd_set_probe_feature(hd_data, pr_partition);
       break;
 
     case hw_braille:
@@ -625,6 +629,9 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_usb:
       hd_set_probe_feature(hd_data, pr_usb);
+      hd_set_probe_feature(hd_data, pr_scsi);
+      hd_set_probe_feature(hd_data, pr_partition);
+      hd_data->flags.fast = 1;
       break;
 
     case hw_pci:
@@ -649,6 +656,8 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_scsi:
       hd_set_probe_feature(hd_data, pr_scsi);
+      hd_set_probe_feature(hd_data, pr_usb);
+      hd_set_probe_feature(hd_data, pr_partition);
       break;
 
     case hw_ide:
@@ -3768,6 +3777,7 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
   unsigned char probe_save[sizeof hd_data->probe];
+  unsigned fast_save;
 
 #ifdef LIBHD_MEMCHECK
 #ifndef __PPC__
@@ -3780,6 +3790,7 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
 
   if(rescan) {
     memcpy(probe_save, hd_data->probe, sizeof probe_save);
+    fast_save = hd_data->flags.fast;
     hd_clear_probe_feature(hd_data, pr_all);
 #ifdef __powerpc__
     hd_set_probe_feature(hd_data, pr_sys);
@@ -3788,6 +3799,7 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
     hd_set_probe_feature_hw(hd_data, item);
     hd_scan(hd_data);
     memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
+    hd_data->flags.fast = fast_save;
   }
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -3795,6 +3807,7 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
       (
         hd->hw_class == item ||
         hd->hw_class2 == item ||
+        hd->hw_class3 == item ||
         item == hw_manual
       )
 #ifndef LIBHD_TINY
@@ -3851,7 +3864,7 @@ hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t sta
   memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->hw_class == item || hd->hw_class2 == item) {
+    if(hd->hw_class == item || hd->hw_class2 == item || hd->hw_class3 == item) {
       if(
         (status.configured == 0 || status.configured == hd->status.configured) &&
         (status.available == 0 || status.available == hd->status.available) &&
@@ -5044,7 +5057,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
   }
 
   if(!hd->hw_class2) {
-    if(hd->bus == bus_usb || hd->usb_guid) {
+    if(hd->bus == bus_usb) {
       hd->hw_class2 = hw_usb;
     }
     else if(hd->bus == bus_pci) {
@@ -5058,6 +5071,20 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
     }
     else if(hd->bus == bus_isa && hd->is.isapnp) {
       hd->hw_class2 = hw_isapnp;
+    }
+  }
+
+  if(!hd->hw_class3) {
+    if(hd->usb_guid) {
+#if 0
+      if(hd->bus == bus_usb) {
+        hd->hw_class3 = hw_scsi;
+      }
+      else
+#endif
+      if(hd->bus == bus_scsi) {
+        hd->hw_class3 = hw_usb;
+      }
     }
   }
 }

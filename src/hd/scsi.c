@@ -243,7 +243,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
     hd->dev_name = new_str(scsi->model);
     hd->rev_name = new_str(scsi->rev);
     hd->serial = new_str(scsi->serial);
-//    hd->usb_guid = new_str(scsi->usb_guid);
+    hd->usb_guid = new_str(scsi->usb_guid);
     if(scsi->host < sizeof scsi_ctrl / sizeof *scsi_ctrl) {
       hd->attached_to = scsi_ctrl[scsi->host].hd_idx;
       hd->driver = new_str(scsi_ctrl[scsi->host].driver);
@@ -439,11 +439,6 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
         dev_name = NULL;
         scsi->type = sc_sdev_disk;
 
-        if(hd_data->flags.fast) {
-          close(fd);
-          continue;
-        }
-
         hd_getdisksize(hd_data, scsi->dev_name, fd, &geo, &size);
 
         if(geo) {
@@ -458,6 +453,11 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
 
         free_res_list(geo);
         free_res_list(size);
+
+        if(hd_data->flags.fast) {
+          close(fd);
+          continue;
+        }
 
         PROGRESS(2, 300 + i, "scsi cmd");
 
@@ -474,7 +474,9 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
           ADD2LOG("%s status(0x12) 0x%x\n", scsi->dev_name, j);
         }
         else {
-          scsi->serial = canon_str(scsi_cmd_buf + 8 + 4, scsi_cmd_buf[8 + 3]);
+          if((scsi->serial = canon_str(scsi_cmd_buf + 8 + 4, scsi_cmd_buf[8 + 3]))) {
+            if(!*scsi->serial) scsi->serial = free_mem(scsi->serial);
+          }
         }
 
         if(hd_probe_feature(hd_data, pr_scsi_geo) && scsi->size) {

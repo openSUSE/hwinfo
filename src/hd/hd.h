@@ -1253,6 +1253,7 @@ typedef struct s_hd_t {
 
   hd_hw_item_t hw_class;	/* not to confuse with base_class */
   hd_hw_item_t hw_class2;	/* it may belong to more than one class (e.g., mouse vs. usb  */
+  hd_hw_item_t hw_class3;	/* dto  */
   char *model;			/* combined vendor & device names */
 
   unsigned attached_to;		/* idx field of 'parent' entry */

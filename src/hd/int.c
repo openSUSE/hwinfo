@@ -22,6 +22,7 @@ static void int_bios(hd_data_t *hd_data);
 static void int_media_check(hd_data_t *hd_data);
 static void int_floppy(hd_data_t *hd_data);
 static void int_fix_ide_scsi(hd_data_t *hd_data);
+static void int_fix_usb_scsi(hd_data_t *hd_data);
 
 void hd_scan_int(hd_data_t *hd_data)
 {
@@ -35,20 +36,23 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(1, 0, "idescsi");
   int_fix_ide_scsi(hd_data);
 
-  PROGRESS(2, 0, "pcmcia");
+  PROGRESS(2, 0, "usbscsi");
+  int_fix_usb_scsi(hd_data);
+
+  PROGRESS(3, 0, "pcmcia");
   int_pcmcia(hd_data);
 
-  PROGRESS(3, 0, "cdrom");
+  PROGRESS(4, 0, "cdrom");
   int_cdrom(hd_data);
 
-  PROGRESS(4, 0, "media");
+  PROGRESS(5, 0, "media");
   int_media_check(hd_data);
 
-  PROGRESS(5, 0, "floppy");
+  PROGRESS(6, 0, "floppy");
   int_floppy(hd_data);
 
 #if defined(__i386__)
-  PROGRESS(6, 0, "bios");
+  PROGRESS(7, 0, "bios");
   int_bios(hd_data);
 #endif
 }
@@ -275,6 +279,56 @@ void int_fix_ide_scsi(hd_data_t *hd_data)
           hd_scsi->unique_id1 = free_mem(hd_scsi->unique_id1);
           hd_scsi->old_unique_id = free_mem(hd_scsi->old_unique_id);
           hd_add_id(hd_data, hd_scsi);
+        }
+      }
+    }
+  }
+
+  remove_tagged_hd_entries(hd_data);
+}
+#undef COPY_ENTRY
+
+
+#define COPY_ENTRY(a) if(hd_scsi->a) { free_mem(hd_usb->a); hd_usb->a = new_str(hd_scsi->a); }
+/*
+ * Remove usb entries that are handled by usb-storage.
+ */
+void int_fix_usb_scsi(hd_data_t *hd_data)
+{
+  hd_t *hd_scsi, *hd_usb;
+
+  for(hd_scsi = hd_usb = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
+    if(
+      hd_scsi->bus == bus_scsi &&
+      hd_scsi->driver &&
+      hd_scsi->usb_guid &&
+      !strcmp(hd_scsi->driver, "usb-storage")
+    ) {
+      for(; hd_usb ; hd_usb = hd_usb->next) {
+        if(
+          hd_usb->bus == bus_usb &&
+          hd_usb->usb_guid &&
+          !hd_usb->tag.remove &&
+          !strcmp(hd_usb->usb_guid, hd_scsi->usb_guid)
+        ) {
+          hd_scsi->tag.remove = 1;
+
+          /* join usb & scsi info */
+          hd_usb->bus = hd_scsi->bus;
+          COPY_ENTRY(unix_dev_name);
+          COPY_ENTRY(model);
+          COPY_ENTRY(driver);
+          hd_usb->is.notready = hd_scsi->is.notready;
+          if(hd_usb->block0) free_mem(hd_usb->block0);
+          hd_usb->block0 = hd_scsi->block0;
+          hd_scsi->block0 = NULL;
+          add_res_entry(&hd_usb->res, hd_scsi->res);
+          hd_scsi->res = NULL;
+
+          hd_usb->unique_id = free_mem(hd_usb->unique_id);
+          hd_usb->unique_id1 = free_mem(hd_usb->unique_id1);
+          hd_usb->old_unique_id = free_mem(hd_usb->old_unique_id);
+          hd_add_id(hd_data, hd_usb);
         }
       }
     }
