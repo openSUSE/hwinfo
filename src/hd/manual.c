@@ -949,8 +949,16 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
 
       case hwdi_features:
         u0 = strtoul(sl2->str, NULL, 0);
-        u1 = sizeof hd->is < sizeof u0 ? sizeof hd->is : sizeof u0;
-        memcpy(&hd->is, &u0, u1);
+        if(u0 & (1 << 0)) hd->is.agp = 1;
+        if(u0 & (1 << 1)) hd->is.isapnp = 1;
+        if(u0 & (1 << 2)) hd->is.softraiddisk = 1;
+        if(u0 & (1 << 3)) hd->is.zip = 1;
+        if(u0 & (1 << 4)) hd->is.cdr = 1;
+        if(u0 & (1 << 5)) hd->is.cdrw = 1;
+        if(u0 & (1 << 6)) hd->is.dvd = 1;
+        if(u0 & (1 << 7)) hd->is.dvdr = 1;
+        if(u0 & (1 << 8)) hd->is.dvdram = 1;
+        if(u0 & (1 << 9)) hd->is.pppoe = 1;
         break;
     }
   }
@@ -1013,7 +1021,7 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
   char *s, *t;
   hd_res_t *res;
   str_list_t *sl;
-  unsigned u0, u1;
+  unsigned u;
 
   if(!hd || !entry) return;
 
@@ -1156,12 +1164,21 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
     add_str_list(&entry->value, hd->usb_guid);
   }
 
-  u1 = sizeof hd->is < sizeof u0 ? sizeof hd->is : sizeof u0;
-  u0 = 0;
-  memcpy(&u0, &hd->is, u1);
-  if(u0) {
+  u = 0;
+  if(hd->is.agp)          u |= 1 << 0;
+  if(hd->is.isapnp)       u |= 1 << 1;
+  if(hd->is.softraiddisk) u |= 1 << 2;
+  if(hd->is.zip)          u |= 1 << 3;
+  if(hd->is.cdr)          u |= 1 << 4;
+  if(hd->is.cdrw)         u |= 1 << 5;
+  if(hd->is.dvd)          u |= 1 << 6;
+  if(hd->is.dvdr)         u |= 1 << 7;
+  if(hd->is.dvdram)       u |= 1 << 8;
+  if(hd->is.pppoe)        u |= 1 << 9;
+  
+  if(u) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_features));
-    str_printf(&s, 0, "0x%x", u0);
+    str_printf(&s, 0, "0x%x", u);
     add_str_list(&entry->value, s);
   }
 
