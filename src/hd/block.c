@@ -191,7 +191,11 @@ void get_block_devs(hd_data_t *hd_data)
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->sub_class.id = sc_sdev_cdrom;
     }
-    else if(sf_dev && sf_dev->bus && !strcmp(sf_dev->bus, "scsi")) {
+    else if(
+      sf_dev &&
+      sf_dev->bus &&
+      (!strcmp(sf_dev->bus, "scsi") || !strcmp(sf_dev->bus, "ide"))
+    ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->sub_class.id = sc_sdev_other;
     }

@@ -1,3 +1,6 @@
+11/10/2004:	v9.30
+	- find ide devices != cdrom & disk (#39911, #45229)
+
 7/10/2004:	v9.29
 	- fixed segfault with large /proc/interrupt entries (e.g. 512 cpus) (#46582)
 
