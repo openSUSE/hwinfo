@@ -2754,9 +2754,9 @@ void hddb_init(hddb_data_t *hddb, list_t *hd)
 }
 
 
-char *quote_string(char *str, int len)
+unsigned char *quote_string(unsigned char *str, int len)
 {
-  char *qstr;
+  unsigned char *qstr;
   int i, j;
 
   if(!str || !len) return NULL;
@@ -2776,7 +2776,7 @@ char *quote_string(char *str, int len)
       qstr[j++] = '\\';
       qstr[j++] = 't';
     }
-    else if(str[i] >= 0 && str[i] < ' ') {
+    else if(str[i] < ' ') {
       qstr[j++] = '\\';
       qstr[j++] = (str[i] >> 6) + '0';
       qstr[j++] = ((str[i] >> 3) & 7) + '0';
