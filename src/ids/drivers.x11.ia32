@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-07-12 18:59:41
+#hwinfo data from 2000-07-14 19:08:54
 #
 
 
@@ -156,7 +156,7 @@
 
 # Diamond:Fire GL1
 1014 00b7  
-	x	4|firegl1||xfiregl||accel,DDCInfo|8
+	x	4|firegl1||xfiregl1||accel,DDCInfo|8
 		Option "NumDMABuffers2D" "4"
 		Option "NumDMABuffers" "24"
 		Option "NumTMBuffers" "4"
@@ -576,11 +576,6 @@
 
 # ATI:Rage 3D Pro AGP
 1002 4742  
-	x	4|ati|||||
-
-
-# ATI:Rage 3D Pro AGP
-1002 4742  
 	x	3|MACH64|||||
 
 
@@ -627,11 +622,6 @@
 # ATI:RageIIC
 1002 0084  
 	x	3|MACH64|||||
-
-
-# ATI:Rage P/M Mobility AGP 2x (HP Omnibook)
-1002 4C4D 103c 000a
-	x	4|ati|||||
 
 
 # ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
@@ -1131,12 +1121,12 @@
 
 # S3:Trio64V2/DX GUI Accelerator
 5333 8900  
-	x	3|S3|||||
+	x	3|SVGA|||||
 
 
 # S3:Trio64V2/DX or /GX
 5333 8901  
-	x	3|S3|||||
+	x	3|SVGA|||||
 
 
 # S3:PLATO/PX (graphics)
@@ -1246,11 +1236,6 @@
 
 # 3DLabs:Permedia 3 2D+3D
 3D3D 0009  
-	x	3|3DLABS|||||
-
-
-# 3DLabs:GLINT Gamma
-3D3D 0008  
 	x	3|3DLABS|||||
 
 
@@ -1434,11 +1419,6 @@
 	x	3|SVGA|||||1f
 
 
-# Nvidia:Riva TNT2
-10DE 0028  
-	x	3|SVGA|3d|glx|glx.so||4
-
-
 # Nvidia:Riva TNT
 10DE 0020  
 	x	4|nv|||||f
@@ -1452,11 +1432,6 @@
 # Nvidia:Riva TNT
 10DE 0020  
 	x	3|SVGA|||||f
-
-
-# Nvidia:Riva TNT
-10DE 0020  
-	x	3|SVGA|3d|glx|glx.so||4
 
 
 # Nvidia:DAC64
@@ -1480,12 +1455,12 @@
 
 
 # Neomagic:MagicGraph 256ZX
-10C8 0006  
+10c8 0006  
 	x	4|neomagic|||||
 
 
 # Neomagic:MagicGraph 256ZX
-10C8 0006  
+10c8 0006  
 	x	3|SVGA|||||
 
 
