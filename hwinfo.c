@@ -105,7 +105,8 @@ struct option options[] = {
   { "manual", 0, NULL, 1000 + hw_manual },
   { "all", 0, NULL, 2000 },
   { "reallyall", 0, NULL, 2001 },
-  { "smp", 0, NULL, 3000 },
+  { "smp", 0, NULL, 2002 },
+  { "arch", 0, NULL, 2003 },
   { }
 };
 
@@ -206,7 +207,8 @@ int main(int argc, char **argv)
 
         case 2000:
         case 2001:
-        case 3000:
+        case 2002:
+        case 2003:
           if(hw_items < sizeof hw_item / sizeof *hw_item)
             hw_item[hw_items++] = i;
           break;
@@ -361,22 +363,26 @@ int main(int argc, char **argv)
 void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
 {
   hd_t *hd, *hd0;
-  int smp = -1;
-  int i;
+  int smp = -1, i;
+  char *s, *t;
+  enum boot_arch b_arch;
+  enum cpu_arch c_arch;
 
   hd0 = NULL;
 
   switch(hw_item) {
-    case 3000:
+    case 2002:
       smp = hd_smp_support(hd_data);
       break;
 
     case 2000:
     case 2001:
+    case 2003:
       i = -1;
       switch((int) hw_item) {
         case 2000: i = pr_default; break;
         case 2001: i = pr_all; break;
+        case 2003: i = pr_cpu; break;
       }
       if(i != -1) {
         hd_clear_probe_feature(hd_data, pr_all);
@@ -415,13 +421,96 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
     );
   }
 
-  if(hw_item == 3000) {
+  if(hw_item == 2002) {
     fprintf(f ? f : stdout,
       "SMP support: %s",
       smp < 0 ? "unknown" : smp > 0 ? "yes" : "no"
     );
     if(smp > 0) fprintf(f ? f : stdout, " (%u cpus)", smp);
     fprintf(f ? f : stdout, "\n");
+  }
+  else if(hw_item == 2003) {
+    c_arch = hd_cpu_arch(hd_data);
+    b_arch = hd_boot_arch(hd_data);
+
+    s = t = "Unknown";
+    switch(c_arch) {
+      case arch_unknown:
+        break;
+      case arch_intel:
+        s = "X86 (32)";
+        break;
+      case arch_alpha:
+        s = "Alpha";
+        break;
+      case arch_sparc:
+        s = "Sparc (32)";
+        break;
+      case arch_sparc64:
+        s = "UltraSparc (64)";
+        break;
+      case arch_ppc:
+        s = "PowerPC";
+        break;
+      case arch_ppc64:
+        s = "PowerPC (64)";
+        break;
+      case arch_68k:
+        s = "68k";
+        break;
+      case arch_ia64:
+        s = "IA-64";
+        break;
+      case arch_s390:
+        s = "S390";
+        break;
+      case arch_s390x:
+        s = "S390x";
+        break;
+      case arch_arm:
+        s = "ARM";
+        break;
+      case arch_mips:
+        s = "MIPS";
+        break;
+      case arch_x86_64:
+        s = "X86_64";
+        break;
+    }
+
+    switch(b_arch) {
+      case boot_unknown:
+        break;
+      case boot_lilo:
+        t = "lilo";
+        break;
+      case boot_milo:
+        t = "milo";
+        break;
+      case boot_aboot:
+        t = "aboot";
+        break;
+      case boot_silo:
+        t = "silo";
+        break;
+      case boot_ppc:
+        t = "ppc";
+        break;
+      case boot_elilo:
+        t = "elilo";
+        break;
+      case boot_s390:
+        t = "s390";
+        break;
+      case boot_mips:
+        t = "mips";
+        break;
+      case boot_grub:
+        t = "grub";
+        break;
+    }
+
+    fprintf(f ? f : stdout, "Arch: %s/%s\n", s, t);
   }
   else {
     if(is_short) {
@@ -431,9 +520,7 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
     }
     else {
       for(hd = hd0; hd; hd = hd->next) {
-        if(hw_item != 3003 || hd->is.isapnp) {
-          hd_dump_entry(hd_data, hd, f ? f : stdout);
-        }
+        hd_dump_entry(hd_data, hd, f ? f : stdout);
       }
     }
   }

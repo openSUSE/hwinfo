@@ -1731,13 +1731,6 @@ void hd_scan(hd_data_t *hd_data)
 #endif
   }
 
-#if 0
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    hd_data->debug = -1;
-    hd_dump_entry(hd_data, hd, stderr);
-  }
-#endif
-
 #ifndef LIBHD_TINY
   /* must be _after_ we have valid hw_class entries */
   hd_scan_manual2(hd_data);
@@ -1770,101 +1763,6 @@ void hd_scan(hd_data_t *hd_data)
     }
     ADD2LOG("\n");
   }
-
-#if 0
-  /* drop this */
-
-  if(hd_data->debug && !hd_data->flags.internal) {
-    i = hd_usb_support(hd_data);
-    ADD2LOG("  usb support: %s\n", i == 2 ? "ohci" : i == 1 ? "uhci" : "none");
-    ADD2LOG("  pcmcia support: %d\n", hd_has_pcmcia(hd_data));
-    ADD2LOG("  special eide chipset: %d\n", hd_has_special_eide(hd_data));
-    ADD2LOG("  apm status: %sabled\n", hd_apm_enabled(hd_data) ? "en" : "dis");
-    i = hd_smp_support(hd_data);
-    ADD2LOG("  smp board: ");
-    if(i)
-      ADD2LOG("yes (%d cpus)\n", i);
-    else
-      ADD2LOG("no\n");
-    switch(hd_cpu_arch(hd_data)) {
-      case arch_intel:
-        s = "ia32";
-        break;
-      case arch_alpha:
-        s = "alpha";
-        break;
-      case arch_sparc:
-        s = "sparc";
-        break;
-      case arch_sparc64:
-        s = "sparc64";
-        break;
-      case arch_ppc:
-        s = "ppc";
-        break;
-      case arch_68k:
-        s = "68k";
-        break;
-      case arch_s390:
-        s = "s390";
-        break;
-      case arch_ia64:
-        s = "ia64";
-        break;
-      case arch_x86_64:
-        s = "x86_64";
-        break;
-      default:
-        s = "unknown";
-    }
-    ADD2LOG("  architecture: %s\n", s);
-    switch(hd_boot_arch(hd_data)) {
-      case boot_lilo:
-        s = "lilo";
-        break;
-      case boot_milo:
-        s = "milo";
-        break;
-      case boot_aboot:
-        s = "aboot";
-        break;
-      case boot_silo:
-        s = "silo";
-        break;
-      case boot_ppc:
-        s = "ppc";
-        break;
-      case boot_elilo:
-        s = "elilo";
-        break;
-      case boot_s390:
-        s = "s390";
-        break;
-      case boot_grub:
-        s = "grub";
-        break;
-      default:
-        s = "unknown";
-    }
-    ADD2LOG("  boot concept: %s\n", s);
-    hd = hd_get_device_by_idx(hd_data, hd_boot_disk(hd_data, &i));
-    s = "unknown"; if(hd && (s = hd->unix_dev_name));
-    ADD2LOG("  boot device: %s (%d)\n", s, i);
-
-    u = hd_display_adapter(hd_data);
-    hd = hd_get_device_by_idx(hd_data, u);
-    di = hd_driver_info(hd_data, hd);
-    s = "unknown";
-    if(di && di->any.type == di_x11 && di->x11.server) s = di->x11.server;
-    ADD2LOG("  display adapter: #%u (%s)\n", u, s);
-    hd_free_driver_info(di);
-    i = hd_color(hd_data);
-    if(i != -1) {
-      ADD2LOG("  color code: 0x%02x\n", i);
-    }
-  }
-#endif
-
 }
 
 
