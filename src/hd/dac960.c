@@ -65,14 +65,14 @@ void hd_scan_dac960(hd_data_t *hd_data)
     for(j = 0; sl; sl = sl->next, j++) {
       if(sscanf(sl->str, " " DEV_DAC960 "/c%ud%u: %31s %31s %u blocks,", &u0, &u1, buf0, buf1, &u2) == 5) {
         hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->base_class = bc_storage_device;
-        hd->sub_class = sc_sdev_disk;
-        hd->bus = bus_raid;
+        hd->base_class.id = bc_storage_device;
+        hd->sub_class.id = sc_sdev_disk;
+        hd->bus.id = bus_raid;
         hd->slot = u0;
         hd->func = u1;
         str_printf(&hd->unix_dev_name, 0, DEV_DAC960 "/c%ud%u", hd->slot, hd->func);
 
-        str_printf(&hd->dev_name, 0, "DAC960 RAID Array %u/%u", hd->slot, hd->func);
+        str_printf(&hd->device3.name, 0, "DAC960 RAID Array %u/%u", hd->slot, hd->func);
         
         hd_getdisksize(hd_data, hd->unix_dev_name, -1, &geo, &size);
       
@@ -82,7 +82,7 @@ void hd_scan_dac960(hd_data_t *hd_data)
         if(pci_slot || pci_func) {
           for(hd2 = hd_data->hd; hd2; hd2 = hd2->next) {
             if(
-              hd2->bus == bus_pci &&
+              hd2->bus.id == bus_pci &&
               hd2->slot == pci_slot &&
               hd2->func == pci_func
             ) {

@@ -51,7 +51,7 @@ void hd_scan_floppy(hd_data_t *hd_data)
    * *none*).
    */
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_storage && hd->sub_class == sc_sto_floppy) {
+    if(hd->base_class.id == bc_storage && hd->sub_class.id == sc_sto_floppy) {
       floppy_ctrls++;
       floppy_ctrl_idx = hd->idx;
     }
@@ -109,17 +109,17 @@ void hd_scan_floppy(hd_data_t *hd_data)
       ) {
         /* create one, if missing (there's no floppy without a controller...) */
         hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->base_class = bc_storage;
-        hd->sub_class = sc_sto_floppy;
+        hd->base_class.id = bc_storage;
+        hd->sub_class.id = sc_sto_floppy;
         floppy_ctrl_idx = hd->idx;
         floppy_ctrls++;
       }
 
       if(floppy_ctrls) {
         hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->base_class = bc_storage_device;
-        hd->sub_class = sc_sdev_floppy;
-        hd->bus = bus_floppy;
+        hd->base_class.id = bc_storage_device;
+        hd->sub_class.id = sc_sdev_floppy;
+        hd->bus.id = bus_floppy;
         hd->slot = u;
         str_printf(&hd->unix_dev_name, 0, "/dev/fd%u", u);
 

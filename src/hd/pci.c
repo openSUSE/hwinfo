@@ -64,35 +64,33 @@ void hd_scan_pci(hd_data_t *hd_data)
     pnext = p->next;
     hd = add_hd_entry(hd_data, __LINE__, 0);
 
-    hd->bus = bus_pci;
+    hd->bus.id = bus_pci;
     hd->slot = p->slot + (p->bus << 8);
     hd->func = p->func;
-    hd->base_class = p->base_class;
-    hd->sub_class = p->sub_class;
-    hd->prog_if = p->prog_if;
+    hd->base_class.id = p->base_class;
+    hd->sub_class.id = p->sub_class;
+    hd->prog_if.id = p->prog_if;
 
     /* fix up old VGA's entries */
-    if(hd->base_class == bc_none && hd->sub_class == 0x01) {
-      hd->base_class = bc_display;
-      hd->sub_class = sc_dis_vga;
+    if(hd->base_class.id == bc_none && hd->sub_class.id == 0x01) {
+      hd->base_class.id = bc_display;
+      hd->sub_class.id = sc_dis_vga;
     }
 
     if(p->dev || p->vend) {
-      hd->dev = MAKE_ID(TAG_PCI, p->dev);
-      hd->vend = MAKE_ID(TAG_PCI, p->vend);
+      hd->device3.id = MAKE_ID(TAG_PCI, p->dev);
+      hd->vendor3.id = MAKE_ID(TAG_PCI, p->vend);
     }
     if(p->sub_dev || p->sub_vend) {
       hd->sub_dev = MAKE_ID(TAG_PCI, p->sub_dev);
-      hd->sub_vend = MAKE_ID(TAG_PCI, p->sub_vend);
+      hd->sub_vendor3.id = MAKE_ID(TAG_PCI, p->sub_vend);
     }
     hd->rev = p->rev;
 
-//    if((hd->base_class == 0 || hd->base_class == 0xff) && hd->sub_class == 0) {
-      if((u = device_class(hd_data, hd->vend, hd->dev))) {
-        hd->base_class = u >> 8;
-        hd->sub_class = u & 0xff;
-      }
-//    }
+    if((u = device_class(hd_data, hd->vendor3.id, hd->device3.id))) {
+      hd->base_class.id = u >> 8;
+      hd->sub_class.id = u & 0xff;
+    }
 
     if(p->secondary_bus && bridges < sizeof bridge / sizeof *bridge) {
       bridge[bridges].hd_idx = hd->idx;
@@ -150,7 +148,7 @@ void hd_scan_pci(hd_data_t *hd_data)
   hd_data->pci = NULL;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->bus == bus_pci) {
+    if(hd->bus.id == bus_pci) {
       bus = hd->slot >> 8;
       for(j = 0; j < bridges; j++) {
         if(bridge[j].bus == bus) {
@@ -174,12 +172,12 @@ void add_driver_info(hd_data_t *hd_data)
   hd_res_t *res;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->bus != bus_pci) continue;
+    if(hd->bus.id != bus_pci) continue;
     if(hd->drv_vend || hd->drv_dev) continue;
 
-    if(hd->base_class == bc_serial && hd->sub_class == sc_ser_usb) {
+    if(hd->base_class.id == bc_serial && hd->sub_class.id == sc_ser_usb) {
       hd->drv_vend = MAKE_ID(TAG_SPECIAL, 0x7001);
-      hd->drv_dev = MAKE_ID(TAG_SPECIAL, 0x0000 + hd->prog_if);
+      hd->drv_dev = MAKE_ID(TAG_SPECIAL, 0x0000 + hd->prog_if.id);
       for(res = hd->res; res; res = res->next) {
         if(res->any.type == res_irq) break;
       }
@@ -187,16 +185,16 @@ void add_driver_info(hd_data_t *hd_data)
       continue;
     }
 
-    if(hd->base_class == bc_i2o) {
+    if(hd->base_class.id == bc_i2o) {
       hd->drv_vend = MAKE_ID(TAG_SPECIAL, 0x7002);
       hd->drv_dev = MAKE_ID(TAG_SPECIAL, 0x0000);
       continue;
     }
 
     if(
-      hd->base_class == bc_storage &&
-      hd->sub_class == sc_sto_raid &&
-      hd->vend == MAKE_ID(TAG_PCI, 0x105a)
+      hd->base_class.id == bc_storage &&
+      hd->sub_class.id == sc_sto_raid &&
+      hd->vendor3.id == MAKE_ID(TAG_PCI, 0x105a)
     ) {
       hd->drv_vend = MAKE_ID(TAG_PCI, 0x105a);
       hd->drv_dev = MAKE_ID(TAG_PCI, 0x6268);

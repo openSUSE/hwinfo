@@ -44,15 +44,15 @@ void hd_scan_adb(hd_data_t *hd_data)
       if(!(adr & (1 << u))) {
         adr |= 1 << u;
         hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->base_class = bc_mouse;
-        hd->sub_class = sc_mou_bus;
-        hd->bus = bus_adb;
+        hd->base_class.id = bc_mouse;
+        hd->sub_class.id = sc_mou_bus;
+        hd->bus.id = bus_adb;
         hd->slot = u;
 //        hd->func = i;
         hd->unix_dev_name = new_str(DEV_MICE);
 
-        hd->vend = MAKE_ID(TAG_SPECIAL, 0x0100);
-        hd->dev = MAKE_ID(TAG_SPECIAL, 0x0300 + i);
+        hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0100);
+        hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0300 + i);
       }
     }
 
@@ -61,15 +61,15 @@ void hd_scan_adb(hd_data_t *hd_data)
       if(!(adr & (1 << u))) {
         adr |= 1 << u;
         hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->base_class = bc_keyboard;
-        hd->sub_class = 0;
-        hd->bus = bus_adb;
+        hd->base_class.id = bc_keyboard;
+        hd->sub_class.id = 0;
+        hd->bus.id = bus_adb;
         hd->slot = u;
 //        hd->func = i;
 //        hd->unix_dev_name = new_str(DEV_ADBMOUSE);
 
-        hd->vend = MAKE_ID(TAG_SPECIAL, 0x0100);
-        hd->dev = MAKE_ID(TAG_SPECIAL, 0x0200+i);
+        hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0100);
+        hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0200+i);
       }
     }
   }

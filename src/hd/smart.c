@@ -76,9 +76,9 @@ void hd_scan_smart(hd_data_t *hd_data)
     for(j = 0; sl; sl = sl->next, j++) {
       if(sscanf(sl->str, " ida/c%ud%u: blksz=%u nr_blks=%u", &u0, &u1, &u2, &u3) == 4) {
         hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->base_class = bc_storage_device;
-        hd->sub_class = sc_sdev_disk;
-        hd->bus = bus_raid;
+        hd->base_class.id = bc_storage_device;
+        hd->sub_class.id = sc_sdev_disk;
+        hd->bus.id = bus_raid;
         hd->slot = u0;
         hd->func = u1;
         str_printf(&hd->unix_dev_name, 0, DEV_SMART "/c%ud%u", hd->slot, hd->func);

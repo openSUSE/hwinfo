@@ -78,20 +78,20 @@ void int_hotplug(hd_data_t *hd_data)
   hd_t *bridge_hd;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->bus == bus_usb || hd->usb_guid) {
+    if(hd->bus.id == bus_usb || hd->usb_guid) {
       hd->hotplug = hp_usb;
     }
     if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
       if(
-        bridge_hd->base_class == bc_bridge &&
-        bridge_hd->sub_class == sc_bridge_cardbus
+        bridge_hd->base_class.id == bc_bridge &&
+        bridge_hd->sub_class.id == sc_bridge_cardbus
       ) {
         hd->is.cardbus = 1;
         hd->hotplug = hp_cardbus;
       }
      else if(
-        bridge_hd->base_class == bc_bridge &&
-        bridge_hd->sub_class == sc_bridge_pcmcia
+        bridge_hd->base_class.id == bc_bridge &&
+        bridge_hd->sub_class.id == sc_bridge_pcmcia
       ) {
         hd->is.pcmcia = 1;
         hd->hotplug = hp_pcmcia;
@@ -109,12 +109,12 @@ void int_cdrom(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_storage_device &&
-      hd->sub_class == sc_sdev_cdrom &&
-      !hd->prog_if
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_cdrom &&
+      !hd->prog_if.id
     ) {
-      if(hd->dev_name && strstr(hd->dev_name, "DVD")) {
-        hd->prog_if = 3;
+      if(hd->device3.name && strstr(hd->device3.name, "DVD")) {
+        hd->prog_if.id = 3;
       }
     }
   }
@@ -129,8 +129,8 @@ int set_bios_id(hd_data_t *hd_data, char *dev_name, int bios_id)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_storage_device &&
-      hd->sub_class == sc_sdev_disk &&
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_disk &&
       hd->unix_dev_name &&
       !strcmp(hd->unix_dev_name, dev_name)
     ) {
@@ -176,8 +176,8 @@ void int_bios(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_storage_device &&
-      hd->sub_class == sc_sdev_disk
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_disk
     ) {
       hd->rom_id = free_mem(hd->rom_id);
     }
@@ -215,11 +215,11 @@ void int_media_check(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_storage_device &&
+      hd->base_class.id == bc_storage_device &&
       (
-        /* hd->sub_class == sc_sdev_cdrom || */ /* cf. cdrom.c */
-        hd->sub_class == sc_sdev_disk ||
-        hd->sub_class == sc_sdev_floppy
+        /* hd->sub_class.id == sc_sdev_cdrom || */ /* cf. cdrom.c */
+        hd->sub_class.id == sc_sdev_disk ||
+        hd->sub_class.id == sc_sdev_floppy
       ) &&
       hd->unix_dev_name &&
       !hd->block0 &&
@@ -244,22 +244,22 @@ void int_floppy(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_storage_device &&
-      hd->sub_class == sc_sdev_disk
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_disk
     ) {
       if(
         (
           (
-            (hd->vend_name && !strcasecmp(hd->vend_name, "iomega")) ||
-            (hd->sub_vend_name && !strcasecmp(hd->sub_vend_name, "iomega"))
+            (hd->vendor3.name && !strcasecmp(hd->vendor3.name, "iomega")) ||
+            (hd->sub_vendor3.name && !strcasecmp(hd->sub_vendor3.name, "iomega"))
           ) &&
           (
-            (hd->dev_name && strstr(hd->dev_name, "ZIP")) ||
+            (hd->device3.name && strstr(hd->device3.name, "ZIP")) ||
             (hd->sub_dev_name && strstr(hd->sub_dev_name, "Zip"))
           )
         )
       ) {
-        hd->sub_class = sc_sdev_floppy;
+        hd->sub_class.id = sc_sdev_floppy;
         new_id(hd_data, hd);
       }
     }
@@ -277,13 +277,13 @@ void int_fix_ide_scsi(hd_data_t *hd_data)
 
   for(hd_scsi = hd_ide = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
     if(
-      hd_scsi->bus == bus_scsi &&
+      hd_scsi->bus.id == bus_scsi &&
       hd_scsi->driver &&
       !strcmp(hd_scsi->driver, "ide-scsi")
     ) {
       for(; hd_ide ; hd_ide = hd_ide->next) {
         if(
-          hd_ide->bus == bus_ide &&
+          hd_ide->bus.id == bus_ide &&
           hd_ide->driver &&
           !strcmp(hd_ide->driver, "ide-scsi")
         ) {
@@ -293,10 +293,10 @@ void int_fix_ide_scsi(hd_data_t *hd_data)
           }
           hd_ide->status.available = status_no;
 
-          COPY_ENTRY(dev_name);
-          COPY_ENTRY(vend_name);
+          COPY_ENTRY(vendor3.name);
+          COPY_ENTRY(device3.name);
           COPY_ENTRY(sub_dev_name);
-          COPY_ENTRY(sub_vend_name);
+          COPY_ENTRY(sub_vendor3.name);
           COPY_ENTRY(rev_name);
           COPY_ENTRY(serial);
 
@@ -321,14 +321,14 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
 
   for(hd_scsi = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
     if(
-      hd_scsi->bus == bus_scsi &&
+      hd_scsi->bus.id == bus_scsi &&
       hd_scsi->driver &&
       hd_scsi->usb_guid &&
       !strcmp(hd_scsi->driver, "usb-storage")
     ) {
       for(hd_usb = hd_data->hd; hd_usb ; hd_usb = hd_usb->next) {
         if(
-          hd_usb->bus == bus_usb &&
+          hd_usb->bus.id == bus_usb &&
           hd_usb->usb_guid &&
           !hd_usb->tag.remove &&
           !strcmp(hd_usb->usb_guid, hd_scsi->usb_guid)
@@ -336,22 +336,26 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
           hd_scsi->tag.remove = 1;
 
           /* join usb & scsi info */
-          hd_usb->bus = hd_scsi->bus;
-          hd_usb->base_class = hd_scsi->base_class;
-          hd_usb->sub_class = hd_scsi->sub_class;
-          hd_usb->prog_if = hd_scsi->prog_if;
+          hd_usb->bus.id = hd_scsi->bus.id;
+          COPY_ENTRY(bus.name);
+          hd_usb->base_class.id = hd_scsi->base_class.id;
+          COPY_ENTRY(base_class.name);
+          hd_usb->sub_class.id = hd_scsi->sub_class.id;
+          COPY_ENTRY(sub_class.name);
+          hd_usb->prog_if.id = hd_scsi->prog_if.id;
+          COPY_ENTRY(prog_if.name);
           COPY_ENTRY(unix_dev_name);
           COPY_ENTRY(model);
           COPY_ENTRY(driver);
 
-          hd_usb->vend = hd_scsi->vend;
-          hd_usb->dev = hd_scsi->dev;
-          COPY_ENTRY(dev_name);
-          COPY_ENTRY(vend_name);
+          hd_usb->vendor3.id = hd_scsi->vendor3.id;
+          COPY_ENTRY(vendor3.name);
+          hd_usb->device3.id = hd_scsi->device3.id;
+          COPY_ENTRY(device3.name);
+          hd_usb->sub_vendor3.name = free_mem(hd_usb->sub_vendor3.name);
+          COPY_ENTRY(sub_vendor3.name);
           hd_usb->sub_dev_name = free_mem(hd_usb->sub_dev_name);
-          hd_usb->sub_vend_name = free_mem(hd_usb->sub_vend_name);
           COPY_ENTRY(sub_dev_name);
-          COPY_ENTRY(sub_vend_name);
           COPY_ENTRY(rev_name);
           COPY_ENTRY(serial);
 
@@ -394,21 +398,21 @@ void int_mouse(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_mouse &&
-      hd->sub_class == sc_mou_ps2 &&
-      hd->bus == bt->mouse.bus &&
-      hd->vend == MAKE_ID(TAG_SPECIAL, 0x0200) &&
-      hd->dev == MAKE_ID(TAG_SPECIAL, 0x0002)
+      hd->base_class.id == bc_mouse &&
+      hd->sub_class.id == sc_mou_ps2 &&
+      hd->bus.id == bt->mouse.bus &&
+      hd->vendor3.id == MAKE_ID(TAG_SPECIAL, 0x0200) &&
+      hd->device3.id == MAKE_ID(TAG_SPECIAL, 0x0002)
     ) {
-      hd->vend_name = free_mem(hd->vend_name);
-      hd->dev_name = free_mem(hd->dev_name);
-      hd->vend = hd->dev = 0;
+      hd->vendor3.name = free_mem(hd->vendor3.name);
+      hd->device3.name = free_mem(hd->device3.name);
+      hd->vendor3.id = hd->device3.id = 0;
 #if 1
-      hd->vend = bt->mouse.compat_vend;
-      hd->dev = bt->mouse.compat_dev;
+      hd->vendor3.id = bt->mouse.compat_vend;
+      hd->device3.id = bt->mouse.compat_dev;
 #else
       hd->vend_name = new_str(bt->mouse.vendor);
-      hd->dev_name = new_str(bt->mouse.type);
+      hd->device3.name = new_str(bt->mouse.type);
       hd->compat_vend = bt->mouse.compat_vend;
       hd->compat_dev = bt->mouse.compat_dev;
 #endif

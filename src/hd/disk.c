@@ -41,7 +41,7 @@ void hd_scan_disk(hd_data_t *hd_data)
     str_printf(&s, 0, "/dev/%s", sl->str);
 
     for(hd = hd_data->hd; hd; hd = hd->next) {
-      if(hd->base_class != bc_storage_device || !hd->unix_dev_name) continue;
+      if(hd->base_class.id != bc_storage_device || !hd->unix_dev_name) continue;
       if(!strcmp(hd->unix_dev_name, s)) break;
     }
 
@@ -50,34 +50,34 @@ void hd_scan_disk(hd_data_t *hd_data)
     fd = open(s, O_RDONLY | O_NONBLOCK);
     if(fd >= 0) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_storage_device;
-      hd->bus = bus_none;
+      hd->base_class.id = bc_storage_device;
+      hd->bus.id = bus_none;
 
-      hd->sub_class = sc_sdev_disk;
+      hd->sub_class.id = sc_sdev_disk;
       hd->unix_dev_name = s; s = NULL;
 
-      str_printf(&hd->dev_name, 0, "Disk");
+      str_printf(&hd->device3.name, 0, "Disk");
       if(sscanf(sl->str, "ataraid/d%u", &u0) == 1) {
         hd->slot = u0;
-        str_printf(&hd->dev_name, 0, "IDE RAID Array %u", u0);
+        str_printf(&hd->device3.name, 0, "IDE RAID Array %u", u0);
       }
       else if(sscanf(sl->str, "cciss/d%uc%u", &u0, &u1) == 2) {
         hd->slot = (u0 << 8) + u1;
-        str_printf(&hd->dev_name, 0, "CCISS disk %u/%u", u0, u1);
+        str_printf(&hd->device3.name, 0, "CCISS disk %u/%u", u0, u1);
       }
       else if(sscanf(sl->str, "rd/d%uc%u", &u0, &u1) == 2) {
         hd->slot = (u0 << 8) + u1;
-        str_printf(&hd->dev_name, 0, "DAC960 RAID Array %u/%u", u0, u1);
+        str_printf(&hd->device3.name, 0, "DAC960 RAID Array %u/%u", u0, u1);
       }
       else if(sscanf(sl->str, "hd%c", &c) == 1) {
         u0 = c - 'a';
         hd->slot = u0;
-        str_printf(&hd->dev_name, 0, "IDE Disk %u", u0);
+        str_printf(&hd->device3.name, 0, "IDE Disk %u", u0);
       }
       else if(sscanf(sl->str, "sd%c", &c) == 1) {
         u0 = c - 'a';
         hd->slot = u0;
-        str_printf(&hd->dev_name, 0, "SCSI Disk %u", u0);
+        str_printf(&hd->device3.name, 0, "SCSI Disk %u", u0);
       }
 
       hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size);

@@ -37,8 +37,8 @@ void hd_scan_braille(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_comm &&
-      hd->sub_class == sc_com_ser &&
+      hd->base_class.id == bc_comm &&
+      hd->sub_class.id == sc_com_ser &&
       hd->unix_dev_name &&
       !hd->tag.ser_skip &&
       !has_something_attached(hd_data, hd)
@@ -76,12 +76,12 @@ void hd_scan_braille(hd_data_t *hd_data)
 
       if(dev) {
         hd_tmp = add_hd_entry(hd_data, __LINE__, 0);
-        hd_tmp->base_class = bc_braille;
-        hd_tmp->bus = bus_serial;
+        hd_tmp->base_class.id = bc_braille;
+        hd_tmp->bus.id = bus_serial;
         hd_tmp->unix_dev_name = new_str(hd->unix_dev_name);
         hd_tmp->attached_to = hd->idx;
-        hd_tmp->vend = vend;
-        hd_tmp->dev = dev;
+        hd_tmp->vendor3.id = vend;
+        hd_tmp->device3.id = dev;
       }
     }
   }

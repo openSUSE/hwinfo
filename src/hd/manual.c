@@ -10,6 +10,7 @@
 #include "hd.h"
 #include "hd_int.h"
 #include "manual.h"
+#include "hddb.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  *
@@ -135,7 +136,7 @@ static char *key2value(hash_t *hash, int id);
 static int value2key(hash_t *hash, char *str);
 static void dump_manual(hd_data_t *hd_data);
 static unsigned str2id(char *str);
-static void manual2hd(hd_manual_t *entry, hd_t *hd);
+static void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd);
 static void hd2manual(hd_t *hd, hd_manual_t *entry);
 
 void hd_scan_manual(hd_data_t *hd_data)
@@ -222,7 +223,7 @@ void hd_scan_manual(hd_data_t *hd_data)
       /* add new entry */
       hd = add_hd_entry(hd_data, __LINE__, 0);
 
-      manual2hd(entry, hd);
+      manual2hd(hd_data, entry, hd);
 
       if(hd->status.available != status_unknown) hd->status.available = status_no;
 
@@ -699,7 +700,7 @@ unsigned str2id(char *str)
 /*
  * move info from hd_manual_t to hd_t
  */
-void manual2hd(hd_manual_t *entry, hd_t *hd)
+void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
 {
   str_list_t *sl1, *sl2;
   hw_hd_items_t item;
@@ -723,7 +724,7 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
   ) {
     switch(item = value2key(hw_ids_hd_items, sl1->str)) {
       case hwdi_bus:
-        hd->bus = strtoul(sl2->str, NULL, 0);
+        hd->bus.id = strtoul(sl2->str, NULL, 0);
         break;
 
       case hwdi_slot:
@@ -735,23 +736,23 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
         break;
 
       case hwdi_base_class:
-        hd->base_class = strtoul(sl2->str, NULL, 0);
+        hd->base_class.id = strtoul(sl2->str, NULL, 0);
         break;
 
       case hwdi_sub_class:
-        hd->sub_class = strtoul(sl2->str, NULL, 0);
+        hd->sub_class.id = strtoul(sl2->str, NULL, 0);
         break;
 
       case hwdi_prog_if:
-        hd->prog_if = strtoul(sl2->str, NULL, 0);
+        hd->prog_if.id = strtoul(sl2->str, NULL, 0);
         break;
 
       case hwdi_dev:
-        hd->dev = str2id(sl2->str);
+        hd->device3.id = str2id(sl2->str);
         break;
 
       case hwdi_vend:
-        hd->vend = str2id(sl2->str);
+        hd->vendor3.id = str2id(sl2->str);
         break;
 
       case hwdi_sub_dev:
@@ -759,7 +760,7 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
         break;
 
       case hwdi_sub_vend:
-        hd->sub_vend = str2id(sl2->str);
+        hd->sub_vendor3.id = str2id(sl2->str);
         break;
 
       case hwdi_rev:
@@ -775,11 +776,11 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
         break;
 
       case hwdi_dev_name:
-        hd->dev_name = new_str(sl2->str);
+        hd->device3.name = new_str(sl2->str);
         break;
 
       case hwdi_vend_name:
-        hd->vend_name = new_str(sl2->str);
+        hd->vendor3.name = new_str(sl2->str);
         break;
 
       case hwdi_sub_dev_name:
@@ -787,7 +788,7 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
         break;
 
       case hwdi_sub_vend_name:
-        hd->sub_vend_name = new_str(sl2->str);
+        hd->sub_vendor3.name = new_str(sl2->str);
         break;
 
       case hwdi_rev_name:
@@ -817,20 +818,20 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
     }
   }
 
-  if(hd->dev || hd->vend) {
-    tag = ID_TAG(hd->dev);
-    tag = tag ? tag : ID_TAG(hd->vend);
+  if(hd->device3.id || hd->vendor3.id) {
+    tag = ID_TAG(hd->device3.id);
+    tag = tag ? tag : ID_TAG(hd->vendor3.id);
     tag = tag ? tag : TAG_PCI;
-    hd->dev = MAKE_ID(tag, ID_VALUE(hd->dev));
-    hd->vend = MAKE_ID(tag, ID_VALUE(hd->vend));
+    hd->device3.id = MAKE_ID(tag, ID_VALUE(hd->device3.id));
+    hd->vendor3.id = MAKE_ID(tag, ID_VALUE(hd->vendor3.id));
   }
 
-  if(hd->sub_dev || hd->sub_vend) {
+  if(hd->sub_dev || hd->sub_vendor3.id) {
     tag = ID_TAG(hd->sub_dev);
-    tag = tag ? tag : ID_TAG(hd->sub_vend);
+    tag = tag ? tag : ID_TAG(hd->sub_vendor3.id);
     tag = tag ? tag : TAG_PCI;
     hd->sub_dev = MAKE_ID(tag, ID_VALUE(hd->sub_dev));
-    hd->sub_vend = MAKE_ID(tag, ID_VALUE(hd->sub_vend));
+    hd->sub_vendor3.id = MAKE_ID(tag, ID_VALUE(hd->sub_vendor3.id));
   }
 
   if(hd->compat_dev || hd->compat_vend) {
@@ -845,20 +846,20 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
 
   /* create some entries, if missing */
 
-  if(!hd->dev && !hd->vend && !hd->dev_name) {
-    hd->dev_name = new_str(hd->model);
+  if(!hd->device3.id && !hd->vendor3.id && !hd->device3.name) {
+    hd->device3.name = new_str(hd->model);
   }
 
-  if(hd->hw_class && !hd->base_class) {
+  if(hd->hw_class && !hd->base_class.id) {
     switch(hd->hw_class) {
       case hw_cdrom:
-        hd->base_class = bc_storage_device;
-        hd->sub_class = sc_sdev_cdrom;
+        hd->base_class.id = bc_storage_device;
+        hd->sub_class.id = sc_sdev_cdrom;
         break;
 
       case hw_mouse:
-        hd->base_class = bc_mouse;
-        hd->sub_class = sc_mou_other;
+        hd->base_class.id = bc_mouse;
+        hd->sub_class.id = sc_mou_other;
         break;
 
       default:
@@ -866,6 +867,7 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
     }
   }
 
+  hddb_add_info(hd_data, hd);
 }
 
 
@@ -903,9 +905,9 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
     add_str_list(&entry->value, s);
   }
 
-  if(hd->bus) {
+  if(hd->bus.id) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_bus));
-    str_printf(&s, 0, "0x%x", hd->bus);
+    str_printf(&s, 0, "0x%x", hd->bus.id);
     add_str_list(&entry->value, s);
   }
 
@@ -921,35 +923,35 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
     add_str_list(&entry->value, s);
   }
 
-  if(hd->base_class) {
+  if(hd->base_class.id) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_base_class));
-    str_printf(&s, 0, "0x%x", hd->base_class);
+    str_printf(&s, 0, "0x%x", hd->base_class.id);
     add_str_list(&entry->value, s);
   }
 
-  if(hd->sub_class) {
+  if(hd->sub_class.id) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_class));
-    str_printf(&s, 0, "0x%x", hd->sub_class);
+    str_printf(&s, 0, "0x%x", hd->sub_class.id);
     add_str_list(&entry->value, s);
   }
 
-  if(hd->prog_if) {
+  if(hd->prog_if.id) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_prog_if));
-    str_printf(&s, 0, "0x%x", hd->prog_if);
+    str_printf(&s, 0, "0x%x", hd->prog_if.id);
     add_str_list(&entry->value, s);
   }
 
-  if(hd->dev || hd->vend) {
+  if(hd->device3.id || hd->vendor3.id) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_vend));
-    add_str_list(&entry->value, vend_id2str(hd->vend));
+    add_str_list(&entry->value, vend_id2str(hd->vendor3.id));
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_dev));
-    str_printf(&s, 0, "%04x", ID_VALUE(hd->dev));
+    str_printf(&s, 0, "%04x", ID_VALUE(hd->device3.id));
     add_str_list(&entry->value, s);
   }
 
-  if(hd->sub_dev || hd->sub_vend) {
+  if(hd->sub_dev || hd->sub_vendor3.id) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_vend));
-    add_str_list(&entry->value, vend_id2str(hd->sub_vend));
+    add_str_list(&entry->value, vend_id2str(hd->sub_vendor3.id));
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_dev));
     str_printf(&s, 0, "%04x", ID_VALUE(hd->sub_dev));
     add_str_list(&entry->value, s);
@@ -969,14 +971,14 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
     add_str_list(&entry->value, s);
   }
 
-  if(hd->dev_name) {
+  if(hd->device3.name) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_dev_name));
-    add_str_list(&entry->value, hd->dev_name);
+    add_str_list(&entry->value, hd->device3.name);
   }
 
-  if(hd->vend_name) {
+  if(hd->vendor3.name) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_vend_name));
-    add_str_list(&entry->value, hd->vend_name);
+    add_str_list(&entry->value, hd->vendor3.name);
   }
 
   if(hd->sub_dev_name) {
@@ -984,9 +986,9 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
     add_str_list(&entry->value, hd->sub_dev_name);
   }
 
-  if(hd->sub_vend_name) {
+  if(hd->sub_vendor3.name) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_vend_name));
-    add_str_list(&entry->value, hd->sub_vend_name);
+    add_str_list(&entry->value, hd->sub_vendor3.name);
   }
 
   if(hd->rev_name) {
@@ -1023,6 +1025,8 @@ hd_t *hd_read_config(hd_data_t *hd_data, const char *id)
   hd_t *hd = NULL;
   hd_manual_t *entry;
 
+  hddb_init(hd_data);
+
   entry = hd_manual_read_entry(hd_data, id);
 
   if(entry) {
@@ -1030,7 +1034,7 @@ hd_t *hd_read_config(hd_data_t *hd_data, const char *id)
     hd->module = hd_data->module;
     hd->line = __LINE__;
     hd->tag.freeit = 1;		/* make it a 'stand alone' entry */
-    manual2hd(entry, hd);
+    manual2hd(hd_data, entry, hd);
     hd_free_manual(entry);
   }
 

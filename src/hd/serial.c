@@ -67,13 +67,13 @@ void hd_scan_serial(hd_data_t *hd_data)
 
   for(ser = hd_data->serial; ser; ser = ser->next) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_comm;
-    hd->sub_class = sc_com_ser;
-    hd->prog_if = 0x80;
+    hd->base_class.id = bc_comm;
+    hd->sub_class.id = sc_com_ser;
+    hd->prog_if.id = 0x80;
     for(i = 0; i < sizeof ser_names / sizeof *ser_names; i++) {
-      if(strstr(ser->name, ser_names[i])) hd->prog_if = i;
+      if(strstr(ser->name, ser_names[i])) hd->prog_if.id = i;
     }
-    hd->dev_name = new_str(ser->name);
+    hd->device3.name = new_str(ser->name);
     hd->func = ser->line;
     str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%u", ser->line);
     for(i = 0; i < sizeof skip_dev / sizeof *skip_dev; i++) {

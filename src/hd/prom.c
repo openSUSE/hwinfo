@@ -69,8 +69,8 @@ void hd_scan_prom(hd_data_t *hd_data)
   PROGRESS(2, 0, "color");
 
   hd = add_hd_entry(hd_data, __LINE__, 0);
-  hd->base_class = bc_internal;
-  hd->sub_class = sc_int_prom;
+  hd->base_class.id = bc_internal;
+  hd->sub_class.id = sc_int_prom;
   hd->detail = new_mem(sizeof *hd->detail);
   hd->detail->type = hd_detail_prom;
   hd->detail->prom.data = pt = new_mem(sizeof *pt);
@@ -266,12 +266,12 @@ void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent
 
         if(id) {
           hd = add_hd_entry(hd_data, __LINE__, 0);
-          hd->bus = bus_none;
-          hd->base_class = bc_storage;
-          hd->sub_class = sc_sto_floppy;
+          hd->bus.id = bus_none;
+          hd->base_class.id = bc_storage;
+          hd->sub_class.id = sc_sto_floppy;
 
-          hd->vend = MAKE_ID(TAG_SPECIAL, 0x0401);
-          hd->dev = id;
+          hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0401);
+          hd->device3.id = id;
           hd->attached_to = hd_parent->idx;
           hd->rom_id = new_str(dt->path);
           if(dt->interrupt) {
@@ -283,9 +283,9 @@ void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent
           floppy_ctrl_idx = hd->idx;
 
           hd = add_hd_entry(hd_data, __LINE__, 0);
-          hd->base_class = bc_storage_device;
-          hd->sub_class = sc_sdev_floppy;
-          hd->bus = bus_floppy;
+          hd->base_class.id = bc_storage_device;
+          hd->sub_class.id = sc_sdev_floppy;
+          hd->bus.id = bus_floppy;
           hd->unix_dev_name = new_str("/dev/fd0");
 
           res = add_res_entry(&hd->res, new_mem(sizeof *res));
@@ -325,12 +325,12 @@ void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent
 
         if(id) {
           hd = add_hd_entry(hd_data, __LINE__, 0);
-          hd->bus = bus_none;
-          hd->base_class = bc_storage;
-          hd->sub_class = sc_sto_scsi;
+          hd->bus.id = bus_none;
+          hd->base_class.id = bc_storage;
+          hd->sub_class.id = sc_sto_scsi;
 
-          hd->vend = MAKE_ID(TAG_SPECIAL, 0x0401);
-          hd->dev = id;
+          hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0401);
+          hd->device3.id = id;
           hd->attached_to = hd_parent->idx;
           hd->rom_id = new_str(dt->path);
           if(dt->interrupt) {
@@ -367,12 +367,12 @@ void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent
 
         if(id) {
           hd = add_hd_entry(hd_data, __LINE__, 0);
-          hd->bus = bus_none;
-          hd->base_class = bc_network;
-          hd->sub_class = 0;	/* ethernet */
+          hd->bus.id = bus_none;
+          hd->base_class.id = bc_network;
+          hd->sub_class.id = 0;	/* ethernet */
 
-          hd->vend = MAKE_ID(TAG_SPECIAL, 0x0401);
-          hd->dev = id;
+          hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0401);
+          hd->device3.id = id;
           hd->attached_to = hd_parent->idx;
           hd->rom_id = new_str(dt->path);
           if(dt->interrupt) {
@@ -407,9 +407,9 @@ void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent
         if(!dt2) dt2 = dt;
 
         hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->bus = bus_none;
-        hd->base_class = bc_multimedia;
-        hd->sub_class = sc_multi_audio;
+        hd->bus.id = bus_none;
+        hd->base_class.id = bc_multimedia;
+        hd->sub_class.id = sc_multi_audio;
         hd->attached_to = hd_parent->idx;
         hd->rom_id = new_str(dt2->path);
         irq = dt2->interrupt;
@@ -423,22 +423,22 @@ void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent
           res->irq.base = irq;
         }
 
-        hd->vend = MAKE_ID(TAG_SPECIAL, 0x401);		/* Apple */
-        hd->dev = MAKE_ID(TAG_SPECIAL, 0x0010);
+        hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x401);		/* Apple */
+        hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0010);
 
         if(dt2->compatible) {
           if(!strcmp(dt2->compatible, "screamer")) {
-            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0011);
+            hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0011);
           }
           else if(!strcmp(dt2->compatible, "burgundy")) {
-            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0012);
+            hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0012);
           }
           else if(!strcmp(dt2->compatible, "daca")) {
-            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0013);
+            hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0013);
           }
           else if(!strcmp(dt2->compatible, "CRUS,CS4236B")) {
-            hd->vend = MAKE_ID(TAG_SPECIAL, 0x402);	/* IBM */
-            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0014);
+            hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x402);	/* IBM */
+            hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0014);
           }
         }
       }
@@ -473,12 +473,12 @@ void add_legacy_prom_devices(hd_data_t *hd_data, devtree_t *dt)
 
     if(id) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->bus = bus_none;
-      hd->base_class = bc_display;
-      hd->sub_class = sc_dis_other;
+      hd->bus.id = bus_none;
+      hd->base_class.id = bc_display;
+      hd->sub_class.id = sc_dis_other;
 
-      hd->vend = MAKE_ID(TAG_SPECIAL, 0x0401);
-      hd->dev = id;
+      hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x0401);
+      hd->device3.id = id;
       hd->rom_id = new_str(dt->path);
       if(dt->interrupt) {
         res = add_res_entry(&hd->res, new_mem(sizeof *res));
@@ -501,7 +501,7 @@ void add_devices(hd_data_t *hd_data)
 
   /* remove old assignments */
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(ID_TAG(hd->dev) == TAG_PCI && ID_TAG(hd->vend) == TAG_PCI) {
+    if(ID_TAG(hd->device3.id) == TAG_PCI && ID_TAG(hd->vendor3.id) == TAG_PCI) {
       hd->rom_id = free_mem(hd->rom_id);
       hd->detail = free_hd_detail(hd->detail);
     }
@@ -517,11 +517,11 @@ void add_devices(hd_data_t *hd_data)
            * way, we can't do that.
            */
           !hd->rom_id &&
-          ID_TAG(hd->dev) == TAG_PCI &&
-          ID_TAG(hd->vend) == TAG_PCI &&
-          ID_VALUE(hd->dev) == dt->device_id &&
-          ID_VALUE(hd->vend) == dt->vendor_id &&
-          (dt->subvendor_id == -1 || ID_VALUE(hd->sub_vend) == dt->subvendor_id) &&
+          ID_TAG(hd->device3.id) == TAG_PCI &&
+          ID_TAG(hd->vendor3.id) == TAG_PCI &&
+          ID_VALUE(hd->device3.id) == dt->device_id &&
+          ID_VALUE(hd->vendor3.id) == dt->vendor_id &&
+          (dt->subvendor_id == -1 || ID_VALUE(hd>sub_vendor3.id) == dt->subvendor_id) &&
           (dt->subdevice_id == -1 || ID_VALUE(hd->sub_dev) == dt->subdevice_id) &&
           hd->rev == dt->revision_id
         ) break;
@@ -536,32 +536,32 @@ void add_devices(hd_data_t *hd_data)
 
         hd = add_hd_entry(hd_data, __LINE__, 0);
 
-        hd->bus = bus_pci;
+        hd->bus.id = bus_pci;
         hd->slot = pci_slot++ + 0xff00;
-        hd->base_class = (dt->class_code >> 16) & 0xff;
-        hd->sub_class =  (dt->class_code >> 8) & 0xff;
-        hd->prog_if = dt->class_code & 0xff;
+        hd->base_class.id = (dt->class_code >> 16) & 0xff;
+        hd->sub_class.id =  (dt->class_code >> 8) & 0xff;
+        hd->prog_if.id = dt->class_code & 0xff;
 
         /* fix up old VGA's entries */
-        if(hd->base_class == bc_none && hd->sub_class == 0x01) {
-          hd->base_class = bc_display;
-          hd->sub_class = sc_dis_vga;
+        if(hd->base_class.id == bc_none && hd->sub_class.id == 0x01) {
+          hd->base_class.id = bc_display;
+          hd->sub_class.id = sc_dis_vga;
         }
 
-        hd->dev = MAKE_ID(TAG_PCI, dt->device_id);
-        hd->vend = MAKE_ID(TAG_PCI, dt->vendor_id);
+        hd->device3.id = MAKE_ID(TAG_PCI, dt->device_id);
+        hd->vendor3.id = MAKE_ID(TAG_PCI, dt->vendor_id);
         if(dt->subdevice_id != -1) {
           hd->sub_dev = MAKE_ID(TAG_PCI, dt->subdevice_id);
         }
         if(dt->subvendor_id != -1) {
-          hd->sub_vend = MAKE_ID(TAG_PCI, dt->subvendor_id);
+          hd>sub_vendor3.id = MAKE_ID(TAG_PCI, dt->subvendor_id);
         }
         hd->rev = dt->revision_id;
 
-        if((hd->base_class == 0 || hd->base_class == 0xff) && hd->sub_class == 0) {
-          if((u = device_class(hd_data, hd->vend, hd->dev))) {
-            hd->base_class = u >> 8;
-            hd->sub_class = u & 0xff;
+        if((hd->base_class.id == 0 || hd->base_class.id == 0xff) && hd->sub_class.id == 0) {
+          if((u = device_class(hd_data, hd->vend, hd->device3.id))) {
+            hd->base_class.id = u >> 8;
+            hd->sub_class.id = u & 0xff;
           }
         } 
 

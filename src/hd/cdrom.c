@@ -58,8 +58,8 @@ void hd_scan_cdrom(hd_data_t *hd_data)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     /* look for existing entries... */
     if(
-      hd->base_class == bc_storage_device &&
-      hd->sub_class == sc_sdev_cdrom &&
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_cdrom &&
       hd->unix_dev_name
     ) {
       found = 0;
@@ -91,10 +91,10 @@ void hd_scan_cdrom(hd_data_t *hd_data)
     next = ci->next;
     ci->next = NULL;
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_storage_device;
-    hd->sub_class = sc_sdev_cdrom;
+    hd->base_class.id = bc_storage_device;
+    hd->sub_class.id = sc_sdev_cdrom;
     hd->unix_dev_name = new_str(ci->name);
-    hd->bus = bus_none;
+    hd->bus.id = bus_none;
     hd->detail = free_hd_detail(hd->detail);
     hd->detail = new_mem(sizeof *hd->detail);
     hd->detail->type = hd_detail_cdrom;
@@ -106,8 +106,8 @@ void hd_scan_cdrom(hd_data_t *hd_data)
   /* update prog_if: cdr, cdrw, ... */
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_storage_device &&
-      hd->sub_class == sc_sdev_cdrom &&
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_cdrom &&
       hd->detail &&
       hd->detail->type == hd_detail_cdrom
     ) {
@@ -125,15 +125,15 @@ void hd_scan_cdrom(hd_data_t *hd_data)
         }
         ci->dvdr = ci->dvdram = 0;
         ci->cdr = ci->cdrw = 0;
-        if(hd->prog_if == pif_cdr) ci->cdr = 1;
+        if(hd->prog_if.id == pif_cdr) ci->cdr = 1;
       }
 
       /* trust ide info */
-      if(ci->cdr) hd->prog_if = pif_cdr;
-      if(ci->cdrw) hd->prog_if = pif_cdrw;
-      if(ci->dvd) hd->prog_if = pif_dvd;
-      if(ci->dvdr) hd->prog_if = pif_dvdr;
-      if(ci->dvdram) hd->prog_if = pif_dvdram;
+      if(ci->cdr) hd->prog_if.id = pif_cdr;
+      if(ci->cdrw) hd->prog_if.id = pif_cdrw;
+      if(ci->dvd) hd->prog_if.id = pif_dvd;
+      if(ci->dvdr) hd->prog_if.id = pif_dvdr;
+      if(ci->dvdram) hd->prog_if.id = pif_dvdram;
     }
   }
 }
@@ -158,8 +158,8 @@ void hd_scan_cdrom2(hd_data_t *hd_data)
 
   for(i = 0, hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_storage_device &&
-      hd->sub_class == sc_sdev_cdrom &&
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_cdrom &&
       hd->unix_dev_name
     ) {
       PROGRESS(3, ++i, "read cdrom");

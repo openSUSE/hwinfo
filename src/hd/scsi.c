@@ -228,18 +228,18 @@ void hd_scan_scsi(hd_data_t *hd_data)
 
     hd = add_hd_entry(hd_data, __LINE__, 0);
     if(scsi->type != sc_sdev_scanner) {
-      hd->base_class = bc_storage_device;
-      hd->sub_class = scsi->type;
+      hd->base_class.id = bc_storage_device;
+      hd->sub_class.id = scsi->type;
     }
     else {
-      hd->base_class = bc_scanner;
+      hd->base_class.id = bc_scanner;
     }
-    hd->bus = bus_scsi;
+    hd->bus.id = bus_scsi;
     hd->slot = (scsi->host << 8) + (scsi->channel << 4) + (scsi->id);
     hd->func = scsi->lun;
     hd->unix_dev_name = new_str(scsi->dev_name);
-    hd->vend_name = new_str(scsi->vendor);
-    hd->dev_name = new_str(scsi->model);
+    hd->vendor3.name = new_str(scsi->vendor);
+    hd->device3.name = new_str(scsi->model);
     hd->rev_name = new_str(scsi->rev);
     hd->serial = new_str(scsi->serial);
     hd->usb_guid = new_str(scsi->usb_guid);
@@ -284,7 +284,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
     }
 
     if((scsi->cache & 4) && scsi->type == sc_sdev_cdrom) {
-      hd->prog_if = pif_cdr;
+      hd->prog_if.id = pif_cdr;
     }
 
     hd->detail = new_mem(sizeof *hd->detail);

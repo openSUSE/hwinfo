@@ -43,14 +43,14 @@ void hd_scan_i2o(hd_data_t *hd_data)
     fd = open(s, O_RDONLY | O_NONBLOCK);
     if(fd >= 0) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_storage_device;
-      hd->bus = bus_none;
+      hd->base_class.id = bc_storage_device;
+      hd->bus.id = bus_none;
       hd->slot = u;
 
-      hd->sub_class = sc_sdev_disk;
+      hd->sub_class.id = sc_sdev_disk;
       hd->unix_dev_name = s; s = NULL;
 
-      str_printf(&hd->dev_name, 0, "I2O disk %u", u);
+      str_printf(&hd->device3.name, 0, "I2O disk %u", u);
 
       PROGRESS(2, u, "ioctl");
       if(!ioctl(fd, HDIO_GETGEO, &geo)) {

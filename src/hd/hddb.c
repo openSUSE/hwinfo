@@ -75,11 +75,6 @@ typedef struct {
   unsigned val[32];	/* arbitrary (approx. max. number of modules/xf86 config lines) */
 } tmp_entry_t;
 
-typedef struct {
-  unsigned id;
-  char *name;
-} hd_id_t;
-
 /* except for driver, all strings are static and _must not_ be freed */
 typedef struct {
   hddb_entry_mask_t key;
@@ -195,13 +190,13 @@ driver_info_t *hd_pcidb(hd_data_t *hd_data, hd_t *hd)
 
   if(!(p = hd_data->hddb_pci)) return NULL;
 
-  if(ID_TAG(hd->vend) != TAG_PCI) return NULL;
+  if(ID_TAG(hd->vendor3.id) != TAG_PCI) return NULL;
 
-  vendor = ID_VALUE(hd->vend);
-  device = ID_VALUE(hd->dev);
-  subvendor = ID_VALUE(hd->sub_vend);
+  vendor = ID_VALUE(hd->vendor3.id);
+  device = ID_VALUE(hd->device3.id);
+  subvendor = ID_VALUE(hd->sub_vendor3.id);
   subdevice = ID_VALUE(hd->sub_dev);
-  pciclass = (hd->base_class << 16) + ((hd->sub_class & 0xff) << 8) + (hd->prog_if & 0xff);
+  pciclass = (hd->base_class.id << 16) + ((hd->sub_class.id & 0xff) << 8) + (hd->prog_if.id & 0xff);
 
   if(
     hd->detail &&
@@ -785,10 +780,7 @@ void hddb_dump_raw(hddb2_data_t *hddb, FILE *f)
     else if(fl == FLAG_ID) {
       t = ID_TAG(v);
       id = ID_VALUE(v);
-      fprintf(f, "%s0x%04x",
-        t < sizeof hid_tag_names / sizeof *hid_tag_names ? hid_tag_names[t] : "",
-        id
-      );
+      fprintf(f, "%s0x%04x", hid_tag_name(t), id);
       if(t == TAG_EISA) {
         fprintf(f, " (%s)", eisa_vendor_str(id));
       }
@@ -886,10 +878,7 @@ void hddb_dump_skey(hddb2_data_t *hddb, FILE *f, prefix_t pre, hddb_entry_mask_t
           else if(ent == he_baseclass_id) {
             u = 3;
           }
-          fprintf(f, "%s0x%0*x",
-            tag < sizeof hid_tag_names / sizeof *hid_tag_names ? hid_tag_names[tag] : "",
-            u, id
-          );
+          fprintf(f, "%s0x%0*x", hid_tag_name(tag), u, id);
         }
         if(r_or_m) {
           fprintf(f, "%c0x%04x", r_or_m == 1 ? '+' : '&', rm_val);
@@ -1461,80 +1450,6 @@ int hd_find_device_by_name(hd_data_t *hd_data, unsigned base_class, char *vendor
 }
 
 
-char *hd_bus_name(hd_data_t *hd_data, unsigned bus)
-{
-  hddb_search_t hs = {};
-
-  hs.bus.id = bus;
-  hs.key |= 1 << he_bus_id;
-
-  hddb_search(hd_data, &hs);
-
-  return hs.bus.name;
-}
-
-char *hd_class_name(hd_data_t *hd_data, int level, unsigned base_class, unsigned sub_class, unsigned prog_if)
-{
-  hddb_search_t hs = {};
-  static char *name = NULL;
-  char *s;
-
-  hs.base_class.id = base_class;
-  hs.sub_class.id = sub_class;
-  hs.prog_if.id = prog_if;
-  hs.key |= 1 << he_baseclass_id;
-  if(level > 1) hs.key |= 1 << he_subclass_id;
-  if(level > 2) hs.key |= 1 << he_progif_id;
-
-  hddb_search(hd_data, &hs);
-
-  if(name) name = free_mem(name);
-
-  s = hs.base_class.name;
-  switch(level) {
-    case 2:
-      if(hs.sub_class.name) s = hs.sub_class.name;
-      break;
-
-    case 3:
-      if(hs.sub_class.name) s = hs.sub_class.name;
-      if(hs.prog_if.name) {
-        str_printf(&name, 0, "%s (%s)", s, hs.prog_if.name);
-        s = name;
-      }
-      break;
-  }
-
-  return s;
-}
-
-char *hd_vendor_name(hd_data_t *hd_data, unsigned vendor)
-{
-  hddb_search_t hs = {};
-
-  hs.vendor.id = vendor;
-  hs.key |= 1 << he_vendor_id;
-
-  hddb_search(hd_data, &hs);
-
-  return hs.vendor.name;
-}
-
-
-char *hd_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device)
-{
-  hddb_search_t hs = {};
-
-  hs.vendor.id = vendor;
-  hs.device.id = device;
-  hs.key |= (1 << he_vendor_id) + (1 << he_device_id);
-
-  hddb_search(hd_data, &hs);
-
-  return hs.device.name;
-}
-
-
 char *hd_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device)
 {
   hddb_search_t hs = {};
@@ -1606,27 +1521,30 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
 
   if(hd->tag.fixed) return;
 
-  hs.base_class.id = hd->base_class;
+  hs.bus.id = hd->bus.id;
+  hs.key |= 1 << he_bus_id;
+
+  hs.base_class.id = hd->base_class.id;
   hs.key |= 1 << he_baseclass_id;
 
-  hs.sub_class.id = hd->sub_class;
+  hs.sub_class.id = hd->sub_class.id;
   hs.key |= 1 << he_subclass_id;
 
-  hs.prog_if.id = hd->prog_if;
+  hs.prog_if.id = hd->prog_if.id;
   hs.key |= 1 << he_progif_id;
 
-  if(hd->vend) {
-    hs.vendor.id = hd->vend;
+  if(hd->vendor3.id) {
+    hs.vendor.id = hd->vendor3.id;
     hs.key |= 1 << he_vendor_id;
   }
 
-  if(hd->dev) {
-    hs.device.id = hd->dev;
+  if(hd->device3.id) {
+    hs.device.id = hd->device3.id;
     hs.key |= 1 << he_device_id;
   }
 
-  if(hd->sub_vend) {
-    hs.sub_vendor.id = hd->sub_vend;
+  if(hd->sub_vendor3.id) {
+    hs.sub_vendor.id = hd->sub_vendor3.id;
     hs.key |= 1 << he_subvendor_id;
   }
 
@@ -1645,21 +1563,63 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
 
   hddb_search(hd_data, &hs);
 
+  if((hs.value & (1 << he_bus_id))) {
+    hd->bus.id = hs.bus.id;
+  }
+
+  if((hs.value & (1 << he_bus_name))) {
+    if(!hd->ref) free_mem(hd->bus.name);
+    hd->bus.name = new_str(hs.bus.name);
+  }
+
   if((hs.value & (1 << he_baseclass_id))) {
-    hd->base_class = hs.base_class.id;
+    hd->base_class.id = hs.base_class.id;
+  }
+
+  if((hs.value & (1 << he_baseclass_name))) {
+    if(!hd->ref) free_mem(hd->base_class.name);
+    hd->base_class.name = new_str(hs.base_class.name);
   }
 
   if((hs.value & (1 << he_subclass_id))) {
-    hd->sub_class = hs.sub_class.id;
+    hd->sub_class.id = hs.sub_class.id;
+  }
+
+  if((hs.value & (1 << he_subclass_name))) {
+    if(!hd->ref) free_mem(hd->sub_class.name);
+    hd->sub_class.name = new_str(hs.sub_class.name);
   }
 
   if((hs.value & (1 << he_progif_id))) {
-    hd->prog_if = hs.prog_if.id;
+    hd->prog_if.id = hs.prog_if.id;
+  }
+
+  if((hs.value & (1 << he_progif_name))) {
+    if(!hd->ref) free_mem(hd->prog_if.name);
+    hd->prog_if.name = new_str(hs.prog_if.name);
   }
 
   if((hs.value & (1 << he_requires))) {
     if(!hd->ref) hd->requires = free_str_list(hd->requires);
     hd->requires = hd_split('|', hs.requires);
+  }
+
+  if((hs.value & (1 << he_vendor_id))) {
+    hd->vendor3.id = hs.vendor.id;
+  }
+
+  if((hs.value & (1 << he_vendor_name))) {
+    if(!hd->ref) free_mem(hd->vendor3.name);
+    hd->vendor3.name = new_str(hs.vendor.name);
+  }
+
+  if((hs.value & (1 << he_device_id))) {
+    hd->device3.id = hs.device.id;
+  }
+
+  if((hs.value & (1 << he_device_name))) {
+    if(!hd->ref) free_mem(hd->device3.name);
+    hd->device3.name = new_str(hs.device.name);
   }
 
   /* get driver info */
@@ -1716,11 +1676,11 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     }
   }
 
-  if(!new_driver_info && hd->base_class == bc_keyboard) {
+  if(!new_driver_info && hd->base_class.id == bc_keyboard) {
     new_driver_info = kbd_driver(hd_data, hd);
   }
 
-  if(!new_driver_info && hd->base_class == bc_monitor) {
+  if(!new_driver_info && hd->base_class.id == bc_monitor) {
     new_driver_info = monitor_driver(hd_data, hd);
   }
 
@@ -1857,7 +1817,7 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
     { 33, "us", "us" }
   };
 
-  if(hd->sub_class == sc_keyboard_console) return NULL;
+  if(hd->sub_class.id == sc_keyboard_console) return NULL;
 
   di = new_mem(sizeof *di);
   di->kbd.type = di_kbd;
@@ -1877,8 +1837,8 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
       ki->XkbModel = new_str("macintosh");
       for(hd_tmp = hd_data->hd; hd_tmp; hd_tmp = hd_tmp->next) {
         if(
-          hd_tmp->base_class == bc_internal &&
-          hd_tmp->sub_class == sc_int_cpu &&
+          hd_tmp->base_class.id == bc_internal &&
+          hd_tmp->sub_class.id == sc_int_cpu &&
           hd_tmp->detail &&
           hd_tmp->detail->type == hd_detail_cpu &&
           hd_tmp->detail->cpu.data
@@ -1894,16 +1854,16 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
 
     case arch_sparc:
     case arch_sparc64:
-      if(hd->vend == MAKE_ID(TAG_SPECIAL, 0x0202)) {
+      if(hd->vendor3.id == MAKE_ID(TAG_SPECIAL, 0x0202)) {
         ki->XkbRules = new_str("sun");
-        u = ID_VALUE(hd->dev);
+        u = ID_VALUE(hd->device3.id);
         if(u == 4) ki->XkbModel = new_str("type4");
         if(u == 5) {
           ki->XkbModel = new_str(ID_VALUE(hd->sub_dev) == 2 ? "type5_euro" : "type5");
         }
         s1 = s2 = NULL;
 
-        switch(hd->prog_if) {
+        switch(hd->prog_if.id) {
           case  0: case  1: case 33: case 34: case 80: case 81:
           default:
             s1 = "us"; s2 = "sunkeymap";
@@ -2009,7 +1969,7 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
   }
 
   if(
-    hd->bus == bus_usb &&
+    hd->bus.id == bus_usb &&
     hd->detail &&
     hd->detail->type == hd_detail_usb &&
     (usb = hd->detail->usb.data) &&
@@ -2139,7 +2099,7 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
       free_str_list(sl0);
     }
 
-    if(hd->bus == bus_pci) continue;
+    if(hd->bus.id == bus_pci) continue;
 
     pnr = 1;
     while((ipi = hd_ihw_get_parameter(ici->handle, pnr++))) {
@@ -2566,4 +2526,10 @@ char *module_cmd(hd_t *hd, char *cmd)
   return buf;
 }
 
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+char *hid_tag_name(int tag)
+{
+  return tag < sizeof hid_tag_names / sizeof *hid_tag_names ? hid_tag_names[tag] : "";
+}
 

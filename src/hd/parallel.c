@@ -45,7 +45,7 @@ void do_lp(hd_data_t *hd_data)
   PROGRESS(1, 0, "pp mod");
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_comm && hd->sub_class == sc_com_par) break;
+    if(hd->base_class.id == bc_comm && hd->sub_class.id == sc_com_par) break;
   }
 
   /* ... if there seems to be a parallel interface, try to load it */
@@ -113,8 +113,8 @@ void do_lp(hd_data_t *hd_data)
 
     for(hd = hd_data->hd; hd; hd = hd->next) {
       if(
-        hd->base_class == bc_comm &&
-        hd->sub_class == sc_com_par &&
+        hd->base_class.id == bc_comm &&
+        hd->sub_class.id == sc_com_par &&
         hd->unix_dev_name &&
         !strcmp(hd->unix_dev_name, unix_dev)
       ) break;
@@ -123,8 +123,8 @@ void do_lp(hd_data_t *hd_data)
     if(!hd) {
       /* no entry ??? */
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_comm;
-      hd->sub_class = sc_com_par;
+      hd->base_class.id = bc_comm;
+      hd->sub_class.id = sc_com_par;
       hd->unix_dev_name = new_str(unix_dev);
       if(port) {
         res = add_res_entry(&hd->res, new_mem(sizeof *res));
@@ -146,14 +146,15 @@ void do_lp(hd_data_t *hd_data)
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->attached_to = hd_i->idx;
       hd->unix_dev_name = new_str(hd_i->unix_dev_name);
-      hd->base_class = bc_none;
-      if(base_class && !strcasecmp(base_class, "printer")) hd->base_class = bc_printer;
-      hd->bus = bus_parallel;
+      hd->base_class.id = bc_none;
+      if(base_class && !strcasecmp(base_class, "printer")) hd->base_class.id = bc_printer;
+      hd->bus.id = bus_parallel;
 
-      if(!hd_find_device_by_name(hd_data, hd->base_class, vendor, device, &hd->vend, &hd->dev)) {
+      // ###################
+      if(!hd_find_device_by_name(hd_data, hd->base_class.id, vendor, device, &hd->vendor3.id, &hd->device3.id)) {
         /* not found in database */
-        hd->dev_name = new_str(device);
-        hd->vend_name = new_str(vendor);
+        hd->vendor3.name = new_str(vendor);
+        hd->device3.name = new_str(device);
       }
     }
 
@@ -183,7 +184,7 @@ void do_zip(hd_data_t *hd_data)
 
   if(!(is_imm || is_ppa)) {
     for(hd = hd_data->hd; hd; hd = hd->next) {
-      if(hd->base_class == bc_comm && hd->sub_class == sc_com_par) break;
+      if(hd->base_class.id == bc_comm && hd->sub_class.id == sc_com_par) break;
     }
     /* ... if there seems to be a parallel interface, try to load it */
     if(hd) {
@@ -225,8 +226,8 @@ void do_zip(hd_data_t *hd_data)
     if(unix_dev) {
       for(hd = hd_data->hd; hd; hd = hd->next) {
         if(
-          hd->base_class == bc_comm &&
-          hd->sub_class == sc_com_par &&
+          hd->base_class.id == bc_comm &&
+          hd->sub_class.id == sc_com_par &&
           hd->unix_dev_name &&
           !strcmp(hd->unix_dev_name, unix_dev)
         ) break;
@@ -235,8 +236,8 @@ void do_zip(hd_data_t *hd_data)
       if(!hd) {
         /* no entry ??? */
         hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->base_class = bc_comm;
-        hd->sub_class = sc_com_par;
+        hd->base_class.id = bc_comm;
+        hd->sub_class.id = sc_com_par;
         hd->unix_dev_name = new_str(unix_dev);
       }
     }
@@ -247,11 +248,11 @@ void do_zip(hd_data_t *hd_data)
       hd->attached_to = hd_i->idx;
       hd->unix_dev_name = new_str(hd_i->unix_dev_name);
     }
-    hd->base_class = bc_storage;
-    hd->sub_class = sc_sto_scsi;
-    hd->bus = bus_parallel;
-    hd->vend = MAKE_ID(TAG_SPECIAL, 0x1800);
-    hd->dev = MAKE_ID(TAG_SPECIAL, (i % 2) ? 2 : 1);
+    hd->base_class.id = bc_storage;
+    hd->sub_class.id = sc_sto_scsi;
+    hd->bus.id = bus_parallel;
+    hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x1800);
+    hd->device3.id = MAKE_ID(TAG_SPECIAL, (i % 2) ? 2 : 1);
   }
 
   if(!is_imm0) unload_module(hd_data, "imm");

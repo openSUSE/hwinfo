@@ -329,6 +329,15 @@ typedef enum {
 
 
 /**
+ * Holds id/name pairs.
+ * Used for bus, class, vendor, %device and such.
+ */
+typedef struct {
+  unsigned id;		/**< Numeric id. */
+  char *name;		/**< Name (if any) that corresponds to \ref id. */
+} hd_id_t;
+
+/**
  * String list type.
  * Used whenever we create a list of strings (e.g. file read).
  */
@@ -1392,7 +1401,7 @@ typedef struct s_hd_t {
   /**
    * Bus type.
    */ 
-  unsigned bus;
+  hd_id_t bus;
 
   /**
    * Slot and bus number.
@@ -1408,58 +1417,43 @@ typedef struct s_hd_t {
   /**
    * Base class.
    */
-  unsigned base_class;
+  hd_id_t base_class;
 
   /**
    * Sub class.
    */
-  unsigned sub_class;
+  hd_id_t sub_class;
 
   /**
    * (PCI) programming interface.
    */
-  unsigned prog_if;
+  hd_id_t prog_if;
 
   /**
-   * Vendor id.
+   * Vendor id and name.
    * Id is actually a combination of some tag to differentiate the
    * various id types and the real id. Use the \ref ID_VALUE macro to
    * get e.g. the real PCI id value for a PCI %device.
    */
-  unsigned vend;
+  hd_id_t vendor3;
 
   /**
-   * Vendor name (corresponds to \ref vend).
-   */
-  char *vend_name;
-
-  /**
-   * Device id.
+   * Device id and name.
    * Id is actually a combination of some tag to differentiate the
    * various id types and the real id. Use the \ref ID_VALUE macro to
    * get e.g. the real PCI id value for a PCI %device.
-   */
-  unsigned dev;
-
-  /**
-   * Device name (corresponds to \ref dev).
    * \note If you're looking or something printable, you might want to use \ref model
    * instead.
    */
-  char *dev_name;
+  hd_id_t device3;
 
   /**
-   * Subvendor id.
+   * Subvendor id and name.
    * Id is actually a combination of some tag to differentiate the
    * various id types and the real id. Use the \ref ID_VALUE macro to
    * get e.g. the real PCI id value for a PCI %device.
    */
-  unsigned sub_vend;
-
-  /**
-   * Subvendor name (corresponds to \ref sub_vend).
-   */
-  char *sub_vend_name;
+  hd_id_t sub_vendor3;
 
   /**
    * Subdevice id.
@@ -1848,10 +1842,6 @@ hd_t *hd_get_device_by_idx(hd_data_t *hd_data, int idx);
 
 /* implemented in hddb.c */
 
-char *hd_bus_name(hd_data_t *hd_data, unsigned bus);
-char *hd_class_name(hd_data_t *hd_data, int level, unsigned base_class, unsigned sub_class, unsigned prog_if);
-char *hd_vendor_name(hd_data_t *hd_data, unsigned vendor);
-char *hd_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device);
 char *hd_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned subvendor, unsigned subdevice);
 
 int hd_find_device_by_name(hd_data_t *hd_data, unsigned base_class, char *vendor, char *device, unsigned *vendor_id, unsigned *device_id);

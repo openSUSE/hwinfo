@@ -63,7 +63,7 @@ void hd_scan_usb(hd_data_t *hd_data)
   PROGRESS(1, 0, "check");
 
   for(hd = hd_data->hd; hd && usb_ctrl_idx < sizeof usb_ctrl / sizeof *usb_ctrl; hd = hd->next) {
-    if(hd->base_class == bc_serial && hd->sub_class == sc_ser_usb) {
+    if(hd->base_class.id == bc_serial && hd->sub_class.id == sc_ser_usb) {
       usb_ctrl[usb_ctrl_idx++] = hd->idx;
     }
   }
@@ -74,8 +74,8 @@ void hd_scan_usb(hd_data_t *hd_data)
     load_module(hd_data, "usbcore");
     hd2 = hd_get_device_by_idx(hd_data, usb_ctrl[0]);
     s = "usb-uhci";
-    if(hd2 && hd2->prog_if == pif_usb_ohci) s = "usb-ohci";
-    if(hd2 && hd2->prog_if == pif_usb_ehci) s = "usb-ehci";
+    if(hd2 && hd2->prog_if.id == pif_usb_ohci) s = "usb-ohci";
+    if(hd2 && hd2->prog_if.id == pif_usb_ehci) s = "usb-ehci";
     load_module(hd_data, s);
     load_module(hd_data, "input");
     load_module(hd_data, "hid");
@@ -98,7 +98,7 @@ void hd_scan_usb(hd_data_t *hd_data)
     usb = find_usb_entry(hd_data, &usb_idx);
     if(usb) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->bus = bus_usb;
+      hd->bus.id = bus_usb;
       hd->detail = new_mem(sizeof *hd->detail);
       hd->detail->type = hd_detail_usb;
       hd->detail->usb.data = usb;
@@ -108,23 +108,23 @@ void hd_scan_usb(hd_data_t *hd_data)
       hd->slot = (usb->bus << 8) + usb->dev_nr;
 
       if(usb->vendor || usb->device) {
-        hd->vend = MAKE_ID(TAG_USB, usb->vendor);
-        hd->dev = MAKE_ID(TAG_USB, usb->device);
+        hd->vendor3.id = MAKE_ID(TAG_USB, usb->vendor);
+        hd->device3.id = MAKE_ID(TAG_USB, usb->device);
       }
       if(usb->rev) str_printf(&hd->rev_name, 0, "%x.%02x", usb->rev >> 8, usb->rev & 0xff);
 
       if(usb->manufact) {
-        if(hd->vend)
-          hd->sub_vend_name = new_str(usb->manufact);
+        if(hd->vendor3.id)
+          hd->sub_vendor3.name = new_str(usb->manufact);
         else
-          hd->vend_name = new_str(usb->manufact);
+          hd->vendor3.name = new_str(usb->manufact);
       }
 
       if(usb->product) {
-        if(hd->dev)
+        if(hd->device3.id)
           hd->sub_dev_name = new_str(usb->product);
         else
-          hd->dev_name = new_str(usb->product);
+          hd->device3.name = new_str(usb->product);
       }
 
       if(usb->serial) hd->serial = new_str(usb->serial);
@@ -140,10 +140,10 @@ void hd_scan_usb(hd_data_t *hd_data)
       set_class_entries(hd_data, hd, usb);
 
       if (usb->driver && !strcmp(usb->driver,"usbscanner")) {
-      	hd->base_class = bc_scanner;
+      	hd->base_class.id = bc_scanner;
       }
 
-      if(hd->base_class == bc_mouse) {
+      if(hd->base_class.id == bc_mouse) {
 #if 0
         mse_cnt = get_next_device(mse_dev, mse_cnt);
         if(mse_cnt >= 0) str_printf(&hd->unix_dev_name, 0, "%s%d", mse_dev, mse_cnt++);
@@ -153,17 +153,17 @@ void hd_scan_usb(hd_data_t *hd_data)
 #endif
       }
 
-      if(hd->base_class == bc_keyboard) {
+      if(hd->base_class.id == bc_keyboard) {
         // kbd_cnt = get_next_device(kbd_dev, kbd_cnt);
         // if(kbd_cnt >= 0) str_printf(&hd->unix_dev_name, 0, "%s%d", kbd_dev, kbd_cnt++);
       }
 
-      if(hd->base_class == bc_printer) {
+      if(hd->base_class.id == bc_printer) {
         lp_cnt = get_next_device(lp_dev, lp_cnt);
         if(lp_cnt >= 0 && lp_cnt < 8) str_printf(&hd->unix_dev_name, 0, "%s%d", lp_dev, lp_cnt++);
       }
 
-      if(hd->base_class == bc_modem) {
+      if(hd->base_class.id == bc_modem) {
         acm_cnt = get_next_device(acm_dev, acm_cnt);
         if(acm_cnt >= 0) str_printf(&hd->unix_dev_name, 0, "%s%d", acm_dev, acm_cnt++);
       }
@@ -177,7 +177,7 @@ void hd_scan_usb(hd_data_t *hd_data)
   /* now, connect the usb devices to each other */
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->bus == bus_usb &&
+      hd->bus.id == bus_usb &&
       hd->detail &&
       hd->detail->type == hd_detail_usb
     ) {
@@ -190,19 +190,19 @@ void hd_scan_usb(hd_data_t *hd_data)
           hd->attached_to = usb->hd_idx;
         }
       }
-      else if(hd->base_class == bc_hub && hd_usb->bus < usb_ctrl_idx) {
+      else if(hd->base_class.id == bc_hub && hd_usb->bus < usb_ctrl_idx) {
         /* root hub */
         hd->attached_to = usb_ctrl[hd_usb->bus];
 
         hd2 = hd_get_device_by_idx(hd_data, hd->attached_to);
 
-        if(hd2 && !(hd->vend || hd->vend_name)) {
-          hd->vend = hd2->vend;
-          hd->vend_name = new_str(hd2->vend_name);
+        if(hd2 && !(hd->vendor3.id || hd->vendor3.name)) {
+          hd->vendor3.id = hd2->vendor3.id;
+          hd->vendor3.name = new_str(hd2->vendor3.name);
         }
 
-        if(!(hd->dev || hd->dev_name)) {
-          hd->dev_name = new_str("Root Hub");
+        if(!(hd->device3.id || hd->device3.name)) {
+          hd->device3.name = new_str("Root Hub");
         }
       }
     }
@@ -211,7 +211,7 @@ void hd_scan_usb(hd_data_t *hd_data)
   /* remove potentially dangling 'next' links */
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->bus == bus_usb &&
+      hd->bus.id == bus_usb &&
       hd->detail &&
       hd->detail->type == hd_detail_usb
     ) {
@@ -457,13 +457,13 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
 
   switch(cls) {
     case 2:
-      hd->base_class = bc_modem;
+      hd->base_class.id = bc_modem;
       break;
 
     case 3:
       if(sub == 1 && prot == 1) {
-        hd->base_class = bc_keyboard;
-        hd->sub_class = sc_keyboard_kbd;
+        hd->base_class.id = bc_keyboard;
+        hd->sub_class.id = sc_keyboard_kbd;
         break;
       }
       if(sub == 1 && prot == 2) {
@@ -471,8 +471,8 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
           (usb->vendor == 0x056a && usb->device == 0x0022)	/* Wacom Tablet */
 //          || (usb->vendor == 0x08ca && usb->device == 0x0020)	/* AIPTEK APT-6000U tablet */
         )) {
-          hd->base_class = bc_mouse;
-          hd->sub_class = sc_mou_usb;
+          hd->base_class.id = bc_mouse;
+          hd->sub_class.id = sc_mou_usb;
           hd->compat_vend = MAKE_ID(TAG_SPECIAL, 0x0200);
           hd->compat_dev = MAKE_ID(TAG_SPECIAL, 0x001);
         }
@@ -482,46 +482,46 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
 
     case 6:
       if(sub == 1 && prot == 1) { /* PTP camera */
-        hd->base_class = bc_camera;
-        hd->sub_class = sc_camera_digital;
+        hd->base_class.id = bc_camera;
+        hd->sub_class.id = sc_camera_digital;
         break;
       }
       break;
 
     case 7:
-      hd->base_class = bc_printer;
+      hd->base_class.id = bc_printer;
       break;
 
     case 8:
-      hd->base_class = bc_storage_device;
+      hd->base_class.id = bc_storage_device;
       switch(sub) {
         case 1:		/* flash devices & removable media */
         case 5:
         case 6:
-          hd->sub_class = sc_sdev_disk;
+          hd->sub_class.id = sc_sdev_disk;
           break;
         case 2:
-          hd->sub_class = sc_sdev_cdrom;
+          hd->sub_class.id = sc_sdev_cdrom;
           break;
         case 3:
-          hd->sub_class = sc_sdev_tape;
+          hd->sub_class.id = sc_sdev_tape;
           break;
         case 4:
-          hd->sub_class = sc_sdev_floppy;
+          hd->sub_class.id = sc_sdev_floppy;
           break;
         default:
-          hd->sub_class = sc_sdev_other;
+          hd->sub_class.id = sc_sdev_other;
       }
       break;
 
     case 9:
-      hd->base_class = bc_hub;
+      hd->base_class.id = bc_hub;
       break;
   }
 
-  if((u = device_class(hd_data, hd->vend, hd->dev))) {
-    hd->base_class = u >> 8;
-    hd->sub_class = u & 0xff;
+  if((u = device_class(hd_data, hd->vendor3.id, hd->device3.id))) {
+    hd->base_class.id = u >> 8;
+    hd->sub_class.id = u & 0xff;
   }
 
 }
@@ -603,7 +603,7 @@ void add_usb_guid(hd_t *hd)
   unsigned pg[3];
   char c, *s;
 
-  pg[0] = ((hd->vend & 0xffff) << 16) | (hd->dev & 0xffff);
+  pg[0] = ((hd->vendor3.id & 0xffff) << 16) | (hd->device3.id & 0xffff);
   pg[1] = pg[2] = 0;
   if(hd->serial) {
     for(s = hd->serial; *s; s++) {

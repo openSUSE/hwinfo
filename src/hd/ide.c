@@ -70,7 +70,7 @@ void hd_scan_ide(hd_data_t *hd_data)
         vend = MAKE_ID(TAG_PCI, u2);
         dev = MAKE_ID(TAG_PCI, u3);
         for(hd = hd_data->hd; hd; hd = hd->next) {
-          if(hd->slot == slot && hd->func == func && hd->vend == vend && hd->dev == dev) {
+          if(hd->slot == slot && hd->func == func && hd->vendor3.id == vend && hd->device3.id == dev) {
             if_table[i] = hd->idx;
             if(!search_str_list(hd->extra_info, t)) {
               add_str_list(&hd->extra_info, t);
@@ -120,8 +120,8 @@ void hd_scan_ide(hd_data_t *hd_data)
       /* ok, assume the ide drive exists */
 
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_storage_device;
-      hd->bus = bus_ide;
+      hd->base_class.id = bc_storage_device;
+      hd->bus.id = bus_ide;
       hd->slot = i;
       hd->attached_to = parent;
       found++;
@@ -135,13 +135,13 @@ void hd_scan_ide(hd_data_t *hd_data)
         u0 = sc_sdev_cdrom;
       else if(strstr(sl->str, "tape"))
         u0 = sc_sdev_tape;
-      hd->sub_class = u0;
+      hd->sub_class.id = u0;
 
       free_str_list(sl);
 
       str_printf(&fname, 0, PROC_IDE "/hd%c/model", i + 'a');
       if((sl = read_file(fname, 0, 1))) {
-        hd->dev_name = canon_str(sl->str, strlen(sl->str));
+        hd->device3.name = canon_str(sl->str, strlen(sl->str));
         free_str_list(sl);
       }
 
@@ -260,10 +260,10 @@ void scan_ide2(hd_data_t *hd_data)
 
   if(max_disks) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_storage;
-    hd->sub_class = sc_sto_other;
+    hd->base_class.id = bc_storage;
+    hd->sub_class.id = sc_sto_other;
     hd->vend_name = new_str("IBM");
-    hd->dev_name = new_str("VIO DASD");
+    hd->device3.name = new_str("VIO DASD");
   }
 
   for(i = 0; i < max_disks; i++) {
@@ -271,9 +271,9 @@ void scan_ide2(hd_data_t *hd_data)
     fd = open(s, O_RDONLY | O_NONBLOCK);
     if(fd >= 0) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_storage_device;
-      hd->sub_class = sc_sdev_disk;
-      hd->bus = bus_none;
+      hd->base_class.id = bc_storage_device;
+      hd->sub_class.id = sc_sdev_disk;
+      hd->bus.id = bus_none;
       hd->slot = i;
 
       hd->unix_dev_name = new_str(s);

@@ -1011,10 +1011,14 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
 
 hd_t *free_hd_entry(hd_t *hd)
 {
-  free_mem(hd->dev_name);
-  free_mem(hd->vend_name);
+  free_mem(hd->bus.name);
+  free_mem(hd->base_class.name);
+  free_mem(hd->sub_class.name);
+  free_mem(hd->prog_if.name);
+  free_mem(hd->vendor3.name);
+  free_mem(hd->device3.name);
+  free_mem(hd->sub_vendor3.name);
   free_mem(hd->sub_dev_name);
-  free_mem(hd->sub_vend_name);
   free_mem(hd->rev_name);
   free_mem(hd->serial);
   free_mem(hd->model);
@@ -2523,9 +2527,9 @@ int hd_has_special_eide(hd_data_t *hd_data)
 #endif
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->bus == bus_pci) {
+    if(hd->bus.id == bus_pci) {
       for(i = 0; i < sizeof ids / sizeof *ids; i++) {
-        if(hd->vend == ids[i][0] && hd->dev == ids[i][1]) return 1;
+        if(hd->vendor3.id == ids[i][0] && hd->device3.id == ids[i][1]) return 1;
       }
     }
   }
@@ -2584,16 +2588,16 @@ int hd_has_pcmcia(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-       hd->base_class == bc_bridge &&
-      (hd->sub_class == sc_bridge_pcmcia || hd->sub_class == sc_bridge_cardbus)
+       hd->base_class.id == bc_bridge &&
+      (hd->sub_class.id == sc_bridge_pcmcia || hd->sub_class.id == sc_bridge_cardbus)
     ) return 1;
 
     /* just in case... */
-    if(hd->bus == bus_pci) {
+    if(hd->bus.id == bus_pci) {
       for(i = 0; i < sizeof ids / sizeof *ids; i++) {
         if(
-          ID_VALUE(hd->vend) == ids[i][0] &&
-          ID_VALUE(hd->dev) == ids[i][1]
+          ID_VALUE(hd->vendor3.id) == ids[i][0] &&
+          ID_VALUE(hd->device3.id) == ids[i][1]
         ) return 1;
       }
     }
@@ -2616,8 +2620,8 @@ int hd_apm_enabled(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_internal &&
-      hd->sub_class == sc_int_bios &&
+      hd->base_class.id == bc_internal &&
+      hd->sub_class.id == sc_int_bios &&
       hd->detail &&
       hd->detail->type == hd_detail_bios &&
       hd->detail->bios.data
@@ -2643,10 +2647,10 @@ int hd_usb_support(hd_data_t *hd_data)
 #endif
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_serial && hd->sub_class == sc_ser_usb) {
+    if(hd->base_class.id == bc_serial && hd->sub_class.id == sc_ser_usb) {
       for(res = hd->res; res; res = res->next) {
         if(res->any.type == res_irq)
-          return hd->prog_if == pif_usb_ohci ? 2 : 1;	/* 2: ohci, 1: uhci */
+          return hd->prog_if.id == pif_usb_ohci ? 2 : 1;	/* 2: ohci, 1: uhci */
       }
     }
   }
@@ -2724,7 +2728,7 @@ int hd_color(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_internal && hd->sub_class == sc_int_prom &&
+      hd->base_class.id == bc_internal && hd->sub_class.id == sc_int_prom &&
       hd->detail && hd->detail->type == hd_detail_prom &&
       (pt = hd->detail->prom.data) &&
       pt->has_color
@@ -2781,14 +2785,14 @@ unsigned hd_display_adapter(hd_data_t *hd_data)
   disp_cnt = disp_any_cnt = 0;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_display) {
+    if(hd->base_class.id == bc_display) {
       disp_any_cnt++;
       if(!disp_any) disp_any = hd->idx;
-      if(hd->sub_class == sc_dis_vga) {
+      if(hd->sub_class.id == sc_dis_vga) {
         disp_cnt++;
         if(!disp) disp = hd->idx;
-        if(hd->bus == bus_pci && !disp_pci) disp_pci = hd->idx;
-        if(hd->bus == bus_sbus && !disp_sbus) disp_sbus = hd->idx;
+        if(hd->bus.id == bus_pci && !disp_pci) disp_pci = hd->idx;
+        if(hd->bus.id == bus_sbus && !disp_sbus) disp_sbus = hd->idx;
       }
       if(!disp_di) {
         if(!(di = hd->driver_info)) {
@@ -2842,8 +2846,8 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_internal &&
-      hd->sub_class == sc_int_cpu &&
+      hd->base_class.id == bc_internal &&
+      hd->sub_class.id == sc_int_cpu &&
       hd->detail &&
       hd->detail->type == hd_detail_cpu &&
       hd->detail->cpu.data
@@ -3050,19 +3054,19 @@ hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
     /* ###### fix later: card bus magic */
     if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
       if(
-        bridge_hd->base_class == bc_bridge &&
-        bridge_hd->sub_class == sc_bridge_cardbus
+        bridge_hd->base_class.id == bc_bridge &&
+        bridge_hd->sub_class.id == sc_bridge_cardbus
       ) continue;
     }
 #endif
 
     /* add multimedia/sc_multi_video to display */
     if(
-      hd->base_class == base_class ||
+      hd->base_class.id == base_class ||
       (
         base_class == bc_display &&
-        hd->base_class == bc_multimedia &&
-        hd->sub_class == sc_multi_video
+        hd->base_class.id == bc_multimedia &&
+        hd->sub_class.id == sc_multi_video
       )
     ) {
       hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
@@ -3085,7 +3089,7 @@ hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_cl
 #endif
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == base_class && hd->sub_class == sub_class) {
+    if(hd->base_class.id == base_class && hd->sub_class.id == sub_class) {
       hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
       hd_copy(hd1, hd);
     }
@@ -3106,7 +3110,7 @@ hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus)
 #endif
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->bus == bus) {
+    if(hd->bus.id == bus) {
       hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
       hd_copy(hd1, hd);
     }
@@ -3355,8 +3359,8 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_storage_device &&
-      hd->sub_class == sc_sdev_disk &&
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_disk &&
       hd->block0
     ) {
       if(dev_name_duplicate(dl0, hd->unix_dev_name)) continue;
@@ -3511,15 +3515,15 @@ int cmp_hd(hd_t *hd1, hd_t *hd2)
   if(!hd1 || !hd2) return 1;
 
   if(
-    hd1->bus != hd2->bus ||
+    hd1->bus.id != hd2->bus.id ||
     hd1->slot != hd2->slot ||
     hd1->func != hd2->func ||
-    hd1->base_class != hd2->base_class ||
-    hd1->sub_class != hd2->sub_class ||
-    hd1->prog_if != hd2->prog_if ||
-    hd1->dev != hd2->dev ||
-    hd1->vend != hd2->vend ||
-    hd1->sub_vend != hd2->sub_vend ||
+    hd1->base_class.id != hd2->base_class.id ||
+    hd1->sub_class.id != hd2->sub_class.id ||
+    hd1->prog_if.id != hd2->prog_if.id ||
+    hd1->device3.id != hd2->device3.id ||
+    hd1->vendor3.id != hd2->vendor3.id ||
+    hd1->sub_vendor3.id != hd2->sub_vendor3.id ||
     hd1->rev != hd2->rev ||
     hd1->compat_dev != hd2->compat_dev ||
 
@@ -3654,12 +3658,12 @@ void hd_scan_xtra(hd_data_t *hd_data)
           else {
             hd = add_hd_entry(hd_data, __LINE__, 0);
           }
-          hd->base_class = u0 >> 8;
-          hd->sub_class = u0 & 0xff;
-          hd->vend = u1;
-          hd->dev = u2;
-          if(ID_TAG(hd->vend) == TAG_PCI) hd->bus = bus_pci;
-          if(ID_TAG(hd->vend) == TAG_USB) hd->bus = bus_usb;
+          hd->base_class.id = u0 >> 8;
+          hd->sub_class.id = u0 & 0xff;
+          hd->vendor3.id = u1;
+          hd->device3.id = u2;
+          if(ID_TAG(hd->vendor3.id) == TAG_PCI) hd->bus.id = bus_pci;
+          if(ID_TAG(hd->vendor3.id) == TAG_USB) hd->bus.id = bus_usb;
           if(*buf3) hd->unix_dev_name = new_str(buf3);
           hd->status.available = status_yes;
           hd->status.configured = status_new;
@@ -3669,11 +3673,11 @@ void hd_scan_xtra(hd_data_t *hd_data)
           for(hd = hd_data->hd; hd; hd = hd->next) {
             if(
                 (u0 == -1 || (
-                  hd->base_class == (u0 >> 8) &&
-                  hd->sub_class == (u0 & 0xff)
+                  hd->base_class.id == (u0 >> 8) &&
+                  hd->sub_class.id == (u0 & 0xff)
                 )) &&
-                (u1 == 0 || hd->vend == u1) &&
-                (u2 == 0 || hd->dev == u2) &&
+                (u1 == 0 || hd->vendor3.id == u1) &&
+                (u2 == 0 || hd->device3.id == u2) &&
                 (*buf3 == 0 || (
                   hd->unix_dev_name &&
                   !strcmp(hd->unix_dev_name, buf3)
@@ -3770,29 +3774,29 @@ void hd_add_old_id(hd_t *hd)
 
   if(hd->unique_id) return;
 
-  INT_CRC(id0, bus);
+  INT_CRC(id0, bus.id);
   INT_CRC(id0, slot);
   INT_CRC(id0, func);
-  INT_CRC(id0, base_class);
-  INT_CRC(id0, sub_class);
-  INT_CRC(id0, prog_if);
+  INT_CRC(id0, base_class.id);
+  INT_CRC(id0, sub_class.id);
+  INT_CRC(id0, prog_if.id);
   STR_CRC(id0, unix_dev_name);
   STR_CRC(id0, rom_id);
 
-  INT_CRC(id1, base_class);
-  INT_CRC(id1, sub_class);
-  INT_CRC(id1, prog_if);
-  INT_CRC(id1, dev);
-  INT_CRC(id1, vend);
+  INT_CRC(id1, base_class.id);
+  INT_CRC(id1, sub_class.id);
+  INT_CRC(id1, prog_if.id);
+  INT_CRC(id1, device3.id);
+  INT_CRC(id1, vendor3.id);
   INT_CRC(id1, sub_dev);
-  INT_CRC(id1, sub_vend);
+  INT_CRC(id1, sub_vendor3.id);
   INT_CRC(id1, rev);
   INT_CRC(id1, compat_dev);
   INT_CRC(id1, compat_vend);
-  STR_CRC(id1, dev_name);
-  STR_CRC(id1, vend_name);
+  STR_CRC(id1, device3.name);
+  STR_CRC(id1, vendor3.name);
   STR_CRC(id1, sub_dev_name);
-  STR_CRC(id1, sub_vend_name);
+  STR_CRC(id1, sub_vendor3.name);
   STR_CRC(id1, rev_name);
   STR_CRC(id1, serial);
 
@@ -3813,33 +3817,33 @@ void hd_add_id(hd_data_t *hd_data, hd_t *hd)
   hd->old_unique_id = hd->unique_id;
   hd->unique_id = NULL;
 
-  INT_CRC(id1, base_class);
-  INT_CRC(id1, sub_class);
-  INT_CRC(id1, prog_if);
-  INT_CRC(id1, dev);
-  INT_CRC(id1, vend);
+  INT_CRC(id1, base_class.id);
+  INT_CRC(id1, sub_class.id);
+  INT_CRC(id1, prog_if.id);
+  INT_CRC(id1, device3.id);
+  INT_CRC(id1, vendor3.id);
   INT_CRC(id1, sub_dev);
-  INT_CRC(id1, sub_vend);
+  INT_CRC(id1, sub_vendor3.id);
   INT_CRC(id1, rev);
   INT_CRC(id1, compat_dev);
   INT_CRC(id1, compat_vend);
   // make sure we get the same id even if, say, the pci name list changes
-  if(!hd->dev) STR_CRC(id1, dev_name);
-  if(!hd->vend) STR_CRC(id1, vend_name);
+  if(!hd->device3.id) STR_CRC(id1, device3.name);
+  if(!hd->vendor3.id) STR_CRC(id1, vendor3.name);
   if(!hd->sub_dev_name) STR_CRC(id1, sub_dev_name);
-  if(!hd->sub_vend_name) STR_CRC(id1, sub_vend_name);
+  if(!hd->sub_vendor3.name) STR_CRC(id1, sub_vendor3.name);
   if(!hd->rev_name) STR_CRC(id1, rev_name);
   STR_CRC(id1, serial);
 
   hd->unique_id1 = new_str(numid2str(id1, 64));
 
-  INT_CRC(id0, bus);
+  INT_CRC(id0, bus.id);
   // usb likes to re-attach devices at different places
   if(hd->unix_dev_name) {
     STR_CRC(id0, unix_dev_name);
   }
   else if(
-    hd->bus == bus_usb
+    hd->bus.id == bus_usb
   ) {
     for(cnt = 0, hd1 = hd_data->hd; hd1 && hd1->idx != hd->idx; hd1 = hd1->next) {
       if(
@@ -4151,21 +4155,21 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 
       if(
         (
-          hd->base_class == base_class &&
-          (sc == 0 || hd->sub_class == sub_class)
+          hd->base_class.id == base_class &&
+          (sc == 0 || hd->sub_class.id == sub_class)
         )
         ||
         ( /* list other display adapters, too */
           base_class == bc_display &&
-          hd->base_class == bc_multimedia &&
-          hd->sub_class == sc_multi_video
+          hd->base_class.id == bc_multimedia &&
+          hd->sub_class.id == sc_multi_video
         )
         ||
         ( /* make i2o & fibre channel controllers storage controllers */
           item == hw_storage_ctrl &&
           (
-            hd->base_class == bc_i2o ||
-            (hd->base_class == bc_serial && hd->sub_class == sc_ser_fiber)
+            hd->base_class.id == bc_i2o ||
+            (hd->base_class.id == bc_serial && hd->sub_class.id == sc_ser_fiber)
           )
         )
       ) {
@@ -4173,7 +4177,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         /* ISA-PnP sound cards: just one entry per card */
         if(
           item == hw_sound &&
-          hd->bus == bus_isa &&
+          hd->bus.id == bus_isa &&
           hd->is.isapnp &&
           hd->func
         ) continue;
@@ -4188,19 +4192,19 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
   }
 
   if(!hd->hw_class2) {
-    if(hd->bus == bus_usb) {
+    if(hd->bus.id == bus_usb) {
       hd->hw_class2 = hw_usb;
     }
-    else if(hd->bus == bus_pci) {
+    else if(hd->bus.id == bus_pci) {
       hd->hw_class2 = hw_pci;
     }
-    else if(hd->bus == bus_scsi) {
+    else if(hd->bus.id == bus_scsi) {
       hd->hw_class2 = hw_scsi;
     }
-    else if(hd->bus == bus_ide) {
+    else if(hd->bus.id == bus_ide) {
       hd->hw_class2 = hw_ide;
     }
-    else if(hd->bus == bus_isa && hd->is.isapnp) {
+    else if(hd->bus.id == bus_isa && hd->is.isapnp) {
       hd->hw_class2 = hw_isapnp;
     }
   }
@@ -4208,12 +4212,12 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
   if(!hd->hw_class3) {
     if(hd->usb_guid) {
 #if 0
-      if(hd->bus == bus_usb) {
+      if(hd->bus.id == bus_usb) {
         hd->hw_class3 = hw_scsi;
       }
       else
 #endif
-      if(hd->bus == bus_scsi) {
+      if(hd->bus.id == bus_scsi) {
         hd->hw_class3 = hw_usb;
       }
     }
@@ -4289,23 +4293,16 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
   else {
     /* normal entry */
 
-    vend = new_str(hd->sub_vend_name);
+    vend = new_str(hd->sub_vendor3.name);
 
     dev = new_str(hd->sub_dev_name);
 
-    if(!vend) vend = new_str(hd_vendor_name(hd_data, hd->sub_vend));
-
     if(!dev)
-      dev = new_str(hd_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev));
+      dev = new_str(hd_sub_device_name(hd_data, hd->vendor3.id, hd->device3.id, hd->sub_vendor3.id, hd->sub_dev));
 
-    if(!vend) vend = new_str(hd->vend_name);
+    if(!vend) vend = new_str(hd->vendor3.name);
 
-    if(!dev) dev = new_str(hd->dev_name);
-
-    if(!vend) vend = new_str(hd_vendor_name(hd_data, hd->vend));
-
-    if(!dev) dev = new_str(hd_device_name(hd_data, hd->vend, hd->dev));
-
+    if(!dev) dev = new_str(hd->device3.name);
 
     if(dev) {
       if(vend) {
@@ -4318,10 +4315,11 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
 
     if(!part1 && !part2) {
       if(hd->compat_vend || hd->compat_dev) {
-        compat = new_str(hd_device_name(hd_data, hd->compat_vend, hd->compat_dev));
+        // ###############
+        // compat = new_str(hd_device_name(hd_data, hd->compat_vend, hd->compat_dev));
       }
 
-      dev_class = new_str(hd_class_name(hd_data, 2, hd->base_class, hd->sub_class, 0));
+      dev_class = new_str(hd->sub_class.name ?: hd->base_class.name);
 
       hw_class = new_str(hd_hw_item_name(hd->hw_class));
 

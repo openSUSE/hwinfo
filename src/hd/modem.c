@@ -147,16 +147,16 @@ void get_serial_modem(hd_data_t *hd_data)
     if(
       (
         (
-          hd->base_class == bc_comm &&
-          hd->sub_class == sc_com_ser &&
+          hd->base_class.id == bc_comm &&
+          hd->sub_class.id == sc_com_ser &&
           !hd->tag.ser_skip &&
           hd->tag.ser_device != 2 &&		/* cf. serial.c */
           !has_something_attached(hd_data, hd)
         ) ||
         (
           chk_usb &&
-          hd->bus == bus_usb &&
-          hd->base_class == bc_modem
+          hd->bus.id == bus_usb &&
+          hd->base_class.id == bc_modem
         )
       ) && hd->unix_dev_name
     ) {
@@ -413,14 +413,14 @@ void get_serial_modem(hd_data_t *hd_data)
     if(!sm->is_modem) continue;
 
     hd = hd_get_device_by_idx(hd_data, sm->hd_idx);
-    if(hd && hd->base_class == bc_modem) {
+    if(hd && hd->base_class.id == bc_modem) {
       /* just *add* info */
 
     }
     else {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_modem;
-      hd->bus = bus_serial;
+      hd->base_class.id = bc_modem;
+      hd->bus.id = bus_serial;
       hd->unix_dev_name = new_str(sm->dev_name);
       hd->attached_to = sm->hd_idx;
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
@@ -434,25 +434,25 @@ void get_serial_modem(hd_data_t *hd_data)
       if(*sm->pnp_id) {
         strncpy(buf, sm->pnp_id, 3);
         buf[3] = 0;
-        hd->vend = name2eisa_id(buf);
-        hd->dev = MAKE_ID(TAG_EISA, strtol(sm->pnp_id + 3, NULL, 16));
+        hd->vendor3.id = name2eisa_id(buf);
+        hd->device3.id = MAKE_ID(TAG_EISA, strtol(sm->pnp_id + 3, NULL, 16));
       }
       hd->serial = new_str(sm->serial);
-      if(sm->user_name && hd->dev) {
+      if(sm->user_name && hd->device3.id) {
 #if 0
 // ######### FIXME
         add_device_name(hd_data, hd->vend, hd->dev, sm->user_name);
 #endif
       }
       else if(sm->user_name && sm->vend) {
-        if(!hd_find_device_by_name(hd_data, hd->base_class, sm->vend, sm->user_name, &hd->vend, &hd->dev)) {
-          hd->dev_name = new_str(sm->user_name);
-          hd->vend_name = new_str(sm->vend);
+        if(!hd_find_device_by_name(hd_data, hd->base_class.id, sm->vend, sm->user_name, &hd->vendor3.id, &hd->device3.id)) {
+          hd->device3.name = new_str(sm->user_name);
+          hd->vendor3.name = new_str(sm->vend);
         }
       }
-      if(!(hd->dev || hd->dev_name || hd->vend || hd->vend_name)) {
-        hd->vend = MAKE_ID(TAG_SPECIAL, 0x2000);
-        hd->dev = MAKE_ID(TAG_SPECIAL, 0x0001);
+      if(!(hd->device3.id || hd->device3.name || hd->vendor3.id || hd->vendor3.name)) {
+        hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x2000);
+        hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0001);
       }
     }
     res = add_res_entry(&hd->res, new_mem(sizeof *res));
@@ -495,7 +495,7 @@ void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
   s1 = NULL;
   if(sl) {
     if(strstr(sl->str, "PowerBook")) {
-      sm->vend = new_str("Apple");
+      sm->vendor3.id = new_str("Apple");
       sm->user_name = new_str(sl->str);
 
       return;
@@ -509,7 +509,7 @@ void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
 
   if(sl) {
     if(strstr(sl->str, "APPLE")) {
-      sm->vend = new_str("Apple");
+      sm->vendor3.id = new_str("Apple");
       str_printf(&sm->user_name, 0, "AT Modem");
       if(s1) {
         u = strtoul(s1, &s2, 10);

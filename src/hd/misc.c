@@ -76,8 +76,8 @@ void hd_scan_misc(hd_data_t *hd_data)
     /* what can the BIOS tell us? */
     for(hd = hd_data->hd; hd; hd = hd->next) {
       if(
-        hd->base_class == bc_internal &&
-        hd->sub_class == sc_int_bios &&
+        hd->base_class.id == bc_internal &&
+        hd->sub_class.id == sc_int_bios &&
         hd->detail &&
         hd->detail->type == hd_detail_bios &&
         hd->detail->bios.data
@@ -115,7 +115,7 @@ void hd_scan_misc(hd_data_t *hd_data)
   if(hd_probe_feature(hd_data, pr_misc_floppy)) {
     /* look for a floppy *device* entry... */
     for(hd = hd_data->hd; hd; hd = hd->next) {
-      if(hd->base_class == bc_storage_device && hd->sub_class == sc_sdev_floppy) {
+      if(hd->base_class.id == bc_storage_device && hd->sub_class.id == sc_sdev_floppy) {
 
         PROGRESS(1, 3, "read floppy");
         i = 5;
@@ -192,8 +192,8 @@ void hd_scan_misc(hd_data_t *hd_data)
   gather_resources(hd_data->misc, &res, "fpu", 0);
   if(res) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_internal;
-    hd->sub_class = sc_int_fpu;
+    hd->base_class.id = bc_internal;
+    hd->sub_class.id = sc_int_fpu;
     hd->res = res;
   }
 
@@ -206,8 +206,8 @@ void hd_scan_misc(hd_data_t *hd_data)
   gather_resources(hd_data->misc, &res, "cascade", W_DMA);
   if(res) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_system;
-    hd->sub_class = sc_sys_dma;
+    hd->base_class.id = bc_system;
+    hd->sub_class.id = sc_sys_dma;
     hd->res = res;
   }
 
@@ -219,8 +219,8 @@ void hd_scan_misc(hd_data_t *hd_data)
   gather_resources(hd_data->misc, &res, "cascade", W_IRQ);
   if(res) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_system;
-    hd->sub_class = sc_sys_pic;
+    hd->base_class.id = bc_system;
+    hd->sub_class.id = sc_sys_pic;
     hd->res = res;
   }
 
@@ -230,8 +230,8 @@ void hd_scan_misc(hd_data_t *hd_data)
   gather_resources(hd_data->misc, &res, "timer", 0);
   if(res) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_system;
-    hd->sub_class = sc_sys_timer;
+    hd->base_class.id = bc_system;
+    hd->sub_class.id = sc_sys_timer;
     hd->res = res;
   }
 
@@ -241,8 +241,8 @@ void hd_scan_misc(hd_data_t *hd_data)
   gather_resources(hd_data->misc, &res, "rtc", 0);
   if(res) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_system;
-    hd->sub_class = sc_sys_rtc;
+    hd->base_class.id = bc_system;
+    hd->sub_class.id = sc_sys_rtc;
     hd->res = res;
   }
 
@@ -251,8 +251,8 @@ void hd_scan_misc(hd_data_t *hd_data)
   gather_resources(hd_data->misc, &res, "keyboard", 0);
   if(res) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_input;
-    hd->sub_class = sc_inp_keyb;
+    hd->base_class.id = bc_input;
+    hd->sub_class.id = sc_inp_keyb;
     hd->res = res;
   }
 
@@ -262,8 +262,8 @@ void hd_scan_misc(hd_data_t *hd_data)
     gather_resources(hd_data->misc, &res, par, 0);
     if(res) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_comm;
-      hd->sub_class = sc_com_par;
+      hd->base_class.id = bc_comm;
+      hd->sub_class.id = sc_com_par;
       str_printf(&hd->unix_dev_name, 0, "/dev/lp%d", i);
       hd->res = res;
     }
@@ -276,14 +276,14 @@ void hd_scan_misc(hd_data_t *hd_data)
   if(res) {
     /* look for an existing entry */
     for(hd = hd_data->hd; hd; hd = hd->next) {
-      if(hd->base_class == bc_storage && hd->sub_class == sc_sto_floppy) break;
+      if(hd->base_class.id == bc_storage && hd->sub_class.id == sc_sto_floppy) break;
     }
 
     /* missing, so create one */
     if(!hd) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_storage;
-      hd->sub_class = sc_sto_floppy;
+      hd->base_class.id = bc_storage;
+      hd->sub_class.id = sc_sto_floppy;
     }
 
     hd->res = res;
@@ -304,7 +304,7 @@ void hd_scan_misc(hd_data_t *hd_data)
 
   if(res || fd >= 0) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_ps2;
+    hd->base_class.id = bc_ps2;
 
     if(res) {
       hd->res = res;
@@ -339,16 +339,16 @@ void hd_scan_misc2(hd_data_t *hd_data)
   if(res) {
     for(hd = hd_data->hd; hd; hd = hd->next) {
       if(
-        hd->base_class == bc_storage &&
-        hd->sub_class == sc_sto_ide &&
+        hd->base_class.id == bc_storage &&
+        hd->sub_class.id == sc_sto_ide &&
         have_common_res(hd->res, res)
       ) break;
     }
     if(!hd) {
       /* eg. non-PCI IDE controller */
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_storage;
-      hd->sub_class = sc_sto_ide;
+      hd->base_class.id = bc_storage;
+      hd->sub_class.id = sc_sto_ide;
       /* use join_res to join the i/o ranges of ide0/1 */
       join_res_io(&hd->res, res);
       join_res_irq(&hd->res, res);
@@ -370,7 +370,7 @@ void hd_scan_misc2(hd_data_t *hd_data)
   gather_resources(hd_data->misc, &res, "vesafb", 0);
   if(res) {
     for(i = 0, hd1 = NULL, hd = hd_data->hd; hd; hd = hd->next) {
-      if(hd->base_class == bc_display && hd->sub_class == sc_dis_vga) {
+      if(hd->base_class.id == bc_display && hd->sub_class.id == sc_dis_vga) {
         i++;
         hd1 = hd;
       }
@@ -382,8 +382,8 @@ void hd_scan_misc2(hd_data_t *hd_data)
       free_res_list(res);
 #else
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_display;
-      hd->sub_class = sc_dis_vga;
+      hd->base_class.id = bc_display;
+      hd->sub_class.id = sc_dis_vga;
       hd->res = res;
 #endif
     }
@@ -399,8 +399,8 @@ void hd_scan_misc2(hd_data_t *hd_data)
       /* more than 1: look again, now only 'active' cards */
       for(i = 0, hd1 = NULL, hd = hd_data->hd; hd; hd = hd->next) {
         if(
-          hd->base_class == bc_display &&
-          hd->sub_class == sc_dis_vga &&
+          hd->base_class.id == bc_display &&
+          hd->sub_class.id == sc_dis_vga &&
           active_vga_card(hd)
         ) {
           i++;
@@ -428,7 +428,7 @@ void hd_scan_misc2(hd_data_t *hd_data)
   gather_resources(hd_data->misc, &res, "serial(set)", 0);
   gather_resources(hd_data->misc, &res, "serial", 0);
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_comm && hd->sub_class == sc_com_ser) {
+    if(hd->base_class.id == bc_comm && hd->sub_class.id == sc_com_ser) {
       for(res1 = hd->res; res1; res1 = res1->next) {
         for(res2 = res; res2; res2 = res2->next) {
           if(res1->any.type == res2->any.type) {
@@ -460,9 +460,9 @@ void hd_scan_misc2(hd_data_t *hd_data)
   for(res2 = res; res2; res2 = res2->next) {
     if(res2->any.type != res_any) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_comm;
-      hd->sub_class = sc_com_ser;
-      hd->prog_if = 0x80;
+      hd->base_class.id = bc_comm;
+      hd->sub_class.id = sc_com_ser;
+      hd->prog_if.id = 0x80;
       for(; res2; res2 = res2->next) {
         if(res2->any.type != res_any) {
           res1 = add_res_entry(&hd->res, new_mem(sizeof *res));
@@ -662,7 +662,7 @@ int active_vga_card(hd_t *hd)
 {
   hd_res_t *res;
 
-  if(hd->bus != bus_pci) return 1;
+  if(hd->bus.id != bus_pci) return 1;
 
   for(res = hd->res; res; res = res->next) {
     if(

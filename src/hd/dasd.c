@@ -45,14 +45,14 @@ void hd_scan_dasd(hd_data_t *hd_data)
   for(sl = sl0; sl; sl = sl->next) {
     if(sscanf(sl->str, "%x%*s at (%*u:%*u) is dasd%c:active at blocksize: %u, %u blocks", &u0, &c, &u2, &u3) == 4) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_storage_device;
-      hd->bus = bus_none;
+      hd->base_class.id = bc_storage_device;
+      hd->bus.id = bus_none;
       hd->slot = (u0 >> 8) & 0xff;
       hd->func = u0 & 0xff;
 
-      hd->sub_class = sc_sdev_disk;
+      hd->sub_class.id = sc_sdev_disk;
 
-      hd->dev_name = new_str("S390 Disk");
+      hd->device3.name = new_str("S390 Disk");
       str_printf(&hd->unix_dev_name, 0, "/dev/dasd%c", c);
       str_printf(&hd->rom_id, 0, "%04X", u0);
 
@@ -82,10 +82,10 @@ void hd_scan_dasd(hd_data_t *hd_data)
 
   if(i > 1) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_storage;
-    hd->sub_class = sc_sto_other;
+    hd->base_class.id = bc_storage;
+    hd->sub_class.id = sc_sto_other;
     hd->vend_name = new_str("IBM");
-    hd->dev_name = new_str("VIO DASD");
+    hd->device3.name = new_str("VIO DASD");
   }
 }
 

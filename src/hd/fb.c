@@ -55,10 +55,10 @@ void hd_scan_fb(hd_data_t *hd_data)
     imac_vend = name2eisa_id("APP");
 
     for(hd = hd_data->hd; hd; hd = hd->next) {
-      if(hd->base_class == bc_monitor) break;
+      if(hd->base_class.id == bc_monitor) break;
     }
 
-    if(hd && hd->dev == imac_dev && hd->vend == imac_vend) {
+    if(hd && hd->device3.id == imac_dev && hd->vendor3.id == imac_vend) {
       hd->tag.remove = 1;
       remove_tagged_hd_entries(hd_data);
       imac = 1;
@@ -68,14 +68,14 @@ void hd_scan_fb(hd_data_t *hd_data)
     /* add monitor entry based on fb data if we have no other info */
     if(!hd) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_monitor;
+      hd->base_class.id = bc_monitor;
       if(imac) {
-        hd->vend = imac_vend;
-        hd->dev = imac_dev;
+        hd->vendor3.id = imac_vend;
+        hd->device3.id = imac_dev;
       }
       else {
-        hd->dev_name = new_str("Monitor");
-        hd->vend_name = new_str("Generic");
+        hd->vendor3.name = new_str("Generic");
+        hd->device3.name = new_str("Monitor");
       }
 
       res = add_res_entry(&hd->res, new_mem(sizeof *res));

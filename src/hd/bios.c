@@ -44,8 +44,8 @@ int detect_smp(hd_data_t *hd_data)
 
   for(bt = NULL, hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_internal &&
-      hd->sub_class == sc_int_bios &&
+      hd->base_class.id == bc_internal &&
+      hd->sub_class.id == sc_int_bios &&
       hd->detail &&
       hd->detail->type == hd_detail_bios &&
       (bt = hd->detail->bios.data)
@@ -90,8 +90,8 @@ void hd_scan_bios(hd_data_t *hd_data)
   PROGRESS(1, 0, "cmdline");
 
   hd = add_hd_entry(hd_data, __LINE__, 0);
-  hd->base_class = bc_internal;
-  hd->sub_class = sc_int_bios;
+  hd->base_class.id = bc_internal;
+  hd->sub_class.id = sc_int_bios;
   hd->detail = new_mem(sizeof *hd->detail);
   hd->detail->type = hd_detail_bios;
   hd->detail->bios.data = bt = new_mem(sizeof *bt);
@@ -307,8 +307,8 @@ void hd_scan_bios(hd_data_t *hd_data)
 
     if(vbe->ok && vbe->fb_start) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_framebuffer;
-      hd->sub_class = sc_fb_vesa;
+      hd->base_class.id = bc_framebuffer;
+      hd->sub_class.id = sc_fb_vesa;
 
 #if 0
       hd->detail = new_mem(sizeof *hd->detail);
@@ -316,9 +316,9 @@ void hd_scan_bios(hd_data_t *hd_data)
       hd->detail->bios.data = bt = new_mem(sizeof *bt);
 #endif
 
-      hd->vend_name = new_str(vbe->vendor_name);
-      hd->dev_name = new_str(vbe->product_name);
-      hd->sub_vend_name = new_str(vbe->oem_name);
+      hd->vendor3.name = new_str(vbe->vendor_name);
+      hd->device3.name = new_str(vbe->product_name);
+      hd->sub_vendor3.name = new_str(vbe->oem_name);
       hd->rev_name = new_str(vbe->product_revision);
 
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
@@ -355,7 +355,7 @@ void hd_scan_bios(hd_data_t *hd_data)
       if(
         hd->vend_name &&
         !strcmp(hd->vend_name, "Matrox") &&
-        hd->dev_name &&
+        hd->device3.name &&
         (
           strstr(hd->dev_name, "G200") ||
           strstr(hd->dev_name, "G400") ||

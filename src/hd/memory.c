@@ -57,8 +57,8 @@ void hd_scan_memory(hd_data_t *hd_data)
   if(klog_alt > msize0) msize0 = klog_alt;
 
   hd = add_hd_entry(hd_data, __LINE__, 0);
-  hd->base_class = bc_internal;
-  hd->sub_class = sc_int_main_mem;
+  hd->base_class.id = bc_internal;
+  hd->sub_class.id = sc_int_main_mem;
 
   res = add_res_entry(&hd->res, new_mem(sizeof *res));
   res->mem.type = res_mem;

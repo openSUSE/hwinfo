@@ -53,7 +53,7 @@ void hd_scan_net(hd_data_t *hd_data)
     found = 0;
     for(hd = hd_data->hd; hd; hd = hd->next) {
       if(
-        hd->base_class == bc_network_interface &&
+        hd->base_class.id == bc_network_interface &&
         hd->unix_dev_name &&
         !strcmp(hd->unix_dev_name, sl->str)
       ) {
@@ -64,69 +64,69 @@ void hd_scan_net(hd_data_t *hd_data)
 
     if(!found) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_network_interface;
+      hd->base_class.id = bc_network_interface;
       hd->unix_dev_name = new_str(sl->str);
 
       if(!strcmp(sl->str, "lo")) {
-        hd->sub_class = sc_nif_loopback;
+        hd->sub_class.id = sc_nif_loopback;
       }
       else if(sscanf(sl->str, "eth%u", &u) == 1) {
-        hd->sub_class = sc_nif_ethernet;
+        hd->sub_class.id = sc_nif_ethernet;
         hd->slot = u;
       }
       else if(sscanf(sl->str, "tr%u", &u) == 1) {
-        hd->sub_class = sc_nif_tokenring;
+        hd->sub_class.id = sc_nif_tokenring;
         hd->slot = u;
       }
       else if(sscanf(sl->str, "fddi%u", &u) == 1) {
-        hd->sub_class = sc_nif_fddi;
+        hd->sub_class.id = sc_nif_fddi;
         hd->slot = u;
       }
       else if(sscanf(sl->str, "escon%u", &u) == 1) {
-        hd->sub_class = sc_nif_escon;
+        hd->sub_class.id = sc_nif_escon;
         hd->slot = u;
       }
       else if(sscanf(sl->str, "sit%u", &u) == 1) {
-        hd->sub_class = sc_nif_sit;	/* ipv6 over ipv4 tunnel */
+        hd->sub_class.id = sc_nif_sit;	/* ipv6 over ipv4 tunnel */
         hd->slot = u;
       }
       /* ##### add more interface names here */
       else {
-        hd->sub_class = sc_nif_other;
+        hd->sub_class.id = sc_nif_other;
       }
 
-      hd->bus = bus_none;
+      hd->bus.id = bus_none;
 
 #if defined(__s390__) || defined(__s390x__)
       if(
-        hd->sub_class != sc_nif_loopback &&
-        hd->sub_class != sc_nif_sit
+        hd->sub_class.id != sc_nif_loopback &&
+        hd->sub_class.id != sc_nif_sit
       ) {
         hd0 = hd;
         hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->base_class = bc_network;
+        hd->base_class.id = bc_network;
         hd->unix_dev_name = new_str(hd0->unix_dev_name);
         hd->slot = hd0->slot;
-        hd->vend = MAKE_ID(TAG_SPECIAL, 0x6001);	// IBM
+        hd->vendor3.id = MAKE_ID(TAG_SPECIAL, 0x6001);	// IBM
         switch(hd0->sub_class) {
           case sc_nif_ethernet:
-            hd->sub_class = 0;
-            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0000);
+            hd->sub_class.id = 0;
+            hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0000);
             str_printf(&hd->dev_name, 0, "Ethernet card %d", hd->slot);
             break;
           case sc_nif_tokenring:
-            hd->sub_class = 1;
-            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0001);
+            hd->sub_class.id = 1;
+            hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0001);
             str_printf(&hd->dev_name, 0, "Token ring card %d", hd->slot);
             break;
           case sc_nif_escon:
-            hd->sub_class = 0x70;
-            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0070);
+            hd->sub_class.id = 0x70;
+            hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0070);
             str_printf(&hd->dev_name, 0, "ESCON %d", hd->slot);
             break;
           default:
-            hd->sub_class = 0x80;
-            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0080);
+            hd->sub_class.id = 0x80;
+            hd->device3.id = MAKE_ID(TAG_SPECIAL, 0x0080);
         }
       }
 #endif

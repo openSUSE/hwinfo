@@ -53,7 +53,7 @@ void hd_scan_cpu(hd_data_t *hd_data)
   read_cpuinfo(hd_data);
 
   for(hd0 = hd_data->hd; hd0; hd0 = hd0->next) {
-    if(hd0->base_class == bc_internal && hd0->sub_class == sc_int_cpu) break;
+    if(hd0->base_class.id == bc_internal && hd0->sub_class.id == sc_int_cpu) break;
   }
 
   if(!hd0 || hd0->next) return;		/* 0 or > 1 entries */
@@ -160,8 +160,8 @@ void read_cpuinfo(hd_data_t *hd_data)
     if(!cpus) cpus = 1;		/* at least 1 machine had a "cpus: 0" entry... */
     for(u = 0; u < cpus; u++) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_internal;
-      hd->sub_class = sc_int_cpu;
+      hd->base_class.id = bc_internal;
+      hd->sub_class.id = sc_int_cpu;
       hd->slot = u;
       hd->detail = new_mem(sizeof *hd->detail);
       hd->detail->type = hd_detail_cpu;
@@ -210,8 +210,8 @@ void read_cpuinfo(hd_data_t *hd_data)
       hd_data->boot = boot_silo;
 
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_internal;
-      hd->sub_class = sc_int_cpu;
+      hd->base_class.id = bc_internal;
+      hd->sub_class.id = sc_int_cpu;
       hd->slot = u;
       hd->detail = new_mem(sizeof *hd->detail);
       hd->detail->type = hd_detail_cpu;
@@ -289,8 +289,8 @@ void read_cpuinfo(hd_data_t *hd_data)
         ct->clock = mhz;
 
         hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->base_class = bc_internal;
-        hd->sub_class = sc_int_cpu;
+        hd->base_class.id = bc_internal;
+        hd->sub_class.id = sc_int_cpu;
         hd->slot = cpus;
         hd->detail = new_mem(sizeof *hd->detail);
         hd->detail->type = hd_detail_cpu;
@@ -348,8 +348,8 @@ void read_cpuinfo(hd_data_t *hd_data)
         ct->clock = mhz;
 
         hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->base_class = bc_internal;
-        hd->sub_class = sc_int_cpu;
+        hd->base_class.id = bc_internal;
+        hd->sub_class.id = sc_int_cpu;
         hd->slot = cpus;
         hd->detail = new_mem(sizeof *hd->detail);
         hd->detail->type = hd_detail_cpu;
@@ -419,8 +419,8 @@ void read_cpuinfo(hd_data_t *hd_data)
         ct->clock = mhz;
 
         hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->base_class = bc_internal;
-        hd->sub_class = sc_int_cpu;
+        hd->base_class.id = bc_internal;
+        hd->sub_class.id = sc_int_cpu;
         hd->slot = cpus;
         hd->detail = new_mem(sizeof *hd->detail);
         hd->detail->type = hd_detail_cpu;
@@ -462,8 +462,8 @@ void read_cpuinfo(hd_data_t *hd_data)
       hd_data->boot = boot_s390;
 
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = bc_internal;
-      hd->sub_class = sc_int_cpu;
+      hd->base_class.id = bc_internal;
+      hd->sub_class.id = sc_int_cpu;
       hd->slot = cpus;
       hd->detail = new_mem(sizeof *hd->detail);
       hd->detail->type = hd_detail_cpu;

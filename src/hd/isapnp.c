@@ -65,9 +65,9 @@ void hd_scan_isapnp(hd_data_t *hd_data)
 
   if(isapnp_ok) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->bus = bus_isa;
-    hd->base_class = bc_internal;
-    hd->sub_class = sc_int_isapnp_if;
+    hd->bus.id = bus_isa;
+    hd->base_class.id = bc_internal;
+    hd->sub_class.id = sc_int_isapnp_if;
 
     res = add_res_entry(&hd->res, new_mem(sizeof *res));
     res->io.type = res_io;
@@ -192,33 +192,33 @@ void build_list(hd_data_t *hd_data, str_list_t *isapnp_list)
 
       hd = add_hd_entry(hd_data, __LINE__, 0);
 
-      hd->bus = bus_isa;
+      hd->bus.id = bus_isa;
       hd->is.isapnp = 1;
       hd->slot = card;
       hd->func = ldev;
 
-      hd->vend = vend_id;
-      hd->dev = dev_id;
+      hd->vendor3.id = vend_id;
+      hd->device3.id = dev_id;
 
-      hd->base_class = base_class;
-      hd->sub_class = sub_class;
+      hd->base_class.id = base_class;
+      hd->sub_class.id = sub_class;
 
       hd->sub_dev = MAKE_ID(TAG_EISA, ldev_id);
-      hd->sub_vend = name2eisa_id(s1);
+      hd->sub_vendor3.id = name2eisa_id(s1);
 
-      if(hd->sub_vend == hd->vend && hd->sub_dev == hd->dev) {
-        hd->sub_vend = hd->sub_dev = 0;
+      if(hd->sub_vendor3.id == hd->vendor3.id && hd->sub_dev == hd->device3.id) {
+        hd->sub_vendor3.id = hd->sub_dev = 0;
       }
 
-      if((u = sub_device_class(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev))) {
-        hd->base_class = u >> 8;
-        hd->sub_class = u & 0xff;
+      if((u = sub_device_class(hd_data, hd->vendor3.id, hd->device3.id, hd->sub_vendor3.id, hd->sub_dev))) {
+        hd->base_class.id = u >> 8;
+        hd->sub_class.id = u & 0xff;
       }
 
 #if 0
 # ############# FIXME
       if(
-        (ID_VALUE(hd->sub_vend) || ID_VALUE(hd->sub_dev)) &&
+        (ID_VALUE(hd>sub_vendor3.id) || ID_VALUE(hd->sub_dev)) &&
         !hd_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev)
       ) {
         if(ldev_name) {
@@ -246,29 +246,29 @@ void build_list(hd_data_t *hd_data, str_list_t *isapnp_list)
       hd->compat_dev = MAKE_ID(TAG_EISA, cdev_id);
       hd->compat_vend = name2eisa_id(s1);
 
-      if(!(hd->base_class || hd->sub_class)) {
+      if(!(hd->base_class.id || hd->sub_class.id)) {
         if((u = device_class(hd_data, hd->compat_vend, hd->compat_dev))) {
-          hd->base_class = u >> 8;
-          hd->sub_class = u & 0xff;
+          hd->base_class.id = u >> 8;
+          hd->sub_class.id = u & 0xff;
         }
         else if(hd->compat_vend == MAKE_ID(TAG_EISA, 0x41d0)) {
           /* 0x41d0 is 'PNP' */
           switch((hd->compat_dev >> 12) & 0xf) {
             case   8:
-              hd->base_class = bc_network;
-              hd->sub_class = 0x80;
+              hd->base_class.id = bc_network;
+              hd->sub_class.id = 0x80;
               break;
             case 0xa:
-              hd->base_class = bc_storage;
-              hd->sub_class = 0x80;
+              hd->base_class.id = bc_storage;
+              hd->sub_class.id = 0x80;
               break;
             case 0xb:
-              hd->base_class = bc_multimedia;
-              hd->sub_class = 0x80;
+              hd->base_class.id = bc_multimedia;
+              hd->sub_class.id = 0x80;
               break;
             case 0xc:
             case 0xd:
-              hd->base_class = bc_modem;
+              hd->base_class.id = bc_modem;
               break;
           }
         }

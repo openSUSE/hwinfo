@@ -36,8 +36,8 @@ void hd_scan_ataraid(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_storage &&
-      hd->sub_class == sc_sto_raid
+      hd->base_class.id == bc_storage &&
+      hd->sub_class.id == sc_sto_raid
     ) {
       if(hd->driver_info) hddb_add_info(hd_data, hd);
       for(di = hd->driver_info; di; di = di->next) {
@@ -66,8 +66,8 @@ void hd_scan_ataraid(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_storage_device &&
-      hd->sub_class == sc_sdev_disk &&
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_disk &&
       hd->unix_dev_name
     ) {
       if(strstr(hd->unix_dev_name, "/dev/ataraid") == hd->unix_dev_name) {
@@ -80,8 +80,8 @@ void hd_scan_ataraid(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_storage_device &&
-      hd->sub_class == sc_sdev_disk
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_disk
     ) {
       for(i = 0; i < raid_cnt; i++) {
         if(hd->attached_to == raid_ctrl[i]->idx) {

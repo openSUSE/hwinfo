@@ -468,12 +468,12 @@ int fast_ok(hd_hw_item_t item)
 
   for(hd1 = hd; hd1; hd1 = hd1->next) {
     /* serial mice */
-    if(hd1->hw_class == hw_mouse && hd1->bus == bus_serial) {
+    if(hd1->hw_class == hw_mouse && hd1->bus.id == bus_serial) {
       ok = 0;
       break;
     }
     /* parallel zip */
-    if(hd1->hw_class == hw_storage_ctrl && hd1->bus == bus_parallel) {
+    if(hd1->hw_class == hw_storage_ctrl && hd1->bus.id == bus_parallel) {
       ok = 0;
       break;
     }

@@ -844,12 +844,12 @@ static char *scanner_info(hd_t *hd)
 {
   int i;
 
-  if(!hd->vend_name || !hd->dev_name) return NULL;
+  if(!hd->vendor3.name || !hd->device3.name) return NULL;
 
   for(i = 0; i < sizeof scanner_data / sizeof *scanner_data; i++) {
     if(
-      !strcasecmp(scanner_data[i].vendor, hd->vend_name) &&
-      !strcasecmp(scanner_data[i].model, hd->dev_name)
+      !strcasecmp(scanner_data[i].vendor, hd->vendor3.name) &&
+      !strcasecmp(scanner_data[i].model, hd->device3.name)
     ) {
       return scanner_data[i].driver;
     }
@@ -870,7 +870,7 @@ void do_test(hd_data_t *hd_data)
   int i, wheels, buttons;
   unsigned u;
   uint64_t ul;
-  char *s, *s1, *s2, *s3;
+  char *s, *s1;
   hd_hw_item_t item, items[] = {
     hw_display, hw_monitor, hw_tv, hw_sound, hw_mouse, hw_disk, hw_cdrom,
     hw_floppy, hw_modem, hw_isdn, hw_scanner, hw_camera
@@ -898,7 +898,7 @@ void do_test(hd_data_t *hd_data)
               u = ((ul >> 29) + 1) >> 1;
             }
           }
-          s = hd_bus_name(hd_data, hd->bus);
+          s = hd->bus.name;
           fprintf(f, "  %s", hd->model);
           if(u) {
             fprintf(f, " (");
@@ -913,20 +913,10 @@ void do_test(hd_data_t *hd_data)
       case hw_cdrom:
         fprintf(f, "CD-ROM\n");
         for(hd = hd0; hd; hd = hd->next) {
-          s = hd_bus_name(hd_data, hd->bus);
-          s1 = hd_class_name(hd_data, 3, hd->base_class, hd->sub_class, hd->prog_if);
-          s2 = strchr(s1, '(');
-          s3 = strchr(s1, ')');
-          if(s2 && s3 && s2[1] && !s3[1]) {
-            *s3 = 0;
-            s1 = s2 + 1;
-          }
-          else {
-            s1 = "CD-ROM";
-          }
+          s = hd->bus.name;
           fprintf(f, "  %s (", hd->model);
           if(s) fprintf(f, "%s, ", s);
-          fprintf(f, "%s)", s1);
+          fprintf(f, "%s)", hd->prog_if.name ?: "CD-ROM");
           fprintf(f, "\n");
         }
         fprintf(f, "\n");
@@ -1294,9 +1284,9 @@ int braille_install_info(hd_data_t *hd_data)
 
   for(; hd; hd = hd->next) {
     if(
-      hd->base_class == bc_braille &&		/* is a braille display */
+      hd->base_class.id == bc_braille &&	/* is a braille display */
       hd->unix_dev_name &&			/* and has a device name */
-      (braille = hd_device_name(hd_data, hd->vend, hd->dev))
+      (braille = hd->device3.name)
     ) {
       braille_dev = hd->unix_dev_name;
       ok = 1;
@@ -1434,7 +1424,7 @@ char *get_xserver(hd_data_t *hd_data, char **version, char **busid, driver_info_
 
   hd = hd_get_device_by_idx(hd_data, hd_display_adapter(hd_data));
 
-  if(hd && hd->bus == bus_pci)
+  if(hd && hd->bus.id == bus_pci)
     sprintf(id, "%d:%d:%d", hd->slot >> 8, hd->slot & 0xff, hd->func);
 
   if(!hd || *display) return display;

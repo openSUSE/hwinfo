@@ -45,8 +45,8 @@ void hd_scan_sys(hd_data_t *hd_data)
   PROGRESS(1, 0, "cpu");
 
   hd = add_hd_entry(hd_data, __LINE__, 0);
-  hd->base_class = bc_internal;
-  hd->sub_class = sc_int_sys;
+  hd->base_class.id = bc_internal;
+  hd->sub_class.id = sc_int_sys;
   hd->detail = new_mem(sizeof *hd->detail);
   hd->detail->type = hd_detail_sys;
   hd->detail->sys.data = st = new_mem(sizeof *st);
