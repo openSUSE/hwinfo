@@ -31,6 +31,13 @@ Examples:
   - hw debug=-1 -all
     does *no* probing at all; useful if you want to see all supported probing flags
 
+You can specify probing flags via the environment variable 'probe' (yes,
+lower case); e.g.
+
+  probe=-all,+pci,+cdrom hw
+
+The 'probe' environment variable is parsed *after* the command line options.
+
 Note: the order of arguments is relevant *only* for building the internal
 representation of the probing flags. It has *no* effect on the order the
 actual probing is done!

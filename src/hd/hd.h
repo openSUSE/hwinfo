@@ -188,6 +188,7 @@ typedef struct {
   unsigned char *card_regs;
   unsigned char (*ldev_regs)[0xd0];
   int res_len;
+  unsigned broken:1;		/* mark a broken card */
   isapnp_res_t *res;
 } isapnp_card_t;
 
@@ -502,7 +503,8 @@ typedef union {
  */
 typedef struct s_hd_t {
   struct s_hd_t *next;		/* pointer to next hd_t entry */
-  unsigned idx;				/* unique index, starting at 1 */
+  unsigned idx;			/* unique index, starting at 1 */
+  unsigned broken:1;		/* hardware appears to be broken in some way */
   unsigned bus, slot, func;
   unsigned base_class, sub_class, prog_if;
   unsigned dev, vend, sub_dev, sub_vend, rev;
@@ -519,7 +521,7 @@ typedef struct s_hd_t {
   hd_detail_t *detail;
 
   struct {			/* this struct is for internal purposes only */
-    unsigned remove:1;			/* schedule for removal */
+    unsigned remove:1;		/* schedule for removal */
   } tag;
 
 } hd_t;

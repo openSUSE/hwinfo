@@ -1,17 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 
 #include "hd.h"
 
 static int get_probe_flags(int, char **, hd_data_t *);
+static int get_probe_env(hd_data_t *);
 static void progress(char *, char *);
 
 static unsigned deb = 0;
 static char *log_file = "";
+
+static int test = 0;
 
 /*
  * Just scan the hardware and dump all info.
@@ -32,19 +35,20 @@ int main(int argc, char **argv)
 
   do {
     if(first_probe)				/* only for the 1st probing */
-      hd_set_probe_feature(hd_data, pr_all);
+      hd_set_probe_feature(hd_data, pr_default);
     else
       hd_clear_probe_feature(hd_data, pr_all);
-
-    first_probe = 0;
 
     if((i = get_probe_flags(argc, argv, hd_data)) < 0) return 1;
     deb = hd_data->debug;
     argc -= i; argv += i;
 
+    if(get_probe_env(hd_data)) return 2;
+
     hd_scan(hd_data);
     printf("\r%64s\r", "");
 
+    first_probe = 0;
   } while(argc);
 
   if(*log_file) f = fopen(log_file, "w+");
@@ -120,14 +124,57 @@ int get_probe_flags(int argc, char **argv, hd_data_t *hd_data)
   return argc;
 }
 
+int get_probe_env(hd_data_t *hd_data)
+{
+  char *s, *t, *env = getenv("probe");
+  int j, k;
+
+  if(env) s = env = strdup(env);
+  if(!env) return 0;
+
+  while((t = strsep(&s, ","))) {
+    if(*t == '+') {
+      k = 1;
+    }
+    else if(*t == '-') {
+      k = 0;
+    }
+    else {
+      fprintf(stderr, "oops: don't know what to do with \"%s\"\n", t);
+      return -1;
+    }
+
+    t++;
+
+    if((j = hd_probe_feature_by_name(t))) {
+      if(k)
+        hd_set_probe_feature(hd_data, j);
+      else
+        hd_clear_probe_feature(hd_data, j);
+    }
+    else if(!strcmp(t, "test")) {
+      test = k;
+    }
+    else {
+      fprintf(stderr, "oops: don't know what to do with \"%s\"\n", t);
+      return -2;
+    }
+  }
+
+  free(env);
+
+  return 0;
+}
+
 
 /*
  * A simple progress function.
  */
 void progress(char *pos, char *msg)
 {
-  printf("\r%64s\r", "");
+  if(!test) printf("\r%64s\r", "");
   printf("> %s: %s ", pos, msg);
+  if(test) printf("\n");
   fflush(stdout);
 }
 

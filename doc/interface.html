@@ -8,7 +8,7 @@
 
 Author: Steffen Winterfeldt <a href="wfeldt@suse.de">wfeldt@suse.de</a><p>
 
-Current version (15 Dec 1999): 0.28<p>
+Current version (20 Dec 1999): 0.31<p>
 
 <h2>Simple Expample</h2>
 
@@ -58,7 +58,10 @@ elements. The start of the list is in <code>hd_data-&gt;hd</code>.<p>
 <code><strong>void hd_set_probe_feature(<a href="#hd_data_t">hd_data_t</a> *hd_data, <a href="#enum@probe_feature">enum probe_feature</a> feature)</strong></code><br>
 <code><strong>void hd_clear_probe_feature(<a href="#hd_data_t">hd_data_t</a> *hd_data, <a href="#enum@probe_feature">enum probe_feature</a> feature)</strong></code><p>
 
-Activate resp. deactivate a probing feature.<p>
+Activate resp. deactivate a probing feature.<br>
+For convenience, two special features <code>pr_all</code> and
+<code>pr_default</code> have been defined. <code>pr_all</code> activates all probing
+features; <code>pr_default</code> the most useful features.<p>
 
 <code><strong>void hd_probe_feature(<a href="#hd_data_t">hd_data_t</a> *hd_data, <a href="#enum@probe_feature">enum probe_feature</a> feature)</strong></code><p>
 
@@ -98,6 +101,18 @@ Return info about the boot method to use.<p>
 
 Return the driver info for a particular hardware item or <code>NULL</code>
 if no info is available.<p>
+
+<code><strong>char *hd_bus_name(unsigned bus)</strong></code><br>
+<code><strong>char *hd_base_class_name(unsigned base_class)</strong></code><br>
+<code><strong>char *hd_sub_class_name(unsigned base_class, unsigned sub_class)</strong></code><br>
+<code><strong>char *hd_vendor_name(unsigned vendor_id)</strong></code><br>
+<code><strong>char *hd_device_name(unsigned vendor_id, unsigned device_id)</strong></code><br>
+<code><strong>char *hd_sub_device_name(unsigned vendor_id, unsigned device_id, unsigned subvendor_id, unsigned subdevice_id)</strong></code><p>
+
+These functions convert various ids to strings. If an id could not be found,
+<code>NULL</code> is returned.<br>
+The returned strings are valid only til the next call to
+<code>hd_scan()</code>.<p>
 
 <code><strong>void hd_dump_entry(<a href="#hd_data_t">hd_data_t</a> *hd_data, <a href="#hd_t">hd_t</a> *hd, FILE *f)</strong></code><p>
 

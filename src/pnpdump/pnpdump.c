@@ -52,7 +52,13 @@ _syscall2(int, nanosleep, struct timespec *, rqtp, struct timespec *, rmtp)
 #  endif
 #endif /* __GLIBC__ */
 
-int realtimeok = 0;
+static int realtimeok = 0;
+static struct sched_param s_parm = { 0 };
+static int s_policy = 0;
+static hd_data_t *hd_data;
+
+static void set_sched_rr(void);
+static void set_sched_normal(void);
 
 #if 1
 #undef printf
@@ -65,19 +71,35 @@ int realtimeok = 0;
 #define putchar(a)
 #endif
 
-void
-setroundrobin(void)
+void set_sched_rr()
 {
-	pid_t mypid = getpid();
-	struct sched_param sched_p =
-	{50};
-	/* Use the syscall, as my library not up todate */
-	if (sched_setscheduler(mypid, SCHED_RR, &sched_p) < 0)
-	{
-		perror("Couldn't set real-time scheduling, may be a bit slow");
-	}
-	else
-		realtimeok = 1;
+  struct sched_param sched_p = { 50 };
+
+  if(
+    sched_getparam(0, &s_parm) < 0 ||
+    (s_policy = sched_getscheduler(0)) < 0 ||
+    sched_setscheduler(0, SCHED_RR, &sched_p) < 0
+  ) {
+    ADD2LOG("pnpdump: couldn't set real-time scheduling, may be a bit slow (%d.%d)\n", SCHED_RR, sched_p.sched_priority);
+  }
+  else {
+    ADD2LOG("pnpdump: real-time scheduling (%d.%d)\n", SCHED_RR, sched_p.sched_priority);
+    realtimeok = 1;
+  }
+}
+
+
+void set_sched_normal()
+{
+  if(!realtimeok) return;
+
+  if(sched_setscheduler(0, s_policy, &s_parm) < 0) {
+    ADD2LOG("pnpdump: couldn't change to normal scheduling (%d.%d)\n", s_policy, s_parm.sched_priority);
+  }
+  else {
+    ADD2LOG("pnpdump: normal scheduling (%d.%d)\n", s_policy, s_parm.sched_priority);
+    realtimeok = 0;
+  }
 }
 
 /*
@@ -170,8 +192,6 @@ void dumpregs(int);
 
 char *devidstr(unsigned char, unsigned char, unsigned char, unsigned char);
 
-static hd_data_t *hd_data;
-
 /*
  * Single argument is initial readport
  * Two arguments is no-of-boards and the readport to use
@@ -221,7 +241,7 @@ int pnpdump(hd_data_t *hd_data_loc, int read_boards)
 		return 1;
 	}
 #ifdef REALTIME
-	setroundrobin();
+	set_sched_rr();
 #endif /* REALTIME */
 
 	/* Have to do this anyway to check readport for clashes */
@@ -243,6 +263,9 @@ int pnpdump(hd_data_t *hd_data_loc, int read_boards)
 		if(do_dumpregs)
 			dumpregs(i);
 	}
+#ifdef REALTIME
+	set_sched_normal();
+#endif /* REALTIME */
 	if (do_autoconfig)
 	{
 		alloc_result = alloc_resources(resources, resource_count, NULL, 0);
@@ -273,10 +296,12 @@ statuswait(void)
 {
 #ifdef REALTIME
 #define TIMEOUTLOOPS 100
+        static int cnt = 0;
 	int to;												   /* For timeout */
 	/*
 	 * Try for up to 1ms
 	 */
+//        PROGRESS(4, ++cnt, "statuswait");
 	for (to = 0; to < TIMEOUTLOOPS; to++)
 	{
 		if (STATUS & 1)
@@ -285,8 +310,9 @@ statuswait(void)
 	}
 	if (to >= TIMEOUTLOOPS)
 	{
+//                PROGRESS(5, cnt, "timeout");
 		fprintf(stderr, "Timeout attempting to read resource data - is READPORT correct ?\n");
-		return (1);
+		return 1;
 	}
 #else /* !REALTIME */
 #if defined _OS2_ || defined __DJGPP__
@@ -310,11 +336,11 @@ statuswait(void)
 	/*
 	 * Infinite loop potentially, but if we usleep, we may lose 10ms
 	 */
-	while (!(STATUS & 1))
-		;
+	while (!(STATUS & 1));
+
 #endif /* !(OS2 or DJGPP) */
 #endif /* !REALTIME */
-	return (0);
+	return 0;
 }
 
 int port;
@@ -583,14 +609,23 @@ read_one_resource(struct resource *res)
 {
 	unsigned char *p;
 	int i;
+	int cnt = 1;
+
 	if (read_resource_data(&res->tag) != 0)
 		return 1;
+
+        if(res->tag == 0xff) {
+          ic->broken = 1;
+          return 1;
+        }
+
 	if (res->tag & 0x80)
 	{
 		/* Large item */
 		res->type = res->tag;
 		for (i = 1; i <= 2; i++)
 		{
+			cnt++;
 			if (read_resource_data(&tmp[i]) != 0)
 				return 1;
 		}
@@ -602,6 +637,12 @@ read_one_resource(struct resource *res)
 		res->type = (res->tag >> 3) & 0x0f;
 		res->len = res->tag & 7;
 	}
+
+        if(res->len + cnt > 10000) {
+          /* be sensible about the resource length to avoid infinite loops */
+          ic->broken = 1;
+          return 1;
+        }
 	p = add_isapnp_card_res(ic, res->len, res->type);
 	if ((res->data = malloc(res->len * sizeof(unsigned char))) == NULL)
 	{
@@ -610,6 +651,7 @@ read_one_resource(struct resource *res)
 	}
 	for (i = 0; i < res->len; i++)
 	{
+		cnt++;
 		if (read_resource_data(&res->data[i]) != 0)
 			return 1;
 		p[i] = res->data[i];
@@ -738,7 +780,7 @@ read_board_resources(struct resource *first_element,
 			return;		// ###### was: exit(1)
 		}
 		memset(tmp, 0, sizeof(tmp));
-		read_one_resource(&result_array[elts - 1]);
+		if(read_one_resource(&result_array[elts - 1])) return;
 		if (result_array[elts - 1].type == StartDep_TAG && !dependent_clause)
 		{
 			int num_alts = 1;
@@ -889,7 +931,7 @@ read_board(int csn, struct resource **res_list, int *list_len)
 
 void dumpregs(int csn)
 {
-  int logical_device, addr;
+  int logical_device, addr, last_addr;
 
   Wake(csn);
 
@@ -903,7 +945,14 @@ void dumpregs(int csn)
     WRITE_DATA(logical_device);
     if(READ_DATA != logical_device) break;
 
-    for(addr = 0x30; addr < 0xff; addr++) {
+    /*
+     * #####
+     * More or less a hack; what should we really do with broken cards???
+     */
+    last_addr = ic->broken ? 0x80 : 0x100;
+
+    for(addr = 0x30; addr < last_addr; addr++) {
+//      PROGRESS(logical_device, addr, "dumpregs");
       ADDRESS(addr);
       ic->ldev_regs[logical_device][addr - 0x30] = READ_DATA;
     }

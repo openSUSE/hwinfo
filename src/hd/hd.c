@@ -548,6 +548,9 @@ unsigned name2eisa_id(char *s)
 
 /*
  * Create a 'canonical' version, i.e. no spaces at start and end.
+ *
+ * Note: removes chars >= 0x80 as well (due to (char *))! This
+ * is currently considered a feature.
  */
 char *canon_str(char *s, int len)
 {

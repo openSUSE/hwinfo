@@ -178,6 +178,10 @@ void dump_normal(hd_t *h, unsigned debug, FILE *f)
     }
   }
 
+  if(h->broken) {
+    dump_line_str("Warning: might be broken\n");
+  }
+
   if((debug & HD_DEB_DRIVER_INFO)) {
     if(h->vend || h->dev) {
       a0 = hd_device_drv_name(h->vend, h->dev);

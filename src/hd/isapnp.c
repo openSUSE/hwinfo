@@ -102,6 +102,8 @@ void hd_scan_isapnp(hd_data_t *hd_data)
       dev->card = c;
       dev->dev = j;
 
+      if(c->broken) hd->broken = 1;
+
       hd->bus = bus_isa;
       hd->slot = c->csn;
       hd->func = j;
