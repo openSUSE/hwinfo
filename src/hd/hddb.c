@@ -2648,7 +2648,7 @@ void expand_driver_info(hd_data_t *hd_data, hd_t *hd)
   if(di && di->any.type == di_x11 && !hd_probe_feature(hd_data, pr_ignx11)) {
     cmd = get_cmdline(hd_data, "x11");
     if(cmd && *cmd->str) {
-      di = reorder_x11(di, cmd->str);
+      hd->driver_info = reorder_x11(di, cmd->str);
     }
     free_str_list(cmd);
   }

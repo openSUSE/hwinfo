@@ -551,7 +551,7 @@ void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *labe
   ADD2LOG("----- %s 0x%05x - 0x%05x -----\n", label, mem->start, mem->start + mem->size - 1);
   for(u = 0; u < mem->size; u += step) {
     ADD2LOG("  %03x  ", u + mem->start);
-    hexdump(&hd_data->log, 1, 0x10, mem->data + u);
+    hexdump(&hd_data->log, 1, mem->size - u > 0x10 ? 0x10 : mem->size - u, mem->data + u);
     ADD2LOG("\n");
   }
   ADD2LOG("----- %s end -----\n", label);
