@@ -183,6 +183,12 @@ int new_card(char *s)
 	t = strtok(NULL, ";");
 	sscanf(t, "%x", &isdncard_info[max_card_rec].subdevice);
 	fprintf(stderr, "/0x%x", isdncard_info[max_card_rec].subdevice);
+	t = strtok(NULL, ";");
+	sscanf(t, "%x", &isdncard_info[max_card_rec].features);
+	fprintf(stderr, "/0x%x", isdncard_info[max_card_rec].features);
+	t = strtok(NULL, ";");
+	sscanf(t, "%x", &isdncard_info[max_card_rec].line_cnt);
+	fprintf(stderr, "/0x%x", isdncard_info[max_card_rec].line_cnt);
 	isdncard_info[max_card_rec].driver = -1;
 	fprintf(stderr, "\n");
 	return(0);
@@ -257,6 +263,11 @@ int new_driver(char *s)
 	fprintf(stderr, " D:%s",
 		driver_info[max_driver_rec].description ? 
 		driver_info[max_driver_rec].description : "\"\"");
+	t = strtok(NULL, ";");
+	driver_info[max_driver_rec].need_pkg = add_drv_str(t, 0);
+	fprintf(stderr, " N:%s",
+		driver_info[max_driver_rec].need_pkg ?
+		driver_info[max_driver_rec].need_pkg : "\"\"");
 	fprintf(stderr, "\n");
 	return(0);
 }
@@ -503,6 +514,8 @@ char *argv[];
 		fprintf(f,"%d,",isdncard_info[isdncard_txt[i]].device);
 		fprintf(f,"%d,",isdncard_info[isdncard_txt[i]].subvendor);
 		fprintf(f,"%d,",isdncard_info[isdncard_txt[i]].subdevice);
+		fprintf(f,"%d,",isdncard_info[isdncard_txt[i]].features);
+		fprintf(f,"%d,",isdncard_info[isdncard_txt[i]].line_cnt);
 		fprintf(f,"%d,",isdncard_info[isdncard_txt[i]].driver);
 		fprintf(f,"%d,",isdncard_info[isdncard_txt[i]].paracnt);
 		fprintf(f,"%d",isdncard_info[isdncard_txt[i]].para);
@@ -578,6 +591,10 @@ char *argv[];
 			fprintf(f,"\"\",");
 		if (driver_info[isdndrv_type[i]].description)
 			fprintf(f,"\"%s\",", driver_info[isdndrv_type[i]].description);
+		else
+			fprintf(f,"\"\",");
+		if (driver_info[isdndrv_type[i]].need_pkg)
+			fprintf(f,"\"%s\",", driver_info[isdndrv_type[i]].need_pkg);
 		else
 			fprintf(f,"\"\",");
 		fprintf(f,"%d,",driver_info[isdndrv_type[i]].arch);

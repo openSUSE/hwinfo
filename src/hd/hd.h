@@ -1534,12 +1534,29 @@ int hd_change_status(const char *id, hd_status_t status, const char *config_stri
 #define PCI_ANY_ID	0xffff
 #endif
 
+/* card features */
+#define IHW_CARD_BRI		0x00000001
+#define IHW_CARD_PRI		0x00000002
+#define IHW_CARD_DSL		0x00000004
+#define IHW_CARD_HANDSET	0x00000100
+#define IHW_CARD_MODEM		0x00000200
+ 
 /* supported architectures */
-#define SUPPORT_ARCH_SMP	0x10000
-#define SUPPORT_ARCH_I386	0x0001
-#define SUPPORT_ARCH_AXP	0x0002
-#define SUPPORT_ARCH_PPC	0x0004
-                                                                                                                                                                                
+#define SUPPORT_ARCH_SMP	0x00010000
+#define SUPPORT_ARCH_I386	0x00000001
+#define SUPPORT_ARCH_AXP	0x00000002
+#define SUPPORT_ARCH_PPC	0x00000004
+
+/* driver features */
+#define IHW_DRV_PROT_1TR6	0x00000001
+#define IHW_DRV_PROT_DSS1	0x00000002
+#define IHW_DRV_PROT_NI1	0x00000004
+#define IHW_DRV_PROT_LEASED	0x00000008
+#define IHW_DRV_FCLASS1		0x00010000
+#define IHW_DRV_FCLASS2		0x00020000
+#define IHW_DRV_CAPI20		0x00100000
+#define IHW_DRV_CAPIFAX		0x00200000
+
 /* card info */
 
 typedef struct	{
@@ -1552,6 +1569,8 @@ typedef struct	{
 				/* A value of 0xffff is ANY_ID */
 	int     subdevice;	/* Subdevice ID for PCI cards */
 				/* A value of 0xffff is ANY_ID */
+	unsigned int features;	/* feature flags */
+	int	line_cnt;	/* count of ISDN ports */
 	int	driver;		/* referenz to driver record */
 	int	paracnt;	/* count of parameters */
 	int	para;		/* index to first parameter */
@@ -1569,8 +1588,9 @@ typedef struct  {
 	const char *cfg_prog;	/* optional cfg prog */
 	const char *firmware;	/* optional firmware to load */
 	const char *description;/* optional description */
-	int	arch;		/* supported architectures */
-	int	features;	/* optional features*/
+	const char *need_pkg;	/* packages needed for function */
+	unsigned int arch;	/* supported architectures */
+	unsigned int features;	/* optional features*/
 	int	card_ref;	/* reference to a card */
 	const char *name;	/* driver name */
 } ihw_driver_info;
