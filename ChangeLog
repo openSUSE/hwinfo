@@ -1,3 +1,6 @@
+28/8/2002:	v5.20
+	- got rid of gcc warning
+
 28/8/2002:	v5.19
 	- added x86_64 x11 data
 

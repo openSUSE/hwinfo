@@ -371,8 +371,8 @@ vm86_do_int(int num)
 	/* try to run bios interrupt */
 	
 	/* if not installed fall back */
-#define COPY(x) regs.##x = CPU_REG(x)
-#define COPY_R(x) CPU_REG(x) = regs.##x
+#define COPY(x) regs.x = CPU_REG(x)
+#define COPY_R(x) CPU_REG(x) = regs.x
 	
 	COPY(eax);
 	COPY(ebx);
