@@ -2320,7 +2320,8 @@ hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan);
 hd_t *hd_list_with_status2(hd_data_t *hd_data, hd_hw_item_t *items, hd_status_t status);
 
 int hd_has_pcmcia(hd_data_t *hd_data);
-int hd_apm_enabled(hd_data_t *hd_data);
+// will be gone soon
+// int hd_apm_enabled(hd_data_t *hd_data);
 int hd_usb_support(hd_data_t *hd_data);
 int hd_smp_support(hd_data_t *hd_data);
 int hd_mac_color(hd_data_t *hd_data);
@@ -2335,6 +2336,8 @@ hd_t *hd_get_device_by_idx(hd_data_t *hd_data, unsigned idx);
 
 void hd_set_hw_class(hd_t *hd, hd_hw_item_t hw_class);
 int hd_is_hw_class(hd_t *hd, hd_hw_item_t hw_class);
+
+int hd_is_sgi_altix(hd_data_t *hd_data);
 
 char *hd_version(void);
 

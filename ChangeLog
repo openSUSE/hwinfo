@@ -1,3 +1,4 @@
+	- fixed some dvb entries (#47057)
 	- s390: added new prog_if ID pif_dasd_fba to identify FBA DASDs
 	  (reqd. by fehr)
 

@@ -259,6 +259,18 @@ void get_block_devs(hd_data_t *hd_data)
         }
       }
 
+      /*
+       * set hd->drivers before calling any of add_xxx_sysfs_info()
+       */
+      if(
+        sf_dev &&
+        sf_dev->driver_name &&
+        *sf_dev->driver_name &&
+        strcmp(sf_dev->driver_name, "unknown")
+      ) {
+        add_str_list(&hd->drivers, sf_dev->driver_name);
+      }
+
       if(hd->bus.id == bus_ide) {
         add_ide_sysfs_info(hd_data, hd, sf_dev);
       }
@@ -270,15 +282,6 @@ void get_block_devs(hd_data_t *hd_data)
       }
 
       
-      if(
-        sf_dev &&
-        sf_dev->driver_name &&
-        *sf_dev->driver_name &&
-        strcmp(sf_dev->driver_name, "unknown")
-      ) {
-        add_str_list(&hd->drivers, sf_dev->driver_name);
-      }
-
       if(hd->sub_class.id == sc_sdev_cdrom) {
         add_cdrom_info(hd_data, hd);
       }
@@ -634,6 +637,9 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_de
 }
 
 
+/*
+ * assumes hd->drivers aleady includes scsi device drivers (like 'sd')
+ */
 void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev)
 {
   hd_t *hd1;
@@ -730,17 +736,24 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
       }
     }
 
+    /*
+     * typically needed for usb card readers (unused slots)
+     */
     if(
       hd->base_class.id == bc_storage_device &&
       hd->sub_class.id == sc_sdev_other
     ) {
       switch(ul0) {
         case 0:
-          hd->sub_class.id = sc_sdev_disk;
+          if(search_str_list(hd->drivers, "sd")) {
+            hd->sub_class.id = sc_sdev_disk;
+          }
           break;
 
         case 5:
-          hd->sub_class.id = sc_sdev_cdrom;
+          if(search_str_list(hd->drivers, "sr")) {
+            hd->sub_class.id = sc_sdev_cdrom;
+          }
           break;
       }
     }

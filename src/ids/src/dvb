@@ -10,9 +10,79 @@
 
  vendor.id		pci 0x109e
 &device.id		pci 0x0878
++driver.module.modprobe	bt878
+
+ vendor.id		pci 0x109e
+&device.id		pci 0x0878
+&subvendor.id		pci 0x0071
+&subdevice.id		pci 0x0101
 +baseclass.id		0x111
 +subclass.id		0x00
 +driver.module.modprobe	bt878
++subdevice.name		"Nebula Electronics DigiTV"
+
+ vendor.id		pci 0x109e
+&device.id		pci 0x0878
+&subvendor.id		pci 0x1461
+&subdevice.id		pci 0x0761
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	bt878
++subdevice.name		"AverMedia AverTV DVB-T"
+
+ vendor.id		pci 0x109e
+&device.id		pci 0x0878
+&subvendor.id		pci 0x11bd
+&subdevice.id		pci 0x0026
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	bt878
++subdevice.name		"Pinnacle PCTV SAT CI"
+
+ vendor.id		pci 0x109e
+&device.id		pci 0x0878
+&subvendor.id		pci 0x1822
+&subdevice.id		pci 0x0001
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	bt878
++subdevice.name		"Twinhan VisionPlus DVB-T"
+
+ vendor.id		pci 0x109e
+&device.id		pci 0x0878
+&subvendor.id		pci 0x270f
+&subdevice.id		pci 0xfc00
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	bt878
++subdevice.name		"ChainTech digitop DST-1000 DVB-S"
+
+ vendor.id		pci 0x109e
+&device.id		pci 0x0878
+&subvendor.id		pci 0x1461
+&subdevice.id		pci 0x0771
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	bt878
++subdevice.name		"AVermedia DVB-T 771"
+
+ vendor.id		pci 0x109e
+&device.id		pci 0x0878
+&subvendor.id		pci 0x18ac
+&subdevice.id		pci 0xdb10
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	bt878
++subdevice.name		"DVICO FusionHDTV DVB-T Lite"
+
+ vendor.id		pci 0x109e
+&device.id		pci 0x0878
+&subvendor.id		pci 0x11bd
+&subdevice.id		pci 0x001c
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	bt878
++subdevice.name		"Pinnacle PCTV Sat"
 
  vendor.id		pci 0x1131
 &device.id		pci 0x7146
