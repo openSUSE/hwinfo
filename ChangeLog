@@ -2,6 +2,7 @@
 	- updated ancient audio info (#46096)
 	- add ipw/atmel firmware packages (#45960)
 	- updated X11 data
+	- added new isdn cards to database
 
 27/9/2004:	v9.20
 	- report bluetooth devices (#45893)
