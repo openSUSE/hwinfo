@@ -1,3 +1,5 @@
+14/8/2003:      v6.22
+	- add ISDN/DSL controller FRITZ!Card DSL v2.0
 12/5/2003:	v6.21
 	- scan for partitions (backport from SL 8.3 needed by linuxrc
 	  for live eval and #26906)
