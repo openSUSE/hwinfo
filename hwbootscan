@@ -1,18 +1,28 @@
 #!/bin/sh
 
+function has_keyboard {
+  if [ ! "$kbd_ok" ] ; then
+    hwinfo --keyboard | grep -q keyboard
+    kbd_ok=$?
+  fi
+  return $kbd_ok
+}
+
+kbd_ok=
+
 rm -f /var/lib/hardware/LOCK
 
-neededchanged=`/usr/sbin/hwscan --mouse`
-if [ -n "$neededchanged" ] ; then
-	/sbin/yast2 mouse reprobe
-fi
+# do not scan serial mice, it may hang ...
+/usr/sbin/hwscan --fast --mouse
 
 neededchanged=`/usr/sbin/hwscan --gfxcard`
 if [ -n "$neededchanged" ] ; then
-	/sbin/yast2 x11 reprobe
+  has_keyboard && /sbin/yast2 x11 reprobe
 fi
+
 /usr/sbin/hwscan --pci
 /usr/sbin/hwscan --isapnp
 /usr/sbin/hwscan --cdrom
 /usr/sbin/hwscan --disk
+
 exit 0
