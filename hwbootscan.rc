@@ -9,7 +9,7 @@
 #
 ### BEGIN INIT INFO
 # Provides: hwscan
-# Required-Start: hotplug
+# Required-Start: hotplug kbd
 # Required-Stop:
 # Default-Start: 2 3 5
 # Default-Stop:
