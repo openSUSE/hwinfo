@@ -32,7 +32,7 @@ IDFILES	+= drivers.x11.sparc names.x11.sparc
 endif
 
 ifeq "$(ARCH)" "ia64"
-IDFILES	+= drivers.x11.ia64 names.x11.ia64
+IDFILES	+= drivers.x11.ia32 names.x11.ia32
 endif
 
 IDFILES += names.video names.pciutils\

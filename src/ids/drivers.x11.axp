@@ -5,27 +5,25 @@
 
 #
 
-# generated at: Sat Mar  9 15:46:14 2002
-
 # data source:  CDB
 
 # distribution: Stable
 
 #
 
-# nVidia Corporation:Riva TNT2
+# nVidia Corporation:Aladdin TNT2
 10de 00a0
 	x	4|nv||||||||
 
-# nVidia Corporation:Riva TNT2
+# nVidia Corporation:Aladdin TNT2
 10de 00a0
 	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:GeForce256
+# nVidia Corporation:Quadro
 10de 0103
 	x	4|nv|||||f|||
 
-# nVidia Corporation:GeForce256
+# nVidia Corporation:Quadro
 10de 0103
 	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
 
@@ -349,107 +347,107 @@
 1092 4820
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:Riva TnT2 Ultra [NV5]
+# nVidia Corporation:RIVA TNT2 Ultra
 10de 0029
 	x	4|nv||||||||
 
-# nVidia Corporation:Riva TnT2 Ultra [NV5]
+# nVidia Corporation:RIVA TNT2 Ultra
 10de 0029
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:Vanta [NV6]
+# nVidia Corporation:Vanta
 10de 002c
 	x	4|nv|||||d|||
 
-# nVidia Corporation:Vanta [NV6]
+# nVidia Corporation:Vanta
 10de 002c
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:Vanta [NV6]
+# nVidia Corporation:RIVA TNT2 Model 64
 10de 002d
 	x	4|nv||||||||
 
-# nVidia Corporation:Vanta [NV6]
+# nVidia Corporation:RIVA TNT2 Model 64
 10de 002d
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:Vanta [NV6]
+# nVidia Corporation:unknown1
 10de 002e
 	x	4|nv||||||||
 
-# nVidia Corporation:Vanta [NV6]
+# nVidia Corporation:unknown1
 10de 002e
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|||4||switch2nvidia_glx|
 
-# nVidia Corporation:Vanta [NV6]
+# nVidia Corporation:unknown
 10de 002f
 	x	4|nv||||||||
 
-# nVidia Corporation:Vanta [NV6]
+# nVidia Corporation:unknown
 10de 002f
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|||4||switch2nvidia_glx|
 
-# nVidia Corporation:GeForce 256 DDR
+# nVidia Corporation:GeForce DDR
 10de 0101
 	x	4|nv||||||||
 
-# nVidia Corporation:GeForce 256 DDR
+# nVidia Corporation:GeForce DDR
 10de 0101
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:NV11
+# nVidia Corporation:GeForce2 MX/MX 400
 10de 0110
 	x	4|nv||||||||
 
-# nVidia Corporation:NV11
+# nVidia Corporation:GeForce2 MX/MX 400
 10de 0110
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:NV11 DDR
+# nVidia Corporation:GeForce2 MX 100/200
 10de 0111
 	x	4|nv||||||||
 
-# nVidia Corporation:NV11 DDR
+# nVidia Corporation:GeForce2 MX 100/200
 10de 0111
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:NV11 GL
+# nVidia Corporation:Quadro2 MXR/EX/Go
 10de 0113
 	x	4|nv||||||||
 
-# nVidia Corporation:NV11 GL
+# nVidia Corporation:Quadro2 MXR/EX/Go
 10de 0113
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:NV15 (Geforce2 GTS)
+# nVidia Corporation:GeForce2 GTS
 10de 0150
 	x	4|nv||||||||
 
-# nVidia Corporation:NV15 (Geforce2 GTS)
+# nVidia Corporation:GeForce2 GTS
 10de 0150
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:NV15 DDR (Geforce2 GTS)
+# nVidia Corporation:GeForce2 Ti
 10de 0151
 	x	4|nv||||||||
 
-# nVidia Corporation:NV15 DDR (Geforce2 GTS)
+# nVidia Corporation:GeForce2 Ti
 10de 0151
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:NV15 Bladerunner (Geforce2 GTS)
+# nVidia Corporation:GeForce2 Ultra
 10de 0152
 	x	4|nv||||||||
 
-# nVidia Corporation:NV15 Bladerunner (Geforce2 GTS)
+# nVidia Corporation:GeForce2 Ultra
 10de 0152
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:NV15 GL (Quadro2)
+# nVidia Corporation:Quadro2 Pro
 10de 0153
 	x	4|nv||||||||
 
-# nVidia Corporation:NV15 GL (Quadro2)
+# nVidia Corporation:Quadro2 Pro
 10de 0153
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
@@ -586,19 +584,19 @@
 3d3d 0009
 	x	4|glint|||||f|||
 
-# nVidia Corporation:Riva TnT 128 [NV04]
+# nVidia Corporation:RIVA TNT
 10de 0020
 	x	4|nv|||||f|||
 
-# nVidia Corporation:Riva TnT 128 [NV04]
+# nVidia Corporation:RIVA TNT
 10de 0020
 	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:Riva TnT2 [NV5]
+# nVidia Corporation:RIVA TNT2
 10de 0028
 	x	4|nv|||||f|||
 
-# nVidia Corporation:Riva TnT2 [NV5]
+# nVidia Corporation:RIVA TNT2
 10de 0028
 	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
 
@@ -754,8 +752,6 @@
 
 #
 
-# generated at: Sat Mar  9 15:46:14 2002
-
 # data source:  CDB
 
 # distribution: Stable
@@ -810,7 +806,7 @@
 104e 0111
 	x	3|SVGA||||||||
 
-# nVidia Corporation:Riva TNT2
+# nVidia Corporation:Aladdin TNT2
 10de 00a0
 	x	3|SVGA||||||||
 
@@ -818,7 +814,7 @@
 12d2 0019
 	x	3|SVGA||||||||
 
-# nVidia Corporation:GeForce256
+# nVidia Corporation:Quadro
 10de 0103
 	x	3|SVGA|||||15|||
 
@@ -1446,19 +1442,19 @@
 1092 4820
 	x	3|SVGA|||||15|||
 
-# nVidia Corporation:Riva TnT2 Ultra [NV5]
+# nVidia Corporation:RIVA TNT2 Ultra
 10de 0029
 	x	3|SVGA||||||||
 
-# nVidia Corporation:Vanta [NV6]
+# nVidia Corporation:Vanta
 10de 002c
 	x	3|SVGA||||||||
 
-# nVidia Corporation:Vanta [NV6]
+# nVidia Corporation:RIVA TNT2 Model 64
 10de 002d
 	x	3|SVGA||||||||
 
-# nVidia Corporation:GeForce 256 DDR
+# nVidia Corporation:GeForce DDR
 10de 0101
 	x	3|SVGA||||||||
 
@@ -1774,11 +1770,11 @@
 3d3d 0009
 	x	3|3DLABS|||||1d|||
 
-# nVidia Corporation:Riva TnT 128 [NV04]
+# nVidia Corporation:RIVA TNT
 10de 0020
 	x	3|SVGA|||||15|||
 
-# nVidia Corporation:Riva TnT2 [NV5]
+# nVidia Corporation:RIVA TNT2
 10de 0028
 	x	3|SVGA|||||15|||
 
