@@ -4284,8 +4284,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
       }
     }
     if(hd->is.wlan) {
-      hd->hw_class3 = hd->hw_class;
-      hd->hw_class = hw_wlan;
+      hd->hw_class3 = hw_wlan;
     }
   }
 }
