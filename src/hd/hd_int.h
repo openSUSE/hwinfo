@@ -33,7 +33,6 @@
 #define PROC_PARTITIONS		"/proc/partitions"
 #define PROC_APM		"/proc/apm"
 
-#define DEV_USB_DEVICES		"/dev/usb/devices"
 #define DEV_NVRAM		"/dev/nvram"
 #define DEV_PSAUX		"/dev/psaux"
 #define DEV_ADBMOUSE		"/dev/adbmouse"
@@ -64,6 +63,7 @@
 
 #define KERNEL_22		0x020200
 #define KERNEL_24		0x020400
+#define KERNEL_26		0x020600
 
 #if defined(__s390__) || defined(__s390x__) || defined(__alpha__) || defined(LIBHD_TINY)
 #define WITH_ISDN	0

@@ -651,17 +651,16 @@ typedef enum pci_flags {
 typedef struct usb_s {
   struct usb_s *next;
   unsigned hd_idx;
-  str_list_t *b, *c, *ci, *d, *e, *i, *p, *s, *t;
-  /*
-   * see Linux USB docu for the meaning of the above;
-   * c: active config, ci: other configs
-   */
+  unsigned hd_base_idx;
+  /* see Linux USB docs */
+  str_list_t *c, *d, *e, *i, *p, *s, *t;
   struct usb_s *cloned;
   int bus, dev_nr, lev, parent, port, count, conns, used_conns, ifdescr;
   unsigned speed;
   unsigned vendor, device, rev;
   char *manufact, *product, *serial;
   char *driver;
+  memory_range_t raw_descr;
   int d_cls, d_sub, d_prot;
   int i_cls, i_sub, i_prot;
   unsigned country;

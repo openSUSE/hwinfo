@@ -644,6 +644,7 @@ void int_fix_ide_scsi(hd_data_t *hd_data)
 void int_fix_usb_scsi(hd_data_t *hd_data)
 {
   hd_t *hd_scsi, *hd_usb;
+  usb_t *usb;
 
   for(hd_scsi = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
     if(
@@ -657,7 +658,12 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
           hd_usb->bus.id == bus_usb &&
           hd_usb->usb_guid &&
           !hd_usb->tag.remove &&
-          !strcmp(hd_usb->usb_guid, hd_scsi->usb_guid)
+          !strcmp(hd_usb->usb_guid, hd_scsi->usb_guid) &&
+          hd_usb->detail &&
+          hd_usb->detail->type == hd_detail_usb &&
+          (usb = hd_usb->detail->usb.data) &&
+          usb->driver &&
+          !strcmp(usb->driver, "usb-storage")
         ) {
           hd_scsi->tag.remove = 1;
 

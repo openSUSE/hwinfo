@@ -25,7 +25,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-static int get_next_device(char *dev, int idx);
 static void get_usb_data(hd_data_t *hd_data);
 static int usb_control_msg(int fd, unsigned requesttype, unsigned request, unsigned value, unsigned index, unsigned size, void *data);
 static void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb);
@@ -33,25 +32,36 @@ static usb_t *find_usb_entry(hd_data_t *hd_data, int *dev_idx);
 static usb_t *add_usb_entry(hd_data_t *hd_data, usb_t *new_usb);
 static void dump_usb_data(hd_data_t *hd_data);
 static void add_usb_guid(hd_t *hd);
+static void read_usb_lp(hd_data_t *hd_data, hd_t *hd_start);
+static void drop_some_ifs(hd_data_t *hd_data, hd_t *hd_start);
+static int same_device(hd_data_t *hd_data, hd_t *hd_start, hd_t *hd);
 
 #define USB_DT_CS_DEVICE	0x21
 #define CTRL_RETRIES		50
 #define CTRL_TIMEOUT		100	/* milliseconds */
 
+#define IOCNR_GET_DEVICE_ID		1
+#define IOCNR_GET_BUS_ADDRESS		5
+#define IOCNR_GET_VID_PID		6
+
+/* Get device_id string: */
+#define LPIOC_GET_DEVICE_ID(len) _IOC(_IOC_READ, 'P', IOCNR_GET_DEVICE_ID, len)
+/* Get two-int array: [0]=bus number, [1]=device address: */
+#define LPIOC_GET_BUS_ADDRESS(len) _IOC(_IOC_READ, 'P', IOCNR_GET_BUS_ADDRESS, len)
+/* Get two-int array: [0]=vendor ID, [1]=product ID: */
+#define LPIOC_GET_VID_PID(len) _IOC(_IOC_READ, 'P', IOCNR_GET_VID_PID, len)
+
+
 void hd_scan_usb(hd_data_t *hd_data)
 {
-  hd_t *hd, *hd2;
+  hd_t *hd, *hd2, *hd_start;
   unsigned usb_ctrl[4];		/* up to 4 USB controllers; just for fun... */
   unsigned usb_ctrl_idx = 0;
-  int usb_idx;
+  unsigned hd_base_idx;
+  int usb_idx, acm_cnt;
   usb_t *usb;
   hd_res_t *res;
-  int kbd_cnt, mse_cnt, lp_cnt, acm_cnt;
-  char *s;
-#if 0
-  char *mse_dev = "/dev/usbmouse";
-#endif
-  char *lp_dev = "/dev/usb/lp", *acm_dev = "/dev/ttyACM";
+  char *s, *acm_dev = "/dev/ttyACM";
 
   if(!hd_probe_feature(hd_data, pr_usb)) return;
 
@@ -94,18 +104,22 @@ void hd_scan_usb(hd_data_t *hd_data)
 
   PROGRESS(4, 0, "build list");
 
-  /* as an alternative, we might just *sort* the usb list... */
-  usb_idx = kbd_cnt = mse_cnt = lp_cnt = acm_cnt = 0;
+  usb_idx = acm_cnt = 0;
+  hd_start = NULL;
+  hd_base_idx = 0;
   do {
     usb = find_usb_entry(hd_data, &usb_idx);
     if(usb) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
+      if(!hd_start) hd_start = hd;
       hd->bus.id = bus_usb;
       hd->detail = new_mem(sizeof *hd->detail);
       hd->detail->type = hd_detail_usb;
       hd->detail->usb.data = usb;
 
+      if(!usb->ifdescr) hd_base_idx = hd->idx;
       usb->hd_idx = hd->idx;
+      usb->hd_base_idx = hd_base_idx;
 
       hd->slot = (usb->bus << 8) + usb->dev_nr;
 
@@ -148,35 +162,30 @@ void hd_scan_usb(hd_data_t *hd_data)
       }
 
       if(hd->base_class.id == bc_mouse) {
-#if 0
-        mse_cnt = get_next_device(mse_dev, mse_cnt);
-        if(mse_cnt >= 0) str_printf(&hd->unix_dev_name, 0, "%s%d", mse_dev, mse_cnt++);
-#else
-        /* new USB stack - new devices :-/ */
         hd->unix_dev_name = new_str(DEV_MICE);
-#endif
-      }
-
-      if(hd->base_class.id == bc_keyboard) {
-        // kbd_cnt = get_next_device(kbd_dev, kbd_cnt);
-        // if(kbd_cnt >= 0) str_printf(&hd->unix_dev_name, 0, "%s%d", kbd_dev, kbd_cnt++);
-      }
-
-      if(hd->base_class.id == bc_printer) {
-        lp_cnt = get_next_device(lp_dev, lp_cnt);
-        if(lp_cnt >= 0 && lp_cnt < 8) str_printf(&hd->unix_dev_name, 0, "%s%d", lp_dev, lp_cnt++);
       }
 
       if(hd->base_class.id == bc_modem) {
-        acm_cnt = get_next_device(acm_dev, acm_cnt);
-        if(acm_cnt >= 0) str_printf(&hd->unix_dev_name, 0, "%s%d", acm_dev, acm_cnt++);
+        str_printf(&hd->unix_dev_name, 0, "%s%d", acm_dev, acm_cnt++);
       }
 
     }
   }
   while(usb_idx);
 
-  PROGRESS(5, 0, "tree");
+  PROGRESS(5, 0, "usb lp");
+
+  if(hd_start) {
+    read_usb_lp(hd_data, hd_start);
+  }
+
+  PROGRESS(6, 0, "drop");
+
+  if(hd_start) {
+    drop_some_ifs(hd_data, hd_start);
+  }
+
+  PROGRESS(7, 0, "tree");
 
   /* now, connect the usb devices to each other */
   for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -228,70 +237,43 @@ void hd_scan_usb(hd_data_t *hd_data)
 }
 
 
-int get_next_device(char *dev, int idx)
-{
-  char *s = NULL;
-  int dev_ok = 0;
-  int fd;
-
-  if(idx < 0 || idx > 15) return -1;
-
-  for(; idx < 16; idx++) {
-    dev_ok = 1;
-    str_printf(&s, 0, "%s%d", dev, idx);
-    fd = open(s, O_RDONLY | O_NONBLOCK);
-    /*
-     * note: basically, we treat missing or inacessible devices as ok;
-     * we're looking only for devices without drivers attached
-     */
-    if(fd < 0 && (errno == ENXIO || errno == ENODEV)) dev_ok = 0;
-    s = free_mem(s);
-    close(fd);
-    if(dev_ok) break;
-  }
-
-  return dev_ok ? idx : -1;
-}
-
-
 void get_usb_data(hd_data_t *hd_data)
 {
   int i0, i1, i2, i3, i4, i5, i6;
   char buf[256];
+  unsigned char *buf2;
   str_list_t *sl, *sl_next;
-  usb_t *usb = NULL, *usb_next;
+  usb_t *usb = NULL, *usb_next, *usb_orig;
   char *s;
   int fd, cfg_descr_size, i, ifcnt;
   unsigned char *cfg_descr, *hid_descr;
+  int active_config = 0;
+  ssize_t len;
 
-  if(
-    !(hd_data->proc_usb = read_file(PROC_USB_DEVICES, 0, 0)) &&
-    !(hd_data->proc_usb = read_file(DEV_USB_DEVICES, 0, 0))
-  ) return;
+  if(!(hd_data->proc_usb = read_file(PROC_USB_DEVICES, 0, 0))) return;
 
   for(sl = hd_data->proc_usb; sl; sl = sl->next) {
     if(*sl->str == 'T') {
       usb = add_usb_entry(hd_data, new_mem(sizeof *usb));
+      active_config = 0;
     }
     s = strlen(sl->str) > 4 ? sl->str + 4 : "";
     if(usb) switch(*sl->str) {
-      case 'B':
-        add_str_list(&usb->b, s); break;
       case 'C':
-        if(*s && sl->str[2] == '*')
+        if(*s && sl->str[2] == '*') {
           add_str_list(&usb->c, s);
-        else
-          add_str_list(&usb->ci, s);
+          active_config = 1;
+        }
+        else {
+          active_config = 0;
+        }
         break;
       case 'D':
         add_str_list(&usb->d, s); break;
       case 'E':
-        add_str_list(&usb->e, s); break;
+        if(active_config) add_str_list(&usb->e, s); break;
       case 'I':
-        if(!usb->i || strstr(s, "Cls=03") /* HID only */) {
-          add_str_list(&usb->i, s);
-        }
-        break;
+        if(active_config) add_str_list(&usb->i, s); break;
       case 'P':
         add_str_list(&usb->p, s); break;
       case 'S':
@@ -310,76 +292,114 @@ void get_usb_data(hd_data_t *hd_data)
     if(usb->i && (sl = usb->i->next)) {
       usb->i->next = NULL;
       ifcnt = 1;
-      for(; sl; sl = sl_next, ifcnt++) {
+      for(usb_orig = usb; sl; sl = sl_next, ifcnt++) {
         sl_next = sl->next;
-        if(!usb->cloned) usb->cloned = usb;
         usb->next = new_mem(sizeof *usb);
         memcpy(usb->next, usb, sizeof *usb);
         usb = usb->next;
         usb->next = usb_next;
+        usb->cloned = usb_orig;
         usb->i = sl;
         usb->i->next = NULL;
         usb->ifdescr = ifcnt;
+        usb->d = usb->p = usb->s = usb->t = NULL;
       }
     }
   }
 
   for(usb = hd_data->usb; usb; usb = usb->next) {
-    if(
-      sscanf(usb->t->str,
-        "Bus=%d Lev=%d Prnt=%d Port=%d Cnt=%d Dev#=%d Spd=%7s MxCh=%d",
-        &i0, &i1, &i2, &i3, &i4, &i5, buf, &i6
-      ) == 8 ||
-      (/* old usb stack */ i0 = 0, sscanf(usb->t->str,
-        "Lev=%d Prnt=%d Port=%d Cnt=%d Dev#=%d Spd=%7s MxCh=%d",
-        &i1, &i2, &i3, &i4, &i5, buf, &i6
-      )) == 7
-    ) {
-      usb->bus = i0;
-      usb->dev_nr = i5;
-      if(strcmp(buf, "12")) usb->speed = 12*1000000;
-      if(strcmp(buf, "1.5")) usb->speed = 15*100000;
-      usb->lev = i1;
-      usb->parent = i2;
-      usb->port = i3;
-      usb->count = i4;
-      usb->conns = i6;
-    }
 
-    for(sl = usb->s; sl; sl = sl->next) {
-      if(sscanf(sl->str, "Manufacturer=%255[^\n]", buf) == 1) {
-        usb->manufact = canon_str(buf, strlen(buf));
+    if(usb->cloned) {
+      usb->bus = usb->cloned->bus;
+      usb->dev_nr = usb->cloned->dev_nr;
+      usb->speed = usb->cloned->speed;
+      usb->lev = usb->cloned->lev;
+      usb->parent = usb->cloned->parent;
+      usb->port = usb->cloned->port;
+      usb->count = usb->cloned->count;
+      usb->conns = usb->cloned->conns;
+
+      usb->manufact = new_str(usb->cloned->manufact);
+      usb->product = new_str(usb->cloned->product);
+      usb->serial = new_str(usb->cloned->serial);
+
+      usb->vendor = usb->cloned->vendor;
+      usb->device = usb->cloned->device;
+      usb->rev = usb->cloned->rev;
+
+      usb->d_cls = usb->cloned->d_cls;
+      usb->d_sub = usb->cloned->d_sub;
+      usb->d_prot = usb->cloned->d_prot;
+    }
+    else {
+      if(
+        sscanf(usb->t->str,
+          "Bus=%d Lev=%d Prnt=%d Port=%d Cnt=%d Dev#=%d Spd=%7s MxCh=%d",
+          &i0, &i1, &i2, &i3, &i4, &i5, buf, &i6
+        ) == 8
+      ) {
+        usb->bus = i0;
+        usb->dev_nr = i5;
+        if(strcmp(buf, "12")) usb->speed = 12*1000000;
+        if(strcmp(buf, "1.5")) usb->speed = 15*100000;
+        usb->lev = i1;
+        usb->parent = i2;
+        usb->port = i3;
+        usb->count = i4;
+        usb->conns = i6;
       }
-      if(sscanf(sl->str, "Product=%255[^\n]", buf) == 1) {
-        usb->product = canon_str(buf, strlen(buf));
+
+      for(sl = usb->s; sl; sl = sl->next) {
+        if(sscanf(sl->str, "Manufacturer=%255[^\n]", buf) == 1) {
+          usb->manufact = canon_str(buf, strlen(buf));
+        }
+        if(sscanf(sl->str, "Product=%255[^\n]", buf) == 1) {
+          usb->product = canon_str(buf, strlen(buf));
+        }
+        if(sscanf(sl->str, "SerialNumber=%255[^\n]", buf) == 1) {
+          usb->serial = canon_str(buf, strlen(buf));
+        }
       }
-      if(sscanf(sl->str, "SerialNumber=%255[^\n]", buf) == 1) {
-        usb->serial = canon_str(buf, strlen(buf));
+
+      if(
+        usb->p &&
+        sscanf(usb->p->str, "Vendor=%x ProdID=%x Rev=%x.%x", &i0, &i1, &i2, &i3) == 4
+      ) {
+        usb->vendor = i0;
+        usb->device = i1;
+        usb->rev = (i2 << 8) + i3;
       }
+
+      if(
+        usb->d &&
+        sscanf(usb->d->str,
+          "Ver=%x.%x Cls=%x(%255[^)]) Sub=%x Prot=%x MxPS=%d #Cfgs=%d",
+           &i0, &i1, &i2, buf, &i3, &i4, &i5, &i6
+        ) == 8
+      ) {
+        usb->d_cls = i2;
+        usb->d_sub = i3;
+        usb->d_prot = i4;
+      }
+
+      s = NULL;
+      str_printf(&s, 0, "/proc/bus/usb/%03d/%03d", usb->bus, usb->dev_nr);
+      fd = open(s, O_RDONLY);
+      if(fd >= 0) {
+        buf2 = malloc(64*1024);
+        len = read(fd, buf2, 64*1024);
+        if(len) {
+          usb->raw_descr.size = len;
+          usb->raw_descr.data = new_mem(usb->raw_descr.size);
+          memcpy(usb->raw_descr.data, buf2, usb->raw_descr.size);
+        }
+        free(buf2);
+      }
+      close(fd);
+      free_mem(s);
+
     }
 
-    if(
-      usb->p &&
-      sscanf(usb->p->str, "Vendor=%x ProdID=%x Rev=%x.%x", &i0, &i1, &i2, &i3) == 4
-    ) {
-      usb->vendor = i0;
-      usb->device = i1;
-      usb->rev = (i2 << 8) + i3;
-    }
-
-    if(
-      usb->d &&
-      sscanf(usb->d->str,
-        "Ver=%x.%x Cls=%x(%255[^)]) Sub=%x Prot=%x MxPS=%d #Cfgs=%d",
-         &i0, &i1, &i2, buf, &i3, &i4, &i5, &i6
-      ) == 8
-    ) {
-      usb->d_cls = i2;
-      usb->d_sub = i3;
-      usb->d_prot = i4;
-    }
-
-    /* we'll look just at the first interface for now */
     if(
       usb->i &&
       sscanf(usb->i->str,
@@ -564,6 +584,24 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
     case 9:
       hd->base_class.id = bc_hub;
       break;
+
+    case 0xff:
+      /* hp psc 2100, 2200, 2150, officejet 6100 */
+      if(
+        sub == 0xcc &&
+        (
+          usb->vendor == 0x03f0 &&
+          (
+            usb->device == 0x2811 ||
+            usb->device == 0x2911 ||
+            usb->device == 0x2a11 ||
+            usb->device == 0x2d11
+          )
+        )
+      ) {
+        hd->base_class.id = bc_scanner;
+      }
+      break;
   }
 
   if((u = device_class(hd_data, hd->vendor.id, hd->device.id))) {
@@ -619,6 +657,7 @@ void dump_usb_data(hd_data_t *hd_data)
 {
   str_list_t *sl;
   usb_t *usb;
+  unsigned u, l;
 
   ADD2LOG("----- /proc/bus/usb/devices -----\n");
   for(sl = hd_data->proc_usb; sl; sl = sl->next) {
@@ -628,12 +667,26 @@ void dump_usb_data(hd_data_t *hd_data)
 
   ADD2LOG("----- usb device info -----\n");
   for(usb = hd_data->usb; usb; usb = usb->next) {
-    ADD2LOG("  %d:%d.%d (@%d:%d) %d %d\n", usb->bus, usb->dev_nr, usb->ifdescr, usb->bus, usb->parent, usb->conns, usb->speed);
-    ADD2LOG("  vend 0x%04x, dev 0x%04x, rev 0x%04x\n", usb->vendor, usb->device, usb->rev);
+    ADD2LOG("  %d:%d.%d (@%d:%d.0) %d %d", usb->bus, usb->dev_nr, usb->ifdescr, usb->bus, usb->parent, usb->conns, usb->speed);
+    if(usb->cloned) ADD2LOG(" from %d:%d.%d", usb->cloned->bus, usb->cloned->dev_nr, usb->cloned->ifdescr);
+    ADD2LOG("\n  vend 0x%04x, dev 0x%04x, rev 0x%04x\n", usb->vendor, usb->device, usb->rev);
     ADD2LOG(
       "  cls/sub/prot: 0x%02x/0x%02x/0x%02x  0x%02x/0x%02x/0x%02x\n",
       usb->d_cls, usb->d_sub, usb->d_prot, usb->i_cls, usb->i_sub, usb->i_prot
     );
+    if(usb->raw_descr.size) {
+      ADD2LOG("  descriptors:\n");
+      for(u = 0; u < usb->raw_descr.size; u += l) {
+        l = usb->raw_descr.data[u];
+        if(!l || u + l > usb->raw_descr.size) {
+          l = usb->raw_descr.size - u;
+          ADD2LOG("    *** oops: broken length: ***\n");
+        }
+        ADD2LOG("    ");
+        hexdump(&hd_data->log, 0, l, usb->raw_descr.data + u);
+        ADD2LOG("\n");
+      }
+    }
     if(usb->driver) ADD2LOG("  driver \"%s\"\n", usb->driver);
     if(usb->manufact) ADD2LOG("  manufacturer \"%s\"\n", usb->manufact);
     if(usb->product) ADD2LOG("  product \"%s\"\n", usb->product);
@@ -664,5 +717,150 @@ void add_usb_guid(hd_t *hd)
   }
 
   str_printf(&hd->usb_guid, 0, "%08x%08x%08x", pg[0], pg[1], pg[2]);
+}
+
+
+#define MATCH_FIELD(field, var) \
+  if(!strncasecmp(sl->str, field, sizeof field - 1)) var = sl->str + sizeof field - 1
+
+/*
+ * assign /dev/usb/lp* to usb printers.
+ */
+void read_usb_lp(hd_data_t *hd_data, hd_t *hd_start)
+{
+  hd_t *hd;
+  char *lp_dev = "/dev/usb/lp", *dev = NULL, *s;
+  char buf[1024];
+  int i, fd, two_ints[2];
+  unsigned bus;
+  str_list_t *sl0, *sl;
+  char *vend, *prod, *serial, *descr;
+
+  for(i = 0; i < 16; i++) {
+    str_printf(&dev, 0, "%s%d", lp_dev, i);
+    if((fd = open(dev, O_RDWR)) >= 0) {
+      if(ioctl(fd, LPIOC_GET_BUS_ADDRESS(sizeof two_ints), two_ints) == -1) continue;
+      
+      ADD2LOG("  usb/lp%d: bus = %d, dev_nr = %d\n", i, two_ints[0], two_ints[1]);
+      bus = ((two_ints[0] & 0xff) << 8) + (two_ints[1] & 0xff);
+
+      if(ioctl(fd, LPIOC_GET_VID_PID(sizeof two_ints), two_ints) != -1) {
+        /* just for the record */
+        ADD2LOG("  usb/lp%d: vend = 0x%04x, prod = 0x%04x\n", i, two_ints[0], two_ints[1]);
+      }
+
+      for(hd = hd_start; hd; hd = hd->next) {
+        if(
+          hd->bus.id == bus_usb &&
+          hd->slot == bus &&
+          hd->base_class.id == bc_printer
+        ) {
+          str_printf(&hd->unix_dev_name, 0, "%s", dev);
+          memset(buf, 0, sizeof buf);
+          if(!ioctl(fd, LPIOC_GET_DEVICE_ID(sizeof buf), buf)) {
+            buf[sizeof buf - 1] = 0;
+            s = canon_str(buf + 2, sizeof buf - 3);
+            ADD2LOG("  usb/lp%d: \"%s\"\n", i, s);
+            sl0 = hd_split(';', s);
+            free_mem(s);
+            vend = prod = serial = descr = NULL;
+            for(sl = sl0; sl; sl = sl->next) {
+              MATCH_FIELD("MFG:", vend);
+              MATCH_FIELD("MANUFACTURER:", vend);
+              MATCH_FIELD("MDL:", prod);
+              MATCH_FIELD("MODEL:", prod);
+              MATCH_FIELD("DES:", descr);
+              MATCH_FIELD("DESCRIPTION:", descr);
+              MATCH_FIELD("SERN:", serial);
+              MATCH_FIELD("SERIALNUMBER:", serial);
+            }
+            ADD2LOG(
+              "  usb/lp%d: vend = %s, prod = %s, descr = %s, serial = %s\n",
+              i,
+              vend ?: "", prod ?: "", descr ?: "", serial ?: ""
+            );
+            if(descr) {
+              str_printf(&hd->model, 0, "%s", descr);
+            }
+            if(vend && prod) {
+              str_printf(&hd->sub_vendor.name, 0, "%s", vend);
+              str_printf(&hd->sub_device.name, 0, "%s", prod);
+            }
+            if(serial && !hd->serial) {
+              hd->serial = new_str(serial);
+            }
+
+            free_str_list(sl0);
+          }
+        }
+      }
+
+      close(fd);
+    }
+    else {
+      if(i >= 8 && errno == ENOENT) break;
+    }
+  }
+  free_mem(dev);
+}
+#undef MATCH_FIELD
+
+
+/*
+ * Check if it's just a different interface on the same device doing
+ * the same thing.
+ */
+int same_device(hd_data_t *hd_data, hd_t *hd_start, hd_t *hd)
+{
+  hd_t *hd2;
+  usb_t *usb, *usb2;
+
+  if(
+    !(
+      hd->detail &&
+      hd->detail->type == hd_detail_usb &&
+      (usb = hd->detail->usb.data) &&
+      usb->hd_idx != usb->hd_base_idx &&
+      hd->base_class.id != bc_none
+    )
+  ) {
+    return 0;
+  }
+
+  for(hd2 = hd_start; hd2; hd2 = hd2->next) {
+    if(hd2 == hd) break;
+    if(
+      hd2->detail &&
+      hd2->detail->type == hd_detail_usb &&
+      (usb2 = hd2->detail->usb.data) &&
+      !hd2->tag.remove
+    ) {
+      if(
+        usb2->hd_base_idx == usb->hd_base_idx &&
+        hd2->base_class.id == hd->base_class.id
+      ) {
+        return 1;
+      }
+    }
+    
+  }
+
+  return 0;
+}
+
+/*
+ * don't report interfaces that do the same thing (like
+ * uni- & bidirectional printer ifs) 
+ */
+void drop_some_ifs(hd_data_t *hd_data, hd_t *hd_start)
+{
+  hd_t *hd;
+
+  for(hd = hd_start; hd; hd = hd->next) {
+    if(same_device(hd_data, hd_start, hd)) {
+      hd->tag.remove = 1;
+    }
+  }
+  remove_tagged_hd_entries(hd_data);
 }
 

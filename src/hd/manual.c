@@ -634,7 +634,7 @@ int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
 void dump_manual(hd_data_t *hd_data)
 {
   hd_manual_t *entry;
-  static const char *txt = "manually configured harware";
+  static const char *txt = "manually configured hardware";
   str_list_t *sl1, *sl2;
 
   if(!hd_data->manual) return;

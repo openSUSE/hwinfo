@@ -927,21 +927,20 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
         usb_t *u = d->usb.data;
 
         if(!u->cloned) {
-          free_str_list(u->b);
           free_str_list(u->c);
-          free_str_list(u->ci);
-          free_str_list(u->d);
           free_str_list(u->e);
-          free_str_list(u->i);
-          free_str_list(u->p);
-          free_str_list(u->s);
-          free_str_list(u->t);
         }
+        free_str_list(u->d);
+        free_str_list(u->p);
+        free_str_list(u->s);
+        free_str_list(u->t);
+        free_str_list(u->i);
 
         free_mem(u->manufact);
         free_mem(u->product);
         free_mem(u->serial);
         free_mem(u->driver);
+        free_mem(u->raw_descr.data);
 
         free_mem(u);
       }
@@ -1808,7 +1807,14 @@ void hd_scan(hd_data_t *hd_data)
 
   hd_data->module = mod_none;
 
-  if(hd_data->debug && !hd_data->flags.internal) {
+  if(
+    hd_data->debug &&
+    !hd_data->flags.internal &&
+    (
+      hd_data->kmods ||
+      hd_probe_feature(hd_data, pr_int /* arbitrary; just avoid /proc/modules for -pr_all */)
+    )
+  ) {
     sl0 = read_file(PROC_MODULES, 0, 0);
     ADD2LOG("----- /proc/modules -----\n");
     for(sl = sl0; sl; sl = sl->next) {
@@ -4009,7 +4015,15 @@ void get_kernel_version(hd_data_t *hd_data)
     }
     u1 = (u1 << 16) + (u2 << 8);
 
-    if(u1 <= KERNEL_22) hd_data->kernel_version = KERNEL_22;
+    if(u1 <= KERNEL_22) {
+      hd_data->kernel_version = KERNEL_22;
+    }
+    else if(u1 <= KERNEL_24) {
+      hd_data->kernel_version = KERNEL_24;
+    }
+    else if(u1 <= KERNEL_26) {
+      hd_data->kernel_version = KERNEL_26;
+    }
   }
 
   free_str_list(sl);

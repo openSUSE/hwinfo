@@ -43,7 +43,7 @@ void hd_scan_smart(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
 
-  cpqarray = hd_data->kernel_version == KERNEL_24 ? PROC_SMART_24 : PROC_SMART_22;
+  cpqarray = hd_data->kernel_version != KERNEL_22 ? PROC_SMART_24 : PROC_SMART_22;
 
   if((dir = opendir(cpqarray))) {
     closedir(dir);
