@@ -668,7 +668,7 @@ void hd_scan(hd_data_t *hd_data)
   /* after hd_scan_prom() */
   hd_scan_monitor(hd_data);
 
-#if defined(__i386__) || defined(__alpha__) || defined(__PPC__)
+#if defined(__i386__) || defined(__alpha__)
   hd_scan_isapnp(hd_data);
 #endif
 

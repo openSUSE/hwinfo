@@ -1,6 +1,9 @@
+	- ppc x11 driver info
+
 8/9/2000:	v1.38
 	- updated device ids
 	- added basic i2o support
+	- disabled isapnp on ppc
 
 7/9/2000:	v1.37
 	- fixed modem segfault bug

@@ -11,9 +11,9 @@ include $(TOPDIR)/Makefile.common
 #SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
 #endif
 
-#ifeq "$(ARCH)" "ppc"
-#SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
-#endif
+ifeq "$(ARCH)" "ppc"
+SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
+endif
 
 ifeq "$(ARCH)" "sparc"
 SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))

@@ -12,7 +12,7 @@ IDFILES	+= drivers.x11.ia32 names.x11.ia32
 endif
 
 ifeq "$(ARCH)" "ppc"
-IDFILES	+= drivers.x11.ppc names.x11.ppc
+IDFILES	+= drivers.x11.ppc drivers.x11special.ppc names.x11.ppc
 endif
 
 ifeq "$(ARCH)" "axp"

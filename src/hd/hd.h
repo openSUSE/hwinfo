@@ -99,7 +99,7 @@ typedef enum base_classes {
   /* these *must* match standard PCI class numbers */
   bc_none, bc_storage, bc_network, bc_display, bc_multimedia,
   bc_memory, bc_bridge, bc_comm, bc_system, bc_input, bc_docking,
-  bc_processor, bc_serial, bc_other = 0xff,
+  bc_processor, bc_serial, bc_wireless, bc_i2o, bc_other = 0xff,
 
   // add our own classes here (starting at 0x100 as PCI values are 8 bit)
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,

@@ -1,0 +1,15 @@
+#
+# data not in minicdb
+#
+
+# Valkyrie
+s0401 3000
+	x	4|fbdev
+
+# Platinum
+s0401 3001
+	x	3|FBDev
+
+# Control
+106b 0003
+	x	4|fbdev
