@@ -277,6 +277,7 @@ void get_serial_modem(hd_data_t *hd_data)
 	  free_mem(sm->init_string2);
 	  sm->init_string1 = new_str("AT&F");
 	  sm->init_string2 = new_str("AT$IBP=HDLCP");
+	  sm->pppd_option = new_str("default-asyncmap");
 	}
 	if(atx == 6 && check_for_responce(responces[j], "643", 3) &&
 	    check_for_responce(sm->at_resp, "MicroLink ISDN/TLV.34", 21)) {
@@ -413,6 +414,11 @@ void get_serial_modem(hd_data_t *hd_data)
       res->init_strings.type = res_init_strings;
       res->init_strings.init1 = new_str(sm->init_string1);
       res->init_strings.init2 = new_str(sm->init_string2);
+      if(sm->pppd_option) {
+	res = add_res_entry(&hd->res, new_mem(sizeof *res));
+	res->pppd_option.type = res_pppd_option;
+	res->pppd_option.option = new_str(sm->pppd_option);
+      }
       if(*sm->pnp_id) {
         strncpy(buf, sm->pnp_id, 3);
         buf[3] = 0;

@@ -1016,6 +1016,10 @@ hd_res_t *free_res_list(hd_res_t *res)
       free_mem(res->init_strings.init2);
     }
 
+    if(res->any.type == res_pppd_option) {
+      free_mem(res->pppd_option.option);
+    }
+
     free_mem(res);
   }
 

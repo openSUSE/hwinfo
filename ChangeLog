@@ -1,3 +1,6 @@
+10/1/2001:	v1.0.70
+	- made res_pppd_option work (arvin@suse.de)
+
 10/1/2001:	v1.0.69
 	- introduced res_pppd_option
 

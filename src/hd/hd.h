@@ -690,7 +690,7 @@ typedef struct s_ser_modem_t {
   int buf_len;
   int garbage, pnp;
   unsigned char pnp_id[8];
-  char *serial, *class_name, *dev_id, *user_name, *vend, *init_string1, *init_string2;
+  char *serial, *class_name, *dev_id, *user_name, *vend, *init_string1, *init_string2, *pppd_option;
   unsigned pnp_rev;
   unsigned bits;
 } ser_modem_t;

@@ -430,7 +430,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
         break;
 
       case res_pppd_option:
-	dump_line("pppd Option: %s\n", res->pppd_option.option);
+	dump_line("PPPD Option: %s\n", res->pppd_option.option);
         break;
 
       default:
