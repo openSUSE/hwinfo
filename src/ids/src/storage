@@ -16,7 +16,9 @@
  vendor.id		pci 0x1000
 &device.id		pci 0x0006
 |vendor.id		pci 0x1000
-&device.id		pci 0x000a+0x0004
+&device.id		pci 0x000a
+|vendor.id		pci 0x1000
+&device.id		pci 0x000c+0x0002
 # 0x000f: see #5816
 |vendor.id		pci 0x1000
 &device.id		pci 0x000f
@@ -27,6 +29,9 @@
 &device.id		pci 0x0012
 |vendor.id		pci 0x1000
 &device.id		pci 0x008f
+# #21984
+|vendor.id		pci 0x1000
+&device.id		pci 0x000b
 +driver.module.insmod	sym53c8xx
 +driver.module.insmod	ncr53c8xx
 
@@ -69,6 +74,10 @@
 &device.id		pci 0x1216
 &subvendor.id		pci 0x101e
 &subdevice.id		pci 0x8493
+|vendor.id		pci 0x1077
+&device.id		pci 0x1216
+&subvendor.id		pci 0x101e
+&subdevice.id		pci 0x8471
 +driver.module.insmod	megaraid
 
 # scsi/tmscsim.c
@@ -126,21 +135,20 @@
 &device.id		pci 0x1020
 +driver.module.insmod	qlogicisp
 
-# scsi/qla2100.c
 # scsi/qlogicfc.c
  vendor.id		pci 0x1077
 &device.id		pci 0x2100
-+driver.module.insmod	qla2x00
 +driver.module.insmod	qlogicfc
 
  vendor.id		pci 0x1077
 &device.id		pci 0x2200
 +driver.module.insmod	qla2200
-+driver.module.insmod	qla2x00
 +driver.module.insmod	qlogicfc
 
  vendor.id		pci 0x1077
 &device.id		pci 0x2300
+|vendor.id		pci 0x1077
+&device.id		pci 0x2312
 +driver.module.insmod	qla2300
 
 # scsi/advansys.c
@@ -385,6 +393,57 @@
  baseclass.id		0x00e
 &subclass.id		0x00+2
 +driver.module.insmod	i2o_pci|i2o_core|i2o_config|i2o_block
+
+# scsi/aacraid/linit.c
+ vendor.id		pci 0x1028
+&device.id		pci 0x0001
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0001
+|vendor.id		pci 0x1028
+&device.id		pci 0x0002
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0002
+|vendor.id		pci 0x1028
+&device.id		pci 0x0003
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0003
+|vendor.id		pci 0x1028
+&device.id		pci 0x0004
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x00d0
+|vendor.id		pci 0x1028
+&device.id		pci 0x0002
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x00d1
+|vendor.id		pci 0x1028
+&device.id		pci 0x0002
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x00d9
+|vendor.id		pci 0x1028
+&device.id		pci 0x000a
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0106
+|vendor.id		pci 0x1028
+&device.id		pci 0x000a
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x011b
+|vendor.id		pci 0x1028
+&device.id		pci 0x000a
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0121
+|vendor.id		pci 0x1011
+&device.id		pci 0x0046
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0364
+|vendor.id		pci 0x1011
+&device.id		pci 0x0046
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0365
+|vendor.id		pci 0x1011
+&device.id		pci 0x0046
+&subvendor.id		pci 0x103c
+&subdevice.id		pci 0x10c2
++driver.module.insmod	aacraid
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
