@@ -2287,6 +2287,7 @@ int hd_module_is_active(hd_data_t *hd_data, char *mod);
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class);
 hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_class);
 hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus);
+const char* hd_busid_to_hwcfg(int busid);
 hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old);
 hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t status);
 hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan);

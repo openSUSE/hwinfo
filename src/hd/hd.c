@@ -3269,6 +3269,19 @@ hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus)
   return hd_list;
 }
 
+/* Convert libhd bus IDs to hwcfg bus names */
+const char* hd_busid_to_hwcfg(int busid)
+{
+	const char* const ids1[]={"none","isa","eisa","mc","pci","pcmcia","nubus","cardbus","other"};
+	const char* const ids2[]={"ps2","serial","parallel","floppy","scsi","ide","usb","adb","raid","sbus","i2o","vio","ccw"};
+	if(busid <9)
+		return ids1[busid];
+	else if(busid >=0x80 && busid <0x8d)
+		return ids2[busid-0x80];
+	else
+		return 0;
+}
+
 /*
  * Check if the execution of (*func)() takes longer than timeout seconds.
  * This is useful to work around long kernel-timeouts as in the floppy
