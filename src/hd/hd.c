@@ -1453,7 +1453,7 @@ str_list_t *read_kmods(hd_data_t *hd_data)
   if(!(sl0 = read_file(PROC_MODULES, 0, 0))) return NULL;
 
   for(sl = sl0; sl; sl = sl->next) {
-    add_str_list(&sl1, strsep(&sl->str, " \t"));
+    add_str_list(&sl1, new_str(strsep(&sl->str, " \t")));
   }
 
   return sl1;

@@ -13,15 +13,17 @@
  */
 
 
+static void dump_parallel_data(hd_data_t *hd_data, str_list_t *sl);
+
 void hd_scan_parallel(hd_data_t *hd_data)
 {
-
   hd_t *hd, *hd_i;
   str_list_t *sl, *sl0;
   hd_res_t *res;
-  char *pp = NULL, buf[256], unix_dev[] = "/dev/lp0";
+  char *pp = NULL, buf[256], unix_dev[] = "/dev/lp0", *s = NULL;
   char *base_class, *device, *vendor, *cmd_set;
   int i, j, port;
+  str_list_t *log = NULL;
 
   if(!hd_probe_feature(hd_data, pr_parallel)) return;
 
@@ -52,18 +54,25 @@ void hd_scan_parallel(hd_data_t *hd_data)
     port = 0;
     // ##### read modes as well? (e.g: SPP,ECP,ECPEPP,ECPPS2)
     str_printf(&pp, 0, "%s/%d/hardware", PROC_PARPORT, i);
-    if((sl = read_file(pp, 0, 4))) {
+    sl0 = read_file(pp, 0, 0);
+    if(!sl0) continue;		/* file doesn't exist -> no parport entry */
+    str_printf(&s, 0, "%s\n", pp);
+    add_str_list(&log, new_str(s));
+    for(sl = sl0; sl; sl = sl->next) {
+      str_printf(&s, 0, "  %s", sl->str);
+      add_str_list(&log, new_str(s));
       if(sscanf(sl->str, "base: %i", &j) == 1) port = j;
     }
-    else {	/* file doesn't exist -> no parport entry */
-      continue;
-    }
-    free_str_list(sl);
+    free_str_list(sl0);
 
     str_printf(&pp, 0, "%s/%d/autoprobe", PROC_PARPORT, i);
     sl0 = read_file(pp, 0, 0);
+    str_printf(&s, 0, "%s\n", pp);
+    add_str_list(&log, new_str(s));
     base_class = device = vendor = cmd_set = NULL;
     for(sl = sl0; sl; sl = sl->next) {
+      str_printf(&s, 0, "  %s", sl->str);
+      add_str_list(&log, new_str(s));
 //      fprintf(stderr, "str = \"%s\"\n", sl->str);
       if(sscanf(sl->str, "CLASS: %255[^\n;]", buf) == 1) base_class = new_str(buf);
       if(sscanf(sl->str, "MODEL: %255[^\n;]", buf) == 1) device = new_str(buf);
@@ -71,6 +80,9 @@ void hd_scan_parallel(hd_data_t *hd_data)
       if(sscanf(sl->str, "COMMAND SET: %255[^\n;]", buf) == 1) cmd_set = new_str(buf);
     }
     free_str_list(sl0);
+
+    pp = free_mem(pp);
+    s = free_mem(s);
 
 //    fprintf(stderr, "port <0x%x\n", port);
 //    fprintf(stderr, "class <%s>\n", base_class);
@@ -130,5 +142,19 @@ void hd_scan_parallel(hd_data_t *hd_data)
     free_mem(cmd_set);
   }
 
+  if((hd_data->debug & HD_DEB_PARALLEL)) dump_parallel_data(hd_data, log);
+
+  free_str_list(log);
+
+}
+
+
+void dump_parallel_data(hd_data_t *hd_data, str_list_t *sl)
+{
+  ADD2LOG("----- parallel info -----\n");
+  for(; sl; sl = sl->next) {
+    ADD2LOG("%s", sl->str);
+  }
+  ADD2LOG("----- parallel info end -----\n");
 }
 
