@@ -3,10 +3,9 @@
 # check in libhd to /work/src/done/STABLE
 # call from the libhd directory
 
-ver=`cat ../VERSION`
+ver=`cat VERSION`
 libhd=/tmp/libhd-$ver
 
-cd ~/b
 make clean
 rm -rf $libhd
 mkdir $libhd
