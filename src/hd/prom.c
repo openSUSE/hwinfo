@@ -473,9 +473,11 @@ void add_legacy_prom_devices(hd_data_t *hd_data, devtree_t *dt)
 void add_devices(hd_data_t *hd_data)
 {
   hd_t *hd;
-  hd_res_t *res;
   devtree_t *dt;
+#if 0
+  hd_res_t *res;
   unsigned pci_slot = 0, u;
+#endif
 
   /* remove old assignments */
   for(hd = hd_data->hd; hd; hd = hd->next) {

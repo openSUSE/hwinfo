@@ -1,3 +1,12 @@
+5/10/2001:	v3.26
+	- fix the check for active framebuffer (ppc)
+	  the current one is a hack and doesnt work in all cases
+	- use pc104 instead of powerpcps2 (ppc)
+	- longer timeouts in modem detection (#11432)
+	- don't merge pci and proc data on ppc (#10435)
+	- pci data are inconsistent on ppc, remove consistency check (#11551)
+	- new x11 data (ppc)
+
 24/9/2001:	v3.25
 	- updated X11 data
 	- no longer default to XF3 for installation on ppc (#11260)

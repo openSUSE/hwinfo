@@ -2187,7 +2187,7 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
           s1 = hd_tmp->detail->cpu.data->vend_name;
           if(s1 && (strstr(s1, "CHRP ") == s1 || strstr(s1, "PReP ") == s1)) {
             free_mem(ki->XkbModel);
-            ki->XkbModel = new_str("powerpcps2");
+            ki->XkbModel = new_str("pc104");
           }
         }
       }
