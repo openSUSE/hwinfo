@@ -1,4 +1,6 @@
+29/4/2004:	v8.45
 	- s390: enhance grouped channel detection using ccwgroup bus
+	- s390: ID changes
 
 28/4/2004:	v8.44
 	- add bus.name for bus.id == bus_ccw
