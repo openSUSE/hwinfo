@@ -1,13 +1,29 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # ia64 fixes
 
-# net/eepro100.c
+# pcimap
  vendor.id		pci 0x8086
+&device.id		pci 0x1029
+|vendor.id		pci 0x8086
+&device.id		pci 0x1030+0x0005
+|vendor.id		pci 0x8086
+&device.id		pci 0x1038+0x0007
+|vendor.id		pci 0x8086
+&device.id		pci 0x1059
+|vendor.id		pci 0x8086
 &device.id		pci 0x1209
 |vendor.id		pci 0x8086
 &device.id		pci 0x1229
-+driver.module.insmod	eepro100
+|vendor.id		pci 0x8086
+&device.id		pci 0x2449
+|vendor.id		pci 0x8086
+&device.id		pci 0x2459
+|vendor.id		pci 0x8086
+&device.id		pci 0x245d
++driver.module.modprobe	eepro100
++driver.module.insmod	mii|eepro100
 +driver.module.insmod	e100
+
 
 # #21984
  vendor.id              pci 0x14e4

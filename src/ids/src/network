@@ -158,7 +158,8 @@
 # net/amd8111e.c
  vendor.id		pci 0x1022
 &device.id		pci 0x7462
-+driver.module.insmod	amd8111e
++driver.module.modprobe	amd8111e
++driver.module.insmod	mii|amd8111e
 
 # net/sis900.c
  vendor.id		pci 0x1039
@@ -338,7 +339,8 @@
 &device.id		pci 0x1002
 |vendor.id		pci 0x13f0
 &device.id		pci 0x0201
-+driver.module.insmod	sundance
++driver.module.modprobe	sundance
++driver.module.insmod	mii|sundance
 
 # net/dl2k.c
  vendor.id		pci 0x1186
@@ -376,7 +378,8 @@
 # net/hamachi.c
  vendor.id		pci 0x1318
 &device.id		pci 0x0911
-+driver.module.insmod	hamachi
++driver.module.modprobe	hamachi
++driver.module.insmod	mii|hamachi
 
 # see #14848
  vendor.id		pci 0x1385
@@ -430,36 +433,64 @@
 &device.id		pci 0x1960
 +driver.module.insmod	rcpci45
 
-# net/e1000_main.c
+# pcimap
+ vendor.id		pci 0x8086
+&device.id		pci 0x1050+0x0006
++driver.module.insmod	e100
+
+# pcimap
+ vendor.id		pci 0x8086
+&device.id		pci 0x1035+0x0003
+|vendor.id		pci 0x8086
+&device.id		pci 0x1227+0x0002
+|vendor.id		pci 0x8086
+&device.id		pci 0x5200+0x0002
++driver.module.modprobe	eepro100
++driver.module.insmod	mii|eepro100
+
+# pcimap
+ vendor.id		pci 0x8086
+&device.id		pci 0x1029
+|vendor.id		pci 0x8086
+&device.id		pci 0x1030+0x0005
+|vendor.id		pci 0x8086
+&device.id		pci 0x1038+0x0007
+|vendor.id		pci 0x8086
+&device.id		pci 0x1059
+|vendor.id		pci 0x8086
+&device.id		pci 0x1209
+|vendor.id		pci 0x8086
+&device.id		pci 0x1229
+|vendor.id		pci 0x8086
+&device.id		pci 0x2449
+|vendor.id		pci 0x8086
+&device.id		pci 0x2459
+|vendor.id		pci 0x8086
+&device.id		pci 0x245d
++driver.module.insmod	e100
++driver.module.modprobe	eepro100
++driver.module.insmod	mii|eepro100
+
+# pcimap
  vendor.id		pci 0x8086
 &device.id		pci 0x1000+0x0002
 |vendor.id		pci 0x8086
 &device.id		pci 0x1004
 |vendor.id		pci 0x8086
-&device.id		pci 0x1008+2
+&device.id		pci 0x1008+0x0002
 |vendor.id		pci 0x8086
-&device.id		pci 0x100c+7
+&device.id		pci 0x100c+0x0007
+|vendor.id		pci 0x8086
+&device.id		pci 0x1016+0x0002
+|vendor.id		pci 0x8086
+&device.id		pci 0x101e
 +driver.module.insmod	e1000
-
-# net/e100.c
- vendor.id		pci 0x8086
-&device.id		pci 0x1029
-|vendor.id		pci 0x8086
-&device.id		pci 0x2449
-+driver.module.insmod	e100
-
-# net/eepro100.c
- vendor.id		pci 0x8086
-&device.id		pci 0x1209
-|vendor.id		pci 0x8086
-&device.id		pci 0x1229
-+driver.module.insmod	e100
-+driver.module.insmod	eepro100
 
 # net/starfire.c
  vendor.id		pci 0x9004
 &device.id		pci 0x6915
-+driver.module.insmod	starfire
++driver.module.modprobe	starfire
++driver.module.insmod	mii|starfire
 
 # net/ne.c
  vendor.id		AXE

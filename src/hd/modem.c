@@ -756,7 +756,7 @@ int set_modem_speed(ser_device_t *sm, unsigned baud)
   cfsetospeed(&tio, speeds[i].mask);
   cfsetispeed(&tio, speeds[i].mask);
 
-  if(tcsetattr(sm->fd, TCSAFLUSH, &tio)) return errno;
+  if(tcsetattr(sm->fd, TCSANOW, &tio)) return errno;
 
   /* tcsetattr() returns ok even if it couldn't set the speed... */
 
@@ -791,7 +791,7 @@ int init_modem(ser_device_t *sm)
 
   tio.c_cflag = CREAD | CLOCAL | HUPCL | B1200 | CS8;
 
-  if(tcsetattr(sm->fd, TCSAFLUSH, &tio)) return errno;
+  if(tcsetattr(sm->fd, TCSANOW, &tio)) return errno;
 
   return 0;
 }

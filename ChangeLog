@@ -1,3 +1,15 @@
+16/10/2003:	v5.58
+	- ported ul1 changes (v5.57 - v5.62 incl.):
+	- avoid pci config type detection on Gateway 920 (#30704)
+	- updated e100 module data (#32199)
+	- more modules need mii.o (#32141)
+	- ibmsis driver info updated (#31676)
+	- no braille detection on ia64 (#26235)
+	- serial mouse probing could hang in some cases (#31440)
+	- don't read from cd drives that don't exist (#23248)
+	- don't try BIOS things on SGI Altix (#28663)
+	- OnStream tapes have their own devices (#27954)
+
 13/5/2003:	v5.57
 	- write ff to /dev/lp0 if imm.o didn't load (#14175)
 

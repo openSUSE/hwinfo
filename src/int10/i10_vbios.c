@@ -75,7 +75,7 @@ static int vram_mapped = 0;
 static int int10inited = 0;
 
 int
-InitInt10()
+InitInt10(int pci_cfg_method)
 {
   if (geteuid())
     return -1;
@@ -90,7 +90,7 @@ InitInt10()
   setup_io();
 #if 1
   iopl(3);
-  scan_pci();
+  scan_pci(pci_cfg_method);
   for (; CurrentPci; CurrentPci = CurrentPci->next)
     if (CurrentPci->active)
       {
