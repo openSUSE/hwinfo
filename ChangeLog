@@ -1,6 +1,48 @@
+19/11/2002:	v5.44
+	- use eepro100 instead of e100 on ia64 (#21055)
+
+11/11/2002:	v5.43
+	- fixed qla* module info (#21567)
+
+4/11/2002:	v5.42
+	- check for REDIRECT in hwscan init script (in case it gets called
+	  from the commandline). #17773
+
+4/11/2002:	v5.41
+	- do some consistency checks on legacy data from BIOS area (#21462)
+
+17/10/2002:	v5.40
+	- updated megaraid info (#21043)
+
+10/10/2002:	v5.39
+	- updated tg3/bcm5700 driver info (#19913)
+
+7/10/2002:	v5.38
+	- added aacraid driver info (#20592)
+	- don't run yast if no keyboard is attached (#19768)
+
+30/9/2002:	v5.37
+	- add "Virtual" to veth description string (#20319)
+
+27/9/2002:	v5.36
+	- fixed floppy detection (#20269)
+	- x11 data update (#20182)
+	- added IBM ServeRAID ids (#20268)
+
+23/9/2002:	v5.35
+	- 'hwscan --pci' should add prom id (#19648)
+
+20/9/2002:	v5.34
+	- ia64: switch back to reading ACPI tables for SMP detection.
+
+18/9/2002:	v5.33
+	- fixed chksum call causing hwinfo to hang in some cases on ia64
+	- don't overwrite vga modelist
+
 10/9/2002:	v5.32
 	- avoid alignment problems on ia64
-	- fixed usb-cdrom & disk probing (#19407, #19440)
+	- fixed usb-cdrom probing (#19407, #19440)
+	- removed '--fast' for disk probing; instead, fixed i2o & cciss
 
 10/9/2002:	v5.31
 	- probe for cdrom & disk at boot (#19297)

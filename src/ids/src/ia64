@@ -1,0 +1,11 @@
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ia64 fixes
+
+# net/eepro100.c
+ vendor.id		pci 0x8086
+&device.id		pci 0x1209
+|vendor.id		pci 0x8086
+&device.id		pci 0x1229
++driver.module.insmod	eepro100
++driver.module.insmod	e100
+
