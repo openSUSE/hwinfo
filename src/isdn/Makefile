@@ -1,6 +1,6 @@
 TOPDIR	= ../..
 TARGETS	= $(LIBHD_D)
-SUBDIRS = db
+SUBDIRS = cdb
 
 include $(TOPDIR)/Makefile.common
 

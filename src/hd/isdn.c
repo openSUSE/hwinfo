@@ -21,7 +21,7 @@
 void hd_scan_isdn(hd_data_t *hd_data)
 {
   hd_t *hd;
-  ihw_card_info *ici;
+  cdb_isdn_card *cic;
 
   if(!hd_probe_feature(hd_data, pr_isdn)) return;
 
@@ -120,26 +120,26 @@ void hd_scan_isdn(hd_data_t *hd_data)
 #endif
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if((ici = get_isdn_info(hd))) {
+    if((cic = get_isdn_info(hd))) {
       hd->base_class.id = bc_isdn;
       hd->sub_class.id = 0;
-      free_mem(ici);
+      free_mem(cic);
     }
   }
 
 
 }
 
-ihw_card_info *get_isdn_info(hd_t *hd)
+cdb_isdn_card *get_isdn_info(hd_t *hd)
 {
-  ihw_card_info *ici0, *ici;
+  cdb_isdn_card *cic0, *cic;
   unsigned u0, u1;
 
   if(hd->bus.id == bus_pci ||
     hd->bus.id == bus_isa ||
     hd->bus.id == bus_usb) {
 
-    ici = NULL;
+    cic = NULL;
     u0 = ID_VALUE(hd->vendor.id);
     if(
       hd->bus.id == bus_isa &&
@@ -148,7 +148,7 @@ ihw_card_info *get_isdn_info(hd_t *hd)
       ID_TAG(hd->device.id) == TAG_SPECIAL
     ) {
       u0 = ID_VALUE(hd->device.id);
-      ici = hd_ihw_get_card_from_type(u0 >> 8, u0 & 0xff);
+      cic = hd_cdbisdn_get_card_from_type(u0 >> 8, u0 & 0xff);
     }
 
     if(
@@ -158,25 +158,38 @@ ihw_card_info *get_isdn_info(hd_t *hd)
     ) {
       u0 = ID_VALUE(hd->vendor.id);
       u1 = ID_VALUE(hd->device.id);
-      ici = hd_ihw_get_card_from_id(((u0 & 0xff) << 8) + ((u0 >> 8) & 0xff),
+      cic = hd_cdbisdn_get_card_from_id(((u0 & 0xff) << 8) + ((u0 >> 8) & 0xff),
                                    ((u1 & 0xff) << 8) + ((u1 >> 8) & 0xff),
                                    0xffff,0xffff);
     }
 
     if(hd->bus.id == bus_pci) {
-      ici = hd_ihw_get_card_from_id(ID_VALUE(hd->vendor.id), ID_VALUE(hd->device.id),
-                                 ID_VALUE(hd->sub_vendor.id),ID_VALUE(hd->sub_device.id));
+      cic = hd_cdbisdn_get_card_from_id(ID_VALUE(hd->vendor.id), ID_VALUE(hd->device.id),
+                                 ID_VALUE(hd->sub_vendor.id), ID_VALUE(hd->sub_device.id));
     }
 
-    if(hd->bus.id == bus_usb) {
-      ici = hd_ihw_get_card_from_id(ID_VALUE(hd->vendor.id), ID_VALUE(hd->device.id),
-                                 0xffff,0xffff);
+    if(hd->bus.id == bus_usb &&
+    	ID_TAG(hd->vendor.id) == TAG_USB &&
+    	ID_TAG(hd->device.id) == TAG_USB) {
+      
+      if (hd->revision.id == 0 && hd->revision.name) {
+        /* the revision is usually saved as string (1.00) */
+      	sscanf(hd->revision.name, "%x.%x", &u1, &u0);
+      	u0 = u0 | u1 << 8;
+      } else
+      	u0 = ID_VALUE(hd->revision.id);
+
+      cic = hd_cdbisdn_get_card_from_id(ID_VALUE(hd->vendor.id), ID_VALUE(hd->device.id),
+                                 u0, 0xffff);
+      if (!cic) /* to get cards without revision info in database */
+      	cic = hd_cdbisdn_get_card_from_id(ID_VALUE(hd->vendor.id), ID_VALUE(hd->device.id),
+      				0xffff, 0xffff);
     }
 
-    if(ici) {
-      ici0 = new_mem(sizeof *ici0);
-      memcpy(ici0, ici, sizeof *ici0);
-      return ici0;
+    if(cic) {
+      cic0 = new_mem(sizeof *cic0);
+      memcpy(cic0, cic, sizeof *cic0);
+      return cic0;
     }
   }
   return NULL;

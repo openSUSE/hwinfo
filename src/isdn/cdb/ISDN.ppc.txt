@@ -1,0 +1,30 @@
+#
+# CDB data export for subclass: ISDN Single Basic Rate
+# Generated at                : Sat Aug 23 12:43:23 2003
+#
+# Exported combinations:
+#	arch=ppc  dist=Stable  lang=de_DE  vario=HiSax driver
+#
+# Author: dhess@suse.de (13.02.2003)
+# Author: didge@suse.de (04.08.2003)
+#
+#
+# Export format: |Vendorname|Productname|Subclass|Bus|Variation|topic=value|topic=value|...|Variation|topic=value|topic=value|...|
+#
+
+
+|vendor=Sagem|device=Niccy PCI|device_class=ISDN Single Basic Rate|bus_type=PCI|vendor_id=0x1267|device_id=0x1016|subvendor_id=0xffff|subdevice_id=0xffff|vario=HiSax driver|SMP=Yes|drv_id=0x20018|drv_subtyp=2|drv_typ=24|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|line_protocol=LEASED|line_protocol=NI1|module=hisax|need_packages=i4l-base|supported=full|
+|vendor=AVM Computersysteme Vertriebs GmbH|device=FRITZ!X seriell|device_class=ISDN Single Basic Rate|bus_type=Serial|vario=HiSax driver|line_cnt=1|supported=not|
+|vendor=Eicon|device=Diva 2.0 PCI|device_class=ISDN Single Basic Rate|bus_type=PCI|vendor_id=0x1133|device_id=0xe002|subvendor_id=0xffff|subdevice_id=0xffff|vario=HiSax driver|SMP=Yes|drv_id=0x2000b|drv_subtyp=2|drv_typ=11|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|line_protocol=LEASED|line_protocol=NI1|module=hisax|need_packages=i4l-base|supported=full|
+|vendor=Sedlbauer AG|device=Speed PCI|device_class=ISDN Single Basic Rate|bus_type=PCI|vendor_id=0xe159|device_id=0x0002|subvendor_id=0x0053|subdevice_id=0x0001|vario=HiSax driver|SMP=Yes|drv_id=0x6000f|drv_subtyp=6|drv_typ=15|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|line_protocol=LEASED|line_protocol=NI1|module=hisax|need_packages=i4l-base|supported=full|
+|vendor=Eicon|device=Diva 2.01 PCI|device_class=ISDN Single Basic Rate|bus_type=PCI|vendor_id=0x1133|device_id=0xe005|subvendor_id=0xffff|subdevice_id=0xffff|vario=HiSax driver|SMP=Yes|drv_id=0x4000b|drv_subtyp=4|drv_typ=11|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|line_protocol=LEASED|line_protocol=NI1|module=hisax|need_packages=i4l-base|supported=full|
+|vendor=Telekom AG|device=Teledat USB 2a/b|device_class=ISDN Single Basic Rate|bus_type=USB|vario=HiSax driver|line_cnt=1|supported=not|
+|vendor=HST|device=saphir III|device_class=ISDN Single Basic Rate|bus_type=PCI|vendor_id=0xe159|device_id=0x0002|subvendor_id=0x0052|subdevice_id=0x0001|vario=HiSax driver|SMP=Yes|drv_id=0x9000f|drv_subtyp=9|drv_typ=15|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|line_protocol=LEASED|line_protocol=NI1|module=hisax|need_packages=i4l-base|supported=full|
+|vendor=AVM Computersysteme Vertriebs GmbH|device=FRITZ!Card PCI|device_class=ISDN Single Basic Rate|bus_type=PCI|vendor_id=0x1244|device_id=0x0a00|subvendor_id=0xffff|subdevice_id=0xffff|vario=HiSax driver|SMP=Yes|alternative_name=Telekom AG,Teledat 150|drv_id=0x1001b|drv_subtyp=1|drv_typ=27|feature=Fax|info=This card has multiple drivers, some functions are only available on the binonly driver|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|line_protocol=LEASED|line_protocol=NI1|module=hisax|need_packages=i4l-base|short_description=OpenSource without Fax G3|supported=full|
+|vendor=Eicon|device=Diva 2.02 PCI|device_class=ISDN Single Basic Rate|bus_type=PCI|vendor_id=0x1133|device_id=0xe00b|subvendor_id=0xffff|subdevice_id=0xffff|vario=HiSax driver|SMP=Yes|drv_id=0xd000b|drv_subtyp=13|drv_typ=11|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|line_protocol=LEASED|line_protocol=NI1|module=hisax|need_packages=i4l-base|supported=full|
+|vendor=Sedlbauer AG|device=Speed Fax+ PCI|device_class=ISDN Single Basic Rate|bus_type=PCI|vendor_id=0xe159|device_id=0x0002|subvendor_id=0x0054|subdevice_id=0x0001|vario=HiSax driver|SMP=Yes|drv_id=0x8001c|drv_subtyp=8|drv_typ=28|feature=Fax|firmware=ISAR.BIN|interface=FCLASS1|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|line_protocol=LEASED|line_protocol=NI1|module=hisax|need_packages=i4l-base|supported=full|
+|vendor=Elsa AG|device=Quickstep 3000 PCI|device_class=ISDN Single Basic Rate|bus_type=PCI|vendor_id=0x1048|device_id=0x3000|subvendor_id=0xffff|subdevice_id=0xffff|vario=HiSax driver|SMP=Yes|drv_id=0xa0012|drv_subtyp=10|drv_typ=18|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|line_protocol=LEASED|line_protocol=NI1|module=hisax|need_packages=i4l-base|supported=full|
+|vendor=Elsa AG|device=Microlink ISDN USB|device_class=ISDN Single Basic Rate|bus_type=USB|vario=HiSax driver|line_cnt=1|supported=not|
+|vendor=Elsa AG|device=Quickstep 1000 PCI|device_class=ISDN Single Basic Rate|bus_type=PCI|vendor_id=0x1048|device_id=0x1000|subvendor_id=0xffff|subdevice_id=0xffff|vario=HiSax driver|SMP=Yes|drv_id=0x90012|drv_subtyp=9|drv_typ=18|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|line_protocol=LEASED|line_protocol=NI1|module=hisax|need_packages=i4l-base|supported=full|
+|vendor=Elsa AG|device=Microlink PCI|device_class=ISDN Single Basic Rate|bus_type=PCI|vendor_id=0x1048|device_id=0x1000|subvendor_id=0xffff|subdevice_id=0xffff|vario=HiSax driver|SMP=Yes|drv_id=0xc0012|drv_subtyp=12|drv_typ=18|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|line_protocol=LEASED|line_protocol=NI1|module=hisax|need_packages=i4l-base|supported=full|
+|vendor=Pyramid|device=Speed Fax+ PCI|device_class=ISDN Single Basic Rate|bus_type=PCI|vendor_id=0xe159|device_id=0x0002|subvendor_id=0x0051|subdevice_id=0x0001|vario=HiSax driver|SMP=Yes|drv_id=0x7001c|drv_subtyp=7|drv_typ=28|feature=Fax|firmware=ISAR.BIN|interface=FCLASS1|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|line_protocol=LEASED|line_protocol=NI1|module=hisax|need_packages=i4l-base|supported=full|

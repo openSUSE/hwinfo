@@ -82,7 +82,7 @@ static driver_info_t *monitor_driver(hd_data_t *hd_data, hd_t *hd);
 #if WITH_ISDN
 static int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len);
 static isdn_parm_t *new_isdn_parm(isdn_parm_t **ip);
-static driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici);
+static driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, cdb_isdn_card *cic);
 #endif
 
 static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
@@ -1473,7 +1473,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
   hddb_search_t hs = {};
   driver_info_t *new_driver_info = NULL;
 #if WITH_ISDN
-  ihw_card_info *ici;
+  cdb_isdn_card *cic;
 #endif
 
   if(hd->tag.fixed) return;
@@ -1651,12 +1651,12 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
   /* get driver info */
 
 #if WITH_ISDN
-  if((ici = get_isdn_info(hd))) {
-    new_driver_info = isdn_driver(hd_data, hd, ici);
-    if(!hd->model && ici->name && *ici->name) {
-      hd->model = new_str(ici->name);
+  if((cic = get_isdn_info(hd))) {
+    new_driver_info = isdn_driver(hd_data, hd, cic);
+    if(!hd->model && cic->lname && *cic->lname) {
+      hd->model = new_str(cic->lname);
     }
-    free_mem(ici);
+    free_mem(cic);
   }
 #endif
 
@@ -2056,35 +2056,33 @@ int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len)
   return c == 0xff ? 1 : 0;
 }
 
-
+#if 0
 isdn_parm_t *new_isdn_parm(isdn_parm_t **ip)
 {
   while(*ip) ip = &(*ip)->next;
 
   return *ip = new_mem(sizeof **ip);
 }
+#endif
 
-
-driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
+driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, cdb_isdn_card *cic)
 {
   driver_info_t *di0, *di;
-  ihw_para_info *ipi;
-  ihw_driver_info *idi;
-  isdn_parm_t *ip;
+  cdb_isdn_vario *civ;
   hd_res_t *res;
   uint64_t irqs, irqs2;
   int i, irq_val, drv, pnr;
   str_list_t *sl, *sl0;
 
-  if(!ici) return NULL;
+  if(!cic) return NULL;
 
   di0 = new_mem(sizeof *di0);
 
-  drv = ici->driver;
+  drv = cic->vario;
   di = NULL;
 
-  while((idi = hd_ihw_get_driver(drv))) {
-    drv = idi->next_drv;
+  while((civ = hd_cdbisdn_get_vario(drv))) {
+    drv = civ->next_vario;
     if (di) {
       di->next = new_mem(sizeof *di);
       di = di->next;
@@ -2092,12 +2090,12 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
       di = di0;
     }
     di->isdn.type = di_isdn;
-    di->isdn.i4l_type = idi->typ;
-    di->isdn.i4l_subtype = idi->subtyp;
-    di->isdn.i4l_name = new_str(ici->name);
+    di->isdn.i4l_type = civ->typ;
+    di->isdn.i4l_subtype = civ->subtyp;
+    di->isdn.i4l_name = new_str(cic->lname);
 
-    if(idi->need_pkg && *idi->need_pkg) {
-      sl0 = hd_split(',', (char *) idi->need_pkg);
+    if(civ->need_pkg && *civ->need_pkg) {
+      sl0 = hd_split(',', (char *) civ->need_pkg);
       for(sl = sl0; sl; sl = sl->next) {
         if(!search_str_list(hd->requires, sl->str)) {
           add_str_list(&hd->requires, sl->str);
@@ -2107,8 +2105,25 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
     }
 
     if(hd->bus.id == bus_pci) continue;
-
+#if 0
     pnr = 1;
+    civ = hd_cdbisdn_get_vario(cic->vario);
+    if (!civ) continue;
+    if (civ->irq && civ->irq[0]) {
+    	ip = new_isdn_parm(&di->isdn.params);
+    	ip->name = new_str("IRQ");
+    	ip->type = CDBISDN_P_IRQ;
+    }
+    if (civ->io && civ->io[0]) {
+    	ip = new_isdn_parm(&di->isdn.params);
+    	ip->name = new_str("IO");
+    	ip->type = CDBISDN_P_IO;
+    }
+    if (civ->membase && civ->membase[0]) {
+    	ip = new_isdn_parm(&di->isdn.params);
+    	ip->name = new_str("MEMBASE");
+    	ip->type = CDBISDN_P_MEM;
+    }
     while((ipi = hd_ihw_get_parameter(ici->handle, pnr++))) {
       ip = new_isdn_parm(&di->isdn.params);
       ip->name = new_str(ipi->name);
@@ -2229,8 +2244,8 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
         if(!res) ip->valid = 0;
       }
     }
+#endif
   }
-
   if(!di) di0 = free_mem(di0);
 
   return di0;

@@ -1191,8 +1191,8 @@ typedef struct isdn_parm_s {
   unsigned valid:1;			/* 1: entry is valid, 0: some inconsistencies */
   unsigned conflict:1;			/* 1: ressource conflict (eg. no free irq) */
   uint64_t value;			/* value of the parameter */
-  unsigned type;			/* libihw type (P_...) */
-  unsigned flags;			/* libihw flags (P_...) */
+  unsigned type;			/* CDBISDN type (P_...) */
+  unsigned flags;			/* CDBISDN flags (P_...) */
   unsigned def_value;			/* default value */
   int alt_values;			/* length of alt_value[] */
   unsigned *alt_value;			/* possible values */
@@ -1901,82 +1901,39 @@ int hd_change_status(const char *id, hd_status_t status, const char *config_stri
 
 
 /*
- * - - - - - ihw interface - - - - -
+ * - - - - - CDB ISDN interface - - - - -
  */
 
 
-/* (C) kkeil@suse.de */
+/* (C) 2003 kkeil@suse.de */
 
-#define IHW_VERSION	0x0204
-#define	CLASS_PCI	1
-#define CLASS_ISAPNP	2
-#define CLASS_ISALEGAL	3
-#define CLASS_PCMCIA	4
-#define CLASS_PC104	5
-#define CLASS_PARALLEL	6
-#define CLASS_SERIAL	7
-#define CLASS_USB	8
-#define CLASS_ONBOARD	9
-
-/* parameter types */
-#define P_NONE		0x0
-#define P_IRQ		0x1
-#define P_MEM		0x2
-#define P_IO		0x3
-#define P_IO0		0x4
-#define P_IO1		0x5
-#define P_IO2		0x6
-#define P_BASE0		0x8
-#define P_BASE1		0x9
-#define P_BASE2		0xa
-#define P_BASE3		0xb
-#define P_BASE4		0xc
-#define P_BASE5		0xd
-
-#define P_TYPE_MASK	0xff
-
-#define P_DEFINE	0x0100
-#define P_SOFTSET	0x0200
-#define P_HARDSET	0x0400
-#define P_READABLE	0x0800
-#define P_ISAPNP	0x1000
-#define P_PCI		0x2000
-
-#define P_PROPERTY_MASK	0xffff00
+#define CDBISDN_VERSION	0x0100
 
 #ifndef PCI_ANY_ID
 #define PCI_ANY_ID	0xffff
 #endif
 
-/* card features */
-#define IHW_CARD_BRI		0x00000001
-#define IHW_CARD_PRI		0x00000002
-#define IHW_CARD_DSL		0x00000004
-#define IHW_CARD_HANDSET	0x00000100
-#define IHW_CARD_MODEM		0x00000200
- 
-/* supported architectures */
-#define SUPPORT_ARCH_SMP	0x00010000
-#define SUPPORT_ARCH_I386	0x00000001
-#define SUPPORT_ARCH_AXP	0x00000002
-#define SUPPORT_ARCH_PPC	0x00000004
+#define CDBISDN_P_NONE	0x0
+#define CDBISDN_P_IRQ	0x1
+#define CDBISDN_P_MEM	0x2
+#define CDBISDN_P_IO	0x3
 
-/* driver features */
-#define IHW_DRV_PROT_1TR6	0x00000001
-#define IHW_DRV_PROT_DSS1	0x00000002
-#define IHW_DRV_PROT_NI1	0x00000004
-#define IHW_DRV_PROT_LEASED	0x00000008
-#define IHW_DRV_FCLASS1		0x00010000
-#define IHW_DRV_FCLASS2		0x00020000
-#define IHW_DRV_CAPI20		0x00100000
-#define IHW_DRV_CAPIFAX		0x00200000
-
-/* card info */
+/* vendor info */
+typedef struct {
+	char	*name;
+	char	*shortname;
+	int	vnr;
+	int	refcnt;
+} cdb_isdn_vendor;
 
 typedef struct	{
-	int	handle;		/* internal identifier idx in daatabase */
-	const char *name;	/* Ascii cardname */
-	int	Class;		/* CLASS of the card */
+	int	handle;		/* internal identifier idx in database */
+	int	vhandle;	/* internal identifier to vendor database */
+	const char *name;	/* cardname */
+	const char *lname;	/* vendor short name + cardname */
+	const char *Class;	/* CLASS of the card */
+	const char *bus;	/* bus type */
+	int	revision;	/* revision used with USB */
 	int	vendor;		/* Vendor ID for ISAPNP and PCI cards */
 	int     device;		/* Device ID for ISAPNP and PCI cards */
 	int	subvendor;	/* Subvendor ID for PCI cards */
@@ -1985,89 +1942,47 @@ typedef struct	{
 				/* A value of 0xffff is ANY_ID */
 	unsigned int features;	/* feature flags */
 	int	line_cnt;	/* count of ISDN ports */
-	int	driver;		/* referenz to driver record */
-	int	paracnt;	/* count of parameters */
-	int	para;		/* index to first parameter */
-} ihw_card_info;
+	int	vario_cnt;	/* count of driver varios */
+	int	vario;		/* referenz to driver vario record */
+} cdb_isdn_card;
 
 typedef struct  {
 	int	handle;		/* idx in database */	
-	int     next_drv;	/* link to alternate driver */
-	int     drvid;		/* unique id of the driver */
+	int     next_vario;	/* link to alternate vario */
+	int     drvid;		/* unique id of the driver vario */
 	int	typ;		/* Type to identify the driver */
 	int	subtyp;		/* Subtype of the driver type */
+	int	smp;		/* SMP supported ? */
 	const char *mod_name;	/* name of the driver module */
 	const char *para_str;	/* optional parameter string */
 	const char *mod_preload;/* optional modules to preload */
 	const char *cfg_prog;	/* optional cfg prog */
 	const char *firmware;	/* optional firmware to load */
 	const char *description;/* optional description */
-	const char *need_pkg;	/* packages needed for function */
-	unsigned int arch;	/* supported architectures */
-	unsigned int features;	/* optional features*/
-	int	card_ref;	/* reference to a card */
+	const char *need_pkg;	/* list of packages needed for function */
+	const char *info;	/* optional additional info */
+	const char *protocol;	/* supported D-channel protocols */
+	const char *interface;  /* supported API interfaces */
+	const char *io;		/* possible IO ports with legacy ISA cards */
+	const char *irq;	/* possible interrupts with legacy ISA cards */
+	const char *membase;	/* possible membase with legacy ISA cards */
+	const char *features;	/* optional features*/
+	int card_ref;		/* reference to a card */
 	const char *name;	/* driver name */
-} ihw_driver_info;
+} cdb_isdn_vario;
 
-/* parameter info */
-typedef struct  {
-	const char	*name;		/* Name of the parameter */
-	unsigned int	type;		/* type of parameter (P_... */
-	unsigned int	flags;		/* additional information about the */
-					/* parameter */
-	unsigned long	def_value;	/* default value */
-	unsigned long   bytecnt;	/* byte count of ressource not used */
-       	const unsigned long *list;	/* possible values of the parameter */
-       					/* The first element gives the count */
-       					/* of values */
-} ihw_para_info;
 
-/* get card informations in alphabetically order handle = 0,1,... */
-/* if handle is out of bounds NULL is returned */
+extern cdb_isdn_vendor	*hd_cdbisdn_get_vendor(int);
+extern cdb_isdn_card	*hd_cdbisdn_get_card(int);
+extern cdb_isdn_vario	*hd_cdbisdn_get_vario_from_type(int, int);
+extern cdb_isdn_card	*hd_cdbisdn_get_card_from_type(int, int);
+extern cdb_isdn_card	*hd_cdbisdn_get_card_from_id(int, int, int, int);
+extern cdb_isdn_vario	*hd_cdbisdn_get_vario(int);
+extern int		hd_cdbisdn_get_version(void);
+extern int		hd_cdbisdn_get_db_version(void);
+extern char		*hd_cdbisdn_get_db_date(void);
 
-extern ihw_card_info	*hd_ihw_get_card(int handle);
-
-/* get card informations  for the card with typ and */
-/* subtyp returns NULL if no card match */
-
-extern ihw_card_info	*hd_ihw_get_card_from_type(int typ, int subtyp);
-
-/* get informations  for the card with VENDOR,DEVICE,SUBVENDOR, */
-/* SUBDEVICE for  ISAPNP and PCI cards SUBVENDOR and SUBDEVICE should be */
-/* set to 0xffff for ISAPNP cards; returns NULL if no card found */
-
-extern ihw_card_info	*hd_ihw_get_card_from_id(int vendor, int device,
-					int subvendor, int subdevice);
-
-/* Get a parameter information for a card identified with "card_handle" */
-/* the pnr starts with 1 for the first parameter 2 for the second ... */
-/* returns NULL, if here are no parameter with that pnr */
-
-extern ihw_para_info	*hd_ihw_get_parameter(int card_handle, int pnr);
-
-/* get driver informations for the driver with handle */
-/* returns NULL if no driver has this handle */
-
-extern ihw_driver_info	*hd_ihw_get_driver(int handle);
-
-/* get driver informations  for the driver with typ and subtype */
-/* returns NULL if no driver has this typ and subtype */
-
-extern ihw_driver_info	*hd_ihw_get_driver_from_type(int typ, int subtyp);
-
-/* get ihw struct version */
-extern int		hd_ihw_get_version(void);
-
-/* get ihw database version */
-extern int		hd_ihw_get_db_version(void);
-
-/* get ihw database creation date */
-extern char		*hd_ihw_get_db_date(void);
-
-/*
- * - - - - - ihw interface end  - - - - -
- */
-
+/* CDB ISDN interface end */
 
 #ifdef __cplusplus
 }
