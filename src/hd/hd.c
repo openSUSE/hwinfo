@@ -5539,8 +5539,11 @@ int hd_read_mmap(hd_data_t *hd_data, char *name, unsigned char *buf, off_t start
   int psize = getpagesize(), fd;
   unsigned map_size;
   void *p;
+  struct stat sbuf;
 
   if(!size || !name) return 0;
+
+  memset(buf, 0, size);
 
   map_start = start & -psize;
   xofs = start - map_start;
@@ -5550,6 +5553,22 @@ int hd_read_mmap(hd_data_t *hd_data, char *name, unsigned char *buf, off_t start
   fd = open(name, O_RDONLY);
 
   if(fd == -1) return 0;
+
+  if(!fstat(fd, &sbuf) && S_ISREG(sbuf.st_mode)) {
+    if(sbuf.st_size < start + size) {
+      if(sbuf.st_size > start) {
+        size = sbuf.st_size - start;
+      }
+      else {
+        size = 0;
+      }
+    }
+  }
+
+  if(!size) {
+    close(fd);
+    return 0;
+  }
 
   p = mmap(NULL, map_size, PROT_READ, MAP_PRIVATE, fd, map_start);
 

@@ -1,3 +1,6 @@
+1/6/2004:	v8.57
+	- check file size so we don't read outside mmap()-ed region
+
 27/5/2004:	v8.56
 	- added scsi.noserial probe option; useful for some usb sticks (#40485)
 	- adding pci id fix from #40175
