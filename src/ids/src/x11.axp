@@ -1127,7 +1127,7 @@
 +driver.xfree		3|SVGA|||||8,16
 
  vendor.id		pci 0x103c
-+vendor.name		Hewlett-Packard Company
++vendor.name		Hewlett-Packard
 
  vendor.id		pci 0x103c
 &device.id		pci 0x1030

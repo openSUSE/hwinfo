@@ -72,6 +72,7 @@
 #include "pppoe.h"
 #include "pcmcia.h"
 #include "s390.h"
+#include "sysfs.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -209,7 +210,8 @@ static struct s_mod_names {
   { mod_ataraid, "ataraid" },
   { mod_pppoe, "pppoe" },
   { mod_pcmcia, "pcmcia" },
-  { mod_s390, "s390" }
+  { mod_s390, "s390" },
+  { mod_sysfs, "sysfs" }
 };
 
 /*
@@ -308,7 +310,8 @@ static struct s_pr_flags {
   { pr_scan,          0,                  0, "scan"          },
   { pr_pcmcia,        0,            8|4|2|1, "pcmcia"        },
   { pr_fork,          0,                  0, "fork"          },
-  { pr_cpuemu,        0,                  0, "cpuemu"        }
+  { pr_cpuemu,        0,                  0, "cpuemu"        },
+  { pr_sysfs,         0,                  0, "sysfs"         }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -952,6 +955,7 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
         pci_t *p = d->pci.data;
 
         free_mem(p->log);
+        free_mem(p->sysfs);
         free_mem(p);
       }
       break;
@@ -1609,6 +1613,10 @@ void hd_scan(hd_data_t *hd_data)
   if(hd_data->last_idx == 0) {
     hd_set_probe_feature(hd_data, pr_fork);
     if(!hd_probe_feature(hd_data, pr_fork)) hd_data->flags.nofork = 1;
+#if 0	/* not yet default */
+    hd_set_probe_feature(hd_data, pr_sysfs);
+#endif
+    if(!hd_probe_feature(hd_data, pr_sysfs)) hd_data->flags.nosysfs = 1;
     if(hd_probe_feature(hd_data, pr_cpuemu)) hd_data->flags.cpuemu = 1;
   }
 
@@ -1654,7 +1662,12 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_cpu(hd_data);
   hd_scan_memory(hd_data);
 
-  hd_scan_pci(hd_data);
+  if(hd_data->flags.nosysfs) {
+    hd_scan_pci(hd_data);
+  }
+  else {
+    hd_scan_sysfs_pci(hd_data);
+  }
 
   /* do it _after_ hd_scan_pci() */
 #if defined(__PPC__)

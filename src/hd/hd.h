@@ -105,7 +105,7 @@ typedef enum probe_feature {
   pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
   pr_fb, pr_bios_vbe2, pr_veth, pr_partition, pr_disk, pr_ataraid, pr_pppoe,
   pr_scan, pr_partition_add, pr_pcmcia, pr_fork, pr_parallel_imm, pr_s390,
-  /* pr_bios_32, */ pr_cpuemu,
+  /* pr_bios_32, */ pr_cpuemu, pr_sysfs,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
@@ -956,6 +956,7 @@ typedef struct s_pci_t {
   uint64_t base_len[6];				/* I/O or memory ranges */
   uint64_t rom_base_addr;			/* memory base for card ROM */
   uint64_t rom_base_len;			/* memory range for card ROM */
+  char *sysfs;					/* sysfs path */
 } pci_t;
 
 /*
@@ -2120,6 +2121,7 @@ typedef struct {
     unsigned fast:1;		/**< Don't check tricky hardware. */
     unsigned list_md:1;		/**< Report md & lvm devices from /proc/partitions */
     unsigned nofork:1;		/**< don't run potentially hanging code in a subprocess */
+    unsigned nosysfs:1;		/**< don't ask sysfs */
     unsigned forked:1;		/**< we're running in a subprocess */
     unsigned cpuemu:1;		/**< use CPU emulation to run BIOS code (i386 only) */
   } flags;
