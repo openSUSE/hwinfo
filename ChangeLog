@@ -1,3 +1,4 @@
+6/5/2004:	v8.46
 	- detect IUCV pseudodevices (bug #39456)
 	- added hd_busid_to_hwcfg() (bug #39456)
 	- updated X11 data (#39767)
