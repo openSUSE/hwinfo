@@ -113,7 +113,7 @@ void hd_scan_ide(hd_data_t *hd_data)
 
     parent = 0;
     str_printf(&fname, 0, PROC_IDE "/hd%c", i + 'a');
-    s = read_symlink(fname);
+    s = hd_read_symlink(fname);
     if(s && (t = strchr(s, '/'))) {
       *t = 0;
       for(j = 0; j < if_table_len; j++) {

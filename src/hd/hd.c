@@ -2145,7 +2145,7 @@ str_list_t *read_dir(char *dir_name, int type)
 }
 
 
-char *read_symlink(char *link_name)
+char *hd_read_symlink(char *link_name)
 {
   static char buf[256];
   int i;

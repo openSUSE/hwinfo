@@ -138,7 +138,7 @@ str_list_t *add_str_list(str_list_t **sl, char *str);
 str_list_t *free_str_list(str_list_t *list);
 str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines);
 str_list_t *read_dir(char *dir_name, int type);
-char *read_symlink(char *link_name);
+char *hd_read_symlink(char *link_name);
 void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg);
 
 void remove_hd_entries(hd_data_t *hd_data);
