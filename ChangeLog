@@ -1,5 +1,5 @@
 18/9/2003:	v7.28
-	- set ATA RAID bus type to 'IDE' (#31235)
+	- set ATA RAID bus type to 'RAID' (#31235)
 
 17/9/2003:	v7.27
 	- don't make every parport into a printer (#31161)
