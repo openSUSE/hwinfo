@@ -1,3 +1,7 @@
+12/5/2003:	v6.21
+	- scan for partitions (backport from SL 8.3 needed by linuxrc
+	  for live eval and #26906)
+
 16/4/2003:	v6.20
 	- fixed megaraid info (#26325)
 
