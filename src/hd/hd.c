@@ -1841,6 +1841,9 @@ void hd_scan(hd_data_t *hd_data)
       case boot_s390:
         s = "s390";
         break;
+      case boot_grub:
+        s = "grub";
+        break;
       default:
         s = "unknown";
     }

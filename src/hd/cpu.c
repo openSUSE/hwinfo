@@ -252,7 +252,11 @@ void read_cpuinfo(hd_data_t *hd_data)
         ct->model = model;
         ct->stepping = stepping;
         ct->cache = cache;
+#ifdef __i386__
+	hd_data->boot = boot_grub;
+#else	/* __x86_64__ */
 	hd_data->boot = boot_lilo;
+#endif
 
         /* round clock to typical values */
         if(mhz >= 38 && mhz <= 42)

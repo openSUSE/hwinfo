@@ -4,6 +4,7 @@
 	- save %gs register around vm86() syscall (%gs may be used in glibc)
 	- isdn changes
 	- better handling of dasd devs
+	- grub instead of lilo on ix86
 
 13/6/2002:	v5.01
 	- made ia64 cpu model entry more useful
