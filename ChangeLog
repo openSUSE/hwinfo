@@ -1,5 +1,5 @@
 21/9/2004:	v9.16
-	- drop workaround for multiple hotplug events by broken [Fkernel
+	- drop workaround for multiple hotplug events by broken kernel
 
 21/9/2004:	v9.15
 	- replaced raiddetect with dmraid
