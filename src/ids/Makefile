@@ -37,7 +37,8 @@ endif
 
 IDFILES += names.video names.pciutils\
 	   drivers.network drivers.scsi drivers.block drivers.monitor\
-	   drivers.audio drivers.mouse drivers.video drivers.braille drivers.special
+	   drivers.alsa drivers.audio drivers.mouse drivers.video\
+	   drivers.braille drivers.special
 
 $(LIBHD_D): $(OBJS)
 	ar r $(LIBHD) $?

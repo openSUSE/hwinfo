@@ -1,3 +1,6 @@
+6/6/2002:	v5.00
+	- assign hardware added via 'hwprobe' a proper inital status
+
 24/4/2002:	v4.26
 	- add x86-64 support
 

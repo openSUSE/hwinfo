@@ -1,7 +1,7 @@
 TOPDIR		= ..
 SUBDIRS		= hd isdn pnpdump ids
 TARGETS		= touch $(LIBHD) $(LIBHD_SO)
-CLEANFILES	= $(LIBHD) $(LIBHD_D) $(LIBHD_SO) libhd.so.$(LIBHD_MAJOR_VERSION) libhd.so
+CLEANFILES	= $(LIBHD) $(LIBHD_D) $(LIBHD_SO) libhd.so*
 
 .PHONY: touch
 

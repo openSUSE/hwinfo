@@ -4560,6 +4560,9 @@ void hd_scan_xtra(hd_data_t *hd_data)
           if(ID_TAG(hd->vend) == TAG_PCI) hd->bus = bus_pci;
           if(ID_TAG(hd->vend) == TAG_USB) hd->bus = bus_usb;
           if(*buf3) hd->unix_dev_name = new_str(buf3);
+          hd->status.available = status_yes;
+          hd->status.configured = status_new;
+          hd->status.needed = status_no;
         }
         else {
           for(hd = hd_data->hd; hd; hd = hd->next) {
