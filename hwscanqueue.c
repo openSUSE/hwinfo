@@ -65,7 +65,7 @@ int main( int argc, char **argv )
 			}
 		}
 		if ( i>=NR_COMMANDS ){
-			fprintf(stderr, "need a device for this command\n");
+			fprintf(stderr, "unknown command\n");
 			exit(1);
 		}
 	}else
