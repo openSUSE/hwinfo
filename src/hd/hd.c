@@ -4921,7 +4921,7 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
 }
 
 
-int hd_change_status(char *id, hd_status_t status)
+int hd_change_status(const char *id, hd_status_t status)
 {
   hd_data_t *hd_data;
   hd_manual_t *entry;
@@ -4929,7 +4929,7 @@ int hd_change_status(char *id, hd_status_t status)
 
   hd_data = new_mem(sizeof *hd_data);
 
-  entry = hd_manual_read_entry(hd_data, id);
+  entry = hd_manual_read_entry(hd_data, (char *) id);
 
   if(!entry || status.invalid) return 1;
 
