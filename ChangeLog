@@ -1,5 +1,6 @@
 14/12/2001:	v3.36
 	- create version for linking against dietlibc
+	- mls: continue even if some vbe calls fail
 
 26/11/2001:	v3.35
 	- prepare for arm
