@@ -619,8 +619,13 @@ void hd_scan(hd_data_t *hd_data)
   /* init driver info database */
   init_hddb(hd_data);
 
-  /* for various reasons, do it befor scan_misc() */
+  /*
+   * for various reasons, do it befor scan_misc(); but on
+   * ppc, do it after scan_prom()
+   */
+#ifndef __PPC__
   hd_scan_floppy(hd_data);
+#endif
 
   /* get basic system info */
   hd_scan_misc(hd_data);
@@ -628,7 +633,6 @@ void hd_scan(hd_data_t *hd_data)
   /* start the detection  */
   hd_scan_cpu(hd_data);
   hd_scan_memory(hd_data);
-  hd_scan_monitor(hd_data);
 
   hd_scan_pci(hd_data);
 
@@ -639,7 +643,15 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_prom(hd_data);
 #endif
 
+#ifdef __PPC__
+  /* see comment above */
+  hd_scan_floppy(hd_data);
+#endif
+
   hd_scan_sys(hd_data);
+
+  /* after hd_scan_prom() */
+  hd_scan_monitor(hd_data);
 
 #if defined(__i386__) || defined(__alpha__) || defined(__PPC__)
   hd_scan_isapnp(hd_data);
@@ -1813,7 +1825,9 @@ int hd_module_is_active(hd_data_t *hd_data, char *mod)
 {
   str_list_t *sl, *sl0 = read_kmods(hd_data);
   int active = 0;
+#ifdef __PPC__
   char *s1, *s2;
+#endif
 
   for(sl = sl0; sl; sl = sl->next) {
     if(!strcmp(sl->str, mod)) break;

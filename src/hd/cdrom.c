@@ -60,7 +60,8 @@ void hd_scan_cdrom(hd_data_t *hd_data)
     /* look for existing entries... */
     if(
       hd->base_class == bc_storage_device &&
-      hd->sub_class == sc_sdev_cdrom
+      hd->sub_class == sc_sdev_cdrom &&
+      hd->unix_dev_name
     ) {
       found = 0;
       for(sl = *(prev = &hd_data->cdrom); sl; sl = *(prev = &sl->next)) {
@@ -148,26 +149,28 @@ cdrom_info_t *hd_read_cdrom_info(hd_t *hd)
     hd->detail->type = hd_detail_cdrom;
     hd->detail->cdrom.data = ci = new_mem(sizeof *ci);
 
-    /* now, fill in the fields */
-    s = canon_str(iso_desc.volume_id, sizeof iso_desc.volume_id);
-    if(!*s) s = free_mem(s);
-    ci->volume = s;
+    if(!memcmp(iso_desc.id, "CD001", 5)) {
+      /* now, fill in the fields */
+      s = canon_str(iso_desc.volume_id, sizeof iso_desc.volume_id);
+      if(!*s) s = free_mem(s);
+      ci->volume = s;
 
-    s = canon_str(iso_desc.publisher_id, sizeof iso_desc.publisher_id);
-    if(!*s) s = free_mem(s);
-    ci->publisher = s;
+      s = canon_str(iso_desc.publisher_id, sizeof iso_desc.publisher_id);
+      if(!*s) s = free_mem(s);
+      ci->publisher = s;
 
-    s = canon_str(iso_desc.preparer_id, sizeof iso_desc.preparer_id);
-    if(!*s) s = free_mem(s);
-    ci->preparer = s;
+      s = canon_str(iso_desc.preparer_id, sizeof iso_desc.preparer_id);
+      if(!*s) s = free_mem(s);
+      ci->preparer = s;
 
-    s = canon_str(iso_desc.application_id, sizeof iso_desc.application_id);
-    if(!*s) s = free_mem(s);
-    ci->application = s;
+      s = canon_str(iso_desc.application_id, sizeof iso_desc.application_id);
+      if(!*s) s = free_mem(s);
+      ci->application = s;
 
-    s = canon_str(iso_desc.creation_date, sizeof iso_desc.creation_date);
-    if(!*s) s = free_mem(s);
-    ci->creation_date = s;
+      s = canon_str(iso_desc.creation_date, sizeof iso_desc.creation_date);
+      if(!*s) s = free_mem(s);
+      ci->creation_date = s;
+    }
   }
   else {
     ci = NULL;

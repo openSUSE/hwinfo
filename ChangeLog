@@ -1,3 +1,7 @@
+15/8/2000:	v1.30
+	- added monitor detection on ppc
+	- fixed iso9660 info reading 
+
 14/8/2000:	v1.29
 	- added PROM parser for ppc; currently handles
           SCSI, network, sound & floppy devices
