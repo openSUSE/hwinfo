@@ -1,3 +1,4 @@
+16/2/2004:	v8.07
 	- fixed ia64 unaligned access (#32396)
 	- use modprobe for tulip (#32911)
 
