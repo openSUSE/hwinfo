@@ -62,8 +62,56 @@ static void do_int(int num) {
 }
 
 
+static u8 deb_inb(X86EMU_pioAddr addr)
+{
+  u8 u;
+
+  u = inb(addr);
+  fprintf(stderr, "%04x:%04x  inb  %04x = %02x\n", M.x86.R_CS, (unsigned) M.x86.R_EIP, addr, u);
+
+  return u;
+}
+
+static u16 deb_inw(X86EMU_pioAddr addr)
+{
+  u16 u;
+
+  u = inw(addr);
+  fprintf(stderr, "%04x:%04x  inw  %04x = %04x\n", M.x86.R_CS, (unsigned) M.x86.R_EIP, addr, u);
+
+  return u;
+}
+
+static u32 deb_inl(X86EMU_pioAddr addr)
+{
+  u32 u;
+
+  u = inl(addr);
+  fprintf(stderr, "%04x:%04x  inl  %04x = %08x\n", M.x86.R_CS, (unsigned) M.x86.R_EIP, addr, (unsigned) u);
+
+  return u;
+}
+
+static void deb_outb(X86EMU_pioAddr addr, u8 val)
+{
+  fprintf(stderr, "%04x:%04x  outb %04x, %02x\n", M.x86.R_CS, (unsigned) M.x86.R_EIP, addr, val);
+  outb(addr, val);
+}
+
+static void deb_outw(X86EMU_pioAddr addr, u16 val)
+{
+  fprintf(stderr, "%04x:%04x  outw %04x, %04x\n", M.x86.R_CS, (unsigned) M.x86.R_EIP, addr, val);
+  outw(addr, val);
+}
+
+static void deb_outl(X86EMU_pioAddr addr, u32 val)
+{
+  fprintf(stderr, "%04x:%04x  outl %04x, %08x\n", M.x86.R_CS, (unsigned) M.x86.R_EIP, addr, (unsigned) val);
+  outl(addr, val);
+}
+
 int
-emu_vm86(struct vm86_struct *vm)
+emu_vm86(struct vm86_struct *vm, unsigned debug)
 {
   int i;
 
@@ -79,12 +127,21 @@ emu_vm86(struct vm86_struct *vm)
   memFuncs.wrl = Mem_wl;
   X86EMU_setupMemFuncs(&memFuncs);
 
+if(debug) {
+  pioFuncs.inb = deb_inb;
+  pioFuncs.inw = deb_inw;
+  pioFuncs.inl = deb_inl;
+  pioFuncs.outb = deb_outb;
+  pioFuncs.outw = deb_outw;
+  pioFuncs.outl = deb_outl;
+} else {
   pioFuncs.inb = (u8(*)(u16))inb;
   pioFuncs.inw = (u16(*)(u16))inw;
   pioFuncs.inl = (u32(*)(u16))inl;
   pioFuncs.outb = (void(*)(u16, u8))outb;
   pioFuncs.outw = (void(*)(u16, u16))outw;
   pioFuncs.outl = (void(*)(u16, u32))outl;
+}
   X86EMU_setupPioFuncs(&pioFuncs);
 
   for (i=0;i<256;i++)
