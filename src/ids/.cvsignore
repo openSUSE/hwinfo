@@ -3,7 +3,5 @@ hd.drivers
 mk_ids.err
 .depend
 hd.names
-names.c
 names.h
-names_s.c
 names_s.h
