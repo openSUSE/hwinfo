@@ -24,7 +24,6 @@
 #define PROC_USB_DEVICES	"/proc/bus/usb/devices_please-use-sysfs-instead"
 #define PROC_PROM		"/proc/device-tree"
 #define PROC_MEMINFO		"/proc/meminfo"
-#define PROC_DASD		"/proc/dasd"
 #define PROC_VERSION		"/proc/version"
 #define PROC_ISAPNP		"/proc/isapnp"
 #define PROC_ISERIES		"/proc/iSeries"
@@ -108,7 +107,7 @@ enum mod_idx {
   mod_floppy, mod_misc, mod_bios, mod_cpu, mod_monitor, mod_mouse, mod_scsi,
   mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel, mod_isa, mod_isdn,
   mod_kbd, mod_prom, mod_sbus, mod_int, mod_braille, mod_xtra, mod_sys,
-  mod_dasd, mod_manual, mod_fb, mod_veth, mod_pppoe, mod_pcmcia, mod_s390,
+  mod_manual, mod_fb, mod_veth, mod_pppoe, mod_pcmcia, mod_s390,
   mod_sysfs, mod_dsl, mod_block
 };
 

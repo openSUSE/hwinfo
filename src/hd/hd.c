@@ -54,7 +54,6 @@
 #include "int.h"
 #include "braille.h"
 #include "sys.h"
-#include "dasd.h"
 #include "manual.h"
 #include "fb.h"
 #include "veth.h"
@@ -186,7 +185,6 @@ static struct s_mod_names {
   { mod_braille, "braille" },
   { mod_xtra, "hd" },
   { mod_sys, "sys" },
-  { mod_dasd, "dasd" },
   { mod_manual, "manual" },
   { mod_fb, "fb" },
   { mod_veth, "veth" },
@@ -271,7 +269,6 @@ static struct s_pr_flags {
 #endif
   { pr_ignx11,        0,                  0, "ignx11"        },
   { pr_sys,           0,            8|4|2|1, "sys"           },
-  { pr_dasd,          0,            8|4|2|1, "dasd"          },
   { pr_manual,        0,            8|4|2|1, "manual"        },
   { pr_fb,            0,            8|4|2|1, "fb"            },
   { pr_veth,          0,            8|4|2|1, "veth"          },
@@ -446,13 +443,20 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_block_part);
 
     case hw_disk:
-#if defined(__s390__) || defined(__s390x__)
       hd_set_probe_feature(hd_data, pr_s390disks);
-#endif      
       hd_set_probe_feature(hd_data, pr_bios);		// bios disk order
       hd_set_probe_feature(hd_data, pr_pci);
-      hd_set_probe_feature(hd_data, pr_dasd);
       hd_set_probe_feature(hd_data, pr_block);
+      break;
+
+    case hw_block:
+      hd_set_probe_feature(hd_data, pr_s390disks);
+      hd_set_probe_feature(hd_data, pr_bios);		// bios disk order
+      hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_block);
+      if(!hd_data->flags.fast) {
+        hd_set_probe_feature(hd_data, pr_block_cdrom);
+      }
       break;
 
     case hw_network:
@@ -565,7 +569,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
         hd_set_probe_feature(hd_data, pr_parallel_zip);
       }
       hd_set_probe_feature(hd_data, pr_s390);
-      hd_set_probe_feature(hd_data, pr_dasd);		/* dasd on s390 */
 #ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
       hd_set_probe_feature(hd_data, pr_misc);
@@ -724,15 +727,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
     
     case hw_redasd:
-      hd_set_probe_feature(hd_data, pr_dasd);
-      break;
-
-    case hw_block:
-      hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_block);
-      if(!hd_data->flags.fast) {
-        hd_set_probe_feature(hd_data, pr_block_cdrom);
-      }
       break;
 
     case hw_unknown:
@@ -1712,9 +1707,6 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_sysfs_block(hd_data);
   hd_scan_sysfs_scsi(hd_data);
 
-#if defined(__s390__) || defined(__s390x__)
-  hd_scan_dasd(hd_data);
-#endif
 #if defined(__PPC__)   
   hd_scan_veth(hd_data);
 #endif
@@ -4412,6 +4404,13 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
     hd->base_class.id == bc_partition
   ) {
     hd_set_hw_class(hd, hw_block);
+  }
+
+  if(
+    hd->base_class.id == bc_storage_device &&
+    hd->sub_class.id == sc_sdev_disk
+  ) {
+    hd_set_hw_class(hd, hw_redasd);
   }
 }
 

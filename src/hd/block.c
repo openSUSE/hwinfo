@@ -418,6 +418,13 @@ void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_
       hd->slot = c - 'a';
       str_printf(&hd->device.name, 0, "I2O disk %u", hd->slot);
     }
+    else if(
+      sscanf(hd->sysfs_id, "/block/dasd%c", &c) == 1 &&
+      c >= 'a'
+    ) {
+      hd->slot = c - 'a';
+      hd->device.name = new_str("S390 Disk");
+    }
   }
 
 
@@ -580,7 +587,7 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_de
 void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev)
 {
   hd_t *hd1;
-  char *s, *cs;
+  char *s, *t, *cs;
   unsigned u0, u1, u2, u3;
   int fd, k;
   unsigned char scsi_cmd_buf[0x300];
@@ -653,9 +660,13 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
     scsi->wwpn = ul0;
 
     /* it's a bit of a hack, actually */
-    scsi->controller_id = new_str(hd_sysfs_id(sf_dev->path));
-    if((s = strrchr(scsi->controller_id, '/'))) *s =  0;
-    if((s = strrchr(scsi->controller_id, '/'))) *s =  0;
+    t = new_str(hd_sysfs_id(sf_dev->path));
+    if((s = strrchr(t, '/'))) *s = 0;
+    if((s = strrchr(t, '/'))) *s = 0;
+    if((s = strrchr(t, '/'))) {
+      scsi->controller_id = new_str(s + 1);
+    }
+    t = free_mem(t);
   }
 
   if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "fcp_lun"), &ul0)) {

@@ -100,7 +100,7 @@ typedef enum probe_feature {
   pr_modem_usb, pr_parallel, pr_parallel_lp, pr_parallel_zip, pr_isa,
   pr_isa_isdn, pr_isdn, pr_kbd, pr_prom, pr_sbus, pr_int, pr_braille,
   pr_braille_alva, pr_braille_fhp, pr_braille_ht, pr_ignx11, pr_sys,
-  pr_dasd, pr_bios_vbe, pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod,
+  pr_bios_vbe, pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod,
   pr_braille_baum, pr_manual, pr_fb, pr_bios_vbe2, pr_veth, pr_pppoe,
   pr_scan, pr_pcmcia, pr_fork, pr_parallel_imm, pr_s390, pr_cpuemu,
   pr_sysfs, pr_s390disks, pr_udev, pr_block, pr_block_cdrom, pr_block_part,
