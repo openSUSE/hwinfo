@@ -349,11 +349,13 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # block devices (RAID, ...)
 
-# block/DAC960.c
+# modules.alias
  vendor.id		pci 0x1011
 &device.id		pci 0x1065
+&subvendor.id		pci 0x1069
+&subdevice.id		pci 0x0020
 |vendor.id		pci 0x1069
-&device.id		pci 0x0002
+&device.id		pci 0x0001+0x0002
 |vendor.id		pci 0x1069
 &device.id		pci 0x0010
 |vendor.id		pci 0x1069
@@ -361,6 +363,8 @@
 |vendor.id		pci 0x1069
 &device.id		pci 0xba56
 +driver.module.modprobe	DAC960
++baseclass.id		0x001
++subclass.id		0x04
 
 # pcimap
  vendor.id		pci 0x0e11
