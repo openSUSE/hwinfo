@@ -1,3 +1,6 @@
+5/4/2004:	v8.35
+	- don't run raiddetect if --fast option is used
+
 5/4/2004:	v8.34
 	- make --only accept device names, too (#38265)
 	- check return value from hd_sysfs_id() (#38266)

@@ -957,6 +957,8 @@ void int_softraid(hd_data_t *hd_data)
   str_list_t *raid, *sl, *raid_sysfs = NULL, *sl1;
   size_t len;
   char *s;
+
+  if(hd_data->flags.fast) return;
   
   raid = read_file("| /sbin/raiddetect -s 2>/dev/null", 0, 0);
 

@@ -1520,6 +1520,8 @@ int hd_write_config(hd_data_t *hd_data, hd_t *hd)
   int err = 0;
   hd_manual_t *entry;
 
+  if(!hd_report_this(hd_data, hd)) return 0;
+
   entry = new_mem(sizeof *entry);
 
   hd2manual(hd, entry);
