@@ -51,7 +51,7 @@ clean: subdirs
 ifneq "$(CFILES)" ""
 ifneq "$(MAKECMDGOALS)" "clean"
 .depend: $(CFILES)
-	@$(CC) -MM $(CFLAGS) $(CFILES) >$@
+	@$(CC) -MG -MM $(CFLAGS) $(CFILES) >$@
 
 -include .depend
 endif

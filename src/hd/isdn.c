@@ -14,6 +14,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+#ifndef LIBHD_TINY
+
 #if !defined(__s390__) && !defined(__s390x__) && !defined(__alpha__)
 
 void hd_scan_isdn(hd_data_t *hd_data)
@@ -133,13 +135,7 @@ ihw_card_info *get_isdn_info(hd_t *hd)
   ihw_card_info *ici0, *ici;
   unsigned u0, u1;
 
-//#if defined(__i386)
-/*
- * libihw currently breaks on non-Intel machines
- */
-
   if(hd->bus == bus_pci || hd->bus == bus_isa) {
-    ici0 = new_mem(sizeof *ici0);
     ici = NULL;
     u0 = ID_VALUE(hd->vend);
     if(
@@ -149,9 +145,7 @@ ihw_card_info *get_isdn_info(hd_t *hd)
       ID_TAG(hd->dev) == TAG_SPECIAL
     ) {
       u0 = ID_VALUE(hd->dev);
-      ici0->type = u0 >> 8;
-      ici0->subtype = u0 & 0xff;
-      ici = ihw_get_device_from_type(ici0);
+      ici = hd_ihw_get_card_from_type(u0 >> 8, u0 & 0xff);
     }
 
     if(
@@ -161,31 +155,26 @@ ihw_card_info *get_isdn_info(hd_t *hd)
     ) {
       u0 = ID_VALUE(hd->vend);
       u1 = ID_VALUE(hd->dev);
-      ici0->Class = CLASS_ISAPNP;
-      ici0->vendor = ((u0 & 0xff) << 8) + ((u0 >> 8) & 0xff);
-      ici0->device = ((u1 & 0xff) << 8) + ((u1 >> 8) & 0xff);
-      ici0->subvendor = 0xffff;
-      ici0->subdevice = 0xffff;
-      ici = ihw_get_device_from_id(ici0);
+      ici = hd_ihw_get_card_from_id(((u0 & 0xff) << 8) + ((u0 >> 8) & 0xff),
+                                   ((u1 & 0xff) << 8) + ((u1 >> 8) & 0xff),
+                                   0xffff,0xffff);
     }
 
     if(hd->bus == bus_pci) {
-      ici0->Class = CLASS_PCI;
-      ici0->vendor = ID_VALUE(hd->vend);
-      ici0->device = ID_VALUE(hd->dev);
-      ici0->subvendor = ID_VALUE(hd->sub_vend);
-      ici0->subdevice = ID_VALUE(hd->sub_dev);
-      ici = ihw_get_device_from_id(ici0);
+      ici = hd_ihw_get_card_from_id(ID_VALUE(hd->vend), ID_VALUE(hd->dev),
+                                 ID_VALUE(hd->sub_vend),ID_VALUE(hd->sub_dev));
     }
 
-    if(ici) return ici;
-
-    ici0 = free_mem(ici0);
+    if(ici) {
+      ici0 = new_mem(sizeof *ici0);
+      memcpy(ici0, ici, sizeof *ici0);
+      return ici0;
+    }
   }
-
-//#endif		/* i386 */
-
   return NULL;
 }
 
 #endif		/* !defined(__s390__) && !defined(__s390x__) && !defined(__alpha__) */
+
+#endif		/* !defined(LIBHD_TINY) */
+

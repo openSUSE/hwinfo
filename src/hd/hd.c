@@ -105,7 +105,7 @@
 #define HD_ARCH "mips"
 #endif
 
-#if defined(__s390__) || defined(__s390x__) ||defined(__alpha__)
+#if defined(__s390__) || defined(__s390x__) || defined(__alpha__) || defined(LIBHD_TINY)
 #define WITH_ISDN	0
 #else
 #define WITH_ISDN	1
@@ -1540,10 +1540,8 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_xtra(hd_data);
 
   /* some final fixup's */
-#ifndef LIBHD_TINY
 #if WITH_ISDN
   hd_scan_isdn(hd_data);
-#endif
 #endif
   hd_scan_int(hd_data);
 
@@ -2527,149 +2525,162 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
 #if WITH_ISDN
 driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
 {
-  driver_info_t *di;
-  ihw_para_info *ipi0, *ipi;
+  driver_info_t *di0, *di;
+  ihw_para_info *ipi;
+  ihw_driver_info *idi;
   isdn_parm_t *ip;
   hd_res_t *res;
   uint64_t irqs, irqs2;
-  int i, irq_val;
+  int i, irq_val, drv, pnr;
 
-  di = new_mem(sizeof *di);
-  ipi0 = new_mem(sizeof *ipi0);
+  if (!ici)
+  	return NULL;
 
-  di->isdn.type = di_isdn;
-  di->isdn.i4l_type = ici->type;
-  di->isdn.i4l_subtype = ici->subtype;
-  di->isdn.i4l_name = new_str(ici->name);
+  di0 = new_mem(sizeof *di0);
 
-  if(hd->bus == bus_pci) return di;
+  drv = ici->driver;
+  di = NULL;
+  while((idi = hd_ihw_get_driver(drv))) {
+    drv = idi->next_drv;
+    if (di) {
+      di->next = new_mem(sizeof *di);
+      di = di->next;
+    } else
+      di = di0;
+    di->isdn.type = di_isdn;
+    di->isdn.i4l_type = idi->typ;
+    di->isdn.i4l_subtype = idi->subtyp;
+    di->isdn.i4l_name = new_str(ici->name);
 
-  ipi0->handle = -1;
-  while((ipi = ihw_get_parameter(ici->handle, ipi0))) {
-    ip = new_isdn_parm(&di->isdn.params);
-    ip->name = new_str(ipi->name);
-    ip->type = ipi->type & P_TYPE_MASK;
-    ip->flags = ipi->flags & P_PROPERTY_MASK;
-    ip->def_value = ipi->def_value;
-    if(ipi->list) ip->alt_values = *ipi->list;
-    ip->alt_value = new_mem(ip->alt_values * sizeof *ip->alt_value);
-    for(i = 0; i < ip->alt_values; i++) {
-      ip->alt_value[i] = ipi->list[i + 1];
-    }
-    ip->valid = 1;
+    if(hd->bus == bus_pci) continue;
 
-    if((ip->flags & P_SOFTSET)) {
-      switch(ip->type) {
-        case P_IRQ:
-          update_irq_usage(hd_data);
-          irqs = 0;
-          for(i = 0; i < ip->alt_values; i++) {
-            irqs |= 1ull << ip->alt_value[i];
-          }
-          irqs &= ~(hd_data->used_irqs | hd_data->assigned_irqs);
-#ifdef __i386__
-          irqs &= 0xffffull;	/* max. 16 on intel */
-          /*
-           * The point is, that this is relevant for isa boards only
-           * and those have irq values < 16 anyway. So it really
-           * doesn't matter if we mask with 0xffff or not.
-           */
-#endif
-          if(!irqs) {
-            ip->conflict = 1;
-            ip->valid = 0;
-          }
-          else {
-            irqs2 = irqs & ~0xc018ull;
-            /* see if we can avoid irqs 3,4,14,15 */
-            if(irqs2) irqs = irqs2;
-            irq_val = -1;
-            /* try default value first */
-            if(ip->def_value && (irqs & (1ull << ip->def_value))) {
-              irq_val = ip->def_value;
+    pnr = 1;
+    while((ipi = hd_ihw_get_parameter(ici->handle, pnr++))) {
+      ip = new_isdn_parm(&di->isdn.params);
+      ip->name = new_str(ipi->name);
+      ip->type = ipi->type & P_TYPE_MASK;
+      ip->flags = ipi->flags & P_PROPERTY_MASK;
+      ip->def_value = ipi->def_value;
+      if(ipi->list) ip->alt_values = *ipi->list;
+      ip->alt_value = new_mem(ip->alt_values * sizeof *ip->alt_value);
+      for(i = 0; i < ip->alt_values; i++) {
+        ip->alt_value[i] = ipi->list[i + 1];
+      }
+      ip->valid = 1;
+
+      if((ip->flags & P_SOFTSET)) {
+        switch(ip->type) {
+          case P_IRQ:
+            update_irq_usage(hd_data);
+            irqs = 0;
+            for(i = 0; i < ip->alt_values; i++) {
+              irqs |= 1ull << ip->alt_value[i];
             }
-            else {
-              for(i = 0; i < 64 && irqs; i++, irqs >>= 1) {
-                if((irqs & 1)) irq_val = i;
-              }
-            }
-            if(irq_val >= 0) {
-              ip->value = irq_val;
-              hd_data->assigned_irqs |= 1ull << irq_val;
-            }
-            else {
+            irqs &= ~(hd_data->used_irqs | hd_data->assigned_irqs);
+  #ifdef __i386__
+            irqs &= 0xffffull;	/* max. 16 on intel */
+            /*
+             * The point is, that this is relevant for isa boards only
+             * and those have irq values < 16 anyway. So it really
+             * doesn't matter if we mask with 0xffff or not.
+             */
+  #endif
+            if(!irqs) {
+              ip->conflict = 1;
               ip->valid = 0;
             }
-          }
-          break;
-        case P_MEM:
-          if(!hd_data->bios_rom.data) {
-            if(ip->def_value) {
-              ip->value = ip->def_value;
+            else {
+              irqs2 = irqs & ~0xc018ull;
+              /* see if we can avoid irqs 3,4,14,15 */
+              if(irqs2) irqs = irqs2;
+              irq_val = -1;
+              /* try default value first */
+              if(ip->def_value && (irqs & (1ull << ip->def_value))) {
+                irq_val = ip->def_value;
+              }
+              else {
+                for(i = 0; i < 64 && irqs; i++, irqs >>= 1) {
+                  if((irqs & 1)) irq_val = i;
+                }
+              }
+              if(irq_val >= 0) {
+                ip->value = irq_val;
+                hd_data->assigned_irqs |= 1ull << irq_val;
+              }
+              else {
+                ip->valid = 0;
+              }
             }
-          }
-          else {
-            /* ###### 0x2000 is just guessing -> should be provided by libihw */
-            if(ip->def_value && chk_free_biosmem(hd_data, ip->def_value, 0x2000)) {
-              ip->value = ip->def_value;
+            break;
+          case P_MEM:
+            if(!hd_data->bios_rom.data) {
+              if(ip->def_value) {
+                ip->value = ip->def_value;
+              }
             }
             else {
-              for(i = ip->alt_values - 1; i >= 0; i--) {
-                if(chk_free_biosmem(hd_data, ip->alt_value[i], 0x2000)) {
-                  ip->value = ip->alt_value[i];
-                  break;
+              /* ###### 0x2000 is just guessing -> should be provided by libihw */
+              if(ip->def_value && chk_free_biosmem(hd_data, ip->def_value, 0x2000)) {
+                ip->value = ip->def_value;
+              }
+              else {
+                for(i = ip->alt_values - 1; i >= 0; i--) {
+                  if(chk_free_biosmem(hd_data, ip->alt_value[i], 0x2000)) {
+                    ip->value = ip->alt_value[i];
+                    break;
+                  }
                 }
               }
             }
-          }
-          if(!ip->value) ip->conflict = 1;
-          break;
-        default:
-          ip->valid = 0;
+            if(!ip->value) ip->conflict = 1;
+            break;
+          default:
+            ip->valid = 0;
+        }
+      }
+      else if((ip->flags & P_DEFINE)) {
+        res = NULL;
+        switch(ip->type) {
+          case P_IRQ:
+            res = get_res(hd, res_irq, 0);
+            if(res) ip->value = res->irq.base;
+            break;
+          case P_MEM:
+            res = get_res(hd, res_mem, 0);
+            if(res) ip->value = res->mem.base;
+            break;
+          case P_IO:
+            res = get_res(hd, res_io, 0);
+            if(res) ip->value = res->io.base;
+            break;
+          case P_IO0:
+          case P_IO1:
+          case P_IO2:
+            res = get_res(hd, res_io, ip->type - P_IO0);
+            if(res) ip->value = res->io.base;
+            break;
+          // ##### might break for 64bit pci entries?
+          case P_BASE0:
+          case P_BASE1:
+          case P_BASE2:
+          case P_BASE3:
+          case P_BASE4:
+          case P_BASE5:
+            res = get_res(hd, res_mem, ip->type - P_BASE0);
+            if(res) ip->value = res->mem.base;
+            break;
+          default:
+            ip->valid = 0;
+        }
+        if(!res) ip->valid = 0;
       }
     }
-    else if((ip->flags & P_DEFINE)) {
-      res = NULL;
-      switch(ip->type) {
-        case P_IRQ:
-          res = get_res(hd, res_irq, 0);
-          if(res) ip->value = res->irq.base;
-          break;
-        case P_MEM:
-          res = get_res(hd, res_mem, 0);
-          if(res) ip->value = res->mem.base;
-          break;
-        case P_IO:
-          res = get_res(hd, res_io, 0);
-          if(res) ip->value = res->io.base;
-          break;
-        case P_IO0:
-        case P_IO1:
-        case P_IO2:
-          res = get_res(hd, res_io, ip->type - P_IO0);
-          if(res) ip->value = res->io.base;
-          break;
-        // ##### might break for 64bit pci entries?
-        case P_BASE0:
-        case P_BASE1:
-        case P_BASE2:
-        case P_BASE3:
-        case P_BASE4:
-        case P_BASE5:
-          res = get_res(hd, res_mem, ip->type - P_BASE0);
-          if(res) ip->value = res->mem.base;
-          break;
-        default:
-          ip->valid = 0;
-      }
-      if(!res) ip->valid = 0;
-    }
-
   }
-
-  free_mem(ipi0);
-
-  return di;
+  if (!di) {
+  	free_mem(di0);
+  	di0 = NULL;
+  }
+  return di0;
 }
 #endif		/* WITH_ISDN */
 
@@ -5073,7 +5084,9 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
 {
   hd_res_t *res;
   struct hd_geometry geo_s;
+#if 0
   struct hd_big_geometry big_geo_s;
+#endif
   unsigned long secs;
   unsigned sec_size;
   int close_fd = 0;
@@ -5091,6 +5104,7 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
 
   ADD2LOG("  open ok, fd = %d\n", fd);
 
+#if 0
   if(!ioctl(fd, HDIO_GETGEO_BIG, &big_geo_s)) {
     if(dev) ADD2LOG("%s: ioctl(big geo) ok\n", dev);
     res = add_res_entry(geo, new_mem(sizeof *res));
@@ -5102,6 +5116,7 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
   }
   else {
     ADD2LOG("  big geo failed: %s\n", strerror(errno));
+#endif
     if(!ioctl(fd, HDIO_GETGEO, &geo_s)) {
       if(dev) ADD2LOG("%s: ioctl(geo) ok\n", dev);
       res = add_res_entry(geo, new_mem(sizeof *res));
@@ -5114,7 +5129,9 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
     else {
       ADD2LOG("  geo failed: %s\n", strerror(errno));
     }
+#if 0
   }
+#endif
 
   if(!ioctl(fd, BLKGETSIZE, &secs)) {
     if(dev) ADD2LOG("%s: ioctl(disk size) ok\n", dev);

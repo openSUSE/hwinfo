@@ -1251,6 +1251,143 @@ char *hd_hw_item_name(hd_hw_item_t item);
 char *hd_status_value_name(hd_status_value_t status);
 int hd_change_status(const char *id, hd_status_t status, const char *config_string);
 
+
+/*
+ * - - - - - ihw interface - - - - -
+ */
+
+
+/* (C) kkeil@suse.de */
+
+#define IHW_VERSION	0x0202
+#define	CLASS_PCI	1
+#define CLASS_ISAPNP	2
+#define CLASS_ISALEGAL	3
+#define CLASS_PCMCIA	4
+#define CLASS_PC104	5
+#define CLASS_PARALLEL	6
+#define CLASS_SERIAL	7
+#define CLASS_USB	8
+#define CLASS_ONBOARD	9
+
+/* parameter types */
+#define P_NONE		0x0
+#define P_IRQ		0x1
+#define P_MEM		0x2
+#define P_IO		0x3
+#define P_IO0		0x4
+#define P_IO1		0x5
+#define P_IO2		0x6
+#define P_BASE0		0x8
+#define P_BASE1		0x9
+#define P_BASE2		0xa
+#define P_BASE3		0xb
+#define P_BASE4		0xc
+#define P_BASE5		0xd
+
+#define P_TYPE_MASK	0xff
+
+#define P_DEFINE	0x0100
+#define P_SOFTSET	0x0200
+#define P_HARDSET	0x0400
+#define P_READABLE	0x0800
+#define P_ISAPNP	0x1000
+#define P_PCI		0x2000
+
+#define P_PROPERTY_MASK	0xffff00
+
+#ifndef PCI_ANY_ID
+#define PCI_ANY_ID	0xffff
+#endif
+
+/* supported architectures */
+#define SUPPORT_ARCH_SMP	0x10000
+#define SUPPORT_ARCH_I386	0x0001
+#define SUPPORT_ARCH_AXP	0x0002
+#define SUPPORT_ARCH_PPC	0x0004
+                                                                                                                                                                                
+/* card info */
+
+typedef struct	{
+	int	handle;		/* internal identifier idx in daatabase */
+	const char *name;	/* Ascii cardname */
+	int	Class;		/* CLASS of the card */
+	int	vendor;		/* Vendor ID for ISAPNP and PCI cards */
+	int     device;		/* Device ID for ISAPNP and PCI cards */
+	int	subvendor;	/* Subvendor ID for PCI cards */
+				/* A value of 0xffff is ANY_ID */
+	int     subdevice;	/* Subdevice ID for PCI cards */
+				/* A value of 0xffff is ANY_ID */
+	int	driver;		/* referenz to driver record */
+	int	paracnt;	/* count of parameters */
+	int	para;		/* index to first parameter */
+} ihw_card_info;
+
+typedef struct  {
+	int	handle;		/* idx in database */	
+	int     next_drv;	/* link to alternate driver */
+	int     drvid;		/* unique id of the driver */
+	int	typ;		/* Type to identify the driver */
+	int	subtyp;		/* Subtype of the driver type */
+	const char *mod_name;	/* name of the driver module */
+	const char *para_str;	/* optional parameter string */
+	const char *mod_preload;/* optional modules to preload */
+	const char *cfg_prog;	/* optional cfg prog */
+	const char *firmware;	/* optional firmware to load */
+	const char *description;/* optional description */
+	int	arch;		/* supported architectures */
+	int	features;	/* optional features*/
+	int	card_ref;	/* reference to a card */
+} ihw_driver_info;
+
+/* parameter info */
+typedef struct  {
+	const char	*name;		/* Name of the parameter */
+	unsigned int	type;		/* type of parameter (P_... */
+	unsigned int	flags;		/* additional information about the */
+					/* parameter */
+	unsigned long	def_value;	/* default value */
+	unsigned long   bytecnt;	/* byte count of ressource not used */
+       	const unsigned long *list;	/* possible values of the parameter */
+       					/* The first element gives the count */
+       					/* of values */
+} ihw_para_info;
+
+#if 0
+/* get card informations in alphabetically order handle = 0,1,... */
+/* if handle is out of bounds NULL is returned */
+
+extern ihw_card_info	*hd_ihw_get_card(int handle);
+#endif
+
+/* get card informations  for the card with typ and */
+/* subtyp returns NULL if no card match */
+
+extern ihw_card_info	*hd_ihw_get_card_from_type(int typ, int subtyp);
+
+/* get informations  for the card with VENDOR,DEVICE,SUBVENDOR, */
+/* SUBDEVICE for  ISAPNP and PCI cards SUBVENDOR and SUBDEVICE should be */
+/* set to 0xffff for ISAPNP cards; returns NULL if no card found */
+
+extern ihw_card_info	*hd_ihw_get_card_from_id(int vendor, int device,
+					int subvendor, int subdevice);
+
+/* Get a parameter information for a card identified with "card_handle" */
+/* the pnr starts with 1 for the first parameter 2 for the second ... */
+/* returns NULL, if here are no parameter with that pnr */
+
+extern ihw_para_info	*hd_ihw_get_parameter(int card_handle, int pnr);
+
+/* get driver informations for the driver with handle */
+/* returns NULL if no driver has this handle */
+
+extern ihw_driver_info	*hd_ihw_get_driver(int handle);
+
+/*
+ * - - - - - ihw interface end  - - - - -
+ */
+
+
 #ifdef __cplusplus
 }
 #endif
