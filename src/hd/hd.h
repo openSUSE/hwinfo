@@ -1141,6 +1141,7 @@ typedef struct {
     unsigned dformat:2;		/* alternative output format */
     unsigned no_parport:1;	/* don't do parport probing: parport modules crash pmacs */
     unsigned iseries:1;		/* set if we are on an iSeries machine */
+    unsigned list_all:1;	/* return even devices with status 'not available' */
   } flags;			/* special flags */
   enum boot_arch boot;		/* boot method */
   hd_t *old_hd;			/* old (outdated) entries (if you scan more than once) */
@@ -1264,7 +1265,7 @@ int hd_change_status(const char *id, hd_status_t status, const char *config_stri
 
 /* (C) kkeil@suse.de */
 
-#define IHW_VERSION	0x0202
+#define IHW_VERSION	0x0203
 #define	CLASS_PCI	1
 #define CLASS_ISAPNP	2
 #define CLASS_ISALEGAL	3
@@ -1343,6 +1344,7 @@ typedef struct  {
 	int	arch;		/* supported architectures */
 	int	features;	/* optional features*/
 	int	card_ref;	/* reference to a card */
+	const char *name;	/* driver name */
 } ihw_driver_info;
 
 /* parameter info */
@@ -1385,6 +1387,20 @@ extern ihw_para_info	*hd_ihw_get_parameter(int card_handle, int pnr);
 /* returns NULL if no driver has this handle */
 
 extern ihw_driver_info	*hd_ihw_get_driver(int handle);
+
+/* get driver informations  for the driver with typ and subtype */
+/* returns NULL if no driver has this typ and subtype */
+
+extern ihw_driver_info	*hd_ihw_get_driver_from_type(int typ, int subtyp);
+
+/* get ihw struct version */
+extern int		hd_ihw_get_version(void);
+
+/* get ihw database version */
+extern int		hd_ihw_get_db_version(void);
+
+/* get ihw database creation date */
+extern char		*hd_ihw_get_db_date(void);
 
 /*
  * - - - - - ihw interface end  - - - - -

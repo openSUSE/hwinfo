@@ -46,7 +46,7 @@ ihw_card_info      *hd_ihw_get_card(int handle)
 	return(&isdncard_info[handle]);
 }
 
-static ihw_driver_info *ihw_get_driver_from_type(int typ, int subtyp)
+ihw_driver_info *hd_ihw_get_driver_from_type(int typ, int subtyp)
 {
 	int key,*ret;
 	
@@ -69,7 +69,7 @@ ihw_card_info *hd_ihw_get_card_from_type(int typ, int subtyp)
 {
 	ihw_driver_info	*idi;
 	
-	idi = ihw_get_driver_from_type(typ, subtyp);
+	idi = hd_ihw_get_driver_from_type(typ, subtyp);
 	if (idi) {
 		if (idi->card_ref >= 0)
 			return(&isdncard_info[idi->card_ref]);
@@ -136,3 +136,17 @@ ihw_driver_info *hd_ihw_get_driver(int handle)
 	return(&driver_info[handle]);
 }
 
+int	hd_ihw_get_version(void)
+{
+	return(IHW_VERSION);
+}
+
+int	hd_ihw_get_db_version(void)
+{
+	return(IHWDB_VERSION);
+}
+
+char	*hd_ihw_get_db_date(void)
+{
+	return((char *)IHWDB_DATE);
+}

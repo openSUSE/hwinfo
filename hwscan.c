@@ -26,6 +26,7 @@ struct option options[] = {
   { "modem", 0, NULL, 1000 + hw_modem },
   { "printer", 0, NULL, 1000 + hw_printer },
   { "storage_ctrl", 0, NULL, 1000 + hw_storage_ctrl },
+  { "netcard", 0, NULL, 1000 + hw_network_ctrl },
   { "network_ctrl", 0, NULL, 1000 + hw_network_ctrl },
   { "camera", 0, NULL, 1000 + hw_camera },
   { "isdn", 0, NULL, 1000 + hw_isdn },
@@ -33,6 +34,12 @@ struct option options[] = {
   { "scanner", 0, NULL, 1000 + hw_scanner },
   { "joystick", 0, NULL, 1000 + hw_joystick },
   { "usb", 0, NULL, 1000 + hw_usb },
+  { "framebuffer", 0, NULL, 1000 + hw_framebuffer },
+  { "keyboard", 0, NULL, 1000 + hw_keyboard },
+  { "chipcard", 0, NULL, 1000 + hw_chipcard },
+  { "braille", 0, NULL, 1000 + hw_braille },
+  { "partition", 0, NULL, 1000 + hw_partition },
+  { "usb_ctrl", 0, NULL, 1000 + hw_usb_ctrl },
   { }
 };
 
@@ -176,12 +183,34 @@ int do_scan(hd_hw_item_t item)
 
   hd_data = calloc(1, sizeof *hd_data);
 
+  hd_data->flags.list_all = 1;
+
   hd = hd_list(hd_data, item, 1, NULL);
 
   if(hd) found_items = 1;
 
   for(hd1 = hd; hd1; hd1 = hd1->next) {
     err = hd_write_config(hd_data, hd1);
+#if 0
+    if(verbose) {
+      printf(
+        "write=%d %s: (cfg=%s, avail=%s, need=%s",
+        err,
+        hd1->unique_id,
+        hd_status_value_name(hd1->status.configured),
+        hd_status_value_name(hd1->status.available),
+        hd_status_value_name(hd1->status.needed)
+      );
+      if(hd1->unix_dev_name) {
+        printf(", dev=%s", hd1->unix_dev_name);
+      }
+      printf(
+        ") %s\n",
+        hd1->model
+      );
+      
+    }
+#endif
     if(err) break;
   }
 

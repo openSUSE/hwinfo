@@ -3663,7 +3663,8 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
       && (
         hd->status.available == status_yes ||
         hd->status.available == status_unknown ||
-        item == hw_manual
+        item == hw_manual ||
+        hd_data->flags.list_all
       )
 #endif
     ) {

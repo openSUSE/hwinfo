@@ -203,6 +203,10 @@ int new_driver(char *s)
 	else
 		driver_info[max_driver_rec-1].next_drv = max_driver_rec;
 	t = strtok(s, ";");
+	driver_info[max_driver_rec].name = add_drv_str(t, 1);
+	fprintf(stderr, "add_drv:%s",
+		driver_info[max_driver_rec].name);
+	t = strtok(NULL, ";");
 	driver_info[max_driver_rec].mod_name = add_drv_str(t, 1);
 	fprintf(stderr, "add_drv:%s",
 		driver_info[max_driver_rec].mod_name);
@@ -578,7 +582,11 @@ char *argv[];
 			fprintf(f,"\"\",");
 		fprintf(f,"%d,",driver_info[isdndrv_type[i]].arch);
 		fprintf(f,"%d,",driver_info[isdndrv_type[i]].features);
-		fprintf(f,"%d",driver_info[isdndrv_type[i]].card_ref);
+		fprintf(f,"%d,",driver_info[isdndrv_type[i]].card_ref);
+		if (driver_info[isdndrv_type[i]].name)
+			fprintf(f,"\"%s\"", driver_info[isdndrv_type[i]].name);
+		else
+			fprintf(f,"\"\"");
 		fprintf(f,"},\n");
 	}
 	/* dummy entry */
