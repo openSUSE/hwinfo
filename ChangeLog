@@ -1,5 +1,7 @@
 6/6/2002:	v5.00
 	- assign hardware added via 'hwprobe' a proper inital status
+	- added alsa driver info
+	- dropped old pnpdump() code
 
 24/4/2002:	v4.26
 	- add x86-64 support

@@ -1,5 +1,5 @@
 TOPDIR		= ..
-SUBDIRS		= hd isdn pnpdump ids
+SUBDIRS		= hd isdn ids
 TARGETS		= touch $(LIBHD) $(LIBHD_SO)
 CLEANFILES	= $(LIBHD) $(LIBHD_D) $(LIBHD_SO) libhd.so*
 
@@ -7,25 +7,13 @@ CLEANFILES	= $(LIBHD) $(LIBHD_D) $(LIBHD_SO) libhd.so*
 
 include $(TOPDIR)/Makefile.common
 
-ifeq "$(ARCH)" "alpha"
-SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
-endif
-
 ifeq "$(ARCH)" "i386"
 SUBDIRS	+= int10
 endif
 
-ifeq "$(findstring $(ARCH), i386 alpha)" ""
-SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
-endif
-
-ifeq "$(ARCH)" "s390"
-SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
-endif
-
-ifeq "$(ARCH)" "s390x"
-SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
-endif
+#ifeq "$(findstring $(ARCH), i386 alpha)" ""
+#SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
+#endif
 
 $(LIBHD): $(OBJS)
 	ar r $@ $?
