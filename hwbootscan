@@ -1,21 +1,6 @@
 #!/bin/bash
 
-function has_keyboard {
-  if [ ! "$kbd_ok" ] ; then
-    hwinfo --keyboard | grep -q keyboard
-    kbd_ok=$?
-  fi
-  return $kbd_ok
-}
-
-kbd_ok=
-
 rm -f /var/lib/hardware/LOCK
-
-neededchanged=`/sbin/hwscan --boot --gfxcard`
-if [ -n "$neededchanged" ] ; then
-  has_keyboard && /sbin/yast2 x11 reprobe
-fi
 
 /sbin/hwscan --silent --boot --fast --isapnp --pci --block --floppy --mouse
 

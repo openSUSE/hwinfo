@@ -5383,12 +5383,33 @@ hd_udevinfo_t *hd_free_udevinfo(hd_udevinfo_t *ui)
 
 void read_udevinfo(hd_data_t *hd_data)
 {
-  str_list_t *sl, *udevinfo, *sl0, *sl1;
+  str_list_t *sl, *udevinfo, *sl0, *sl1, *dir_list;
   hd_udevinfo_t **uip, *ui;
   char *s, buf[256];
   int l;
 
-  udevinfo = read_file("| " PROG_UDEVINFO " -d 2>/dev/null", 0, 0);
+  udevinfo = NULL;
+
+  if((dir_list = read_dir("/dev/.udevdb", 'r'))) {
+    s = NULL;
+
+    for(sl = dir_list; sl; sl = sl->next) {
+      str_printf(&s, 0, "/dev/.udevdb/%s", sl->str);
+      sl0 = read_file(s, 0, 0);
+      if(sl0) {
+        sl1 = udevinfo;
+        udevinfo = sl0;
+        while(sl0->next) sl0 = sl0->next;
+        sl0->next = sl1;
+      }
+    }
+
+    s = free_mem(s);
+    free_str_list(dir_list);
+  }
+  else {
+    udevinfo = read_file("| " PROG_UDEVINFO " -d 2>/dev/null", 0, 0);
+  }
 
   ADD2LOG("-----  udevinfo -----\n");
   for(sl = udevinfo; sl; sl = sl->next) {
@@ -5422,8 +5443,9 @@ void read_udevinfo(hd_data_t *hd_data)
       continue;
     }
 
-    if(!strncmp(sl->str, "S: ", 3)) {
-      s = sl->str + 3;
+    if(!strncmp(sl->str, "S:", 2)) {
+      s = sl->str + 2;
+      while(*s == ' ') s++;
       l = strlen(s);
       while(l > 0 && isspace(s[l-1])) s[--l] = 0;
       if(*s) {

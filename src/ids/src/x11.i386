@@ -23,6 +23,10 @@
 +subdevice.name		Radeon X600 Pro
 +driver.xfree		4|radeon
 +driver.xfree		4|fglrx|3d||dri
++driver.xfree.config	Option "UseInternalAGPGART" "no"
++driver.xfree.config	Option "mtrr" "off"
++driver.xfree.config	Option "VideoOverlay" "on"
++driver.xfree.config	Option "OpenGLOverlay" "off"
 +requires		fglrx
 
  vendor.id		pci 0x1002
@@ -323,6 +327,10 @@
 +device.name		R420 JP
 +driver.xfree		4|radeon
 +driver.xfree		4|fglrx|3d||dri
++driver.xfree.config	Option "UseInternalAGPGART" "no"
++driver.xfree.config	Option "mtrr" "off"
++driver.xfree.config	Option "VideoOverlay" "on"
++driver.xfree.config	Option "OpenGLOverlay" "off"
 +requires		fglrx
 
  vendor.id		pci 0x1002
@@ -461,6 +469,10 @@
 +device.name		R300 ND
 +driver.xfree		4|radeon
 +driver.xfree		4|fglrx|3d||dri
++driver.xfree.config	Option "UseInternalAGPGART" "no"
++driver.xfree.config	Option "mtrr" "off"
++driver.xfree.config	Option "VideoOverlay" "on"
++driver.xfree.config	Option "OpenGLOverlay" "off"
 +requires		fglrx
 
  vendor.id		pci 0x1002
@@ -484,6 +496,10 @@
 +device.name		R300 NG
 +driver.xfree		4|radeon
 +driver.xfree		4|fglrx|3d||dri
++driver.xfree.config	Option "UseInternalAGPGART" "no"
++driver.xfree.config	Option "mtrr" "off"
++driver.xfree.config	Option "VideoOverlay" "on"
++driver.xfree.config	Option "OpenGLOverlay" "off"
 +requires		fglrx
 
  vendor.id		pci 0x1002
@@ -1034,6 +1050,10 @@
 +subdevice.name		Radeon X300 SE
 +driver.xfree		4|radeon
 +driver.xfree		4|fglrx|3d||dri
++driver.xfree.config	Option "UseInternalAGPGART" "no"
++driver.xfree.config	Option "mtrr" "off"
++driver.xfree.config	Option "VideoOverlay" "on"
++driver.xfree.config	Option "OpenGLOverlay" "off"
 +requires		fglrx
 
  vendor.id		pci 0x1002

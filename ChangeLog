@@ -1,3 +1,10 @@
+16/3/2005:	v10.10
+	- updated notebook display data
+	- fix udev db reading
+	- updated X11 data
+	- ltmodem device id update
+	- no check for gfx card changes (#72907)
+
 14/3/2005:	v10.9
 	- hardware detection for ISDN PCMCIA cards (#71208)
 	- updated ISDN data

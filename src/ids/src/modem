@@ -4,43 +4,16 @@
 +subclass.id		0x02
 +requires		Intel-536ep
 
-
-# FIXME: id ranges are too broad!!!
-# maybe additional check for baseclass 7 is ok (#25309)
-#
-# vendor.id		pci 0x11c1
-#&device.id		pci 0x0440+0x001d
-#|vendor.id		pci 0x115d
-#&device.id		pci 0x0000+0x0400
-#|vendor.id		pci 0x115d
-#&device.id		pci 0x0440+0x001d
-#
-
  vendor.id		pci 0x115d
+&device.id		pci 0x0101
+|vendor.id		pci 0x115d
 &device.id		pci 0x0103
-&baseclass.id		0x007
-|baseclass.id		0x007
-&subclass.id		0x80
-&vendor.id		pci 0x11c1
-&device.id		pci 0x0440+0x000f
-|baseclass.id		0x007
-&subclass.id		0x80
-&vendor.id		pci 0x11c1
-&device.id		pci 0x0450+0x000e
 |vendor.id		pci 0x115d
-&device.id		pci 0x000c
-&subvendor.id		pci 0x8086
-&subdevice.id		pci 0x2408
-|vendor.id		pci 0x115d
-&device.id		pci 0x0102
-&subvendor.id		pci 0x11c1
-&subdevice.id		pci 0x045b
-|baseclass.id		0x007
-&subclass.id		0x00
-&vendor.id		pci 0x11c1
-&device.id		pci 0x045c
+&device.id		pci 0x0440+0x001d
+|vendor.id		pci 0x11c1
+&device.id		pci 0x0440+0x001d
 +baseclass.id		0x102
 +subclass.id		0x03
 +requires		ltmodem
-
++driver.module.modprobe	lt_serial
 
