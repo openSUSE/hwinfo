@@ -127,7 +127,8 @@ typedef enum {
   hwdi_broken, hwdi_usb_guid, hwdi_res_mem, hwdi_res_phys_mem, hwdi_res_io,
   hwdi_res_irq, hwdi_res_dma, hwdi_res_size, hwdi_res_baud, hwdi_res_cache,
   hwdi_res_disk_geo, hwdi_res_monitor, hwdi_res_framebuffer, hwdi_features,
-  hwdi_hotplug, hwdi_class_list
+  hwdi_hotplug, hwdi_class_list, hwdi_drivers, hwdi_sysfs_id,
+  hwdi_sysfs_busid, hwdi_sysfs_link
 } hw_hd_items_t;
 
 static hash_t hw_ids_hd_items[] = {
@@ -170,6 +171,10 @@ static hash_t hw_ids_hd_items[] = {
   { hwdi_features,        "Features"         },
   { hwdi_hotplug,         "Hotplug"          },
   { hwdi_class_list,      "HWClassList"      },
+  { hwdi_drivers,         "Drivers"          },
+  { hwdi_sysfs_id,        "SysfsID"          },
+  { hwdi_sysfs_busid,     "SysfsBusID"       },
+  { hwdi_sysfs_link,      "SysfsLink"        },
   { 0,                    NULL               }
 };
 
@@ -902,6 +907,22 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
         hd->unix_dev_names = hd_split(' ', sl2->str);
         break;
 
+      case hwdi_drivers:
+        hd->drivers = hd_split('|', sl2->str);
+        break;
+
+      case hwdi_sysfs_id:
+        hd->sysfs_id = new_str(sl2->str);
+        break;
+
+      case hwdi_sysfs_busid:
+        hd->sysfs_bus_id = new_str(sl2->str);
+        break;
+
+      case hwdi_sysfs_link:
+        hd->sysfs_device_link = new_str(sl2->str);
+        break;
+
       case hwdi_rom_id:
         hd->rom_id = new_str(sl2->str);
         break;
@@ -1269,6 +1290,28 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
     s = free_mem(s);
     s = hd_join(" ", hd->unix_dev_names);
     add_str_list(&entry->value, s);
+  }
+
+  if(hd->drivers) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_drivers));
+    s = free_mem(s);
+    s = hd_join("|", hd->drivers);
+    add_str_list(&entry->value, s);
+  }
+
+  if(hd->sysfs_id) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sysfs_id));
+    add_str_list(&entry->value, hd->sysfs_id);
+  }
+
+  if(hd->sysfs_bus_id) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sysfs_busid));
+    add_str_list(&entry->value, hd->sysfs_bus_id);
+  }
+
+  if(hd->sysfs_device_link) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sysfs_link));
+    add_str_list(&entry->value, hd->sysfs_device_link);
   }
 
   if(hd->rom_id) {

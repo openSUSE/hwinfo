@@ -1,3 +1,6 @@
+2/4/2004:	v8.32
+	- store driver list & sysfs info in hardware config files
+
 2/4/2004:	v8.31
 	- add Fritz!Card DSL SL USB in database
 	- hwbootscan: move icon creation from coldplug
