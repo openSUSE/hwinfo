@@ -354,7 +354,7 @@ void test_serial_open(void *arg)
 void get_serial_mouse(hd_data_t *hd_data)
 {
   hd_t *hd;
-  int j, fd, fd_max = 0, sel;
+  int j, fd, fd_max = 0, sel, max_len;
   unsigned modem_info;
   fd_set set, set0;
   struct timeval to;
@@ -410,6 +410,9 @@ void get_serial_mouse(hd_data_t *hd_data)
     ioctl(sm->fd, TIOCMBIS, &modem_info);
   }
 
+  /* smaller buffer size, otherwise we might wait really long... */
+  max_len = sizeof sm->buf < 128 ? sizeof sm->buf : 128;
+
   to.tv_sec = 0; to.tv_usec = 300000;
 
   set0 = set;
@@ -419,7 +422,7 @@ void get_serial_mouse(hd_data_t *hd_data)
     if((sel = select(fd_max + 1, &set, NULL, NULL, &to)) > 0) {
       for(sm = hd_data->ser_mouse; sm; sm = sm->next) {
         if(FD_ISSET(sm->fd, &set)) {
-          if((j = read(sm->fd, sm->buf + sm->buf_len, sizeof sm->buf - sm->buf_len)) > 0)
+          if((j = read(sm->fd, sm->buf + sm->buf_len, max_len - sm->buf_len)) > 0)
             sm->buf_len += j;
           if(j <= 0) FD_CLR(sm->fd, &set0);	// #####
         }

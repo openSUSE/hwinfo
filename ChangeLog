@@ -1,3 +1,8 @@
+9/5/2003:	v5.56
+	- limit the maximum amount of data we expect looking
+	  for serial mice (#25153, #26771) 
+	- workaround for ps/2 mouse detection inconsistency (#25331)
+
 16/4/2003:	v5.55
 	- fixed megaraid info (#26325)
 
