@@ -12,6 +12,7 @@ mkdir $libhd
 tar -cf - * | tar -C $libhd -xf -
 cd $libhd
 find . -depth -name CVS -exec rm -r {} \;
+find . -depth -name .cvsignore -exec rm -r {} \;
 cd src/ids
 mkdir .x
 mv Makefile.dist .x/Makefile

@@ -12,7 +12,8 @@ mkdir $libhdint
 tar -cf - src/ids | tar -C $libhdint -xf -
 cd $libhdint
 find . -depth -name CVS -exec rm -r {} \;
-rm MAINTAINER scripts/ci_*
+find . -depth -name .cvsignore -exec rm -r {} \;
+rm -f MAINTAINER scripts/ci_*
 cd /tmp
 
 tar -zcf $libhdint.tar.gz libhdint-$ver

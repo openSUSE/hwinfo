@@ -1,3 +1,7 @@
+2276/2000:	v1.07
+	- activated serial line scanning in linuxrc
+	- extendend 'hwprobe=' features
+
 21/6/2000:	v1.06
 	- fhp_old braille detection implemented
 	- alva & ht braille stuff added

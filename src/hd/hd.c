@@ -167,7 +167,12 @@ static struct s_pr_flags {
   { pr_bios,         0,          8|4|2|1, "bios"         },
   { pr_cpu,          0,          8|4|2|1, "cpu"          },
   { pr_monitor,      0,          8|4|2|1, "monitor"      },
+#if defined(__i386__)
+  /* needed to check for braille displays in linuxrc */
+  { pr_serial,       0,          8|4|2|1, "serial"       },
+#else
   { pr_serial,       0,            4|2|1, "serial"       },
+#endif
 #if defined(__sparc__)
   /* Probe for mouse on SPARC */
   { pr_mouse,        0,          8|4|2|1, "mouse"        },
@@ -3033,23 +3038,22 @@ void get_probe_env(hd_data_t *hd_data)
 
   while((t = strsep(&s, ","))) {
     if(*t == '+') {
-      k = 1;
+      k = 1; t++;
     }
     else if(*t == '-') {
-      k = 0;
+      k = 0; t++;
     }
     else {
-      ADD2LOG("hwprobe: +/- missing before \"%s\"\n", t);
-      return;
+      k = 2;
+//      ADD2LOG("hwprobe: +/- missing before \"%s\"\n", t);
+//      return;
     }
-
-    t++;
 
     if((j = hd_probe_feature_by_name(t))) {
       set_probe_feature(hd_data, j, k ? 1 : 0);
     }
     else if(sscanf(t, "%8[^:]:%8[^:]:%8[^:]", buf, buf, buf) == 3) {
-      add_str_list(&hd_data->xtra_hd, t - 1);
+      add_str_list(&hd_data->xtra_hd, t - (k == 2 ? 0 : 1));
     }
     else {
       ADD2LOG("hwprobe: what is \"%s\"?\n", t);
@@ -3063,7 +3067,7 @@ void get_probe_env(hd_data_t *hd_data)
 void hd_scan_xtra(hd_data_t *hd_data)
 {
   str_list_t *sl;
-  hd_t *hd;
+  hd_t *hd, *hd_tmp;
   unsigned u0, u1, u2, tag;
   int i, err;
   char buf0[10], buf1[10], buf2[10], buf3[64], *s, k;
@@ -3073,15 +3077,18 @@ void hd_scan_xtra(hd_data_t *hd_data)
   remove_hd_entries(hd_data);
 
   for(sl = hd_data->xtra_hd; sl; sl = sl->next) {
-    if((i = sscanf(sl->str, "%c%8[^:]:%8[^:]:%8[^:]:%60s", &k, buf0, buf1, buf2, buf3)) >= 4) {
-      err = 0;
-      switch(k) {
-        case '+': k = 1; break;
-        case '-': k = 0; break;
-        default: err = 1;
-      }
+    s = sl->str;
+    err = 0;
+    switch(*s) {
+      case '+': k = 1; s++; break;
+      case '-': k = 0; s++; break;
+      default: k = 2;
+    }
+    if(
+      (i = sscanf(s, "%8[^:]:%8[^:]:%8[^:]:%60s", buf0, buf1, buf2, buf3)) >= 3 /* check 'i == 4' below!!! */
+    ) {
       u0 = strtoul(buf0, &s, 16);
-      if(*s) err = 1;
+      if(*s) err |= 1;
       if(strlen(buf1) == 3) {
         u1 = name2eisa_id(buf1);
       }
@@ -3095,32 +3102,56 @@ void hd_scan_xtra(hd_data_t *hd_data)
           case 'u': tag = TAG_USB; s++; break;
         }
         u1 = strtoul(s, &s, 16);
-        if(*s) err = 1;
+        if(*s) err |= 2;
         u1 = MAKE_ID(tag, u1);
       }
       u2 = strtoul(buf2, &s, 16);
-      if(*s) err = 1;
+      if(*s) err |= 4;
       u2 = MAKE_ID(ID_TAG(u1), ID_VALUE(u2));
+      if((err & 1) && !strcmp(buf0, "*")) {
+        u0 = -1;
+        err &= ~1;
+      }
+      if((err & 2) && !strcmp(buf1, "*")) {
+        u1 = 0;
+        err &= ~2;
+      }
+      if((err & 4) && !strcmp(buf2, "*")) {
+        u2 = 0;
+        err &= ~4;
+      }
       if(!err) {
         if(k) {
-          hd = add_hd_entry(hd_data, __LINE__, 0);
+          if(k == 2) {
+            /* insert at top */
+            hd_tmp = hd_data->hd;
+            hd_data->hd = NULL;
+            hd = add_hd_entry(hd_data, __LINE__, 0);
+            hd->next = hd_tmp;
+            hd_tmp = NULL;
+          }
+          else {
+            hd = add_hd_entry(hd_data, __LINE__, 0);
+          }
           hd->base_class = u0 >> 8;
           hd->sub_class = u0 & 0xff;
           hd->vend = u1;
           hd->dev = u2;
-          if(i == 5) hd->unix_dev_name = new_str(buf3);
+          if(i == 4) hd->unix_dev_name = new_str(buf3);
         }
         else {
           for(hd = hd_data->hd; hd; hd = hd->next) {
             if(
               (
-                hd->base_class == (u0 >> 8) &&
-                hd->sub_class == (u0 & 0xff) &&
-                hd->vend == u1 &&
-                hd->dev == u2
+                (u0 == -1 || (
+                  hd->base_class == (u0 >> 8) &&
+                  hd->sub_class == (u0 & 0xff)
+                )) &&
+                (u1 == 0 || hd->vend == u1) &&
+                (u2 == 0 || hd->dev == u2)
               ) ||
               (
-                i == 5 &&
+                i == 4 &&
                 hd->unix_dev_name &&
                 !strcmp(hd->unix_dev_name, buf3)
               )
