@@ -1,3 +1,6 @@
+	- s390: fake geometry and size of unformatted DASDs to most likely
+	  values
+
 19/4/2004:	v8.40
 	- fixed bug in modules.alias conversion script (#38800)
 	- fixed linmodem data (#38800)

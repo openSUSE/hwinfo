@@ -4761,17 +4761,30 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
 
   secs = 0;
 
-  if(!ioctl(fd, BLKGETSIZE64, &secs)) {
-    if(dev) ADD2LOG("%s: ioctl(disk size) ok\n", dev);
-    secs /= sec_size;
+#if defined(__s390__) || defined(__s390x__)
+  if(res && res->disk_geo.sectors == 0)
+  { /* This seems to be an unformatted DASD -> fake the formatted geometry */
+    res->disk_geo.sectors=12;
+    sec_size=4096;
+    secs = (uint64_t) res->disk_geo.cyls * res->disk_geo.heads * res->disk_geo.sectors;
   }
-  else if(!ioctl(fd, BLKGETSIZE, &secs32)) {
-    if(dev) ADD2LOG("%s: ioctl(disk size32) ok\n", dev);
-    secs = secs32;
+  else
+  {
+#endif
+    if(!ioctl(fd, BLKGETSIZE64, &secs)) {
+      if(dev) ADD2LOG("%s: ioctl(disk size) ok\n", dev);
+      secs /= sec_size;
+    }
+    else if(!ioctl(fd, BLKGETSIZE, &secs32)) {
+      if(dev) ADD2LOG("%s: ioctl(disk size32) ok\n", dev);
+      secs = secs32;
+    }
+    else {
+      secs = secs0;
+    }
+#if defined(__s390__) || defined(__s390x__)
   }
-  else {
-    secs = secs0;
-  }
+#endif
 
   if(!got_big && secs0 && res) {
     /* fix cylinder value */
