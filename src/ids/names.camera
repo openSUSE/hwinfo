@@ -1,3 +1,4 @@
+# digital still cams
 u0553 STM
 	0202.10f02 STV680 based camera
 u06bd Agfa
@@ -40,3 +41,10 @@ u07b4 Olympus
 	0100.10f02 C-2100UZ
 u0784 Polaroid
 	0784.10f02 DC700
+
+# webcams
+u05a9 OmniVision
+	0511.10f01 OV511 WebCam
+	a511.10f01 OV511+ WebCam
+u0813 Mattel
+	0002.10f01 OV511 based WebCam
