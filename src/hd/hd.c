@@ -1749,7 +1749,15 @@ hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
       ) continue;
     }
 
-    if(hd->base_class == base_class) {
+    /* add multimedia/sc_multi_video to display */
+    if(
+      hd->base_class == base_class ||
+      (
+        base_class == bc_display &&
+        hd->base_class == bc_multimedia &&
+        hd->sub_class == sc_multi_video
+      )
+    ) {
       hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
       *hd1 = *hd;
       hd1->next = NULL;

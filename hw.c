@@ -73,10 +73,10 @@ int main(int argc, char **argv)
     hd_dump_entry(hd_data, hd, f ? f : stdout);
   }
 
-#if 0
-  printf("-- net cards --\n");
+#if 1
+  printf("-- display cards --\n");
 
-  hd = hd_base_class_list(hd_data, bc_network); printf("\n");
+  hd = hd_base_class_list(hd_data, bc_display); printf("\n");
   for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
 #endif
 

@@ -1,3 +1,6 @@
+8/3/2000:	v0.84
+	- changed display adapter probing to include bc_multimedia
+
 8/3/2000:	v0.83
 	- pci cards are attached to their resp. bridges
 	- card bus cards not listed by probe_by_class
