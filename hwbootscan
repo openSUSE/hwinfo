@@ -1,15 +1,15 @@
 #!/bin/sh
 
-neededchanged=`/usr/sbin/hwscan --gfxcard`
+neededchanged=`/usr/sbin/hwscan --mouse`
 if [ -n "$neededchanged" ] ; then
-	/sbin/yast2 x11 '(.reprobe)'
+	/sbin/yast2 mouse '(.reprobe)'
 	for i in $neededchanged ; do
 		/bin/rm /var/lib/hardware/$i
 	done
 fi
-neededchanged=`/usr/sbin/hwscan --mouse`
+neededchanged=`/usr/sbin/hwscan --gfxcard`
 if [ -n "$neededchanged" ] ; then
-	/sbin/yast2 mouse '(.reprobe)'
+	/sbin/yast2 x11 '(.reprobe)'
 	for i in $neededchanged ; do
 		/bin/rm /var/lib/hardware/$i
 	done
