@@ -178,7 +178,7 @@ static struct s_pr_flags {
 #endif
   { pr_ide,          0,           8|4|2|1, "ide"          },
   { pr_scsi,         0,           8|4|2|1, "scsi"         },
-  { pr_scsi_geo,     0,             4|2  , "scsi.geo"     },
+  { pr_scsi_geo,     pr_scsi,       4|2  , "scsi.geo"     },
   { pr_usb,          0,           8|4|2|1, "usb"          },
   { pr_usb_mods,     0,             4    , "usb.mods"     },
   { pr_adb,          0,           8|4|2|1, "adb"          },
@@ -589,7 +589,7 @@ void hd_scan(hd_data_t *hd_data)
   driver_info_t *di;
 
   /* log the debug & probe flags */
-  if(hd_data->debug) {
+  if(hd_data->debug && !hd_data->flags.internal) {
     ADD2LOG("libhd version %s%s (%s)\n", HD_VERSION, getuid() ? "u" : "", HD_ARCH);
   }
 
@@ -1900,6 +1900,22 @@ char *module_cmd(hd_t *hd, char *cmd)
 #define PCI_DEVICE_ID_INTEL_82820FW_5	0x244b
 #endif
 
+#ifndef PCI_DEVICE_ID_AMD_VIPER_7409
+#define PCI_DEVICE_ID_AMD_VIPER_7409	0x7409
+#endif
+
+#ifndef PCI_DEVICE_ID_CMD_648
+#define PCI_DEVICE_ID_CMD_648		0x0648
+#endif
+
+#ifndef PCI_DEVICE_ID_TTI_HPT366
+#define PCI_DEVICE_ID_TTI_HPT366	0x0004
+#endif
+
+#ifndef PCI_DEVICE_ID_PROMISE_20262
+#define PCI_DEVICE_ID_PROMISE_20262	0x4d38
+#endif
+
 int hd_has_special_eide(hd_data_t *hd_data)
 {
   int i;
@@ -2484,6 +2500,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         break;
 
       case hw_isdn:
+        hd_set_probe_feature(hd_data, pr_misc);		/* get basic i/o res */
         hd_set_probe_feature(hd_data, pr_pci);
         hd_set_probe_feature(hd_data, pr_isapnp);
         hd_set_probe_feature(hd_data, pr_isa_isdn);
