@@ -204,6 +204,11 @@ PNP 80d6
 108e 1001
 	i	sunhme
 
+# net/sungem.c (pci)
+108e 1101
+108e 2bad
+	i	sungem
+
 # net/sunhme.c (sbus)
 s4001 3001
 	i	sunhme

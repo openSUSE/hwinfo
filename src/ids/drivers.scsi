@@ -128,9 +128,11 @@
 	i	qla1280
 
 # scsi/qla2100.c
+# scsi/qlogicfc.c
 1077 2100
 1077 2200
 	i	qla2x00
+	i	qlogicfc
 
 # scsi/dc395x_trm.c
 1de1 0391
@@ -175,11 +177,6 @@
 # scsi/pci2220i.c
 1256 4401
 	i	pci2220i
-
-# scsi/qlogicfc.c
-1077 2100
-1077 2200
-	i	qlogicfc
 
 # scsi/aha152x.c
 ADP 1505

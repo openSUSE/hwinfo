@@ -86,10 +86,12 @@ typedef enum probe_feature {
  * list types for hd_list()
  *
  * if you want to modify this: cf. manual.c::hw_items[]
+ *
+ * Note: hw_tv _must_ be < hw_display!
  */
 typedef enum hw_item {
   hw_sys = 1, hw_cpu, hw_keyboard, hw_braille, hw_mouse, hw_joystick,
-  hw_printer, hw_scanner, hw_chipcard, hw_monitor, hw_display, hw_tv,
+  hw_printer, hw_scanner, hw_chipcard, hw_monitor, hw_tv, hw_display,
   hw_framebuffer, hw_camera, hw_sound, hw_storage_ctrl, hw_network_ctrl,
   hw_isdn, hw_modem, hw_network, hw_disk, hw_partition, hw_cdrom, hw_floppy,
   hw_manual,

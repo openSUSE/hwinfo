@@ -414,7 +414,9 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
   }
   else {
     if(is_short) {
-      do_short(hd_data, hd0, f ? f : stdout);
+      /* always to stdout */
+      do_short(hd_data, hd0, stdout);
+      if(f) do_short(hd_data, hd0, f);
     }
     else {
       for(hd = hd0; hd; hd = hd->next) {

@@ -1,3 +1,11 @@
+6/8/2001:	v3.08
+	- added sungem
+	- fixed qlogicfc entry
+	- fixed tv card detection
+
+1/8/2001:	v3.07
+	- fixed typo in short model name calculation
+
 31/7/2001:	v3.06
 	- make now builds shared version per default
 

@@ -4529,7 +4529,8 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         case 1:		/* tv cards */
           if(!di) di = hd_driver_info(hd_data, hd);
           if(
-            di && di->any.type == di_any &&
+            di &&
+            (di->any.type == di_any || di->any.type == di_module) &&
             di->any.hddb0 && di->any.hddb0->str &&
             !strcmp(di->any.hddb0->str, "bttv")
           ) {
@@ -4546,6 +4547,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         break;
       }
     }
+
   }
 
   hd_free_driver_info(di);
@@ -4556,13 +4558,13 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 void short_vendor(char *vendor)
 {
   static char *remove[] = {
-    ".", ",", "-", "&", " inc", "corporation", " corp", " system", "
-    systems", "technology", "technologies", "multimedia", "communications",
+    ".", ",", "-", "&", " inc", "corporation", " corp", " system",
+    " systems", "technology", "technologies", "multimedia", "communications",
     "computer", " ltd", "(formerly ncr)", " group", " labs", "research",
-    "equipment", " ag", "personal", " canada", "data", "products", "
-    america", " co", " of", "solutions", " as", "publishing", "(old)", "
-    usa", " gmbh", "electronic", "components", "(matsushita)", " ab", "
-    pte", " north", " japan", "limited", "microcomputer", " kg",
+    "equipment", " ag", "personal", " canada", "data", "products",
+    " america", " co", " of", "solutions", " as", "publishing", "(old)",
+    " usa", " gmbh", "electronic", "components", "(matsushita)", " ab",
+    " pte", " north", " japan", "limited", "microcomputer", " kg",
     "incorporated", "semiconductor", "graphics"
   };
   int i, j;
