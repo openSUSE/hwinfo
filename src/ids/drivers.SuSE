@@ -93,7 +93,7 @@
 # net/ne.c
 AXE 2201
 	m	ne
-		io=<io0> irq=<irq0>
+		options ne		io=<io0> irq=<irq0>
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -226,7 +226,7 @@ AXE 2201
 # scsi/aha152x.c
 ADP 1505
 	m	aha152x
-		aha152x=<io0>,<irq0>
+		options aha152x		aha152x=<io0>,<irq0>
 	i	aha152x|aha152x=<io0>,<irq0>
 
 

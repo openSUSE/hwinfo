@@ -66,6 +66,24 @@ int main(int argc, char **argv)
     hd_dump_entry(hd_data, hd, f ? f : stdout);
   }
 
+#if 0	// ##### remove
+  printf("-- all --\n");
+
+  hd = hd_net_list(hd_data, 2); printf("\n");
+  for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
+
+  printf("-- new --\n");
+  getchar();
+
+  hd = hd_net_list(hd_data, 2); printf("\n");
+  for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
+
+  printf("-- nothing --\n");
+
+  hd = hd_net_list(hd_data, 2); printf("\n");
+  for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
+#endif
+
   if(f) {
     fseek(f, l, SEEK_SET);
     while((i = fgetc(f)) != EOF) putchar(i);

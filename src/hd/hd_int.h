@@ -74,6 +74,7 @@ int hex(char *string, int digits);
 
 void str_printf(char **buf, int offset, char *format, ...) __attribute__ ((format (printf, 3, 4)));
 void hexdump(char **buf, int with_ascii, unsigned data_len, unsigned char *data);
+str_list_t *search_str_list(str_list_t *sl, char *str);
 str_list_t *add_str_list(str_list_t **sl, char *str);
 str_list_t *free_str_list(str_list_t *list);
 str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines);

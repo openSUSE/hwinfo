@@ -590,6 +590,9 @@ typedef struct {
   hddb_data_t *hddb_dev;	/* device name database */
   hddb_data_t *hddb_drv;	/* driver info database */
   str_list_t *kmods;		/* list of active kernel modules */
+  str_list_t *cd_list;		/* used by hd_cd_list() */
+  str_list_t *disk_list;	/* dto, hd_disk_list() */
+  str_list_t *net_list;		/* dto hd_net_list() */
 } hd_data_t;
 
 

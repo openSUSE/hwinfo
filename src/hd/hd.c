@@ -784,6 +784,19 @@ void hexdump(char **buf, int with_ascii, unsigned data_len, unsigned char *data)
 
 
 /*
+ * Search a string list for a string.
+ */
+str_list_t *search_str_list(str_list_t *sl, char *str)
+{
+  if(!str) return NULL;
+
+  for(; sl; sl = sl->next) if(!strcmp(sl->str, str)) return sl;
+
+  return NULL;
+}
+
+
+/*
  * Add a string to a string list; just for convenience.
  */
 str_list_t *add_str_list(str_list_t **sl, char *str)
@@ -1045,9 +1058,9 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
           else if(i == 1) {
             di->module.mod_args = new_str(module_cmd(hd, sl->str));
           }
-          else {
-            str_printf(&di->module.conf, -1, "%s\n", module_cmd(hd, sl->str));
-          }
+        }
+        for(i = 0, sl = di->module.hddb1; sl; sl = sl->next, i++) {
+          str_printf(&di->module.conf, -1, "%s\n", module_cmd(hd, sl->str));
         }
         break;
 
@@ -1299,9 +1312,14 @@ hd_t *hd_cd_list(hd_data_t *hd_data, int rescan)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class == bc_storage_device && hd->sub_class == sc_sdev_cdrom) {
-      hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-      *hd1 = *hd;
-      hd1->next = NULL;
+      if(rescan != 2 || !search_str_list(hd_data->cd_list, hd->unix_dev_name)) {
+        if(rescan == 2) {
+          add_str_list(&hd_data->cd_list, hd->unix_dev_name);
+        }
+        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+        *hd1 = *hd;
+        hd1->next = NULL;
+      }
     }
   }
 
@@ -1325,9 +1343,14 @@ hd_t *hd_disk_list(hd_data_t *hd_data, int rescan)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class == bc_storage_device && hd->sub_class == sc_sdev_disk) {
-      hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-      *hd1 = *hd;
-      hd1->next = NULL;
+      if(rescan != 2 || !search_str_list(hd_data->disk_list, hd->unix_dev_name)) {
+        if(rescan == 2) {
+          add_str_list(&hd_data->disk_list, hd->unix_dev_name);
+        }
+        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+        *hd1 = *hd;
+        hd1->next = NULL;
+      }
     }
   }
 
@@ -1350,9 +1373,14 @@ hd_t *hd_net_list(hd_data_t *hd_data, int rescan)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class == bc_network_interface) {
-      hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-      *hd1 = *hd;
-      hd1->next = NULL;
+      if(rescan != 2 || !search_str_list(hd_data->net_list, hd->unix_dev_name)) {
+        if(rescan == 2) {
+          add_str_list(&hd_data->net_list, hd->unix_dev_name);
+        }
+        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+        *hd1 = *hd;
+        hd1->next = NULL;
+      }
     }
   }
 

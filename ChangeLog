@@ -1,3 +1,9 @@
+27/10/2000:	v0.53
+	- fixed driver entries with modules.conf lines
+	- fixed internal handling of modules.conf entries
+	- added new feature to hd_*_list() functions:
+	  rescan == 2 --> return only new entries
+
 25/10/2000:	v0.52
 	- started this log :-)
 	- modem code now handles non-pnp modems
