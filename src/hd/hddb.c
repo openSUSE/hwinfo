@@ -1695,7 +1695,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
 
   if(new_driver_info) {
     if(!hd->ref) {
-      hd->driver_info = hd_free_driver_info(hd->driver_info);
+      hd->driver_info = free_driver_info(hd->driver_info);
     }
     hd->driver_info = new_driver_info;
     expand_driver_info(hd_data, hd);
@@ -2297,7 +2297,7 @@ driver_info_t *reorder_x11(driver_info_t *di0, char *info)
   free_mem(di_list);
 
   if(!found && strlen(info) > 1) {
-    hd_free_driver_info(di_new);
+    free_driver_info(di_new);
     di_new = new_mem(sizeof *di_new);
     di_new->any.type = di_x11;
     di_new->x11.server = new_str(info);
@@ -2458,10 +2458,12 @@ void expand_driver_info(hd_data_t *hd_data, hd_t *hd)
         for(i = 0, sl = di->x11.hddb1; sl; sl = sl->next, i++) {
           add_str_list(&di->x11.raw, sl->str);
         }
+#if 0
         // ######## for compatibility
         for(sl = hd->requires; sl; sl = sl->next) {
           add_str_list(&di->x11.packages, sl->str);
         }
+#endif
         break;
 
       default:

@@ -1647,6 +1647,11 @@ int oem_install_info(hd_data_t *hd_data)
   pcmcia = hd_has_pcmcia(hd_data);
 
   for(hd = hd_list(hd_data, hw_display, 1, NULL); hd; hd = hd->next) {
+    for(str = hd->requires; str; str = str->next) {
+      if(!search_str_list(x11packs, str->str)) {
+        add_str_list(&x11packs, str->str);
+      }
+    }
     drvinfo = (driver_info_x11_t *) hd->driver_info;
     for (di = drvinfo; di; di = (driver_info_x11_t *)di->next) {
       if (di->type != di_x11)
@@ -1659,12 +1664,9 @@ int oem_install_info(hd_data_t *hd_data)
 	      break;
 	  if (xserver3map[i])
 	    if (!search_str_list(x11packs, xserver3map[i + 1]))
-	      add_str_list(&x11packs, new_str(xserver3map[i + 1]));
+	      add_str_list(&x11packs, xserver3map[i + 1]);
 	}
       }
-      for (str = di->packages; str; str = str->next)
-	if (str->str && *str->str && !search_str_list(x11packs, str->str))
-	  add_str_list(&x11packs, new_str(str->str));
     }
   }
 

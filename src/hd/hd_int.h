@@ -152,7 +152,7 @@ void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg);
 void remove_hd_entries(hd_data_t *hd_data);
 void remove_tagged_hd_entries(hd_data_t *hd_data);
 
-driver_info_t *hd_free_driver_info(driver_info_t *di);
+driver_info_t *free_driver_info(driver_info_t *di);
 
 int str2float(char *s, int n);
 char *float2str(int i, int n);

@@ -741,14 +741,14 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
 /*
  * Free all data associated with a driver_info_t struct. Even the struct itself.
  */
-driver_info_t *hd_free_driver_info(driver_info_t *di)
+driver_info_t *free_driver_info(driver_info_t *di)
 {
   driver_info_t *next;
 
 #ifdef LIBHD_MEMCHECK
   {
     if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_free_driver_info, di), di);
+      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(free_driver_info, di), di);
   }
 #endif
 
@@ -774,7 +774,6 @@ driver_info_t *hd_free_driver_info(driver_info_t *di)
       case di_x11:
         free_mem(di->x11.server);
         free_mem(di->x11.xf86_ver);
-        free_str_list(di->x11.packages);
         free_str_list(di->x11.extensions);
         free_str_list(di->x11.options);
         free_str_list(di->x11.raw);
@@ -1034,7 +1033,7 @@ hd_t *free_hd_entry(hd_t *hd)
 
   free_hd_detail(hd->detail);
 
-  hd_free_driver_info(hd->driver_info);
+  free_driver_info(hd->driver_info);
   free_str_list(hd->requires);
 
   memset(hd, 0, sizeof *hd);

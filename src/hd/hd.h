@@ -1143,7 +1143,6 @@ typedef struct {
     unsigned c8:1, c15:1, c16:1, c24:1, c32:1;
   } colors;				/* supported color depths */
   unsigned dacspeed;			/* max. ramdac clock */
-  str_list_t *packages;			/* extra packages to install */
   str_list_t *extensions;		/* additional X extensions to load ('Module' section) */
   str_list_t *options;			/* special server options */
   str_list_t *raw;			/* extra info to add to XF86Config */
