@@ -1,3 +1,6 @@
+29/10/2004:	v9.30
+	- fixed some dvb card entries (#47057)
+
 7/10/2004:	v9.29
 	- fixed segfault with large /proc/interrupt entries (e.g. 512 cpus) (#46582)
 
