@@ -10,6 +10,8 @@
 #define AVM_HSCX_A_VSTR	0x40e   /* HSCX A version reg */
 #define AVM_HSCX_B_VSTR	0xc0e   /* HSCX B version reg */
 
+#if defined(__i386__)
+
 int avm_a1_detect(isa_isdn_t **ii) {
 	int adr,i;
 	unsigned char val,v1,v2;
@@ -232,3 +234,5 @@ isa_isdn_t *isdn_detect()
 
   return ii;
 }
+
+#endif	/* i386 */

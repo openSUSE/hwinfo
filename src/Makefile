@@ -7,20 +7,20 @@ CLEANFILES	= $(LIBHD) $(LIBHD_D) $(LIBHD_T)
 
 include $(TOPDIR)/Makefile.common
 
-ifeq "$(ARCH)" "alpha"
-SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
-endif
+#ifeq "$(ARCH)" "alpha"
+#SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
+#endif
 
-ifeq "$(ARCH)" "ppc"
-SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
-endif
+#ifeq "$(ARCH)" "ppc"
+#SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
+#endif
 
 ifeq "$(ARCH)" "sparc"
-SUBDIRS	:= $(filter-out pnpdump isdn, $(SUBDIRS))
+SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
 endif
 
 ifeq "$(ARCH)" "sparc64"
-SUBDIRS	:= $(filter-out pnpdump isdn, $(SUBDIRS))
+SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
 endif
 
 $(LIBHD): $(OBJS)
