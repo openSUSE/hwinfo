@@ -27,11 +27,15 @@ static void read_int(char *path, char *name, int *val);
 static void read_devtree(hd_data_t *hd_data);
 static void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent);
 static void add_legacy_prom_devices(hd_data_t *hd_data, devtree_t *dt);
+static int add_prom_display(hd_data_t *hd_data, devtree_t *dt);
+static int add_prom_vscsi(hd_data_t *hd_data, devtree_t *dt);
+static int add_prom_veth(hd_data_t *hd_data, devtree_t *dt);
 static void add_devices(hd_data_t *hd_data);
 static void dump_devtree_data(hd_data_t *hd_data);
 
+static unsigned veth_cnt, vscsi_cnt;
 
-int detect_smp(hd_data_t *hd_data)
+int detect_smp_prom(hd_data_t *hd_data)
 {
   unsigned cpus;
   devtree_t *devtree;
@@ -59,6 +63,8 @@ void hd_scan_prom(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
   hd_data->devtree = free_devtree(hd_data);
+
+  veth_cnt = vscsi_cnt = 0;
 
   PROGRESS(1, 0, "devtree");
 
@@ -147,11 +153,11 @@ void read_mem(char *path, char *name, unsigned char **mem, unsigned len)
 
 void read_int(char *path, char *name, int *val)
 {
-  int *i = NULL;
+  unsigned char *p = NULL;
 
-  read_mem(path, name, (unsigned char **) &i, sizeof *i);
-  if(i) *val = *i;
-  free_mem(i);
+  read_mem(path, name, &p, sizeof (int));
+  if(p) memcpy(val, p, sizeof (int));
+  free_mem(p);
 }
 
 void read_devtree_entry(hd_data_t *hd_data, devtree_t *parent, char *dirname)
@@ -446,13 +452,21 @@ void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent
   }
 }
 
+
 void add_legacy_prom_devices(hd_data_t *hd_data, devtree_t *dt)
+{
+  if(dt->pci) return;
+
+  if(add_prom_display(hd_data, dt)) return;
+  if(add_prom_vscsi(hd_data, dt)) return;
+  if(add_prom_veth(hd_data, dt)) return;
+}
+
+int add_prom_display(hd_data_t *hd_data, devtree_t *dt)
 {
   hd_t *hd;
   hd_res_t *res;
   unsigned id;
-
-  if(dt->pci) return;
 
   if(
     dt->device_type &&
@@ -486,8 +500,86 @@ void add_legacy_prom_devices(hd_data_t *hd_data, devtree_t *dt)
         res->irq.enabled = 1;
         res->irq.base = dt->interrupt;
       }
+
+      return 1;
     }
   }
+
+  return 0;
+}
+
+int add_prom_vscsi(hd_data_t *hd_data, devtree_t *dt)
+{
+  hd_t *hd;
+  char *s, *id;
+
+  if(
+    dt->path &&
+    dt->device_type &&
+    !strcmp(dt->device_type, "vscsi")
+  ) {
+    /* vscsi storage */
+
+    if(
+      (s = strstr(dt->path, "v-scsi@")) &&
+      *(id = s + sizeof "v-scsi@" - 1)
+    ) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->bus.id = bus_none;
+      hd->base_class.id = bc_storage;
+      hd->sub_class.id = sc_sto_scsi;
+      hd->slot = veth_cnt++;
+
+      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);
+      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1001);
+      str_printf(&hd->device.name, 0, "Virtual SCSI %d", hd->slot);
+      hd->rom_id = new_str(dt->path);
+
+      str_printf(&hd->sysfs_id, 0, "/devices/vio/%s", id);
+
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+int add_prom_veth(hd_data_t *hd_data, devtree_t *dt)
+{
+  hd_t *hd;
+  char *s, *id;
+
+  if(
+    dt->path &&
+    dt->device_type &&
+    dt->compatible &&
+    !strcmp(dt->device_type, "network") &&
+    !strcmp(dt->compatible, "IBM,l-lan")
+  ) {
+    /* veth network */
+
+    if(
+      (s = strstr(dt->path, "l-lan@")) &&
+      *(id = s + sizeof "l-lan@" - 1)
+    ) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->bus.id = bus_none;
+      hd->base_class.id = bc_network;
+      hd->sub_class.id = 0x00;
+      hd->slot = veth_cnt++;
+
+      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);
+      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1002);
+      str_printf(&hd->device.name, 0, "Virtual Ethernet card %d", hd->slot);
+      hd->rom_id = new_str(dt->path);
+
+      str_printf(&hd->sysfs_id, 0, "/devices/vio/%s", id);
+
+      return 1;
+    }
+  }
+
+  return 0;
 }
 
 void add_devices(hd_data_t *hd_data)
@@ -526,53 +618,6 @@ void add_devices(hd_data_t *hd_data)
           hd->revision.id == dt->revision_id
         ) break;
       }
-
-#if 0
-/*
- * no longer needed, the kernel does it
- */
-      if(!hd) {
-        /* no appropriate pci entry; create one */
-
-        hd = add_hd_entry(hd_data, __LINE__, 0);
-
-        hd->bus.id = bus_pci;
-        hd->slot = pci_slot++ + 0xff00;
-        hd->base_class.id = (dt->class_code >> 16) & 0xff;
-        hd->sub_class.id =  (dt->class_code >> 8) & 0xff;
-        hd->prog_if.id = dt->class_code & 0xff;
-
-        /* fix up old VGA's entries */
-        if(hd->base_class.id == bc_none && hd->sub_class.id == 0x01) {
-          hd->base_class.id = bc_display;
-          hd->sub_class.id = sc_dis_vga;
-        }
-
-        hd->device.id = MAKE_ID(TAG_PCI, dt->device_id);
-        hd->vendor.id = MAKE_ID(TAG_PCI, dt->vendor_id);
-        if(dt->subdevice_id != -1) {
-          hd->sub_device.id = MAKE_ID(TAG_PCI, dt->subdevice_id);
-        }
-        if(dt->subvendor_id != -1) {
-          hd->sub_vendor.id = MAKE_ID(TAG_PCI, dt->subvendor_id);
-        }
-        hd->revision.id = dt->revision_id;
-
-        if((hd->base_class.id == 0 || hd->base_class.id == 0xff) && hd->sub_class.id == 0) {
-          if((u = device_class(hd_data, hd->vend, hd->device.id))) {
-            hd->base_class.id = u >> 8;
-            hd->sub_class.id = u & 0xff;
-          }
-        } 
-
-        if(dt->interrupt > 1) {
-          res = add_res_entry(&hd->res, new_mem(sizeof *res));
-          res->irq.type = res_irq;
-          res->irq.enabled = 1;
-          res->irq.base = dt->interrupt;
-        }
-      }
-#endif
 
       if(hd) {
         hd->rom_id = new_str(dt->path);
