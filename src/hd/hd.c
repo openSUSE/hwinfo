@@ -37,6 +37,7 @@
 #include "dac960.h"
 #include "smart.h"
 #include "isdn.h"
+#include "kbd.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -103,7 +104,8 @@ static struct s_mod_names {
   { mod_isa, "isa" },
   { mod_dac960, "dac960" },
   { mod_smart, "smart" },
-  { mod_isdn, "isdn" }
+  { mod_isdn, "isdn" },
+  { mod_kbd, "kbd" }
 };
 
 /*
@@ -146,7 +148,8 @@ static struct s_pr_flags {
   { pr_isa_isdn, "isa.isdn" },
   { pr_dac960, "dac960" },
   { pr_smart, "smart" },
-  { pr_isdn, "isdn" }
+  { pr_isdn, "isdn" },
+  { pr_kbd, "kbd" }
 };
 
 int is_default_feature(enum probe_feature feature)
@@ -550,6 +553,9 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_usb(hd_data);
 #if defined(__PPC__)
   hd_scan_adb(hd_data);
+#endif
+#if defined(__i386__)
+  hd_scan_kbd(hd_data);
 #endif
 #ifndef LIBHD_TINY
   hd_scan_modem(hd_data);	/* do it before hd_scan_mouse() */

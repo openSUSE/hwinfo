@@ -10,6 +10,13 @@ s0200	Unknown
 	0002	Generic PS/2 Mouse
 	0003	MS-Compatible Serial Mouse
 
+# pc keyboards
+# ids > 1 are keyboard ids as read via keyboard id command
+s0201	Unknown
+	0000	PC Keyboard
+	0001	PS/2 Keyboard
+	41ab	MF2 Keyboard
+
 # printer
 s1001	Minolta Co., Ltd.
 s1001	MINOLTA

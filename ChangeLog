@@ -1,4 +1,6 @@
+24/2/2000:	v0.72
 	- libihw used only on ix86 & axp
+	- pc keyboard detection
 
 23/2/2000:	v0.71
 	- isdn stuff
