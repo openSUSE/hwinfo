@@ -265,9 +265,10 @@ typedef struct {
   unsigned invalid:1;
   /**
    * Hardware should be reconfigured.
-   * Either \ref status_yes or \ref status_no.
+   * Either \ref hd_status_t::status_yes or \ref hd_status_t::status_no.
    * A hardware must be reconfigured if it is in state
-   * \ref available == \ref status_no and \ref needed == \ref status_yes.
+   * \ref hd_status_t::available == \ref hd_status_t::status_no and
+   * \ref hd_status_t::needed == \ref hd_status_t::status_yes.
    * In other words, if a hardware that was
    * needed to run the system is gone.
    */
@@ -275,26 +276,26 @@ typedef struct {
 
   /**
    * Hardware %config status.
-   * Set to \ref status_yes if the hardware has been configured, otherwise
-   * \ref status_no.
+   * Set to \ref hd_status_t::status_yes if the hardware has been configured, otherwise
+   * \ref hd_status_t::status_no.
    */
   unsigned configured:3;
 
   /**
    * Hardware availability.
-   * Set to \ref status_yes if the hardware has been detected or
-   * \ref status_no if the hardware has not been found. You can set
-   * it to \ref status_unknown to indicate that this hardware cannot
+   * Set to \ref hd_status_t::status_yes if the hardware has been detected or
+   * \ref hd_status_t::status_no if the hardware has not been found. You can set
+   * it to \ref hd_status_t::status_unknown to indicate that this hardware cannot
    * be automatically detected (say, ISA cards).
    * \note You can simulate all kinds of hardware on your system by
    * creating entries in /var/lib/hardware/unique-keys/ that have
-   * \ref available set to \ref status_unknown.
+   * \ref hd_status_t::available set to \ref hd_status_t::status_unknown.
    */
   unsigned available:3;
 
   /**
    * Hardware is needed.
-   * Set to \ref status_yes if this hardware is really necessary to run
+   * Set to \ref hd_status_t::status_yes if this hardware is really necessary to run
    * your computer. The effect will be that some hardware %config dialog
    * is run if the hardware item is not found.
    * Typical examples are graphics cards and mice.
@@ -303,8 +304,8 @@ typedef struct {
 
   /**
    * (Internal) original value of \ref available;
-   * This is used to keep track of the original value of the \ref available
-   * state as it was stored in /var/lib/hardware/unique-keys/. (\ref available
+   * This is used to keep track of the original value of the \ref hd_status_t::available
+   * state as it was stored in /var/lib/hardware/unique-keys/. (\ref hd_status_t::available
    * is automatically updated during the detection process.)
    */
   unsigned available_orig:3;
@@ -334,7 +335,7 @@ typedef enum {
  */
 typedef struct {
   unsigned id;		/**< Numeric id. */
-  char *name;		/**< Name (if any) that corresponds to \ref id. */
+  char *name;		/**< Name (if any) that corresponds to \ref hd_id_t::id. */
 } hd_id_t;
 
 /**
@@ -1442,7 +1443,7 @@ typedef struct s_hd_t {
    * Id is actually a combination of some tag to differentiate the
    * various id types and the real id. Use the \ref ID_VALUE macro to
    * get e.g. the real PCI id value for a PCI %device.
-   * \note If you're looking or something printable, you might want to use \ref model
+   * \note If you're looking or something printable, you might want to use \ref hd_t::model
    * instead.
    */
   hd_id_t device;
@@ -1510,8 +1511,8 @@ typedef struct s_hd_t {
   /**
    * Model name.
    * This is a combination of vendor and %device names. Some heuristics is used
-   * to make it more presentable. Use this instead of \ref vendor and
-   * \ref device.
+   * to make it more presentable. Use this instead of \ref hd_t::vendor and
+   * \ref hd_t::device.
    */
   char *model;
 
@@ -1560,7 +1561,7 @@ typedef struct s_hd_t {
   unsigned line;
 
   /**
-   * (Internal) Counter, used in combination with \ref module and \ref line.
+   * (Internal) Counter, used in combination with \ref hd_t::module and \ref hd_t::line.
    */
   unsigned count;
 
@@ -1657,8 +1658,8 @@ typedef struct s_hd_t {
 
   /**
    * USB Global Unique Identifier.
-   * Available for USB devices. This may even be set if \ref bus is not
-   * \ref bus_usb (e.g. USB storage devices will have \ref bus set to
+   * Available for USB devices. This may even be set if \ref hd_t::bus is not
+   * \ref bus_usb (e.g. USB storage devices will have \ref hd_t::bus set to
    * \ref bus_scsi due to SCSI emulation).
    */
   char *usb_guid;
