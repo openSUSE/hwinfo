@@ -34,8 +34,12 @@ void hd_scan_pci(hd_data_t *hd_data)
   pci_t *p;
   hd_res_t *res;
   int j;
-  unsigned u;
+  unsigned u, bus;
   uint64_t u64;
+  struct {
+    unsigned hd_idx, bus;
+  } bridge[32];
+  unsigned bridges;
 
   if(!hd_probe_feature(hd_data, pr_pci)) return;
 
@@ -51,6 +55,9 @@ void hd_scan_pci(hd_data_t *hd_data)
   if((hd_data->debug & HD_DEB_PCI)) dump_pci_data(hd_data);
 
   PROGRESS(4, 0, "build list");
+
+  bridges = 0;
+  memset(bridge, 0, sizeof bridge);
 
   for(p = hd_data->pci; p; p = p->next) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
@@ -77,6 +84,11 @@ void hd_scan_pci(hd_data_t *hd_data)
         hd->base_class = u >> 8;
         hd->sub_class = u & 0xff;
       }
+    }
+
+    if(p->secondary_bus && bridges < sizeof bridge / sizeof *bridge) {
+      bridge[bridges].hd_idx = hd->idx;
+      bridge[bridges++].bus = p->secondary_bus;
     }
 
     for(j = 0; j < 6; j++) {
@@ -125,6 +137,19 @@ void hd_scan_pci(hd_data_t *hd_data)
     hd->detail->type = hd_detail_pci;
     hd->detail->pci.data = p;
   }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->bus == bus_pci) {
+      bus = hd->slot >> 8;
+      for(j = 0; j < bridges; j++) {
+        if(bridge[j].bus == bus) {
+          hd->attached_to = bridge[j].hd_idx;
+          break;
+        }
+      }
+    }
+  }
+
 }
 
 /*
@@ -212,6 +237,10 @@ void get_pci_data(hd_data_t *hd_data)
         read(fd, p->data, hd_probe_feature(hd_data, pr_pci_ext) ? sizeof p->data : 0x40);
       if(p->data_len >= 0x40) {
         p->hdr_type = p->data[PCI_HEADER_TYPE] & 0x7f;
+        if(p->hdr_type == 1 || p->hdr_type == 2) {	/* PCI or CB bridge */
+          p->secondary_bus = p->data[PCI_SECONDARY_BUS];
+          /* PCI_SECONDARY_BUS == PCI_CB_CARD_BUS */
+        }
         p->cmd = p->data[PCI_COMMAND] + (p->data[PCI_COMMAND + 1] << 8);
         ul[0] = p->data[PCI_VENDOR_ID] + (p->data[PCI_VENDOR_ID + 1] << 8);
         ul[1] = p->data[PCI_DEVICE_ID] + (p->data[PCI_DEVICE_ID + 1] << 8);
@@ -413,6 +442,7 @@ void dump_pci_data(hd_data_t *hd_data)
 {
   pci_t *p;
   char *s = NULL;
+  char buf[32];
   int i, j;
 
   ADD2LOG("---------- PCI raw data ----------\n");
@@ -424,9 +454,14 @@ void dump_pci_data(hd_data_t *hd_data)
     if(p->flags & (1 << pci_flag_agp)) str_printf(&s, -1, ",agp");
     if(!s) str_printf(&s, 0, "%s", "");
 
+    *buf = 0;
+    if(p->secondary_bus) {
+      sprintf(buf, "->%02x", p->secondary_bus);
+    }
+
     ADD2LOG(
-      "bus %02x, slot %02x, func %x, vend:dev:s_vend:s_dev:rev %04x:%04x:%04x:%04x:%02x\n",
-      p->bus, p->slot, p->func, p->vend, p->dev, p->sub_vend, p->sub_dev, p->rev
+      "bus %02x%s, slot %02x, func %x, vend:dev:s_vend:s_dev:rev %04x:%04x:%04x:%04x:%02x\n",
+      p->bus, buf, p->slot, p->func, p->vend, p->dev, p->sub_vend, p->sub_dev, p->rev
     );
     ADD2LOG(
       "class %02x, sub_class %02x prog_if %02x, hdr %x, flags <%s>, irq %u\n",

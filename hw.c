@@ -37,8 +37,14 @@ int main(int argc, char **argv)
   do {
     if(first_probe)				/* only for the 1st probing */
       hd_set_probe_feature(hd_data, pr_default);
-    else
+    else {
       hd_clear_probe_feature(hd_data, pr_all);
+#if 0
+      printf("press return to start re-probe...");
+      fflush(stdout);
+      getchar();
+#endif
+    }
 
     if((i = get_probe_flags(argc, argv, hd_data)) < 0) return 1;
     deb = hd_data->debug;
@@ -66,6 +72,13 @@ int main(int argc, char **argv)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     hd_dump_entry(hd_data, hd, f ? f : stdout);
   }
+
+#if 0
+  printf("-- net cards --\n");
+
+  hd = hd_base_class_list(hd_data, bc_network); printf("\n");
+  for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
+#endif
 
 #if 0	// ##### remove
   printf("-- all --\n");

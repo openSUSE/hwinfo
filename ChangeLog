@@ -1,3 +1,7 @@
+8/3/2000:	v0.83
+	- pci cards are attached to their resp. bridges
+	- card bus cards not listed by probe_by_class
+
 6/3/2000:	v0.82
 	- X server list fixes
 

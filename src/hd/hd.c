@@ -1271,8 +1271,17 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
   driver_info_t *di, *di0 = NULL;
   ihw_card_info *ici;
   str_list_t *sl;
+  hd_t *bridge_hd;
 
   if(!hd) return NULL;
+
+  /* ignore card bus cards */
+  if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
+    if(
+      bridge_hd->base_class == bc_bridge &&
+      bridge_hd->sub_class == sc_bridge_cardbus
+    ) return NULL;
+  }
 
   if(hd->sub_vend || hd->sub_dev) {
     di0 = sub_device_driver(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev);
@@ -1728,8 +1737,18 @@ hd_t *hd_net_list(hd_data_t *hd_data, int rescan)
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
+  hd_t *bridge_hd;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
+
+    /* ###### fix later: card bus magic */
+    if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
+      if(
+        bridge_hd->base_class == bc_bridge && 
+        bridge_hd->sub_class == sc_bridge_cardbus
+      ) continue;
+    }
+
     if(hd->base_class == base_class) {
       hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
       *hd1 = *hd;

@@ -198,7 +198,8 @@ typedef struct s_pci_t {
   char *log;					/* log messages */
   unsigned flags,				/* various info, see enum pci_flags */
            cmd,					/* PCI_COMMAND */
-           hdr_type;				/* PCI_HEADER_TYPE */
+           hdr_type,				/* PCI_HEADER_TYPE */
+           secondary_bus;			/* > 0 for PCI & CB bridges */
   unsigned bus,					/* PCI bus #, *nothing* to do with hw_t.bus */
            slot, func; 				/* slot & function */
   unsigned base_class, sub_class, prog_if;	/* PCI device classes */
