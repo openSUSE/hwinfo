@@ -18,6 +18,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+#ifndef LIBHD_TINY
+
 typedef struct {
   int key;
   char *value;
@@ -883,4 +885,6 @@ int hd_write_config(hd_data_t *hd_data, hd_t *hd)
   return err;
 }
 
+
+#endif	/* LIBHD_TINY */
 

@@ -1269,7 +1269,9 @@ void hd_scan(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd);
 
+#ifndef LIBHD_TINY
   hd_scan_manual(hd_data);
+#endif
 
   /* add test entries */
   hd_scan_xtra(hd_data);

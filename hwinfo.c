@@ -184,6 +184,7 @@ int main(int argc, char **argv)
         do_hw(hd_data, f, hw_item[i]);
       }
 
+#ifndef LIBHD_TINY
       if(showconfig) {
         hd = hd_read_config(hd_data, showconfig);
         if(hd) {
@@ -210,6 +211,7 @@ int main(int argc, char **argv)
           fprintf(f ? f : stdout, "No such hardware: %s\n", saveconfig);
         }
       }
+#endif
 
       if(f) fclose(f);
     }
@@ -413,30 +415,7 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
 
 void do_test(hd_data_t *hd_data)
 {
-  hd_manual_t *entry;
-  int i;
 
-  entry = calloc(sizeof *entry, 1);
-
-  entry->unique_id = "as123123123.sdasda";
-  entry->hw_class = hw_cdrom;
-  entry->model = "140x speed";
-
-  entry->status.configured = status_new;
-
-  i = hd_manual_write_entry(hd_data, entry);
-
-  printf("hd_write_manual() = %d\n", i);
-
-  entry = hd_manual_read_entry(hd_data, "gG82.g++hATXqKsF");
-
-  entry->unique_id = "77777";
-
-  i = hd_manual_write_entry(hd_data, entry);
-
-  entry = hd_free_manual(entry);
-
-  printf("hd_write_manual() = %d\n", i);
 }
 
 

@@ -18,7 +18,6 @@ LIBHD_MAJOR_VERSION	:= $(shell cut -d . -f 1 $(TOPDIR)/VERSION)
 CC	= gcc
 LD	= ld
 CFLAGS	= -Wall -O2 -fomit-frame-pointer $(EXTRA_FLAGS) -I$(TOPDIR)/src/hd
-CFLAGS	= -g -Wall -O2 $(EXTRA_FLAGS) -I$(TOPDIR)/src/hd
 
 LDFLAGS	= -Lsrc
 
