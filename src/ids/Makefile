@@ -5,7 +5,7 @@ CLEANFILES	= *.h *.err hd.names hd.drivers drivers.c
 include $(TOPDIR)/Makefile.common
 
 IDFILES	= names.SuSE names.bus names.class names.special \
-	  names.scanner names.usb names.eisa names.monitor
+	  names.scanner names.network names.usb names.eisa names.monitor
 
 ifeq "$(ARCH)" "i386"
 IDFILES	+= drivers.x11.ia32 names.x11.ia32

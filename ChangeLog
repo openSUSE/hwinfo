@@ -1,3 +1,6 @@
+17/8/2001:	v3.11
+	- added usb network data
+
 17/8/2001:	v3.10
 	- install in $DESTDIR
 	- handle ide-scsi drives
