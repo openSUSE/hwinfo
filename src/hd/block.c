@@ -658,6 +658,22 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
         hd->sub_class.id = sc_sdev_scanner;
       }
     }
+
+    if(
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_other
+    ) {
+      switch(ul0) {
+        case 0:
+          hd->sub_class.id = sc_sdev_disk;
+          break;
+
+        case 5:
+          hd->sub_class.id = sc_sdev_cdrom;
+          break;
+      }
+    }
+
   }
 
   /* s390: wwpn & fcp lun */
