@@ -1881,14 +1881,14 @@ typedef struct s_hd_t {
 
   /**
    * Special %device file.
-   * Device file name to acces this hardware. Normally something below /dev.
+   * Device file name to access this hardware. Normally something below /dev.
    * For network interfaces this is the interface name.
    */
   char *unix_dev_name;
 
   /**
    * List of %device names.
-   * Device file names to acces this hardware. Normally something below /dev.
+   * Device file names to access this hardware. Normally something below /dev.
    * They should be all equivalent. The preferred name however is
    * \ref hd_t::unix_dev_name.
    */
@@ -1896,7 +1896,7 @@ typedef struct s_hd_t {
 
   /**
    * Special %device file.
-   * Device file name to acces this hardware. Most hardware only has one
+   * Device file name to access this hardware. Most hardware only has one
    * %device name stored in \ref hd_t::unix_dev_name. But in some cases
    * there's an alternative name.
    */
