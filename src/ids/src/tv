@@ -388,6 +388,13 @@
 +driver.module.modprobe	bttv
 
 
+ vendor.id		pci 0x14f1
+&device.id		pci 0x8800
++baseclass.id		0x112
++subclass.id		0x00
++driver.module.modprobe	cx8800
+
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
  vendor.id		pci 0x1131
