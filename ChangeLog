@@ -1,5 +1,5 @@
 7/9/2000:	v1.37
-	- fixed modem degfault bug
+	- fixed modem segfault bug
 	- fixed Zip device detection
 
 6/9/2000:	v1.36
