@@ -1,6 +1,7 @@
 20/9/2001:	v3.22
 	- make AIPTEK tablet a mouse again
 	- added old_unique_id field
+	- updated driver info
 
 19/9/2001:	v3.21
 	- new sound card
