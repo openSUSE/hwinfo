@@ -62,6 +62,7 @@
 #include "s390.h"
 #include "pci.h"
 #include "block.h"
+#include "edd.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -193,7 +194,8 @@ static struct s_mod_names {
   { mod_s390, "s390" },
   { mod_sysfs, "sysfs" },
   { mod_dsl, "dsl" },
-  { mod_block, "block" }
+  { mod_block, "block" },
+  { mod_edd, "edd" }
 };
 
 /*
@@ -283,7 +285,9 @@ static struct s_pr_flags {
   { pr_udev,          0,            8|4|2|1, "udev"          },
   { pr_block,         0,            8|4|2|1, "block"         },
   { pr_block_cdrom,   pr_block,     8|4|2|1, "block.cdrom"   },
-  { pr_block_part,    pr_block,     8|4|2|1, "block.part"    }
+  { pr_block_part,    pr_block,     8|4|2|1, "block.part"    },
+  { pr_edd,           0,            8|4|2|1, "edd"           },
+  { pr_edd_mod,       pr_edd,       8|4|2|1, "edd.mod"       }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -451,6 +455,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_edd_mod);
       hd_set_probe_feature(hd_data, pr_scsi);
       break;
 
@@ -461,6 +466,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_edd_mod);
       hd_set_probe_feature(hd_data, pr_scsi);
       if(!hd_data->flags.fast) {
         hd_set_probe_feature(hd_data, pr_floppy);
@@ -1725,6 +1731,7 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_sysfs_block(hd_data);
   hd_scan_sysfs_scsi(hd_data);
   hd_scan_sysfs_usb(hd_data);
+  hd_scan_sysfs_edd(hd_data);
 
 #if defined(__PPC__)   
   hd_scan_veth(hd_data);
@@ -4332,9 +4339,8 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           break;
 
         case hw_wlan:
-          break;
-
         case hw_block:
+        case hw_tape:
           break;
 
         case hw_unknown:
