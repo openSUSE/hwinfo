@@ -136,10 +136,8 @@ static void test_read_block0_open(void *arg);
 static void get_kernel_version(hd_data_t *hd_data);
 static int is_modem(hd_data_t *hd_data, hd_t *hd);
 static void assign_hw_class(hd_data_t *hd_data, hd_t *hd);
-#ifndef LIBHD_TINY
 static void short_vendor(char *vendor);
 static void create_model_name(hd_data_t *hd_data, hd_t *hd);
-#endif
 
 static void sigchld_handler(int);
 static pid_t child_id;
@@ -1815,10 +1813,9 @@ void hd_scan(hd_data_t *hd_data)
   /* assign a hw_class & build a useful model string */
   for(hd = hd_data->hd; hd; hd = hd->next) {
     assign_hw_class(hd_data, hd);
-#ifndef LIBHD_TINY
+
     /* create model name _after_ hw_class */
     create_model_name(hd_data, hd);
-#endif
   }
 
 #ifndef LIBHD_TINY
@@ -4528,7 +4525,6 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 }
 
 
-#ifndef LIBHD_TINY
 void short_vendor(char *vendor)
 {
   static char *remove[] = {
@@ -4679,6 +4675,7 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
 }
 
 
+#ifndef LIBHD_TINY
 int hd_change_status(const char *id, hd_status_t status, const char *config_string)
 {
   hd_data_t *hd_data;

@@ -1,3 +1,7 @@
+10/5/2004:	v8.47
+	- added functions necessary to build a model name to tiny version;
+	  this is needed by linuxrc (#39092)
+
 6/5/2004:	v8.46
 	- detect IUCV pseudodevices (bug #39456)
 	- added hd_busid_to_hwcfg() (bug #39456)
