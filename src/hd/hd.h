@@ -96,7 +96,7 @@ typedef enum hw_item {
   hw_framebuffer, hw_camera, hw_sound, hw_storage_ctrl, hw_network_ctrl,
   hw_isdn, hw_modem, hw_network, hw_disk, hw_partition, hw_cdrom, hw_floppy,
   hw_manual, hw_usb_ctrl, hw_usb, hw_bios, hw_pci, hw_isapnp, hw_bridge,
-  hw_hub,
+  hw_hub, hw_scsi, hw_ide,
   hw_unknown, hw_all					/* hw_all must be last */
 } hd_hw_item_t;
 
@@ -610,6 +610,8 @@ typedef struct scsi_s {
   uint64_t size;
   unsigned sec_size;
   unsigned cache;
+  str_list_t *host_info;
+  char *usb_guid;
 } scsi_t;
 
 
@@ -1291,6 +1293,8 @@ typedef struct s_hd_t {
   char *old_unique_id;		/* the id before v3.17 */
   char *parent_id;		/* unique_id of our parent, please do not use it for now */
   char *unique_id1;		/* location independent unique_id part */
+
+  char *usb_guid;		/* USB GUID */
 
   unsigned drv_dev, drv_vend;	/* sometimes used for driver info lookups */
 

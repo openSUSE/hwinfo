@@ -311,6 +311,10 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
   if(h->serial)
     dump_line("Serial ID: \"%s\"\n", h->serial);
 
+  if(h->usb_guid) {
+    dump_line("USB GUID: %s\n", h->usb_guid);
+  }
+
   if(h->compat_vend || h->compat_dev) {
     a0 = hd_device_name(hd_data, h->compat_vend, h->compat_dev);
     dump_line(

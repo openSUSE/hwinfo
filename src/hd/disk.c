@@ -36,6 +36,8 @@ void hd_scan_disk(hd_data_t *hd_data)
   PROGRESS(1, 0, "get info");
 
   for(sl = hd_data->disks; sl; sl = sl->next) {
+    if(!strncmp(sl->str, "lvm", 3) || !strncmp(sl->str, "md", 2)) continue;
+
     str_printf(&s, 0, "/dev/%s", sl->str);
 
     for(hd = hd_data->hd; hd; hd = hd->next) {

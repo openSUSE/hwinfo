@@ -125,7 +125,11 @@
 	i	sym53c8xx
 
 # message/fusion/
-1000 0621+5
+1000 0621+2
+1000 0624
+1000 0030
+#1000 0031
+#1000 0035
 	i	mptbase|mptscsih
 
 # scsi/qlogicisp.c

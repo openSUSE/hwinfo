@@ -85,16 +85,14 @@ struct option options[] = {
   { "usb", 0, NULL, 1000 + hw_usb },
   { "pci", 0, NULL, 1000 + hw_pci },
   { "isapnp", 0, NULL, 1000 + hw_isapnp },
+  { "scsi", 0, NULL, 1000 + hw_scsi },
+  { "ide", 0, NULL, 1000 + hw_ide },
   { "bridge", 0, NULL, 1000 + hw_bridge },
   { "hub", 0, NULL, 1000 + hw_hub },
   { "manual", 0, NULL, 1000 + hw_manual },
   { "all", 0, NULL, 2000 },
   { "reallyall", 0, NULL, 2001 },
   { "smp", 0, NULL, 3000 },
-//  { "pci", 0, NULL, 3002 },
-//  { "isapnp", 0, NULL, 3003 },
-  { "ide", 0, NULL, 3004 },
-  { "scsi", 0, NULL, 3005 },
   { }
 };
 
@@ -186,10 +184,6 @@ int main(int argc, char **argv)
         case 2000:
         case 2001:
         case 3000:
-        case 3002:
-        case 3003:
-        case 3004:
-        case 3005:
           if(hw_items < sizeof hw_item / sizeof *hw_item)
             hw_item[hw_items++] = i;
           break;
@@ -345,7 +339,7 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
 {
   hd_t *hd, *hd0;
   int smp = -1;
-  int i, j;
+  int i;
 
   hd0 = NULL;
 
@@ -356,32 +350,16 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
 
     case 2000:
     case 2001:
-    case 3002:
-    case 3003:
-    case 3004:
-    case 3005:
-      i = j = -1;
+      i = -1;
       switch((int) hw_item) {
         case 2000: i = pr_default; break;
         case 2001: i = pr_all; break;
-        case 3002: i = pr_pci; j = bus_pci; break;
-        case 3003: i = pr_isapnp; j = bus_isa; break;
-        case 3004: i = pr_ide; j = bus_ide; break;
-        case 3005: i = pr_scsi; j = bus_scsi; break;
       }
       if(i != -1) {
         hd_clear_probe_feature(hd_data, pr_all);
         hd_set_probe_feature(hd_data, i);
-        if(i == pr_isapnp) {
-          hd_set_probe_feature(hd_data, pr_isapnp_mod);
-          hd_set_probe_feature(hd_data, pr_misc);
-        }
         hd_scan(hd_data);
-        if(j != -1) {
-          hd0 = hd_bus_list(hd_data, j);
-        } else {
-          hd0 = hd_data->hd;
-        }
+        hd0 = hd_data->hd;
       }
       break;
 

@@ -29,6 +29,7 @@ static void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb);
 static usb_t *find_usb_entry(hd_data_t *hd_data, int *dev_idx);
 static usb_t *add_usb_entry(hd_data_t *hd_data, usb_t *new_usb);
 static void dump_usb_data(hd_data_t *hd_data);
+static void add_usb_guid(hd_t *hd);
 
 #define USB_DT_CS_DEVICE	0x21
 #define CTRL_RETRIES		50
@@ -105,8 +106,10 @@ void hd_scan_usb(hd_data_t *hd_data)
 
       hd->slot = (usb->bus << 8) + usb->dev_nr;
 
-      if(usb->vendor) hd->vend = MAKE_ID(TAG_USB, usb->vendor);
-      if(usb->device) hd->dev = MAKE_ID(TAG_USB, usb->device);
+      if(usb->vendor || usb->device) {
+        hd->vend = MAKE_ID(TAG_USB, usb->vendor);
+        hd->dev = MAKE_ID(TAG_USB, usb->device);
+      }
       if(usb->rev) str_printf(&hd->rev_name, 0, "%x.%02x", usb->rev >> 8, usb->rev & 0xff);
 
       if(usb->manufact) {
@@ -124,6 +127,8 @@ void hd_scan_usb(hd_data_t *hd_data)
       }
 
       if(usb->serial) hd->serial = new_str(usb->serial);
+
+      add_usb_guid(hd);
 
       if(usb->speed) {
         res = add_res_entry(&hd->res, new_mem(sizeof *res));
@@ -590,3 +595,25 @@ void dump_usb_data(hd_data_t *hd_data)
   }
   ADD2LOG("----- usb device info end -----\n");
 }
+
+
+void add_usb_guid(hd_t *hd)
+{
+  unsigned pg[3];
+  char *s;
+
+  pg[0] = ((hd->vend & 0xffff) << 16) | (hd->dev & 0xffff);
+  pg[1] = pg[2] = 0;
+  if(hd->serial) {
+    for(s = hd->serial; *s; s++) {
+      pg[1] <<= 4;
+      pg[1] |= pg[2] >> 28;
+      pg[2] <<= 4;
+      if(*s >= 'a') *s -= 'a' - 'A';
+      pg[2] |= (*s <= '9' && *s >= '0') ? *s - '0' : *s - 'A' + 10;
+    }
+  }
+
+  str_printf(&hd->usb_guid, 0, "%08x%08x%08x", pg[0], pg[1], pg[2]);
+}
+

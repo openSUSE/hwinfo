@@ -29,7 +29,7 @@
 static scsi_t *do_basic_ioctl(hd_data_t *hdata, scsi_t **ioctl_scsi, int fd);
 static scsi_t *get_ioctl_scsi(hd_data_t *hd_data);
 static void get_proc_scsi(hd_data_t *hd_data);
-static void read_more_proc_info(hd_data_t *hd_data, scsi_t *scsi, str_list_t **pl0);
+static void read_more_proc_info(hd_data_t *hd_data, scsi_t *scsi);
 static scsi_t *add_scsi_entry(scsi_t **scsi, scsi_t *new);
 static void dump_proc_scsi_data(hd_data_t *hd_data, str_list_t *proc_scsi);
 static void dump_scsi_data(hd_data_t *hd_data, scsi_t *scsi, char *text);
@@ -65,7 +65,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
 #endif
   hd_res_t *res;
   scsi_t *ioctl_scsi, *scsi, *scsi2, *scsi3, *next;
-  str_list_t *pl0 = NULL, *sl;
+  str_list_t *sl;
   int i, j;
   unsigned found, found_a;
   driver_info_t *di, *di0;
@@ -219,19 +219,20 @@ void hd_scan_scsi(hd_data_t *hd_data)
   for(scsi = hd_data->scsi; scsi; scsi = next) {
     next = scsi->next;
 
+    if(!scsi->fake) read_more_proc_info(hd_data, scsi);
+
     if(scsi->fake) {
       scsi->next = NULL;
       free_scsi(scsi, 1);
       continue;
     }
 
-    read_more_proc_info(hd_data, scsi, &pl0);
-
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    if (scsi->type != sc_sdev_scanner) {
+    if(scsi->type != sc_sdev_scanner) {
       hd->base_class = bc_storage_device;
       hd->sub_class = scsi->type;
-    } else {
+    }
+    else {
       hd->base_class = bc_scanner;
     }
     hd->bus = bus_scsi;
@@ -242,6 +243,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
     hd->dev_name = new_str(scsi->model);
     hd->rev_name = new_str(scsi->rev);
     hd->serial = new_str(scsi->serial);
+//    hd->usb_guid = new_str(scsi->usb_guid);
     if(scsi->host < sizeof scsi_ctrl / sizeof *scsi_ctrl) {
       hd->attached_to = scsi_ctrl[scsi->host].hd_idx;
       hd->driver = new_str(scsi_ctrl[scsi->host].driver);
@@ -295,8 +297,6 @@ void hd_scan_scsi(hd_data_t *hd_data)
   hd_data->scsi = NULL;
 
   ioctl_scsi = free_scsi(ioctl_scsi, 1);
-
-  free_str_list(pl0);
 
 }
 
@@ -354,6 +354,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
   struct dirent *de;
   struct stat sbuf;
   hd_res_t *geo, *size;
+  str_list_t *proc_dirs, *sl;
 
   /* TODO?: sr.c:get_capabilities */
 
@@ -378,7 +379,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
             case 2: scsi->type = sc_sdev_tape; break;
           }
 
-          if(scsi->type == sc_sdev_cdrom) {
+          if(!hd_data->flags.fast && scsi->type == sc_sdev_cdrom) {
             PROGRESS(2, i * 100 + j, "cache");
 
             if(
@@ -424,6 +425,10 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
       s[1] = i % 26 + 'a';
       s[2] = 0;
     }
+    if(hd_data->disks) {
+      str_printf(&dev_name, 0, "sd%s", s);
+      if(!search_str_list(hd_data->disks, dev_name)) continue;
+    }
     str_printf(&dev_name, 0, "/dev/sd%s", s);
     fd = open(dev_name, O_RDONLY | O_NONBLOCK);
     if(fd >= 0) {
@@ -433,6 +438,11 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
         scsi->dev_name = dev_name;
         dev_name = NULL;
         scsi->type = sc_sdev_disk;
+
+        if(hd_data->flags.fast) {
+          close(fd);
+          continue;
+        }
 
         hd_getdisksize(hd_data, scsi->dev_name, fd, &geo, &size);
 
@@ -488,7 +498,6 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
             }
           }
         }
-
       }
 
       close(fd);
@@ -497,6 +506,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
       if(errno == ENOENT) break;	/* stop on non-existent devices */
     }
   }
+
   dev_name = free_mem(dev_name);
 
   for(scsi = ioctl_scsi; scsi; scsi = scsi->next) {
@@ -517,14 +527,26 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
     }
   }
 
+  proc_dirs = read_dir(PROC_SCSI, 'd');
+
   /* evil hack for usb-storage devices */
   for(scsi = ioctl_scsi; scsi; scsi = scsi->next) {
     if(scsi->proc_dir || !scsi->info) continue;
 
     if(!strcmp(scsi->info, "SCSI emulation for USB Mass Storage devices")) {
-      str_printf(&scsi->proc_dir, 0, "usb-storage-%d", scsi->host);
+      for(sl = proc_dirs; sl; sl = sl->next) {
+        str_printf(&scsi->proc_dir, 0, PROC_SCSI "/%s/%d", sl->str, scsi->host);
+        scsi->host_info = read_file(scsi->proc_dir, 0, 0);
+        scsi->proc_dir = free_mem(scsi->proc_dir);
+        if(scsi->host_info) {
+          str_printf(&scsi->proc_dir, 0, "%s/%d", sl->str, scsi->host);
+          break;
+        }
+      }
     }
   }
+
+  proc_dirs = free_str_list(proc_dirs);
 
   /* get name of /proc/scsi entry */
   if((dir = opendir(PROC_SCSI))) {
@@ -739,55 +761,42 @@ void get_proc_scsi(hd_data_t *hd_data)
 }
 
 
-void read_more_proc_info(hd_data_t *hd_data, scsi_t *scsi, str_list_t **pl0)
+void read_more_proc_info(hd_data_t *hd_data, scsi_t *scsi)
 {
-  str_list_t *sl, *sl0;
-  char *pname = NULL;
+  str_list_t *sl;
+  char buf[64];
 
   if(!scsi->proc_dir) return;
 
-  str_printf(&pname, 0, PROC_SCSI "/%s/%d", scsi->proc_dir, scsi->host);
-
-  sl0 = read_file(pname, 0, 0);
-
-  if(sl0) {
+  if(scsi->host_info) {
 
     /* handle usb floppies */
-    if(
-      scsi->driver &&
-      !strcmp(scsi->driver, "usb-storage") &&
-      (
-        scsi->type == sc_sdev_other ||
-        scsi->type == sc_sdev_disk
-      )
-    ) {
-      for(sl = sl0; sl; sl = sl->next) {
-        if(strstr(sl->str, "Protocol:") && strstr(sl->str, "UFI")) {
+    if(scsi->driver && !strcmp(scsi->driver, "usb-storage")) {
+      for(sl = scsi->host_info; sl; sl = sl->next) {
+        if(
+          (scsi->type == sc_sdev_other || scsi->type == sc_sdev_disk) &&
+          strstr(sl->str, "Protocol:") &&
+          strstr(sl->str, "UFI")
+        ) {
           scsi->type = sc_sdev_floppy;
-          break;
+        }
+        if(strstr(sl->str, "Attached:") && strstr(sl->str, "No")) {
+          scsi->fake = 1;
+        }
+        if(sscanf(sl->str, " GUID: %63s", buf) == 1) {
+          scsi->usb_guid = new_str(buf);
         }
       }
     }
 
     if((hd_data->debug & HD_DEB_SCSI)) {
-      sl = NULL;
-      if(pl0) for(sl = *pl0; sl; sl = sl->next) {
-        if(!strcmp(sl->str, pname)) break;
+      ADD2LOG("----- %s -----\n", scsi->proc_dir);
+      for(sl = scsi->host_info; sl; sl = sl->next) {
+        ADD2LOG("  %s", sl->str);
       }
-      if(!sl) {
-        ADD2LOG("----- %s -----\n", pname);
-        for(sl = sl0; sl; sl = sl->next) {
-          ADD2LOG("  %s", sl->str);
-        }
-        ADD2LOG("----- %s end -----\n", pname);
-      }
+      ADD2LOG("----- %s end -----\n", scsi->proc_dir);
     }
   }
-
-  add_str_list(pl0, pname);
-
-  free_str_list(sl0);
-  free_mem(pname);
 }
 
 

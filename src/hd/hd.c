@@ -635,6 +635,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_isapnp:
       hd_set_probe_feature(hd_data, pr_isapnp);
       hd_set_probe_feature(hd_data, pr_isapnp_mod);
+      hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_isdn);
       break;
 
@@ -644,6 +645,14 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_hub:
       hd_set_probe_feature(hd_data, pr_usb); 
+      break;
+
+    case hw_scsi:
+      hd_set_probe_feature(hd_data, pr_scsi);
+      break;
+
+    case hw_ide:
+      hd_set_probe_feature(hd_data, pr_ide);
       break;
 
     case hw_all:
@@ -997,6 +1006,7 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->driver);
   free_mem(hd->old_unique_id);
   free_mem(hd->unique_id1);
+  free_mem(hd->usb_guid);
   free_mem(hd->parent_id);
   free_mem(hd->config_string);
   free_str_list(hd->extra_info);
@@ -1060,6 +1070,8 @@ scsi_t *free_scsi(scsi_t *scsi, int free_all)
     free_mem(scsi->proc_dir);
     free_mem(scsi->driver);
     free_mem(scsi->info);
+    free_mem(scsi->usb_guid);
+    free_str_list(scsi->host_info);
 
     if(!free_all) {
       next = scsi->next;
@@ -5032,11 +5044,17 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
   }
 
   if(!hd->hw_class2) {
-    if(hd->bus == bus_usb) {
+    if(hd->bus == bus_usb || hd->usb_guid) {
       hd->hw_class2 = hw_usb;
     }
     else if(hd->bus == bus_pci) {
       hd->hw_class2 = hw_pci;
+    }
+    else if(hd->bus == bus_scsi) {
+      hd->hw_class2 = hw_scsi;
+    }
+    else if(hd->bus == bus_ide) {
+      hd->hw_class2 = hw_ide;
     }
     else if(hd->bus == bus_isa && hd->is.isapnp) {
       hd->hw_class2 = hw_isapnp;
