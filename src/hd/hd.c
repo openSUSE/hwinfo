@@ -70,6 +70,7 @@
 #include "ataraid.h"
 #include "pppoe.h"
 #include "pcmcia.h"
+#include "s390.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -203,7 +204,8 @@ static struct s_mod_names {
   { mod_disk, "disk" },
   { mod_ataraid, "ataraid" },
   { mod_pppoe, "pppoe" },
-  { mod_pcmcia, "pcmcia" }
+  { mod_pcmcia, "pcmcia" },
+  { mod_s390, "s390" }
 };
 
 /*
@@ -223,6 +225,7 @@ static struct s_pr_flags {
   { pr_pci,           0,            8|4|2|1, "pci"           },
   { pr_pci_range,     pr_pci,         4|2  , "pci.range"     },
   { pr_pci_ext,       pr_pci,         4|2  , "pci.ext"       },
+  { pr_s390,          0,            8|4|2|1, "s390"          },
   { pr_isapnp,        0,              4|2|1, "isapnp"        },
   { pr_isapnp_old,    pr_isapnp,          0, "isapnp.old"    },
   { pr_isapnp_new,    pr_isapnp,          0, "isapnp.new"    },
@@ -586,6 +589,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
         hd_set_probe_feature(hd_data, pr_misc_par);
         hd_set_probe_feature(hd_data, pr_parallel_zip);
       }
+      hd_set_probe_feature(hd_data, pr_s390);
       hd_set_probe_feature(hd_data, pr_dasd);		/* dasd on s390 */
 #ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
@@ -606,6 +610,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_prom);
 #endif
 #if defined(__s390__) || defined(__s390x__)
+      hd_set_probe_feature(hd_data, pr_s390);
       hd_set_probe_feature(hd_data, pr_net);
 #endif
       hd_set_probe_feature(hd_data, pr_veth);
@@ -644,6 +649,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_sys:
       hd_set_probe_feature(hd_data, pr_bios);
       hd_set_probe_feature(hd_data, pr_prom);
+      hd_set_probe_feature(hd_data, pr_s390);
       hd_set_probe_feature(hd_data, pr_sys);
       break;
 
@@ -1719,6 +1725,10 @@ void hd_scan(hd_data_t *hd_data)
   /* do it _after_ hd_scan_pci() */
 #if defined(__PPC__)
   hd_scan_prom(hd_data);
+#endif
+
+#if defined(__s390__) || defined(__s390x__)
+  hd_scan_s390(hd_data);
 #endif
 
   /* after hd_scan_prom() and hd_scan_bios() */
