@@ -8,7 +8,7 @@
 
 Author: Steffen Winterfeldt <a href="wfeldt@suse.de">wfeldt@suse.de</a><p>
 
-Current version (20 Dec 1999): 0.31<p>
+Current version (17 Jan 2000): 0.42<p>
 
 <h2>Simple Expample</h2>
 
@@ -45,6 +45,22 @@ The probing library allocates a lot of memory during the probing process. To
 not confuse it, it is assumed that you do not free any memory allocated by
 the library except using the <code>hd_free_*</code> functions described
 below.<p>
+
+<h3>Name/Driver Database</h3>
+
+To associate the hardware with a name and with driver information,
+<code>libhd</code> uses two databases.<p>
+
+The first assigns device/vendor names to device/vendor ids. Additionally,
+the device's class code can be stored.<p>
+
+The second assigns driver info to device/vendor ids. More than one driver
+info can be given, specifying alternative methods to activate a device.<p>
+
+Both databases are compiled into <code>libhd</code>. But you can
+<strong>extend</strong> these data using simple text files:
+<code>hd.names</code> &amp; <code>hd.drivers</code>. The info from these
+files takes precedence over the compiled-in data.<p>
 
 <h3>Functions</h3>
 
@@ -97,22 +113,35 @@ Return 1 or 0 depending on wheter we have PCMCIA support or not.<p>
 
 Return info about the boot method to use.<p>
 
-<code><strong><a href="#driver_info_t">driver_info_t</a> *hd_driver_info(<a href="#hd_t">hd_t</a> *hd)</strong></code><p>
+<code><strong><a href="#driver_info_t">driver_info_t</a> *hd_driver_info(<a href="#hd_data_t">hd_data_t</a> *hd_data, <a href="#hd_t">hd_t</a> *hd)</strong></code><p>
 
 Return the driver info for a particular hardware item or <code>NULL</code>
 if no info is available.<p>
 
-<code><strong>char *hd_bus_name(unsigned bus)</strong></code><br>
-<code><strong>char *hd_base_class_name(unsigned base_class)</strong></code><br>
-<code><strong>char *hd_sub_class_name(unsigned base_class, unsigned sub_class)</strong></code><br>
-<code><strong>char *hd_vendor_name(unsigned vendor_id)</strong></code><br>
-<code><strong>char *hd_device_name(unsigned vendor_id, unsigned device_id)</strong></code><br>
-<code><strong>char *hd_sub_device_name(unsigned vendor_id, unsigned device_id, unsigned subvendor_id, unsigned subdevice_id)</strong></code><p>
+Note that the driver info is actually a linked list so that you possibly get
+more than one info for the device. These infos describe alternative methods to
+activate the device. The preferred methods are at the top of the list.<p>
+
+<code><strong>char *hd_bus_name(<a href="#hd_data_t">hd_data_t</a> *hd_data, unsigned bus)</strong></code><br>
+<code><strong>char *hd_class_name(<a href="#hd_data_t">hd_data_t</a> *hd_data, int level, unsigned base_class, unsigned sub_class, unsigned prog_if)</strong></code><br>
+<code><strong>char *hd_vendor_name(<a href="#hd_data_t">hd_data_t</a> *hd_data, unsigned vendor_id)</strong></code><br>
+<code><strong>char *hd_device_name(<a href="#hd_data_t">hd_data_t</a> *hd_data, unsigned vendor, unsigned device)</strong></code><br>
+<code><strong>char *hd_sub_device_name(<a href="#hd_data_t">hd_data_t</a> *hd_data, unsigned vendor, unsigned device, unsigned subvendor, unsigned subdevice)</strong></code><p>
 
 These functions convert various ids to strings. If an id could not be found,
 <code>NULL</code> is returned.<br>
 The returned strings are valid only til the next call to
 <code>hd_scan()</code>.<p>
+
+<code><strong>char *hd_class_name(<a href="#hd_data_t">hd_data_t</a> *hd_data, int level, unsigned base_class, unsigned sub_class, unsigned prog_if)</strong></code><p>
+
+Look up a class name. This function can return a class name (<code>level =
+1</code>), a sub class name (<code>level = 2</code>) or a programming
+interface name (<code>level = 3</code>).<p>
+
+If a name was not found, the function will automatically do a new search with
+a decreased level. For example, if a sub class 0x5 of class 0x21 was not found,
+it returns the name of class 0x5.<p>
 
 <code><strong>void hd_dump_entry(<a href="#hd_data_t">hd_data_t</a> *hd_data, <a href="#hd_t">hd_t</a> *hd, FILE *f)</strong></code><p>
 
@@ -178,12 +207,11 @@ typedef struct s_hd_t {
 <a name=enum@probe_feature></a>
 <pre>
 enum probe_feature {
-  pr_default = 1, pr_memory, pr_pci, pr_pci_range, pr_isapnp, pr_cdrom,
-  pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial, pr_misc_par,
-  pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide,
-  pr_scsi,
-  pr_all        /* pr_all must be the last */
-}
+  pr_default = 1, pr_memory, pr_pci, pr_pci_range, pr_pci_ext, pr_isapnp,
+  pr_cdrom, pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial,
+  pr_misc_par, pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor,
+  pr_mouse, pr_ide, pr_scsi, pr_usb, pr_adb,
+  pr_all                /* pr_all must be the last */
 </pre>
 
 <a name=enum@boot_arch></a>
@@ -195,59 +223,75 @@ enum boot_arch {
 </pre>
 
 <pre>
-// driver info types (module, mouse info, ...)
+/* device driver info types */
 enum driver_info_type {
-  di_none, di_module, di_mouse, di_x11, di_display
+  di_any, di_display, di_module, di_mouse, di_x11
 };
 
-// module info
+/* unspecific info */
 typedef struct {
-  enum driver_info_type type;   // driver info type
-  unsigned is_active:1;         // if module is already active
-  unsigned autoload:1;          // if it is automatically loaded (via conf.modules)
-  char *name;                   // the actual module name
-  char *load_cmd;               // the command line to run ("insmod xyz")
-  char *conf;                   // the conf.modules entry (e.g. for sb.o)
-} module_info_t;
+  union driver_info_u *next;
+  enum driver_info_type type;           /* driver info type */
+  str_list_t *hddb0, *hddb1;            /* the actual driver database entries */
+} driver_info_any_t;
 
-// mouse protocol info
+/* display (monitor) info */
 typedef struct {
-  enum driver_info_type type;   // driver info type
-  char *xf86;                   // the XF86 protocol name
-  char *gpm;                    // dto, gpm
-} mouse_info_t;
+  union driver_info_u *next;
+  enum driver_info_type type;           /* driver info type */
+  str_list_t *hddb0, *hddb1;            /* the actual driver database entries */
+  unsigned width, height;               /* max. useful display geometry */
+  unsigned min_vsync, max_vsync;        /* vsync range */
+  unsigned min_hsync, max_hsync;        /* hsync range */
+  unsigned bandwidth;                   /* max. pixel clock */
+} driver_info_display_t;
 
-// X server info
+/* module info */
 typedef struct {
-  enum driver_info_type type;   // driver info type
-  char *server;                 // the XF86 server name
-  char *x3d;                    // 3D info
+  union driver_info_u *next;
+  enum driver_info_type type;           /* driver info type */
+  str_list_t *hddb0, *hddb1;            /* the actual driver database entries */
+  unsigned active:1;                    /* if module is currently active */
+  unsigned modprobe:1;                  /* modprobe or insmod  */
+  char *name;                           /* the actual module name */
+  char *load_cmd;                       /* the command line to run ("insmod xyz") */
+  char *conf;                           /* the conf.modules entry, if any (e.g. for sb.o) */
+} driver_info_module_t;
+
+/* mouse protocol info */
+typedef struct {
+  union driver_info_u *next;
+  enum driver_info_type type;           /* driver info type */
+  str_list_t *hddb0, *hddb1;            /* the actual driver database entries */
+  char *xf86;                           /* the XF86 protocol name */
+  char *gpm;                            /* dto, gpm */
+} driver_info_mouse_t;
+
+/* X11 server info */
+typedef struct {
+  union driver_info_u *next;
+  enum driver_info_type type;           /* driver info type */
+  str_list_t *hddb0, *hddb1;            /* the actual driver database entries */
+  char *server;                         /* the server name */
+  char *x3d;                            /* 3D info */
   struct {
-    unsigned all:5;             // the next 5 entries combined
+    unsigned all:5;                     /* the next 5 entries combined */
     unsigned c8:1, c15:1, c16:1, c24:1, c32:1;
-  } colors;                     // supported color depths
-  unsigned dacspeed;            // max. ramdac clock
-} x11_info_t;
-
-// display info
-typedef struct {
-  enum driver_info_type type;           // driver info type
-  unsigned width, height;               // max. useful display geometry
-  unsigned min_vsync, max_vsync;        // vsync range
-  unsigned min_hsync, max_hsync;        // hsync range
-  unsigned bandwidth;                   // max. pixel clock
-} display_info_t;
+  } colors;                             /* supported color depths */
+  unsigned dacspeed;                    /* max. ramdac clock */
+} driver_info_x11_t;
 
 <a name=driver_info_t></a>
-// describes the device drivers; either:
-// - the actions needed to load a module
-// - or the mouse protocol
-typedef union {
-  enum driver_info_type type;   // driver info type
-  module_info_t module;
-  mouse_info_t mouse;
-  x11_info_t x11;
-  display_info_t display;
+/*
+ * holds device driver info
+ */
+typedef union driver_info_u {
+  union driver_info_u *next;
+  driver_info_any_t any;
+  driver_info_module_t module;
+  driver_info_mouse_t mouse;
+  driver_info_x11_t x11;
+  driver_info_display_t display;
 } driver_info_t;
 </pre>
 
