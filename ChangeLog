@@ -1,9 +1,8 @@
-	- ppc: handle iseries_veth correctly in loaded and unloaded module
-          state. #41347/LTC#8984
-	  Updated kernel to fit.
-
 1/6/2004:	v8.57
 	- check file size so we don't read outside mmap()-ed region
+	- ppc: handle iseries_veth correctly in loaded and unloaded module
+	  state. #41347/LTC#8984
+	- send smaller scsi INQUIRY command (#38731)
 
 27/5/2004:	v8.56
 	- added scsi.noserial probe option; useful for some usb sticks (#40485)

@@ -814,12 +814,11 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
       PROGRESS(5, 2, pr_str);
 
       memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
-      // ###### FIXME: smaller!
-      *((unsigned *) (scsi_cmd_buf + 4)) = sizeof scsi_cmd_buf - 0x100;
+      *((unsigned *) (scsi_cmd_buf + 4)) = 0x24;
       scsi_cmd_buf[8 + 0] = 0x12;
       scsi_cmd_buf[8 + 1] = 0x01;
       scsi_cmd_buf[8 + 2] = 0x80;
-      scsi_cmd_buf[8 + 4] = 0xff;
+      scsi_cmd_buf[8 + 4] = 0x24;
 
       k = ioctl(fd, SCSI_IOCTL_SEND_COMMAND, scsi_cmd_buf);
 
