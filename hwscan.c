@@ -62,7 +62,9 @@ int main(int argc, char **argv)
     return 1;
   }
 
+#ifndef LIBHD_TINY
   do_scan(scan_item);
+#endif
 
   return rc;
 }
@@ -72,6 +74,7 @@ void help()
   fprintf(stderr, "usage: hwscan [options]\n");
 }
 
+#ifndef LIBHD_TINY
 
 int do_scan(hd_hw_item_t item)
 {
@@ -133,3 +136,4 @@ int do_scan(hd_hw_item_t item)
   return run_config;
 }
 
+#endif	/* LIBHD_TINY */

@@ -1,13 +1,14 @@
 TOPDIR		= $(CURDIR)
 SUBDIRS		= src
 TARGETS		= hwinfo hwscan
-CLEANFILES	= hwinfo hwinfo.static hwscan
+CLEANFILES	= hwinfo hwinfo.static hwscan hwscan.static
 
 include Makefile.common
 
+SHARED_FLAGS	=
 OBJS_NO_TINY	= names.o parallel.o modem.o
 
-.PNONY:	static tiny
+.PNONY:	fullstatic static shared tiny
 
 hwscan: hwscan.o $(LIBHD)
 	$(CC) hwscan.o $(LDFLAGS) -lhd -o $@
@@ -15,20 +16,21 @@ hwscan: hwscan.o $(LIBHD)
 hwinfo: hwinfo.o $(LIBHD)
 	$(CC) hwinfo.o $(LDFLAGS) -lhd -o $@
 
-static: hwinfo
-	$(CC) -static hwinfo.o $(LDFLAGS) -o hwinfo.static
-	strip -R .note -R .comment hwinfo.static
+# kept for compatibility
+shared:
+	@make
 
 tiny:
-	@make EXTRA_FLAGS=-DLIBHD_TINY hwinfo
+	@make EXTRA_FLAGS=-DLIBHD_TINY SHARED_FLAGS=
 
-shared: hwinfo.o
-	@make EXTRA_FLAGS=-fpic
-	$(CC) -shared -Wl,--whole-archive $(LIBHD) -Wl,--no-whole-archive \
-		-Wl,-soname=libhd.so.$(LIBHD_MAJOR_VERSION)\
-		-o $(LIBHD_SO) 
-	$(CC) hwinfo.o $(LDFLAGS) $(LIBHD_SO) -o hwinfo
-	$(CC) hwscan.o $(LDFLAGS) $(LIBHD_SO) -o hwscan
+static:
+	@make SHARED_FLAGS=
+
+fullstatic: static
+	$(CC) -static hwinfo.o $(LDFLAGS) -lhd -o hwinfo.static
+	$(CC) -static hwscan.o $(LDFLAGS) -lhd -o hwscan.static
+	strip -R .note -R .comment hwinfo.static
+	strip -R .note -R .comment hwscan.static
 
 install:
 	install -d -m 755 /usr/sbin /usr/lib /usr/include
@@ -36,7 +38,8 @@ install:
 	install -m 755 -s hwscan /usr/sbin
 	if [ -f $(LIBHD_SO) ] ; then \
 		install $(LIBHD_SO) /usr/lib ; \
-		ln -snf libhd.so.$(LIBHD_VERSION) /usr/lib/libhd.so ; \
+		ln -snf libhd.so.$(LIBHD_VERSION) /usr/lib/libhd.so.$(LIBHD_MAJOR_VERSION) ; \
+		ln -snf libhd.so.$(LIBHD_MAJOR_VERSION) /usr/lib/libhd.so ; \
 	else \
 		install -m 644 $(LIBHD) /usr/lib ; \
 	fi
