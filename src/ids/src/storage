@@ -5,19 +5,12 @@
 # scsi controller
 
 # scsi/53c7,8xx.c
- vendor.id		pci 0x1000
-&device.id		pci 0x0001
-|vendor.id		pci 0x1000
-&device.id		pci 0x0004
-+driver.module.insmod	53c7,8xx
-
-# scsi/53c7,8xx.c
 # scsi/ncr53c8xx.c
 # scsi/sym53c8xx.c
  vendor.id		pci 0x1000
-&device.id		pci 0x0002+0x0002
-+driver.module.insmod	ncr53c8xx
+&device.id		pci 0x0001+0x0004
 +driver.module.insmod	sym53c8xx
++driver.module.insmod	ncr53c8xx
 +driver.module.insmod	53c7,8xx
 
  vendor.id		pci 0x1000
