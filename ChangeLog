@@ -1,3 +1,5 @@
+	- s390: set is.notready flag on unformatted DASDs (bug #39174)
+
 20/4/2004:	v8.41
 	- s390: add bus id bus_ccw
 	- s390: set bus.id, sysfs_bus_id and sysfs_device_link for all devices

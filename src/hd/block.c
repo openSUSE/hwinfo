@@ -481,7 +481,10 @@ void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_
       str_printf(&pr_str, 0, "%s geo", hd->unix_dev_name);
       PROGRESS(5, 1, pr_str);
 
-      hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size);
+      if(hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size) == 1)
+        /* (low-level) unformatted disk */
+        hd->is.notready=1;
+      	
       if(geo) add_res_entry(&hd->res, geo);
       if(size) add_res_entry(&hd->res, size);
 
@@ -795,7 +798,10 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
       str_printf(&pr_str, 0, "%s geo", hd->unix_dev_name);
       PROGRESS(5, 1, pr_str);
 
-      hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size);
+      if(hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size) == 1)
+        /* (low-level) unformatted disk */
+        hd->is.notready=1;
+      
       if(geo) add_res_entry(&hd->res, geo);
       if(size) add_res_entry(&hd->res, size);
 

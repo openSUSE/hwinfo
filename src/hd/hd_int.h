@@ -194,7 +194,7 @@ void gather_resources(misc_t *m, hd_res_t **r, char *name, unsigned which);
 
 char *vend_id2str(unsigned vend);
 
-void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res_t **size);
+int hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res_t **size);
 
 str_list_t *hd_split(char del, char *str);
 char *hd_join(char *del, str_list_t *str);

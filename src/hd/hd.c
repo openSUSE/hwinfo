@@ -4689,8 +4689,9 @@ int hd_change_status(const char *id, hd_status_t status, const char *config_stri
 #endif		/* !defined(LIBHD_TINY) */
 
 
-void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res_t **size)
+int hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res_t **size)
 {
+  int status=0;
   hd_res_t *res;
   struct hd_geometry geo_s;
 #ifdef HDIO_GETGEO_BIG
@@ -4707,10 +4708,10 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
   ADD2LOG("  dev = %s, fd = %d\n", dev, fd);
 
   if(fd < 0) {
-    if(!dev) return;
+    if(!dev) return 0;
     fd = open(dev, O_RDONLY | O_NONBLOCK);
     close_fd = 1;
-    if(fd < 0) return;
+    if(fd < 0) return 0;
   }
 
   ADD2LOG("  open ok, fd = %d\n", fd);
@@ -4767,6 +4768,7 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
     res->disk_geo.sectors=12;
     sec_size=4096;
     secs = (uint64_t) res->disk_geo.cyls * res->disk_geo.heads * res->disk_geo.sectors;
+    status=1;
   }
   else
   {
@@ -4802,6 +4804,8 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
   // ADD2LOG("  geo = %p, size = %p\n", *geo, *size);
 
   if(close_fd) close(fd);
+  
+  return status;
 }
 
 
