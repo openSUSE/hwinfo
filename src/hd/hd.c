@@ -56,7 +56,6 @@
 #include "sys.h"
 #include "manual.h"
 #include "fb.h"
-#include "veth.h"
 #include "pppoe.h"
 #include "pcmcia.h"
 #include "s390.h"
@@ -189,7 +188,6 @@ static struct s_mod_names {
   { mod_sys, "sys" },
   { mod_manual, "manual" },
   { mod_fb, "fb" },
-  { mod_veth, "veth" },
   { mod_pppoe, "pppoe" },
   { mod_pcmcia, "pcmcia" },
   { mod_s390, "s390" },
@@ -216,7 +214,7 @@ static struct s_pr_flags {
   { pr_memory,        0,            8|4|2|1, "memory"        },
   { pr_pci,           0,            8|4|2|1, "pci"           },
   { pr_s390,          0,            8|4|2|1, "s390"          },
-  { pr_s390disks,     0,            8|4|2|1, "s390disks"     },
+  { pr_s390disks,     0,                  0, "s390disks"     },
   { pr_isapnp,        0,              4|2|1, "isapnp"        },
   { pr_isapnp_old,    pr_isapnp,          0, "isapnp.old"    },
   { pr_isapnp_new,    pr_isapnp,          0, "isapnp.new"    },
@@ -277,7 +275,6 @@ static struct s_pr_flags {
   { pr_sys,           0,            8|4|2|1, "sys"           },
   { pr_manual,        0,            8|4|2|1, "manual"        },
   { pr_fb,            0,            8|4|2|1, "fb"            },
-  { pr_veth,          0,            8|4|2|1, "veth"          },
   { pr_pppoe,         0,            8|4|2|1, "pppoe"         },
   /* dummy, used to turn off hwscan */
   { pr_scan,          0,                  0, "scan"          },
@@ -488,6 +485,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_network:
       hd_set_probe_feature(hd_data, pr_net);
       hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_prom);
       break;
 
     case hw_display:
@@ -564,9 +562,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_isapnp);
       hd_set_probe_feature(hd_data, pr_isapnp_mod);
       hd_set_probe_feature(hd_data, pr_sbus);
-#ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
-#endif
       break;
 
     case hw_isdn:
@@ -598,8 +594,8 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
         hd_set_probe_feature(hd_data, pr_parallel_zip);
       }
       hd_set_probe_feature(hd_data, pr_s390);
-#ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
+#ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_misc);
 #endif
       break;
@@ -614,14 +610,8 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_sbus);
       hd_set_probe_feature(hd_data, pr_isdn);
       hd_set_probe_feature(hd_data, pr_dsl);
-#ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
-#endif
-#if defined(__s390__) || defined(__s390x__)
       hd_set_probe_feature(hd_data, pr_s390);
-      hd_set_probe_feature(hd_data, pr_net);
-#endif
-      hd_set_probe_feature(hd_data, pr_veth);
       break;
 
     case hw_printer:
@@ -704,9 +694,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_net);
       hd_set_probe_feature(hd_data, pr_isdn);
       hd_set_probe_feature(hd_data, pr_dsl);
-#ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
-#endif
       break;
 
     case hw_isapnp:
@@ -1037,16 +1025,18 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
       {
         cdrom_info_t *c = d->cdrom.data;
 
-        free_mem(c->name);
-        free_mem(c->iso9660.volume);
-        free_mem(c->iso9660.publisher);
-        free_mem(c->iso9660.preparer);
-        free_mem(c->iso9660.application);
-        free_mem(c->iso9660.creation_date);
-        free_mem(c->el_torito.id_string);
-        free_mem(c->el_torito.label);
+        if(c) {
+          free_mem(c->name);
+          free_mem(c->iso9660.volume);
+          free_mem(c->iso9660.publisher);
+          free_mem(c->iso9660.preparer);
+          free_mem(c->iso9660.application);
+          free_mem(c->iso9660.creation_date);
+          free_mem(c->el_torito.id_string);
+          free_mem(c->el_torito.label);
 
-        free_mem(c);
+          free_mem(c);
+        }
       }
       break;
 
@@ -1715,8 +1705,8 @@ void hd_scan(hd_data_t *hd_data)
 #endif
 
 #if defined(__s390__) || defined(__s390x__)
-  hd_scan_s390(hd_data);
   hd_scan_s390disks(hd_data);
+  hd_scan_s390(hd_data);
 #endif
 
   /* after hd_scan_prom() and hd_scan_bios() */
@@ -1753,14 +1743,10 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_sysfs_usb(hd_data);
   hd_scan_sysfs_edd(hd_data);
 
-#if defined(__PPC__)   
-  hd_scan_veth(hd_data);
-#endif
-
 #if defined(__PPC__)
   hd_scan_adb(hd_data);
 #endif
-  hd_scan_kbd(hd_data);
+
 #ifndef LIBHD_TINY
 #if !defined(__sparc__)
   hd_scan_braille(hd_data);
@@ -1771,6 +1757,10 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_sbus(hd_data);
 
   hd_scan_input(hd_data);
+
+#if !defined(__s390__) && !defined(__s390x__)
+  hd_scan_kbd(hd_data);
+#endif
 
   /* must be after hd_scan_monitor() */
   hd_scan_fb(hd_data);
@@ -2683,7 +2673,7 @@ int hd_smp_support(hd_data_t *hd_data)
     if(!hd_data->bios_ram.data) {
       hd_free_hd_list(hd_list(hd_data, hw_sys, 1, NULL));
     }
-    is_smp = detect_smp(hd_data);
+    is_smp = detect_smp_bios(hd_data);
     // at least 2 processors
     if(is_smp < 2) is_smp = 0;
     if(!is_smp && cpu_threads > 1) is_smp = 2;
@@ -2695,7 +2685,7 @@ int hd_smp_support(hd_data_t *hd_data)
     if(!hd_data->devtree) {
       hd_free_hd_list(hd_list(hd_data, hw_sys, 1, NULL));
     }
-    is_smp = detect_smp(hd_data);
+    is_smp = detect_smp_prom(hd_data);
     if(is_smp < 0) is_smp = 0;
   }
 #endif
@@ -2922,6 +2912,21 @@ int hd_is_uml(hd_data_t *hd_data)
   return is_uml;
 }
 
+
+int hd_is_sgi_altix(hd_data_t *hd_data)
+{
+  struct stat sbuf;
+
+  return stat("/proc/sgi_sn", &sbuf) ? 0 : 1;
+}
+
+
+int hd_is_iseries(hd_data_t *hd_data)
+{
+  struct stat sbuf;
+
+  return stat(PROC_ISERIES, &sbuf) ? 0 : 1;
+}
 
 
 /*
@@ -4688,8 +4693,9 @@ int hd_change_status(const char *id, hd_status_t status, const char *config_stri
 #endif		/* !defined(LIBHD_TINY) */
 
 
-void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res_t **size)
+int hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res_t **size)
 {
+  int status=0;
   hd_res_t *res;
   struct hd_geometry geo_s;
 #ifdef HDIO_GETGEO_BIG
@@ -4706,10 +4712,10 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
   ADD2LOG("  dev = %s, fd = %d\n", dev, fd);
 
   if(fd < 0) {
-    if(!dev) return;
+    if(!dev) return 0;
     fd = open(dev, O_RDONLY | O_NONBLOCK);
     close_fd = 1;
-    if(fd < 0) return;
+    if(fd < 0) return 0;
   }
 
   ADD2LOG("  open ok, fd = %d\n", fd);
@@ -4760,17 +4766,31 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
 
   secs = 0;
 
-  if(!ioctl(fd, BLKGETSIZE64, &secs)) {
-    if(dev) ADD2LOG("%s: ioctl(disk size) ok\n", dev);
-    secs /= sec_size;
+#if defined(__s390__) || defined(__s390x__)
+  if(res && res->disk_geo.sectors == 0)
+  { /* This seems to be an unformatted DASD -> fake the formatted geometry */
+    res->disk_geo.sectors=12;
+    sec_size=4096;
+    secs = (uint64_t) res->disk_geo.cyls * res->disk_geo.heads * res->disk_geo.sectors;
+    status=1;
   }
-  else if(!ioctl(fd, BLKGETSIZE, &secs32)) {
-    if(dev) ADD2LOG("%s: ioctl(disk size32) ok\n", dev);
-    secs = secs32;
+  else
+  {
+#endif
+    if(!ioctl(fd, BLKGETSIZE64, &secs)) {
+      if(dev) ADD2LOG("%s: ioctl(disk size) ok\n", dev);
+      secs /= sec_size;
+    }
+    else if(!ioctl(fd, BLKGETSIZE, &secs32)) {
+      if(dev) ADD2LOG("%s: ioctl(disk size32) ok\n", dev);
+      secs = secs32;
+    }
+    else {
+      secs = secs0;
+    }
+#if defined(__s390__) || defined(__s390x__)
   }
-  else {
-    secs = secs0;
-  }
+#endif
 
   if(!got_big && secs0 && res) {
     /* fix cylinder value */
@@ -4788,6 +4808,8 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
   // ADD2LOG("  geo = %p, size = %p\n", *geo, *size);
 
   if(close_fd) close(fd);
+  
+  return status;
 }
 
 

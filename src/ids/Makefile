@@ -5,8 +5,12 @@ DISTCLEANFILES	= *.h *.xml *.ids check_hd
 
 include $(TOPDIR)/Makefile.common
 
-ifeq "$(ARCH)" "ia64"
-IDFILES += src/ia64
+ifeq "$(ARCH)" "ppc"
+IDFILES += src/ppc
+endif
+
+ifeq "$(ARCH)" "ppc64"
+IDFILES += src/ppc
 endif
 
 IDFILES	+= src/bus src/class src/extra src/special src/scanner src/network \
