@@ -1,7 +1,7 @@
+26/8/2002:	v5.16
 	- use "reprobe" as yast2 argument, not (.reprobe)
 	- added some new hardware types
-	- fixed usb controller detection
-	- fixed ieee1394 info
+	- fixed usb & ieee1394 controller detection
 
 22/8/2002:	v5.15
 	- check cpuid for hyperthreading (#13532)

@@ -3967,12 +3967,14 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
   int sc;		/* compare sub_class too */
   unsigned base_class, sub_class;
   hd_hw_item_t item;
-  int (*test_func)(hd_data_t *, hd_t *) = NULL;
+  int (*test_func)(hd_data_t *, hd_t *);
 
   if(!hd) return;
 
   if(!hd->hw_class) {		/* skip if we've already done it */
     for(item = 1; item < hw_all; item++) {
+
+      test_func = NULL;
 
       sc = 0;
       sub_class = 0;
@@ -4140,6 +4142,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         case hw_hotplug_ctrl:	/* not handled */
         case hw_zip:		/* not handled */
         case hw_partition:	/* not handled */
+          break;
       }
 
       if(test_func) {
@@ -4160,12 +4163,8 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           hd->sub_class.id == sc_multi_video
         )
         ||
-        ( /* make i2o & fibre channel controllers storage controllers */
-          item == hw_storage_ctrl &&
-          (
-            hd->base_class.id == bc_i2o ||
-            (hd->base_class.id == bc_serial && hd->sub_class.id == sc_ser_fiber)
-          )
+        ( /* make i2o storage controllers */
+          item == hw_storage_ctrl && hd->base_class.id == bc_i2o
         )
       ) {
 
