@@ -7,12 +7,15 @@ include $(TOPDIR)/Makefile.common
 IDFILES	= names.SuSE names.bus names.class names.special \
 	  names.scanner names.network names.usb names.eisa names.monitor
 
+# IDFILES		+= drivers.x11
+
 ifeq "$(ARCH)" "i386"
 IDFILES	+= drivers.x11.ia32 names.x11.ia32
 endif
 
 ifeq "$(ARCH)" "ppc"
 IDFILES	+= drivers.x11.ppc drivers.x11special.ppc names.x11.ppc
+# IDFILES	+= drivers.x11special.ppc
 endif
 
 ifeq "$(ARCH)" "alpha"

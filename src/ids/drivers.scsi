@@ -127,10 +127,17 @@
 1077 1280
 	i	qla1280
 
+1077 2200
+	i	qla2200
+	i	qla2x00
+	i	qlogicfc
+
+1077 2300
+	i	qla2300
+
 # scsi/qla2100.c
 # scsi/qlogicfc.c
 1077 2100
-1077 2200
 	i	qla2x00
 	i	qlogicfc
 

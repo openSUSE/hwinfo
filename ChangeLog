@@ -1,3 +1,5 @@
+	- new qlogic driver info (#9868)
+
 23/8/2001:	v3.13
 	- fixed to work with the new cpqarray driver
 	- fixed evil database bug (#9798)
