@@ -838,9 +838,24 @@ void int_wlan(hd_data_t *hd_data)
     "prism2_pci",
     "prism2_plx",
     "prism2_usb",
+    "prism54",
     "ray_cs",
     "wavelan",
-    "wavelan_cs"
+    "wavelan_cs",
+    "ipw2100",
+    "acx100_pci",
+    "atmel",
+    "atmel_cs",
+    "atmel_pci",
+    "at76c503-i3861",
+    "at76c503-i3863",
+    "at76c503-rfmd-acc",
+    "at76c503-rfmd",
+    "at76c503",
+    "at76c505-rfmd",
+    "at76c505-rfmd2958",
+    "usbdfu",
+    "wl3501_cs"
   };
 
   for(hd = hd_data->hd; hd; hd = hd->next) {

@@ -2,6 +2,7 @@
 	  seconds (workaround some unexpected signals from kernel)
 	- hwscand: set long timeout to 10 seconds
 	- hwscan*: add --partition command
+	- wlan card detection fix (#37872)
 
 31/3/2004:	v8.28
 	- rewrote input device handling

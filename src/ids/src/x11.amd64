@@ -338,6 +338,13 @@
 +driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
+&device.id		pci 0x4c4d
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x00bb
++subdevice.name		Mach64LM/Dell
++driver.xfree		4|fbdev
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x4c4e
 +device.name		3D Rage L Mobility AGP 2x
 +driver.xfree		4|ati
@@ -940,6 +947,13 @@
 +driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
+&device.id		pci 0x5964
+&subvendor.id		pci 0x17af
+&subdevice.id		pci 0x2012
++subdevice.name		Radeon 9200 SE (DH)
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x5c61
 +device.name		RV280 5c61
 +driver.xfree		4|radeon
@@ -1398,6 +1412,9 @@
 &device.id		pci 0x9910
 +device.name		9910
 +driver.xfree		4|trident
+
+ vendor.id		pci 0x1028
++vendor.name		ATI Technologies Inc
 
  vendor.id		pci 0x102b
 +vendor.name		Matrox Graphics, Inc.
@@ -2937,6 +2954,9 @@
 +driver.xfree		4|vmware
 
  vendor.id		pci 0x174b
++vendor.name		ATI Technologies Inc
+
+ vendor.id		pci 0x17af
 +vendor.name		ATI Technologies Inc
 
  vendor.id		pci 0x270f

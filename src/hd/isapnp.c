@@ -134,7 +134,7 @@ void get_read_port(hd_data_t *hd_data, isapnp_t *p)
   p->read_port = 0;
 
   res = NULL;
-  gather_resources(hd_data->misc, &res, "isapnp read", W_IO);
+  gather_resources(hd_data->misc, &res, "ISAPnP", W_IO);
   if(res && res->any.type == res_io) p->read_port = res->io.base;
   free_res_list(res);
 }
