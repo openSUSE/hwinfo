@@ -4192,6 +4192,8 @@ char *numid2str(uint64_t id, int len)
 #define INT_CRC(a, b)	crc64(&a, &hd->b, sizeof hd->b);
 #define STR_CRC(a, b)	if(hd->b) crc64(&a, hd->b, strlen(hd->b) + 1);
 
+#if 0
+// old method
 void hd_add_id(hd_t *hd)
 {
   uint64_t id0 = 0, id1 = 0;
@@ -4222,6 +4224,47 @@ void hd_add_id(hd_t *hd)
   STR_CRC(id1, sub_dev_name);
   STR_CRC(id1, sub_vend_name);
   STR_CRC(id1, rev_name);
+  STR_CRC(id1, serial);
+
+  id0 += (id0 >> 32);
+  str_printf(&hd->unique_id, 0, "%s", numid2str(id0, 24));
+  str_printf(&hd->unique_id, -1, ".%s", numid2str(id1, 64));
+}
+#endif
+
+void hd_add_id(hd_t *hd)
+{
+  uint64_t id0 = 0, id1 = 0;
+
+  if(hd->unique_id) return;
+
+  INT_CRC(id0, bus);
+  // usb likes to re-attach devices at different places
+  if(hd->unix_dev_name) {
+    STR_CRC(id0, unix_dev_name);
+  }
+  else {
+    INT_CRC(id0, slot);
+    INT_CRC(id0, func);
+  }
+  STR_CRC(id0, rom_id);
+
+  INT_CRC(id1, base_class);
+  INT_CRC(id1, sub_class);
+  INT_CRC(id1, prog_if);
+  INT_CRC(id1, dev);
+  INT_CRC(id1, vend);
+  INT_CRC(id1, sub_dev);
+  INT_CRC(id1, sub_vend);
+  INT_CRC(id1, rev);
+  INT_CRC(id1, compat_dev);
+  INT_CRC(id1, compat_vend);
+  // make sure we get the same id even if, say, the pci name list changes
+  if(!hd->dev) STR_CRC(id1, dev_name);
+  if(!hd->vend) STR_CRC(id1, vend_name);
+  if(!hd->sub_dev_name) STR_CRC(id1, sub_dev_name);
+  if(!hd->sub_vend_name) STR_CRC(id1, sub_vend_name);
+  if(!hd->rev_name) STR_CRC(id1, rev_name);
   STR_CRC(id1, serial);
 
   id0 += (id0 >> 32);
