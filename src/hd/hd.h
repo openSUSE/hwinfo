@@ -75,7 +75,7 @@ typedef enum probe_feature {
   pr_parallel, pr_parallel_lp, pr_parallel_zip, pr_isa, pr_isa_isdn,
   pr_dac960, pr_smart, pr_isdn, pr_kbd, pr_prom, pr_sbus, pr_int,
   pr_braille, pr_braille_alva, pr_braille_fhp, pr_braille_ht, pr_ignx11,
-  pr_sys,
+  pr_sys, pr_dasd,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 

@@ -43,6 +43,7 @@
 #include "int.h"
 #include "braille.h"
 #include "sys.h"
+#include "dasd.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -145,7 +146,8 @@ static struct s_mod_names {
   { mod_int, "int" },
   { mod_braille, "braille" },
   { mod_xtra, "hd" },
-  { mod_sys, "sys" }
+  { mod_sys, "sys" },
+  { mod_dasd, "dasd" }
 };
 
 /*
@@ -210,7 +212,8 @@ static struct s_pr_flags {
   { pr_braille_fhp,  pr_braille,    4|2|1, "braille.fhp"  },
   { pr_braille_ht,   pr_braille,    4|2|1, "braille.ht"   },
   { pr_ignx11,       0,                 0, "ignx11"       },
-  { pr_sys,          0,           8|4|2|1, "sys"          }
+  { pr_sys,          0,           8|4|2|1, "sys"          },
+  { pr_dasd,         0,           8|4|2|1, "dasd"         }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -682,6 +685,9 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_scsi(hd_data);
   hd_scan_dac960(hd_data);
   hd_scan_smart(hd_data);
+#ifdef __s390__
+  hd_scan_dasd(hd_data);
+#endif
   hd_scan_usb(hd_data);
 #if defined(__PPC__)
   hd_scan_adb(hd_data);
@@ -2560,6 +2566,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_scsi);
         hd_set_probe_feature(hd_data, pr_dac960);
         hd_set_probe_feature(hd_data, pr_smart);
+        hd_set_probe_feature(hd_data, pr_dasd);
         hd_set_probe_feature(hd_data, pr_int);
         break;
 

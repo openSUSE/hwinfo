@@ -21,6 +21,7 @@
 #define PROC_SMART		"/proc/array"
 #define PROC_PROM		"/proc/device-tree"
 #define PROC_MEMINFO		"/proc/meminfo"
+#define PROC_DASD		"/proc/dasd"
 
 #define DEV_USB_DEVICES		"/dev/usb/devices"
 #define DEV_NVRAM		"/dev/nvram"
@@ -52,7 +53,7 @@ enum mod_idx {
   mod_net, mod_floppy, mod_misc, mod_bios, mod_cpu, mod_monitor, mod_mouse,
   mod_ide, mod_scsi, mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel,
   mod_isa, mod_dac960, mod_smart, mod_isdn, mod_kbd, mod_prom, mod_sbus,
-  mod_int, mod_braille, mod_xtra, mod_sys
+  mod_int, mod_braille, mod_xtra, mod_sys, mod_dasd
 };
 
 void *new_mem(size_t size);
