@@ -208,6 +208,9 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 #if defined(__PPC__) || defined(__sparc__)
     dump_line("PROM id: %s\n", h->rom_id);
 #endif
+#if defined(__s390__)
+    dump_line("Chp id: %s\n", h->rom_id);
+#endif
   }
 
   if(h->tag.ser_skip) {

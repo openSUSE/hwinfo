@@ -54,6 +54,7 @@ void hd_scan_dasd(hd_data_t *hd_data)
 
       hd->dev_name = new_str("S390 Disk");
       str_printf(&hd->unix_dev_name, 0, "/dev/dasd%c", c);
+      str_printf(&hd->rom_id, 0, "%04X", u0);
 
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
       res->size.type = res_size;
