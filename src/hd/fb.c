@@ -112,6 +112,7 @@ fb_info_t *fb_get_info(hd_data_t *hd_data)
   int h, v;
 
   fd = open(DEV_FB, O_RDONLY);
+  if(fd < 0) fd = open(DEV_FB0, O_RDONLY);
   if(fd < 0) return fb;
 
   if(!ioctl(fd, FBIOGET_VSCREENINFO, &fbv_info)) {

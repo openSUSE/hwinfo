@@ -41,6 +41,7 @@
 #define DEV_SUNMOUSE		"/dev/sunmouse"
 #define DEV_MICE		"/dev/input/mice"
 #define DEV_FB			"/dev/fb"
+#define DEV_FB0			"/dev/fb0"
 
 #define PROG_MODPROBE		"/sbin/modprobe"
 #define PROG_RMMOD		"/sbin/rmmod"

@@ -60,7 +60,7 @@ typedef struct {
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 static void hddb_init_pci(hd_data_t *hd_data);
 static hddb_pci_t *parse_pcimap(str_list_t *file);
-static driver_info_t *hd_pcidb(hd_data_t *hd_data, hddb_pci_t *pci_db, hd_t *hd);
+static driver_info_t *hd_pcidb(hd_data_t *hd_data, hddb_pci_t *pci_db, hd_t *hd, driver_info_t *drv_info);
 static void hddb_init_external(hd_data_t *hd_data);
 
 static line_t *parse_line(char *str);
@@ -163,15 +163,20 @@ hddb_pci_t *parse_pcimap(str_list_t *file)
 }
 
 
-driver_info_t *hd_pcidb(hd_data_t *hd_data, hddb_pci_t *pci_db, hd_t *hd)
+driver_info_t *hd_pcidb(hd_data_t *hd_data, hddb_pci_t *pci_db, hd_t *hd, driver_info_t *drv_info)
 {
   unsigned vendor, device, subvendor, subdevice, pciclass;
-  driver_info_t *di = NULL, *di0 = NULL;
+  driver_info_t **di = NULL, *di2;
   pci_t *pci;
+  char *mod_list[16 /* arbitrary */];
+  int mod_prio[sizeof mod_list / sizeof *mod_list];
+  int i, prio, mod_list_len;
 
-  if(!pci_db) return NULL;
+  if(!pci_db) return drv_info;
 
-  if(ID_TAG(hd->vendor.id) != TAG_PCI) return NULL;
+  if(ID_TAG(hd->vendor.id) != TAG_PCI) return drv_info;
+
+  for(di = &drv_info; *di; di = &(*di)->next);
 
   vendor = ID_VALUE(hd->vendor.id);
   device = ID_VALUE(hd->device.id);
@@ -187,7 +192,7 @@ driver_info_t *hd_pcidb(hd_data_t *hd_data, hddb_pci_t *pci_db, hd_t *hd)
     pciclass = (pci->base_class << 16) + ((pci->sub_class & 0xff) << 8) + (pci->prog_if & 0xff);
   }
 
-  for(; pci_db->module; pci_db++) {
+  for(mod_list_len = 0; pci_db->module; pci_db++) {
     if(
       (pci_db->vendor == 0xffffffff || pci_db->vendor == vendor) &&
       (pci_db->device == 0xffffffff || pci_db->device == device) &&
@@ -195,19 +200,43 @@ driver_info_t *hd_pcidb(hd_data_t *hd_data, hddb_pci_t *pci_db, hd_t *hd)
       (pci_db->subdevice == 0xffffffff || pci_db->subdevice == subdevice) &&
       !((pci_db->pciclass ^ pciclass) & pci_db->classmask)
     ) {
-      if(di) {
-        di = di->next = new_mem(sizeof *di);
+      for(di2 = drv_info; di2; di2 = di2->next) {
+        if(
+          di2->any.type == di_module &&
+          di2->any.hddb0 &&
+          di2->any.hddb0->str &&
+          !strcmp(di2->any.hddb0->str, pci_db->module)
+        ) break;
       }
-      else {
-        di = di0 = new_mem(sizeof *di);
-      }
-      di->any.type = di_module;
-      di->module.modprobe = 1;
-      add_str_list(&di->any.hddb0, pci_db->module);
+
+      if(di2) continue;
+
+      prio = 0;
+      if(pci_db->vendor == vendor) prio = 1;
+      if(pci_db->device == device) prio = 2;
+      if(pci_db->subvendor == subvendor) prio = 3;
+      if(pci_db->subdevice == subdevice) prio = 4;
+
+      mod_prio[mod_list_len] = prio;
+      mod_list[mod_list_len++] = pci_db->module;
+
+      if(mod_list_len >= sizeof mod_list / sizeof *mod_list) break;
     }
   }
 
-  return di0;
+  for(prio = 4; prio >= 0; prio--) {
+    for(i = 0; i < mod_list_len; i++) {
+      if(mod_prio[i] == prio) {
+        *di = new_mem(sizeof **di);
+        (*di)->any.type = di_module;
+        (*di)->module.modprobe = 1;
+        add_str_list(&(*di)->any.hddb0, mod_list[i]);
+        di = &(*di)->next;
+      }
+    }
+  }
+
+  return drv_info;
 }
 
 
@@ -1729,7 +1758,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
 #endif
 
   if(!new_driver_info) {
-    new_driver_info = hd_pcidb(hd_data, hd_data->hddb_pci_hm, hd);
+    new_driver_info = hd_pcidb(hd_data, hd_data->hddb_pci_hm, hd, new_driver_info);
   }
 
   if(!new_driver_info && (hs.value & (1 << he_driver))) {
@@ -1763,9 +1792,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     new_driver_info = monitor_driver(hd_data, hd);
   }
 
-  if(!new_driver_info) {
-    new_driver_info = hd_pcidb(hd_data, hd_data->hddb_pci, hd);
-  }
+  new_driver_info = hd_pcidb(hd_data, hd_data->hddb_pci, hd, new_driver_info);
 
   if(new_driver_info) {
     if(!hd->ref) {
