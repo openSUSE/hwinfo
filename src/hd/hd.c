@@ -650,6 +650,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_braille_fhp);
       hd_set_probe_feature(hd_data, pr_braille_ht);
       hd_set_probe_feature(hd_data, pr_braille_baum);
+      hd_set_probe_feature(hd_data, pr_usb);
       break;
 
     case hw_sys:

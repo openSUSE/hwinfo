@@ -36,6 +36,7 @@ static void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb);
 static void get_input_devs(hd_data_t *hd_data);
 static void get_printer_devs(hd_data_t *hd_data);
 static void read_usb_lp(hd_data_t *hd_data, hd_t *hd);
+static void get_serial_devs(hd_data_t *hd_data);
 
 void hd_scan_sysfs_usb(hd_data_t *hd_data)
 {
@@ -67,6 +68,9 @@ void hd_scan_sysfs_usb(hd_data_t *hd_data)
 
   PROGRESS(3, 4, "lp");
   get_printer_devs(hd_data);
+
+  PROGRESS(3, 5, "serial");
+  get_serial_devs(hd_data);
 
 }
 
@@ -694,3 +698,83 @@ void read_usb_lp(hd_data_t *hd_data, hd_t *hd)
   close(fd);
 }
 #undef MATCH_FIELD
+
+
+void get_serial_devs(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  char *s, *t;
+  hd_dev_num_t dev_num;
+  unsigned u1, u2;
+
+  struct sysfs_class *sf_class;
+  struct sysfs_class_device *sf_cdev;
+  struct sysfs_device *sf_dev;
+  struct dlist *sf_cdev_list;
+
+  sf_class = sysfs_open_class("tty");
+
+  if(!sf_class) {
+    ADD2LOG("sysfs: no such class: tty\n");
+    return;
+  }
+
+  sf_cdev_list = sysfs_get_class_devices(sf_class);
+  if(sf_cdev_list) dlist_for_each_data(sf_cdev_list, sf_cdev, struct sysfs_class_device) {
+    if(strncmp(sf_cdev->name, "ttyUSB", 6)) continue;
+
+    ADD2LOG(
+      "  usb: name = %s, path = %s\n",
+      sf_cdev->name,
+      hd_sysfs_id(sf_cdev->path)
+    );
+
+    if((s = hd_attr_str(sysfs_get_classdev_attr(sf_cdev, "dev")))) {
+      if(sscanf(s, "%u:%u", &u1, &u2) == 2) {
+        dev_num.type = 'c';
+        dev_num.major = u1;
+        dev_num.minor = u2;
+        dev_num.range = 1;
+      }
+      ADD2LOG("    dev = %u:%u\n", u1, u2);
+    }
+
+    sf_dev = sysfs_get_classdev_device(sf_cdev);
+    if(sf_dev) {
+      s = hd_sysfs_id(sf_dev->path);
+
+      if((t = strrchr(s, '/')) && !strncmp(t + 1, "ttyUSB", sizeof "ttyUSB" - 1)) *t =0;
+
+      ADD2LOG(
+        "    usb device: bus = %s, bus_id = %s driver = %s\n      path = %s\n",
+        sf_dev->bus,
+        sf_dev->bus_id,
+        sf_dev->driver_name,
+        s
+      );
+
+      for(hd = hd_data->hd; hd; hd = hd->next) {
+        if(
+          hd->module == hd_data->module &&
+          hd->sysfs_id &&
+          s &&
+          !strcmp(s, hd->sysfs_id)
+        ) {
+          t = NULL;
+          str_printf(&t, 0, "/dev/%s", sf_cdev->name);
+
+          hd->unix_dev_name = t;
+          hd->unix_dev_num = dev_num;
+
+          hd->base_class.id = bc_comm;
+          hd->sub_class.id = sc_com_ser;
+          hd->prog_if.id = 0x80;
+        }
+      }
+    }
+  }
+
+  sysfs_close_class(sf_class);
+}
+
+
