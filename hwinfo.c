@@ -52,6 +52,7 @@ struct option options[] = {
   { "show-config", 1, NULL, 302 },
   { "save-config", 1, NULL, 303 },
   { "short", 0, NULL, 304 },
+  { "fast", 0, NULL, 305 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -171,6 +172,10 @@ int main(int argc, char **argv)
 
         case 304:
           is_short = 1;
+          break;
+
+        case 305:
+          hd_data->flags.fast = 1;
           break;
 
         case 1000 ... 1100:

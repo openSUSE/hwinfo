@@ -4,6 +4,9 @@
 	- added some new hardware classes: bios, bridge, hub, usb_ctrl
 	- added '--pci' and '--isapnp' options to hwscan
 	- fixed evil segfault caused by reading some hardware configs
+	- added '--fast' option to hwscan: don't check for tricky hardware
+	  as serial mice or parport zips unless they had been found
+	  previously
 
 25/2/2002:	v4.13
 	- meissner: boot.hwscan:

@@ -483,7 +483,9 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_mouse:
       hd_set_probe_feature(hd_data, pr_misc);
-      hd_set_probe_feature(hd_data, pr_serial);
+      if(!hd_data->flags.fast) {
+        hd_set_probe_feature(hd_data, pr_serial);
+      }
       hd_set_probe_feature(hd_data, pr_adb);
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_kbd);
@@ -543,11 +545,14 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_storage_ctrl:
+      hd_set_probe_feature(hd_data, pr_floppy);
       hd_set_probe_feature(hd_data, pr_sys);
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_sbus);
-      hd_set_probe_feature(hd_data, pr_misc_par);
-      hd_set_probe_feature(hd_data, pr_parallel_zip);
+      if(!hd_data->flags.fast) {
+        hd_set_probe_feature(hd_data, pr_misc_par);
+        hd_set_probe_feature(hd_data, pr_parallel_zip);
+      }
 #ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
       hd_set_probe_feature(hd_data, pr_misc);

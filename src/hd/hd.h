@@ -1145,6 +1145,7 @@ typedef struct {
     unsigned no_parport:1;	/* don't do parport probing: parport modules crash pmacs */
     unsigned iseries:1;		/* set if we are on an iSeries machine */
     unsigned list_all:1;	/* return even devices with status 'not available' */
+    unsigned fast:1;		/* don't check tricky hardware */
   } flags;			/* special flags */
   enum boot_arch boot;		/* boot method */
   hd_t *old_hd;			/* old (outdated) entries (if you scan more than once) */

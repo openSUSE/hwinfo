@@ -15,6 +15,7 @@ struct option options[] = {
   { "avail", 1, NULL, 503 },
   { "need", 1, NULL, 504 },
   { "new", 0, NULL, 505 },
+  { "fast", 0, NULL, 506 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -61,12 +62,14 @@ int opt_config_cfg = 0;
 int opt_config_avail = 0;
 int opt_config_need = 0;
 int opt_new = 0;
+int opt_fast = 0;
 
 void help(void);
 int do_scan(hd_hw_item_t item);
 int do_show(char *id);
 int do_list(hd_hw_item_t item);
 int do_config(int type, char *val, char *id);
+int fast_ok(hd_hw_item_t item);
 
 int main(int argc, char **argv)
 {
@@ -116,6 +119,10 @@ int main(int argc, char **argv)
 
       case 505:
         opt_new = 1;
+        break;
+
+      case 506:
+        opt_fast = 1;
         break;
 
       case 1000 ... 1100:
@@ -189,9 +196,12 @@ int do_scan(hd_hw_item_t item)
   hd_t *hd, *hd1;
   int err = 0;
 
+  if(opt_fast) opt_fast = fast_ok(item);
+
   hd_data = calloc(1, sizeof *hd_data);
 
   hd_data->flags.list_all = 1;
+  hd_data->flags.fast = opt_fast;
 
   hd = hd_list(hd_data, item, 1, NULL);
 
@@ -408,5 +418,44 @@ int do_config(int type, char *val, char *id)
   return 0;
 }
 
+
+/*
+ * Check whether a 'fast' scan would suffice to re-check the presence
+ * of all known hardware.
+ */
+int fast_ok(hd_hw_item_t item)
+{
+  hd_data_t *hd_data;
+  hd_t *hd, *hd1;
+  int ok = 1;
+
+  if(item != hw_mouse && item != hw_storage_ctrl) {
+    return 1;
+  }
+
+  hd_data = calloc(1, sizeof *hd_data);
+
+  hd_data->flags.list_all = 1;
+
+  hd = hd_list(hd_data, hw_manual, 1, NULL);
+
+  for(hd1 = hd; hd1; hd1 = hd1->next) {
+    /* serial mice */
+    if(hd1->hw_class == hw_mouse && hd1->bus == bus_serial) {
+      ok = 0;
+      break;
+    }
+    /* parallel zip */
+    if(hd1->hw_class == hw_storage_ctrl && hd1->bus == bus_parallel) {
+      ok = 0;
+      break;
+    }
+  }
+
+  hd_free_hd_data(hd_data);
+  free(hd_data);
+
+  return ok;
+}
 
 #endif		/* !defined(LIBHD_TINY) */
