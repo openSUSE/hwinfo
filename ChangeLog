@@ -1,3 +1,6 @@
+8/8/2003:	v7.06
+	- use modprobe instead of insmod for scsi modules
+
 5/8/2003:	v7.05
 	- ltmodem is back
 	- parent id, again

@@ -9,9 +9,9 @@
 # scsi/sym53c8xx.c
  vendor.id		pci 0x1000
 &device.id		pci 0x0001+0x0004
-+driver.module.insmod	sym53c8xx
-+driver.module.insmod	ncr53c8xx
-+driver.module.insmod	53c7,8xx
++driver.module.modprobe	sym53c8xx
++driver.module.modprobe	ncr53c8xx
++driver.module.modprobe	53c7,8xx
 
  vendor.id		pci 0x1000
 &device.id		pci 0x0006
@@ -22,8 +22,8 @@
 # 0x000f: see #5816
 |vendor.id		pci 0x1000
 &device.id		pci 0x000f
-+driver.module.insmod	ncr53c8xx
-+driver.module.insmod	sym53c8xx
++driver.module.modprobe	ncr53c8xx
++driver.module.modprobe	sym53c8xx
 
  vendor.id		pci 0x1000
 &device.id		pci 0x0012
@@ -32,13 +32,13 @@
 # #21984
 |vendor.id		pci 0x1000
 &device.id		pci 0x000b
-+driver.module.insmod	sym53c8xx
-+driver.module.insmod	ncr53c8xx
++driver.module.modprobe	sym53c8xx
++driver.module.modprobe	ncr53c8xx
 
 # sym* only
  vendor.id		pci 0x1000
 &device.id		pci 0x0020+0x0002
-+driver.module.insmod	sym53c8xx
++driver.module.modprobe	sym53c8xx
 
 # message/fusion/
  vendor.id		pci 0x1000
@@ -59,11 +59,11 @@
 &device.id		pci 0x002e
 |vendor.id		pci 0x1014
 &device.id		pci 0x01bd
-+driver.module.insmod	ips
++driver.module.modprobe	ips
 
  vendor.id		pci 0x1014
 &device.id		pci 0x0096
-+driver.module.insmod	ibmsis
++driver.module.modprobe	ibmsis
 
 # scsi/megaraid.c
 # scsi/megaraid2.c
@@ -81,8 +81,8 @@
 &device.id		pci 0x0407
 |vendor.id		pci 0x1000
 &device.id		pci 0x1960
-+driver.module.insmod	megaraid
-+driver.module.insmod	megaraid2
++driver.module.modprobe	megaraid
++driver.module.modprobe	megaraid2
 
 # override qla1280 info (#26325)
  vendor.id		pci 0x1077
@@ -93,25 +93,25 @@
 &device.id		pci 0x1216
 &subvendor.id		pci 0x101e
 &subdevice.id		pci 0x8471
-+driver.module.insmod	megaraid
-+driver.module.insmod	megaraid2
++driver.module.modprobe	megaraid
++driver.module.modprobe	megaraid2
 
 # scsi/tmscsim.c
 # scsi/AM53C974.c
  vendor.id		pci 0x1022
 &device.id		pci 0x2020
-+driver.module.insmod	tmscsim
-+driver.module.insmod	AM53C974
++driver.module.modprobe	tmscsim
++driver.module.modprobe	AM53C974
 
 # scsi/fdomain.c
  vendor.id		pci 0x1036
 &device.id		pci 0x0000
-+driver.module.insmod	fdomain
++driver.module.modprobe	fdomain
 
 # scsi/eata_dma.c
  vendor.id		pci 0x1044
 &device.id		pci 0xa400
-+driver.module.insmod	eata
++driver.module.modprobe	eata
 
 # scsi/dpti.c
  baseclass.id           0x00e
@@ -122,7 +122,7 @@
 &subclass.id            0x00
 &vendor.id		pci 0x1044
 &device.id		pci 0xa511
-+driver.module.insmod	dpt_i2o
++driver.module.modprobe	dpt_i2o
 
 # scsi/BusLogic.c
  vendor.id		pci 0x104b
@@ -131,7 +131,7 @@
 &device.id		pci 0x1040
 |vendor.id		pci 0x104b
 &device.id		pci 0x8130
-+driver.module.insmod	BusLogic
++driver.module.modprobe	BusLogic
 
 # scsi/qla1280.c
  vendor.id		pci 0x1077
@@ -144,28 +144,28 @@
 &device.id		pci 0x1240
 |vendor.id		pci 0x1077
 &device.id		pci 0x1280
-+driver.module.insmod	qla1280
++driver.module.modprobe	qla1280
 
 # scsi/qlogicisp.c
  vendor.id		pci 0x1077
 &device.id		pci 0x1020
-+driver.module.insmod	qlogicisp
++driver.module.modprobe	qlogicisp
 
 # scsi/qlogicfc.c
  vendor.id		pci 0x1077
 &device.id		pci 0x2100
-+driver.module.insmod	qlogicfc
++driver.module.modprobe	qlogicfc
 
  vendor.id		pci 0x1077
 &device.id		pci 0x2200
-+driver.module.insmod	qla2200
-+driver.module.insmod	qlogicfc
++driver.module.modprobe	qla2200
++driver.module.modprobe	qlogicfc
 
  vendor.id		pci 0x1077
 &device.id		pci 0x2300
 |vendor.id		pci 0x1077
 &device.id		pci 0x2312
-+driver.module.insmod	qla2300
++driver.module.modprobe	qla2300
 
 # scsi/advansys.c
  vendor.id		pci 0x10cd
@@ -178,14 +178,14 @@
 &device.id		pci 0x2300
 |vendor.id		pci 0x10cd
 &device.id		pci 0x2500
-+driver.module.insmod	advansys
++driver.module.modprobe	advansys
 
 # scsi/inia100.c
  vendor.id		pci 0x1101
 &device.id		pci 0x0002
 |vendor.id		pci 0x1101
 &device.id		pci 0x1060
-+driver.module.insmod	a100u2w
++driver.module.modprobe	a100u2w
 
 # scsi/ini9100u.c
  vendor.id		pci 0x1101
@@ -194,7 +194,7 @@
 &device.id		pci 0x9500
 |vendor.id		pci 0x134a
 &device.id		pci 0x0002
-+driver.module.insmod	initio
++driver.module.modprobe	initio
 
 # scsi/gdth.c
  vendor.id		pci 0x1119
@@ -203,7 +203,7 @@
 &device.id		pci 0x0100+0x0300
 |vendor.id		pci 0x8086
 &device.id		pci 0x0600
-+driver.module.insmod	gdth
++driver.module.modprobe	gdth
 
 # scsi/atp870u.c
  vendor.id		pci 0x1191
@@ -220,32 +220,32 @@
 &device.id		pci 0x8050
 |vendor.id		pci 0x1191
 &device.id		pci 0x8060
-+driver.module.insmod	atp870u
++driver.module.modprobe	atp870u
 
 # scsi/pci2220i.c
  vendor.id		pci 0x1256
 &device.id		pci 0x4401
-+driver.module.insmod	pci2220i
++driver.module.modprobe	pci2220i
 
 # scsi/pci2000.c
  vendor.id		pci 0x1256
 &device.id		pci 0x5201
-+driver.module.insmod	pci2000
++driver.module.modprobe	pci2000
 
 # scsi/dmx3191d.c
  vendor.id		pci 0x134a
 &device.id		pci 0x0001
-+driver.module.insmod	dmx3191d
++driver.module.modprobe	dmx3191d
 
 # scsi/3w-xxxx.c
  vendor.id		pci 0x13c1
 &device.id		pci 0x1000+0x0002
-+driver.module.insmod	3w-xxxx
++driver.module.modprobe	3w-xxxx
 
 # scsi/dc395x_trm.c
  vendor.id		pci 0x1de1
 &device.id		pci 0x0391
-+driver.module.insmod	dc395x_trm
++driver.module.modprobe	dc395x_trm
 
 # scsi/aic7xxx.c
  vendor.id		pci 0x9004
@@ -318,8 +318,8 @@
 &device.id		pci 0x00c3
 |vendor.id		pci 0x9005
 &device.id		pci 0x00cf
-+driver.module.insmod	aic7xxx
-+driver.module.insmod	aic7xxx_old
++driver.module.modprobe	aic7xxx
++driver.module.modprobe	aic7xxx_old
 
 # scsi/aha152x.c
  vendor.id		ADP
@@ -331,12 +331,12 @@
 # scsi/mesh.c
  vendor.id		special 0x0401
 &device.id		special 0x0030
-+driver.module.insmod	mesh
++driver.module.modprobe	mesh
 
 # scsi/mac53c94.c
  vendor.id		special 0x0401
 &device.id		special 0x0031
-+driver.module.insmod	mac53c94
++driver.module.modprobe	mac53c94
 
 # iomega zip
  vendor.id		special 0x1800
@@ -351,7 +351,7 @@
 # scsi/qlogicpti.c
  vendor.id		special 0x4001
 &device.id		special 0x1003+0x0002
-+driver.module.insmod	qlogicpti
++driver.module.modprobe	qlogicpti
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -368,7 +368,7 @@
 &device.id		pci 0x0050
 |vendor.id		pci 0x1069
 &device.id		pci 0xba56
-+driver.module.insmod	DAC960
++driver.module.modprobe	DAC960
 
 # block/cpqarray.c
  vendor.id		pci 0x0e11
@@ -391,7 +391,7 @@
 &device.id		pci 0x0046
 &subvendor.id		pci 0x0e11
 &subdevice.id		pci 0x4058
-+driver.module.insmod	cpqarray
++driver.module.modprobe	cpqarray
 
 # block/cciss.c
  vendor.id		pci 0x0e11
@@ -410,12 +410,12 @@
 &device.id		pci 0xb178
 &subvendor.id		pci 0x0e11
 &subdevice.id		pci 0x4082+0x0002
-+driver.module.insmod	cciss
++driver.module.modprobe	cciss
 
 # block/swim3.c
  vendor.id		special 0x0401
 &device.id		special 0x0040
-+driver.module.insmod	swim3
++driver.module.modprobe	swim3
 
 # ide/hpt3*.c
  vendor.id		pci 0x1103
@@ -521,7 +521,7 @@
 &device.id		pci 0x0046
 &subvendor.id		pci 0x103c
 &subdevice.id		pci 0x10c2
-+driver.module.insmod	aacraid
++driver.module.modprobe	aacraid
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
