@@ -47,9 +47,6 @@ static void smbios_bitmap2str(hd_bitmap_t *hbm, sm_str_map_t *map);
   };
 
 
-#define SMBIOS_ID2NAME(list, id, default) new_str(list[id < sizeof list / sizeof *list ? id : default])
-
-
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 static sm_num2str_t smbios_bios_feature_[] = {
@@ -537,8 +534,7 @@ char *get_string(str_list_t *sl, int index)
 
 /*
  * Print a bitmap.
- *   style: 0: short, 1: long
- *
+ * Style: 0: short, 1: long.
  */
 void smbios_bitmap_print(FILE *f, hd_bitmap_t *hbm, char *label, int style)
 {
@@ -642,7 +638,10 @@ void smbios_bitmap2str(hd_bitmap_t *hbm, sm_str_map_t *map)
 }
 
 
-void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
+/*
+ * Interpret raw smbios data.
+ */
+void smbios_parse(hd_data_t *hd_data)
 {
   hd_smbios_t *sm;
   str_list_t *sl_any, *sl;
@@ -1083,8 +1082,8 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
 
 
 /*
- * Note: new_smbios is directly inserted into the list, so you *must* make sure
- * that new_smbios points to a malloc'ed pice of memory.
+ * Note: new_sm is directly inserted into the list, so you *must* make sure
+ * that new_sm points to a malloc'ed pice of memory.
  */
 hd_smbios_t *smbios_add_entry(hd_smbios_t **sm, hd_smbios_t *new_sm)
 {

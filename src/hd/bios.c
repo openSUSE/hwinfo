@@ -687,7 +687,7 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
 
   memory.data = free_mem(memory.data);
 
-  smbios_parse(hd_data, bt);
+  smbios_parse(hd_data);
 }
 
 
