@@ -363,6 +363,7 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 			hd->dev = MAKE_ID(TAG_SPECIAL, 0x000c);
 			break;
 		      }
+		    break;
 		  default:
 		    ADD2LOG ("DISPLAY: Sun|Unknown GX (cgsix), depth=8\n");
 		    hd->dev = MAKE_ID(TAG_SPECIAL, 0x000d);
