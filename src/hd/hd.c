@@ -89,12 +89,12 @@
 #define HD_ARCH "sparc"
 #endif
 
+#ifdef __s390x__
+#define HD_ARCH "s390x"
+#else
 #ifdef __s390__
 #define HD_ARCH "s390"
 #endif
-
-#ifdef __s390x__
-#define HD_ARCH "s390x"
 #endif
 
 #ifdef __arm__
@@ -2848,7 +2848,10 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 #ifdef __sparc__
   return arch_sparc;
 #else
-#if defined(__s390__) || defined(__s390x__)
+#ifdef __s390x__
+  return arch_s390x;
+#else
+#ifdef __s390__
   return arch_s390;
 #else
 #ifdef __ia64__
@@ -2858,6 +2861,7 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
   return arch_x86_64;
 #else
   return arch_unknown;
+#endif
 #endif
 #endif
 #endif

@@ -458,7 +458,11 @@ void read_cpuinfo(hd_data_t *hd_data)
       sscanf(sl->str, "processor %u : version = %x , identification = %x , machine = %x", &u0, &u1, &u2, &u3) == 4
     ) {
       ct = new_mem(sizeof *ct);
+#ifdef __s390x__
+      ct->architecture = arch_s390x;
+#else
       ct->architecture = arch_s390;
+#endif
       if(vendor_id) ct->vend_name = new_str(vendor_id);
       ct->stepping = u1;
       hd_data->boot = boot_s390;

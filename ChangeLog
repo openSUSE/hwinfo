@@ -1,4 +1,6 @@
+6/9/2002:	v5.28
 	- new x11 data
+	- report s390x arch properly
 
 5/9/2002:	v5.27
 	- added amd-8111 info
