@@ -1172,9 +1172,62 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
       case sm_cache:
         fprintf(f, "  Cache Info: #%d\n", sm->any.handle);
         SMBIOS_PRINT_STR(cache.socket, "Designation");
+        fprintf(f, "    Level: L%u\n", sm->cache.level + 1);
+        fprintf(f, "    State: %s\n", sm->cache.state ? "Enabled" : "Disabled");
+        SMBIOS_PRINT_ID(cache.mode, "Mode");
+        if(sm->cache.location.name) {
+          fprintf(f, "    Location: 0x%02x (%s, %sSocketed)\n",
+            sm->cache.location.id,
+            sm->cache.location.name,
+            sm->cache.socketed ? "" : "Not "
+          );
+        }
+        SMBIOS_PRINT_ID(cache.ecc, "ECC");
+        SMBIOS_PRINT_ID(cache.cache_type, "Type");
+        SMBIOS_PRINT_ID(cache.assoc, "Associativity");
         if(sm->cache.max_size) fprintf(f, "    Max. Size: %u kB\n", sm->cache.max_size);
         if(sm->cache.current_size) fprintf(f, "    Current Size: %u kB\n", sm->cache.current_size);
         if(sm->cache.speed) fprintf(f, "    Speed: %u ns\n", sm->cache.speed);
+        if(sm->cache.supp_sram) {
+          fprintf(f, "    Supported SRAM Types: 0x%04x (", sm->cache.supp_sram);
+          for(sl = sm->cache.supp_sram_str; sl; sl = sl->next) {
+            fprintf(f, "%s%s", sl->str, sl->next ? ", " : "");
+          }
+          fprintf(f, ")\n");
+        }
+        if(sm->cache.sram) {
+          fprintf(f, "    Current SRAM Type: 0x%04x (", sm->cache.sram);
+          for(sl = sm->cache.sram_str; sl; sl = sl->next) {
+            fprintf(f, "%s%s", sl->str, sl->next ? ", " : "");
+          }
+          fprintf(f, ")\n");
+        }
+        break;
+
+      case sm_connect:
+        fprintf(f, "  Port Connector: #%d\n", sm->any.handle);
+        SMBIOS_PRINT_ID(connect.port_type, "Type");
+        SMBIOS_PRINT_STR(connect.i_des, "Internal Designator");
+        SMBIOS_PRINT_ID(connect.i_type, "Internal Connector");
+        SMBIOS_PRINT_STR(connect.x_des, "External Designator");
+        SMBIOS_PRINT_ID(connect.x_type, "External Connector");
+        break;
+
+      case sm_slot:
+        fprintf(f, "  System Slot: #%d\n", sm->any.handle);
+        SMBIOS_PRINT_STR(slot.desig, "Designation");
+        SMBIOS_PRINT_ID(slot.slot_type, "Type");
+        SMBIOS_PRINT_ID(slot.bus_width, "Bus Width");
+        SMBIOS_PRINT_ID(slot.usage, "Status");
+        SMBIOS_PRINT_ID(slot.length, "Length");
+        fprintf(f, "    Slot ID: %u\n", sm->slot.id);
+        if(sm->slot.features) {
+          fprintf(f, "    Characteristics: 0x%04x (", sm->slot.features);
+          for(sl = sm->slot.feature_str; sl; sl = sl->next) {
+            fprintf(f, "%s%s", sl->str, sl->next ? ", " : "");
+          }
+          fprintf(f, ")\n");
+        }
         break;
 
       case sm_onboard:

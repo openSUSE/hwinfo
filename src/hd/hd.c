@@ -1587,6 +1587,30 @@ hd_smbios_t *free_smbios_list(hd_smbios_t *sm)
 
       case sm_cache:
         free_mem(sm->cache.socket);
+        free_mem(sm->cache.mode.name);
+        free_mem(sm->cache.location.name);
+        free_mem(sm->cache.ecc.name);
+        free_mem(sm->cache.cache_type.name);
+        free_mem(sm->cache.assoc.name);
+        free_str_list(sm->cache.supp_sram_str);
+        free_str_list(sm->cache.sram_str);
+        break;
+
+      case sm_connect:
+        free_mem(sm->connect.port_type.name);
+        free_mem(sm->connect.i_des);
+        free_mem(sm->connect.x_des);
+        free_mem(sm->connect.i_type.name);
+        free_mem(sm->connect.x_type.name);
+        break;
+
+      case sm_slot:
+        free_mem(sm->slot.desig);
+        free_mem(sm->slot.slot_type.name);
+        free_mem(sm->slot.bus_width.name);
+        free_mem(sm->slot.usage.name);
+        free_mem(sm->slot.length.name);
+        free_str_list(sm->slot.feature_str);
         break;
 
       case sm_onboard:

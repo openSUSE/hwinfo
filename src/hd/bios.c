@@ -844,6 +844,131 @@ static char *smbios_proc_families[] = {
 };
 
 
+static char *smbios_cache_mode[] = {
+  "Write Through", "Write Back", "Varies with Memory Address", "Unknown"
+};
+
+
+static char *smbios_cache_location[] = {
+  "Internal", "External", "Reserved", "Unknown"
+};
+
+
+static char *smbios_cache_ecc[] = {
+  NULL, "Other", "Unknown", "None",
+  "Parity", "Single-bit", "Multi-bit"
+};
+
+
+static char *smbios_cache_cache_type[] = {
+  NULL, "Other", "Unknown", "Instruction",
+  "Data", "Unified"
+};
+
+
+static char *smbios_cache_assoc[] = {
+  NULL, "Other", "Unknown", "Direct Mapped",
+  "2-way Set-Associative", "4-way Set-Associative", "Fully Associative", "8-way Set-Associative",
+  "16-way Set-Associative"
+};
+
+
+static struct {
+  unsigned bit;
+  char *name;
+} smbios_cache_sram[] = {
+  {  0, "Other" },
+  {  1, "Unknown" },
+  {  2, "Non-Burst" },
+  {  3, "Burst" },
+  {  4, "Pipeline Burst" },
+  {  5, "Synchronous" },
+  {  6, "Asynchronous" }
+};
+
+
+static char *smbios_connect_conn_type[] = {
+  NULL, "Centronics", "Mini Centronics", "Proprietary",
+  "DB-25 pin male", "DB-25 pin female", "DB-15 pin male", "DB-15 pin female",
+  "DB-9 pin male", "DB-9 pin female", "RJ-11", "RJ-45",
+  "50 Pin MiniSCSI", "Mini-DIN", "Micro-DIN", "PS/2",
+  "Infrared", "HP-HIL", "Access Bus [USB]", "SSA SCSI",
+  "Circular DIN-8 male", "Circular DIN-8 female", "On Board IDE", "On Board Floppy",
+  "9 Pin Dual Inline [pin 10 cut]", "25 Pin Dual Inline [pin 26 cut]", "50 Pin Dual Inline", "68 Pin Dual Inline",
+  "On Board Sound Input from CD-ROM", "Mini-Centronics Type-14", "Mini-Centronics Type-26", "Mini-jack [headphones]",
+  "BNC", "1394",
+  /* 0x22 */
+  [ 0xa0 ] = "PC-98", "PC-98Hireso", "PC-H98", "PC-98Note",
+  "PC-98Full",
+  /* 0xa5 */
+  [ 0xff ] = "Other"
+};
+
+
+static char *smbios_connect_port_type[] = {
+  NULL, "Parallel Port XT/AT Compatible", "Parallel Port PS/2", "Parallel Port ECP",
+  "Parallel Port EPP", "Parallel Port ECP/EPP", "Serial Port XT/AT Compatible", "Serial Port 16450 Compatible",
+  "Serial Port 16550 Compatible", "Serial Port 16550A Compatible", "SCSI Port", "MIDI Port",
+  "Joy Stick Port", "Keyboard Port", "Mouse Port", "SSA SCSI",
+  "USB", "FireWire [IEEE P1394]", "PCMCIA Type I", "PCMCIA Type II",
+  "PCMCIA Type III", "Cardbus", "Access Bus Port", "SCSI II",
+  "SCSI Wide", "PC-98", "PC-98-Hireso", "PC-H98",
+  "Video Port", "Audio Port", "Modem Port", "Network Port",
+  /* 0x20 */
+  [ 0xa0 ] = "8251 Compatible", "8251 FIFO Compatible",
+  /* 0xa2 */
+  [ 0xff ] = "Other"
+};
+
+
+static struct {
+  unsigned bit;
+  char *name;
+} smbios_slot_feature[] = {
+  {  0, "Unknown" },
+  {  1, "5.0 V" },
+  {  2, "3.3 V" },
+  {  3, "Shared" },
+  {  4, "PC Card-16" },
+  {  5, "CardBus" },
+  {  6, "Zoom Video" },
+  {  7, "Modem Ring Resume" },
+  {  8, "PME#" },
+  {  9, "Hot-Plug" }
+};
+
+
+static char *smbios_slot_type[] = {
+  NULL, "Other", "Unknown", "ISA",
+  "MCA", "EISA", "PCI", "PC Card [PCMCIA]",
+  "VL-VESA", "Proprietary", "Processor Card", "Proprietary Memory Card",
+  "I/O Riser Card", "NuBus", "PCI - 66MHz Capable", "AGP",
+  "AGP 2X", "AGP 4X", "PCI-X", "AGP 8X",
+  /* 0x14 */
+  [ 0xa0 ] = "PC-98/C20", "PC-98/C24", "PC-98/E", "PC-98/Local Bus",
+  "PC-98/Card"
+  /* 0xa5 */
+};
+
+
+static char *smbios_slot_bus_width[] = {
+  NULL, "Other", "Unknown", "8 bit",
+  "16 bit", "32 bit", "64 bit", "128 bit"
+};
+
+
+static char *smbios_slot_usage[] = {
+  NULL, "Other", "Unknown", "Available",
+  "In Use"
+};
+
+
+static char *smbios_slot_length[] = {
+  NULL, "Other", "Unknown", "Short",
+  "Long"
+};
+
+
 #define SMBIOS_ID2NAME(list, id, default) new_str(list[id < sizeof list / sizeof *list ? id : default])
 
 void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
@@ -1024,9 +1149,75 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
           u = *(uint16_t *) (sm_data + 9);
           if((u & 0x8000)) u = (u & 0x7fff) << 6;
           sm->cache.current_size = u;
+          u = *(uint16_t *) (sm_data + 5);
+          sm->cache.mode.id = (u >> 8) & 3;
+          sm->cache.state = (u >> 7) & 1;
+          sm->cache.location.id = (u >> 5) & 3;
+          sm->cache.socketed = (u >> 3) & 1;
+          sm->cache.level = u & 7;
+          sm->cache.mode.name = SMBIOS_ID2NAME(smbios_cache_mode, sm->cache.mode.id, 0);
+          sm->cache.location.name = SMBIOS_ID2NAME(smbios_cache_location, sm->cache.location.id, 0);
+          sm->cache.supp_sram = *(uint16_t *) (sm_data + 0x0b);
+          for(u = 0; u < sizeof smbios_cache_sram / sizeof *smbios_cache_sram; u++) {
+            if(sm->cache.supp_sram & (1 << smbios_cache_sram[u].bit)) {
+              add_str_list(&sm->cache.supp_sram_str, smbios_cache_sram[u].name);
+            }
+          }
+          sm->cache.sram = *(uint16_t *) (sm_data + 0x0d);
+          for(u = 0; u < sizeof smbios_cache_sram / sizeof *smbios_cache_sram; u++) {
+            if(sm->cache.sram & (1 << smbios_cache_sram[u].bit)) {
+              add_str_list(&sm->cache.sram_str, smbios_cache_sram[u].name);
+            }
+          }
         }
         if(data_len >= 0x13) {
           sm->cache.speed = sm_data[0x0f];
+          sm->cache.ecc.id = sm_data[0x10];
+          sm->cache.cache_type.id = sm_data[0x11];
+          sm->cache.assoc.id = sm_data[0x12];
+          sm->cache.ecc.name = SMBIOS_ID2NAME(smbios_cache_ecc, sm->cache.ecc.id, 1);
+          sm->cache.cache_type.name = SMBIOS_ID2NAME(smbios_cache_cache_type, sm->cache.cache_type.id, 1);
+          sm->cache.assoc.name = SMBIOS_ID2NAME(smbios_cache_assoc, sm->cache.assoc.id, 1);
+        }
+        break;
+
+      case sm_connect:
+        if(data_len >= 9) {
+          sm->connect.i_des = get_string(sl, sm_data[4]);
+          sm->connect.x_des = get_string(sl, sm_data[6]);
+          sm->connect.i_type.id = sm_data[5];
+          sm->connect.x_type.id = sm_data[7];
+          sm->connect.port_type.id = sm_data[8];
+          sm->connect.i_type.name = SMBIOS_ID2NAME(smbios_connect_conn_type, sm->connect.i_type.id, 0xff);
+          sm->connect.x_type.name = SMBIOS_ID2NAME(smbios_connect_conn_type, sm->connect.x_type.id, 0xff);
+          sm->connect.port_type.name = SMBIOS_ID2NAME(smbios_connect_port_type, sm->connect.port_type.id, 0xff);
+          if(!sm->connect.i_type.name && sm->connect.i_type.id) sm->connect.i_type.name = new_str("Other");
+          if(!sm->connect.x_type.name && sm->connect.x_type.id) sm->connect.x_type.name = new_str("Other");
+          if(!sm->connect.port_type.name && sm->connect.port_type.id) sm->connect.port_type.name = new_str("Other");
+        }
+        break;
+
+      case sm_slot:
+        if(data_len >= 0x0c) {
+          sm->slot.desig = get_string(sl, sm_data[4]);
+          sm->slot.slot_type.id = sm_data[5];
+          sm->slot.bus_width.id = sm_data[6];
+          sm->slot.usage.id = sm_data[7];
+          sm->slot.length.id = sm_data[8];
+          sm->slot.id = *(uint16_t *) (sm_data + 9);
+          sm->slot.features = sm_data[0x0b];
+        }
+        if(data_len >= 0x0d) {
+          sm->slot.features += sm_data[0x0c] << 8;
+        }
+        sm->slot.slot_type.name = SMBIOS_ID2NAME(smbios_slot_type, sm->slot.slot_type.id, 1);
+        sm->slot.bus_width.name = SMBIOS_ID2NAME(smbios_slot_bus_width, sm->slot.bus_width.id, 1);
+        sm->slot.usage.name = SMBIOS_ID2NAME(smbios_slot_usage, sm->slot.usage.id, 1);
+        sm->slot.length.name = SMBIOS_ID2NAME(smbios_slot_length, sm->slot.length.id, 1);
+        for(u = 0; u < sizeof smbios_slot_feature / sizeof *smbios_slot_feature; u++) {
+          if(sm->slot.features & (1 << smbios_slot_feature[u].bit)) {
+            add_str_list(&sm->slot.feature_str, smbios_slot_feature[u].name);
+          }
         }
         break;
 

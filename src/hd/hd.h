@@ -602,7 +602,54 @@ typedef struct {
   unsigned max_size;		/* max cache size in kbytes */
   unsigned current_size;	/* current size in kbytes */
   unsigned speed;		/* cache speed in nanoseconds */
+  hd_id_t mode;			/* operational mode */
+  unsigned state;		/* 0/1: disabled/enabled */
+  hd_id_t location;		/* cache location */
+  unsigned socketed;		/* 0/1: not socketed/socketed */
+  unsigned level;		/* cache level (0 = L1, 1 = L2, ...) */
+  hd_id_t ecc;			/* error correction type */
+  hd_id_t cache_type;		/* logical cache type */
+  hd_id_t assoc;		/* cache associativity */
+  unsigned supp_sram;		/* supported SRAM types (bitmask) */
+  str_list_t *supp_sram_str;	/* the above, interpreted */
+  unsigned sram;		/* current SRAM type (bitmask) */
+  str_list_t *sram_str;		/* the above, interpreted */
 } smbios_cache_t;
+
+
+/* port connector information */
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  hd_id_t port_type;		/* port type */
+  char *i_des;			/* internal reference designator */
+  hd_id_t i_type;		/* internal connector type */
+  char *x_des;			/* external reference designator */
+  hd_id_t x_type;		/* external connector type */
+} smbios_connect_t;
+
+
+/* system slot information */
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  char *desig;			/* slot designation */
+  hd_id_t slot_type;		/* slot type */
+  hd_id_t bus_width;		/* data bus width */
+  hd_id_t usage;		/* current usage */
+  hd_id_t length;		/* slot length */
+  unsigned id;			/* slot id */
+  unsigned features;		/* slot characteristics (bitmask) */
+  str_list_t *feature_str;	/* the above, interpreted */
+} smbios_slot_t;
 
 
 typedef struct {
@@ -676,6 +723,8 @@ typedef union u_hd_smbios_t {
   smbios_chassis_t chassis;
   smbios_processor_t processor;
   smbios_cache_t cache;
+  smbios_connect_t connect;
+  smbios_slot_t slot;
   smbios_lang_t lang;
   smbios_memarray_t memarray;
   smbios_memdevice_t memdevice;
