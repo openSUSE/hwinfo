@@ -1,8 +1,9 @@
 6/9/2003:	v7.18
 	- updated usb mouse data (#29719)
 	- better touch pad/track point reporting for notebooks
-	- fork() for serial mouse & modem detection (#)
+	- fork() for serial mouse & modem detection (#25843, #26513)
 	- fixed hwbootscan (#29959)
+	- don't load imm.o module (#14175)
 
 2/9/2003:	v7.17
 	- catch more vm86() faults (#28381)

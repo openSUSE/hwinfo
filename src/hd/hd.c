@@ -149,6 +149,7 @@ static void create_model_name(hd_data_t *hd_data, hd_t *hd);
 
 static void sigchld_handler(int);
 static pid_t child_id;
+static volatile pid_t child;
 static char *hd_shm_add_str(hd_data_t *hd_data, char *str);
 static str_list_t *hd_shm_add_str_list(hd_data_t *hd_data, str_list_t *sl);
 
@@ -260,6 +261,7 @@ static struct s_pr_flags {
   { pr_parallel,      0,              4|2|1, "parallel"      },
   { pr_parallel_lp,   pr_parallel,    4|2|1, "parallel.lp"   },
   { pr_parallel_zip,  pr_parallel,    4|2|1, "parallel.zip"  },
+  { pr_parallel_imm,  0,                  0, "parallel.imm"  },
   { pr_isa,           0,              4|2|1, "isa"           },
   { pr_isa_isdn,      pr_isa,         4|2|1, "isa.isdn"      },
   { pr_dac960,        0,            8|4|2|1, "dac960"        },
@@ -4950,12 +4952,12 @@ int hd_is_hw_class(hd_t *hd, hd_hw_item_t hw_class)
 void hd_fork(hd_data_t *hd_data, int timeout, int total_timeout)
 {
   void (*old_sigchld_handler)(int);
-  pid_t child;
   struct timespec wait_time;
   int i, j, sleep_intr = 1;
   hd_data_t *hd_data_shm;
   time_t stop_time;
   int updated, rem_time;
+  sigset_t new_set, old_set;
 
   if(hd_data->flags.forked) return;
 
@@ -4969,7 +4971,11 @@ void hd_fork(hd_data_t *hd_data, int timeout, int total_timeout)
   stop_time = time(NULL) + total_timeout;
   rem_time = total_timeout;
 
-  child_id = 0;
+  child_id = child = 0;
+
+  sigemptyset(&new_set);
+  sigaddset(&new_set, SIGCHLD);
+  sigprocmask(SIG_BLOCK, &new_set, &old_set);
 
   old_sigchld_handler = signal(SIGCHLD, sigchld_handler);
 
@@ -4979,6 +4985,8 @@ void hd_fork(hd_data_t *hd_data, int timeout, int total_timeout)
   updated = hd_data_shm->shm.updated;
 
   child = fork();
+
+  sigprocmask(SIG_SETMASK, &old_set, NULL);
 
   if(child != -1) {
     if(child) {
@@ -5066,9 +5074,9 @@ void hd_fork_done(hd_data_t *hd_data)
  */
 void sigchld_handler(int num)
 {
-  pid_t p = waitpid(-1, NULL, WNOHANG);
+  pid_t p = waitpid(child, NULL, WNOHANG);
 
-  if(p && p != -1) child_id = p;
+  if(p && p == child) child_id = p;
 }
 
 

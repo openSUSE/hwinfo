@@ -178,6 +178,7 @@ void do_zip(hd_data_t *hd_data)
   int i, j, port, is_imm, is_ppa, is_imm0, is_ppa0;
   char *pp = NULL, *s = NULL, *unix_dev = NULL;
   str_list_t *log = NULL, *sl, *sl0;
+  int do_imm = hd_probe_feature(hd_data, pr_parallel_imm);
 
   is_imm = is_imm0 = hd_module_is_active(hd_data, "imm");
   is_ppa = is_ppa0 = hd_module_is_active(hd_data, "ppa");
@@ -188,13 +189,15 @@ void do_zip(hd_data_t *hd_data)
     }
     /* ... if there seems to be a parallel interface, try to load it */
     if(hd) {
-      PROGRESS(5, 0, "imm mod");
-      load_module(hd_data, "imm");
+      if(do_imm) {
+        PROGRESS(5, 0, "imm mod");
+        load_module(hd_data, "imm");
+      }
       PROGRESS(5, 0, "ppa mod");
       load_module(hd_data, "ppa");
       is_imm = hd_module_is_active(hd_data, "imm");
       is_ppa = hd_module_is_active(hd_data, "ppa");
-      if(!is_imm) {
+      if(do_imm && !is_imm) {
         int fd;
         char flush[2] = { 4, 12 };
 
