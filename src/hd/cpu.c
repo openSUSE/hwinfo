@@ -36,8 +36,8 @@ void hd_scan_cpu(hd_data_t *hd_data)
 #endif
 
 #ifdef __PPC__
-  char model_id[80], system_id[80], serial_number[80];
-  unsigned cpu_variation, cpu_revision;
+  char model_id[80], vendor_id[80];
+  unsigned bogo, mhz, cache, family, model, stepping;
 #endif
 
   if(!hd_probe_feature(hd_data, pr_cpu)) return;
@@ -113,7 +113,7 @@ void hd_scan_cpu(hd_data_t *hd_data)
 
 #ifdef __i386__
   *model_id = *vendor_id = 0;
-  bogo = mhz = cache = family = model= 0;
+  bogo = mhz = cache = family = model = stepping = 0;
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(sscanf(sl->str, "model name : %79[^\n]", model_id) == 1) continue;
@@ -186,7 +186,7 @@ void hd_scan_cpu(hd_data_t *hd_data)
 
 #ifdef __PPC__
   *model_id = *vendor_id = 0;
-  bogo = mhz = cache = family = model= 0;
+  bogo = mhz = cache = family = model = stepping = 0;
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(sscanf(sl->str, "cpu : %79[^\n]", model_id) == 1) continue;
