@@ -1,0 +1,49 @@
+# block devices (RAID, ...)
+
+
+# block/DAC960.c
+ vendor.id		pci 0x1011
+&device.id		pci 0x1065
+|vendor.id		pci 0x1069
+&device.id		pci 0x0002
+|vendor.id		pci 0x1069
+&device.id		pci 0x0010
+|vendor.id		pci 0x1069
+&device.id		pci 0x0050
+|vendor.id		pci 0x1069
+&device.id		pci 0xba56
++driver.module.insmod	DAC960
+
+# block/cpqarray.c
+ vendor.id		pci 0x0e11
+&device.id		pci 0xae10
+|vendor.id		pci 0x1000
+&device.id		pci 0x0010
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x0000+0x10000
+|vendor.id		pci 0x1011
+&device.id		pci 0x0046
++driver.module.insmod	cpqarray
+
+# block/cciss.c
+ vendor.id		pci 0x0e11
+&device.id		pci 0xb060
+|vendor.id		pci 0x0e11
+&device.id		pci 0xb178
++driver.module.insmod	cciss
+
+# block/swim3.c
+ vendor.id		special 0x0401
+&device.id		special 0x0040
++driver.module.insmod	swim3
+
+# ide/hpt3*.c
+ vendor.id		pci 0x1103
+&device.id		pci 0x0003+0x0002
++driver.module.insmod	ataraid|hptraid
+
+# look at ../hd/pci.c::add_driver_info() before changing anything
+ vendor.id		pci 0x105a
+&device.id		pci 0x6268
++driver.module.insmod	ataraid|pdcraid
+

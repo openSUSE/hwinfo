@@ -36,9 +36,8 @@ IDFILES += src/x11.hwinfo.ia64
 endif
 
 IDFILES += src/names.pciutils\
-	   src/drivers.network src/drivers.scsi src/drivers.block src/drivers.monitor\
-	   src/sound.alsa src/sound.kernel src/drivers.mouse\
-	   src/braille src/drivers.special
+	   src/drivers.network src/storage.scsi src/storage.block src/drivers.monitor\
+	   src/sound.alsa src/sound.kernel src/mouse src/braille src/drivers.special
 
 $(LIBHD_D): hd_ids.o
 	ar r $(LIBHD) $?
