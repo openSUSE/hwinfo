@@ -526,7 +526,7 @@ void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
     sm->any.data_len = slen;
     sm->any.data = new_mem(slen);
     memcpy(sm->any.data, memory.data + ofs, slen);
-    sm->any.handle = *(uint16_t *) (memory.data + ofs + 2);
+    sm->any.handle = memory.data[ofs + 2] + (memory.data[ofs + 3] << 8);
     ADD2LOG("  type 0x%02x [0x%04x]: ", type, sm->any.handle);
     if(slen) hexdump(&hd_data->log, 0, slen, sm->any.data);
     ADD2LOG("\n");
@@ -602,7 +602,7 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
           sm->biosinfo.vendor = get_string(sl, sm_data[4]);
           sm->biosinfo.version = get_string(sl, sm_data[5]);
           sm->biosinfo.date = get_string(sl, sm_data[8]);
-          sm->biosinfo.features = *(uint64_t *) (sm_data + 0xa);
+          memcpy(&sm->biosinfo.features, sm_data + 0xa, 8);
         }
         if(data_len >= 0x13) {
           sm->biosinfo.xfeatures = sm_data[0x12];
@@ -697,7 +697,7 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
       case sm_memarray:
         if(data_len >= 0x0b) {
           sm->memarray.ecc = sm_data[6];
-          sm->memarray.max_size = *(uint32_t *) (sm_data + 0x7);
+          memcpy(&sm->memarray.max_size, sm_data + 0x7, 4);
         }
         break;
 
@@ -725,10 +725,10 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
           sm->memdevice.location = get_string(sl, sm_data[0x10]);
           sm->memdevice.bank = get_string(sl, sm_data[0x11]);
           sm->memdevice.type1 = sm_data[0x12];
-          sm->memdevice.type2 = *(uint16_t *) (sm_data + 0x13);
+          sm->memdevice.type2 = sm_data[0x13] + (sm_data[0x14] << 8);
         }
         if(data_len >= 0x17) {
-          sm->memdevice.speed = *(uint16_t *) (sm_data + 0x15);
+          sm->memdevice.speed = sm_data[0x15] + (sm_data[0x16] << 8);
         }
         break;
 
