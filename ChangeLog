@@ -1,3 +1,6 @@
+5/7/2000:	v1.13
+	- added parallel Zip drive detection
+
 3/7/2000:	v1.12
 	- don't list cardbus/pcmcia devs in hd_list()
 	- add multimedia/video boards to display adapters

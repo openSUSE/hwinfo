@@ -54,6 +54,11 @@ s1004	Hewlett-Packard
 s1004	HEWLETT-PACKARD
 	0001.10900	DESKJET 810C
 
+# parport zip controller
+s1800	Iomega
+	0001	MatchMaker
+	0002	PPA3
+
 # modem
 s2000	Unknown
 	0001.10200	AT Modem

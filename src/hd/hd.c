@@ -146,62 +146,59 @@ static struct s_pr_flags {
   unsigned mask;	/* bit 0: default, bit 1: all, bit 2: max, bit 3: linuxrc */
   char *name;
 } pr_flags[] = {
-  { pr_default,     -1,                1, "default"      },
-  { pr_all,         -1,              2  , "all"          },
-  { pr_max,         -1,            4    , "max"          },
-  { pr_lxrc,        -1,          8      , "lxrc"         },
-  { pr_memory,       0,          8|4|2|1, "memory"       },
-  { pr_pci,          0,          8|4|2|1, "pci"          },
-  { pr_pci_range,    pr_pci,       4|2  , "pci.range"    },
-  { pr_pci_ext,      pr_pci,       4|2  , "pci.ext"      },
-  { pr_isapnp,       0,          8|4|2|1, "isapnp"       },
-  { pr_isapnp,       0,                0, "pnpdump"      },	/* alias for isapnp */
-  { pr_cdrom,        0,          8|4|2|1, "cdrom"        },
-  { pr_cdrom_info,   pr_cdrom,   8|4|2|1, "cdrom.info"   },
-  { pr_net,          0,          8|4|2|1, "net"          },
-  { pr_floppy,       0,          8|4|2|1, "floppy"       },
-  { pr_misc,         0,          8|4|2|1, "misc"         },
-  { pr_misc_serial,  pr_misc,    8|4|2|1, "misc.serial"  },
-  { pr_misc_par,     pr_misc,      4|2|1, "misc.par"     },
-  { pr_misc_floppy,  pr_misc,    8|4|2|1, "misc.floppy"  },
-  { pr_bios,         0,          8|4|2|1, "bios"         },
-  { pr_cpu,          0,          8|4|2|1, "cpu"          },
-  { pr_monitor,      0,          8|4|2|1, "monitor"      },
-#if defined(__i386__)
-  /* needed to check for braille displays in linuxrc */
-  { pr_serial,       0,            4|2|1, "serial"       },
-#else
-  { pr_serial,       0,            4|2|1, "serial"       },
-#endif
+  { pr_default,     -1,                 1, "default"      },
+  { pr_all,         -1,               2  , "all"          },
+  { pr_max,         -1,             4    , "max"          },
+  { pr_lxrc,        -1,           8      , "lxrc"         },
+  { pr_memory,       0,           8|4|2|1, "memory"       },
+  { pr_pci,          0,           8|4|2|1, "pci"          },
+  { pr_pci_range,    pr_pci,        4|2  , "pci.range"    },
+  { pr_pci_ext,      pr_pci,        4|2  , "pci.ext"      },
+  { pr_isapnp,       0,           8|4|2|1, "isapnp"       },
+  { pr_isapnp,       0,                 0, "pnpdump"      },	/* alias for isapnp */
+  { pr_cdrom,        0,           8|4|2|1, "cdrom"        },
+  { pr_cdrom_info,   pr_cdrom,    8|4|2|1, "cdrom.info"   },
+  { pr_net,          0,           8|4|2|1, "net"          },
+  { pr_floppy,       0,           8|4|2|1, "floppy"       },
+  { pr_misc,         0,           8|4|2|1, "misc"         },
+  { pr_misc_serial,  pr_misc,     8|4|2|1, "misc.serial"  },
+  { pr_misc_par,     pr_misc,       4|2|1, "misc.par"     },
+  { pr_misc_floppy,  pr_misc,     8|4|2|1, "misc.floppy"  },
+  { pr_bios,         0,           8|4|2|1, "bios"         },
+  { pr_cpu,          0,           8|4|2|1, "cpu"          },
+  { pr_monitor,      0,           8|4|2|1, "monitor"      },
+  { pr_serial,       0,             4|2|1, "serial"       },
 #if defined(__sparc__)
   /* Probe for mouse on SPARC */
-  { pr_mouse,        0,          8|4|2|1, "mouse"        },
+  { pr_mouse,        0,           8|4|2|1, "mouse"        },
 #else
-  { pr_mouse,        0,            4|2|1, "mouse"        },
+  { pr_mouse,        0,             4|2|1, "mouse"        },
 #endif
-  { pr_ide,          0,          8|4|2|1, "ide"          },
-  { pr_scsi,         0,          8|4|2|1, "scsi"         },
-  { pr_scsi_geo,     0,            4|2  , "scsi.geo"     },
-  { pr_usb,          0,          8|4|2|1, "usb"          },
-  { pr_usb_mods,     0,            4    , "usb.mods"     },
-  { pr_adb,          0,          8|4|2|1, "adb"          },
-  { pr_modem,        0,            4|2|1, "modem"        },
-  { pr_modem_usb,    pr_modem,     4|2|1, "modem.usb"    },
-  { pr_parallel,     0,            4|2|1, "parallel"     },
-  { pr_isa,          0,            4|2|1, "isa"          },
-  { pr_isa_isdn,     pr_isa,       4|2|1, "isa.isdn"     },
-  { pr_dac960,       0,          8|4|2|1, "dac960"       },
-  { pr_smart,        0,          8|4|2|1, "smart"        },
-  { pr_isdn,         0,            4|2|1, "isdn"         },
-  { pr_kbd,          0,          8|4|2|1, "kbd"          },
-  { pr_prom,         0,          8|4|2|1, "prom"         },
-  { pr_sbus,         0,          8|4|2|1, "sbus"         },
-  { pr_int,          0,          8|4|2|1, "int"          },
-  { pr_braille,      0,          8|4|2|1, "braille"      },
-  { pr_braille_alva, pr_braille,   4|2|1, "braille.alva" },
-  { pr_braille_fhp,  pr_braille,   4|2|1, "braille.fhp"  },
-  { pr_braille_ht,   pr_braille,   4|2|1, "braille.ht"   },
-  { pr_ignx11,       0,                0, "ignx11"       }
+  { pr_ide,          0,           8|4|2|1, "ide"          },
+  { pr_scsi,         0,           8|4|2|1, "scsi"         },
+  { pr_scsi_geo,     0,             4|2  , "scsi.geo"     },
+  { pr_usb,          0,           8|4|2|1, "usb"          },
+  { pr_usb_mods,     0,             4    , "usb.mods"     },
+  { pr_adb,          0,           8|4|2|1, "adb"          },
+  { pr_modem,        0,             4|2|1, "modem"        },
+  { pr_modem_usb,    pr_modem,      4|2|1, "modem.usb"    },
+  { pr_parallel,     0,             4|2|1, "parallel"     },
+  { pr_parallel_lp,  pr_parallel,   4|2|1, "parallel.lp"  },
+  { pr_parallel_zip, pr_parallel,   4|2|1, "parallel.zip" },
+  { pr_isa,          0,             4|2|1, "isa"          },
+  { pr_isa_isdn,     pr_isa,        4|2|1, "isa.isdn"     },
+  { pr_dac960,       0,           8|4|2|1, "dac960"       },
+  { pr_smart,        0,           8|4|2|1, "smart"        },
+  { pr_isdn,         0,             4|2|1, "isdn"         },
+  { pr_kbd,          0,           8|4|2|1, "kbd"          },
+  { pr_prom,         0,           8|4|2|1, "prom"         },
+  { pr_sbus,         0,           8|4|2|1, "sbus"         },
+  { pr_int,          0,           8|4|2|1, "int"          },
+  { pr_braille,      0,           8|4|2|1, "braille"      },
+  { pr_braille_alva, pr_braille,    4|2|1, "braille.alva" },
+  { pr_braille_fhp,  pr_braille,    4|2|1, "braille.fhp"  },
+  { pr_braille_ht,   pr_braille,    4|2|1, "braille.ht"   },
+  { pr_ignx11,       0,                 0, "ignx11"       }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -2398,6 +2395,8 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
       case hw_storage_ctrl:
         hd_set_probe_feature(hd_data, pr_pci);
         hd_set_probe_feature(hd_data, pr_sbus);
+        hd_set_probe_feature(hd_data, pr_misc_par);
+        hd_set_probe_feature(hd_data, pr_parallel_zip);
         break;
 
       case hw_network_ctrl:
@@ -2996,6 +2995,17 @@ int load_module(hd_data_t *hd_data, char *module)
   if(hd_module_is_active(hd_data, module)) return 0;
 
   str_printf(&cmd, 0, "/sbin/insmod %s", module);
+
+  return run_cmd(hd_data, cmd);
+}
+
+int unload_module(hd_data_t *hd_data, char *module)
+{
+  char *cmd = NULL;
+
+  if(!hd_module_is_active(hd_data, module)) return 0;
+
+  str_printf(&cmd, 0, "/sbin/rmmod %s", module);
 
   return run_cmd(hd_data, cmd);
 }

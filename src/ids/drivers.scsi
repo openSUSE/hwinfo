@@ -136,3 +136,9 @@ s4001 1003
 s4001 1004
 	i	qlogicpti
 
+# iomega zip
+s1800 0001
+	m	imm
+s1800 0002
+	m	ppa
+

@@ -101,6 +101,7 @@ int detectSMP(void);
 void update_irq_usage(hd_data_t *hd_data);
 int run_cmd(hd_data_t *hd_data, char *cmd);
 int load_module(hd_data_t *hd_data, char *module);
+int unload_module(hd_data_t *hd_data, char *module);
 
 int cmp_hd(hd_t *hd1, hd_t *hd2);
 unsigned has_something_attached(hd_data_t *hd_data, hd_t *hd);

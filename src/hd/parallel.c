@@ -12,10 +12,25 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-
+static void do_lp(hd_data_t *hd_data);
+static void do_zip(hd_data_t *hd_data);
 static void dump_parallel_data(hd_data_t *hd_data, str_list_t *sl);
 
 void hd_scan_parallel(hd_data_t *hd_data)
+{
+  if(!hd_probe_feature(hd_data, pr_parallel)) return;
+
+  hd_data->module = mod_parallel;
+
+  /* some clean-up */
+  remove_hd_entries(hd_data);
+
+  if(hd_probe_feature(hd_data, pr_parallel_lp)) do_lp(hd_data);
+
+  if(hd_probe_feature(hd_data, pr_parallel_zip)) do_zip(hd_data);
+}
+
+void do_lp(hd_data_t *hd_data)
 {
   hd_t *hd, *hd_i;
   str_list_t *sl, *sl0;
@@ -25,34 +40,19 @@ void hd_scan_parallel(hd_data_t *hd_data)
   int i, j, port;
   str_list_t *log = NULL;
 
-  if(!hd_probe_feature(hd_data, pr_parallel)) return;
-
-  hd_data->module = mod_parallel;
-
-  /* some clean-up */
-  remove_hd_entries(hd_data);
-
   PROGRESS(1, 0, "pp mod");
-
-  /* parport_probe loaded... ? */
-  for(sl = read_kmods(hd_data); sl; sl = sl->next) {
-    if(!strcmp(sl->str, "parport_probe")) break;
-  }
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class == bc_comm && hd->sub_class == sc_com_par) break;
   }
   /* ... if there seems to be a parallel interface, try to load it */
   if(hd) {
-    if(sl) run_cmd(hd_data, "/sbin/rmmod parport_probe");
-    run_cmd(hd_data, "/sbin/insmod parport_probe");
+    unload_module(hd_data, "parport_probe");
+    load_module(hd_data, "parport_probe");
   }
 
-  sl = free_str_list(sl);
-
-  /* got through hda...hdp */
   for(i = 0; i < 3; i++, unix_dev[sizeof unix_dev - 2]++) {
-    PROGRESS(2, 1 + i, "read info");
+    PROGRESS(2, 1 + i, "lp read info");
 
     port = 0;
     // ##### read modes as well? (e.g: SPP,ECP,ECPEPP,ECPPS2)
@@ -151,6 +151,99 @@ void hd_scan_parallel(hd_data_t *hd_data)
 
 }
 
+void do_zip(hd_data_t *hd_data)
+{
+  hd_t *hd, *hd_i;
+  int i, j, port, is_imm, is_ppa, is_imm0, is_ppa0;
+  char *pp = NULL, *s = NULL, *unix_dev = NULL;
+  str_list_t *log = NULL, *sl, *sl0;
+
+  is_imm = is_imm0 = hd_module_is_active(hd_data, "imm");
+  is_ppa = is_ppa0 = hd_module_is_active(hd_data, "ppa");
+
+  if(!(is_imm || is_ppa)) {
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      if(hd->base_class == bc_comm && hd->sub_class == sc_com_par) break;
+    }
+    /* ... if there seems to be a parallel interface, try to load it */
+    if(hd) {
+      PROGRESS(5, 0, "imm mod");
+      load_module(hd_data, "imm");
+      PROGRESS(5, 0, "ppa mod");
+      load_module(hd_data, "ppa");
+      is_imm = hd_module_is_active(hd_data, "imm");
+      is_ppa = hd_module_is_active(hd_data, "ppa");
+    }
+  }
+
+  if(!(is_imm || is_ppa)) return;
+
+  PROGRESS(6, 0, "zip read info");
+
+  for(i = 0; i < 16; i++) {
+    str_printf(&pp, 0, PROC_SCSI "/%s/%d", (i % 2) ? "ppa" : "imm", i / 2);
+    sl0 = read_file(pp, 0, 0);
+    if(!sl0) continue;
+    str_printf(&s, 0, "%s\n", pp);
+    add_str_list(&log, s);
+    port = -1;
+    for(sl = sl0; sl; sl = sl->next) {
+      str_printf(&s, 0, "  %s", sl->str);
+      add_str_list(&log, s);
+      if(sscanf(sl->str, "Parport : parport%d", &j) == 1) port = j;
+    }
+    free_str_list(sl0);
+    pp = free_mem(pp);
+    s = free_mem(s);
+
+    unix_dev = free_mem(unix_dev);
+    if(port >= 0) {
+      str_printf(&unix_dev, 0, "/dev/lp%d", port);
+    }
+
+    hd = NULL;
+    if(unix_dev) {
+      for(hd = hd_data->hd; hd; hd = hd->next) {
+        if(
+          hd->base_class == bc_comm &&
+          hd->sub_class == sc_com_par &&
+          hd->unix_dev_name &&
+          !strcmp(hd->unix_dev_name, unix_dev)
+        ) break;
+      }
+
+      if(!hd) {
+        /* no entry ??? */
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+        hd->base_class = bc_comm;
+        hd->sub_class = sc_com_par;
+        hd->unix_dev_name = new_str(unix_dev);
+      }
+    }
+
+    hd_i = hd;
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    if(hd_i) {
+      hd->attached_to = hd_i->idx;
+      hd->unix_dev_name = new_str(hd_i->unix_dev_name);
+    }
+    hd->base_class = bc_storage;
+    hd->sub_class = sc_sto_scsi;
+    hd->bus = bus_parallel;
+    hd->vend = MAKE_ID(TAG_SPECIAL, 0x1800);
+    hd->dev = MAKE_ID(TAG_SPECIAL, (i % 2) ? 2 : 1);
+  }
+
+  if(!is_imm0) unload_module(hd_data, "imm");
+  if(!is_ppa0) unload_module(hd_data, "ppa");
+
+  if((hd_data->debug & HD_DEB_PARALLEL)) dump_parallel_data(hd_data, log);
+
+  free_mem(unix_dev);
+
+  free_str_list(log);
+
+}
 
 void dump_parallel_data(hd_data_t *hd_data, str_list_t *sl)
 {

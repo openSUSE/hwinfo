@@ -72,9 +72,9 @@ typedef enum probe_feature {
   pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial, pr_misc_par,
   pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide,
   pr_scsi, pr_scsi_geo, pr_usb, pr_usb_mods, pr_adb, pr_modem, pr_modem_usb,
-  pr_parallel, pr_isa, pr_isa_isdn, pr_dac960, pr_smart, pr_isdn, pr_kbd,
-  pr_prom, pr_sbus, pr_int, pr_braille, pr_braille_alva, pr_braille_fhp,
-  pr_braille_ht, pr_ignx11,
+  pr_parallel, pr_parallel_lp, pr_parallel_zip, pr_isa, pr_isa_isdn,
+  pr_dac960, pr_smart, pr_isdn, pr_kbd, pr_prom, pr_sbus, pr_int,
+  pr_braille, pr_braille_alva, pr_braille_fhp, pr_braille_ht, pr_ignx11,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
