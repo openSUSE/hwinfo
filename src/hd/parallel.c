@@ -39,13 +39,16 @@ void hd_scan_parallel(hd_data_t *hd_data)
     if(!strcmp(sl->str, "parport_probe")) break;
   }
 
-  if(!sl) {	/* ... no, then... */
-    for(hd = hd_data->hd; hd; hd = hd->next) {
-      if(hd->base_class == bc_comm && hd->sub_class == sc_com_par) break;
-    }
-    /* ... if there seems to be a parallel interface, try to load it */
-    if(hd) system("insmod parport_probe");
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_comm && hd->sub_class == sc_com_par) break;
   }
+  /* ... if there seems to be a parallel interface, try to load it */
+  if(hd) {
+    if(sl) run_cmd(hd_data, "rmmod parport_probe");
+    run_cmd(hd_data, "insmod parport_probe");
+  }
+
+  sl = free_str_list(sl);
 
   /* got through hda...hdp */
   for(i = 0; i < 3; i++, unix_dev[sizeof unix_dev - 2]++) {

@@ -330,6 +330,7 @@ void hd_scan_misc2(hd_data_t *hd_data)
       join_res_irq(&hd1->res, res);
       join_res_dma(&hd1->res, res);
       free_res_list(res);
+      hd_data->display = hd1->idx;
     }
     else {
       /* more than 1: look again, now only 'active' cards */
@@ -348,6 +349,7 @@ void hd_scan_misc2(hd_data_t *hd_data)
         join_res_io(&hd1->res, res);
         join_res_irq(&hd1->res, res);
         join_res_dma(&hd1->res, res);
+        hd_data->display = hd1->idx;
       }
       else {
        /* now, what??? */

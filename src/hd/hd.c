@@ -65,7 +65,7 @@
 #define MOD_INFO_SEP		'|'
 #define MOD_INFO_SEP_STR	"|"
 
-static int is_default_feature(enum probe_feature feature);
+static struct s_pr_flags *get_pr_flags(enum probe_feature feature);
 static hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd);
 static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
 static int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len);
@@ -114,100 +114,102 @@ static struct s_mod_names {
  * hw.c. Cf. enum probe_feature, hd_data_t.probe.
  */
 static struct s_pr_flags {
-  enum probe_feature val;
+  enum probe_feature val, parent;
+  unsigned mask;	/* bit 0: default, bit 1: all, bit 2: max, bit 3: linuxrc */
   char *name;
 } pr_flags[] = {
-  { pr_default, "default"},			/* magic */
-  { pr_all, "all" },				/* magic */
-  { pr_memory, "memory" },
-  { pr_pci, "pci" },
-  { pr_pci_range, "pci.range" },
-  { pr_pci_ext, "pci.ext" },
-  { pr_isapnp, "isapnp" },
-  { pr_isapnp, "pnpdump" },			/* alias for isapnp */
-  { pr_cdrom, "cdrom" },
-  { pr_cdrom_info, "cdrom.info" },
-  { pr_net, "net" },
-  { pr_floppy, "floppy" },
-  { pr_misc, "misc" },
-  { pr_misc_serial, "misc.serial" },
-  { pr_misc_par, "misc.par" },
-  { pr_misc_floppy, "misc.floppy" },
-  { pr_bios, "bios" },
-  { pr_cpu, "cpu" },
-  { pr_monitor, "monitor" },
-  { pr_serial, "serial" },
-  { pr_mouse, "mouse" },
-  { pr_ide, "ide" },
-  { pr_scsi, "scsi" },
-  { pr_usb, "usb" },
-  { pr_adb, "adb" },
-  { pr_modem, "modem" },
-  { pr_modem_usb, "modem.usb" },
-  { pr_parallel, "parallel" },
-  { pr_isa, "isa" },
-  { pr_isa_isdn, "isa.isdn" },
-  { pr_dac960, "dac960" },
-  { pr_smart, "smart" },
-  { pr_isdn, "isdn" },
-  { pr_kbd, "kbd" }
+  { pr_default,     -1,              1, "default"     },
+  { pr_all,         -1,            2  , "all"         },
+  { pr_max,         -1,          4    , "max"         },
+  { pr_lxrc,        -1,        8      , "lxrc"        },
+  { pr_memory,       0,        8|4|2|1, "memory"      },
+  { pr_pci,          0,        8|4|2|1, "pci"         },
+  { pr_pci_range,    pr_pci,     4|2  , "pci.range"   },
+  { pr_pci_ext,      pr_pci,     4|2  , "pci.ext"     },
+  { pr_isapnp,       0,        8|4|2|1, "isapnp"      },
+  { pr_isapnp,       0,              0, "pnpdump"     },	/* alias for isapnp */
+  { pr_cdrom,        0,        8|4|2|1, "cdrom"       },
+  { pr_cdrom_info,   pr_cdrom, 8|4|2|1, "cdrom.info"  },
+  { pr_net,          0,        8|4|2|1, "net"         },
+  { pr_floppy,       0,        8|4|2|1, "floppy"      },
+  { pr_misc,         0,        8|4|2|1, "misc"        },
+  { pr_misc_serial,  pr_misc,  8|4|2|1, "misc.serial" },
+  { pr_misc_par,     pr_misc,  8|4|2|1, "misc.par"    },
+  { pr_misc_floppy,  pr_misc,  8|4|2|1, "misc.floppy" },
+  { pr_bios,         0,        8|4|2|1, "bios"        },
+  { pr_cpu,          0,        8|4|2|1, "cpu"         },
+  { pr_monitor,      0,        8|4|2|1, "monitor"     },
+  { pr_serial,       0,          4|2|1, "serial"      },
+  { pr_mouse,        0,          4|2|1, "mouse"       },
+  { pr_ide,          0,        8|4|2|1, "ide"         },
+  { pr_scsi,         0,        8|4|2|1, "scsi"        },
+  { pr_usb,          0,        8|4|2|1, "usb"         },
+  { pr_usb_mods,     0,          4    , "usb.mods"    },
+  { pr_adb,          0,        8|4|2|1, "adb"         },
+  { pr_modem,        0,          4|2|1, "modem"       },
+  { pr_modem_usb,    pr_modem,   4|2|1, "modem.usb"   },
+  { pr_parallel,     0,          4|2|1, "parallel"    },
+  { pr_isa,          0,          4|2|1, "isa"         },
+  { pr_isa_isdn,     pr_isa,     4|2|1, "isa.isdn"    },
+  { pr_dac960,       0,        8|4|2|1, "dac960"      },
+  { pr_smart,        0,        8|4|2|1, "smart"       },
+  { pr_isdn,         0,        8|4|2|1, "isdn"        },
+  { pr_kbd,          0,        8|4|2|1, "kbd"         }
 };
 
-int is_default_feature(enum probe_feature feature)
+struct s_pr_flags *get_pr_flags(enum probe_feature feature)
 {
-  static enum probe_feature non_default_features[] = {
-    pr_pci_range, pr_pci_ext
-  };
   int i;
 
-  for(i = 0; i < sizeof non_default_features / sizeof *non_default_features; i++) {
-    if(non_default_features[i] == feature) return 0;
+  for(i = 0; i < sizeof pr_flags / sizeof *pr_flags; i++) {
+    if(feature == pr_flags[i].val) return pr_flags + i;
   }
 
-  return 1;
+  return NULL;
 }
 
 void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
-  unsigned ofs = feature >> 3, bit = feature & 7;
+  unsigned ofs, bit, mask;
   int i;
+  struct s_pr_flags *pr;
 
-  if(feature > pr_all) return;
+  if(!(pr = get_pr_flags(feature))) return;
 
-  if(feature == pr_all) {
-    for(i = 0; i < pr_default; i++) {
-      hd_set_probe_feature(hd_data, i);
+  if(pr->parent == -1) {
+    mask = pr->mask;
+    for(i = 0; i < sizeof pr_flags / sizeof *pr_flags; i++) {
+      if(pr_flags[i].parent != -1 && (pr_flags[i].mask & mask))
+        hd_set_probe_feature(hd_data, pr_flags[i].val);
     }
   }
-  else if(feature == pr_default) {
-    for(i = 0; i < pr_default; i++) {
-      if(is_default_feature(i)) hd_set_probe_feature(hd_data, i);
-    }
-  }
-  else if(ofs < sizeof hd_data->probe) {
-    hd_data->probe[ofs] |= 1 << bit;
+  else {
+    ofs = feature >> 3; bit = feature & 7;
+    if(ofs < sizeof hd_data->probe)
+      hd_data->probe[ofs] |= 1 << bit;
+    if(pr->parent) hd_set_probe_feature(hd_data, pr->parent);
   }
 }
 
 void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
-  unsigned ofs = feature >> 3, bit = feature & 7;
+  unsigned ofs, bit, mask;
   int i;
+  struct s_pr_flags *pr;
 
-  if(feature > pr_all) return;
+  if(!(pr = get_pr_flags(feature))) return;
 
-  if(feature == pr_all) {
-    for(i = 0; i < pr_default; i++) {
-      hd_clear_probe_feature(hd_data, i);
+  if(pr->parent == -1) {
+    mask = pr->mask;
+    for(i = 0; i < sizeof pr_flags / sizeof *pr_flags; i++) {
+      if(pr_flags[i].parent != -1 && (pr_flags[i].mask & mask))
+        hd_clear_probe_feature(hd_data, pr_flags[i].val);
     }
   }
-  else if(feature == pr_default) {
-    for(i = 0; i < pr_default; i++) {
-      if(is_default_feature(i)) hd_clear_probe_feature(hd_data, i);
-    }
-  }
-  else if(ofs < sizeof hd_data->probe) {
-    hd_data->probe[ofs] &= ~(1 << bit);
+  else {
+    ofs = feature >> 3; bit = feature & 7;
+    if(ofs < sizeof hd_data->probe)
+      hd_data->probe[ofs] &= ~(1 << bit);
   }
 }
 
@@ -488,8 +490,11 @@ void hd_scan(hd_data_t *hd_data)
 {
   char *s = NULL;
   int i, j;
+  unsigned u;
   hd_t *hd;
   uint64_t irqs;
+  str_list_t *sl, *sl0;
+  driver_info_t *di;
 
   /* log the debug & probe flags */
   if(hd_data->debug) {
@@ -572,6 +577,16 @@ void hd_scan(hd_data_t *hd_data)
   /* we are done... */
   hd_data->module = mod_none;
 
+  if(hd_data->debug) {
+    sl0 = read_file(PROC_MODULES, 0, 0);
+    ADD2LOG("----- /proc/modules -----\n");
+    for(sl = sl0; sl; sl = sl->next) {
+      ADD2LOG("  %s", sl->str);
+    }
+    ADD2LOG("----- /proc/modules end -----\n");
+    free_str_list(sl0);
+  }
+
   update_irq_usage(hd_data);
 
   if(hd_data->debug) {
@@ -640,6 +655,14 @@ void hd_scan(hd_data_t *hd_data)
     hd = hd_get_device_by_idx(hd_data, hd_boot_disk(hd_data, &i));
     s = "unknown"; if(hd && (s = hd->unix_dev_name));
     ADD2LOG("  boot device: %s (%d)\n", s, i);
+
+    u = hd_display_adapter(hd_data);
+    hd = hd_get_device_by_idx(hd_data, u);
+    di = hd_driver_info(hd_data, hd);
+    s = "unknown";
+    if(di && di->any.type == di_x11 && di->x11.server) s = di->x11.server;
+    ADD2LOG("  display adapter: #%u (%s)\n", u, s);
+    hd_free_driver_info(di);
   }
 }
 
@@ -1248,6 +1271,8 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
   ihw_card_info *ici;
   str_list_t *sl;
 
+  if(!hd) return NULL;
+
   if(hd->sub_vend || hd->sub_dev) {
     di0 = sub_device_driver(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev);
   }
@@ -1350,13 +1375,15 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 
 int hd_module_is_active(hd_data_t *hd_data, char *mod)
 {
-  str_list_t *sl = read_kmods(hd_data);
+  str_list_t *sl, *sl0 = read_kmods(hd_data);
 
-  for(; sl; sl = sl->next) {
-    if(!strcmp(sl->str, mod)) return 1;
+  for(sl = sl0; sl; sl = sl->next) {
+    if(!strcmp(sl->str, mod)) break;
   }
 
-  return 0;
+  free_str_list(sl0);
+
+  return sl ? 1 : 0;
 }
 
 hd_res_t *get_res(hd_t *hd, enum resource_types t, unsigned index)
@@ -1547,6 +1574,40 @@ int hd_usb_support(hd_data_t *hd_data)
 int hd_smp_support(hd_data_t *hd_data)
 {
   return detectSMP() > 0 ? 1 : 0;
+}
+
+
+unsigned hd_display_adapter(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  driver_info_t *di;
+  unsigned u = 0;
+
+  if(hd_get_device_by_idx(hd_data, hd_data->display)) return hd_data->display;
+
+  /* guess: 1st vga card */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_display && hd->sub_class == sc_dis_vga) return hd->idx;
+  }
+
+  /* guess: 1st display adapter *with* driver info */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_display) {
+      di = hd_driver_info(hd_data, hd);
+      if(di && di->any.type == di_x11 && di->x11.server) {
+        u = hd->idx;
+      }
+      hd_free_driver_info(di);
+      if(u) return u;
+    }
+  }
+
+  /* last try: 1st display adapter */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_display) return hd->idx;
+  }
+
+  return 0;
 }
 
 
@@ -1766,13 +1827,17 @@ void timeout_alarm_handler(int signal)
 str_list_t *read_kmods(hd_data_t *hd_data)
 {
   str_list_t *sl, *sl0, *sl1 = NULL;
+  char *s;
 
   hd_data->kmods = free_str_list(hd_data->kmods);
 
   if(!(sl0 = read_file(PROC_MODULES, 0, 0))) return NULL;
 
+  hd_data->kmods = sl0;
+
   for(sl = sl0; sl; sl = sl->next) {
-    add_str_list(&sl1, strsep(&sl->str, " \t"));
+    s = sl->str;
+    add_str_list(&sl1, strsep(&s, " \t"));
   }
 
   return sl1;
@@ -1996,5 +2061,41 @@ void update_irq_usage(hd_data_t *hd_data)
   }
 
   hd_data->used_irqs = irqs;
+}
+
+int run_cmd(hd_data_t *hd_data, char *cmd)
+{
+  int i;
+  char *xcmd = NULL, *log = NULL;
+  str_list_t *sl, *sl0;
+
+  ADD2LOG("----- exec: \"%s\" -----\n", cmd);
+
+  str_printf(&log, 0, "/tmp/tmplibhd.%d", getpid());
+  str_printf(&xcmd, 0, "%s >%s 2>&1", cmd, log);
+
+  i = system(xcmd);
+  sl0 = read_file(log, 0, 0);
+  unlink(log);
+
+  for(sl = sl0; sl; sl = sl->next) ADD2LOG("  %s", sl->str);
+
+  ADD2LOG("----- return code: 0x%x -----\n", i);
+
+  free_mem(xcmd);
+  free_mem(log);
+
+  return i;
+}
+
+int load_module(hd_data_t *hd_data, char *module)
+{
+  char *cmd = NULL;
+
+  if(hd_module_is_active(hd_data, module)) return 0;
+
+  str_printf(&cmd, 0, "insmod %s", module);
+
+  return run_cmd(hd_data, cmd);
 }
 

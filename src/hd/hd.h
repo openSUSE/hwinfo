@@ -70,9 +70,9 @@ typedef enum probe_feature {
   pr_memory, pr_pci, pr_pci_range, pr_pci_ext, pr_isapnp, pr_cdrom,
   pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial, pr_misc_par,
   pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide,
-  pr_scsi, pr_usb, pr_adb, pr_modem, pr_modem_usb, pr_parallel, pr_isa,
-  pr_isa_isdn, pr_dac960, pr_smart, pr_isdn, pr_kbd,
-  pr_default, pr_all		/* pr_default, pr_all must be the last 2 */
+  pr_scsi, pr_usb, pr_usb_mods, pr_adb, pr_modem, pr_modem_usb, pr_parallel,
+  pr_isa, pr_isa_isdn, pr_dac960, pr_smart, pr_isdn, pr_kbd,
+  pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
 
@@ -770,6 +770,7 @@ typedef struct {
   uint64_t assigned_irqs;	/* irqs automatically assigned by libhd (for driver info) */
   unsigned char *bios_rom;	/* BIOS 0xc0000 - 0xfffff */
   unsigned char *bios_ram;	/* BIOS   0x400 -   0x4ff */
+  unsigned display;		/* hd_idx of the active (vga) display */
 } hd_data_t;
 
 
@@ -811,6 +812,7 @@ int hd_has_pcmcia(hd_data_t *hd_data);
 int hd_apm_enabled(hd_data_t *hd_data);
 int hd_usb_support(hd_data_t *hd_data);
 int hd_smp_support(hd_data_t *hd_data);
+unsigned hd_display_adapter(hd_data_t *hd_data);
 unsigned hd_boot_disk(hd_data_t *hd_data, int *matches);
 enum cpu_arch hd_cpu_arch(hd_data_t *hd_data);
 enum boot_arch hd_boot_arch(hd_data_t *hd_data);

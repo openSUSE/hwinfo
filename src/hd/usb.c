@@ -34,7 +34,7 @@ void hd_scan_usb(hd_data_t *hd_data)
   usb_t *usb;
   hd_res_t *res;
   int kbd_cnt, mse_cnt, lp_cnt, acm_cnt;
-  char *kbd_dev = "/dev/hidbp-kbd-", *mse_dev = "/dev/usbmouse";
+  char *s, *mse_dev = "/dev/usbmouse";
   char *lp_dev = "/dev/usblp", *acm_dev = "/dev/ttyACM";
 
   if(!hd_probe_feature(hd_data, pr_usb)) return;
@@ -54,18 +54,28 @@ void hd_scan_usb(hd_data_t *hd_data)
     }
   }
 
-  if(usb_ctrl_idx) {
-    // load usb modules...
-
-
+  if(usb_ctrl_idx && hd_probe_feature(hd_data, pr_usb_mods)) {
+    /* load usb modules... */
+    PROGRESS(2, 0, "mods");
+    load_module(hd_data, "usbcore");
+    hd2 = hd_get_device_by_idx(hd_data, usb_ctrl[0]);
+    s = "usb-uhci";
+    if(hd2 && hd2->prog_if == pif_usb_ohci) s = "usb-ohci";
+    load_module(hd_data, s);
+    load_module(hd_data, "input");
+    load_module(hd_data, "hid");
+    load_module(hd_data, "keybdev");
+    load_module(hd_data, "mousedev");
+    load_module(hd_data, "printer");
+    load_module(hd_data, "acm");
   }
 
-  PROGRESS(2, 0, "read info");
+  PROGRESS(3, 0, "read info");
 
   get_usb_data(hd_data);
   if((hd_data->debug & HD_DEB_USB)) dump_usb_data(hd_data);
 
-  PROGRESS(3, 0, "build list");
+  PROGRESS(4, 0, "build list");
 
   /* as an alternative, we might just *sort* the usb list... */
   usb_idx = kbd_cnt = mse_cnt = lp_cnt = acm_cnt = 0;
@@ -116,7 +126,7 @@ void hd_scan_usb(hd_data_t *hd_data)
       }
 
       if(hd->base_class == bc_keyboard) {
-        kbd_cnt = get_next_device(kbd_dev, kbd_cnt);
+        // kbd_cnt = get_next_device(kbd_dev, kbd_cnt);
         // if(kbd_cnt >= 0) str_printf(&hd->unix_dev_name, 0, "%s%d", kbd_dev, kbd_cnt++);
       }
 
@@ -134,7 +144,7 @@ void hd_scan_usb(hd_data_t *hd_data)
   }
   while(usb_idx);
 
-  PROGRESS(4, 0, "tree");
+  PROGRESS(5, 0, "tree");
 
   /* now, connect the usb devices to each other */
   for(hd = hd_data->hd; hd; hd = hd->next) {
