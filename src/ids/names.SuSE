@@ -1,3 +1,9 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# split into names.pci/names.usb... ???
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 1000	
 	000a	53C1510D
 1011	
@@ -25,5 +31,7 @@
 		5053 3355	TBS Montego A3D
 134a	
 	0002	INI-920
+15ad	VMWare, Inc.
+	0710	Virtual SVGA
 ADP	Adaptec
 	1505.00100	Adaptec AVA-1505AE
