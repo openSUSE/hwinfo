@@ -239,365 +239,79 @@
 &device.id		pci 0x0391
 +driver.module.modprobe	dc395x
 
-# modules.alias
- baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
-&device.id		pci 0x0078
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+# scsi/aic7xxx.c
+ vendor.id		pci 0x9004
 &device.id		pci 0x1078
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x2178
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x3860
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x5078
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x5578
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x6038
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x6075
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x6078
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x6178
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x7078
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x7178
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x7278
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x7378
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x7478
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
-&device.id		pci 0x7578
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
-&device.id		pci 0x7678
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
-&device.id		pci 0x7815
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
-&device.id		pci 0x7890
-&subvendor.id		pci 0x9004
-&subdevice.id		pci 0x7893
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x7895
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x8078
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x8178
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x8278
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x8378
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x8478
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x8578
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x8678
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x8778
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9004
+|vendor.id		pci 0x9004
 &device.id		pci 0x8878
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0010
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x2180
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0010
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xa100
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0010
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xa180
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0010
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xe100
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0011
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x0181
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
+|vendor.id		pci 0x9005
+&device.id		pci 0x0010+0x0002
+|vendor.id		pci 0x9005
 &device.id		pci 0x0013
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x0003
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0013
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x000f
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
+|vendor.id		pci 0x9005
 &device.id		pci 0x001f
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x000f
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0050
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xf500
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0050
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xffff
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0051
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xb500
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0051
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xffff
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0053
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xffff
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
+|vendor.id		pci 0x9005
+&device.id		pci 0x0050+0x0002
+|vendor.id		pci 0x9005
 &device.id		pci 0x005f
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xffff
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0080
-&subvendor.id		pci 0x0e11
-&subdevice.id		pci 0xe2a0
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0080
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x6220
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0080
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x62a0
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0080
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xe220
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0080
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xe2a0
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x0081
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x62a1
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
+|vendor.id		pci 0x9005
+&device.id		pci 0x0080+0x0002
+|vendor.id		pci 0x9005
 &device.id		pci 0x0083
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xffff
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
+|vendor.id		pci 0x9005
 &device.id		pci 0x008f
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xffff
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x00c0
-&subvendor.id		pci 0x0e11
-&subdevice.id		pci 0xf620
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x00c0
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xf620
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
+|vendor.id		pci 0x9005
+&device.id		pci 0x00c0+0x0002
+|vendor.id		pci 0x9005
 &device.id		pci 0x00c3
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xffff
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
+|vendor.id		pci 0x9005
 &device.id		pci 0x00cf
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xffff
 +driver.module.modprobe	aic7xxx
 +driver.module.modprobe	aic7xxx_old
-
- baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x8000
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x0060
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x800f
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x8010
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x0040
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x8011
-&subvendor.id		pci 0x0e11
-&subdevice.id		pci 0x00ac
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x8011
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x0041
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x8012
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x0042
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x8013
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x0043
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x8014
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x0044
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x8015+0x0002
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x0040
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x8017
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x0044
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x801c
-&subvendor.id		pci 0x0e11
-&subdevice.id		pci 0x00ac
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x801c
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x0041
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x801e
-|baseclass.id		0x001
-&subclass.id		0x00
-&vendor.id		pci 0x9005
-&device.id		pci 0x801f
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0xffff
-+driver.module.modprobe	aic79xx
 
 # scsi/aha152x.c
  vendor.id		ADP
