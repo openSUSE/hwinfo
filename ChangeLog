@@ -1,3 +1,7 @@
+12/2/2002:	v4.10
+	- meissner: mouse probing is in choose_mouse
+	- meissner: added arguments for light probing '(.reprobe)' as suggested by tom
+
 11/2/2002:	v4.09
 	- isdn database now in libhd, support for multiple isdn driver
 
