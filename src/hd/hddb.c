@@ -176,7 +176,10 @@ driver_info_t *hd_pcidb(hd_data_t *hd_data, hddb_pci_t *pci_db, hd_t *hd, driver
 
   if(ID_TAG(hd->vendor.id) != TAG_PCI) return drv_info;
 
-  for(di = &drv_info; *di; di = &(*di)->next);
+  /* don't add module info if driver info of some other type exists */
+  for(di = &drv_info; *di; di = &(*di)->next) {
+    if((*di)->any.type != di_module) return drv_info;
+  }
 
   vendor = ID_VALUE(hd->vendor.id);
   device = ID_VALUE(hd->device.id);

@@ -298,3 +298,7 @@
  vendor.id		pci 0x1022
 +vendor.name		AMD
 
+# 63973
+ vendor.id		pci 0x10a9
++vendor.name		SGI
+

@@ -44,7 +44,8 @@ void hd_scan_sysfs_edd(hd_data_t *hd_data)
 void get_edd_info(hd_data_t *hd_data)
 {
   hd_t *hd;
-  unsigned u, edd_cnt = 0, lba;
+  hd_res_t *res;
+  unsigned u, u1, u2, edd_cnt = 0, lba;
   uint64_t ul0;
   str_list_t *sl;
   bios_info_t *bt;
@@ -161,6 +162,8 @@ void get_edd_info(hd_data_t *hd_data)
   }
 
   /* add BIOS drive ids to disks */
+
+  /* first, check sysfs link */
   for(u = 0; u < sizeof hd_data->edd / sizeof *hd_data->edd; u++) {
     if(!hd_data->edd[u].hd_idx) continue;
     for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -172,6 +175,42 @@ void get_edd_info(hd_data_t *hd_data)
       ) {
         str_printf(&hd->rom_id, 0, "0x%02x", u + 0x80);
         hd_data->flags.edd_used = 1;
+        hd_data->edd[u].assigned = 1;
+        break;
+      }
+    }
+  }
+
+  /* try based on disk size */
+  for(u = 0; u < sizeof hd_data->edd / sizeof *hd_data->edd; u++) {
+    if(hd_data->edd[u].assigned) continue;
+    if(!(ul0 = hd_data->edd[u].sectors)) continue;
+    for(u1 = u2 = 0; u1 < sizeof hd_data->edd / sizeof *hd_data->edd; u1++) {
+      if(ul0 == hd_data->edd[u1].sectors) u2++;
+    }
+
+    /* more than one disk with this size */
+    if(u2 != 1) continue;
+
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      if(
+        hd->base_class.id == bc_storage_device &&
+        hd->sub_class.id == sc_sdev_disk &&
+        !hd->rom_id
+      ) {
+        for(res = hd->res; res; res = res->next) {
+          if(
+            res->any.type == res_size &&
+            res->size.unit == size_unit_sectors &&
+            res->size.val1 == ul0
+          ) break;
+        }
+
+        if(!res) continue;
+
+        str_printf(&hd->rom_id, 0, "0x%02x", u + 0x80);
+        hd_data->flags.edd_used = 1;
+        hd_data->edd[u].assigned = 1;
         break;
       }
     }

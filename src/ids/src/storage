@@ -662,35 +662,6 @@
 +baseclass.id		0x001
 
 
-# ahci vs. ata_piix, #65218
- vendor.id		pci 0x10b9
-&device.id		pci 0x5288
-|vendor.id		pci 0x8086
-&device.id		pci 0x27c1+0x0003
-|vendor.id		pci 0x8086
-&device.id		pci 0x27c5
-+driver.module.modprobe	ahci
-
- vendor.id		pci 0x8086
-&device.id		pci 0x24d1
-|vendor.id		pci 0x8086
-&device.id		pci 0x24df
-|vendor.id		pci 0x8086
-&device.id		pci 0x25a3
-|vendor.id		pci 0x8086
-&device.id		pci 0x25b0
-|vendor.id		pci 0x8086
-&device.id		pci 0x2651
-|vendor.id		pci 0x8086
-&device.id		pci 0x27c0
-|vendor.id		pci 0x8086
-&device.id		pci 0x27c4
-+driver.module.modprobe	ata_piix
-
- vendor.id		pci 0x8086
-&device.id		pci 0x2652+0x0002
-+driver.module.modprobe	ahci|ata_piix
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # usb controller
 

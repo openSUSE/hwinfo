@@ -1287,6 +1287,7 @@ typedef struct {
   unsigned ext_lock_eject:1;
   unsigned ext_edd:1;
   unsigned ext_64bit:1;
+  unsigned assigned:1;
   char *sysfs_id;
   unsigned hd_idx;
 } edd_info_t;

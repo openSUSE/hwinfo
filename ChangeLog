@@ -1,3 +1,9 @@
+28/2/2005:	v10.5
+	- fixed model name for some SGI hardware (#63973)
+	- fix Fritz!Card DSL SL USB ID (#66674)
+	- better heuristics to assign BIOS driver numbers (#66669)
+	- removed ahci vs. ata_piix hack (#65218)
+
 25/2/2005:	v10.4
 	- report pci class 0x403 as audio devices (#66466)
 	- load ahci *and* ata_piix (#65218)

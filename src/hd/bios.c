@@ -41,6 +41,7 @@ static struct {
   { 1024,  768, "COMPAL", "N30T5", NULL },
   { 1024,  768, "Dell Computer Corporation", "Inspiron 5000", NULL },
   { 1024,  768, "Dell Computer Corporation", "Latitude C400", NULL },
+  { 1024,  768, "Dell Computer Corporation", "Latitude C600", NULL },
   { 1024,  768, "Dell Computer Corporation", "Latitude CPt C400GT", NULL },
   { 1024,  768, "Hewlett-Packard", "HP OmniBook PC", "HP OmniBook 4150 B" },
   { 1280,  800, "Hewlett-Packard", "hp compaq nx9105 (DU367T#ABD)", "03" },
