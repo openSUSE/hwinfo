@@ -2686,32 +2686,32 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x0349
 +device.name		0x0349
-+driver.xfree		4|nvidia
-+driver.xfree		4||3d
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x034b
 +device.name		0x034b
-+driver.xfree		4|nvidia
-+driver.xfree		4||3d
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x034c
 +device.name		0x034c
-+driver.xfree		4|nvidia
-+driver.xfree		4||3d
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x034e
 +device.name		Quadro FX 1100
-+driver.xfree		4|nvidia
-+driver.xfree		4||3d
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x034f
 +device.name		0x034f
-+driver.xfree		4|nvidia
-+driver.xfree		4||3d
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10e0
 +vendor.name		Imstt

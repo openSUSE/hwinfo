@@ -1,6 +1,8 @@
+8/3/2004:	v8.16
 	- added host info for s390 SCSI devices
 	- added disk-only probing method for s390
 	- added WWPN, FCP LUN for s390 SCSI devices
+	- updated X11 data
 
 4/3/2004:	v8.15
 	- s390: added LCSS info to ccw_t
