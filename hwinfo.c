@@ -128,6 +128,7 @@ struct option options[] = {
   { "dsl", 0, NULL, 1000 + hw_dsl },
   { "wlan", 0, NULL, 1000 + hw_wlan },
   { "redasd", 0, NULL, 1000 + hw_redasd },
+  { "block", 0, NULL, 1000 + hw_block },
   { "all", 0, NULL, 2000 },
   { "reallyall", 0, NULL, 2001 },
   { "smp", 0, NULL, 2002 },

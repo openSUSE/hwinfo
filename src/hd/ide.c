@@ -153,7 +153,9 @@ void hd_scan_ide(hd_data_t *hd_data)
       str_printf(&fname, 0, PROC_IDE "/hd%c/driver", i + 'a');
       if((sl = read_file(fname, 0, 1))) {
         if((s = strchr(sl->str, ' '))) *s = 0;
-        hd->driver = canon_str(sl->str, strlen(sl->str));
+        s = canon_str(sl->str, strlen(sl->str));
+        add_str_list(&hd->drivers, s);
+        s = free_mem(s);
         free_str_list(sl);
       }
 

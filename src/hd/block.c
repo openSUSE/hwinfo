@@ -7,11 +7,16 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/ioctl.h>
 
 #include "hd.h"
 #include "hd_int.h"
 #include "hddb.h"
+#include "block.h"
 
+#ifndef SCSI_IOCTL_SEND_COMMAND
+#define SCSI_IOCTL_SEND_COMMAND 1
+#endif
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * block device stuff
@@ -20,6 +25,8 @@
  */
 
 static void get_block_devs(hd_data_t *hd_data);
+static void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev);
+static void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev);
 static void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev);
 static void read_partitions(hd_data_t *hd_data);
 static void read_cdroms(hd_data_t *hd_data);
@@ -71,7 +78,6 @@ void get_block_devs(hd_data_t *hd_data)
   struct sysfs_class *sf_class;
   struct sysfs_class_device *sf_cdev;
   struct sysfs_device *sf_dev;
-  struct sysfs_driver *sf_drv;
   struct dlist *sf_cdev_list;
 
   sf_class = sysfs_open_class("block");
@@ -109,19 +115,11 @@ void get_block_devs(hd_data_t *hd_data)
     sf_dev = sysfs_get_classdev_device(sf_cdev);
     if(sf_dev) {
       ADD2LOG(
-        "    block device: bus = %s, bus_id = %s\n      path = %s\n",
+        "    block device: bus = %s, bus_id = %s driver = %s\n      path = %s\n",
         sf_dev->bus,
         sf_dev->bus_id,
+        sf_dev->driver_name,
         hd_sysfs_id(sf_dev->path)
-      );
-    }
-
-    sf_drv = sysfs_get_classdev_driver(sf_cdev);
-    if(sf_drv) {
-      ADD2LOG(
-        "    block driver: name = %s, path = %s\n",
-        sf_drv->name,
-        hd_sysfs_id(sf_drv->path)
       );
     }
 
@@ -134,6 +132,10 @@ void get_block_devs(hd_data_t *hd_data)
     else if((sl = search_str_list(hd_data->cdroms, hd_sysfs_name2_dev(sf_cdev->name)))) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->sub_class.id = sc_sdev_cdrom;
+    }
+    else if(sf_dev && sf_dev->bus && !strcmp(sf_dev->bus, "scsi")) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->sub_class.id = sc_sdev_other;
     }
 
     if(hd) {
@@ -177,23 +179,36 @@ void get_block_devs(hd_data_t *hd_data)
         t = strrchr(s, '/');
         if(t) *t = 0;
         t = hd_sysfs_find_driver(hd_data, s, 0);
-        if(t) hd->driver = new_str(t);
+        if(t) {
+          add_str_list(&hd->drivers, t);
+        }
         s = free_mem(s);
 
 
       }
 
-      if(hd->bus.id == bus_scsi) {
+      if(hd->bus.id == bus_ide) {
+        add_ide_sysfs_info(hd_data, hd, sf_dev);
+      }
+      else if(hd->bus.id == bus_scsi) {
         add_scsi_sysfs_info(hd_data, hd, sf_dev);
       }
-
+      else {
+        add_other_sysfs_info(hd_data, hd, sf_dev);
+      }
 
       
-
+      if(
+        sf_dev &&
+        sf_dev->driver_name &&
+        *sf_dev->driver_name &&
+        strcmp(sf_dev->driver_name, "unknown")
+      ) {
+        add_str_list(&hd->drivers, sf_dev->driver_name);
+      }
     }
 
   }
-
 
 
   sysfs_close_class(sf_class);
@@ -240,10 +255,171 @@ char *hd_sysfs_find_driver(hd_data_t *hd_data, char *sysfs_id, int exact)
 }
 
 
+void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev)
+{
+  hd_res_t *geo, *size;
+  int fd;
+
+  if(
+    hd->unix_dev_name &&
+    hd->sub_class.id == sc_sdev_disk
+  ) {
+    PROGRESS(5, 0, hd->unix_dev_name);
+    fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK);
+    if(fd >= 0) {
+
+      PROGRESS(5, 1, "size");
+
+      hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size);
+      if(geo) add_res_entry(&hd->res, geo);
+      if(size) add_res_entry(&hd->res, size);
+
+      close(fd);
+    }
+  }
+
+
+}
+
+
+void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev)
+{
+  char *fname = NULL, buf[256], *dev_name, *s;
+  unsigned u0, u1, u2;
+  str_list_t *sl, *sl0;
+  hd_res_t *res;
+  FILE *f;
+
+  if(hd->sysfs_bus_id && sscanf(hd->sysfs_bus_id, "%u.%u", &u0, &u1) == 2) {
+    /* host.master/slave */
+    hd->slot = (u0 << 1) + u1;
+  }
+
+
+  if(
+    hd->unix_dev_name &&
+    strlen(hd->unix_dev_name) > 5
+  ) {
+    dev_name = hd->unix_dev_name + 5;
+
+    str_printf(&fname, 0, PROC_IDE "/%s/media", dev_name);
+    if((sl = read_file(fname, 0, 1))) {
+
+      if(strstr(sl->str, "floppy"))
+        hd->sub_class.id = sc_sdev_floppy;
+      else if(strstr(sl->str, "cdrom"))
+        hd->sub_class.id = sc_sdev_cdrom;
+      else if(strstr(sl->str, "tape"))
+        hd->sub_class.id = sc_sdev_tape;
+
+      free_str_list(sl);
+    }
+
+    str_printf(&fname, 0, PROC_IDE "/%s/model", dev_name);
+    if((sl = read_file(fname, 0, 1))) {
+      hd->device.name = canon_str(sl->str, strlen(sl->str));
+      free_str_list(sl);
+    }
+
+    str_printf(&fname, 0, PROC_IDE "/%s/driver", dev_name);
+    if((sl = read_file(fname, 0, 1))) {
+      if((s = strchr(sl->str, ' '))) *s = 0;
+      s = canon_str(sl->str, strlen(sl->str));
+      add_str_list(&hd->drivers, s);
+      s = free_mem(s);
+      free_str_list(sl);
+    }
+
+
+    str_printf(&fname, 0, PROC_IDE "/%s/geometry", dev_name);
+    if((sl0 = read_file(fname, 0, 2))) {
+      for(sl = sl0; sl; sl = sl->next) {
+        if(sscanf(sl->str, " physical %u / %u / %u", &u0, &u1, &u2) == 3) {
+          if(u0 || u1 || u2) {
+            res = add_res_entry(&hd->res, new_mem(sizeof *res));
+            res->disk_geo.type = res_disk_geo;
+            res->disk_geo.cyls = u0;
+            res->disk_geo.heads = u1;
+            res->disk_geo.sectors = u2;
+          }
+          continue;
+        }
+
+        if(sscanf(sl->str, " logical %u / %u / %u", &u0, &u1, &u2) == 3) {
+          res = add_res_entry(&hd->res, new_mem(sizeof *res));
+          res->disk_geo.type = res_disk_geo;
+          res->disk_geo.cyls = u0;
+          res->disk_geo.heads = u1;
+          res->disk_geo.sectors = u2;
+          res->disk_geo.logical = 1;
+        }
+      }
+      free_str_list(sl0);
+    }
+
+    str_printf(&fname, 0, PROC_IDE "/%s/capacity", dev_name);
+    if((sl = read_file(fname, 0, 1))) {
+      if(sscanf(sl->str, "%u", &u0) == 1 && u0 != 0x7fffffff) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->size.type = res_size;
+        res->size.unit = size_unit_sectors;
+        res->size.val1 = u0;
+        res->size.val2 = 512;		// ####### FIXME: sector size?
+      }
+      free_str_list(sl);
+    }
+
+    str_printf(&fname, 0, PROC_IDE "/%s/cache", dev_name);
+    if((sl = read_file(fname, 0, 1))) {
+      if(sscanf(sl->str, "%u", &u0) == 1 && u0) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->cache.type = res_cache;
+        res->cache.size = u0;
+      }
+      free_str_list(sl);
+    }
+
+    str_printf(&fname, 0, PROC_IDE "/%s/identify", dev_name);
+    if((f = fopen(fname, "r"))) {
+      u1 = 0;
+      memset(buf, sizeof buf, 0);
+      while(u1 < sizeof buf - 1 && fscanf(f, "%x", &u0) == 1) {
+        buf[u1++] = u0 >> 8; buf[u1++] = u0;
+      }
+      fclose(f);
+
+      /* ok, we now have the ATA/ATAPI ident block */
+
+      if(buf[0x14] || buf[0x15]) {	/* has serial id */
+        hd->serial = canon_str(buf + 0x14, 20);
+      }
+      if(buf[0x2e] || buf[0x2f]) {	/* has revision id */
+        hd->revision.name = canon_str(buf + 0x2e, 8);
+      }
+    }
+
+    free_mem(fname);
+  }
+}
+
+
 void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev)
 {
+#ifdef __PPC__
+  hd_t *hd1;
+#endif
   char *s, *cs;
   unsigned u0, u1, u2, u3;
+  int fd, k;
+  unsigned char scsi_cmd_buf[0x300];
+  unsigned char *uc;
+  scsi_t *scsi;
+  hd_res_t *geo, *size;
+  uint64_t ul0;
+
+  hd->detail = new_mem(sizeof *hd->detail);
+  hd->detail->type = hd_detail_scsi;
+  hd->detail->scsi.data = scsi = new_mem(sizeof *scsi);
 
   if(hd->sysfs_bus_id && sscanf(hd->sysfs_bus_id, "%u:%u:%u:%u", &u0, &u1, &u2, &u3) == 4) {
     /* host:channel:id:lun */
@@ -284,8 +460,150 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
     }
   }
 
+  if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "type"), &ul0)) {
+    ADD2LOG("    type = %u\n", (unsigned) ul0);
+    if(ul0 == 6 /* scanner */) {
+      hd->sub_class.id = sc_sdev_scanner;
+    }
+    else if(ul0 == 3 /* processor */ && hd->vendor.name) {
+      if(
+        !strncmp(hd->vendor.name, "HP", sizeof "HP" - 1) ||
+        !strncmp(hd->vendor.name, "EPSON", sizeof "EPSON" - 1)
+      ) {
+        hd->sub_class.id = sc_sdev_scanner;
+      }
+    }
+  }
+
+#ifdef __PPC__
+  if((hd1 = hd_get_device_by_idx(hd_data, hd->attached_to)) && hd1->rom_id) {
+    str_printf(&hd->rom_id, 0, "%s/@%u", hd1->rom_id, (hd->slot & 0xf));
+  }
+#endif
 
 
+#if 0
+#if defined(__s390__) || defined(__s390x__)
+  /* find out WWPN and FCP LUN */
+  scsi->wwpn=scsi->fcp_lun=(uint64_t)-1;
+  if(hd->unix_dev_name)
+  {
+    char sysfs_path[SYSFS_PATH_MAX];
+    struct sysfs_attribute* attr;
+    
+    sprintf(sysfs_path,"/sys/block%s/device/wwpn",hd->unix_dev_name+4);
+    attr=sysfs_open_attribute(sysfs_path);
+    if(!sysfs_read_attribute(attr))
+      scsi->wwpn=strtoull(attr->value,0,16);
+    else
+      ADD2LOG("failed to read sysfs attribute %s\n",sysfs_path);
+    
+    sprintf(sysfs_path,"/sys/block%s/device/fcp_lun",hd->unix_dev_name+4);
+    attr=sysfs_open_attribute(sysfs_path);
+    if(!sysfs_read_attribute(attr))
+      scsi->fcp_lun=strtoull(attr->value,0,16);
+    else
+      ADD2LOG("failed to read sysfs attribute %s\n",sysfs_path);
+
+    sprintf(sysfs_path,"/sys/block%s/device",hd->unix_dev_name+4);
+    if(readlink(sysfs_path,sysfs_path,SYSFS_PATH_MAX)<0)
+      ADD2LOG("failed to determine controller (unable to follow device link)");
+    else
+    {
+      rindex(sysfs_path,'/')[0]=0;
+      rindex(sysfs_path,'/')[0]=0;
+      scsi->controller_id=new_str(rindex(sysfs_path,'/')+1);
+    }
+  }
+#endif
+#endif
+
+  if(
+    hd->unix_dev_name &&
+    hd->sub_class.id == sc_sdev_cdrom &&
+    hd_data->in_vmware != 1		/* VMWare doesn't like it */
+  ) {
+    PROGRESS(5, 0, hd->unix_dev_name);
+    fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK);
+    if(fd >= 0) {
+      PROGRESS(5, 1, "cache");
+
+      memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
+      // ###### FIXME: smaller!
+      *((unsigned *) (scsi_cmd_buf + 4)) = sizeof scsi_cmd_buf - 0x100;
+      scsi_cmd_buf[8 + 0] = 0x1a;
+      scsi_cmd_buf[8 + 2] = 0x08;
+      scsi_cmd_buf[8 + 4] = 0xff;
+
+      k = ioctl(fd, SCSI_IOCTL_SEND_COMMAND, scsi_cmd_buf);
+
+      if(k) {
+        ADD2LOG("%s status(0x1a:8) 0x%x\n", hd->unix_dev_name, k);
+      }
+      else {
+        uc = scsi_cmd_buf + 8 + 4 + scsi_cmd_buf[8 + 3] + 2;
+        scsi->cache = uc[0];
+        ADD2LOG("  scsi cache: 0x%02x\n", uc[0]);
+    
+        if((scsi->cache & 4)) {
+          hd->prog_if.id = pif_cdr;
+        }
+      }
+
+      close(fd);
+    }
+  }
+
+
+  if(
+    hd->unix_dev_name &&
+    hd->sub_class.id == sc_sdev_disk
+  ) {
+    PROGRESS(5, 0, hd->unix_dev_name);
+    fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK);
+    if(fd >= 0) {
+
+      PROGRESS(5, 1, "size");
+
+      hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size);
+      if(geo) add_res_entry(&hd->res, geo);
+      if(size) add_res_entry(&hd->res, size);
+
+      PROGRESS(5, 2, "serial");
+
+      memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
+      // ###### FIXME: smaller!
+      *((unsigned *) (scsi_cmd_buf + 4)) = sizeof scsi_cmd_buf - 0x100;
+      scsi_cmd_buf[8 + 0] = 0x12;
+      scsi_cmd_buf[8 + 1] = 0x01;
+      scsi_cmd_buf[8 + 2] = 0x80;
+      scsi_cmd_buf[8 + 4] = 0xff;
+
+      k = ioctl(fd, SCSI_IOCTL_SEND_COMMAND, scsi_cmd_buf);
+
+      if(k) {
+        ADD2LOG("%s status(0x12) 0x%x\n", scsi->dev_name, k);
+      }
+      else {
+        if((hd->serial = canon_str(scsi_cmd_buf + 8 + 4, scsi_cmd_buf[8 + 3]))) {
+          if(!*hd->serial) hd->serial = free_mem(hd->serial);
+        }
+      }
+
+      close(fd);
+    }
+  }
+
+
+  if(
+    hd->base_class.id == bc_storage_device &&
+    hd->sub_class.id == sc_sdev_scanner
+  ) {
+    hd->base_class.id = bc_scanner;
+  }
+
+  // ###### FIXME: usb-storage: disk vs. floppy?
+ 
 }
 
 

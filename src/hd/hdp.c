@@ -423,9 +423,17 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     );
   }
 
+  if(h->drivers) {
+    s = hd_join("\", \"", h->drivers);
+    dump_line("Driver: \"%s\"\n", s);
+    s = free_mem(s);
+  }
+
+#if 0
   if(h->driver) {
     dump_line("Driver: \"%s\"\n", h->driver);
   }
+#endif
 
   if(
     h->bus.id == bus_usb &&

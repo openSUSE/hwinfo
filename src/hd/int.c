@@ -599,14 +599,12 @@ void int_fix_ide_scsi(hd_data_t *hd_data)
   for(hd_scsi = hd_ide = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
     if(
       hd_scsi->bus.id == bus_scsi &&
-      hd_scsi->driver &&
-      !strcmp(hd_scsi->driver, "ide-scsi")
+      search_str_list(hd_scsi->drivers, "ide-scsi")
     ) {
       for(; hd_ide ; hd_ide = hd_ide->next) {
         if(
           hd_ide->bus.id == bus_ide &&
-          hd_ide->driver &&
-          !strcmp(hd_ide->driver, "ide-scsi")
+          search_str_list(hd_ide->drivers, "ide-scsi")
         ) {
           // FIXME: we need a proper solution for this!
           if(hd_ide->status.configured != status_no) {
@@ -656,9 +654,8 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
   for(hd_scsi = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
     if(
       hd_scsi->bus.id == bus_scsi &&
-      hd_scsi->driver &&
       hd_scsi->usb_guid &&
-      !strcmp(hd_scsi->driver, "usb-storage")
+      search_str_list(hd_scsi->drivers, "usb-storage")
     ) {
       for(hd_usb = hd_data->hd; hd_usb ; hd_usb = hd_usb->next) {
         if(
@@ -685,7 +682,7 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
           COPY_ENTRY(prog_if.name);
           COPY_ENTRY(unix_dev_name);
           COPY_ENTRY(model);
-          COPY_ENTRY(driver);
+          // ###### FIXME?: COPY_ENTRY(driver)
 
           hd_usb->vendor.id = hd_scsi->vendor.id;
           COPY_ENTRY(vendor.name);

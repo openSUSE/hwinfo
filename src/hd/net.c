@@ -101,7 +101,7 @@ void hd_scan_net(hd_data_t *hd_data)
     hd->unix_dev_name = new_str(sf_cdev->name);
     hd->sysfs_id = new_str(hd_sysfs_id(sf_cdev->path));
 
-    if(sf_drv) hd->driver = new_str(sf_drv->name);
+    if(sf_drv) add_str_list(&hd->drivers, sf_drv->name);
 
     if(sf_dev) {
       hd2 = hd_find_sysfs_id(hd_data, hd_sysfs_id(sf_dev->path));

@@ -244,7 +244,8 @@ void add_pci_data(hd_data_t *hd_data)
     hd = add_hd_entry(hd_data, __LINE__, 0);
 
     hd->sysfs_id = new_str(hd_sysfs_id(pci->sysfs_id));
-    hd->driver = new_str(hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1));
+    s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+    if(s) add_str_list(&hd->drivers, s);
 
     if(pci->sysfs_bus_id && *pci->sysfs_bus_id) {
       hd->sysfs_bus_id = new_str(pci->sysfs_bus_id);

@@ -254,7 +254,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
     hd->usb_guid = new_str(scsi->usb_guid);
     if(scsi->host < sizeof scsi_ctrl / sizeof *scsi_ctrl) {
       hd->attached_to = scsi_ctrl[scsi->host].hd_idx;
-      hd->driver = new_str(scsi_ctrl[scsi->host].driver);
+      add_str_list(&hd->drivers, scsi_ctrl[scsi->host].driver);
     }
     if(scsi->pci_info) {
       for(hd2 = hd_data->hd; hd2; hd2 = hd2->next) {

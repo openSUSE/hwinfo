@@ -72,6 +72,7 @@ struct option options[] = {
   { "pppoe", 0, NULL, 1000 + hw_pppoe },
   { "dsl", 0, NULL, 1000 + hw_dsl },
   { "wlan", 0, NULL, 1000 + hw_wlan },
+  { "block", 0, NULL, 1000 + hw_block },
   { "all", 0, NULL, 1000 + hw_all },
   { }
 };

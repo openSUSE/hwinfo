@@ -72,7 +72,7 @@
 #include "pcmcia.h"
 #include "s390.h"
 #include "sysfs.h"
-#include "sysfs_block.h"
+#include "block.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -316,7 +316,8 @@ static struct s_pr_flags {
   { pr_sysfs,         0,                  0, "sysfs"         },
   { pr_dsl,           0,              4|2|1, "dsl"           },
   { pr_udev,          0,                  0, "udev"          },
-  { pr_block,         0,                  0, "block"         }
+  { pr_block,         0,                  0, "block"         },
+  { pr_block_cdrom,   pr_block,           0, "block.cdrom"   }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -466,6 +467,9 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       }
       hd_set_probe_feature(hd_data, pr_partition);
       hd_set_probe_feature(hd_data, pr_block);
+      if(!hd_data->flags.fast) {
+        hd_set_probe_feature(hd_data, pr_block_cdrom);
+      }
       break;
 
     case hw_floppy:
@@ -782,6 +786,14 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_dasd);
       hd_set_probe_feature(hd_data, pr_partition);
       hd_set_probe_feature(hd_data, pr_block);
+      break;
+
+    case hw_block:
+      hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_block);
+      if(!hd_data->flags.fast) {
+        hd_set_probe_feature(hd_data, pr_block_cdrom);
+      }
       break;
 
     case hw_unknown:
@@ -1167,6 +1179,7 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->unique_id);
   free_mem(hd->block0);
   free_mem(hd->driver);
+  free_str_list(hd->drivers);
   free_mem(hd->old_unique_id);
   free_mem(hd->unique_id1);
   free_mem(hd->usb_guid);
@@ -1863,6 +1876,12 @@ void hd_scan(hd_data_t *hd_data)
   /* we are done... */
   for(hd = hd_data->hd; hd; hd = hd->next) hd->tag.fixed = 1;
 
+  /* for compatibility */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    hd->driver = free_mem(hd->driver);
+    if(hd->drivers && hd->drivers->str) hd->driver = new_str(hd->drivers->str);
+  }
+
   hd_data->module = mod_none;
 
   if(
@@ -2205,7 +2224,7 @@ str_list_t *search_str_list(str_list_t *sl, char *str)
 {
   if(!str) return NULL;
 
-  for(; sl; sl = sl->next) if(!strcmp(sl->str, str)) return sl;
+  for(; sl; sl = sl->next) if(sl->str && !strcmp(sl->str, str)) return sl;
 
   return NULL;
 }
@@ -4468,6 +4487,9 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         case hw_wlan:
           break;
 
+        case hw_block:
+          break;
+
         case hw_unknown:
         case hw_all:
         case hw_manual:		/* special */
@@ -4567,6 +4589,13 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 
   if(hd->is.wlan) {
     hd_set_hw_class(hd, hw_wlan);
+  }
+
+  if(
+    hd->base_class.id == bc_storage_device ||
+    hd->base_class.id == bc_partition
+  ) {
+    hd_set_hw_class(hd, hw_block);
   }
 }
 
