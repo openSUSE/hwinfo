@@ -236,11 +236,12 @@ void int_media_check(hd_data_t *hd_data)
 
 
 /*
- * Turn some Zip drives into floppies.
+ * Turn some drives into floppies.
  */
 void int_floppy(hd_data_t *hd_data)
 {
   hd_t *hd;
+  hd_res_t *res;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
@@ -262,6 +263,21 @@ void int_floppy(hd_data_t *hd_data)
         hd->sub_class.id = sc_sdev_floppy;
         hd->is.zip = 1;
         new_id(hd_data, hd);
+      }
+      else {
+        /* make everything a floppy that is 1440k */
+        for(res = hd->res; res; res = res->next) {
+          if(
+            res->any.type == res_size &&
+            res->size.unit == size_unit_sectors &&
+            res->size.val1 == 2880 &&
+            res->size.val2 == 512
+          ) {
+            hd->sub_class.id = sc_sdev_floppy;
+            new_id(hd_data, hd);
+            break;
+          }
+        }
       }
     }
   }

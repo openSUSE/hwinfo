@@ -410,3 +410,12 @@
 &device.id		pci 0x8000
 +driver.module.insmod	ieee1394|pcilynx
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Compaq Virtual Management Device
+
+# make it a floppy
+ baseclass.id		0x106
+&vendor.id		usb 0x049f
+&device.id		usb 0x0040
++subclass.id		0x03
