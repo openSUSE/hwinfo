@@ -15,7 +15,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#ifndef LIBHD_TINY
+#if !defined(LIBHD_TINY) && !defined(__sparc__)
 
 static unsigned do_alva(hd_data_t *hd_data, char *dev_name, int cnt);
 static unsigned do_fhp(hd_data_t *hd_data, char *dev_name, unsigned baud, int cnt);
@@ -451,5 +451,5 @@ unsigned do_baum(hd_data_t *hd_data, char *dev_name, int cnt)
 }
 
 
-#endif	/* ifndef LIBHD_TINY */
+#endif	/* !defined(LIBHD_TINY) && !defined(__sparc__) */
 
