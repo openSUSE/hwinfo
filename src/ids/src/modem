@@ -21,10 +21,26 @@
 #|vendor.id		pci 0x115d
 #&device.id		pci 0x0440+0x001d
 #
+
  vendor.id		pci 0x115d
 &device.id		pci 0x0103
 &baseclass.id		0x007
+|baseclass.id		0x007
+&subclass.id		0x80
+&vendor.id		pci 0x11c1
+&device.id		pci 0x0440+0x000f
+|baseclass.id		0x007
+&subclass.id		0x80
+&vendor.id		pci 0x11c1
+&device.id		pci 0x0450+0x000e
+|vendor.id		pci 0x115d
+&device.id		pci 0x000c
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2408
+|vendor.id		pci 0x115d
+&device.id		pci 0x0102
+&subvendor.id		pci 0x11c1
+&subdevice.id		pci 0x045b
 +baseclass.id		0x102
 +subclass.id		0x03
 +requires		ltmodem
-
