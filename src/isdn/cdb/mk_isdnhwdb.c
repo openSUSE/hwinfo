@@ -192,7 +192,7 @@ static int WriteVarios(FILE *f) {
 			idx = varios[i].name - name_str;
 		else
 			idx = nullidx;
-		fprintf(f,"%d\n", idx);
+		fprintf(f,"%x\n", idx);
 	}
 	return(0);
 }
