@@ -13,6 +13,66 @@
 +subclass.id		0x01
 +device.name		PhotoSmart 618
 
+ vendor.id		usb 0x03f0
+&device.id		usb 0x4202
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PhotoSmart 812
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x4302
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PhotoSmart 850
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x4402
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PhotoSmart 935
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x6302
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PhotoSmart 318
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x6402
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PhotoSmart 715
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x6502
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PhotoSmart 120
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x6602
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PhotoSmart 320
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x6702
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PhotoSmart 720
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x6802
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PhotoSmart 620
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x6a02
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PhotoSmart 735
+
  vendor.id		usb 0x040a
 +vendor.name		Kodak
 
@@ -266,6 +326,12 @@
 +device.name		IXUS v3
 
  vendor.id		usb 0x04a9
+&device.id		usb 0x3072
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		IXUS II
+
+ vendor.id		usb 0x04a9
 &device.id		usb 0x3073
 +baseclass.id		0x10f
 +subclass.id		0x01
@@ -296,16 +362,64 @@
 +device.name		PowerShot S50
 
  vendor.id		usb 0x04a9
+&device.id		usb 0x3078
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		ZR70MC
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x307b
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		MV630i
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x307f
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Optura 20
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3081
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Optura 10
+
+ vendor.id		usb 0x04a9
 &device.id		usb 0x3083
 +baseclass.id		0x10f
 +subclass.id		0x01
 +device.name		EOS 10D
 
  vendor.id		usb 0x04a9
+&device.id		usb 0x3084
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		EOS 300D
+
+ vendor.id		usb 0x04a9
 &device.id		usb 0x3085
 +baseclass.id		0x10f
 +subclass.id		0x01
 +device.name		PowerShot G5
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3099
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		EOS 300D
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x309a
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot A80
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x309b
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		IXUS i
 
  vendor.id		usb 0x04b0
 +vendor.name		Nikon
@@ -335,6 +449,12 @@
 +device.name		Coolpix 2500
 
  vendor.id		usb 0x04b0
+&device.id		usb 0x010b
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Coolpix 4500
+
+ vendor.id		usb 0x04b0
 &device.id		usb 0x010d
 +baseclass.id		0x10f
 +subclass.id		0x01
@@ -357,6 +477,24 @@
 +baseclass.id		0x10f
 +subclass.id		0x01
 +device.name		Coolpix 885
+
+ vendor.id		usb 0x04b0
+&device.id		usb 0x0113
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Coolpix 5000
+
+ vendor.id		usb 0x04b0
+&device.id		usb 0x0115
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Coolpix 3100
+
+ vendor.id		usb 0x04b0
+&device.id		usb 0x0117
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Coolpix 2100
 
  vendor.id		usb 0x04b0
 &device.id		usb 0x0119
@@ -416,6 +554,15 @@
 +baseclass.id		0x10f
 +subclass.id		0x01
 +device.name		STV680 based camera
+
+ vendor.id		usb 0x054c
++vendor.name		Sony
+
+ vendor.id		usb 0x054c
+&device.id		usb 0x004e
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Digital Camera
 
  vendor.id		usb 0x055f
 +vendor.name		Mustek
@@ -522,6 +669,12 @@
 +baseclass.id		0x10f
 +subclass.id		0x01
 +device.name		C-2040Z
+
+ vendor.id		usb 0x07b4
+&device.id		usb 0x0114
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PTP Camera
 
 # vendor.id		usb 0x07cf
 #+vendor.name		Casio
