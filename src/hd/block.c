@@ -660,10 +660,6 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
   if((s = hd_attr_str(sysfs_get_device_attr(sf_dev, "vendor")))) {
     cs = canon_str(s, strlen(s));
     ADD2LOG("    vendor = %s\n", cs);
-    if(!strcmp(cs, "ATA")) {
-      ADD2LOG("    dummy vendor entry \"%s\" removed\n", cs);
-      *cs = 0;
-    }
     if(*cs) {
       hd->vendor.name = cs;
     }
@@ -680,6 +676,30 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
     }
     else {
       free_mem(cs);
+    }
+
+    /* sata entries are somewhat strange... */
+    if(
+      hd->vendor.name &&
+      !strcmp(hd->vendor.name, "ATA") &&
+      hd->device.name
+    ) {
+      if((cs = strchr(hd->device.name, ' '))) {
+        t = canon_str(cs, strlen(cs));
+        if(*t) {
+          *cs = 0;
+          free_mem(hd->vendor.name);
+          hd->vendor.name = hd->device.name;
+          hd->device.name = t;
+        }
+        else {
+          t = free_mem(t);
+        }
+      }
+
+      if(!strcmp(hd->vendor.name, "ATA")) {
+        hd->vendor.name = free_mem(hd->vendor.name);
+      }
     }
   }
 

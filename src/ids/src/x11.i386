@@ -2321,6 +2321,14 @@
 +driver.xfree		4|nvidia|3d||||16
 
  vendor.id		pci 0x10de
+&device.id		pci 0x0322
+&subvendor.id		pci 0x10b0
+&subdevice.id		pci 0x0431
++subdevice.name		GeForce FX 5200 DH
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x0323
 +device.name		0x0323
 +driver.xfree		4|nv

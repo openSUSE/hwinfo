@@ -843,12 +843,14 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->scanner_db = free_str_list(hd_data->scanner_db);
 
   for(u = 0; u < sizeof hd_data->edd / sizeof *hd_data->edd; u++) {
-    free(hd_data->edd[u].sysfs_id);
+    hd_data->edd[u].sysfs_id = free_mem(hd_data->edd[u].sysfs_id);
   }
 
   hd_data->last_idx = 0;
 
   hd_shm_done(hd_data);
+
+  memset(hd_data, 0, sizeof *hd_data);
 
   return NULL;
 }
