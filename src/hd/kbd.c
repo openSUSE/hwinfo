@@ -141,7 +141,11 @@ void add_serial_console(hd_data_t *hd_data)
     }
 
     if(tty_major == 229 /* iseries hvc */) {
-      str_printf(&dev, 0, "hvc%u", tty_minor);
+      if (tty_minor >= 128) {
+        str_printf(&dev, 0, "hvsi%u", tty_minor-128);
+      } else {
+        str_printf(&dev, 0, "hvc%u", tty_minor);
+      }
     }
     else if(!ioctl(fd, TIOCGSERIAL, &ser_info)) {
       ADD2LOG("serial console at line %d\n", ser_info.line);
