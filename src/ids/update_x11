@@ -1,0 +1,10 @@
+#! /bin/sh
+
+mkdir tmp
+./export_x11hwinfo.pl
+cd tmp
+rm x11.hwinfo.all x11.hwinfo.s390
+for i in x11.hwinfo.* ; do ../get_x11ids2 $i ; done
+cd ..
+mv tmp/drivers.x11.* .
+rm -rf tmp
