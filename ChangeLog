@@ -1,5 +1,6 @@
 18/2/2003:	v5.55
 	- added pppoe detection
+	- updated X11 data
 
 18/2/2003:	v5.54
 	- removed experimental code causing segfault on compaq machines
