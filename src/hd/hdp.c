@@ -696,7 +696,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
         break;
 
       case res_hwaddr:
-	dump_line("HW Addr: %s\n", res->hwaddr.addr);
+	dump_line("HW Address: %s\n", res->hwaddr.addr);
         break;
 
       default:
