@@ -746,7 +746,7 @@ void hddb_dump_raw(hddb2_data_t *hddb, FILE *f)
 
   for(s = hddb->strings, i = 0, u = 0; u < hddb->strings_len; u++) {
     if(!hddb->strings[u]) {
-      fprintf(f, "%4d (0x%05x): \"%s\"\n", i, s - hddb->strings, s);
+      fprintf(f, "%4d (0x%05x): \"%s\"\n", i, (unsigned) (s - hddb->strings), s);
       i++;
       s = hddb->strings + u + 1;
     }

@@ -2803,10 +2803,10 @@ void write_cfile(FILE *f, list_t *hd)
   hddb_init(&hddb, hd);
 
   fprintf(log, "  db size: %u bytes\n",
-    sizeof hddb +
+    (unsigned) (sizeof hddb +
     hddb.strings_len +
     hddb.ids_len * sizeof *hddb.ids +
-    hddb.list_len * sizeof *hddb.list
+    hddb.list_len * sizeof *hddb.list)
   );
 
   fprintf(f,
