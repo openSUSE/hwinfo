@@ -45,10 +45,10 @@
 
 
 # modules.alias, #37335
- subclass.id		pci 0x03
+ subclass.id		0x03
 &vendor.id		pci 0x1039
 &device.id		pci 0x7013
-|subclass.id		pci 0x03
+|subclass.id		0x03
 &vendor.id		pci 0x1039
 &device.id		pci 0x7018
 |vendor.id		pci 0x1022

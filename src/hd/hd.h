@@ -46,6 +46,7 @@ extern "C" {
 #include <stdio.h>
 #include <inttypes.h>
 #include <termios.h>
+#include <sys/types.h>
 
 /*
  * libhd's directory
@@ -105,6 +106,7 @@ typedef enum probe_feature {
   pr_parallel_imm, pr_s390, pr_cpuemu, pr_sysfs, pr_s390disks, pr_udev,
   pr_block, pr_block_cdrom, pr_block_part, pr_edd, pr_edd_mod, pr_bios_ddc,
   pr_bios_fb, pr_bios_mode, pr_input, pr_block_mods, pr_bios_vesa,
+  pr_cpuemu_debug,
   pr_max, pr_lxrc, pr_dsl, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
@@ -217,7 +219,8 @@ typedef enum sc_std {
 typedef enum sc_net_if {
   sc_nif_loopback, sc_nif_ethernet, sc_nif_tokenring, sc_nif_fddi,
   sc_nif_ctc, sc_nif_iucv, sc_nif_hsi, sc_nif_qeth,
-  sc_nif_escon, sc_nif_myrinet, sc_nif_wlan, sc_nif_other = 0x80, sc_nif_sit
+  sc_nif_escon, sc_nif_myrinet, sc_nif_wlan, sc_nif_xp, sc_nif_other = 0x80,
+  sc_nif_sit
 } hd_sc_net_if_t;
 
 /* subclass values of bc_multimedia */
@@ -273,7 +276,7 @@ typedef enum bus_types {
 
   /* outside the range of the PCI values */
   bus_ps2 = 0x80, bus_serial, bus_parallel, bus_floppy, bus_scsi, bus_ide, bus_usb,
-  bus_adb, bus_raid, bus_sbus, bus_i2o, bus_vio
+  bus_adb, bus_raid, bus_sbus, bus_i2o, bus_vio, bus_ccw, bus_iucv
 } hd_bus_types_t;
 
 /**
@@ -2189,7 +2192,7 @@ typedef struct {
   } flags;
 
 
-  /** Concentrate on tses devices.
+  /** Concentrate on these devices.
    * List of sysfs ids for devices to look for.
    */
   str_list_t *only;
@@ -2286,6 +2289,7 @@ int hd_module_is_active(hd_data_t *hd_data, char *mod);
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class);
 hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_class);
 hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus);
+const char* hd_busid_to_hwcfg(int busid);
 hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old);
 hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t status);
 hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan);
@@ -2337,6 +2341,7 @@ int hd_write_config(hd_data_t *hd_data, hd_t *hd);
 char *hd_hw_item_name(hd_hw_item_t item);
 char *hd_status_value_name(hd_status_value_t status);
 int hd_change_status(const char *id, hd_status_t status, const char *config_string);
+int hd_read_mmap(hd_data_t *hd_data, char *name, unsigned char *buf, off_t start, unsigned size);
 
 
 /*
