@@ -1,3 +1,7 @@
+21/3/2001:	v1.97
+	- fixed src/ids/Makefile for axp
+	- slightly changed display detection code on axp
+
 20/3/2001:	v1.96
 	- new axp x11 data
 

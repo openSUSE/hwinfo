@@ -358,11 +358,16 @@ void hd_scan_misc2(hd_data_t *hd_data)
       }
     }
     if(i == 0) {
-      /* non-PCI VGA card */
+      /* non-PCI VGA card ??? - really, we shouldn't care... */
+      /* FIX THIS !!! ############### */
+#ifdef __alpha__
+      free_res_list(res);
+#else
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class = bc_display;
       hd->sub_class = sc_dis_vga;
       hd->res = res;
+#endif
     }
     else if(i == 1) {
       /* 1 PCI vga card, add resources */

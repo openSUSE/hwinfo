@@ -15,7 +15,7 @@ ifeq "$(ARCH)" "ppc"
 IDFILES	+= drivers.x11.ppc drivers.x11special.ppc names.x11.ppc
 endif
 
-ifeq "$(ARCH)" "axp"
+ifeq "$(ARCH)" "alpha"
 IDFILES	+= drivers.x11.axp names.x11.axp
 endif
 
