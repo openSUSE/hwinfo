@@ -1,3 +1,7 @@
+17/7/2003:	v7.01
+	- store parent id (#27508) and hotplug field
+	- new attempt to work around broken cciss_ioctl*.h inclue file
+
 16/7/2003:	v7.00
 	- detect pcmcia cards
 	- updated x11 data

@@ -7,7 +7,21 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <sys/pci.h>
+
+#if 1	/* ###### until cciss_ioctl.h gets fixed */
+#include <linux/types.h>
+#include <linux/ioctl.h>
+#define CCISS_IOC_MAGIC 'B'
+#define CCISS_GETPCIINFO _IOR(CCISS_IOC_MAGIC, 1, cciss_pci_info_struct)
+typedef struct _cciss_pci_info_struct
+{
+  unsigned char bus;
+  unsigned char dev_fn;
+  __u32 board_id;
+} cciss_pci_info_struct; 
+#else
 #include <linux/cciss_ioctl.h>
+#endif
 
 #include "hd.h"
 #include "hd_int.h"

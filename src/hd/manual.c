@@ -107,7 +107,7 @@ typedef enum {
   hwdi_unix_dev_name, hwdi_rom_id, hwdi_broken, hwdi_usb_guid, hwdi_res_mem,
   hwdi_res_phys_mem, hwdi_res_io, hwdi_res_irq, hwdi_res_dma, hwdi_res_size,
   hwdi_res_baud, hwdi_res_cache, hwdi_res_disk_geo, hwdi_res_monitor,
-  hwdi_res_framebuffer, hwdi_features
+  hwdi_res_framebuffer, hwdi_features, hwdi_hotplug
 } hw_hd_items_t;
 
 static hash_t hw_ids_hd_items[] = {
@@ -146,6 +146,7 @@ static hash_t hw_ids_hd_items[] = {
   { hwdi_res_monitor,     "Res.Monitor"      },
   { hwdi_res_framebuffer, "Res.Framebuffer"  },
   { hwdi_features,        "Features"         },
+  { hwdi_hotplug,         "Hotplug"          },
   { 0,                    NULL               }
 };
 
@@ -834,6 +835,10 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
         hd->usb_guid = new_str(sl2->str);
         break;
 
+      case hwdi_hotplug:
+        hd->hotplug = strtol(sl2->str, NULL, 0);
+        break;
+
       case hwdi_res_mem:
         res = add_res_entry(&hd->res, new_mem(sizeof *res));
         res->any.type = res_mem;
@@ -1164,6 +1169,12 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
   if(hd->usb_guid) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_usb_guid));
     add_str_list(&entry->value, hd->usb_guid);
+  }
+
+  if(hd->hotplug) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_hotplug));
+    str_printf(&s, 0, "%d", hd->hotplug);
+    add_str_list(&entry->value, s);
   }
 
   u = 0;

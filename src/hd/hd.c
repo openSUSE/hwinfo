@@ -1591,7 +1591,7 @@ void hd_scan(hd_data_t *hd_data)
 {
   char *s = NULL;
   int i, j;
-  hd_t *hd;
+  hd_t *hd, *hd2;
   uint64_t irqs;
   str_list_t *sl, *sl0;
 
@@ -1777,6 +1777,14 @@ void hd_scan(hd_data_t *hd_data)
 
   /* and again... */
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd_data, hd);
+
+  /* assign parent ids */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if((hd2 = hd_get_device_by_idx(hd_data, hd->attached_to))) {
+      free_mem(hd->parent_id);
+      hd->parent_id = new_str(hd2->unique_id);
+    }
+  }
 
   /* assign a hw_class & build a useful model string */
   for(hd = hd_data->hd; hd; hd = hd->next) {

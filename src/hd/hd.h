@@ -13,7 +13,7 @@ extern "C" {
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#define HD_VERSION	6
+#define HD_VERSION	7
 
 /*
  * debug flags
