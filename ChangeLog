@@ -1,3 +1,6 @@
+4/3/2003:	v6.06
+	- fixed floppy detection (#24283)
+
 4/3/2003:	v6.05
 	- fixed ataraid detection (format of /proc/ide/ide?/config
 	  changed, #23057, #24528)

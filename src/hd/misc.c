@@ -115,7 +115,12 @@ void hd_scan_misc(hd_data_t *hd_data)
   if(hd_probe_feature(hd_data, pr_misc_floppy)) {
     /* look for a floppy *device* entry... */
     for(hd = hd_data->hd; hd; hd = hd->next) {
-      if(hd->base_class.id == bc_storage_device && hd->sub_class.id == sc_sdev_floppy) {
+      if(
+        hd->base_class.id == bc_storage_device &&
+        hd->sub_class.id == sc_sdev_floppy &&
+        hd->unix_dev_name &&
+        !strncmp(hd->unix_dev_name, "/dev/fd", sizeof "/dev/fd" - 1)
+      ) {
 
         PROGRESS(1, 3, "read floppy");
         i = 5;
