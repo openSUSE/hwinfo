@@ -5,36 +5,36 @@ Tested platforms:
   - Intel ix86
   - Alpha AXP
   - PowerPC
+  - SPARC
 
-hw usage:
+hwinfo usage:
 
   hw [debug=deb_flag] [log=log_file] [[+|-]probe_option1] [[+|-]probe_option2] ... [.] [[+|-]probe_option3] ...
 
 Examples:
 
-  - hw +default
-    probes for nearly everything (this is the default when you just call "hw" without any args)
+  - hwinfo +default
+    probes for nearly everything (this is the default when you just call "hwinfo" without any args)
 
-  - hw +all
+  - hwinfo +all
     probes for everything
 
-  - hw debug=-1 log=hw.log +all
-    dto, with all debug info, output is written to hw.log *and* stdout (debug info
-    goes only to hw.log (this is a feature :-)))
+  - hwinfo debug=-1 log=hw_log +all
+    dto, with all debug info, output is written to hw_log
 
-  - hw -all +ide
+  - hwinfo -all +ide
     probe for ide drives only
 
-  - hw +all -isapnp -floppy
+  - hwinfo +all -isapnp -floppy
     probe for everything *except* isapnp and floppies
 
-  - hw debug=-1 -all
+  - hwinfo debug=-1 -all
     does *no* probing at all; useful if you want to see all supported probing flags
 
 You can specify probing flags via the environment variable 'probe' (yes,
 lower case); e.g.
 
-  probe=-all,+pci,+cdrom hw
+  probe=-all,+pci,+cdrom hwinfo
 
 The 'probe' environment variable is parsed *after* the command line options.
 
@@ -44,21 +44,21 @@ actual probing is done!
 
 Notably
 
-  hw -all +ide +scsi
+  hwinfo -all +ide +scsi
 
 is *identical* to
 
-  hw -all +scsi +ide
+  hwinfo -all +scsi +ide
 
 but different from
 
-  hw +ide +scsi -all
+  hwinfo +ide +scsi -all
 
 (If you don't believe it, just try it out.)
 
 The "." is a special tag to test re-probing; e.g.
 
-  hw +all . +net
+  hwinfo +all . +net
 
 (note the spaces around ".") will probe everything and then call the probing function
 *again*, this time looking only for network devices. All non-network devs are unaffected
@@ -67,7 +67,7 @@ all the network devs at the end of the hardware list.
 
 This works even multiple times:
 
-  hw -all +scsi . +scsi . +scsi
+  hwinfo -all +scsi . +scsi . +scsi
 
 probes 3 times just for the scsi devices. But this really is useful only for
 testing the lib.
@@ -77,28 +77,24 @@ modules are interdependend. (Particularly the misc module.)
 
 Likewise, some modules are only useful if others are active as well; eg.
 
-  hw -all +mouse
+  hwinfo -all +mouse
 
 will probably do not what you want, so
 
-  hw -all +mouse +serial
+  hwinfo -all +mouse +serial
 
 is better. A ps/2 mouse is only found if you add at least the "misc" module. So to get
 all the mice, do (currently)
 
-  hw -all +mouse +serial +misc
+  hwinfo -all +mouse +serial +misc
 
 Some probing flags do not stand for complete modules but enable additional
 features; e.g. "pci.range" or "cdrom.info".
 
 Example:
-  hw -all +cdrom
+  hwinfo -all +cdrom
   gives a list of all cdrom's
 
-  hw -all +cdrom +cdrom.info
+  hwinfo -all +cdrom.info
   additionally reads the iso9660 info
-
-  BUT:
-    hw -all +cdrom.info
-    does nothing
 

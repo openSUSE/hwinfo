@@ -13,16 +13,14 @@ tar -cf - * | tar -C $libhd -xf -
 cd $libhd
 find . -depth -name CVS -exec rm -r {} \;
 cd src/ids
-make
 mkdir .x
 mv Makefile.dist .x/Makefile
-mv *.c .x
+mv drivers.sample README* names.sample names.bus names.class mk_ids .x
 rm *
 mv .x/* .
 rm -r .x
 cd ../..
-make clean
-rm MAINTAINER scripts/ci_libhd
+rm MAINTAINER scripts/ci_*
 cd /tmp
 
 tar -zcf $libhd.tar.gz libhd-$ver
@@ -35,8 +33,7 @@ if mkdir /work/src/done/STABLE/libhd ; then
   . /work/src/bin/.profile
   vc libhd
   rm /work/src/done/STABLE/libhd/*~
-  echo "- check version info in spec file"
-  echo "- email susedist@suse.de"
+  echo "done"
 else
   echo oops
   exit 1

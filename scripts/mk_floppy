@@ -3,9 +3,7 @@
 #
 # Script to create a bootable floppy
 #
-# usage: mk_floppy [2.88]
-#
-#   2.88: create a 2.88MB floppy image
+# usage: mk_floppy
 #
 # on errors:
 #  - exit code > 0
@@ -72,8 +70,20 @@ mnt=/tmp/mnt$$
 kernel_name=`basename $kernel`
 is_mounted=
 
-sectors=18
-[ "$1" = "2.88" ] && sectors=36
+dos_image_144 () {
+  [ "$1" ] || return
+  (
+    echo -ne "\037\213\010\010\226j\2758\002\003tigz\000\223\357\346\340\230"
+    echo -ne "\226\265\327\202\211\271\044\223\341\355\215\215\274M\001\042"
+    echo -ne "\254\027\276o\274xC@}\203Q\324#\226\200\027L\036\211\047\335\326"
+    echo -ne "\044\274\3162\363QHr,\140\022>k\371\364\354\356\263\272\367\037"
+    echo -ne "\337\274\352[{\253O\311[3H\356\351\256\370\243j\233f\310\226]"
+    echo -ne "_5\343\235\333\363WA2\367E\353\242\212\337\267\037\344a\000\202"
+    echo -ne "\3727\217Wn\237s\371\350\332\273\267\331\030F\301(\030\005\243"
+    echo -ne "\140\024\014\006\260\357)\353\252\204\007\377\031\032\304\030"
+    echo -ne "\000\036\332-\245\015\006\000\000"
+  ) | gunzip -c | gunzip -c >$1
+}
 
 write_init () {
   cat <<-blubber >$mnt/sbin/init
@@ -221,11 +231,11 @@ gzip -9 $tmp_root
 #
 [ -x $syslinux ] || error 6 "no syslinux installed"
 
-scripts/mk_floppy_image $tmp_boot $1
+dos_image_144 $tmp_boot
 $syslinux $tmp_boot
 
 export MTOOLSRC=$mtools_rc
-echo "drive r: file=\"$tmp_boot\" mformat_only cylinders=80 heads=2 sectors=$sectors" >$mtools_rc
+echo "drive r: file=\"$tmp_boot\" mformat_only cylinders=80 heads=2 sectors=18" >$mtools_rc
 
 mcopy $kernel r:linux || error 18 "no space left on the boot floppy"
 mcopy $tmp_root.gz r:root || error 19 "no space left on the boot floppy"

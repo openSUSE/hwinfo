@@ -508,9 +508,9 @@ void hd_scan(hd_data_t *hd_data)
     );
     s = free_mem(s);
 
-    for(i = 0; i < pr_default; i++) {
+    for(i = 1; i < pr_default; i++) {		/* 1 because of pr_memory */
       if((s = hd_probe_feature_by_value(i))) {
-        ADD2LOG("%s%c%s", i ? " " : "", hd_probe_feature(hd_data, i) ? '+' : '-', s);
+        ADD2LOG("%s%c%s", i == 1 ? "" : " ", hd_probe_feature(hd_data, i) ? '+' : '-', s);
       }
     }
 

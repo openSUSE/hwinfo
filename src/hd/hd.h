@@ -67,7 +67,7 @@ extern "C" {
  * flags to control the probing.
  */
 typedef enum probe_feature {
-  pr_memory, pr_pci, pr_pci_range, pr_pci_ext, pr_isapnp, pr_cdrom,
+  pr_memory = 1, pr_pci, pr_pci_range, pr_pci_ext, pr_isapnp, pr_cdrom,
   pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial, pr_misc_par,
   pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide,
   pr_scsi, pr_scsi_geo, pr_usb, pr_usb_mods, pr_adb, pr_modem, pr_modem_usb,

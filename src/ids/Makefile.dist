@@ -1,7 +1,16 @@
 TOPDIR		= ../..
 TARGETS		= $(LIBHD_D)
+CLEANFILES	= *.c *.err hd.names hd.drivers
 
 include $(TOPDIR)/Makefile.common
 
+IDFILES = names.sample names.bus names.class drivers.sample
+
+OBJS	+= names.o names_s.o drivers.o
+
 $(LIBHD_D): $(OBJS)
 	ar r $(LIBHD) $?
+
+names.c names_s.c drivers.c: $(IDFILES)
+	./mk_ids $(IDFILES) 2>mk_ids.err
+

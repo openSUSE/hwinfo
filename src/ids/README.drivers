@@ -15,6 +15,8 @@ o the driver info belongs to all vendor/device_id lines just preceding the
   driver info
 o it doesn't make sense to have the same vendor/device_id twice in the file,
   as the search stops at the first entry that matches
+o driver info not described here (e.g. sound, printer) is currently not
+  maintained by libhd
 
 
 vendor/device ids
@@ -113,13 +115,10 @@ o mouse protocol info
 
 o X11 server info
 
-	x	<server_id>|<3d_extension>|<colors>|<dac_speed>
-  - <server_id>: X server info; this is *not* the server name but some tag
-    for YaST[12]
-  - <3d_extension>: 3D info; as above, just some tag for YaST
-  - <colors>: hexadecimal bitmask indicating the supported color depths:
-    bit0-4: 8, 15, 16, 24, 32 bits; I'm not sure if this is useful information
-  - <dac_speed>: max. RAMDAC clock in MHz
-  - example (no 24bit support, unknown max. RAMDAC speed):
-	x	SVGA|glxriva|17
+	x	<server_id>|<3d_package_1>|<3d_package_2>|...
+  - <server_id>: X server info; this is *not* the server name but some tag for YaST
+    (see SaX's Identity file for tag names)
+  - <3d_paket>: 3D info; packet to install
+  - example (glx & mesa package):
+	x	SVGA|glx|mesa
 

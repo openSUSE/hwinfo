@@ -1,0 +1,30 @@
+The libhd uses two data bases: one for the names of the devices and one for
+the driver info.
+
+The format of the 'hd.drivers' file is described in README.drivers.
+
+The 'hd.names' file follows loosely the format of the pciutils' id file with
+some extensions (ids may be given as ranges, there can be a device class
+attached to an entry (useful for ISA-PnP cards as they don't have device
+class info).
+
+As the parser in the libhd is rather picky, there is a perl script that
+digests some formats and puts them into hd.names & hd.drivers in 'canonical'
+form. In addition it generates the internal representation of the data,
+ready to be included in libhd.
+
+Note that libhd will look for the external data to add to its internal data
+base. These external files must have the format of hd.names & hd.drivers.
+They are looked for in the (then) current directory.
+
+If you want to use *real* data: the perl script can read the pciutils id file,
+SaX's identity file, PCI ids from
+  http://home.hyperlink.net.au/~chart/download/vendors.txt
+and, of course our own format (see names.sample & drivers.sample).
+
+But check 'mk_ids.err' for conflicting info.
+
+
+Have fun,
+
+  Steffen Winterfeldt

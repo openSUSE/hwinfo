@@ -1,7 +1,7 @@
 TOPDIR		= $(CURDIR)
 SUBDIRS		= src
-TARGETS		= hw
-CLEANFILES	= hw hw.static
+TARGETS		= hwinfo
+CLEANFILES	= hwinfo hwinfo.static
 
 include Makefile.common
 
@@ -9,12 +9,12 @@ OBJS_NO_TINY	= names.o cpu.o memory.o monitor.o bios.o parallel.o modem.o
 
 .PNONY:	static tiny
 
-hw: hw.o $(LIBHD)
-	$(CC) hw.o $(LDFLAGS) -o $@
+hwinfo: hwinfo.o $(LIBHD)
+	$(CC) hwinfo.o $(LDFLAGS) -o $@
 
-static: hw
-	$(CC) -static hw.o $(LDFLAGS) -o hw.static
-	strip -R .note -R .comment hw.static
+static: hwinfo
+	$(CC) -static hwinfo.o $(LDFLAGS) -o hwinfo.static
+	strip -R .note -R .comment hwinfo.static
 
 tiny:
 	@make EXTRA_FLAGS=-DLIBHD_TINY
@@ -23,6 +23,6 @@ tiny:
 
 install:
 	install -d -m 755 /usr/sbin /usr/lib /usr/include
-	install -m 755 -s hw /usr/sbin/hwinfo
+	install -m 755 -s hwinfo /usr/sbin
 	install -m 644 $(LIBHD) /usr/lib
 	install -m 644 src/hd/hd.h /usr/include
