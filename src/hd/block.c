@@ -793,7 +793,8 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
   if(
     hd_report_this(hd_data, hd) &&
     hd->unix_dev_name &&
-    hd->sub_class.id == sc_sdev_disk
+    hd->sub_class.id == sc_sdev_disk &&
+    !hd_probe_feature(hd_data, pr_scsi_noserial)
   ) {
     PROGRESS(5, 0, hd->unix_dev_name);
     fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK);

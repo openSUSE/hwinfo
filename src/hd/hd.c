@@ -241,6 +241,7 @@ static struct s_pr_flags {
   { pr_mouse,         0,              4|2|1, "mouse"         },
 #endif
   { pr_scsi,          0,            8|4|2|1, "scsi"          },
+  { pr_scsi_noserial, 0,                  0, "scsi.noserial" },
   { pr_usb,           0,            8|4|2|1, "usb"           },
   { pr_usb_mods,      0,              4    , "usb.mods"      },
   { pr_adb,           0,            8|4|2|1, "adb"           },
