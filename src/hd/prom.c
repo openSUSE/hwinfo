@@ -30,6 +30,21 @@ static void add_legacy_prom_devices(hd_data_t *hd_data, devtree_t *dt);
 static void add_devices(hd_data_t *hd_data);
 static void dump_devtree_data(hd_data_t *hd_data);
 
+
+int detect_smp(hd_data_t *hd_data)
+{
+  unsigned cpus;
+  devtree_t *devtree;
+
+  if(!(devtree = hd_data->devtree)) return -1;	/* hd_scan_prom() not called */
+
+  for(cpus = 0; devtree; devtree = devtree->next) {
+    if(devtree->device_type && !strcmp(devtree->device_type, "cpu")) cpus++;
+  }
+
+  return cpus > 1 ? cpus : 0;
+}
+
 void hd_scan_prom(hd_data_t *hd_data)
 {
   hd_t *hd;

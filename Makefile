@@ -24,7 +24,7 @@ shared: hwinfo.o
 	$(CC) -shared -Wl,--whole-archive $(LIBHD) -Wl,--no-whole-archive \
 		-Wl,-soname=libhd.so.$(LIBHD_MAJOR_VERSION)\
 		-o $(LIBHD_SO) 
-	$(CC) hwinfo.o $(LDFLAGS) -Lsrc -lhd -lpthread -o hwinfo
+	$(CC) hwinfo.o $(LDFLAGS) -Lsrc -lhd -o hwinfo
 
 install:
 	install -d -m 755 /usr/sbin /usr/lib /usr/include

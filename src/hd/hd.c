@@ -2849,17 +2849,6 @@ int hd_smp_support(hd_data_t *hd_data)
 
   if(hd && hd->next) is_smp = 1;
 
-#if 0
-  // ######### this is wrong!!! fix it !!! ########
-
-  if(!hd || !hd->detail || hd->detail->type != hd_detail_cpu) return i;
-  if(!(ct = hd->detail->cpu.data)) return i;
-
-  for(sl = ct->features; sl; sl = sl->next) {
-    if(!strcmp(sl->str, "apic")) return 1;
-  }
-#endif
-
   hd = hd_free_hd_list(hd);
 
 #ifdef __i386__
@@ -2869,6 +2858,19 @@ int hd_smp_support(hd_data_t *hd_data)
       if(!bf) hd_set_probe_feature(hd_data, pr_bios);
       hd_scan_bios(hd_data);
       if(!bf) hd_clear_probe_feature(hd_data, pr_bios);
+    }
+    is_smp = detect_smp(hd_data);
+    if(is_smp < 0) is_smp = 0;
+  }
+#endif
+
+#ifdef __PPC__
+  if(is_smp < 2) {
+    if(!hd_data->devtree) {
+      int pf = hd_probe_feature(hd_data, pr_prom);
+      if(!pf) hd_set_probe_feature(hd_data, pr_prom);
+      hd_scan_prom(hd_data);
+      if(!pf) hd_clear_probe_feature(hd_data, pr_prom);
     }
     is_smp = detect_smp(hd_data);
     if(is_smp < 0) is_smp = 0;

@@ -153,7 +153,7 @@ unsigned has_something_attached(hd_data_t *hd_data, hd_t *hd);
 
 char *get_cmdline(hd_data_t *hd_data, char *key);
 
-#ifdef __i386__
+#if defined(__i386__) || defined(__PPC__)
 int detect_smp(hd_data_t *hd_data);
 #endif
 
