@@ -1,0 +1,86 @@
+# hwinfo names data. From bttv-cards.c, kernel 2.4.7
+# Wed Aug  1 09:08:46 CEST 2001
+#
+109e  Brooktree Corporation
+	036e  Bt878
+		0070 13eb  Hauppauge WinTV
+		0070 3900  Hauppauge WinTV-D
+		0070 4500  Hauppauge WinTV/PVR
+		0070 ff00  Osprey-100
+		0070 ff01  Osprey-200
+		1002 0001  ATI TV Wonder
+		1002 0003  ATI TV Wonder/VE
+		107d 6606  Leadtek WinFast TV 2000
+		10b4 2636  STB TV PCI FM, P/N 6000704
+		10fc 4020  I-O Data Co. GV-BCV3/PCI
+		10fc 4050  I-O Data Co. GV-BCV4/PCI
+		11bd 0012  Pinnacle PCTV
+		121a 3000  VoodooTV 200
+		144f 3000  TView 99 (CPH063)
+		144f 3002  Askey Magic TView
+		1461 0001  AVerMedia TVPhone98
+		1461 0002  AVermedia TVCapture 98
+		1461 0003  AVerMedia TVPhone98
+		1461 0004  AVerMedia TVCapture 98
+		14ff 3000  TView 99 (CPH061)
+		14ff 3002  Phoebe TV Master
+		153b 1117  Terratec TValue
+		153b 1118  Terratec TValue
+		153b 1119  Terratec TValue
+		153b 111a  Terratec TValue
+		153b 1123  Terratec TV Radio+
+		153b 1127  Terratec TV+
+		153b 1134  Terratec TValue
+		153b 1135  Terratec TValue Radio
+		15b0 400a  Zoltrix Genie TV
+		15b0 400d  Zoltrix Genie TV / Radio
+		15b0 4010  Zoltrix Genie TV / Radio
+		15cb 0101  AG GMV1
+		14c7 0101  Modular Technology PCTV
+		1851 1850  Chronos Video Shuttle II
+		1851 1851  CyberMail AV
+		1852 1852  Typhoon TView TV/FM Tuner
+		2636 10b4  STB ???
+		6606 217d  Leadtek WinFast TV 2000
+		bd11 1200  Pinnacle PCTV
+	036f  Bt879
+		0070 13eb  Hauppauge WinTV
+		0070 3900  Hauppauge WinTV-D
+		0070 4500  Hauppauge WinTV/PVR
+		0070 ff00  Osprey-100
+		0070 ff01  Osprey-200
+		1002 0001  ATI TV Wonder
+		1002 0003  ATI TV Wonder/VE
+		107d 6606  Leadtek WinFast TV 2000
+		10b4 2636  STB TV PCI FM, P/N 6000704
+		10fc 4020  I-O Data Co. GV-BCV3/PCI
+		10fc 4050  I-O Data Co. GV-BCV4/PCI
+		11bd 0012  Pinnacle PCTV
+		121a 3000  VoodooTV 200
+		144f 3000  TView 99 (CPH063)
+		144f 3002  Askey Magic TView
+		1461 0001  AVerMedia TVPhone98
+		1461 0002  AVermedia TVCapture 98
+		1461 0003  AVerMedia TVPhone98
+		1461 0004  AVerMedia TVCapture 98
+		14ff 3000  TView 99 (CPH061)
+		14ff 3002  Phoebe TV Master
+		153b 1117  Terratec TValue
+		153b 1118  Terratec TValue
+		153b 1119  Terratec TValue
+		153b 111a  Terratec TValue
+		153b 1123  Terratec TV Radio+
+		153b 1127  Terratec TV+
+		153b 1134  Terratec TValue
+		153b 1135  Terratec TValue Radio
+		15b0 400a  Zoltrix Genie TV
+		15b0 400d  Zoltrix Genie TV / Radio
+		15b0 4010  Zoltrix Genie TV / Radio
+		15cb 0101  AG GMV1
+		14c7 0101  Modular Technology PCTV
+		1851 1850  Chronos Video Shuttle II
+		1851 1851  CyberMail AV
+		1852 1852  Typhoon TView TV/FM Tuner
+		2636 10b4  STB ???
+		6606 217d  Leadtek WinFast TV 2000
+		bd11 1200  Pinnacle PCTV

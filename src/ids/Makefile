@@ -31,7 +31,7 @@ ifeq "$(ARCH)" "ia64"
 IDFILES	+= drivers.x11.ia64 names.x11.ia64
 endif
 
-IDFILES += names.pciutils\
+IDFILES += names.video names.pciutils\
 	   drivers.network drivers.scsi drivers.block drivers.monitor\
 	   drivers.audio drivers.mouse drivers.video drivers.braille
 
