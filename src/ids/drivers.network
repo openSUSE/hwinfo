@@ -137,6 +137,7 @@
 # net/ne.c
 AXE 2201
 PNP 80d6
+	i	isa-pnp|8390|ne io=<io0> irq=<irq0>
 	m	ne
 		options ne		io=<io0> irq=<irq0>
 

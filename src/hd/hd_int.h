@@ -49,6 +49,7 @@
 
 #define NAME_LIST		"/var/lib/libhd/hd.names"
 #define DRIVER_LIST		"/var/lib/libhd/hd.drivers"
+#define MANUAL_DIR		"/var/lib/hardware"
 
 #define KERNEL_22		0x020200
 #define KERNEL_24		0x020400
@@ -96,7 +97,8 @@ enum mod_idx {
   mod_net, mod_floppy, mod_misc, mod_bios, mod_cpu, mod_monitor, mod_mouse,
   mod_ide, mod_scsi, mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel,
   mod_isa, mod_dac960, mod_smart, mod_isdn, mod_kbd, mod_prom, mod_sbus,
-  mod_int, mod_braille, mod_xtra, mod_sys, mod_dasd, mod_i2o, mod_cciss
+  mod_int, mod_braille, mod_xtra, mod_sys, mod_dasd, mod_i2o, mod_cciss,
+  mod_manual
 };
 
 void *new_mem(size_t size);
@@ -115,6 +117,7 @@ misc_t *free_misc(misc_t *m);
 scsi_t *free_scsi(scsi_t *scsi, int free_all);
 hd_detail_t *free_hd_detail(hd_detail_t *d);
 devtree_t *free_devtree(hd_data_t *hd_data);
+hd_manual_t *free_manual(hd_manual_t *manual);
 
 char *isa_id2str(unsigned);
 char *eisa_vendor_str(unsigned);

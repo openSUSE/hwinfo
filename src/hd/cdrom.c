@@ -37,7 +37,7 @@ static cdrom_info_t *new_cdrom_entry(cdrom_info_t **ci);
 
 void hd_scan_cdrom(hd_data_t *hd_data)
 {
-  int found, prog_cnt = 0;
+  int found;
   hd_t *hd;
   cdrom_info_t *ci, **prev, *next;
 
@@ -131,25 +131,37 @@ void hd_scan_cdrom(hd_data_t *hd_data)
       if(ci->dvdram) hd->prog_if = pif_dvdram;
     }
   }
+}
 
+
+/*
+ * Read CD data and get ISO9660 info.
+ */
+void hd_scan_cdrom2(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  int i;
+
+  if(!hd_probe_feature(hd_data, pr_cdrom)) return;
+
+  hd_data->module = mod_cdrom;
 
   /*
    * look for a CD and get some info
    */
   if(!hd_probe_feature(hd_data, pr_cdrom_info)) return;
 
-  for(hd = hd_data->hd; hd; hd = hd->next) {
+  for(i = 0, hd = hd_data->hd; hd; hd = hd->next) {
     if(
       hd->base_class == bc_storage_device &&
       hd->sub_class == sc_sdev_cdrom &&
       hd->unix_dev_name
     ) {
-      PROGRESS(3, ++prog_cnt, "read cdrom");
+      PROGRESS(3, ++i, "read cdrom");
       hd_read_cdrom_info(hd_data, hd);
     }
   }
 }
-
 
 /*
  * Read the CDROM info, if there is a CD inserted.

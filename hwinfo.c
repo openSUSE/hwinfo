@@ -61,6 +61,8 @@ struct option options[] = {
   { "braille", 0, NULL, 1000 + hw_braille },
   { "sys", 0, NULL, 1000 + hw_sys },
   { "cpu", 0, NULL, 1000 + hw_cpu },
+  { "manual", 0, NULL, 1000 + hw_manual },
+  { "partition", 0, NULL, 1000 + hw_partition },
   { "all", 0, NULL, 2000 },
   { "reallyall", 0, NULL, 2001 },
   { "smp", 0, NULL, 3000 },

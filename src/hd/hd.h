@@ -77,18 +77,20 @@ typedef enum probe_feature {
   pr_isa, pr_isa_isdn, pr_dac960, pr_smart, pr_isdn, pr_kbd, pr_prom,
   pr_sbus, pr_int, pr_braille, pr_braille_alva, pr_braille_fhp,
   pr_braille_ht, pr_ignx11, pr_sys, pr_dasd, pr_i2o, pr_cciss, pr_bios_vbe,
-  pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum,
+  pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
 /*
  * list types for hd_list()
+ *
+ * if you want to modify this: cf. manual.c::hw_items[]
  */
 typedef enum hw_item {
-  hw_cdrom = 1, hw_floppy, hw_disk, hw_network, hw_display, hw_monitor,
-  hw_mouse, hw_keyboard, hw_sound, hw_isdn, hw_modem, hw_storage_ctrl,
-  hw_network_ctrl, hw_printer, hw_tv, hw_scanner, hw_braille, hw_sys,
-  hw_cpu
+  hw_all = 1, hw_cdrom, hw_floppy, hw_disk, hw_network, hw_display,
+  hw_monitor, hw_mouse, hw_keyboard, hw_sound, hw_isdn, hw_modem,
+  hw_storage_ctrl, hw_network_ctrl, hw_printer, hw_tv, hw_scanner,
+  hw_braille, hw_sys, hw_cpu, hw_manual, hw_partition
 } hd_hw_item_t;
 
 /*
@@ -205,6 +207,19 @@ typedef enum bus_types {
   bus_ps2 = 0x80, bus_serial, bus_parallel, bus_floppy, bus_scsi, bus_ide, bus_usb,
   bus_adb, bus_raid, bus_sbus, bus_i2o
 } hd_bus_types_t;
+
+/* hardware config status */
+typedef struct {
+  unsigned invalid:1;
+  unsigned configured:3;
+  unsigned available:3;
+  unsigned critical:3;
+} hd_status_t;
+
+/* hardware config status values */
+typedef enum {
+  status_no = 1, status_yes, status_unknown, status_new
+} hd_status_value_t;
 
 /*
  * Used whenever we create a list of strings (e.g. file read).
@@ -973,6 +988,25 @@ typedef union {
 } hd_detail_t;
 
 
+/* info about manually configured hardware (in /var/lib/hardware/) */
+typedef struct hd_manual_s {
+  struct hd_manual_s *next;
+
+  char *unique_id;
+  char *parent_id;
+  unsigned hw_class;
+  char *model;
+
+  hd_status_t status;
+
+  /* More or less free-form key, value pairs.
+   * key should not contain '=', however.
+   */
+  str_list_t *key;
+  str_list_t *value;
+} hd_manual_t;
+
+
 /*
  * Every hardware component gets an hd_t entry. The root of the chained
  * hardware list is in hd_data_t.
@@ -997,6 +1031,8 @@ typedef struct s_hd_t {
   unsigned module, line, count;	/* place where the entry was created */
   hd_res_t *res;
   hd_detail_t *detail;
+
+  hd_status_t status;		/* hardware config status (if available) */
 
   struct {
     unsigned agp:1;		/* AGP device */
@@ -1076,6 +1112,7 @@ typedef struct {
   devtree_t *devtree;		/* prom device tree on ppc */
   unsigned kernel_version;	/* kernel version */
   int in_vmware;		/* running in vmware */
+  hd_manual_t *manual;		/* hardware config info */
 } hd_data_t;
 
 
@@ -1143,6 +1180,10 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *hd, FILE *f);
 /* implemented in cdrom.c */
 
 cdrom_info_t *hd_read_cdrom_info(hd_data_t *hd_data, hd_t *hd);
+
+/* implemented in manual.c */
+hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, char *id);
+int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry);
 
 #ifdef __cplusplus
 }

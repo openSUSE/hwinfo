@@ -47,6 +47,7 @@
 #include "dasd.h"
 #include "i2o.h"
 #include "cciss.h"
+#include "manual.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -158,7 +159,8 @@ static struct s_mod_names {
   { mod_sys, "sys" },
   { mod_dasd, "dasd" },
   { mod_i2o, "i2o" },
-  { mod_cciss, "cciss" }
+  { mod_cciss, "cciss" },
+  { mod_manual, "manual" }
 };
 
 /*
@@ -240,7 +242,8 @@ static struct s_pr_flags {
   { pr_sys,          0,           8|4|2|1, "sys"          },
   { pr_dasd,         0,           8|4|2|1, "dasd"         },
   { pr_i2o,          0,           8|4|2|1, "i2o"          },
-  { pr_cciss,        0,           8|4|2|1, "cciss"        }
+  { pr_cciss,        0,           8|4|2|1, "cciss"        },
+  { pr_manual,       0,           8|4|2|1, "manual"       }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -421,6 +424,7 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->cmd_line = free_mem(hd_data->cmd_line);
   hd_data->xtra_hd = free_str_list(hd_data->xtra_hd);
   hd_data->devtree = free_devtree(hd_data);
+  hd_data->manual = free_manual(hd_data->manual);
 
   return NULL;
 }
@@ -768,6 +772,29 @@ scsi_t *free_scsi(scsi_t *scsi, int free_all)
     }
 
     free_mem(scsi);
+  }
+
+  return NULL;
+}
+
+
+hd_manual_t *free_manual(hd_manual_t *manual)
+{
+  hd_manual_t *next;
+
+  if(!manual) return NULL;
+
+  for(; manual; manual = next) {
+    next = manual->next;
+
+    free_mem(manual->unique_id);
+    free_mem(manual->parent_id);
+    free_mem(manual->model);
+
+    free_str_list(manual->key);
+    free_str_list(manual->value);
+
+    free_mem(manual);
   }
 
   return NULL;
@@ -1232,6 +1259,8 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_cdrom(hd_data);
   hd_scan_net(hd_data);
 
+  hd_scan_manual(hd_data);
+
   /* add test entries */
   hd_scan_xtra(hd_data);
 
@@ -1242,6 +1271,8 @@ void hd_scan(hd_data_t *hd_data)
 #endif
 #endif
   hd_scan_int(hd_data);
+
+  hd_scan_cdrom2(hd_data);
 
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd);
 
@@ -3317,6 +3348,14 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
       case hw_cpu:
         hd_set_probe_feature(hd_data, pr_cpu);
         break;
+
+      case hw_manual:
+        hd_set_probe_feature(hd_data, pr_manual);
+        break;
+
+      case hw_all:
+      case hw_partition:
+        break;
     }
     hd_scan(hd_data);
     memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
@@ -4272,7 +4311,6 @@ devtree_t *free_devtree(hd_data_t *hd_data)
 
   return hd_data->devtree = NULL;
 }
-
 
 
 void test_read_block0_open(void *arg)
