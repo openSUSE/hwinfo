@@ -1,0 +1,54 @@
+#! /usr/bin/perl
+
+sub cbits;
+sub getit;
+
+for (@ARGV) {
+  getit $_;
+}
+
+sub getit
+{
+  my $arch;
+  local $_;
+
+  $arch = shift;
+
+  system "~adrian/bin/x11DB $arch tmp";
+  system "rm -f tmp.sax1 tmp.sax2";
+  system "mv tmp.names names.x11.$arch";
+
+  die "oops" unless open F, "tmp.hwinfo";
+  @f = (<F>);
+  close F;
+
+  for (@f) {
+    s/^(\tx\t.*?)XF86_([^|]+)/$1\U$2/;
+    if(/^\tx\t/) {
+      s/(?<=\|)([0-9,]+)$/cbits $1/e;
+    }
+  }
+
+  die "oops" unless open W, ">drivers.x11.$arch";
+  print W @f;
+  close W;
+  system "rm -f tmp.hwinfo";
+}
+
+sub cbits
+{
+  my $i;
+  local $_;
+
+  $i = 0;
+  for (split /,/, $_[0]) {
+    $i |=  1 if $_ ==  8;
+    $i |=  2 if $_ == 15;
+    $i |=  4 if $_ == 16;
+    $i |=  8 if $_ == 24;
+    $i |= 16 if $_ == 32;
+  }
+
+  return sprintf "%x", $i;
+}
+

@@ -1,0 +1,170 @@
+#x11DB
+#hwinfo data from 2000-07-10 18:57:05
+#
+
+
+
+# ATI:Rage 3D Pro PCI
+1002 4750  
+	x	3|MACH64|||||
+
+
+# Sun:Sun - Monochrome (bwtwo)
+s4001 0001  
+	x	3|SUNMONO|||||
+
+
+# Sun:Sun - Color3 (cgthree)
+s4001 0002  
+	x	3|SUN|||||
+
+
+# Sun:Sun - CG8/RasterOps (cgeight)
+s4001 0003  
+	x	3|SUN|||||
+
+
+# Sun:Sun - GS (cgtwelve)
+s4001 0004  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - Graphics Tower (gt)
+s4001 0005  
+	x	3|SUN24|||||
+
+
+# Sun:Quantum 3D MGXplus with 4M VRAM (mgx)
+s4001 0006  
+	x	3|SUN24|||||
+
+
+# Sun:Quantum 3D MGXplus (mgx)
+s4001 0007  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - Double width GX (cgsix)
+s4001 0008  
+	x	3|SUN|||||
+
+
+# Sun:Sun - Single width GX (cgsix)
+s4001 0009  
+	x	3|SUN|||||
+
+
+# Sun:Sun - Turbo GX with 1M VSIMM (cgsix)
+s4001 000a  
+	x	3|SUN|||||
+
+
+# Sun:Sun - Turbo GX Plus (cgsix)
+s4001 000b  
+	x	3|SUN|||||
+
+
+# Sun:Sun - Turbo GX (cgsix)
+s4001 000c  
+	x	3|SUN|||||
+
+
+# Sun:Sun - Unknown GX (cgsix)
+s4001 000d  
+	x	3|SUN|||||
+
+
+# Sun:Sun - SX with 4M VSIMM (cgfourteen)
+s4001 000e  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - SX with 8M VSIMM (cgfourteen)
+s4001 000f  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - SX (cgfourteen
+s4001 0010  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - ZX or Turbo ZX (leo)
+s4001 0011  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - Turbo ZX (leo)
+s4001 0012  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - TCX (8bit)
+s4001 0013  
+	x	3|SUN|||||
+
+
+# Sun:Sun - TCX (S24)
+s4001 0014  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - Elite3D-M6 Horizontal (afb)
+s4001 0015  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - Elite3D (afb)
+s4001 0016  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - FFB 67MHz Creator (ffb)
+s4001 0017  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - FFB 67MHz Creator 3D (ffb)
+s4001 0018  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - FFB 75MHz Creator 3D (ffb)
+s4001 0019  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - FFB2 Vertical Creator (ffb)
+s4001 001a  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - FFB2 Vertical Creator 3D (ffb)
+s4001 001b  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - FFB2+ Vertical Creator (ffb)
+s4001 001c  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - FFB2+ Vertical Creator 3D (ff)
+s4001 001d  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - FFB2 Horizontal Creator (ffb)
+s4001 001e  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - FFB2 Horizontal Creator 3D (ffb)
+s4001 001f  
+	x	3|SUN24|||||
+
+
+# Sun:Sun - FFB [unknown type] (ffb)
+s4001 0020  
+	x	3|SUN24|||||
+
