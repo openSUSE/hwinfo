@@ -35,6 +35,7 @@ void hd_scan_dasd(hd_data_t *hd_data)
   char  dasdname[32];
   char  *s1;
   int	count1, count2;
+  int old_entry_found=0;
 
   if(!hd_probe_feature(hd_data, pr_dasd)) return;
 
@@ -91,17 +92,50 @@ void hd_scan_dasd(hd_data_t *hd_data)
     if ( 'a' <= c3 && c3 <= 'z') dasdname[2] = c3;
     sprintf(meldung, "dasd device %s, count1 %d, count2 %d\n",sl->str,count1,count2);
     ADD2LOG(meldung);
+
+    /* check if s390.c has already found the device */
+
+    old_entry_found=0;
+    for(hd=hd_data->hd;hd;hd=hd->next)
+    {
+	fprintf(stderr,"bcid %d\n",hd->base_class.id);
+    	if(hd->base_class.id == bc_storage_device)
+    	{
+    		res=hd->res;
+    		for(res=hd->res;res;res=res->next)
+    		{
+    			if(res->io.type==res_io && res->io.base==u0)
+    			{
+    				old_entry_found=1;
+    				goto out;
+    			}
+    		}
+    	}
+    }
     hd = add_hd_entry(hd_data, __LINE__, 0);
     hd->base_class.id = bc_storage_device;
+
+/* a DASD is not necessarily virtual */
+#if 0
     hd->bus.id = bus_vio;
-    hd->slot = (u0 >> 8) & 0xff;
-    hd->func = u0 & 0xff;
+#endif
+
+out:
+    
+    if(!old_entry_found)
+    {
+	    res = add_res_entry(&hd->res, new_mem(sizeof *res));
+	    res->io.type=res_io;
+	    res->io.base=u0;
+	    res->io.range=1;
+	    res->io.enabled=1;
+	    res->io.access=acc_rw;
+    }
 
     hd->sub_class.id = sc_sdev_disk;
 
     hd->device.name = new_str("S390 Disk");
     str_printf(&hd->unix_dev_name, 0, "/dev/dasd%s", dasdname);
-    str_printf(&hd->rom_id, 0, "%04X", u0);
 
     res = add_res_entry(&hd->res, new_mem(sizeof *res));
     res->size.type = res_size;
@@ -131,7 +165,7 @@ void hd_scan_dasd(hd_data_t *hd_data)
     hd->base_class.id = bc_storage;
     hd->sub_class.id = sc_sto_other;
     hd->vendor.name = new_str("IBM");
-    hd->device.name = new_str("VIO DASD");
+    hd->device.name = new_str("DASD");
   }
 }
 
