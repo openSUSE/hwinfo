@@ -1,0 +1,635 @@
+# special ids
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# adb devices
+
+ vendor.id		special 0x0100
++vendor.name		Apple
+
+ vendor.id		special 0x0100
+&device.id		special 0x0201
++device.name		ADB Keyboard 1
+
+ vendor.id		special 0x0100
+&device.id		special 0x0203
++device.name		ADB Keyboard 3
+
+ vendor.id		special 0x0100
+&device.id		special 0x0302
++device.name		ADB Mouse
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# generic mice
+
+ vendor.id		special 0x0200
++vendor.name		Unknown
+
+ vendor.id		special 0x0200
+&device.id		special 0x0001
++device.name		Generic USB Mouse
+
+ vendor.id		special 0x0200
+&device.id		special 0x0002
++device.name		Generic PS/2 Mouse
+
+ vendor.id		special 0x0200
+&device.id		special 0x0003
++device.name		MS-Compatible Serial Mouse
+
+ vendor.id		special 0x0200
+&device.id		special 0x0004
++device.name		Intelli/Wheel Mouse
+
+ vendor.id		special 0x0200
+&device.id		special 0x0005
++device.name		Intelli/Wheel Mouse
+
+ vendor.id		special 0x0200
+&device.id		special 0x0006
++device.name		Touch Pad
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# pc keyboards
+# ids > 1 are keyboard ids as read via keyboard id command
+
+ vendor.id		special 0x0201
++vendor.name		Unknown
+
+ vendor.id		special 0x0201
+&device.id		special 0x0000
++device.name		PC Keyboard
+
+ vendor.id		special 0x0201
+&device.id		special 0x0001
++device.name		PS/2 Keyboard
+
+ vendor.id		special 0x0201
+&device.id		special 0x41ab
++device.name		MF2 Keyboard
+
+ vendor.id		special 0x0202
++vendor.name		Sun Microsystems
+
+ vendor.id		special 0x0202
+&device.id		special 0x0000
++device.name		Sun Mouse
+
+ vendor.id		special 0x0202
+&device.id		special 0x0002
++device.name		Type-2 Keyboard
+
+ vendor.id		special 0x0202
+&device.id		special 0x0003
++device.name		Type-3 Keyboard
+
+ vendor.id		special 0x0202
+&device.id		special 0x0004
++device.name		Type-4 Keyboard
+
+ vendor.id		special 0x0202
+&device.id		special 0x0005
++device.name		Type-5 Keyboard
+
+ vendor.id		special 0x0202
+&device.id		special 0x0005
+&subvendor.id		special 0x0202
+&subdevice.id		special 0x0001
++subdevice.name		Type-5 Unix Keyboard
+
+ vendor.id		special 0x0202
+&device.id		special 0x0005
+&subvendor.id		special 0x0202
+&subdevice.id		special 0x0002
++subdevice.name		Type-5 Euro Keyboard
+
+ vendor.id		special 0x0203
++vendor.name		Unknown
+
+ vendor.id		special 0x0203
+&device.id		special 0x0000
++device.name		Serial Console
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Mac colors
+
+ vendor.id		special 0x0300
+&device.id		special 0x0001
++device.name		Blueberry
+
+ vendor.id		special 0x0300
+&device.id		special 0x0004
++device.name		Lime
+
+ vendor.id		special 0x0300
+&device.id		special 0x0005
++device.name		Tangerine
+
+ vendor.id		special 0x0300
+&device.id		special 0x0007
++device.name		Black
+
+ vendor.id		special 0x0300
+&device.id		special 0x0008
++device.name		Snow
+
+ vendor.id		special 0x0300
+&device.id		special 0x00ff
++device.name		Graphite
+
+# Strawberry, Grape, Ruby, Indigo, Sage
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# special ppc hardware; ids shared with special 0x0402
+
+ vendor.id		special 0x0401
++vendor.name		Apple
+
+ vendor.id		special 0x0401
+&device.id		special 0x0010
++device.name		Integrated Sound (awacs)
+
+ vendor.id		special 0x0401
+&device.id		special 0x0011
++device.name		Integrated Sound (screamer)
+
+ vendor.id		special 0x0401
+&device.id		special 0x0012
++device.name		Integrated Sound (burgundy)
+
+ vendor.id		special 0x0401
+&device.id		special 0x0013
++device.name		Integrated Sound (daca)
+
+ vendor.id		special 0x0401
+&device.id		special 0x0020
++device.name		MACE Ethernet Controller
+
+ vendor.id		special 0x0401
+&device.id		special 0x0021
++device.name		BMAC Ethernet Controller
+
+ vendor.id		special 0x0401
+&device.id		special 0x0022
++device.name		BMAC+ Ethernet Controller
+
+ vendor.id		special 0x0401
+&device.id		special 0x0030
++device.name		MESH SCSI Controller
+
+ vendor.id		special 0x0401
+&device.id		special 0x0031
++device.name		53c94 SCSI Controller
+
+ vendor.id		special 0x0401
+&device.id		special 0x0040
++device.name		Super Woz Integrated Machine 3
+
+ vendor.id		special 0x0401
+&device.id		special 0x1000
++device.name		21" Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x1114
++device.name		Portrait Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x1221
++device.name		12" Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x1331
++device.name		21" Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x1334
++device.name		21" Monitor (mono)
+
+ vendor.id		special 0x0401
+&device.id		special 0x1335
++device.name		21" Monitor (mono)
+
+ vendor.id		special 0x0401
+&device.id		special 0x140a
++device.name		NTSC Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x151e
++device.name		Portrait Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x1603
++device.name		16" Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x160b
++device.name		19" Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x1623
++device.name		21" Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x162b
++device.name		14" Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x1700
++device.name		PAL Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x1714
++device.name		NTSC Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x1717
++device.name		VGA Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x172d
++device.name		16" Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x1730
++device.name		PAL Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x173a
++device.name		19" Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x173f
++device.name		Unknown Monitor
+
+ vendor.id		special 0x0401
+&device.id		special 0x2000
++device.name		800x600 LCD
+
+ vendor.id		special 0x0401
+&device.id		special 0x2001
++device.name		1024x768 LCD
+
+ vendor.id		special 0x0401
+&device.id		special 0x3000
++device.name		Valkyrie
+
+ vendor.id		special 0x0401
+&device.id		special 0x3001
++device.name		Platinum
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# chrp hardware; ids shared with special 0x0401
+
+ vendor.id		special 0x0402
++vendor.name		IBM
+
+ vendor.id		special 0x0402
+&device.id		special 0x0014
++device.name		CS4236B
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# parport zip controller
+
+ vendor.id		special 0x1800
++vendor.name		Iomega
+
+ vendor.id		special 0x1800
+&device.id		special 0x0001
++device.name		MatchMaker
+
+ vendor.id		special 0x1800
+&device.id		special 0x0002
++device.name		PPA3
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# modem
+
+ vendor.id		special 0x2000
++vendor.name		Unknown
+
+ vendor.id		special 0x2000
+&device.id		special 0x0001
++baseclass.id		0x102
++subclass.id		0x00
++device.name		AT Modem
+
+ vendor.id		special 0x2001
++vendor.name		U.S. Robotics, Inc.
+
+ vendor.id		special 0x2001
+&device.id		special 0x0001
++baseclass.id		0x102
++subclass.id		0x00
++device.name		USRobotics Sportster Vi 33600 Faxmodem
+
+ vendor.id		special 0x2002
++vendor.name		3Com U.S. Robotics, Inc.
+
+ vendor.id		special 0x2002
+&device.id		special 0x0001
++baseclass.id		0x102
++subclass.id		0x00
++device.name		3Com U.S. Robotics ISDN Pro TA
+
+ vendor.id		special 0x2003
++vendor.name		ZyXEL
+
+ vendor.id		special 0x2003
+&device.id		special 0x0001
++baseclass.id		0x102
++subclass.id		0x00
++device.name		U1496C
+
+ vendor.id		special 0x2004
++vendor.name		Zoom Telephonics, Inc.
+
+ vendor.id		special 0x2004
+&device.id		special 0x0001
++baseclass.id		0x102
++subclass.id		0x00
++device.name		Zoom FaxModem V.34X Plus Model 2836
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# isa isdn cards
+
+ vendor.id		special 0x3000
++vendor.name		Unknown
+
+ vendor.id		special 0x3001
++vendor.name		Teles
+
+ vendor.id		special 0x3001
+&device.id		special 0x0100
++device.name		Teles 16.0
+
+ vendor.id		special 0x3001
+&device.id		special 0x0101
++device.name		Teles 16.0 AB
+
+ vendor.id		special 0x3003
++vendor.name		Teles
+
+ vendor.id		special 0x3003
+&device.id		special 0x0300
++device.name		Teles 16.3
+
+ vendor.id		special 0x3003
+&device.id		special 0x0301
++device.name		Teles 16.3 AB Video
+
+ vendor.id		special 0x3005
++vendor.name		AVM
+
+ vendor.id		special 0x3005
+&device.id		special 0x0500
++device.name		AVM A1 or Fritz!Classic
+
+ vendor.id		special 0x3006
++vendor.name		Elsa
+
+ vendor.id		special 0x3006
+&device.id		special 0x0601
++device.name		Elsa ML PC
+
+ vendor.id		special 0x3006
+&device.id		special 0x0602
++device.name		Elsa ML PCC-8
+
+ vendor.id		special 0x3006
+&device.id		special 0x0603
++device.name		Elsa ML PCC-16
+
+ vendor.id		special 0x3006
+&device.id		special 0x0604
++device.name		Elsa ML PCF
+
+ vendor.id		special 0x3006
+&device.id		special 0x0605
++device.name		Elsa ML PCF-Pro
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# sbus cards
+
+ vendor.id		special 0x4001
++vendor.name		Sun Microsystems
+
+
+# Grafik cards
+ vendor.id		special 0x4001
+&device.id		special 0x0001
++device.name		Sun|Monochrome (bwtwo)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0002
++device.name		Sun|Color3 (cgthree)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0003
++device.name		Sun|CG8/RasterOps (cgeight)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0004
++device.name		Sun|GS (cgtwelve)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0005
++device.name		Sun|Graphics Tower (gt)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0006
++device.name		Quantum 3D MGXplus with 4M VRAM (mgx)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0007
++device.name		Quantum 3D MGXplus (mgx)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0008
++device.name		Sun|Double width GX (cgsix)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0009
++device.name		Sun|Single width GX (cgsix)
+
+ vendor.id		special 0x4001
+&device.id		special 0x000a
++device.name		Sun|Turbo GX with 1M VSIMM (cgsix)
+
+ vendor.id		special 0x4001
+&device.id		special 0x000b
++device.name		Sun|Turbo GX Plus (cgsix)
+
+ vendor.id		special 0x4001
+&device.id		special 0x000c
++device.name		Sun|Turbo GX (cgsix)
+
+ vendor.id		special 0x4001
+&device.id		special 0x000d
++device.name		Sun|Unknown GX (cgsix)
+
+ vendor.id		special 0x4001
+&device.id		special 0x000e
++device.name		Sun|SX with 4M VSIMM (cgfourteen)
+
+ vendor.id		special 0x4001
+&device.id		special 0x000f
++device.name		Sun|SX with 8M VSIMM (cgfourteen)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0010
++device.name		Sun|SX (cgfourteen)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0011
++device.name		Sun|ZX or Turbo ZX (leo)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0012
++device.name		Sun|Turbo ZX (leo)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0013
++device.name		Sun|TCX (8bit)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0014
++device.name		Sun|TCX (S24)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0015
++device.name		Sun|Elite3D-M6 Horizontal (afb)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0016
++device.name		Sun|Elite3D (afb)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0017
++device.name		Sun|FFB 67MHz Creator (ffb)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0018
++device.name		Sun|FFB 67MHz Creator 3D (ffb)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0019
++device.name		Sun|FFB 75MHz Creator 3D (ffb)
+
+ vendor.id		special 0x4001
+&device.id		special 0x001a
++device.name		Sun|FFB2 Vertical Creator (ffb)
+
+ vendor.id		special 0x4001
+&device.id		special 0x001b
++device.name		Sun|FFB2 Vertical Creator 3D (ffb)
+
+ vendor.id		special 0x4001
+&device.id		special 0x001c
++device.name		Sun|FFB2+ Vertical Creator (ffb)
+
+ vendor.id		special 0x4001
+&device.id		special 0x001d
++device.name		Sun|FFB2+ Vertical Creator 3D (ffb)
+
+ vendor.id		special 0x4001
+&device.id		special 0x001e
++device.name		Sun|FFB2 Horizontal Creator (ffb)
+
+ vendor.id		special 0x4001
+&device.id		special 0x001f
++device.name		Sun|FFB2 Horizontal Creator 3D (ffb)
+
+ vendor.id		special 0x4001
+&device.id		special 0x0020
++device.name		Sun|FFB [unknown type] (ffb)
+
+ vendor.id		special 0x4001
+&device.id		special 0x1001
++device.name		Sun Enhanced SCSI Processor (ESP)
+
+ vendor.id		special 0x4001
+&device.id		special 0x1002
++device.name		Sun Swift (ESP)
+
+ vendor.id		special 0x4001
+&device.id		special 0x1003
++device.name		Performance Technologies ISP
+
+ vendor.id		special 0x4001
+&device.id		special 0x1004
++device.name		QLogic ISP
+
+ vendor.id		special 0x4001
+&device.id		special 0x1101
++device.name		Sun SPARCStorage Array (fc4)
+
+ vendor.id		special 0x4001
+&device.id		special 0x1102
++device.name		Sun Enterprise Network Array (fc4)
+
+
+# audio chips
+ vendor.id		special 0x4001
+&device.id		special 0x2001
++device.name		AMD7930
+
+ vendor.id		special 0x4001
+&device.id		special 0x2002
++device.name		CS4231 EB2 DMA
+
+ vendor.id		special 0x4001
+&device.id		special 0x2003
++device.name		CS4231 APC DMA
+
+ vendor.id		special 0x4001
+&device.id		special 0x2004
++device.name		SS10/SS20 DBRI
+
+
+# Network cards
+ vendor.id		special 0x4001
+&device.id		special 0x3001
++device.name		Sun Happy Meal Ethernet
+
+ vendor.id		special 0x4001
+&device.id		special 0x3002
++device.name		Sun Lance Ethernet
+
+ vendor.id		special 0x4001
+&device.id		special 0x3003
++device.name		Sun Quad Ethernet
+
+ vendor.id		special 0x4001
+&device.id		special 0x3004
++device.name		MyriCOM MyriNET Gigabit Ethernet
+
+
+# special s390 hardware
+ vendor.id		special 0x6001
++vendor.name		IBM
+
+ vendor.id		special 0x6001
+&device.id		special 0x0000
++device.name		Ethernet card
+
+ vendor.id		special 0x6001
+&device.id		special 0x0001
++device.name		Token ring card
+
+ vendor.id		special 0x6001
+&device.id		special 0x0070
++device.name		ESCON
+
+ vendor.id		special 0x6001
+&device.id		special 0x0080
++device.name		Network card
+
