@@ -710,7 +710,7 @@ char *get_string(str_list_t *sl, int index)
 static struct {
   unsigned bit;
   char *name;
-} smbios_feature_name[] = {
+} smbios_feature_name1[] = {
   {  4, "ISA supported" },
   {  5, "MCA supported" },
   {  6, "EISA supported" },
@@ -751,11 +751,58 @@ static struct {
   { 64 + 9, "F12 Network boot supported" }
 };
 
-static char *smbios_wakeups[] = {
- "Reserved", "Other", "Unknown", "APM Timer",
- "Modem Ring", "LAN Remote", "Power Switch", "PCI PME#",
- "AC Power Restored"
+
+static struct {
+  unsigned bit;
+  char *name;
+} smbios_feature_name2[] = {
+  {  0, "hosting board" },
+  {  1, "needs one daughter board" },
+  {  2, "removable" },
+  {  3, "replaceable" },
+  {  4, "hot swappable" }
 };
+
+
+static char *smbios_wakeups[] = {
+  "Reserved", "Other", "Unknown", "APM Timer",
+  "Modem Ring", "LAN Remote", "Power Switch", "PCI PME#",
+  "AC Power Restored"
+};
+
+
+static char *smbios_board_types[] = {
+  NULL, "Other", "Unknown", "Server Blade",
+  "Connectivity Switch", "System Management Module", "Processor Module", "I/O Module",
+  "Memory Module", "Daughter Board", "Motherboard", "Processor/Memory Module",
+  "Processor/IO Module", "Interconnect Board"
+};
+
+
+static char *smbios_chassis_types[] = {
+  NULL, "Other", "Unknown", "Desktop",
+  "Low Profile Desktop", "Pizza Box", "Mini Tower", "Tower",
+  "Portable", "LapTop", "Notebook", "Hand Held",
+  "Docking Station", "All in One", "Sub Notebook", "Space Saving",
+  "Lunch Box", "Main Server Chassis", "Expansion Chassis", "SubChassis",
+  "Bus Expansion Chassis", "Peripheral Chassis", "RAID Chassis", "Rack Mount Chassis",
+  "Sealed-case PC", "Multi-System Chassis"
+};
+
+
+static char *smbios_ch_states[] = {
+  NULL, "Other", "Unknown", "Safe",
+  "Warning", "Critical", "Non-recoverable"
+};
+
+
+static char *smbios_ch_sec_states[] = {
+  NULL, "Other", "Unknown", "None",
+  "External interface locked out", "External interface enabled"
+};
+
+
+#define SMBIOS_ID2NAME(list, id, default) new_str(list[id < sizeof list / sizeof *list ? id : default])
 
 void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
 {
@@ -764,7 +811,6 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
   int cnt, data_len;
   unsigned char *sm_data;
   unsigned u, v;
-  char *s;
 
   if(!hd_data->smbios) return;
 
@@ -788,10 +834,10 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
         if(data_len >= 0x14) {
           sm->biosinfo.xfeatures |= sm_data[0x13] << 8;
         }
-        for(u = 0; u < sizeof smbios_feature_name / sizeof *smbios_feature_name; u++) {
-          v = smbios_feature_name[u].bit;
+        for(u = 0; u < sizeof smbios_feature_name1 / sizeof *smbios_feature_name1; u++) {
+          v = smbios_feature_name1[u].bit;
           if(v < 64 ? sm->biosinfo.features & (1L << v) : sm->biosinfo.xfeatures & (1 << (v - 64))) {
-            add_str_list(&sm->biosinfo.feature_str, smbios_feature_name[u].name);
+            add_str_list(&sm->biosinfo.feature_str, smbios_feature_name1[u].name);
           }
         }
         break;
@@ -806,8 +852,7 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
         if(data_len >= 0x19) {
           memcpy(sm->sysinfo.uuid, sm_data + 8, 16);
           sm->sysinfo.wake_up.id = sm_data[0x18];
-          s = smbios_wakeups[sm->sysinfo.wake_up.id < sizeof smbios_wakeups / sizeof *smbios_wakeups ? sm->sysinfo.wake_up.id : 1];
-          sm->sysinfo.wake_up.name = new_str(s);
+          sm->sysinfo.wake_up.name = SMBIOS_ID2NAME(smbios_wakeups, sm->sysinfo.wake_up.id, 1);
         }
         break;
 
@@ -818,12 +863,57 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
           sm->boardinfo.version = get_string(sl, sm_data[6]);
           sm->boardinfo.serial = get_string(sl, sm_data[7]);
         }
+        if(data_len >= 9) {
+          sm->boardinfo.asset = get_string(sl, sm_data[8]);
+        }
+        if(data_len >= 0x0e) {
+          sm->boardinfo.features = sm_data[9];
+          sm->boardinfo.location = get_string(sl, sm_data[0x0a]);
+          sm->boardinfo.chassis = *(uint16_t *) (sm_data + 0x0b);
+          sm->boardinfo.board_type.id = sm_data[0x0d];
+          sm->boardinfo.board_type.name = SMBIOS_ID2NAME(smbios_board_types, sm->boardinfo.board_type.id, 1);
+          for(u = 0; u < sizeof smbios_feature_name2 / sizeof *smbios_feature_name2; u++) {
+            if(sm->boardinfo.features & (1 << smbios_feature_name2[u].bit)) {
+              add_str_list(&sm->boardinfo.feature_str, smbios_feature_name2[u].name);
+            }
+          }
+        }
+        if(data_len >= 0x0f) {
+          u = sm_data[0x0e];
+          if(u && data_len >= 0x0f + 2 * u) {
+            sm->boardinfo.objects_len = u;
+            sm->boardinfo.objects = new_mem(u * sizeof *sm->boardinfo.objects);
+            for(u = 0; u < sm->boardinfo.objects_len; u++) {
+              sm->boardinfo.objects[u] = *(uint16_t *) (sm_data + 0x0f + 2 * u);
+            }
+          }
+        }
         break;
 
       case sm_chassis:
         if(data_len >= 6) {
           sm->chassis.manuf = get_string(sl, sm_data[4]);
-          sm->chassis.ch_type = sm_data[5] & 0x7f;
+          sm->chassis.lock = sm_data[5] >> 7;
+          sm->chassis.ch_type.id = sm_data[5] & 0x7f;
+          sm->chassis.ch_type.name = SMBIOS_ID2NAME(smbios_chassis_types, sm->chassis.ch_type.id, 1);
+        }
+        if(data_len >= 9) {
+          sm->chassis.version = get_string(sl, sm_data[6]);
+          sm->chassis.serial = get_string(sl, sm_data[7]);
+          sm->chassis.asset = get_string(sl, sm_data[8]);
+        }
+        if(data_len >= 0x0d) {
+          sm->chassis.bootup.id = sm_data[9];
+          sm->chassis.power.id = sm_data[0x0a];
+          sm->chassis.thermal.id = sm_data[0x0b];
+          sm->chassis.security.id = sm_data[0x0c];
+          sm->chassis.bootup.name = SMBIOS_ID2NAME(smbios_ch_states, sm->chassis.bootup.id, 1);
+          sm->chassis.power.name = SMBIOS_ID2NAME(smbios_ch_states, sm->chassis.power.id, 1);
+          sm->chassis.thermal.name = SMBIOS_ID2NAME(smbios_ch_states, sm->chassis.thermal.id, 1);
+          sm->chassis.security.name = SMBIOS_ID2NAME(smbios_ch_sec_states, sm->chassis.security.id, 1);
+        }
+        if(data_len >= 0x11) {
+          sm->chassis.oem = *(uint32_t *) (sm_data + 0x0d);
         }
         break;
 
@@ -932,6 +1022,8 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
     }
   }
 }
+
+#undef SMBIOS_ID2NAME
 
 
 void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)

@@ -22,7 +22,6 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
   int i;
   unsigned char vbeinfo[0x200];
   int ax, bx, cx;
-  hd_smbios_t *sm;
 
   log_hd_data = hd_data;
 

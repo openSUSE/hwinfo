@@ -1553,10 +1553,23 @@ hd_smbios_t *free_smbios_list(hd_smbios_t *sm)
         free_mem(sm->boardinfo.product);
         free_mem(sm->boardinfo.version);
         free_mem(sm->boardinfo.serial);
+        free_mem(sm->boardinfo.asset);
+        free_mem(sm->boardinfo.location);
+        free_mem(sm->boardinfo.board_type.name);
+        free_str_list(sm->boardinfo.feature_str);
+        free_mem(sm->boardinfo.objects);
         break;
 
       case sm_chassis:
         free_mem(sm->chassis.manuf);
+        free_mem(sm->chassis.version);
+        free_mem(sm->chassis.serial);
+        free_mem(sm->chassis.asset);
+        free_mem(sm->chassis.ch_type.name);
+        free_mem(sm->chassis.bootup.name);
+        free_mem(sm->chassis.power.name);
+        free_mem(sm->chassis.thermal.name);
+        free_mem(sm->chassis.security.name);
         break;
 
       case sm_processor:

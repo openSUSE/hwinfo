@@ -1026,15 +1026,6 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
   char c, *s, *t;
   unsigned u;
   int i;
-  static char *chassistypes[] = {
-    "Unknown", "Other", "Unknown", "Desktop",
-    "Low Profile Desktop", "Pizza Box", "Mini Tower", "Tower",
-    "Portable", "LapTop", "Notebook", "Hand Held",
-    "Docking Station", "All in One", "Sub Notebook", "Space Saving",
-    "Lunch Box", "Main Server Chassis", "Expansion Chassis", "SubChassis",
-    "Bus Expansion Chassis", "Peripheral Chassis", "RAID Chassis", "Rack Mount Chassis",
-    "Sealed-case PC"
-  };
   static char *cpustatus[8] = {
     "Unknown Status", "CPU Enabled", "CPU Disabled by User", "CPU Disabled by BIOS",
     "CPU Idle", "Reserved", "Reserved", "Other"
@@ -1079,7 +1070,7 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
   for(sm = hd_data->smbios; sm; sm = sm->next) {
     switch(sm->any.type) {
       case sm_biosinfo:
-        fprintf(f, "  BIOS Info:\n");
+        fprintf(f, "  BIOS Info: #%d\n", sm->any.handle);
         if(sm->biosinfo.vendor) fprintf(f, "    Vendor: \"%s\"\n", sm->biosinfo.vendor);
         if(sm->biosinfo.version) fprintf(f, "    Version: \"%s\"\n", sm->biosinfo.version);
         if(sm->biosinfo.date) fprintf(f, "    Date: \"%s\"\n", sm->biosinfo.date);
@@ -1092,7 +1083,7 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
         break;
 
       case sm_sysinfo:
-        fprintf(f, "  System Info:\n");
+        fprintf(f, "  System Info: #%d\n", sm->any.handle);
         if(sm->sysinfo.manuf) fprintf(f, "    Manufacturer: \"%s\"\n", sm->sysinfo.manuf);
         if(sm->sysinfo.product) fprintf(f, "    Product: \"%s\"\n", sm->sysinfo.product);
         if(sm->sysinfo.version) fprintf(f, "    Version: \"%s\"\n", sm->sysinfo.version);
@@ -1115,22 +1106,59 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
         break;
 
       case sm_boardinfo:
-        fprintf(f, "  Board Info:\n");
+        fprintf(f, "  Board Info: #%d\n", sm->any.handle);
         if(sm->boardinfo.manuf) fprintf(f, "    Manufacturer: \"%s\"\n", sm->boardinfo.manuf);
         if(sm->boardinfo.product) fprintf(f, "    Product: \"%s\"\n", sm->boardinfo.product);
         if(sm->boardinfo.version) fprintf(f, "    Version: \"%s\"\n", sm->boardinfo.version);
         if(sm->boardinfo.serial) fprintf(f, "    Serial: \"%s\"\n", sm->boardinfo.serial);
+        if(sm->boardinfo.asset) fprintf(f, "    Asset Tag: \"%s\"\n", sm->boardinfo.asset);
+        if(sm->boardinfo.board_type.id) {
+          fprintf(f, "    Type: 0x%02x (%s)\n", sm->boardinfo.board_type.id, sm->boardinfo.board_type.name);
+        }
+        if(sm->boardinfo.feature_str) {
+          fprintf(f, "    Features: 0x%02x\n", sm->boardinfo.features);
+          for(sl = sm->boardinfo.feature_str; sl; sl = sl->next) {
+            fprintf(f, "      %s\n", sl->str);
+          }
+        }
+        if(sm->boardinfo.location) fprintf(f, "    Location: \"%s\"\n", sm->boardinfo.location);
+        if(sm->boardinfo.chassis) fprintf(f, "    Chassis: #%d\n", sm->boardinfo.chassis);
+        if(sm->boardinfo.objects_len) {
+          fprintf(f, "    Contained Objects: ");
+          for(i = 0; i < sm->boardinfo.objects_len; i++) {
+            fprintf(f, "%s#%d", i ? ", " : "", sm->boardinfo.objects[i]);
+          }
+          fprintf(f, "\n");
+        }
         break;
 
       case sm_chassis:
-        fprintf(f, "  Chassis Info:\n");
-        if(sm->chassis.manuf) fprintf(f, "    Manufacturer: \"%s\"\n", sm->boardinfo.manuf);
-        s = chassistypes[sm->chassis.ch_type < sizeof chassistypes / sizeof *chassistypes ? sm->chassis.ch_type : 0];
-        fprintf(f, "    Type: 0x%02x (%s)\n", sm->chassis.ch_type, s);
+        fprintf(f, "  Chassis Info: #%d\n", sm->any.handle);
+        if(sm->chassis.manuf) fprintf(f, "    Manufacturer: \"%s\"\n", sm->chassis.manuf);
+        if(sm->chassis.version) fprintf(f, "    Version: \"%s\"\n", sm->chassis.version);
+        if(sm->chassis.serial) fprintf(f, "    Serial: \"%s\"\n", sm->chassis.serial);
+        if(sm->chassis.asset) fprintf(f, "    Asset Tag: \"%s\"\n", sm->chassis.asset);
+        if(sm->chassis.ch_type.id) {
+          fprintf(f, "    Type: 0x%02x (%s)\n", sm->chassis.ch_type.id, sm->chassis.ch_type.name);
+        }
+        if(sm->chassis.lock) fprintf(f, "    Lock: present\n");
+        if(sm->chassis.bootup.id) {
+          fprintf(f, "    Bootup State: 0x%02x (%s)\n", sm->chassis.bootup.id, sm->chassis.bootup.name);
+        }
+        if(sm->chassis.power.id) {
+          fprintf(f, "    Power Supply State: 0x%02x (%s)\n", sm->chassis.power.id, sm->chassis.power.name);
+        }
+        if(sm->chassis.thermal.id) {
+          fprintf(f, "    Thermal State: 0x%02x (%s)\n", sm->chassis.thermal.id, sm->chassis.thermal.name);
+        }
+        if(sm->chassis.security.id) {
+          fprintf(f, "    Security Status: 0x%02x (%s)\n", sm->chassis.security.id, sm->chassis.security.name);
+        }
+        if(sm->chassis.oem) fprintf(f, "    OEM Info: 0x%08x\n", sm->chassis.oem);
         break;
 
       case sm_processor:
-        fprintf(f, "  Processor Info:\n");
+        fprintf(f, "  Processor Info: #%d\n", sm->any.handle);
         if(sm->processor.socket) {
           fprintf(f, "    Processor Socket: \"%s\"", sm->processor.socket);
           s = NULL;
@@ -1154,7 +1182,7 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
         break;
 
       case sm_onboard:
-        fprintf(f, "  On Board Devices:\n");
+        fprintf(f, "  On Board Devices: #%d\n", sm->any.handle);
         for(i = 0; (unsigned) i < sizeof sm->onboard.descr / sizeof *sm->onboard.descr; i++) {
           if(sm->onboard.descr[i]) {
             u = sm->onboard.dtype[i] & 0x7f;
@@ -1169,7 +1197,7 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
         break;
 
       case sm_lang:
-        fprintf(f, "  Language Info:\n");
+        fprintf(f, "  Language Info: #%d\n", sm->any.handle);
         if((sl = sm->lang.strings)) {
           fprintf(f, "    Languages: ");
           for(; sl; sl = sl->next) {
@@ -1181,7 +1209,7 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
         break;
 
       case sm_memarray:
-        fprintf(f, "  Physical Memory Array:\n");
+        fprintf(f, "  Physical Memory Array: #%d\n", sm->any.handle);
         if(sm->memarray.max_size) {
           u = sm->memarray.max_size;
           c = 'k';
@@ -1196,7 +1224,7 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
         break;
 
       case sm_memdevice:
-        fprintf(f, "  Memory Device:\n");
+        fprintf(f, "  Memory Device: #%d\n", sm->any.handle);
         if(sm->memdevice.location) fprintf(f, "    Location: \"%s\"\n", sm->memdevice.location);
         if(sm->memdevice.bank) fprintf(f, "    Bank: \"%s\"\n", sm->memdevice.bank);
         if(sm->memdevice.size) {
@@ -1234,7 +1262,7 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
         break;
 
       case sm_mouse:
-        fprintf(f, "  Pointing Device:\n");
+        fprintf(f, "  Pointing Device: #%d\n", sm->any.handle);
         s = mice[sm->mouse.mtype < sizeof mice / sizeof *mice ? sm->mouse.mtype : 0];
         u = sm->mouse.interface;
         t = mifaces[u < sizeof mifaces / sizeof *mifaces ? u : 0];
@@ -1253,13 +1281,22 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
       case sm_oem:
       case sm_config:
         fprintf(f,
-          sm->any.type == sm_oem ? "  OEM Strings:\n" : "  System Config Options (Jumpers & Switches):\n"
+          sm->any.type == sm_oem ? "  OEM Strings: #%d\n" : "  System Config Options (Jumpers & Switches) #%d:\n",
+          sm->any.handle
         );
         for(sl = sm->any.strings; sl; sl = sl->next) {
           if(sl->str && *sl->str) fprintf(f, "    %s\n", sl->str);
         }
 
+      case sm_inactive:
+        fprintf(f, "  Inactive Record: #%d\n", sm->any.handle);
+        break;
+
+      case sm_end:
+        break;
+
       default:
+        fprintf(f, "  Type %d Record: #%d\n", sm->any.type, sm->any.handle);
 	break;
     }
   }

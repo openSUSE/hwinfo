@@ -467,14 +467,17 @@ typedef enum {
   sm_mdtd, sm_inactive = 126, sm_end = 127
 } hd_smbios_type_t;
 
+
+/* common part of all smbios_* types */
 typedef struct {
-  union u_hd_smbios_t *next;
+  union u_hd_smbios_t *next;	/* link to next entry */
   hd_smbios_type_t type;	/* BIOS info type */
   int data_len;			/* formatted section length */
   unsigned char *data;		/* formatted section */
   str_list_t *strings;		/* strings taken from the unformed section */
   int handle;			/* handle, unique 16 bit number */
 } smbios_any_t;
+
 
 /* BIOS related information */
 typedef struct {
@@ -494,6 +497,7 @@ typedef struct {
   unsigned rom_size;		/* BIOS ROM size (in bytes) */
 } smbios_biosinfo_t;
 
+
 /* overall system related information */
 typedef struct {
   union u_hd_smbios_t *next;
@@ -510,6 +514,7 @@ typedef struct {
   hd_id_t wake_up;		/* wake-up type */
 } smbios_sysinfo_t;
 
+
 /* motherboard related information */
 typedef struct {
   union u_hd_smbios_t *next;
@@ -518,10 +523,18 @@ typedef struct {
   unsigned char *data;
   str_list_t *strings;
   int handle;
-  char *manuf;
-  char *product;
-  char *version;
-  char *serial;
+  char *manuf;			/* manufacturer */
+  char *product;		/* product name */
+  char *version;		/* version */
+  char *serial;			/* serial number */
+  char *asset;			/* asset tag */
+  hd_id_t board_type;		/* board type */
+  unsigned features;		/* feature flags (bitmask) */
+  str_list_t *feature_str;	/* the above, interpreted */
+  char *location;		/* location in chassis */
+  int chassis;			/* handle of chassis */
+  int objects_len;		/* number of contained objects */
+  int *objects;			/* array of object handles */
 } smbios_boardinfo_t;
 
 typedef struct {
@@ -531,8 +544,17 @@ typedef struct {
   unsigned char *data;
   str_list_t *strings;
   int handle;
-  char *manuf;
-  unsigned ch_type;
+  char *manuf;			/* manufacturer */
+  char *version;		/* version */
+  char *serial;			/* serial number */
+  char *asset;			/* asset tag */
+  hd_id_t ch_type;		/* chassis type */
+  unsigned lock;		/* 1: lock present, 0: not present or unknown */
+  hd_id_t bootup;		/* bootup state */
+  hd_id_t power;		/* power supply state (at last boot) */
+  hd_id_t thermal;		/* thermal state (at last boot) */
+  hd_id_t security;		/* security state (at last boot) */
+  unsigned oem;			/* OEM-specific information */
 } smbios_chassis_t;
 
 typedef struct {
