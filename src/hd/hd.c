@@ -3273,10 +3273,10 @@ hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus)
 const char* hd_busid_to_hwcfg(int busid)
 {
 	const char* const ids1[]={"none","isa","eisa","mc","pci","pcmcia","nubus","cardbus","other"};
-	const char* const ids2[]={"ps2","serial","parallel","floppy","scsi","ide","usb","adb","raid","sbus","i2o","vio","ccw"};
+	const char* const ids2[]={"ps2","serial","parallel","floppy","scsi","ide","usb","adb","raid","sbus","i2o","vio","ccw","iucv"};
 	if(busid <9)
 		return ids1[busid];
-	else if(busid >=0x80 && busid <0x8d)
+	else if(busid >=0x80 && busid <0x8e)
 		return ids2[busid-0x80];
 	else
 		return 0;

@@ -14,6 +14,7 @@
 
 #define BUSNAME "ccw"
 #define BUSNAME_GROUP "ccwgroup"
+#define BUSNAME_IUCV "iucv"
 
 static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
 {
@@ -26,6 +27,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
   struct sysfs_attribute *curattr = NULL;
   struct dlist *devlist = NULL;
   struct dlist *devlist_group = NULL;
+  int virtual_machine=0;
 
   unsigned int devtype=0,devmod=0,cutype=0,cumod=0;
 
@@ -75,6 +77,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
 
     if(cutypes[i]==0x2540)
     {
+      virtual_machine=1;	/* we are running in VM */
       cutypes[i]=-2;	/* reader */
       cutypes[i+1]=-3;	/* punch */
     }
@@ -182,6 +185,46 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     hddb_add_info(hd_data,hd);
   }
 
+  if(virtual_machine)
+  {
+  	/* add an unactivated IUCV device */
+  	hd=add_hd_entry(hd_data,__LINE__,0);
+  	hd->vendor.id=MAKE_ID(TAG_SPECIAL,0x6001); /* IBM */
+  	hd->device.id=MAKE_ID(TAG_SPECIAL,0x0005); /* IUCV */
+  	hd->bus.id=bus_iucv;
+  	hd->base_class.id=bc_network;
+  	hd->status.active=status_no;
+  	hddb_add_info(hd_data,hd);
+  	
+  	/* add activated IUCV devices */
+	bus=sysfs_open_bus(BUSNAME_IUCV);
+	if(bus)
+	{
+	  devlist=sysfs_get_bus_devices(bus);
+	  if(devlist)
+	  {
+	    dlist_for_each_data(devlist, curdev, struct sysfs_device)
+	    {
+	      hd=add_hd_entry(hd_data,__LINE__,0);
+	      hd->vendor.id=MAKE_ID(TAG_SPECIAL,0x6001); /* IBM */
+	      hd->device.id=MAKE_ID(TAG_SPECIAL,0x0005); /* IUCV */
+	      hd->bus.id=bus_iucv;
+	      hd->base_class.id=bc_network;
+	      hd->status.active=status_yes;
+	      attributes = sysfs_get_device_attributes(curdev);
+	      dlist_for_each_data(attributes,curattr,struct sysfs_attribute)
+	      {
+	      	if(strcmp("user",curattr->name)==0)
+	      	  hd->rom_id=new_str(curattr->value);
+  	      }
+  	      hd->sysfs_device_link = new_str(hd_sysfs_id(curdev->path));
+  	      hd->sysfs_bus_id = new_str(strrchr(curdev->path,'/')+1);
+  	      hddb_add_info(hd_data,hd);
+  	    }
+  	  }
+  	}
+  	              
+  }
 }
 
 void hd_scan_s390(hd_data_t *hd_data)

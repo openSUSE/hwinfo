@@ -216,3 +216,4 @@
  vendor.id		special 0x6001
 &device.id		special 0x0005
 +device.name		IUCV
++driver.module.modprobe netiucv
