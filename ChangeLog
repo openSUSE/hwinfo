@@ -1,7 +1,9 @@
 11/5/2004:	v8.48
 	- take out ips (#39993)
-	- fixed cdb_x11 script
-	- updated X11 data 
+	- fixed cdb_x11 script (#40335)
+	- updated X11 data (#40335)
+	- fixed UML fix (#40271)
+	- don't check alternate settings (#40266)
 
 10/5/2004:	v8.47
 	- added functions necessary to build a model name to tiny version;
