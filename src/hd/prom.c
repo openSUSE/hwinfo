@@ -521,7 +521,7 @@ void add_devices(hd_data_t *hd_data)
           ID_TAG(hd->vendor.id) == TAG_PCI &&
           ID_VALUE(hd->device.id) == dt->device_id &&
           ID_VALUE(hd->vendor.id) == dt->vendor_id &&
-          (dt->subvendor_id == -1 || ID_VALUE(hd>sub_vendor.id) == dt->subvendor_id) &&
+          (dt->subvendor_id == -1 || ID_VALUE(hd->sub_vendor.id) == dt->subvendor_id) &&
           (dt->subdevice_id == -1 || ID_VALUE(hd->sub_device.id) == dt->subdevice_id) &&
           hd->revision.id == dt->revision_id
         ) break;

@@ -493,7 +493,7 @@ void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
   s1 = NULL;
   if(sl) {
     if(strstr(sl->str, "PowerBook")) {
-      sm->vendor.id = new_str("Apple");
+      sm->vend = new_str("Apple");
       sm->user_name = new_str(sl->str);
 
       return;
@@ -507,7 +507,7 @@ void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
 
   if(sl) {
     if(strstr(sl->str, "APPLE")) {
-      sm->vendor.id = new_str("Apple");
+      sm->vend = new_str("Apple");
       str_printf(&sm->user_name, 0, "AT Modem");
       if(s1) {
         u = strtoul(s1, &s2, 10);

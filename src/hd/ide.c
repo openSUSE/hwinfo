@@ -262,7 +262,7 @@ void scan_ide2(hd_data_t *hd_data)
     hd = add_hd_entry(hd_data, __LINE__, 0);
     hd->base_class.id = bc_storage;
     hd->sub_class.id = sc_sto_other;
-    hd->vend_name = new_str("IBM");
+    hd->vendor.name = new_str("IBM");
     hd->device.name = new_str("VIO DASD");
   }
 
@@ -277,7 +277,7 @@ void scan_ide2(hd_data_t *hd_data)
       hd->slot = i;
 
       hd->unix_dev_name = new_str(s);
-      str_printf(&hd->dev_name, 0, "iSeries DASD #%u", i);
+      str_printf(&hd->device.name, 0, "iSeries DASD #%u", i);
 
       hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size);
               
