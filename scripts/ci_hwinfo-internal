@@ -9,7 +9,7 @@ hwinfo_internal=/tmp/hwinfo-internal-$ver
 make clean
 rm -rf $hwinfo_internal
 mkdir $hwinfo_internal
-tar -cf - src/ids | tar -C $hwinfo_internal -xf -
+tar -cf - src/ids src/isdn/db/isdncards | tar -C $hwinfo_internal -xf -
 cd $hwinfo_internal
 find . -depth -name CVS -exec rm -r {} \;
 find . -depth -name .cvsignore -exec rm -r {} \;

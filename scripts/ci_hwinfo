@@ -13,6 +13,7 @@ tar -cf - * | tar -C $hwinfo -xf -
 cd $hwinfo
 find . -depth -name CVS -exec rm -r {} \;
 find . -depth -name .cvsignore -exec rm -r {} \;
+
 cd src/ids
 mkdir .x
 mv Makefile.dist .x/Makefile
@@ -22,6 +23,11 @@ rm *
 mv .x/* .
 rm -r .x
 cd ../..
+
+cd src/isdn/db
+mv isdncards.sample isdncards
+cd ../../..
+
 rm MAINTAINER scripts/ci_*
 cd /tmp
 
