@@ -78,6 +78,10 @@
 +subclass.name		WLAN controller
 
  baseclass.id		0x002
+&subclass.id		0x83
++subclass.name		XPNET controller
+
+ baseclass.id		0x002
 &subclass.id		0x86
 +subclass.name		OSA-Express controller
 
