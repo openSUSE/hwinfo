@@ -462,9 +462,10 @@ vm86_rep(struct vm86_struct *ptr)
 
 	int __res;
 
-	__asm__ __volatile__("int $0x80\n"
+	/* stay away from %ebx */
+	__asm__ __volatile__("push %%ebx\n\tmov %%ecx,%%ebx\n\tint $0x80\n\tpop %%ebx\n"
 						 :"=a" (__res):"a" ((int)113),
-						 "b" ((struct vm86_struct *)ptr));
+						 "c" ((struct vm86_struct *)ptr));
 
 			if ((__res) < 0) {
 				errno = -__res;

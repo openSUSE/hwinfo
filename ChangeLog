@@ -1,3 +1,6 @@
+7/5/2001:	v2.11
+	- preserve %ebx in i10_v86.c::vm86_rep
+
 7/5/2001:	v2.10
 	- rewrote isapnp detection for 2.4 kernel
 	- updated driver info data
