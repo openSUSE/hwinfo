@@ -1,3 +1,7 @@
+12/8/2002:	v5.08
+	- fixed evil segfault in hwinfo
+	- updated docs
+
 9/8/2002:	v5.07
 	- moved unique key file to var/lib/hardware/unique-keys
 	- moved things from var/lib/libhd to var/lib/hardware

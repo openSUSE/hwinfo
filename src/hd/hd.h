@@ -252,13 +252,61 @@ typedef enum bus_types {
   bus_adb, bus_raid, bus_sbus, bus_i2o
 } hd_bus_types_t;
 
-/* hardware config status */
+/**
+ * Hardware status.
+ * The status is stored in /var/lib/hardware/unique-keys/ and used
+ * to detect if the hardware is new and has to be configured by some
+ * hardware %config tool.
+ */
 typedef struct {
+  /**
+   * Status fields are invalid.
+   */
   unsigned invalid:1;
+  /**
+   * Hardware should be reconfigured.
+   * Either \ref status_yes or \ref status_no.
+   * A hardware must be reconfigured if it is in state
+   * \ref available == \ref status_no and \ref needed == \ref status_yes.
+   * In other words, if a hardware that was
+   * needed to run the system is gone.
+   */
   unsigned reconfig:3;
+
+  /**
+   * Hardware %config status.
+   * Set to \ref status_yes if the hardware has been configured, otherwise
+   * \ref status_no.
+   */
   unsigned configured:3;
+
+  /**
+   * Hardware availability.
+   * Set to \ref status_yes if the hardware has been detected or
+   * \ref status_no if the hardware has not been found. You can set
+   * it to \ref status_unknown to indicate that this hardware cannot
+   * be automatically detected (say, ISA cards).
+   * \note You can simulate all kinds of hardware on your system by
+   * creating entries in /var/lib/hardware/unique-keys/ that have
+   * \ref available set to \ref status_unknown.
+   */
   unsigned available:3;
+
+  /**
+   * Hardware is needed.
+   * Set to \ref status_yes if this hardware is really necessary to run
+   * your computer. The effect will be that some hardware %config dialog
+   * is run if the hardware item is not found.
+   * Typical examples are graphics cards and mice.
+   */
   unsigned needed:3;
+
+  /**
+   * (Internal) original value of \ref available;
+   * This is used to keep track of the original value of the \ref available
+   * state as it was stored in /var/lib/hardware/unique-keys/. (\ref available
+   * is automatically updated during the detection process.)
+   */
   unsigned available_orig:3;
 } hd_status_t;
 
@@ -267,18 +315,26 @@ typedef enum {
   status_no = 1, status_yes, status_unknown, status_new
 } hd_status_value_t;
 
-/* different types of hotplug devices */
+/**
+ * Various types of hotplug devices.
+ */
 typedef enum {
-  hp_none, hp_pcmcia, hp_cardbus, hp_pci, hp_usb, hp_ieee1394
+  hp_none,	/**< Not a hotpluggable %device. */
+  hp_pcmcia,	/**< PCMCIA %device. */
+  hp_cardbus,	/**< Cardbus %device. */
+  hp_pci,	/**< PCI hotplug %device. */
+  hp_usb,	/**< USB %device. */
+  hp_ieee1394	/**< IEEE 1394 (FireWire) %device */
 } hd_hotplug_t;
 
 
-/*
+/**
+ * String list type.
  * Used whenever we create a list of strings (e.g. file read).
  */
 typedef struct s_str_list_t {
-  struct s_str_list_t *next;			/* linked list */
-  char *str;  					/* some string  */
+  struct s_str_list_t *next;	/**< Link to next member. */
+  char *str;  			/**< Some string data. */
 } str_list_t;
 
 
@@ -1368,7 +1424,7 @@ typedef struct s_hd_t {
    * Vendor id.
    * Id is actually a combination of some tag to differentiate the
    * various id types and the real id. Use the \ref ID_VALUE macro to
-   * get e.g. the real PCI id value for a PCI device.
+   * get e.g. the real PCI id value for a PCI %device.
    */
   unsigned vend;
 
@@ -1381,7 +1437,7 @@ typedef struct s_hd_t {
    * Device id.
    * Id is actually a combination of some tag to differentiate the
    * various id types and the real id. Use the \ref ID_VALUE macro to
-   * get e.g. the real PCI id value for a PCI device.
+   * get e.g. the real PCI id value for a PCI %device.
    */
   unsigned dev;
 
@@ -1396,7 +1452,7 @@ typedef struct s_hd_t {
    * Subvendor id.
    * Id is actually a combination of some tag to differentiate the
    * various id types and the real id. Use the \ref ID_VALUE macro to
-   * get e.g. the real PCI id value for a PCI device.
+   * get e.g. the real PCI id value for a PCI %device.
    */
   unsigned sub_vend;
 
@@ -1409,7 +1465,7 @@ typedef struct s_hd_t {
    * Subdevice id.
    * Id is actually a combination of some tag to differentiate the
    * various id types and the real id. Use the \ref ID_VALUE macro to
-   * get e.g. the real PCI id value for a PCI device.
+   * get e.g. the real PCI id value for a PCI %device.
    */
   unsigned sub_dev;
 
@@ -1482,7 +1538,7 @@ typedef struct s_hd_t {
   unsigned attached_to;
 
   /**
-   * Special device file.
+   * Special %device file.
    * Device file name to acces this hardware. Normally something below /dev.
    * For network interfaces this is the interface name.
    */
@@ -1501,10 +1557,12 @@ typedef struct s_hd_t {
    * A unique string identifying this hardware. The string consists
    * of two parts separated by a dot ("."). The part before the dot
    * describes the location (where the hardware is attached in the system).
-   * The part after the dot identifies the hardware itself. Apart from this
-   * there are no restrictions on the form of this string.
+   * The part after the dot identifies the hardware itself. The string
+   * must not contain slashes ("/") because we're going to create files
+   * with this id as name. Apart from this there are no restrictions on
+   * the form of this string.
    */
-  char *unique_id;		/* some id identifying this entry */
+  char *unique_id;
 
   /**
    * (Internal) Probing module that created this entry.
@@ -1528,17 +1586,39 @@ typedef struct s_hd_t {
 
   /**
    * Special info associated with this hardware.
+   * \note This is going to change!
    */
   hd_detail_t *detail;
 
-  str_list_t *extra_info;	/* unspecific text info */
+  /**
+   * (Internal) Unspecific text info.
+   * It is used to track IDE interfaces and assign them to the correct
+   * IDE controllers.
+   */
+  str_list_t *extra_info;
 
-  hd_status_t status;		/* hardware config status (if available) */
-  char *config_string;		/* tag used to indicate how the device has been configured */
+  /**
+   * Hardware status (if available).
+   * The status is stored in files below /var/lib/hardware/unique-keys/. Every
+   * hardware item gets a file there with its unique id as file name.
+   */
+  hd_status_t status;
 
-  hd_hotplug_t hotplug;		/* set if this device is managed by some hotplug controller */
+  /**
+   * Some %config info.
+   * Every hardware item may get some string assigned. This string is stored
+   * in files below /var/lib/hardware/unique-keys/. There is no meaning
+   * associated with this string.
+   */
+  char *config_string;
 
-  struct {
+  /**
+   * Hotplug controller for this %device.
+   * It indicates what kind of hotplug %device (if any) this is.
+   */
+  hd_hotplug_t hotplug;
+
+  struct is_s {
     unsigned agp:1;		/* AGP device */
     unsigned isapnp:1;		/* ISA-PnP device */
     unsigned cardbus:1;		/* cardbus card */
@@ -1548,24 +1628,66 @@ typedef struct s_hd_t {
     unsigned softraiddisk:1;	/* disk belongs to some soft raid array */
   } is;
 
-  struct {			/* this struct is for internal purposes only */
+  struct tag_s {		/* this struct is for internal purposes only */
     unsigned remove:1;		/* schedule for removal */
     unsigned freeit:1;		/* for internal memory management */
     unsigned ser_skip:1;	/* if serial line, don't scan for devices */
     unsigned ser_device:2;	/* if != 0: info about attached serial device; see serial.c */
   } tag;
 
-  unsigned char *block0;	/* for block devices: first 512 data bytes */
+  /**
+   * (Internal) First 512 bytes of block devices.
+   * To check accessibility of block devices we read the first block. The data
+   * is used to identify the boot %device.
+   */
+  unsigned char *block0;
 
-  char *driver;			/* currently active driver */
+  /**
+   * Currently active driver.
+   */
+  char *driver;
 
-  char *old_unique_id;		/* the id before v3.17 */
-  char *parent_id;		/* unique_id of our parent, please do not use it for now */
-  char *unique_id1;		/* location independent unique_id part */
+  /**
+   * Old \ref unique_id for compatibility.
+   * The calculation of unique ids has changed in libhd v3.17. Basically
+   * we no longer use the vendor/%device names if there are vendor/%device
+   * ids. (Otherwise a simple %device name database update would change the id,
+   * which is really not what you want.)
+   */
+  char *old_unique_id;
 
-  char *usb_guid;		/* USB GUID */
+  /**
+   * \ref unique_id of parent (\ref attached_to).
+   * \note Please do not use it for now.
+   * 
+   */
+  char *parent_id;
 
-  unsigned drv_dev, drv_vend;	/* sometimes used for driver info lookups */
+  /**
+   * (Internal) location independent \ref unique_id part.
+   * The speed up some internal searches, we store it here separately.
+   */
+  char *unique_id1;
+
+  /**
+   * USB Global Unique Identifier.
+   * Available for USB devices. This may even be set if \ref bus is not
+   * \ref bus_usb (e.g. USB storage devices will have \ref bus set to
+   * \ref bus_scsi due to SCSI emulation).
+   */
+  char *usb_guid;
+
+  /**
+   * (Internal) Used for driver info lookups.
+   * \note Will likely be gone as a result of our new hardware database.
+   */
+  unsigned drv_vend;
+
+  /**
+   * (Internal) Used for driver info lookups.
+   * \note Will likely be gone as a result of our new hardware database.
+   */
+  unsigned drv_dev;
 
   driver_info_t *driver_info;	/* device driver info */
 
@@ -1616,7 +1738,7 @@ typedef struct {
   /**
    * Special flags.
    * Influence hardware probing in some strange ways with these. You normally
-   * will not want to use them.
+   * do not want to use them.
    */
   struct flag_struct {
     unsigned internal:1;	/**< \ref hd_scan() has been called internally. */

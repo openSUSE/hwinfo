@@ -1433,6 +1433,7 @@ char *get_xserver(hd_data_t *hd_data, char **version, char **busid, driver_info_
   if(c) { xf86_ver[0] = c; xf86_ver[1] = 0; }
 
   hd = hd_get_device_by_idx(hd_data, hd_display_adapter(hd_data));
+
   if(hd && hd->bus == bus_pci)
     sprintf(id, "%d:%d:%d", hd->slot >> 8, hd->slot & 0xff, hd->func);
 
@@ -1485,7 +1486,6 @@ int x11_install_info(hd_data_t *hd_data)
   fb_mode = get_fb_mode();
 
   hd_list(hd_data, hw_display, 1, NULL);
-  xserver = get_xserver(hd_data, &version, &busid, &x11_driver);
 
   for(hd = hd_list(hd_data, hw_keyboard, 1, NULL); hd; hd = hd->next) {
     kbd_ok = 1;
@@ -1499,6 +1499,8 @@ int x11_install_info(hd_data_t *hd_data)
     /* don't free di */
   }
   
+  xserver = get_xserver(hd_data, &version, &busid, &x11_driver);
+
   switch(hd_mac_color(hd_data)) {
     case 0x01:
       yast2_color = 0x5a4add;

@@ -2032,7 +2032,7 @@ void hexdump(char **buf, int with_ascii, unsigned data_len, unsigned char *data)
 }
 
 
-/*
+/** \relates s_str_list_t
  * Search a string list for a string.
  */
 str_list_t *search_str_list(str_list_t *sl, char *str)
@@ -2045,8 +2045,8 @@ str_list_t *search_str_list(str_list_t *sl, char *str)
 }
 
 
-/*
- * Add a string to a string list; just for convenience.
+/** \relates s_str_list_t
+ * Add a string to a string list.
  *
  * The new string (str) will be *copied*!
  */
@@ -2073,7 +2073,7 @@ str_list_t *add_str_list(str_list_t **sl, char *str)
 }
 
 
-/*
+/** \relates s_str_list_t
  * Free the memory allocated by a string list.
  */
 str_list_t *free_str_list(str_list_t *list)
