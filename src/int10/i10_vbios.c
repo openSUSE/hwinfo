@@ -72,8 +72,6 @@ void loadCodeToMem(unsigned char *ptr, CARD8 *code);
 static int vram_mapped = 0;
 static int int10inited = 0;
 
-static void sigsegv_handler(int);
-
 int
 InitInt10()
 {
@@ -139,13 +137,10 @@ FreeInt10()
   int10inited = 0;
 }
 
-void sigsegv_handler(int num) { }
-
 int
 CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
 {
   i86biosRegs bRegs;
-  void (*old_sigsegv_handler)(int);
 
   if (!int10inited)
     return -1;
@@ -158,11 +153,9 @@ CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
   bRegs.di = 0x0;
   if (buf)
     memcpy((unsigned char *)0x7e00, buf, len);
-  old_sigsegv_handler = signal(SIGSEGV, sigsegv_handler);
   iopl(3);
   do_x86(BIOS_START,&bRegs);
   iopl(0);
-  signal(SIGSEGV, old_sigsegv_handler);
   if (buf)
     memcpy(buf, (unsigned char *)0x7e00, len);
 

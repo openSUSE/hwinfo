@@ -1614,7 +1614,7 @@ void hd_scan(hd_data_t *hd_data)
    * to be able to read the right parport io,
    * we have to do this before scan_misc()
    */
-#if defined(__i386__) || defined (__x86_64__)
+#if defined(__i386__) || defined (__x86_64__) || defined(__ia64__)
   hd_scan_bios(hd_data);
 #endif
   

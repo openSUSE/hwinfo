@@ -43,7 +43,9 @@ static int vm86_do_int(int num);
 static void dump_code(void);
 static void dump_registers(void);
 static void stack_trace(void);
+#ifdef __i386__
 static int vm86_rep(struct vm86_struct *ptr);
+#endif
 void log_registers(void);
 
 #define CPU_REG(x) (vm86s.regs.##x)
@@ -468,6 +470,8 @@ stack_trace(void)
 	
 }
 
+#ifdef __i386__
+
 static int
 vm86_rep(struct vm86_struct *ptr) 
 {
@@ -486,6 +490,8 @@ vm86_rep(struct vm86_struct *ptr)
 			else errno = 0;
 			return __res;
 }
+
+#endif
 
 #ifdef __i386__
 

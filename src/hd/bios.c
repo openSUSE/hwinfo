@@ -16,7 +16,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#if defined(__i386__) || defined (__x86_64__)
+#if defined(__i386__) || defined (__x86_64__) || defined(__ia64__)
 
 #define BIOS_TEST
 
@@ -930,6 +930,7 @@ void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt)
 
 int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
 {
+#ifndef __ia64__
   unsigned u, ok;
   unsigned addr = 0, len;
 
@@ -957,6 +958,9 @@ int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
   }
 
   return ok;
+#else
+  return 0;
+#endif
 }
 
 
@@ -1032,4 +1036,4 @@ void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
 #endif		/* !defined(LIBHD_TINY) */
 
 
-#endif /* defined(__i386__) || defined (__x86_64__) */
+#endif /* defined(__i386__) || defined (__x86_64__) || defined (__ia64__) */

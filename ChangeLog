@@ -1,3 +1,6 @@
+20/8/2002:	v5.14
+	- mls: x86 emu for BIOS calls on ia64
+
 19/8/2002:	v5.13
 	- mls: x86 emu for BIOS calls on x86_64
 	- updated x11 data

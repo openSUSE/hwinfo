@@ -45,7 +45,7 @@ install:
 	install -m 755 -s hwinfo $(DESTDIR)/usr/sbin
 	install -m 755 -s hwscan $(DESTDIR)/usr/sbin
 	install -m 755 -s src/ids/check_hd $(DESTDIR)/usr/sbin
-	install -m 755 -s src/ids/convert_hd $(DESTDIR)/usr/sbin
+	install -m 755 src/ids/convert_hd $(DESTDIR)/usr/sbin
 	if [ -f $(LIBHD_SO) ] ; then \
 		install $(LIBHD_SO) $(DESTDIR)$(LIBDIR) ; \
 		ln -snf libhd.so.$(LIBHD_VERSION) $(DESTDIR)$(LIBDIR)/libhd.so.$(LIBHD_MAJOR_VERSION) ; \

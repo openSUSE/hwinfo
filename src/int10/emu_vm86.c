@@ -14,14 +14,36 @@ int emu_vm86_ret;
 static u8 Mem_rb(u32 addr) {
   return *(u8 *)addr;
 }
+static void Mem_wb(u32 addr, u8 val) {
+  *(u8 *)addr = val;
+}
+#ifdef __ia64__
+
+static u16 Mem_rw(u32 addr) {
+  return *(u8 *)addr | *(u8 *)(addr + 1) << 8;
+}
+static u32 Mem_rl(u32 addr) {
+  return *(u8 *)addr             | *(u8 *)(addr + 1) << 8 |
+         *(u8 *)(addr + 2) << 16 | *(u8 *)(addr + 3) << 24;
+}
+static void Mem_ww(u32 addr, u16 val) {
+  *(u8 *)addr = val;
+  *(u8 *)(addr + 1) = val >> 8;
+}
+static void Mem_wl(u32 addr, u32 val) {
+  *(u8 *)addr = val;
+  *(u8 *)(addr + 1) = val >> 8;
+  *(u8 *)(addr + 2) = val >> 16;
+  *(u8 *)(addr + 3) = val >> 24;
+}
+
+#else
+
 static u16 Mem_rw(u32 addr) {
   return *(u16 *)addr;
 }
 static u32 Mem_rl(u32 addr) {
   return *(u32 *)addr;
-}
-static void Mem_wb(u32 addr, u8 val) {
-  *(u8 *)addr = val;
 }
 static void Mem_ww(u32 addr, u16 val) {
   *(u16 *)addr = val;
@@ -29,44 +51,46 @@ static void Mem_ww(u32 addr, u16 val) {
 static void Mem_wl(u32 addr, u32 val) {
   *(u32 *)addr = val;
 }
+
+#endif
+
 static void do_int(int num) {
   emu_vm86_ret = VM86_INTx | (num << 8);
   M.x86.intr = INTR_HALTED;
 }
+
 
 int
 emu_vm86(struct vm86_struct *vm)
 {
   int i;
 
+  X86EMU_memFuncs memFuncs;
   X86EMU_intrFuncs intFuncs[256];
-  X86EMU_pioFuncs pioFuncs = {
-      (u8(*)(u16))inb,
-      (u16(*)(u16))inw,
-      (u32(*)(u16))inl,
-      (void(*)(u16, u8))outb,
-      (void(*)(u16, u16))outw,
-      (void(*)(u16, u32))outl
-  };
+  X86EMU_pioFuncs pioFuncs;
 
-  X86EMU_memFuncs memFuncs = {
-      (u8(*)(u32))Mem_rb,
-      (u16(*)(u32))Mem_rw,
-      (u32(*)(u32))Mem_rl,
-      (void(*)(u32, u8))Mem_wb,
-      (void(*)(u32, u16))Mem_ww,
-      (void(*)(u32, u32))Mem_wl
-  };
-
+  memFuncs.rdb = Mem_rb;
+  memFuncs.rdw = Mem_rw;
+  memFuncs.rdl = Mem_rl;
+  memFuncs.wrb = Mem_wb;
+  memFuncs.wrw = Mem_ww;
+  memFuncs.wrl = Mem_wl;
   X86EMU_setupMemFuncs(&memFuncs);
 
-  M.mem_base = 0;
-  M.mem_size = 1024*1024 + 1024;
+  pioFuncs.inb = (u8(*)(u16))inb;
+  pioFuncs.inw = (u16(*)(u16))inw;
+  pioFuncs.inl = (u32(*)(u16))inl;
+  pioFuncs.outb = (void(*)(u16, u8))outb;
+  pioFuncs.outw = (void(*)(u16, u16))outw;
+  pioFuncs.outl = (void(*)(u16, u32))outl;
   X86EMU_setupPioFuncs(&pioFuncs);
 
   for (i=0;i<256;i++)
       intFuncs[i] = do_int;
   X86EMU_setupIntrFuncs(intFuncs);
+
+  M.mem_base = 0;
+  M.mem_size = 1024*1024 + 1024;
 
   M.x86.R_EAX = vm->regs.eax;
   M.x86.R_EBX = vm->regs.ebx;

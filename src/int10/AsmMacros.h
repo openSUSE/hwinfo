@@ -59,21 +59,29 @@
 
 /* $XFree86: xc/programs/Xserver/hw/xfree86/SuperProbe/AsmMacros.h,v 3.14 1999/09/25 14:36:58 dawes Exp $ */
 
+
 #if defined(__GNUC__)
+
 #if defined(linux) && (defined(__alpha__) || defined(__ia64__))
+
+#include <sys/io.h>
+
 #undef inb
-#define inb _inb
 #undef inw
-#define inw _inw
 #undef inl
-#define inl _inl
 #undef outb
-#define outb(p,v) _outb((v),(p))
 #undef outw
-#define outw(p,v) _outw((v),(p))
 #undef outl
-#define outl(p,v) _outl((v),(p))
+
+static __inline__ unsigned int inb(unsigned long int p) { return _inb(p); };
+static __inline__ unsigned int inw(unsigned long int p) { return _inw(p); };
+static __inline__ unsigned int inl(unsigned long int p) { return _inl(p); };
+static __inline__ void outb(unsigned long int p, unsigned char v) { _outb(v,p); };
+static __inline__ void outw(unsigned long int p, unsigned short v) { _outw(v,p); };
+static __inline__ void outl(unsigned long int p, unsigned int v) { _outl(v,p); };
+
 #else
+
 #if defined(__sparc__)
 #ifndef ASI_PL
 #define ASI_PL 0x88
