@@ -158,8 +158,7 @@
 # net/amd8111e.c
  vendor.id		pci 0x1022
 &device.id		pci 0x7462
-+driver.module.modprobe	amd8111e
-+driver.module.insmod	mii|amd8111e
++driver.module.insmod	amd8111e
 
 # net/sis900.c
  vendor.id		pci 0x1039
