@@ -469,6 +469,14 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
       }
       break;
 
+    case 6:
+      if(sub == 1 && prot == 1) { /* PTP camera */
+        hd->base_class = bc_camera;
+        hd->sub_class = sc_camera_digital;
+        break;
+      }
+      break;
+
     case 7:
       hd->base_class = bc_printer;
       break;
