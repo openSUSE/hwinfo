@@ -606,6 +606,10 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_cpu);
       break;
 
+    case hw_bios:
+      hd_set_probe_feature(hd_data, pr_bios);
+      break;
+
     case hw_manual:
       hd_set_probe_feature(hd_data, pr_manual);
       break;
@@ -616,6 +620,25 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_usb:
       hd_set_probe_feature(hd_data, pr_usb);
+      break;
+
+    case hw_pci:
+      hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_isdn);
+      break;
+
+    case hw_isapnp:
+      hd_set_probe_feature(hd_data, pr_isapnp);
+      hd_set_probe_feature(hd_data, pr_isapnp_mod);
+      hd_set_probe_feature(hd_data, pr_isdn);
+      break;
+
+    case hw_bridge:
+      hd_set_probe_feature(hd_data, pr_pci);
+      break;
+
+    case hw_hub:
+      hd_set_probe_feature(hd_data, pr_usb); 
       break;
 
     case hw_all:
@@ -4831,10 +4854,24 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           sc = 1;
           break;
 
+        case hw_bios:
+          base_class = bc_internal;
+          sub_class = sc_int_bios;
+          sc = 1;
+          break;
+
         case hw_usb_ctrl:
           base_class = bc_serial;
           sub_class = sc_ser_usb;
           sc = 1;
+          break;
+
+        case hw_bridge:
+          base_class = bc_bridge;
+          break;
+
+        case hw_hub:
+          base_class = bc_hub;
           break;
 
         default:
@@ -4908,6 +4945,12 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
   if(!hd->hw_class2) {
     if(hd->bus == bus_usb) {
       hd->hw_class2 = hw_usb;
+    }
+    else if(hd->bus == bus_pci) {
+      hd->hw_class2 = hw_pci;
+    }
+    else if(hd->bus == bus_isa && hd->is.isapnp) {
+      hd->hw_class2 = hw_isapnp;
     }
   }
 }

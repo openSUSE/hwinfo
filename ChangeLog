@@ -1,3 +1,8 @@
+	- new scanner ids
+	- camera subclass ids were 1 off from enumeration
+	- added some new hardware classes: bios, bridge, hub, usb_ctrl
+	- added '--pci' and '--isapnp' options to hwscan
+
 25/2/2002:	v4.13
 	- meissner: boot.hwscan:
 	  probe for storage, network, tv, sound handware

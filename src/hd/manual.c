@@ -34,7 +34,7 @@ static hash_t status_names[] = {
   { 0,              NULL      }
 };
 
-/* corresponds to hd_hw_item_t (not all are allowed) */
+/* corresponds to hd_hw_item_t */
 static hash_t hw_items[] = {
   { hw_cdrom,        "cdrom"             },
   { hw_floppy,       "floppy"            },
@@ -58,8 +58,12 @@ static hash_t hw_items[] = {
   { hw_scanner,      "scanner"           },
   { hw_braille,      "braille"           },
   { hw_sys,          "system"            },
+  { hw_bios,         "bios"              },
   { hw_cpu,          "cpu"               },
   { hw_partition,    "partition"         },
+  { hw_usb_ctrl,     "usb controller"    },
+  { hw_bridge,       "bridge"            },
+  { hw_hub,          "hub"               },
   { hw_unknown,      "unknown"           },
   { 0,               NULL                }
 };

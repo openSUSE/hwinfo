@@ -34,12 +34,19 @@ struct option options[] = {
   { "scanner", 0, NULL, 1000 + hw_scanner },
   { "joystick", 0, NULL, 1000 + hw_joystick },
   { "usb", 0, NULL, 1000 + hw_usb },
+  { "pci", 0, NULL, 1000 + hw_pci },
+  { "isapnp", 0, NULL, 1000 + hw_isapnp },
   { "framebuffer", 0, NULL, 1000 + hw_framebuffer },
   { "keyboard", 0, NULL, 1000 + hw_keyboard },
   { "chipcard", 0, NULL, 1000 + hw_chipcard },
   { "braille", 0, NULL, 1000 + hw_braille },
   { "partition", 0, NULL, 1000 + hw_partition },
   { "usb_ctrl", 0, NULL, 1000 + hw_usb_ctrl },
+  { "sys", 0, NULL, 1000 + hw_sys },
+  { "cpu", 0, NULL, 1000 + hw_cpu },
+  { "bios", 0, NULL, 1000 + hw_bios },
+  { "bridge", 0, NULL, 1000 + hw_bridge },
+  { "hub", 0, NULL, 1000 + hw_hub },
   { }
 };
 

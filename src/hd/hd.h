@@ -95,7 +95,8 @@ typedef enum hw_item {
   hw_printer, hw_scanner, hw_chipcard, hw_monitor, hw_tv, hw_display,
   hw_framebuffer, hw_camera, hw_sound, hw_storage_ctrl, hw_network_ctrl,
   hw_isdn, hw_modem, hw_network, hw_disk, hw_partition, hw_cdrom, hw_floppy,
-  hw_manual, hw_usb_ctrl, hw_usb,
+  hw_manual, hw_usb_ctrl, hw_usb, hw_bios, hw_pci, hw_isapnp, hw_bridge,
+  hw_hub,
   hw_unknown, hw_all					/* hw_all must be last */
 } hd_hw_item_t;
 
