@@ -72,7 +72,7 @@ void hd_scan_cpu(hd_data_t *hd_data)
     if(sscanf(sl->str, "system serial number : %79[^\n]", serial_number) == 1) continue;
     if(sscanf(sl->str, "cpus detected : %u", &cpus) == 1) continue;
     if(sscanf(sl->str, "cycle frequency [Hz] : %u", &hz) == 1) continue;
-    if(sscanf(sl->str, "platform string : %79[^\n]", platform) == 1) continue;
+    if(sscanf(sl->str, "system variation : %79[^\n]", platform) == 1) continue;
   }
 
   if(*model_id || *system_id) {	/* at least one of those */
@@ -91,8 +91,8 @@ void hd_scan_cpu(hd_data_t *hd_data)
     ct->cache = 0;
     ct->clock = (hz + 500000) / 1000000;
 
-    if(platform) {
-      if(strcmp(platform, "N/A")) ct->platform = new_str(platform);
+    if(platform && strcmp(platform, "0")) {
+      ct->platform = new_str(platform);
     }
 
     if(!cpus) cpus = 1;		/* at least 1 machine had a "cpus: 0" entry... */

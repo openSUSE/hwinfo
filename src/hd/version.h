@@ -1,1 +1,1 @@
-#define HD_VERSION "1.33"
+#define HD_VERSION "1.34"
