@@ -1,3 +1,6 @@
+10/3/2003:	v6.13
+	- added more notebook data
+
 8/3/2003:	v6.12
 	- fixed ide-scsi detection bug (device names mixed up if more than
 	  one device is handled by ide-scsi)
