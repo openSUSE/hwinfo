@@ -11,12 +11,14 @@ ARCH	= $(shell uname -m)
 
 export CC TOPDIR CFLAGS LIBHD ARCH
 
-.PHONY: all clean subdirs
+.PHONY: all clean install subdirs
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $<
 
 all: subdirs $(TARGETS)
+
+install: all
 
 ifneq "$(SUBDIRS)" ""
 subdirs:
