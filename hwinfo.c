@@ -468,7 +468,6 @@ void *free_mem(void *);
 void do_test(hd_data_t *hd_data)
 {
   int i;
-  hd_t *hd;
 
   hd_set_probe_feature(hd_data, pr_pci);
   hd_scan(hd_data);
