@@ -226,7 +226,7 @@ unsigned do_fhp(hd_data_t *hd_data, char *dev_name, unsigned baud, int cnt)
   write(fd, "1111111111", 10);
   write(fd, "\03", 1);
 
-  usleep(250000);		/* 100000 should be enough */
+  usleep(500000);		/* 100000 should be enough */
 
   PROGRESS(4, cnt, "fhp write ok");
 
