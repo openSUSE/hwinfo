@@ -429,6 +429,10 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 	dump_line("Init2: %s\n", res->init_strings.init2);
         break;
 
+      case res_pppd_option:
+	dump_line("pppd Option: %s\n", res->pppd_option.option);
+        break;
+
       default:
         dump_line("Unkown resource type %d\n", res->any.type);
     }

@@ -1,3 +1,6 @@
+10/1/2001:	v1.0.69
+	- introduced res_pppd_option
+
 9/1/2001:	v1.0.68
 	- smid@suse.cz: improved modem init string code
 
