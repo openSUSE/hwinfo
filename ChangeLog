@@ -1,4 +1,6 @@
+14/4/2004:	v8.39
 	- bcm5700, not tg3 on ppc* (#38647)
+	- add Acer TravelMate 660 & Asus S5200N LCD sizes (#38149)
 
 6/4/2004:	v8.38
 	- do call --partion with --fast in hwscand polling code
