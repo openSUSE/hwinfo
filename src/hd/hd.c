@@ -2855,6 +2855,38 @@ enum boot_arch hd_boot_arch(hd_data_t *hd_data)
   return hd_data->boot;
 }
 
+
+int hd_is_uml(hd_data_t *hd_data)
+{
+  int is_uml = 0;
+  hd_t *hd;
+  cpu_info_t *ct;
+  unsigned u;
+
+  u = hd_data->flags.internal;
+  hd_data->flags.internal = 1;
+  hd = hd_list(hd_data, hw_cpu, 0, NULL);
+  if(!hd) hd = hd_list(hd_data, hw_cpu, 1, NULL);
+  hd_data->flags.internal = u;
+
+  if(
+    hd &&
+    hd->detail &&
+    hd->detail->type == hd_detail_cpu &&
+    (ct = hd->detail->cpu.data) &&
+    ct->model_name &&
+    !strcmp(ct->model_name, "UML")
+  ) {
+    is_uml = 1;
+  }
+
+  hd = hd_free_hd_list(hd);
+
+  return is_uml;
+}
+
+
+
 /*
  * makes a (shallow) copy; does some magic fixes
  */

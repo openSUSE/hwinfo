@@ -2282,6 +2282,7 @@ int hd_usb_support(hd_data_t *hd_data);
 int hd_smp_support(hd_data_t *hd_data);
 int hd_mac_color(hd_data_t *hd_data);
 int hd_color(hd_data_t *hd_data);
+int hd_is_uml(hd_data_t *hd_data);
 unsigned hd_display_adapter(hd_data_t *hd_data);
 unsigned hd_boot_disk(hd_data_t *hd_data, int *matches);
 enum cpu_arch hd_cpu_arch(hd_data_t *hd_data);

@@ -1,3 +1,5 @@
+	- added hd_is_uml() to report if we're running in an UM kernel
+
 22/3/2004:	v8.22
 	- removed Intel-v92ham support (#36667)
 	- worked on new sysfs block code
