@@ -578,6 +578,9 @@ void int_fix_ide_scsi(hd_data_t *hd_data)
           hd_scsi->is = hd_ide->is;
 
           new_id(hd_data, hd_scsi);
+
+          hd_ide = hd_ide->next;
+          break;
         }
       }
     }
