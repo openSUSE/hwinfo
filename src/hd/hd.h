@@ -120,6 +120,11 @@ typedef enum sc_net_if {
   sc_nif_loopback, sc_nif_ethernet, sc_nif_tokenring, sc_nif_fddi, sc_nif_other = 0x80
 } hd_sc_net_if_t;
 
+/* subclass values of bc_multimedia */
+typedef enum sc_multimedia {
+  sc_multi_video, sc_multi_audio, sc_multi_other
+} hd_sc_multimedia_t;
+
 /* bus type values similar to PCI bridge subclasses */
 typedef enum bus_types {
   bus_none, bus_isa, bus_eisa, bus_mc, bus_pci, bus_pcmcia, bus_nubus,
@@ -686,6 +691,7 @@ hd_t *hd_disk_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_net_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class);
 hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_class);
+hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus);
 
 int hd_has_special_eide(hd_data_t *hd_data);
 int hd_has_pcmcia(hd_data_t *hd_data);

@@ -1389,6 +1389,21 @@ hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_cl
   return hd_list;
 }
 
+hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus)
+{
+  hd_t *hd, *hd1, *hd_list = NULL;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->bus == bus) {
+      hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+      *hd1 = *hd;
+      hd1->next = NULL;
+    }
+  }
+
+  return hd_list;
+}
+
 /*
  * Check if the execution of (*func)() takes longer than timeout seconds. 
  * This is useful to work around long kernel-timeouts as in the floppy

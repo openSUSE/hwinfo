@@ -8,7 +8,7 @@
 
 Author: Steffen Winterfeldt <a href="wfeldt@suse.de">wfeldt@suse.de</a><p>
 
-Current version (18 Jan 2000): 0.45<p>
+Current version (24 Jan 2000): 0.51<p>
 
 <h2>Simple Expample</h2>
 
@@ -104,6 +104,10 @@ set, re-probe the hardware first.<p>
 <code><strong><a href="#hd_t">hd_t</a> *hd_sub_class_list(<a href="#hd_data_t">hd_data_t</a> *hd_data, unsigned base_class, unsigned sub_class)</strong></code><p>
 
 Return a list of entries which have the given class/subclass ids.<p>
+
+<code><strong><a href="#hd_t">hd_t</a> *hd_bus_list(<a href="#hd_data_t">hd_data_t</a> *hd_data, unsigned bus)</strong></code><p>
+
+Return a list of entries attached to the given bus.<p>
 
 <code><strong>int hd_has_special_eide(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
 
