@@ -72,7 +72,7 @@ install:
 		install -m 644 $(LIBHD) $(DESTDIR)$(ULIBDIR) ; \
 	fi
 	install -m 644 src/hd/hd.h $(DESTDIR)/usr/include
-	install -m 755 hwbootscan getsysinfo $(DESTDIR)/usr/sbin
+	install -m 755 hwbootscan getsysinfo gen-hwcfg-disk.sh $(DESTDIR)/usr/sbin
 	install -m 755 hwbootscan.rc $(DESTDIR)/etc/init.d/hwscan
 	install -m 755 src/isdn/cdb/mk_isdnhwdb $(DESTDIR)/usr/sbin
 	install -d -m 755 $(DESTDIR)/usr/share/hwinfo
