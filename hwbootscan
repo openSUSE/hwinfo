@@ -15,4 +15,5 @@ if [ -n "$neededchanged" ] ; then
 	done
 fi
 /usr/sbin/hwscan --pci
+/usr/sbin/hwscan --isapnp
 exit 0
