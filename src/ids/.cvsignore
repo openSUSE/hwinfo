@@ -1,0 +1,7 @@
+drivers.c
+hd.drivers
+mk_ids.err
+.depend
+hd.names
+names.c
+names_s.c
