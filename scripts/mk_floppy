@@ -28,7 +28,7 @@ vga=
 prompt=15
 
 # devices we need on the floppy
-devs="tty1 console null zero ram0 ttyS[0-3] nvram fd[0-1]  hd[a-d]* sd[a-d]* sr[0-3]*"
+devs="tty1 console null zero ram0 ttyS[0-3] nvram psaux fd[0-1]  hd[a-d]* sd[a-d]* sr[0-3]*"
 
 # required programs (*without* the shell, see below)
 # (they are *all* copied to /bin)
