@@ -91,6 +91,7 @@ void hd_scan_kbd(hd_data_t *hd_data)
   i = j = 0;
   for(sl = hd_data->klog; sl; sl = sl->next) {
     if(strstr(sl->str, "keyboard: Too many NACKs")) i++;
+    if(strstr(sl->str, "keyboard: Timeout - AT keyboard not present")) i++;
     if(strstr(sl->str, "Keyboard timeout")) i++;
     if(strstr(sl->str, "Keyboard timed out")) i++;
     if(strstr(sl->str, "Detected PS/2 Mouse Port")) j = 1;

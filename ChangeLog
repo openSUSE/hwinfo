@@ -1,3 +1,7 @@
+10/5/2001:	v2.13
+	- increase /dev/psaux timeout
+	- adapted missing keyboard detection for kernel 2.4
+
 10/5/2001:	v2.12
 	- less things in libhd_tiny.a
 	- read block 0 from disks _before_ going to look for the boot device

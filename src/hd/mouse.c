@@ -174,7 +174,7 @@ static void get_ps2_mouse(hd_data_t *hd_data)
       PROGRESS(1, 1, "ps/2");
 
       /* open the mouse device... */
-      if(hd_timeout(test_ps2_open, NULL, 1) > 0) {
+      if(hd_timeout(test_ps2_open, NULL, 2) > 0) {
         ADD2LOG("ps/2: open(%s) timed out\n", DEV_PSAUX);
         fd = -2;
       }
