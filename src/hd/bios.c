@@ -79,8 +79,12 @@ void hd_scan_bios(hd_data_t *hd_data)
   vbe_mode_info_t *mi;
   hd_res_t *res;
 #endif
+  struct stat sbuf;
 
   if(!hd_probe_feature(hd_data, pr_bios)) return;
+
+  /* we better do nothing on SGI Altix */
+  if(!stat("/proc/sgi_sn", &sbuf)) return;
 
   hd_data->module = mod_bios;
 
@@ -188,9 +192,51 @@ void hd_scan_bios(hd_data_t *hd_data)
     bt->led.caps_lock = (bios_ram[0x97] >> 2) & 1;
     bt->led.ok = 1;
 
+    /*
+     * do some consistency checks:
+     *
+     * ports must be < 0x1000 and not appear twice
+     */
+    if(bt->ser_port0 >= 0x1000) bt->ser_port0 = 0;
+
+    if(
+      bt->ser_port1 >= 0x1000 ||
+      bt->ser_port1 == bt->ser_port0
+    ) bt->ser_port1 = 0;
+
+    if(
+      bt->ser_port2 >= 0x1000 ||
+      bt->ser_port2 == bt->ser_port0 ||
+      bt->ser_port2 == bt->ser_port1
+    ) bt->ser_port2 = 0;
+
+    if(
+      bt->ser_port3 >= 0x1000 ||
+      bt->ser_port3 == bt->ser_port0 ||
+      bt->ser_port3 == bt->ser_port1 ||
+      bt->ser_port3 == bt->ser_port2
+    ) bt->ser_port3 = 0;
+
+    if(bt->par_port0 >= 0x1000) bt->par_port0 = 0;
+
+    if(
+      bt->par_port1 >= 0x1000 ||
+      bt->par_port1 == bt->par_port0
+    ) bt->par_port1 = 0;
+
+    if(
+      bt->par_port2 >= 0x1000 ||
+      bt->par_port2 == bt->par_port0 ||
+      bt->par_port2 == bt->par_port1
+    ) bt->par_port2 = 0;
+
     ADD2LOG("  bios: %u disks\n", bios_ram[0x75]);
 
     bt->low_mem_size = ((bios_ram[0x14] << 8) + bios_ram[0x13]) << 10;
+
+    if(bt->low_mem_size >= 768 || bt->low_mem_size < 500) {
+      bt->low_mem_size = 0;
+    }
 
     hd_data->bios_ebda.start = hd_data->bios_ebda.size = 0;
     hd_data->bios_ebda.data = free_mem(hd_data->bios_ebda.data);

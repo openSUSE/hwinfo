@@ -155,10 +155,11 @@
 +driver.module.modprobe	pcnet32
 +driver.module.insmod	mii|pcnet32
 
-# net/amd-8111/
+# net/amd8111e.c
  vendor.id		pci 0x1022
 &device.id		pci 0x7462
-+driver.module.insmod	amd-8111
++driver.module.modprobe	amd8111e
++driver.module.insmod	mii|amd8111e
 
 # net/sis900.c
  vendor.id		pci 0x1039
@@ -338,7 +339,8 @@
 &device.id		pci 0x1002
 |vendor.id		pci 0x13f0
 &device.id		pci 0x0201
-+driver.module.insmod	sundance
++driver.module.modprobe	sundance
++driver.module.insmod	mii|sundance
 
 # net/dl2k.c
  vendor.id		pci 0x1186
@@ -376,7 +378,8 @@
 # net/hamachi.c
  vendor.id		pci 0x1318
 &device.id		pci 0x0911
-+driver.module.insmod	hamachi
++driver.module.modprobe	hamachi
++driver.module.insmod	mii|hamachi
 
 # see #14848
  vendor.id		pci 0x1385
@@ -393,14 +396,30 @@
 &device.id		pci 0x4800
 +driver.module.insmod	aironet4500
 
-# net/tg3.c
 # net/bcm/b57um.c
+# net/tg3.c
  vendor.id		pci 0x14e4
-&device.id		pci 0x1644+0x0002
+&device.id		pci 0x1644+0x0004
 |vendor.id		pci 0x14e4
-&device.id		pci 0x1647
-+driver.module.insmod	tg3
+&device.id		pci 0x16a6+2
 +driver.module.insmod	bcm5700
++driver.module.insmod	tg3
+
+ vendor.id		pci 0x14e4
+&device.id		pci 0x1648
+|vendor.id		pci 0x14e4
+&device.id		pci 0x16a8
++driver.module.insmod	bcm5700
+
+ vendor.id		pci 0x14e4
+&device.id		pci 0x164d
+|vendor.id		pci 0x173b
+&device.id		pci 0x03e8
+|vendor.id		pci 0x173b
+&device.id		pci 0x03ea
+|vendor.id		pci 0x1148
+&device.id		pci 0x4400
++driver.module.insmod	tg3
 
 # net/arcnet/com20020-pci.c
  vendor.id		pci 0x1571
@@ -438,12 +457,14 @@
 |vendor.id		pci 0x8086
 &device.id		pci 0x1229
 +driver.module.insmod	e100
-+driver.module.insmod	eepro100
++driver.module.modprobe	eepro100
++driver.module.insmod	mii|eepro100
 
 # net/starfire.c
  vendor.id		pci 0x9004
 &device.id		pci 0x6915
-+driver.module.insmod	starfire
++driver.module.modprobe	starfire
++driver.module.insmod	mii|starfire
 
 # net/ne.c
  vendor.id		AXE

@@ -160,6 +160,7 @@ void hd_scan_cdrom2(hd_data_t *hd_data)
     if(
       hd->base_class.id == bc_storage_device &&
       hd->sub_class.id == sc_sdev_cdrom &&
+      hd->status.available != status_no &&
       hd->unix_dev_name
     ) {
       PROGRESS(3, ++i, "read cdrom");
