@@ -2666,7 +2666,7 @@ int hd_smp_support(hd_data_t *hd_data)
   int is_smp = 0;
   unsigned u;
   hd_t *hd, *hd0;
-#if !defined(LIBHD_TINY) && (defined(__i386__) || defined (__x86_64__))
+#if defined(__i386__) || (!defined(LIBHD_TINY) && defined (__x86_64__))
   unsigned cpu_threads = 0;
 #endif
 #ifdef __i386__
