@@ -271,7 +271,9 @@ void int_fix_ide_scsi(hd_data_t *hd_data)
           COPY_ENTRY(serial);
 
           hd_scsi->unique_id = free_mem(hd_scsi->unique_id);
-          hd_add_id(hd_scsi);
+          hd_scsi->unique_id1 = free_mem(hd_scsi->unique_id1);
+          hd_scsi->old_unique_id = free_mem(hd_scsi->old_unique_id);
+          hd_add_id(hd_data, hd_scsi);
         }
       }
     }

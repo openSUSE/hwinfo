@@ -1107,6 +1107,7 @@ typedef struct s_hd_t {
 
   char *old_unique_id;		/* the id before v3.17 */
   char *parent_id;		/* unique_id of our parent, please do not use it for now */
+  char *unique_id1;		/* location independent unique_id part */
 
   unsigned drv_dev, drv_vend;	/* sometimes used for driver info lookups */
 

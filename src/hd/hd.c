@@ -963,6 +963,8 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->unique_id);
   free_mem(hd->block0);
   free_mem(hd->driver);
+  free_mem(hd->old_unique_id);
+  free_mem(hd->unique_id1);
   free_mem(hd->parent_id);
   free_mem(hd->config_string);
   free_str_list(hd->extra_info);
@@ -1530,7 +1532,7 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_disk(hd_data);
   hd_scan_ataraid(hd_data);
 
-  for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd);
+  for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd_data, hd);
 
 #ifndef LIBHD_TINY
   hd_scan_manual(hd_data);
@@ -1548,7 +1550,7 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_cdrom2(hd_data);
 
   /* and again... */
-  for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd);
+  for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd_data, hd);
 
   /* assign a hw_class & build a useful model string */
   for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -4493,26 +4495,17 @@ void hd_add_old_id(hd_t *hd)
   str_printf(&hd->unique_id, -1, ".%s", numid2str(id1, 64));
 }
 
-void hd_add_id(hd_t *hd)
+void hd_add_id(hd_data_t *hd_data, hd_t *hd)
 {
   uint64_t id0 = 0, id1 = 0;
+  hd_t *hd1;
+  int cnt;
 
   if(hd->unique_id) return;
 
   hd_add_old_id(hd);
   hd->old_unique_id = hd->unique_id;
   hd->unique_id = NULL;
-
-  INT_CRC(id0, bus);
-  // usb likes to re-attach devices at different places
-  if(hd->unix_dev_name) {
-    STR_CRC(id0, unix_dev_name);
-  }
-  else {
-    INT_CRC(id0, slot);
-    INT_CRC(id0, func);
-  }
-  STR_CRC(id0, rom_id);
 
   INT_CRC(id1, base_class);
   INT_CRC(id1, sub_class);
@@ -4532,9 +4525,34 @@ void hd_add_id(hd_t *hd)
   if(!hd->rev_name) STR_CRC(id1, rev_name);
   STR_CRC(id1, serial);
 
+  hd->unique_id1 = new_str(numid2str(id1, 64));
+
+  INT_CRC(id0, bus);
+  // usb likes to re-attach devices at different places
+  if(hd->unix_dev_name) {
+    STR_CRC(id0, unix_dev_name);
+  }
+  else if(
+    hd->bus == bus_usb
+  ) {
+    for(cnt = 0, hd1 = hd_data->hd; hd1 && hd1->idx != hd->idx; hd1 = hd1->next) {
+      if(
+        hd1->unique_id1 &&
+        !hd1->tag.remove &&
+        !strcmp(hd1->unique_id1, hd->unique_id1)
+      ) cnt++;
+    }
+    crc64(&id0, &cnt, sizeof cnt);
+  }
+  else {
+    INT_CRC(id0, slot);
+    INT_CRC(id0, func);
+  }
+  STR_CRC(id0, rom_id);
+
   id0 += (id0 >> 32);
-  str_printf(&hd->unique_id, 0, "%s", numid2str(id0, 24));
-  str_printf(&hd->unique_id, -1, ".%s", numid2str(id1, 64));
+
+  str_printf(&hd->unique_id, 0, "%s.%s", numid2str(id0, 24), hd->unique_id1);
 }
 #undef INT_CRC
 #undef STR_CRC
