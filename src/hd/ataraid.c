@@ -47,10 +47,8 @@ void hd_scan_ataraid(hd_data_t *hd_data)
           found = 0;
           ok = 1;
           for(sl = di->module.names; sl; sl = sl->next) {
-            if(!strcmp(sl->str, "ataraid")) {
-              if(!di->module.active) ok = 0;
-              found = 1;
-            }
+            if(!strcmp(sl->str, "ataraid")) found = 1;
+            if(!di->module.active) ok = 0;
           }
           if(found && ok) {
             if((unsigned) raid_cnt < sizeof raid_ctrl / sizeof *raid_ctrl) {
