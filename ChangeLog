@@ -1,3 +1,5 @@
+	-added some epson scanners (#45074)
+
 13/9/2004:	v9.12
 	- kernel-nongpl stuff only for i386 (#45099)
 	- updated megaraid module info
