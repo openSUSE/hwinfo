@@ -105,7 +105,7 @@ char *float2str(int i, int n);
 /* return the file name of a module */
 char *mod_name_by_idx(unsigned idx);
 
-int timeout(void(*func)(void *), void *arg, int timeout);
+int hd_timeout(void(*func)(void *), void *arg, int timeout);
 
 str_list_t *read_kmods(hd_data_t *hd_data);
 char *get_cmd_param(hd_data_t *hd_data, int field);

@@ -92,7 +92,7 @@ void hd_scan_misc(hd_data_t *hd_data)
 
         PROGRESS(1, 3, "open floppy");
         /* ...then try to read from it... */
-        if(timeout(test_floppy_open, s, 5) > 0) {
+        if(hd_timeout(test_floppy_open, s, 5) > 0) {
           ADD2LOG("misc.floppy: open(%s) timed out\n", s);
           fd = -2;
         }
@@ -101,7 +101,7 @@ void hd_scan_misc(hd_data_t *hd_data)
         }
         if(fd >= 0) {
           PROGRESS(1, 4, "read floppy");
-          if(timeout(test_floppy_read, &fd, 5) > 0) {
+          if(hd_timeout(test_floppy_read, &fd, 5) > 0) {
             hd->tag.remove = 1;
             ADD2LOG("misc.floppy: read(%s) timed out\n", s);
             ADD2LOG("misc.floppy: removing floppy entry %u\n", hd->idx);

@@ -3253,7 +3253,7 @@ hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus)
  * This is useful to work around long kernel-timeouts as in the floppy
  * detection and ps/2 mosue detection.
  */
-int timeout(void(*func)(void *), void *arg, int timeout)
+int hd_timeout(void(*func)(void *), void *arg, int timeout)
 {
   int child1, child2;
   int status = 0;
