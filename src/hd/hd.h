@@ -217,7 +217,8 @@ typedef enum sc_std {
 typedef enum sc_net_if {
   sc_nif_loopback, sc_nif_ethernet, sc_nif_tokenring, sc_nif_fddi,
   sc_nif_ctc, sc_nif_iucv, sc_nif_hsi, sc_nif_qeth,
-  sc_nif_escon, sc_nif_myrinet, sc_nif_wlan, sc_nif_other = 0x80, sc_nif_sit
+  sc_nif_escon, sc_nif_myrinet, sc_nif_wlan, sc_nif_xp, sc_nif_other = 0x80,
+  sc_nif_sit
 } hd_sc_net_if_t;
 
 /* subclass values of bc_multimedia */
@@ -273,7 +274,7 @@ typedef enum bus_types {
 
   /* outside the range of the PCI values */
   bus_ps2 = 0x80, bus_serial, bus_parallel, bus_floppy, bus_scsi, bus_ide, bus_usb,
-  bus_adb, bus_raid, bus_sbus, bus_i2o, bus_vio
+  bus_adb, bus_raid, bus_sbus, bus_i2o, bus_vio, bus_ccw, bus_iucv
 } hd_bus_types_t;
 
 /**
@@ -2286,6 +2287,7 @@ int hd_module_is_active(hd_data_t *hd_data, char *mod);
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class);
 hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_class);
 hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus);
+const char* hd_busid_to_hwcfg(int busid);
 hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old);
 hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t status);
 hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan);
