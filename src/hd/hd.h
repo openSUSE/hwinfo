@@ -610,7 +610,8 @@ typedef struct {
 typedef struct s_serial_t {
   struct s_serial_t *next;
   char *name;
-  int line, port, irq, baud;
+  char *device;
+  unsigned line, port, irq, baud;
 } serial_t;
 
 typedef struct s_ser_mouse_t {
@@ -880,6 +881,7 @@ typedef struct s_hd_t {
   struct {			/* this struct is for internal purposes only */
     unsigned remove:1;		/* schedule for removal */
     unsigned ser_skip:1;	/* if serial line, don't scan for devices */
+    unsigned ser_device:2;	/* if != 0: info about attached serial device; see serial.c */
   } tag;
 
 } hd_t;

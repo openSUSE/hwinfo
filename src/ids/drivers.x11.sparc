@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-09-18 17:21:01
+#hwinfo data from 2000-09-28 10:54:44
 #
 
 
@@ -7,6 +7,11 @@
 # ATI:Rage 3D Pro PCI
 1002 4750  
 	x	3|MACH64|||||
+
+
+# 3DLabs:Permedia2V 2D+3D
+3D3D 0009  
+	x	3|3DLABS|||||
 
 
 # Sun:Sun - Monochrome (bwtwo)

@@ -97,6 +97,7 @@ void get_serial_modem(hd_data_t *hd_data)
           hd->base_class == bc_comm &&
           hd->sub_class == sc_com_ser &&
           !hd->tag.ser_skip &&
+          hd->tag.ser_device != 2 &&		/* cf. serial.c */
           !has_something_attached(hd_data, hd)
         ) ||
         (
@@ -285,68 +286,111 @@ void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
   ser_modem_t *sm;
   str_list_t *sl;
   char *s;
+#ifdef __PPC__
+  char *s1, *s2;
+  unsigned u;
+#endif
 
   for(sm = hd_data->ser_modem; sm; sm = sm->next) sm->do_io = 0;
 
   (sm = modem)->do_io = 1;
+
+#ifdef __PPC__
+  at_cmd(hd_data, "ATI0\r", 0, 1);
+  sl = sm->at_resp;
+  if(sl && !strcmp(sl->str, "ATI0")) sl = sl->next;	/* skip AT cmd echo */
+
+  s1 = NULL;
+  if(sl) {
+    if(strstr(sl->str, "PowerBook")) {
+      sm->vend = new_str("Apple");
+      sm->user_name = new_str(sl->str);
+
+      return;
+    }
+    s1 = new_str(sl->str);
+  }
+
+  at_cmd(hd_data, "ATI1\r", 0, 1);
+  sl = sm->at_resp;
+  if(sl && !strcmp(sl->str, "ATI1")) sl = sl->next;	/* skip AT cmd echo */
+
+  if(sl) {
+    if(strstr(sl->str, "APPLE")) {
+      sm->vend = new_str("Apple");
+      str_printf(&sm->user_name, 0, "AT Modem");
+      if(s1) {
+        u = strtoul(s1, &s2, 10);
+        if(u && !*s2 && !(u % 1000)) {
+          str_printf(&sm->user_name, 0, "%uk AT Modem", u / 1000);
+        }
+      }
+      s1 = free_mem(s1);
+
+      return;
+    }
+  }
+  s1 = free_mem(s1);
+
+#endif
   
   at_cmd(hd_data, "ATI3\r", 0, 1);
   sl = sm->at_resp;
   if(sl && !strcmp(sl->str, "ATI3")) sl = sl->next;	/* skip AT cmd echo */
 
-  if(!sl) return;
+  if(sl) {
+    if(*sl->str == 'U' && strstr(sl->str, "Robotics ")) {
+      /* looks like an U.S. Robotics... */
 
-  if(*sl->str == 'U' && strstr(sl->str, "Robotics ")) {
-    /* looks like an U.S. Robotics... */
+      sm->vend = new_str("U.S. Robotics, Inc.");
+      /* strip revision code */
+      if((s = strstr(sl->str, " Rev. "))) *s = 0;
+      sm->user_name = canon_str(sl->str, strlen(sl->str));
 
-    sm->vend = new_str("U.S. Robotics, Inc.");
-    /* strip revision code */
-    if((s = strstr(sl->str, " Rev. "))) *s = 0;
-    sm->user_name = canon_str(sl->str, strlen(sl->str));
+      return;
+    }
 
-    return;
-  }
+    if(strstr(sl->str, "3Com U.S. Robotics ") == sl->str) {
+      /* looks like an 3Com U.S. Robotics... */
 
-  if(strstr(sl->str, "3Com U.S. Robotics ") == sl->str) {
-    /* looks like an 3Com U.S. Robotics... */
+      sm->vend = new_str("3Com U.S. Robotics, Inc.");
+      sm->user_name = canon_str(sl->str, strlen(sl->str));
 
-    sm->vend = new_str("3Com U.S. Robotics, Inc.");
-    sm->user_name = canon_str(sl->str, strlen(sl->str));
+      return;
+    }
 
-    return;
-  }
+    if(strstr(sl->str, "-V34_DS -d Z201 2836")) {
+      /* looks like a Zoom V34X */
 
-  if(strstr(sl->str, "-V34_DS -d Z201 2836")) {
-    /* looks like a Zoom V34X */
+      sm->vend = new_str("Zoom Telephonics, Inc.");
+      sm->user_name = new_str("Zoom FaxModem V.34X Plus Model 2836");
 
-    sm->vend = new_str("Zoom Telephonics, Inc.");
-    sm->user_name = new_str("Zoom FaxModem V.34X Plus Model 2836");
-
-    return;
+      return;
+    }
   }
 
   at_cmd(hd_data, "ATI2\r", 0, 1);
   sl = sm->at_resp;
   if(sl && !strcmp(sl->str, "ATI2")) sl = sl->next;	/* skip AT cmd echo */
 
-  if(!sl) return;
+  if(sl) {
+    if(strstr(sl->str, "ZyXEL ")) {
+      /* looks like a ZyXEL... */
 
-  if(strstr(sl->str, "ZyXEL ")) {
-    /* looks like a ZyXEL... */
+      sm->vend = new_str("ZyXEL");
 
-    sm->vend = new_str("ZyXEL");
+      at_cmd(hd_data, "ATI1\r", 0, 1);
+      sl = sm->at_resp;
+      if(sl && !strcmp(sl->str, "ATI1")) sl = sl->next;
+      
+      if(sl && sl->next) {
+        sl = sl->next;
+        if((s = strstr(sl->str, " V "))) *s = 0;
+        sm->user_name = canon_str(sl->str, strlen(sl->str));
+      }
 
-    at_cmd(hd_data, "ATI1\r", 0, 1);
-    sl = sm->at_resp;
-    if(sl && !strcmp(sl->str, "ATI1")) sl = sl->next;
-    
-    if(sl && sl->next) {
-      sl = sl->next;
-      if((s = strstr(sl->str, " V "))) *s = 0;
-      sm->user_name = canon_str(sl->str, strlen(sl->str));
+      return;
     }
-
-    return;
   }
 
 }

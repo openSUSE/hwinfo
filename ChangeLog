@@ -1,3 +1,9 @@
+28/9/2000:	v1.47
+	- sparc: new x11 info
+
+22/9/2000:	v1.46
+	- ppc: fixed serial line & modem detection
+
 21/9/2000:	v1.45
 	- provide CHPID on s390
 

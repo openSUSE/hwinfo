@@ -82,6 +82,17 @@ void hd_scan_serial(hd_data_t *hd_data)
         break;
       }
     }
+    if(ser->device) {
+      if(strstr(ser->device, "modem-printer")) {
+        hd->tag.ser_device = 1;
+      }
+      else if(strstr(ser->device, "infrared")) {
+         hd->tag.ser_device = 2;
+      }
+      else if(strstr(ser->device, "modem")) {
+         hd->tag.ser_device = 3;
+      }
+    }
     if(ser->baud) {
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
       res->baud.type = res_baud;
@@ -102,46 +113,82 @@ void hd_scan_serial(hd_data_t *hd_data)
 
 void get_serial_info(hd_data_t *hd_data)
 {
-  char buf[32];
-  unsigned u0, u1, u2, u3;
+  char buf[64];
+  unsigned u0, u1, u2;
+#if !defined(__PPC__)
+  unsigned u3;
+#endif
   int i;
   str_list_t *sl, *sl0;
   serial_t *ser;
 
+#if !defined(__PPC__)
   /*
    * Max. 44 serial lines at the moment; the serial proc interface is
    * somewhat buggy at the moment (2.2.13), hence the explicit 44 lines
    * limit. That may be dropped later.
    */
-  if(!(sl0 = read_file(PROC_DRIVER_SERIAL, 1, 44))) return;
+  sl0 = read_file(PROC_DRIVER_SERIAL, 1, 44);
 
   // ########## FIX !!!!!!!! ########
-  for(sl = sl0; sl; sl = sl->next) {
-    i = 0;
-    if(
-      sscanf(sl->str, "%u: uart:%31s port:%x irq:%u baud:%u", &u0, buf, &u1, &u2, &u3) == 5 ||
-      (i = 1, sscanf(sl->str, "%u: uart:%31s port:%x irq:%u tx:%*u", &u0, buf, &u1, &u2) == 5)
-    ) {
-      /*
-       * The 'baud' or 'tx' entries are only present for real interfaces.
-       */
-      ser = add_serial_entry(&hd_data->serial, new_mem(sizeof *ser));
-      ser->line = u0;
-      ser->port = u1;
-      ser->irq = u2;
-      if(!i) ser->baud = u3;
-      ser->name = new_str(buf);
+  if(sl0) {
+    for(sl = sl0; sl; sl = sl->next) {
+      i = 0;
+      if(
+        sscanf(sl->str, "%u: uart:%31s port:%x irq:%u baud:%u", &u0, buf, &u1, &u2, &u3) == 5 ||
+        (i = 1, sscanf(sl->str, "%u: uart:%31s port:%x irq:%u tx:%*u", &u0, buf, &u1, &u2) == 5)
+      ) {
+        /*
+         * The 'baud' or 'tx' entries are only present for real interfaces.
+         */
+        ser = add_serial_entry(&hd_data->serial, new_mem(sizeof *ser));
+        ser->line = u0;
+        ser->port = u1;
+        ser->irq = u2;
+        if(!i) ser->baud = u3;
+        ser->name = new_str(buf);
+      }
     }
-  }
 
-  if((hd_data->debug & HD_DEB_SERIAL)) {
-    /* log just the first 16 entries */
-    ADD2LOG("----- /proc/tty/driver/serial -----\n");
-    for(sl = sl0, i = 16; sl && i--; sl = sl->next) {
-      ADD2LOG("  %s", sl->str);
+    if((hd_data->debug & HD_DEB_SERIAL)) {
+      /* log just the first 16 entries */
+      ADD2LOG("----- "PROC_DRIVER_SERIAL" -----\n");
+      for(sl = sl0, i = 16; sl && i--; sl = sl->next) {
+        ADD2LOG("  %s", sl->str);
+      }
+      ADD2LOG("----- "PROC_DRIVER_SERIAL" end -----\n");
     }
-    ADD2LOG("----- /proc/tty/driver/serial end -----\n");
   }
+#endif	/* !defined(__PPC__) */
+
+#if defined(__PPC__)
+  sl0 = read_file(PROC_DRIVER_MACSERIAL, 1, 0);
+
+  if(sl0) {
+    for(sl = sl0; sl; sl = sl->next) {
+      if(
+        (i = sscanf(sl->str, "%u: port:%x irq:%u con:%63[^\n]", &u0, &u1, &u2, buf)) >= 3
+      ) {
+        ser = add_serial_entry(&hd_data->serial, new_mem(sizeof *ser));
+        ser->line = u0;
+        ser->port = u1;
+        ser->irq = u2;
+        ser->name = new_str("SCC");
+        if(i == 4) ser->device = new_str(buf);
+      }
+    }
+
+    if((hd_data->debug & HD_DEB_SERIAL)) {
+      /* log just the first 16 entries */
+      ADD2LOG("----- "PROC_DRIVER_MACSERIAL" -----\n");
+      for(sl = sl0, i = 16; sl && i--; sl = sl->next) {
+        ADD2LOG("  %s", sl->str);
+      }
+      ADD2LOG("----- "PROC_DRIVER_MACSERIAL" end -----\n");
+    }
+  }
+#endif	/* defined(__PPC__) */
+
 
   free_str_list(sl0);
 }
