@@ -749,6 +749,11 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_all:
       hd_set_probe_feature(hd_data, pr_default);
       break;
+    
+    case hw_redasd:
+      hd_set_probe_feature(hd_data, pr_dasd);
+      hd_set_probe_feature(hd_data, pr_partition);
+      break;
 
     case hw_unknown:
     case hw_ieee1394:
@@ -4421,6 +4426,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         case hw_hotplug:	/* not handled */
         case hw_hotplug_ctrl:	/* not handled */
         case hw_zip:		/* not handled */
+        case hw_redasd:
           break;
       }
 
