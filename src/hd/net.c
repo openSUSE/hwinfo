@@ -354,7 +354,8 @@ void add_iseries(hd_data_t *hd_data)
 {
   hd_t *hd, *hd_card;
   hd_res_t *res, *res2;
-  unsigned card_cnt = 0;
+  unsigned cards = 0, card_cnt = 0;
+  str_list_t *sl0, *sl;
 
   for(hd = hd_data->hd ; hd; hd = hd->next) {
     if(
@@ -369,7 +370,7 @@ void add_iseries(hd_data_t *hd_data)
       hd_card->device.id = MAKE_ID(TAG_SPECIAL, 0x1000);
       hd_card->slot = card_cnt++;
       str_printf(&hd_card->device.name, 0, "Virtual Ethernet card %d", hd_card->slot);
-      add_str_list(&hd_card->drivers, "veth");
+      add_str_list(&hd_card->drivers, "iseries_veth");
 
       hd->attached_to = hd_card->idx;
 
@@ -383,6 +384,24 @@ void add_iseries(hd_data_t *hd_data)
         res2->hwaddr.addr = new_str(res->hwaddr.addr);
         add_res_entry(&hd_card->res, res2);
       }
+    }
+  }
+
+  if(!card_cnt) {
+    sl0 = read_file("/proc/iSeries/config", 0, 0);
+    for(sl = sl0; sl; sl = sl->next) {
+      if(sscanf(sl->str, "AVAILABLE_VETH=%d", &cards) == 1) break;
+    }
+    free_str_list(sl0);
+
+    for(; card_cnt < cards; card_cnt++) {
+      hd_card = add_hd_entry(hd_data, __LINE__, 0);
+      hd_card->base_class.id = bc_network;
+      hd_card->sub_class.id = 0x00;
+      hd_card->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);	// IBM
+      hd_card->device.id = MAKE_ID(TAG_SPECIAL, 0x1000);
+      hd_card->slot = card_cnt;
+      str_printf(&hd_card->device.name, 0, "Virtual Ethernet card %d", hd_card->slot);
     }
   }
 }

@@ -620,7 +620,7 @@
 # iSeries network
  vendor.id		special 0x6001
 &device.id		special 0x1000
-+driver.module.modprobe	ibmveth
++driver.module.modprobe	iseries_veth
 
 # IBM vscsi
  vendor.id		special 0x6001
