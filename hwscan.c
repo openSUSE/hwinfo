@@ -126,6 +126,7 @@ int main(int argc, char **argv)
     if(argv[optind] || !scan_item) return help(), 1;
     rc = do_scan(scan_item);
     if(found_items) {
+      unlink("/var/lib/hardware/.update"); /* so we do retrigger a rescan */
       if((f = fopen("/var/lib/hardware/.update", "a"))) fclose(f);
     }
     ok = 1;
