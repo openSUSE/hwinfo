@@ -625,17 +625,23 @@
 &subdevice.id		pci 0x10c2
 +driver.module.modprobe	aacraid
 
-# modules.alias
- vendor.id		pci 0x1166
-&device.id		pci 0x0240
-+driver.module.modprobe	sata_svw
+# modules.alias sata_*
+ baseclass.id		0x001
+&subclass.id		0x06
+&progif.id		0x00
+&vendor.id		pci 0x1725
+&device.id		pci 0x7174
+|baseclass.id		0x001
+&subclass.id		0x06
+&progif.id		0x00
+&vendor.id		pci 0x8086
+&device.id		pci 0x3200
++driver.module.modprobe	sata_vsc
 
-# modules.alias
- vendor.id		pci 0x1106
-&device.id		pci 0x3149
-+driver.module.modprobe	sata_via
+ vendor.id		pci 0x1039
+&device.id		pci 0x0180+0x0002
++driver.module.modprobe	sata_sis
 
-# modules.alias
  vendor.id		pci 0x105a
 &device.id		pci 0x3318+0x0002
 |vendor.id		pci 0x105a
@@ -644,11 +650,12 @@
 &device.id		pci 0x3373
 |vendor.id		pci 0x105a
 &device.id		pci 0x3375+0x0002
-|vendor.id		pci 0x105a
-&device.id		pci 0x6622
 +driver.module.modprobe	sata_promise
 
-# modules.alias
+ vendor.id		pci 0x105a
+&device.id		pci 0x6622
++driver.module.modprobe	sata_sx4
+
  vendor.id		pci 0x1095
 &device.id		pci 0x0240
 |vendor.id		pci 0x1095
@@ -659,6 +666,27 @@
 &device.id		pci 0x3512
 +driver.module.modprobe	sata_sil
 
+ vendor.id		pci 0x10de
+&device.id		pci 0x0036
+|vendor.id		pci 0x10de
+&device.id		pci 0x003e
+|vendor.id		pci 0x10de
+&device.id		pci 0x0054+0x0002
+|vendor.id		pci 0x10de
+&device.id		pci 0x008e
+|vendor.id		pci 0x10de
+&device.id		pci 0x00e3
+|vendor.id		pci 0x10de
+&device.id		pci 0x00ee
++driver.module.modprobe	sata_nv
+
+ vendor.id		pci 0x1106
+&device.id		pci 0x3149
++driver.module.modprobe	sata_via
+
+ vendor.id		pci 0x1166
+&device.id		pci 0x0240
++driver.module.modprobe	sata_svw
 
 # modules.alias, #38628
  baseclass.id		0x00b
