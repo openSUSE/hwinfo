@@ -301,14 +301,14 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
 {
   hd_t *hd_scsi, *hd_usb;
 
-  for(hd_scsi = hd_usb = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
+  for(hd_scsi = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
     if(
       hd_scsi->bus == bus_scsi &&
       hd_scsi->driver &&
       hd_scsi->usb_guid &&
       !strcmp(hd_scsi->driver, "usb-storage")
     ) {
-      for(; hd_usb ; hd_usb = hd_usb->next) {
+      for(hd_usb = hd_data->hd; hd_usb ; hd_usb = hd_usb->next) {
         if(
           hd_usb->bus == bus_usb &&
           hd_usb->usb_guid &&
@@ -325,6 +325,18 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
           COPY_ENTRY(unix_dev_name);
           COPY_ENTRY(model);
           COPY_ENTRY(driver);
+
+          hd_usb->vend = hd_scsi->vend;
+          hd_usb->dev = hd_scsi->dev;
+          COPY_ENTRY(dev_name);
+          COPY_ENTRY(vend_name);
+          hd_usb->sub_dev_name = free_mem(hd_usb->sub_dev_name);
+          hd_usb->sub_vend_name = free_mem(hd_usb->sub_vend_name);
+          COPY_ENTRY(sub_dev_name);
+          COPY_ENTRY(sub_vend_name);
+          COPY_ENTRY(rev_name);
+          COPY_ENTRY(serial);
+
           hd_usb->is.notready = hd_scsi->is.notready;
           if(hd_usb->block0) free_mem(hd_usb->block0);
           hd_usb->block0 = hd_scsi->block0;
