@@ -83,7 +83,10 @@ int InitInt10()
 
   setup_io();
 
-  iopl(3);
+  if(iopl(3) < 0) {
+    unmap();
+    return -1;
+  }
 
   scan_pci();
 

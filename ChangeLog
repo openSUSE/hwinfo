@@ -1,3 +1,6 @@
+28/8/2003:	v7.15
+	- iopl() may fail even if we're root (#29494)
+
 27/8/2003:	v7.14
 	- probe for multiple hardware classes at a time
 
