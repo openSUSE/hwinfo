@@ -1,5 +1,8 @@
 25/2/2003:	v6.02
 	- fixed 64 bit int -> pointer gcc warnings
+	- fixed minor database lookup bug
+	- database parser logs to logfile, not stderr
+	- support serial mice with really strange vendor ids (#24137)
 
 24/2/2003:	v6.01
 	- add fibre channel adapters to storage controller list (#23686)

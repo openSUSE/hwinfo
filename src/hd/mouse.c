@@ -448,11 +448,17 @@ void get_serial_mouse(hd_data_t *hd_data)
         strncpy(buf, sm->pnp_id, 3);
         buf[3] = 0;
         hd->vendor.id = name2eisa_id(buf);
+        if(!hd->vendor.id) {	/* in case it's a really strange one... */
+          hd->vendor.name = new_str(buf);
+        }
         hd->device.id = MAKE_ID(TAG_EISA, strtol(sm->pnp_id + 3, NULL, 16));
 
         hd->serial = new_str(sm->serial);
         if(sm->user_name) hd->device.name = new_str(sm->user_name);
-        if(sm->vend) hd->vendor.name = new_str(sm->vend);
+        if(sm->vend) {
+          free_mem(hd->vendor.name);
+          hd->vendor.name = new_str(sm->vend);
+        }
 
         if(sm->dev_id && strlen(sm->dev_id) >= 7) {
           char buf[5], *s;
@@ -644,6 +650,17 @@ int is_pnpinfo(ser_device_t *mi, int ofs)
 unsigned chk4id(ser_device_t *mi)
 {
   int i;
+
+#if 0
+  unsigned char fake[] =
+  {
+    // fake pnp data
+  };
+
+  mi->buf_len = sizeof fake;
+  memcpy(mi->buf, fake, mi->buf_len);
+  // for(i = 0; i < mi->buf_len; i++) mi->buf[i] += ' ';
+#endif
 
   if(!mi->buf_len) return 0;
 

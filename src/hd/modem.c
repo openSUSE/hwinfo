@@ -880,6 +880,8 @@ int is_pnpinfo(ser_device_t *mi, int ofs)
   /* now check the id */
   for(j = 0; j < 3; j++) {
     if(
+      /* numbers are not really allowed, but... */
+      (mi->pnp_id[j] < '0' || mi->pnp_id[j] > '9') &&
       (mi->pnp_id[j] < 'A' || mi->pnp_id[j] > 'Z') &&
       mi->pnp_id[j] != '_'
     ) return 0;

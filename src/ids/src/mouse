@@ -109,3 +109,12 @@
 &device.id		special 0x0000
 +driver.mouse		mousesystems|sun|3|0
 
+# A4Tech 4D++ super whatever mouse (#24137)
+ vendor.name		A4W
++vendor.name		A4Tech
+
+ device.id		eisa 0x0005
+&vendor.name		A4Tech
++device.name		Serial Wheel Mouse
++driver.mouse		intellimouse|ms3|3|1
+

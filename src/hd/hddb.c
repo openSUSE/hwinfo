@@ -14,6 +14,7 @@ extern hddb2_data_t hddb_internal;
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 // #define HDDB_TRACE
 // #define HDDB_TEST
+// #define HDDB_EXTERNAL_ONLY
 
 #define DATA_VALUE(a)	((a) & ~(-1 << 28))
 #define DATA_FLAG(a)	(((a) >> 28) & 0xf)
@@ -238,7 +239,9 @@ void hddb_init(hd_data_t *hd_data)
   hddb_init_pci(hd_data);
   hddb_init_external(hd_data);
 
+#ifndef HDDB_EXTERNAL_ONLY
   hd_data->hddb2[1] = &hddb_internal;
+#endif
 
 #ifdef HDDB_TEST
   test_db(hd_data);
@@ -270,7 +273,7 @@ void hddb_init_external(hd_data_t *hd_data)
   for(sl = sl0; sl; sl = sl->next, l_nr++) {
     l = parse_line(sl->str);
     if(!l) {
-      fprintf(stderr, "hd.ids line %d: invalid line\n", l_nr);
+      ADD2LOG("hd.ids line %d: invalid line\n", l_nr);
       state = 4;
       break;
     };
@@ -278,14 +281,14 @@ void hddb_init_external(hd_data_t *hd_data)
     switch(l->prefix) {
       case pref_new:
         if((state == 2 && !entry_mask) || state == 1) {
-          fprintf(stderr, "hd.ids line %d: new item not allowed\n", l_nr);
+          ADD2LOG("hd.ids line %d: new item not allowed\n", l_nr);
           state = 4;
           break;
         }
         if(state == 2 && entry_mask) {
           ent = store_entry(hddb2, tmp_entry);
           if(ent == -1u) {
-            fprintf(stderr, "hd.ids line %d: internal hddb oops 1\n", l_nr);
+            ADD2LOG("hd.ids line %d: internal hddb oops 1\n", l_nr);
             state = 4;
             break;
           }
@@ -305,7 +308,7 @@ void hddb_init_external(hd_data_t *hd_data)
 
       case pref_and:
         if(state != 1) {
-          fprintf(stderr, "hd.ids line %d: must start item first\n", l_nr);
+          ADD2LOG("hd.ids line %d: must start item first\n", l_nr);
           state = 4;
           break;
         }
@@ -313,13 +316,13 @@ void hddb_init_external(hd_data_t *hd_data)
 
       case pref_or:
         if(state != 1 || !entry_mask || l_end <= l_start || l_end < 1) {
-          fprintf(stderr, "hd.ids line %d: must start item first\n", l_nr);
+          ADD2LOG("hd.ids line %d: must start item first\n", l_nr);
           state = 4;
           break;
         }
         ent = store_entry(hddb2, tmp_entry);
         if(ent == -1u) {
-          fprintf(stderr, "hd.ids line %d: internal hddb oops 2\n", l_nr);
+          ADD2LOG("hd.ids line %d: internal hddb oops 2\n", l_nr);
           state = 4;
           break;
         }
@@ -329,7 +332,7 @@ void hddb_init_external(hd_data_t *hd_data)
         clear_entry(tmp_entry);
         u = store_list(hddb2, &dbl);
         if(u != l_end) {
-          fprintf(stderr, "hd.ids line %d: internal hddb oops 2\n", l_nr);
+          ADD2LOG("hd.ids line %d: internal hddb oops 2\n", l_nr);
           state = 4;
           break;
         }
@@ -338,14 +341,14 @@ void hddb_init_external(hd_data_t *hd_data)
 
       case pref_add:
         if(state == 1 && !entry_mask) {
-          fprintf(stderr, "hd.ids line %d: driver info not allowed\n", l_nr);
+          ADD2LOG("hd.ids line %d: driver info not allowed\n", l_nr);
           state = 4;
           break;
         }
         if(state == 1 && l_end > l_start) {
           ent = store_entry(hddb2, tmp_entry);
           if(ent == -1u) {
-            fprintf(stderr, "hd.ids line %d: internal hddb oops 3\n", l_nr);
+            ADD2LOG("hd.ids line %d: internal hddb oops 3\n", l_nr);
             state = 4;
             break;
           }
@@ -356,7 +359,7 @@ void hddb_init_external(hd_data_t *hd_data)
           state = 2;
         }
         if(state != 2 || l_end == 0) {
-          fprintf(stderr, "hd.ids line %d: driver info not allowed\n", l_nr);
+          ADD2LOG("hd.ids line %d: driver info not allowed\n", l_nr);
           state = 4;
           break;
         }
@@ -372,7 +375,7 @@ void hddb_init_external(hd_data_t *hd_data)
         entry_mask |= u;
       }
       else {
-        fprintf(stderr, "hd.ids line %d: invalid info\n", l_nr);
+        ADD2LOG("hd.ids line %d: invalid info\n", l_nr);
         state = 4;
       }
     }
@@ -384,7 +387,7 @@ void hddb_init_external(hd_data_t *hd_data)
   if(state == 2 && entry_mask) {
     ent = store_entry(hddb2, tmp_entry);
     if(ent == -1u) {
-      fprintf(stderr, "hd.ids line %d: internal hddb oops 4\n", l_nr);
+      ADD2LOG("hd.ids line %d: internal hddb oops 4\n", l_nr);
       state = 4;
     }
     else if(l_end && l_end > l_start) {
@@ -1397,6 +1400,7 @@ int hddb_search(hd_data_t *hd_data, hddb_search_t *hs, int max_recursions)
   int i;
   hddb2_data_t *hddb;
   int db_idx;
+  hddb_entry_mask_t all_values = 0;
 
   if(!hs) return 0;
 
@@ -1422,12 +1426,16 @@ int hddb_search(hd_data_t *hd_data, hddb_search_t *hs, int max_recursions)
       }
     }
 
+    all_values |= hs->value;
+
     if(!max_recursions) break;
 
     hs->key |= hs->value;
     hs->value = 0;
     memset(hs->value_mask, 0, sizeof hs->value_mask);
   }
+
+  hs->value = all_values;
 
   return 1;
 }
@@ -1529,9 +1537,19 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     hs.key |= 1 << he_vendor_id;
   }
 
+  if(hd->vendor.name) {
+    hs.vendor.name = hd->vendor.name;
+    hs.key |= 1 << he_vendor_name;
+  }
+
   if(hd->device.id) {
     hs.device.id = hd->device.id;
     hs.key |= 1 << he_device_id;
+  }
+
+  if(hd->device.name) {
+    hs.device.name = hd->device.name;
+    hs.key |= 1 << he_device_name;
   }
 
   if(hd->sub_vendor.id) {
