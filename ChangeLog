@@ -1,3 +1,7 @@
+	- remove mouse probing from hwbootscan, it sometimes
+	  hangs and takes too long.
+	- add --fast to --cdrom probe, so the cdrom is not opened.
+
 4/2/2003:	v5.52
 	- fixed pci base addresses on 64bit archs (#21075)
 

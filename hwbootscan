@@ -12,11 +12,6 @@ kbd_ok=
 
 rm -f /var/lib/hardware/LOCK
 
-neededchanged=`/usr/sbin/hwscan --mouse`
-if [ -n "$neededchanged" ] ; then
-  has_keyboard && /sbin/yast2 mouse reprobe
-fi
-
 neededchanged=`/usr/sbin/hwscan --gfxcard`
 if [ -n "$neededchanged" ] ; then
   has_keyboard && /sbin/yast2 x11 reprobe
@@ -24,7 +19,7 @@ fi
 
 /usr/sbin/hwscan --pci
 /usr/sbin/hwscan --isapnp
-/usr/sbin/hwscan --cdrom
+/usr/sbin/hwscan --cdrom --fast
 /usr/sbin/hwscan --disk
 
 exit 0
