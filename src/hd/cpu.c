@@ -369,7 +369,7 @@ void read_cpuinfo(hd_data_t *hd_data)
   mhz = stepping = 0;
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
-    if(sscanf(sl->str, "model : %79[^\n]", model_id) == 1);
+    if(sscanf(sl->str, "family : %79[^\n]", model_id) == 1);
     if(sscanf(sl->str, "vendor : %79[^\n]", vendor_id) == 1);
     if(sscanf(sl->str, "features : %255[^\n]", features) == 1);
     if(sscanf(sl->str, "cpu MHz : %u", &mhz) == 1);
