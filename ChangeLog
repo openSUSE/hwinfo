@@ -1,3 +1,6 @@
+4/1/2001:	v3.37
+	- reimplemented iSeries veth device detection (#12680)
+
 14/12/2001:	v3.36
 	- create version for linking against dietlibc
 	- mls: continue even if some vbe calls fail

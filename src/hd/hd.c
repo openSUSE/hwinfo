@@ -50,6 +50,7 @@
 #include "cciss.h"
 #include "manual.h"
 #include "fb.h"
+#include "veth.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -87,6 +88,10 @@
 
 #ifdef __arm__
 #define HD_ARCH "arm"
+#endif
+
+#ifdef __mips__
+#define HD_ARCH "mips"
 #endif
 
 #if defined(__s390__) || defined(__s390x__) ||defined(__alpha__)
@@ -172,7 +177,8 @@ static struct s_mod_names {
   { mod_i2o, "i2o" },
   { mod_cciss, "cciss" },
   { mod_manual, "manual" },
-  { mod_fb, "fb" }
+  { mod_fb, "fb" },
+  { mod_veth, "veth" }
 };
 
 /*
@@ -257,7 +263,8 @@ static struct s_pr_flags {
   { pr_i2o,          0,           8|4|2|1, "i2o"          },
   { pr_cciss,        0,           8|4|2|1, "cciss"        },
   { pr_manual,       0,           8|4|2|1, "manual"       },
-  { pr_fb,           0,           8|4|2|1, "fb"           }
+  { pr_fb,           0,           8|4|2|1, "fb"           },
+  { pr_veth,         0,           8|4|2|1, "veth"         }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -533,15 +540,10 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 #ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
 #endif
-#if defined(__s390__) || defined(__s390x__) || (__powerpc__)
-#ifdef __powerpc__
-      if(hd_data->flags.iseries) {
+#if defined(__s390__) || defined(__s390x__)
+      hd_set_probe_feature(hd_data, pr_net);
 #endif
-	      hd_set_probe_feature(hd_data, pr_net);
-#ifdef __powerpc__
-      }
-#endif
-#endif
+      hd_set_probe_feature(hd_data, pr_veth);
       break;
 
     case hw_printer:
@@ -1460,6 +1462,7 @@ void hd_scan(hd_data_t *hd_data)
 #if defined(__s390__) || defined(__s390x__)
   hd_scan_dasd(hd_data);
 #endif
+  hd_scan_veth(hd_data);
   hd_scan_usb(hd_data);
 #if defined(__PPC__)
   hd_scan_adb(hd_data);

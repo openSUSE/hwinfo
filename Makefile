@@ -24,7 +24,7 @@ tiny:
 	@make EXTRA_FLAGS=-DLIBHD_TINY SHARED_FLAGS=
 
 tinydiet:
-	@make CC="diet gcc" EXTRA_FLAGS=-DLIBHD_TINY SHARED_FLAGS=
+	@make CC="diet gcc" EXTRA_FLAGS="-DLIBHD_TINY -DDIET" SHARED_FLAGS=
 
 static:
 	@make SHARED_FLAGS=

@@ -30,6 +30,7 @@
 #define PROC_VERSION		"/proc/version"
 #define PROC_ISAPNP		"/proc/isapnp"
 #define PROC_ISERIES		"/proc/iSeries"
+#define PROC_ISERIES_VETH	"/proc/iSeries/veth"
 
 #define DEV_USB_DEVICES		"/dev/usb/devices"
 #define DEV_NVRAM		"/dev/nvram"
@@ -101,7 +102,7 @@ enum mod_idx {
   mod_ide, mod_scsi, mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel,
   mod_isa, mod_dac960, mod_smart, mod_isdn, mod_kbd, mod_prom, mod_sbus,
   mod_int, mod_braille, mod_xtra, mod_sys, mod_dasd, mod_i2o, mod_cciss,
-  mod_manual, mod_fb
+  mod_manual, mod_fb, mod_veth
 };
 
 void *new_mem(size_t size);

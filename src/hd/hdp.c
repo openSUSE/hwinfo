@@ -757,6 +757,9 @@ void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
       case arch_arm:
 	dump_line0 ("ARM\n");
 	break;
+      case arch_mips:
+	dump_line0 ("MIPS\n");
+	break;
       default:
 	dump_line0 ("**UNKNWON**\n");
 	break;

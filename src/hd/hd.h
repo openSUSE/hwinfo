@@ -78,7 +78,7 @@ typedef enum probe_feature {
   pr_sbus, pr_int, pr_braille, pr_braille_alva, pr_braille_fhp,
   pr_braille_ht, pr_ignx11, pr_sys, pr_dasd, pr_i2o, pr_cciss, pr_bios_vbe,
   pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
-  pr_fb, pr_bios_vbe2,
+  pr_fb, pr_bios_vbe2, pr_veth,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
@@ -550,13 +550,15 @@ typedef enum cpu_arch {
   arch_68k,
   arch_ia64,
   arch_s390, arch_s390x,
-  arch_arm
+  arch_arm,
+  arch_mips
 } hd_cpu_arch_t;
 
 // ###### drop boot_arch at all?
 typedef enum boot_arch {
   boot_unknown = 0,
-  boot_lilo, boot_milo, boot_aboot, boot_silo, boot_ppc, boot_elilo, boot_s390
+  boot_lilo, boot_milo, boot_aboot, boot_silo, boot_ppc, boot_elilo, boot_s390,
+  boot_mips
 } hd_boot_arch_t;
 
 /* special cpu entry */

@@ -50,7 +50,7 @@ struct serial_struct {
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#if defined(__i386__) || defined(__PPC__) || defined(__alpha__) || defined(__ia64__)
+#if defined(__i386__) || defined(__PPC__) || defined(__alpha__) || defined(__ia64__) || defined(__arm__) || defined(__mips__)
 
 void hd_scan_kbd(hd_data_t *hd_data)
 {
