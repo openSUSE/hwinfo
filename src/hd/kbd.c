@@ -121,6 +121,23 @@ void hd_scan_kbd(hd_data_t *hd_data)
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
       res->baud.type = res_baud;
       res->baud.speed = u;
+    } else {
+#ifdef TIOCGDEV
+      unsigned int tty;
+
+      if(!ioctl(fd, TIOCGDEV, &tty)) {
+	fprintf(stderr,"console at tty 0x%x\n", tty);
+
+	if (tty == 0xe500) { /* /dev/hvc0 */
+	  hd = add_hd_entry(hd_data, __LINE__, 0);
+	  hd->base_class.id = bc_keyboard;
+	  hd->sub_class.id = sc_keyboard_console;
+	  hd->bus.id = bus_serial;
+	  hd->device.name = new_str("serial console");
+	  str_printf(&hd->unix_dev_name, 0, "/dev/hvc0");
+        }
+      }
+#endif /* TIOCGDEV */
     }
     close(fd);
   }
