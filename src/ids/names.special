@@ -196,6 +196,7 @@ s5001	Alva
 	0004	abt38d
 	000b	del440
 	000d	del480
+	000e	sat540
 
 s5002	Papenmeier
 	0001	2dlite
@@ -208,6 +209,7 @@ s5002	Papenmeier
 	0044	el40p
 
 s5003	Handy Tech
+	0005	brlwave
 	0009	brlwave
 	0044	vario40
 	0080	ht20

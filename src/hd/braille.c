@@ -15,6 +15,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+#ifndef LIBHD_TINY
+
 static unsigned do_alva(hd_data_t *hd_data, char *dev_name, int cnt);
 static unsigned do_fhp(hd_data_t *hd_data, char *dev_name, unsigned baud, int cnt);
 static unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt);
@@ -92,6 +94,92 @@ void hd_scan_braille(hd_data_t *hd_data)
 /* Communication codes */
 #define BRL_ID	"\033ID="
 
+#if 1
+/* new alva code */
+
+#define WAIT_DTR	700000
+#define WAIT_FLUSH	200
+
+unsigned do_alva(hd_data_t *hd_data, char *dev_name, int cnt)
+{
+  int fd, i, timeout = 100;
+  struct termios oldtio, newtio;		/* old & new terminal settings */
+  int model = -1;
+  unsigned char buffer[sizeof BRL_ID];
+  unsigned dev = 0;
+
+  PROGRESS(2, cnt, "alva open");
+
+  /* Open the Braille display device for random access */
+  fd = open(dev_name, O_RDWR | O_NOCTTY);
+  if(fd < 0) return 0;
+
+  tcgetattr(fd, &oldtio);	/* save current settings */
+
+  /* Set flow control and 8n1, enable reading */
+  memset(&newtio, 0, sizeof newtio);
+  newtio.c_cflag = CRTSCTS | CS8 | CLOCAL | CREAD;
+  /* Ignore bytes with parity errors and make terminal raw and dumb */
+  newtio.c_iflag = IGNPAR;
+  newtio.c_oflag = 0;		/* raw output */
+  newtio.c_lflag = 0;		/* don't echo or generate signals */
+  newtio.c_cc[VMIN] = 0;	/* set nonblocking read */
+  newtio.c_cc[VTIME] = 0;
+
+  PROGRESS(3, cnt, "alva init ok");
+
+  PROGRESS(4, cnt, "alva read data");
+
+  /* autodetecting ABT model */
+  /* to force DTR off */
+  cfsetispeed(&newtio, B0);
+  cfsetospeed(&newtio, B0);
+  tcsetattr(fd, TCSANOW, &newtio);	/* activate new settings */
+  usleep(WAIT_DTR);
+
+  tcflush(fd, TCIOFLUSH);		/* clean line */
+  usleep(WAIT_FLUSH);
+
+  /* DTR back on */
+  cfsetispeed(&newtio, B9600);
+  cfsetospeed(&newtio, B9600);
+  tcsetattr(fd, TCSANOW, &newtio);	/* activate new settings */
+  usleep(WAIT_DTR);			/* give time to send ID string */
+
+  if((i = read(fd, buffer, sizeof buffer)) == sizeof buffer) {
+    if(!strncmp(buffer, BRL_ID, sizeof BRL_ID - 1)) {
+      /* Find out which model we are connected to... */
+      switch(model = buffer[sizeof buffer - 1])
+      {
+        case    1:
+        case    2:
+        case    3:
+        case    4:
+        case 0x0b:
+        case 0x0d:
+        case 0x0e:
+         dev = MAKE_ID(TAG_SPECIAL, model);
+         break;
+      }
+    }
+  }
+  ADD2LOG("alva.%d@%s[%d]: ", timeout, dev_name, i);
+  if(i > 0) hexdump(&hd_data->log, 1, i, buffer);
+  ADD2LOG("\n");
+
+  PROGRESS(5, cnt, "alva read done");
+
+  /* reset serial lines */
+  tcflush(fd, TCIOFLUSH);
+  tcsetattr(fd, TCSAFLUSH, &oldtio);
+  close(fd);
+
+  return dev;
+}
+
+#else
+/* old alva code */
+
 unsigned do_alva(hd_data_t *hd_data, char *dev_name, int cnt)
 {
   int fd, i, timeout = 100;
@@ -168,6 +256,7 @@ unsigned do_alva(hd_data_t *hd_data, char *dev_name, int cnt)
 
   return dev;
 }
+#endif
 
 
 /*
@@ -337,6 +426,7 @@ unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt)
       PROGRESS(6, cnt, "ht read done");
 
       switch(buf[1]) {
+  	case 0x05:
   	case 0x09:
   	case 0x44:
   	case 0x80:
@@ -364,4 +454,5 @@ unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt)
   return dev;
 }
 
+#endif	/* ifndef LIBHD_TINY */
 

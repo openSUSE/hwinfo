@@ -37,8 +37,7 @@ endif
 
 IDFILES += names.pciutils\
 	   drivers.network drivers.scsi drivers.block drivers.monitor\
-	   drivers.audio drivers.mouse drivers.video
-#	   drivers.x11 names.SaX2 names.SaX
+	   drivers.audio drivers.mouse drivers.video drivers.braille
 
 OBJS	+= names.o names_s.o drivers.o
 

@@ -16,6 +16,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+#ifndef LIBHD_TINY
 
 #define dump_line(x0, x1...) fprintf(f, "%*s" x0, ind, "", x1)
 #define dump_line_str(x0...) fprintf(f, "%*s%s", ind, "", x0)
@@ -810,4 +811,10 @@ char *vend_id2str(unsigned vend)
 
   return buf;
 }
+
+#else	/* ifndef LIBHD_TINY */
+
+void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f) { }
+
+#endif	/* ifndef LIBHD_TINY */
 

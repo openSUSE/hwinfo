@@ -28,7 +28,7 @@ tar -Icf $hwinfo.tar.bz2 hwinfo-$ver
 
 if mkdir /work/src/done/STABLE/hwinfo ; then
   cd /work/src/done/STABLE/hwinfo
-  cp $hwinfo.tar.gz /work/SRC/all/hwinfo/hwinfo.{changes,spec} .
+  cp $hwinfo.tar.bz2 /work/SRC/all/hwinfo/hwinfo.{changes,spec} .
   perl -pi -e 's/^(Version:\s+)\S+/${1}'$ver'/' /work/src/done/STABLE/hwinfo/hwinfo.spec
   perl -pi -e 's/^(Source.+?-)\S+?(\.tar\.bz2)/${1}'$ver'${2}/' /work/src/done/STABLE/hwinfo/hwinfo.spec
   . /work/src/bin/.profile

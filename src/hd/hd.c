@@ -242,8 +242,8 @@ static struct s_pr_flags {
   { pr_sbus,         0,           8|4|2|1, "sbus"         },
   { pr_int,          0,           8|4|2|1, "int"          },
 #ifdef __i386__
-  { pr_braille,      0,           8|4|2|1, "braille"      },
-  { pr_braille_alva, pr_braille,        0, "braille.alva" },
+  { pr_braille,      0,             4|2|1, "braille"      },
+  { pr_braille_alva, pr_braille,    4|2|1, "braille.alva" },
   { pr_braille_fhp,  pr_braille,    4|2|1, "braille.fhp"  },
   { pr_braille_ht,   pr_braille,    4|2|1, "braille.ht"   },
 #else
@@ -1144,8 +1144,8 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_adb(hd_data);
 #endif
   hd_scan_kbd(hd_data);
-  hd_scan_braille(hd_data);
 #ifndef LIBHD_TINY
+  hd_scan_braille(hd_data);
   hd_scan_modem(hd_data);	/* do it before hd_scan_mouse() */
 #endif
   hd_scan_mouse(hd_data);
