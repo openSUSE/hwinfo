@@ -1900,6 +1900,7 @@ enum boot_arch hd_boot_arch(hd_data_t *hd_data)
 }
 
 
+#if 0
 hd_t *hd_cd_list(hd_data_t *hd_data, int rescan)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
@@ -2124,6 +2125,7 @@ hd_t *hd_display_list(hd_data_t *hd_data, int rescan)
 
   return hd_list;
 }
+#endif	/* 0 */
 
 hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 {
@@ -2162,6 +2164,10 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_pci);
         hd_set_probe_feature(hd_data, pr_sbus);
         hd_set_probe_feature(hd_data, pr_misc);		/* for isa cards */
+        break;
+
+      case hw_monitor:
+        hd_set_probe_feature(hd_data, pr_monitor);
         break;
 
       case hw_mouse:
@@ -2239,6 +2245,10 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 
     case hw_display:
       base_class = bc_display;
+      break;
+
+    case hw_monitor:
+      base_class = bc_monitor;
       break;
 
     case hw_mouse:
@@ -2441,15 +2451,45 @@ str_list_t *read_kmods(hd_data_t *hd_data)
  * Return field 'field' (starting with 0) from the 'SuSE='
  * kernel cmd line parameter.
  */
-char *get_cmd_param(int field)
+char *get_cmd_param(hd_data_t *hd_data, int field)
 {
-  str_list_t *sl;
+  str_list_t *sl0, *sl1;
   char c_str[] = "SuSE=";
-  char *s, *t;
+  char *s, *t, *t0;
+  int i;
 
-  if(!(sl = read_file(PROC_CMDLINE, 0, 1))) return NULL;
+  if(!hd_data->cmd_line) {
+    sl0 = read_file(PROC_CMDLINE, 0, 1);
+    sl1 = read_file(LIB_CMDLINE, 0, 1);
 
-  t = sl->str;
+    if(sl0) {
+      i = strlen(sl0->str);
+      if(i && sl0->str[i - 1] == '\n') sl0->str[i - 1] = 0;
+      hd_data->cmd_line = new_str(sl0->str);
+      if(hd_data->debug) {
+        ADD2LOG("----- " PROC_CMDLINE " -----\n");
+        ADD2LOG("  %s\n", sl0->str);
+        ADD2LOG("----- " PROC_CMDLINE " end -----\n");
+      }
+    }
+    if(sl1) {
+      i = strlen(sl1->str);
+      if(i && sl1->str[i - 1] == '\n') sl1->str[i - 1] = 0;
+      str_printf(&hd_data->cmd_line, -1, " %s", sl1->str);
+      if(hd_data->debug) {
+        ADD2LOG("----- " LIB_CMDLINE " -----\n");
+        ADD2LOG("  %s\n", sl1->str);
+        ADD2LOG("----- " LIB_CMDLINE " end -----\n");
+      }
+    }
+
+    free_str_list(sl0);
+    free_str_list(sl1);
+  }
+
+  if(!hd_data->cmd_line) return NULL;
+
+  t = t0 = new_str(hd_data->cmd_line);
   while((s = strsep(&t, " "))) {
     if(!*s) continue;
     if(!strncmp(s, c_str, sizeof c_str - 1)) {
@@ -2471,7 +2511,7 @@ char *get_cmd_param(int field)
 
   t = new_str(s);
 
-  free_str_list(sl);
+  free_mem(t0);
 
   return t;
 }
@@ -2561,7 +2601,7 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
 
   if(matches) *matches = 0;
 
-  if(!(s = get_cmd_param(2))) return 0;
+  if(!(s = get_cmd_param(hd_data, 2))) return 0;
 
   i = strlen(s);
 

@@ -47,7 +47,7 @@ void hd_scan_bios(hd_data_t *hd_data)
   /*
    * first, look for APM support
    */
-  if((s = get_cmd_param(1))) {
+  if((s = get_cmd_param(hd_data, 1))) {
     if(strlen(s) >= 10) {
       bt->apm_supported = 1;
       bt->apm_ver = hex(s, 1);

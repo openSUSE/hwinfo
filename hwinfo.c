@@ -88,6 +88,7 @@ int main(int argc, char **argv)
     if(!strcmp(list, "floppy")) i = hw_floppy;
     if(!strcmp(list, "network")) i = hw_network;
     if(!strcmp(list, "display")) i = hw_display;
+    if(!strcmp(list, "monitor")) i = hw_monitor;
     if(!strcmp(list, "mouse")) i = hw_mouse;
     if(!strcmp(list, "keyboard")) i = hw_keyboard;
     if(!strcmp(list, "sound")) i = hw_sound;
@@ -98,15 +99,11 @@ int main(int argc, char **argv)
 
     if(i >= 0) {
       hd = hd_list(hd_data, i, listplus, NULL);
+      printf("\n");
+      printf("-- %s list --\n", list);
+      for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
+      printf("-- %s list end --\n", list);
     }
-    else {
-      hd = NULL;
-    }
-
-    printf("\n");
-    printf("-- %s list --\n", list);
-    for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
-    printf("-- %s list end --\n", list);
   }
 
   if(f) fclose(f);

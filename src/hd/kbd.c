@@ -100,7 +100,7 @@ void hd_scan_kbd(hd_data_t *hd_data)
     }
     if(k == 1) hd->attached_to = keyb_idx;
     hd->vend = MAKE_ID(TAG_SPECIAL, 0x0201);
-    if((s = get_cmd_param(3))) {
+    if((s = get_cmd_param(hd_data, 3))) {
       if(*s && sscanf(s, "%x", &u) == 1) kid = u;
       free_mem(s);
     }

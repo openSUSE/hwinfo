@@ -1,4 +1,5 @@
 #define PROC_CMDLINE		"/proc/cmdline"
+#define LIB_CMDLINE		"/var/lib/libhd/cmdline"
 #define PROC_PCI_DEVICES	"/proc/bus/pci/devices"
 #define PROC_PCI_BUS		"/proc/bus/pci"
 #define PROC_CPUINFO		"/proc/cpuinfo"
@@ -35,8 +36,8 @@
 #define KLOG_BOOT		"/var/log/boot.msg"
 #define ISAPNP_CONF		"/etc/isapnp.conf"
 
-#define NAME_LIST		"hd.names"
-#define DRIVER_LIST		"hd.drivers"
+#define NAME_LIST		"/var/lib/libhd/hd.names"
+#define DRIVER_LIST		"/var/lib/libhd/hd.drivers"
 
 #define PROGRESS(a, b, c) progress(hd_data, a, b, c)
 #define ADD2LOG(a...) str_printf(&hd_data->log, -2, a)
@@ -92,7 +93,7 @@ char *mod_name_by_idx(unsigned idx);
 int timeout(void(*func)(void *), void *arg, int timeout);
 
 str_list_t *read_kmods(hd_data_t *hd_data);
-char *get_cmd_param(int field);
+char *get_cmd_param(hd_data_t *hd_data, int field);
 
 /* smp/smp.c */
 int detectSMP(void);

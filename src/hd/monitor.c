@@ -40,7 +40,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
 
   PROGRESS(1, 0, "cmdline");
 
-  if(!(s = s0 = get_cmd_param(0))) return;
+  if(!(s = s0 = get_cmd_param(hd_data, 0))) return;
 
   se = s + strlen(s);
 

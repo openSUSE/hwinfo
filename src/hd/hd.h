@@ -81,8 +81,9 @@ typedef enum probe_feature {
  * list types for hd_list()
  */
 typedef enum hw_item {
-  hw_cdrom=1, hw_floppy, hw_disk, hw_network, hw_display, hw_mouse,
-  hw_keyboard, hw_sound, hw_isdn, hw_modem, hw_storage_ctrl, hw_network_ctrl
+  hw_cdrom = 1, hw_floppy, hw_disk, hw_network, hw_display, hw_monitor,
+  hw_mouse, hw_keyboard, hw_sound, hw_isdn, hw_modem, hw_storage_ctrl,
+  hw_network_ctrl
 } hd_hw_item_t;
 
 /*
@@ -829,6 +830,7 @@ typedef struct {
   unsigned char *bios_ram;	/* BIOS   0x400 -   0x4ff */
   unsigned display;		/* hd_idx of the active (vga) display */
   unsigned color_code;		/* color, if any */
+  char *cmd_line;		/* kernel command line */
 } hd_data_t;
 
 
@@ -858,13 +860,6 @@ char *hd_probe_feature_by_value(enum probe_feature feature);
 driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd);
 int hd_module_is_active(hd_data_t *hd_data, char *mod);
 
-hd_t *hd_cd_list(hd_data_t *hd_data, int rescan);
-hd_t *hd_disk_list(hd_data_t *hd_data, int rescan);
-hd_t *hd_net_list(hd_data_t *hd_data, int rescan);
-hd_t *hd_mouse_list(hd_data_t *hd_data, int rescan);
-hd_t *hd_keyboard_list(hd_data_t *hd_data, int rescan);
-hd_t *hd_floppy_list(hd_data_t *hd_data, int rescan);
-hd_t *hd_display_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class);
 hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_class);
 hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus);
