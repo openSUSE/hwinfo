@@ -1,3 +1,8 @@
+3/3/2000:	v0.79
+	- tuned probing flags
+	- renamed drivers file
+	- added "Belinea 10 20 20" data (ddc info lies about supported modes!)
+
 29/2/2000:	v0.78
 	- new graphics cards
 

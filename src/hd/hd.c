@@ -134,7 +134,7 @@ static struct s_pr_flags {
   { pr_floppy,       0,        8|4|2|1, "floppy"      },
   { pr_misc,         0,        8|4|2|1, "misc"        },
   { pr_misc_serial,  pr_misc,  8|4|2|1, "misc.serial" },
-  { pr_misc_par,     pr_misc,  8|4|2|1, "misc.par"    },
+  { pr_misc_par,     pr_misc,    4|2|1, "misc.par"    },
   { pr_misc_floppy,  pr_misc,  8|4|2|1, "misc.floppy" },
   { pr_bios,         0,        8|4|2|1, "bios"        },
   { pr_cpu,          0,        8|4|2|1, "cpu"         },
