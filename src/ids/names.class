@@ -106,6 +106,8 @@ C 106	Mass Storage Device
 	00	Disk
 	01	Tape
 	02	CD-ROM
+		01	CD-RW
+		02	DVD
 	03	Floppy Disk
 	80	Storage Device
 C 107	Network Interface

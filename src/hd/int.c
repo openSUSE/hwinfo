@@ -13,6 +13,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+static void int_cdrom(hd_data_t *hd_data);
 #if defined(__i386__)
 static int set_bios_id(hd_data_t *hd_data, char *dev_name, int bios_id);
 static void int_bios(hd_data_t *hd_data);
@@ -32,6 +33,27 @@ void hd_scan_int(hd_data_t *hd_data)
   int_bios(hd_data);
 #endif
 
+  int_cdrom(hd_data);
+}
+
+/*
+ * Add more info to CDROM entries.
+ */
+void int_cdrom(hd_data_t *hd_data)
+{
+  hd_t *hd;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class == bc_storage_device &&
+      hd->sub_class == sc_sdev_cdrom &&
+      !hd->prog_if
+    ) {
+      if(hd->dev_name && strstr(hd->dev_name, "DVD")) {
+        hd->prog_if = 2;
+      }
+    }
+  }
 }
 
 #if defined(__i386__)

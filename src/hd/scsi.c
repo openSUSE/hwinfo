@@ -266,6 +266,10 @@ void hd_scan_scsi(hd_data_t *hd_data)
       res->disk_geo.logical = 0;
     }
 
+    if((scsi->cache & 4) && scsi->type == sc_sdev_cdrom) {
+      hd->prog_if = 1;
+    }
+
     hd->detail = new_mem(sizeof *hd->detail);
     hd->detail->type = hd_detail_scsi;
     hd->detail->scsi.data = scsi;
@@ -322,7 +326,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
   unsigned char scsi_cmd_buf[0x400];
   unsigned long secs;
   unsigned inode_low;
-  int i, j, fd;
+  int i, j, k, fd;
   struct hd_geometry geo;
   char *dev_name = NULL;
   scsi_t *ioctl_scsi = NULL, *scsi, *gen;
@@ -355,6 +359,30 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
             case 1: scsi->type = sc_sdev_cdrom; break;
             case 2: scsi->type = sc_sdev_tape; break;
           }
+
+          if(scsi->type == sc_sdev_cdrom) {
+            PROGRESS(2, i * 100 + j, "cache");
+
+            if(hd_probe_feature(hd_data, pr_scsi_cache)) {
+              memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
+              *((unsigned *) (scsi_cmd_buf + 4)) = sizeof scsi_cmd_buf - 0x100;
+              scsi_cmd_buf[8 + 0] = 0x1a;
+              scsi_cmd_buf[8 + 2] = 0x08;
+              scsi_cmd_buf[8 + 4] = 0xff;
+
+              k = ioctl(fd, SCSI_IOCTL_SEND_COMMAND, scsi_cmd_buf);
+
+              if(k) {
+                ADD2LOG("%s status(0x1a:8) 0x%x\n", scsi->dev_name, k);
+              }
+              else {
+                uc = scsi_cmd_buf + 8 + 4 + scsi_cmd_buf[8 + 3] + 2;
+                scsi->cache = uc[0];
+                ADD2LOG("  scsi cache: 0x%02x\n", uc[0]);
+              }
+            }
+          }
+
         }
 
         close(fd);
@@ -432,7 +460,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
           j = ioctl(fd, SCSI_IOCTL_SEND_COMMAND, scsi_cmd_buf);
 
           if(j) {
-            ADD2LOG("%s status(0x1a) 0x%x\n", scsi->dev_name, j);
+            ADD2LOG("%s status(0x1a:4) 0x%x\n", scsi->dev_name, j);
           }
           else {
             uc = scsi_cmd_buf + 8 + 4 + scsi_cmd_buf[8 + 3] + 2;
@@ -443,6 +471,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
             }
           }
         }
+
       }
 
       close(fd);
@@ -705,8 +734,8 @@ void dump_scsi_data(hd_data_t *hd_data, scsi_t *scsi, char *text)
   for(; scsi; scsi = scsi->next) {
     if(scsi->deleted) continue;
     ADD2LOG(
-      "  host %u, channel %u, id %u, lun %u, type %d\n",
-      scsi->host, scsi->channel, scsi->id, scsi->lun, scsi->type
+      "  host %u, channel %u, id %u, lun %u, type %d, cache 0x%02x\n",
+      scsi->host, scsi->channel, scsi->id, scsi->lun, scsi->type, scsi->cache
     );
     if(scsi->dev_name || scsi->guessed_dev_name || scsi->generic_dev != -1) {
       ADD2LOG(

@@ -1,3 +1,6 @@
+26/10/2000:	v1.52
+	- add CD-RW detection (and DVD)
+
 25/10/2000:	v1.51
 	- remove memory leaks, part 1
 
