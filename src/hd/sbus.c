@@ -144,6 +144,17 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 		  hd->dev = MAKE_ID(TAG_SPECIAL, 0x3003);
 		}
 	    }
+          else if (strcmp (prop2, "qfe") == 0)
+            {
+              ADD2LOG ("NETWORK: type=Sun Quad Ethernet (qfe), module=sunhme\n");
+              hd = add_hd_entry (hd_data, __LINE__, 0);
+              hd->base_class = bc_network;
+              hd->sub_class = 0x00;
+              hd->bus = bus_sbus;
+
+              hd->vend = MAKE_ID(TAG_SPECIAL, 0x4001);
+              hd->dev = MAKE_ID(TAG_SPECIAL, 0x3001);
+            }
 	  else if (strcmp (prop2, "mlanai") == 0 || strcmp (prop2, "myri") == 0)
 	    {
 	      ADD2LOG ("NETWORK: type=MyriCOM MyriNET Gigabit Ethernet, module=myri_sbus\n");
@@ -592,6 +603,28 @@ prom_parse (int node, int sbus, int ebus, hd_data_t *hd_data)
 	  else if (strcmp (prop2, "bpp") == 0)
 	    {
 	      ADD2LOG ("PARPORT: type=bpp, module=unknown\n");
+	    }
+	  else if (strcmp (prop2, "soc") == 0)
+	    {
+	      ADD2LOG ("SCSI: type=Sun SPARCStorage Array, module=fc4:soc:pluto\n");
+	      hd = add_hd_entry (hd_data, __LINE__, 0);
+	      hd->base_class = bc_storage;
+	      hd->sub_class = sc_sto_scsi;
+	      hd->bus = bus_sbus;
+
+	      hd->vend = MAKE_ID(TAG_SPECIAL, 0x4001);
+	      hd->dev = MAKE_ID(TAG_SPECIAL, 0x1101);
+	    }
+	  else if (strcmp (prop2, "socal") == 0)
+	    {
+	      ADD2LOG ("SCSI: type=Sun Enterprise Network Array, module=fc4:socal:fcal\n");
+	      hd = add_hd_entry (hd_data, __LINE__, 0);
+	      hd->base_class = bc_storage;
+	      hd->sub_class = sc_sto_scsi;
+	      hd->bus = bus_sbus;
+
+	      hd->vend = MAKE_ID(TAG_SPECIAL, 0x4001);
+	      hd->dev = MAKE_ID(TAG_SPECIAL, 0x1102);
 	    }
 	  else if (strcmp(prop2, "sbus") == 0 || strcmp(prop2, "sbi") == 0)
 	    nsbus = 1;
