@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-07-20 14:27:01
+#hwinfo data from 2000-07-24 16:29:49
 #
 
 
@@ -959,11 +959,6 @@
 	x	3|SVGA|||||
 
 
-# S3:Trio3D (IBM Netfinity)
-5333 8904 1014 00db
-	x	3|VGA16|||||
-
-
 # S3:PLATO/PX
 5333 0551  
 	x	3|SVGA|||||
@@ -1239,12 +1234,7 @@
 	x	3|S3|||||
 
 
-# 3DLabs:Glint VGA
-3D3D FFFF  
-	x	3|3DLABS|||||
-
-
-# 3DLabs:Permedia 3 2D+3D
+# 3DLabs:Permedia2V 2D+3D
 3D3D 0009  
 	x	3|3DLABS|||||
 
@@ -1366,12 +1356,12 @@
 
 # Nvidia:RIVA 128 2D/3D
 12D2 0018  
-	x	4|nv|||||
+	x	4|nv|||||d
 
 
 # Nvidia:RIVA 128 2D/3D
 12D2 0018  
-	x	3|SVGA|||||
+	x	3|SVGA|||||d
 
 
 # Nvidia:RIVA 128ZX 2D/3D
@@ -1387,11 +1377,6 @@
 # Nvidia:RIVA TNT2 Model 64
 10DE 002D  
 	x	4|nv|||||
-
-
-# Nvidia:RIVA TNT2 Model 64
-10DE 002D  
-	x	4|nvidia|3d|nv_glx|glx||4
 
 
 # Nvidia:RIVA TNT2 Model 64
@@ -1421,7 +1406,7 @@
 
 # Nvidia:Riva TNT2
 10DE 0028  
-	x	4|nv||||sw_cursor|1f
+	x	4|nv||||sw_cursor|f
 
 
 # Nvidia:Riva TNT2
@@ -1431,7 +1416,7 @@
 
 # Nvidia:Riva TNT2
 10DE 0028  
-	x	3|SVGA|||||1f
+	x	3|SVGA|||||f
 
 
 # Nvidia:Riva TNT
@@ -1457,6 +1442,36 @@
 # Nvidia:NV1
 10DE 0008  
 	x	3|SVGA|||||
+
+
+# Nvidia:Riva TNT (PCI)
+10de 0020 1092 4820
+	x	4|nv||||sw_cursor|f
+
+
+# Nvidia:Riva TNT (PCI)
+10de 0020 1092 4820
+	x	3|SVGA|||||f
+
+
+# Nvidia:Riva TNT (PCI)
+10de 0020 1092 4820
+	x	3|SVGA|3d|glx|glx.so||4
+
+
+# Nvidia:Elsa Erazor 2 (TNT)
+10de 0020 1048 0c1c
+	x	4|nv||||sw_cursor|
+
+
+# Nvidia:Elsa Erazor 2 (TNT)
+10de 0020 1048 0c1c
+	x	3|SVGA|||||
+
+
+# Nvidia:Elsa Erazor 2 (TNT)
+10de 0020 1048 0c1c
+	x	3|SVGA|3d|glx|glx.so||4
 
 
 # Neomagic:MagicMedia 256AV
@@ -1511,11 +1526,6 @@
 
 # Texas Instruments:Permedia 2D+3D
 104c 3D04  
-	x	4|glint|||||
-
-
-# Texas Instruments:Permedia 2D+3D
-104c 3D04  
 	x	3|3DLABS|||||
 
 
@@ -1557,11 +1567,6 @@
 # SiS:SiS6326
 1039 6326  
 	x	3|SVGA|||||
-
-
-# SiS:530
-1039 6306  
-	x	4|sis|||||
 
 
 # SiS:530

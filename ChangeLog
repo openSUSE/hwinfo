@@ -1,3 +1,6 @@
+24/7/2000:	v1.25
+	- SMP detection: look for 'apic' flag
+
 20/7/2000:	v1.24
 	- fixed Vaio detection
 	- updated special ide chipset list

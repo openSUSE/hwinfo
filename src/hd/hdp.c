@@ -562,6 +562,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
 {
   cpu_info_t *ct;
+  str_list_t *sl;
 
   if(!hd->detail || hd->detail->type != hd_detail_cpu) return;
   if(!(ct = hd->detail->cpu.data)) return;
@@ -600,6 +601,14 @@ void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
     );
 
   if(ct->platform) dump_line("Platform: \"%s\"\n", ct->platform);
+
+  if(ct->features) {
+    dump_line("Features: %s", ct->features->str);
+    for(sl = ct->features->next; sl; sl = sl->next) {
+      dump_line0(",%s", sl->str);
+    }
+    dump_line0("\n");
+  }
 
   if(ct->clock) dump_line("Clock: %u MHz\n", ct->clock);
 

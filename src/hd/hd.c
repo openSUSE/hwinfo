@@ -2054,7 +2054,25 @@ int hd_usb_support(hd_data_t *hd_data)
 
 int hd_smp_support(hd_data_t *hd_data)
 {
-  return detectSMP() > 0 ? 1 : 0;
+  int i;
+  hd_t *hd;
+  cpu_info_t *ct;
+  str_list_t *sl;
+
+  i = detectSMP() > 0 ? 1 : 0;
+  if(i) return i;
+
+  hd = hd_list(hd_data, hw_cpu, 0, NULL);
+  if(!hd) hd = hd_list(hd_data, hw_cpu, 1, NULL);
+
+  if(!hd || !hd->detail || hd->detail->type != hd_detail_cpu) return i;
+  if(!(ct = hd->detail->cpu.data)) return i;
+
+  for(sl = ct->features; sl; sl = sl->next) {
+    if(!strcmp(sl->str, "apic")) return 1;
+  }
+
+  return i;
 }
 
 
@@ -2505,6 +2523,10 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_prom);
         hd_set_probe_feature(hd_data, pr_sys);
         break;
+
+      case hw_cpu:
+        hd_set_probe_feature(hd_data, pr_cpu);
+        break;
     }
     hd_scan(hd_data);
     memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
@@ -2596,6 +2618,12 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
     case hw_sys:
       base_class = bc_internal;
       sub_class = sc_int_sys;
+      sc = 1;
+      break;
+
+    case hw_cpu:
+      base_class = bc_internal;
+      sub_class = sc_int_cpu;
       sc = 1;
       break;
 

@@ -85,7 +85,8 @@ typedef enum probe_feature {
 typedef enum hw_item {
   hw_cdrom = 1, hw_floppy, hw_disk, hw_network, hw_display, hw_monitor,
   hw_mouse, hw_keyboard, hw_sound, hw_isdn, hw_modem, hw_storage_ctrl,
-  hw_network_ctrl, hw_printer, hw_tv, hw_scanner, hw_braille, hw_sys
+  hw_network_ctrl, hw_printer, hw_tv, hw_scanner, hw_braille, hw_sys,
+  hw_cpu
 } hd_hw_item_t;
 
 /*
@@ -386,6 +387,7 @@ typedef struct {
   char *vend_name;		/* axp: system type */
   char *model_name;		/* axp: cpu model */
   char *platform;		/* x86: NULL */
+  str_list_t *features;		/* x86: flags */
 } cpu_info_t;
 
 

@@ -25,8 +25,9 @@ void hd_scan_cpu(hd_data_t *hd_data)
   str_list_t *sl;
 
 #ifdef __i386__
-  char model_id[80], vendor_id[80];
+  char model_id[80], vendor_id[80], features[0x100];
   unsigned bogo, mhz, cache, family, model, stepping;
+  char *t0, *t;
 #endif
 
 #ifdef __alpha__
@@ -160,12 +161,13 @@ void hd_scan_cpu(hd_data_t *hd_data)
 /* Intel code  */
 
 #ifdef __i386__
-  *model_id = *vendor_id = 0;
+  *model_id = *vendor_id = *features = 0;
   bogo = mhz = cache = family = model = stepping = 0;
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(sscanf(sl->str, "model name : %79[^\n]", model_id) == 1);
     if(sscanf(sl->str, "vendor_id : %79[^\n]", vendor_id) == 1);
+    if(sscanf(sl->str, "flags : %255[^\n]", features) == 1);
     if(sscanf(sl->str, "bogomips : %u", &bogo) == 1);
     if(sscanf(sl->str, "cpu MHz : %u", &mhz) == 1);
     if(sscanf(sl->str, "cache size : %u KB", &cache) == 1);
@@ -223,7 +225,13 @@ void hd_scan_cpu(hd_data_t *hd_data)
         hd->detail = new_mem(sizeof *hd->detail);
         hd->detail->type = hd_detail_cpu;
         hd->detail->cpu.data = ct;
-        
+
+        if(*features) {
+          for(t0 = features; (t = strsep(&t0, " ")); ) {
+            add_str_list(&ct->features, t);
+          }
+        }
+
         *model_id = *vendor_id = 0;
         bogo = mhz = cache = family = model= 0;
         cpus++;
