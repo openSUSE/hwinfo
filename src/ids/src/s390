@@ -9,7 +9,7 @@
 +device.name		OSA Express Ethernet card
 +baseclass.id		2
 +subclass.id		0
-+driver.module.modprobe	qeth_mod
++driver.module.modprobe	qeth
 
  vendor.id		special 0x6001
 &device.id		special 0x1731
@@ -26,8 +26,8 @@
 &detail.ccw.data.cu_model 5
 +device.name		Hipersocket
 +baseclass.id		2
-+subclass.id		0
-+driver.module.modprobe qeth_mod
++subclass.id		5
++driver.module.modprobe qeth
 
  vendor.id		special 0x6001
 &device.id		special 0x2540
@@ -180,7 +180,7 @@
 &detail.ccw.data.cu_model 8
 +device.name		parallel CTC Adapter
 +baseclass.id		2
-+subclass.id		0
++subclass.id		3
 +driver.module.modprobe ctc
 
  vendor.id		special 0x6001
@@ -188,7 +188,7 @@
 &detail.ccw.data.cu_model 0x1f
 +device.name		ESCON Adapter
 +baseclass.id		2
-+subclass.id		0
++subclass.id		7
 
  vendor.id		special 0x6001
 &device.id		special 0x3088
