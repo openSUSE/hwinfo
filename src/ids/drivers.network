@@ -232,6 +232,7 @@ s4001 3004
 
 # net/gmac.c
 106b 0021
+106b 0024
 	i	gmac
 
 # mac ethernet controller

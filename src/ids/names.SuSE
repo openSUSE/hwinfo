@@ -23,6 +23,7 @@
 106b
 	0003.00380
 	0021.00200	GMAC Ethernet Controller
+	0024.00200	GMAC Ethernet Controller
 	0022	Keylargo Mac I/O
 
 1077
