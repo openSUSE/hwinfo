@@ -747,6 +747,7 @@ typedef struct cdrom_info_s {
     unsigned load_address;
     unsigned load_count;	/* sectors to load */
     unsigned start;		/* start sector */
+    unsigned catalog;		/* boot catalog start */
     struct {
       unsigned c, h, s;
       unsigned size;

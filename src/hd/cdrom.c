@@ -259,6 +259,7 @@ cdrom_info_t *hd_read_cdrom_info(hd_data_t *hd_data, hd_t *hd)
         sector[0] == 1
       ) {
         ci->el_torito.ok = 1;
+        ci->el_torito.catalog = et;
         ci->el_torito.platform = sector[1];
         s = canon_str(sector + 4, 24);
         if(!*s) s = free_mem(s);

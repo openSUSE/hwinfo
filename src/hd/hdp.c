@@ -231,6 +231,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
         ci->el_torito.platform,
         ci->el_torito.bootable ? "" : "not "
       );
+      dump_line("  Boot Catalog: at sector 0x%04x\n", ci->el_torito.catalog);
       if(ci->el_torito.id_string) dump_line("  Id String: \"%s\"\n",  ci->el_torito.id_string);
       if(ci->el_torito.label) dump_line("  Volume Label: \"%s\"\n",  ci->el_torito.label);
       {
