@@ -1,3 +1,5 @@
+	- hwscanqueue: closing file descriptors to allow parent to terminate
+
 21/5/2004:	v8.52
 	- use sysfs_bus_id for unique ID calculation on CCW devices to avoid
 	  duplicate IDs (bug #40587)
