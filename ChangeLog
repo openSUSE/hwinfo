@@ -1,3 +1,6 @@
+25/8/2003:	v5.58
+	- don't try BIOS things on SGI Altix (#28663)
+
 30/7/2003:	v5.57
 	- OnStream tapes have their own devices (#27954)
 
