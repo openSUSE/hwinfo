@@ -100,12 +100,18 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("Unique ID: %s\n", h->unique_id);
   }
 
-  if((hd_data->debug == -1u) && h->old_unique_id) {
+  if(hd_data->debug == -1u && h->old_unique_id) {
     dump_line("Old Unique ID: %s\n", h->old_unique_id);
   }
 
   if((hd_data->debug & HD_DEB_CREATION) && h->parent_id) {
     dump_line("Parent ID: %s\n", h->parent_id);
+  }
+
+  if(hd_data->debug == -1u && h->child_ids) {
+    s = hd_join(", ", h->child_ids);
+    dump_line("Child IDs: %s\n", s);
+    s = free_mem(s);
   }
 
   if(h->hw_class && (s = hd_hw_item_name(h->hw_class))) {

@@ -1090,6 +1090,7 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->unique_id1);
   free_mem(hd->usb_guid);
   free_mem(hd->parent_id);
+  free_str_list(hd->child_ids);
   free_mem(hd->config_string);
   free_str_list(hd->extra_info);
 
@@ -1183,6 +1184,7 @@ hd_manual_t *hd_free_manual(hd_manual_t *manual)
 
     free_mem(manual->unique_id);
     free_mem(manual->parent_id);
+    free_mem(manual->child_ids);
     free_mem(manual->model);
 
     free_mem(manual->config_string);
@@ -1783,8 +1785,9 @@ void hd_scan(hd_data_t *hd_data)
   /* and again... */
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd_data, hd);
 
-  /* assign parent ids */
+  /* assign parent & child ids */
   for(hd = hd_data->hd; hd; hd = hd->next) {
+    hd->child_ids = free_str_list(hd->child_ids);
     if((hd2 = hd_get_device_by_idx(hd_data, hd->attached_to))) {
       free_mem(hd->parent_id);
       hd->parent_id = new_str(hd2->unique_id);
@@ -1794,6 +1797,12 @@ void hd_scan(hd_data_t *hd_data)
     }
     else {
       hd->attached_to = 0;
+    }
+  }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if((hd2 = hd_get_device_by_idx(hd_data, hd->attached_to))) {
+      add_str_list(&hd2->child_ids, hd->unique_id);
     }
   }
 
@@ -4660,25 +4669,28 @@ str_list_t *hd_split(char del, char *str)
 }
 
 
-char *hd_join(char del, str_list_t *str)
+char *hd_join(char *del, str_list_t *str)
 {
-  char *s, t[2];
+  char *s;
   str_list_t *str0;
-  int len = 0;
+  int len = 0, del_len = 0;
+
+  if(del) del_len = strlen(del);
 
   for(str0 = str; str0; str0 = str0->next) {
-    len += strlen(str0->str) + 1;
+    if(str0->str) len += strlen(str0->str);
+    if(str0->next) len += del_len;
   }
 
   if(!len) return NULL;
 
+  len++;
+
   s = new_mem(len);
 
-  t[0] = del; t[1] = 0;
-
   for(; str; str = str->next) {
-    strcat(s, str->str);
-    if(str->next) strcat(s, t);
+    if(str->str) strcat(s, str->str);
+    if(str->next && del) strcat(s, del);
   }
 
   return s;

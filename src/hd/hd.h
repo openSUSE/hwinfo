@@ -1393,6 +1393,7 @@ typedef struct hd_manual_s {
 
   char *unique_id;
   char *parent_id;
+  char *child_ids;
   unsigned hw_class;
   char *model;
 
@@ -1690,6 +1691,13 @@ typedef struct s_hd_t {
    * 
    */
   char *parent_id;
+
+  /**
+   * \ref unique_ids of children (\ref parent_id).
+   * \note Please do not use it for now.
+   * 
+   */
+  str_list_t *child_ids;
 
   /**
    * (Internal) location independent \ref unique_id part.

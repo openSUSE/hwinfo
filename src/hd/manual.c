@@ -87,7 +87,7 @@ static hash_t hw_items[] = {
 };
 
 typedef enum {
-  hw_id_unique = 1, hw_id_parent, hw_id_hwclass, hw_id_model,
+  hw_id_unique = 1, hw_id_parent, hw_id_child, hw_id_hwclass, hw_id_model,
   hw_id_configured, hw_id_available, hw_id_needed, hw_id_cfgstring
 } hw_id_t;
 
@@ -98,6 +98,7 @@ typedef enum {
 static hash_t hw_ids_general[] = {
   { hw_id_unique,     "UniqueID"   },
   { hw_id_parent,     "ParentID"   },
+  { hw_id_child,      "ChildIDs"   },
   { hw_id_hwclass,    "HWClass"    },
   { hw_id_model,      "Model"      },
   { 0,                NULL         }
@@ -413,6 +414,11 @@ hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
           s = NULL;
           break;
 
+        case hw_id_child:
+          entry->child_ids = s;
+          s = NULL;
+          break;
+
         case hw_id_hwclass:
           j = value2key(hw_items, s);
           entry->hw_class = j;
@@ -569,6 +575,14 @@ int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
   ) error = 3;
 
   if(
+    entry->child_ids &&
+    !fprintf(f, "%s=%s\n",
+      key2value(hw_ids_general, hw_id_child),
+      entry->child_ids
+    )
+  ) error = 3;
+
+  if(
     (entry->hw_class && key2value(hw_items, entry->hw_class)) &&
     !fprintf(f, "%s=%s\n",
       key2value(hw_ids_general, hw_id_hwclass),
@@ -664,6 +678,11 @@ void dump_manual(hd_data_t *hd_data)
         key2value(hw_ids_general, hw_id_parent),
         entry->parent_id
       );
+    if(entry->child_ids)
+      ADD2LOG("    %s=%s\n",
+        key2value(hw_ids_general, hw_id_child),
+        entry->child_ids
+      );
     ADD2LOG("    %s=%s\n",
       key2value(hw_ids_general, hw_id_hwclass),
       key2value(hw_items, entry->hw_class)
@@ -746,6 +765,7 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
 
   hd->unique_id = new_str(entry->unique_id);
   hd->parent_id = new_str(entry->parent_id);
+  hd->child_ids = hd_split(',', entry->child_ids);
   hd->model = new_str(entry->model);
   hd->hw_class = entry->hw_class;
 
@@ -1066,6 +1086,7 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
 
   entry->unique_id = new_str(hd->unique_id);
   entry->parent_id = new_str(hd->parent_id);
+  entry->child_ids = hd_join(",", hd->child_ids);
   entry->model = new_str(hd->model);
   entry->hw_class = hd->hw_class;
 
@@ -1361,7 +1382,7 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
     }
     /* keep entry->key & entry->value symmetrical! */
     if(sl) {
-      t = hd_join(',', sl);
+      t = hd_join(",", sl);
       add_str_list(&entry->value, t);
       free_mem(t);
       free_str_list(sl);
