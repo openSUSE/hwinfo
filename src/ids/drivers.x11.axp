@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Wed Aug 29 10:25:22 2001
+# generated at: Mon Sep  3 12:50:04 2001
 
 # data source:  CDB
 
@@ -36,6 +36,10 @@
 # Matrox Graphics, Inc.:MGA G100 [Productiva] AGP
 102b 1001
 	x	4|mga|||||d|||
+
+# Cirrus Logic:GD 5480
+1013 00bc
+	x	4|cirrus||||||||
 
 # ATI Technologies Inc:210888CX [Mach64 CX]
 1002 4358
@@ -496,73 +500,73 @@
 	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 		VideoRam 16384
 
-# ATI:Rage 128 Pro TR (AGP)
+# ATI Technologies Inc:Rage 128 Pro TR (AGP)
 1002 5452
 	x	4||||||d|||
 
-# Trident:CyberBlade/DSTN/Ai1
+# Trident Microsystems:CyberBlade/DSTN/Ai1
 1023 8620
 	x	4|trident||||||||
 
-# NeoMagic:256XL(2380)
-10C8 0016
+# Neomagic Corporation:256XL(2380)
+10c8 0016
 	x	4|neomagic|||||d|||
 		VideoRam 4096
 
-# ATI:Rage 128 RG
+# ATI Technologies Inc:Rage 128 RG
 1002 5247
 	x	4|r128|||||d|||
 
-# ATI:Rage 128 Mobility ML
+# ATI Technologies Inc:Rage 128 Mobility ML
 1002 4d4c
 	x	4|r128|||||d|||
 
-# ATI:Rage 128 Mobility MF
+# ATI Technologies Inc:Rage 128 Mobility MF
 1002 4d46
 	x	4|r128|||||d|||
 
-# ATI:Rage 128 Mobility LE
+# ATI Technologies Inc:Rage 128 Mobility LE
 1002 4c45
 	x	4|r128|||||d|||
 
-# Intel:I815
+# Intel Corporation:I815
 8086 1132
 	x	4|i810|||||d|||
 
-# Intel:I815
+# Intel Corporation:I815
 8086 1132
 	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 		VideoRam 16384
 
-# 3Dfx:Voodoo5 5500
-121A 0009
+# 3Dfx Interactive, Inc.:Voodoo5 5500
+121a 0009
 	x	4|tdfx|||||d|||
 
-# 3Dfx:Voodoo5 5500
-121A 0009
+# 3Dfx Interactive, Inc.:Voodoo5 5500
+121a 0009
 	x	4|tdfx|3d|xf86_glx,gldri_v5|dri,glx||4||switch2xf86_glx|
 
-# ATI:Radeon QE
+# ATI Technologies Inc:Radeon QE
 1002 5145
 	x	4|radeon||||||||
 
-# Matrox:Millennium II
+# Matrox Graphics, Inc.:Millennium II
 102b 0100
 	x	4|mga|||||d|||
 
-# ATI:Radeon QD
+# ATI Technologies Inc:Radeon QD
 1002 5144
 	x	4|radeon||||||||
 
-# ATI:RageIIC
+# ATI Technologies Inc:RageIIC
 1002 0084
 	x	4|ati||||||||
 
-# ATI:Radeon QF
+# ATI Technologies Inc:Radeon QF
 1002 5146
 	x	4|radeon||||||||
 
-# ATI:Radeon QG
+# ATI Technologies Inc:Radeon QG
 1002 5147
 	x	4|radeon||||||||
 
@@ -598,7 +602,7 @@
 10de 0100
 	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
 
-# ATI:Mach64
+# ATI Technologies Inc:Mach64
 1002 0088
 	x	4|ati|||||d|||
 
@@ -674,7 +678,7 @@
 102b 0525
 	x	4|mga|3d|xf86_glx|glx,dri|NoHal|4||switch2xf86_glx|
 
-# Matrox:MGA 2064W [Millennium]
+# Matrox Graphics, Inc.:MGA 2064W [Millennium]
 102b 0519
 	x	4|mga|||||d|||
 
@@ -728,6 +732,10 @@
 1002 5656
 	x	4|ati|||||d|||
 
+# Silicon Integrated Systems [SiS]:6306 3D-AGP
+1039 6306
+	x	4|sis||||FastVRam,Noaccel|1|||
+
 # Trident Microsystems:Cyber 9385 [Reference design]
 1023 9385
 	x	4|trident||||||||
@@ -738,7 +746,7 @@
 
 #
 
-# generated at: Wed Aug 29 10:25:22 2001
+# generated at: Mon Sep  3 12:50:04 2001
 
 # data source:  CDB
 
@@ -781,6 +789,10 @@
 # S3 Inc.:86c764/765 [Trio32/64/64V+]
 5333 8811
 	x	3|S3||||||||
+
+# S3 Inc.:86c795 [Savage 3D/MV]
+5333 8a21
+	x	3|SVGA||||||||
 
 # S3 Inc.:Trio 64 3D
 5333 8904
@@ -836,6 +848,10 @@
 
 # Cirrus Logic:GD 7542 [Nordic]
 1013 1200
+	x	3|SVGA||||||||
+
+# Cirrus Logic:GD 5480
+1013 00bc
 	x	3|SVGA||||||||
 
 # Cirrus Logic:GD 5465 [Laguna]
@@ -1690,35 +1706,35 @@
 5333 ca00
 	x	3|S3||||||||
 
-# ATI:Rage 128 Pro TR (AGP)
+# ATI Technologies Inc:Rage 128 Pro TR (AGP)
 1002 5452
 	x	3||||||d|||
 
-# S3:Savage IX
+# S3 Inc.:Savage IX
 5333 8c13
 	x	3|SVGA||||||||
 
-# S3:Savage MX
+# S3 Inc.:Savage MX
 5333 8c11
 	x	3|SVGA||||||||
 
-# ATI:Rage 128 RG
+# ATI Technologies Inc:Rage 128 RG
 1002 5247
 	x	3|SVGA|||||d|||
 
-# ATI:Rage 128 Mobility ML
+# ATI Technologies Inc:Rage 128 Mobility ML
 1002 4d4c
 	x	3|SVGA|||||d|||
 
-# ATI:Rage 128 Mobility MF
+# ATI Technologies Inc:Rage 128 Mobility MF
 1002 4d46
 	x	3|SVGA|||||d|||
 
-# ATI:Rage 128 Mobility LE
+# ATI Technologies Inc:Rage 128 Mobility LE
 1002 4c45
 	x	3|SVGA|||||d|||
 
-# Matrox:Millennium II
+# Matrox Graphics, Inc.:Millennium II
 102b 0100
 	x	3|SVGA|||||d|||
 
@@ -1726,28 +1742,28 @@
 1013 00D5
 	x	3|SVGA||||||||
 
-# ATI:RageIIC
+# ATI Technologies Inc:RageIIC
 1002 0084
 	x	3|MACH64||||||||
 
-# SiS:SG86C215
+# Silicon Integrated Systems [SiS]:SG86C215
 1039 0215
 	x	3|SVGA||||||||
 
-# SiS:SG86C225
+# Silicon Integrated Systems [SiS]:SG86C225
 1039 0225
 	x	3|SVGA||||||||
 
-# SiS:SIS_not_exist
+# Silicon Integrated Systems [SiS]:SIS_not_exist
 1039 1039
 	x	3|SVGA||||||||
 
-# SiS:SIS300
+# Silicon Integrated Systems [SiS]:SIS300
 1039 0300
 	x	3|SVGA||||||||
 
-# NeoMagic:Graphics Controller
-10C8 0000
+# Neomagic Corporation:Graphics Controller
+10c8 0000
 	x	3|SVGA||||||||
 
 # S3 Inc.:ViRGE/DX or /GX
@@ -1770,7 +1786,7 @@
 10de 0100
 	x	3|SVGA||||||||
 
-# ATI:Mach64
+# ATI Technologies Inc:Mach64
 1002 0088
 	x	3|MACH64|||||d|||
 
@@ -1834,7 +1850,7 @@
 102b 0525
 	x	3|SVGA|||||1d|||
 
-# Matrox:MGA 2064W [Millennium]
+# Matrox Graphics, Inc.:MGA 2064W [Millennium]
 102b 0519
 	x	3|SVGA|||||d|||
 

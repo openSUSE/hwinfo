@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Wed Aug 29 10:25:22 2001
+# generated at: Mon Sep  3 12:50:04 2001
 
 # data source:  CDB
 
@@ -25,7 +25,7 @@
 1002 5046
 	x	4|r128|3d|xf86_glx|glx,dri|usefbdev|e||switch2xf86_glx|
 
-# ATI:Rage 128 Pro TR (AGP)
+# ATI Technologies Inc:Rage 128 Pro TR (AGP)
 1002 5452
 	x	4|fbdev||||usefbdev,dpms|b|||
 
@@ -35,7 +35,7 @@
 
 #
 
-# generated at: Wed Aug 29 10:25:22 2001
+# generated at: Mon Sep  3 12:50:04 2001
 
 # data source:  CDB
 
@@ -111,7 +111,7 @@ s4001 0005
 5333 88c1
 	x	3|FBDEV|||||1|||
 
-# ATI:Rage 128 Pro TR (AGP)
+# ATI Technologies Inc:Rage 128 Pro TR (AGP)
 1002 5452
 	x	3|FBDEV|||||1b|||
 

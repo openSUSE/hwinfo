@@ -18,6 +18,7 @@ mkdir .x
 mv Makefile.dist .x/Makefile
 mv drivers.sample README* names.sample names.bus names.class mk_ids .x
 rm *
+rm -rf old
 mv .x/* .
 rm -r .x
 cd ../..

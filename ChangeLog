@@ -1,3 +1,7 @@
+3/9/2001:	v3.16
+	- usb printer device names have changed
+	- new x11 data
+
 29/8/2001:	v3.15
 	- new x11 data
 	- ignore obviously broken ddc info

@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Wed Aug 29 10:25:22 2001
+# generated at: Mon Sep  3 12:50:04 2001
 
 # data source:  CDB
 
@@ -253,7 +253,7 @@ s4001 0020
 3d3d 0007
 	x	4|glint|||||f|||
 
-# ATI:RageIIC
+# ATI Technologies Inc:RageIIC
 1002 0084
 	x	4|ati|||||f|||
 
@@ -261,7 +261,7 @@ s4001 0020
 3d3d 0009
 	x	4|glint|||||f|||
 
-# ATI:Mach64
+# ATI Technologies Inc:Mach64
 1002 0088
 	x	4|ati|||||f|||
 
@@ -307,7 +307,7 @@ s4001 0020
 
 #
 
-# generated at: Wed Aug 29 10:25:22 2001
+# generated at: Mon Sep  3 12:50:04 2001
 
 # data source:  CDB
 
