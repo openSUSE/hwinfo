@@ -254,7 +254,12 @@ void get_pci_data(hd_data_t *hd_data)
         p->cmd = p->data[PCI_COMMAND] + (p->data[PCI_COMMAND + 1] << 8);
         ul[0] = p->data[PCI_VENDOR_ID] + (p->data[PCI_VENDOR_ID + 1] << 8);
         ul[1] = p->data[PCI_DEVICE_ID] + (p->data[PCI_DEVICE_ID + 1] << 8);
+/* on ppc, these data are inconsistent */
+#if !defined(__PPC__)
         if(ul[0] == p->vend && ul[1] == p->dev) {
+#else
+        {
+#endif
           /* these are header type specific */
           if(p->hdr_type == PCI_HEADER_TYPE_NORMAL) {
             p->sub_dev = p->data[PCI_SUBSYSTEM_ID] + (p->data[PCI_SUBSYSTEM_ID + 1] << 8);
