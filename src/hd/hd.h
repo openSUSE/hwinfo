@@ -136,7 +136,7 @@ typedef enum base_classes {
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,
   bc_storage_device, bc_network_interface, bc_keyboard, bc_printer,
   bc_hub, bc_braille, bc_scanner, bc_joystick, bc_chipcard, bc_camera,
-  bc_framebuffer, bc_dvb, bc_tv
+  bc_framebuffer, bc_dvb, bc_tv, bc_partition
 } hd_base_classes_t;
 
 /* subclass values of bc_monitor */
@@ -1714,6 +1714,7 @@ typedef struct {
     unsigned list_all:1;	/**< Return even devices with status 'not available'. */
     unsigned fast:1;		/**< Don't check tricky hardware. */
     unsigned list_md:1;		/**< Report md & lvm devices from /proc/partitions */
+    unsigned add_partitions:1;	/**< Add partitions to hardware list */
   } flags;
 
 
