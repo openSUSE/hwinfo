@@ -3138,7 +3138,7 @@ int hd_timeout(void(*func)(void *), void *arg, int timeout)
     }
     else {
       (*func)(arg);
-      exit(0);
+      _exit(0);
     }
   }
 

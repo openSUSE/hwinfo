@@ -225,7 +225,7 @@ void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
         "\tpop %ebx\n"
       );
 
-      exit(66);
+      _exit(66);
     }
     else {
       if(waitpid(child, &status, 0) == child) {
