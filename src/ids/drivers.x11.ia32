@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Mon Sep  3 12:50:04 2001
+# generated at: Tue Sep  4 15:55:00 2001
 
 # data source:  CDB
 
@@ -716,7 +716,7 @@
 
 # Silicon Integrated Systems [SiS]:86C326
 1039 6326
-	x	4|sis|||||5|||
+	x	4|sis|||||8|||
 
 # S3 Inc.:ViRGE/GX2
 5333 8a10
@@ -1062,7 +1062,7 @@ edd8 a099
 
 #
 
-# generated at: Mon Sep  3 12:50:04 2001
+# generated at: Tue Sep  4 15:55:00 2001
 
 # data source:  CDB
 
