@@ -732,9 +732,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
     
     case hw_redasd:
-      hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_dasd);
-      hd_set_probe_feature(hd_data, pr_block);
       break;
 
     case hw_block:
