@@ -1,4 +1,4 @@
-	- libihw used only on ix86
+	- libihw used only on ix86 & axp
 
 23/2/2000:	v0.71
 	- isdn stuff

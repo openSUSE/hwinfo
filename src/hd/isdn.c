@@ -42,7 +42,7 @@ ihw_card_info *get_isdn_info(hd_t *hd)
   ihw_card_info *ici0, *ici;
   unsigned u0, u1;
 
-#if defined(__i386)
+//#if defined(__i386)
 /*
  * libihw currently breaks on non-Intel machines
  */
@@ -89,7 +89,7 @@ ihw_card_info *get_isdn_info(hd_t *hd)
     ici0 = free_mem(ici0);
   }
 
-#endif		/* i386 */
+//#endif		/* i386 */
 
   return NULL;
 }
