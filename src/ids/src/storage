@@ -7,10 +7,8 @@
 # scsi/53c7,8xx.c
  vendor.id		pci 0x1000
 &device.id		pci 0x0001
-&rev.id			1+2
 |vendor.id		pci 0x1000
 &device.id		pci 0x0004
-&rev.id			2+2
 +driver.module.insmod	53c7,8xx
 
 # scsi/53c7,8xx.c

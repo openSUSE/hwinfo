@@ -40,33 +40,33 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(1, 0, "idescsi");
   int_fix_ide_scsi(hd_data);
 
-  PROGRESS(3, 0, "hotplug");
-  int_hotplug(hd_data);
-
-  PROGRESS(4, 0, "cdrom");
+  PROGRESS(2, 0, "cdrom");
   int_cdrom(hd_data);
 
-  PROGRESS(5, 0, "media");
+  PROGRESS(3, 0, "media");
   int_media_check(hd_data);
 
-  PROGRESS(6, 0, "floppy");
+  PROGRESS(4, 0, "floppy");
   int_floppy(hd_data);
 
 #if defined(__i386__) || defined (__x86_64__)
-  PROGRESS(7, 0, "bios");
+  PROGRESS(5, 0, "bios");
   int_bios(hd_data);
 #endif
 
-  PROGRESS(8, 0, "mouse");
+  PROGRESS(6, 0, "mouse");
   int_mouse(hd_data);
 
-  PROGRESS(9, 0, "usbscsi");
+  PROGRESS(7, 0, "usbscsi");
   int_fix_usb_scsi(hd_data);
 
-  PROGRESS(10, 0, "hdb");
+  PROGRESS(8, 0, "hdb");
   for(hd = hd_data->hd; hd; hd = hd->next) {
     hddb_add_info(hd_data, hd);
   }
+
+  PROGRESS(9, 0, "hotplug");
+  int_hotplug(hd_data);
 }
 
 /*
