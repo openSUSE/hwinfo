@@ -1,3 +1,6 @@
+28/2/2005:	v10.6
+	- jg: improved wlan patch (no dependency on libiw)
+
 28/2/2005:	v10.5
 	- fixed model name for some SGI hardware (#63973)
 	- fix Fritz!Card DSL SL USB ID (#66674)

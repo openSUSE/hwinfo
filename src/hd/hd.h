@@ -1491,14 +1491,15 @@ typedef struct {
   unsigned state:1;			/* network link state: 0 - not connected, 1 - connected */
 } res_link_t;
 
+/* wlan capabilities */
 typedef struct {
   union u_hd_res_t *next;
   enum resource_types type;
   str_list_t *channels;
-  str_list_t *frequencies;
-  str_list_t *bitrates;
-  str_list_t *auth_modes;
-  str_list_t *enc_modes;
+  str_list_t *frequencies; /* in GHz units */
+  str_list_t *bitrates;    /* in Mbps units */
+  str_list_t *auth_modes;  /* open, sharedkey, wpa-psk, wpa-eap, wpa-leap */
+  str_list_t *enc_modes;   /* WEP40, WEP104, WEP128, WEP232, TKIP, CCMP */
 } res_wlan_t;
 
 typedef union u_hd_res_t {

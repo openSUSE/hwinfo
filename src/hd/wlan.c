@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <iwlib.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
 #include <wireless.h>
+#include <net/ethernet.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -37,6 +39,100 @@ struct wpa_driver_ops wpa_driver_wext_ops;
 struct wpa_driver_ops wpa_driver_ndiswrapper_ops;
 struct wpa_driver_ops wpa_driver_ipw_ops;
 
+/* the iw_ functions are copied from libiw, so we do not need to
+   link against it */
+
+int iw_sockets_open(void)
+{
+  static const int families[] = {
+    AF_INET, AF_IPX, AF_AX25, AF_APPLETALK
+  };
+  unsigned int  i;
+  int           sock;
+
+  /*
+   * Now pick any (exisiting) useful socket family for generic queries
+   * Note : don't open all the socket, only returns when one matches,
+   * all protocols might not be valid.
+   * Workaround by Jim Kaba <jkaba@sarnoff.com>
+   * Note : in 99% of the case, we will just open the inet_sock.
+   * The remaining 1% case are not fully correct...
+   */
+
+  /* Try all families we support */
+  for(i = 0; i < sizeof(families)/sizeof(int); ++i)
+    {
+      /* Try to open the socket, if success returns it */
+      sock = socket(families[i], SOCK_DGRAM, 0);
+      if(sock >= 0)
+        return sock;
+  }
+
+  return -1;
+}
+
+static inline int
+iw_get_ext(int                  skfd,           /* Socket to the kernel */
+           const char *         ifname,         /* Device name */
+           int                  request,        /* WE ID */
+           struct iwreq *       pwrq)           /* Fixed part of the request */
+{
+  /* Set device name */
+  strncpy(pwrq->ifr_name, ifname, IFNAMSIZ);
+  /* Do the request */
+  return(ioctl(skfd, request, pwrq));
+}
+
+int iw_get_range_info(int           skfd,
+		      const char *  ifname,
+		      struct iw_range *    range)
+{
+  struct iwreq          wrq;
+  char                  buffer[sizeof(struct iw_range) * 2];    /* Large enough */
+  struct iw_range *     range_raw;
+
+  /* Cleanup */
+  bzero(buffer, sizeof(buffer));
+
+  wrq.u.data.pointer = (caddr_t) buffer;
+  wrq.u.data.length = sizeof(buffer);
+  wrq.u.data.flags = 0;
+  if(iw_get_ext(skfd, ifname, SIOCGIWRANGE, &wrq) < 0)
+    return(-1);
+
+  /* Point to the buffer */
+  range_raw = (struct iw_range *) buffer;
+
+  /* For new versions, we can check the version directly, for old versions
+   * we use magic. 300 bytes is a also magic number, don't touch... */
+  if(wrq.u.data.length < 300) {
+    /* That's v10 or earlier. Ouch ! Let's make a guess...*/
+    range_raw->we_version_compiled = 9;
+  }
+
+  /* Check how it needs to be processed */
+  if(range_raw->we_version_compiled > 15) {
+    /* This is our native format, that's easy... */
+    /* Copy stuff at the right place, ignore extra */
+    memcpy((char *) range, buffer, sizeof(struct iw_range));
+  }
+  else {
+    /* not supported */
+    return(-1);
+  }
+
+  return(0);
+}
+
+double iw_freq2float(const struct iw_freq *    in)
+{
+  int           i;
+  double        res = (double) in->m;
+  for(i = 0; i < in->e; i++)
+    res *= 10;
+  return(res);
+}
+
 void hd_scan_wlan(hd_data_t *hd_data)
 {
   hd_t *hd;
@@ -60,16 +156,14 @@ void hd_scan_wlan(hd_data_t *hd_data)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
       hd->base_class.id == bc_network &&
-      hd->unix_dev_name &&
-      1 /* hd->is.wlan */
-      ) {
+      hd->unix_dev_name ) {
       /* Get list of frequencies / channels */
       if(iw_get_range_info(skfd, hd->unix_dev_name, &range) < 0) {
 	/* this failed, maybe device does not support wireless extensions */
 	continue;
       }
-      ADD2LOG(" device %s is wireless\n", (hd->unix_dev_name) ? hd->unix_dev_name : "unknown" );
-      ADD2LOG("*** wlan features for %s ***\n", hd->unix_dev_name);
+      ADD2LOG("*** device %s is wireless ***\n", hd->unix_dev_name);
+      hd->is.wlan = 1;
       res = new_mem(sizeof *res);
       res->any.type = res_wlan;
 
@@ -98,40 +192,43 @@ void hd_scan_wlan(hd_data_t *hd_data)
 	}
 
 	/* detect WPA capabilities */
-	if (hd->drivers)
-	  if (strncmp(hd->drivers->str, "hostap", 6)==0)
+	if (hd->drivers) {
+	  if (search_str_list(hd->drivers, "hostap_cs") ||
+	      search_str_list(hd->drivers, "hostap_pci") ||
+	      search_str_list(hd->drivers, "hostap_plx") )
 	    wpa_drv = &wpa_driver_hostap_ops;
 	/* prism54 is not ready yet
-	   else if (strcmp(hd->driver, "prism54")==0)
+	   else if (search_str_list(hd->drivers, "prism54")==0)
 	   wpa_drv = &wpa_driver_prism54_ops;
 	*/
-	  else if (strcmp(hd->drivers->str, "ath_pci")==0)
+	  else if (search_str_list(hd->drivers, "ath_pci"))
 	    wpa_drv = &wpa_driver_madwifi_ops;
 	  else if (strncmp(hd->drivers->str, "at76", 4)==0)
 	    wpa_drv = &wpa_driver_atmel_ops;
-	  else if (strcmp(hd->drivers->str, "ndiswrapper")==0)
+	  else if (search_str_list(hd->drivers, "ndiswrapper"))
 	    wpa_drv = &wpa_driver_ndiswrapper_ops;
-	  else if ((strcmp(hd->drivers->str, "ipw2100")==0) ||
-		   (strcmp(hd->drivers->str, "ipw2200")==0))
+	  else if ((search_str_list(hd->drivers, "ipw2100")) ||
+		   (search_str_list(hd->drivers, "ipw2200")) )
 	    wpa_drv = &wpa_driver_ipw_ops;
-
+	}
+	
 	if (wpa_drv) {
 	  if (wpa_drv->set_wpa(hd->unix_dev_name, 1) == 0) {
 	    add_str_list(&res->wlan.auth_modes, "wpa-psk");
 	    add_str_list(&res->wlan.auth_modes, "wpa-eap");
+	    if (wpa_drv->set_auth_alg && 
+		wpa_drv->set_auth_alg(hd->unix_dev_name, AUTH_ALG_LEAP)==0)
+	      add_str_list(&res->wlan.auth_modes, "wpa-leap");
+	    if (wpa_drv->set_key(hd->unix_dev_name, WPA_ALG_TKIP, "ff:ff:ff:ff:ff:ff",
+				 0, 0, 0, 0,
+				 "00000000000000000000000000000000", 32) ==0)
+	      add_str_list(&res->wlan.enc_modes, "TKIP");
+	    if (wpa_drv->set_key(hd->unix_dev_name, WPA_ALG_CCMP, "ff:ff:ff:ff:ff:ff",
+				 0, 0, 0, 0, 
+				 "0000000000000000", 16) ==0)
+	      add_str_list(&res->wlan.enc_modes, "CCMP");
+	    wpa_drv->set_wpa(hd->unix_dev_name, 0);
 	  }
-	  if (wpa_drv->set_auth_alg && 
-	      wpa_drv->set_auth_alg(hd->unix_dev_name, AUTH_ALG_LEAP)==0)
-	    add_str_list(&res->wlan.auth_modes, "wpa-leap");
-	  if (wpa_drv->set_key(hd->unix_dev_name, WPA_ALG_TKIP, "ff:ff:ff:ff:ff:ff",
-			       0, 0, 0, 0,
-			       "00000000000000000000000000000000", 32) ==0)
-	    add_str_list(&res->wlan.enc_modes, "TKIP");
-	  if (wpa_drv->set_key(hd->unix_dev_name, WPA_ALG_CCMP, "ff:ff:ff:ff:ff:ff",
-			       0, 0, 0, 0, 
-			       "0000000000000000", 16) ==0)
-	    add_str_list(&res->wlan.enc_modes, "CCMP");
-	  wpa_drv->set_wpa(hd->unix_dev_name, 0);
 	}
       }
       add_res_entry(&hd->res, res);
