@@ -1,3 +1,6 @@
+22/8/2002:	v5.15
+	- check cpuid for hyperthreading
+
 20/8/2002:	v5.14
 	- mls: x86 emu for BIOS calls on ia64
 

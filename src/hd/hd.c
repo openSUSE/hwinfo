@@ -2666,10 +2666,8 @@ int hd_smp_support(hd_data_t *hd_data)
   int is_smp = 0;
   unsigned u;
   hd_t *hd, *hd0;
-#if 0
   cpu_info_t *ct;
-  str_list_t *sl;
-#endif
+  unsigned cpu_threads = 0;
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -2687,20 +2685,29 @@ int hd_smp_support(hd_data_t *hd_data)
   for(is_smp = 0, hd0 = hd; hd0; hd0 = hd0->next) is_smp++;
   if(is_smp == 1) is_smp = 0;
 
+#if defined(__i386__)
+  if(
+    hd &&
+    hd->detail &&
+    hd->detail->type == hd_detail_cpu &&
+    (ct = hd->detail->cpu.data)
+  ) {
+    cpu_threads = ct->units;
+  }
+#endif
+
   hd = hd_free_hd_list(hd);
 
 #ifndef LIBHD_TINY
 #if defined(__i386__) || defined (__x86_64__)
   if(is_smp < 2) {
     if(!hd_data->bios_ram.data) {
-      int bf = hd_probe_feature(hd_data, pr_bios);
-      if(!bf) hd_set_probe_feature(hd_data, pr_bios);
-      hd_scan_bios(hd_data);
-      if(!bf) hd_clear_probe_feature(hd_data, pr_bios);
+      hd_free_hd_list(hd_list(hd_data, hw_sys, 1, NULL));
     }
     is_smp = detect_smp(hd_data);
     // at least 2 processors
     if(is_smp < 2) is_smp = 0;
+    if(!is_smp && cpu_threads > 1) is_smp = 2;
   }
 #endif
 #endif
@@ -2708,10 +2715,7 @@ int hd_smp_support(hd_data_t *hd_data)
 #ifdef __PPC__
   if(is_smp < 2) {
     if(!hd_data->devtree) {
-      int pf = hd_probe_feature(hd_data, pr_prom);
-      if(!pf) hd_set_probe_feature(hd_data, pr_prom);
-      hd_scan_prom(hd_data);
-      if(!pf) hd_clear_probe_feature(hd_data, pr_prom);
+      hd_free_hd_list(hd_list(hd_data, hw_sys, 1, NULL));
     }
     is_smp = detect_smp(hd_data);
     if(is_smp < 0) is_smp = 0;

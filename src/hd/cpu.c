@@ -30,6 +30,9 @@
 static void read_cpuinfo(hd_data_t *hd_data);
 static void dump_cpu_data(hd_data_t *hd_data);
 
+#ifdef __i386__
+static inline unsigned units_per_cpu();
+#endif
 #ifdef __ia64__
 static int ia64DetectSMP(hd_data_t *hd_data);
 #endif
@@ -299,6 +302,9 @@ void read_cpuinfo(hd_data_t *hd_data)
         if(*features) {
           for(t0 = features; (t = strsep(&t0, " ")); ) {
             add_str_list(&ct->features, t);
+#ifdef __i386__
+            if(!strcmp(t, "ht")) ct->units = units_per_cpu();
+#endif
           }
         }
 
@@ -489,6 +495,27 @@ void dump_cpu_data(hd_data_t *hd_data)
   }
   ADD2LOG("----- /proc/cpuinfo end -----\n");
 }
+
+
+#ifdef __i386__
+inline unsigned units_per_cpu()
+{
+  unsigned u;
+
+  asm(
+    "push %%ebx\n\t"
+    "mov $1,%%eax\n\t"
+    "cpuid\n\t"
+    "shr $8,%%ebx\n\t"
+    "movzx %%bh,%%eax\n\t"
+    "pop %%ebx"
+    : "=a" (u)
+    :: "%ecx", "%edx"
+  );
+
+  return u;
+}
+#endif
 
 
 #if 0

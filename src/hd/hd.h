@@ -874,6 +874,7 @@ typedef struct {
   unsigned stepping;
   unsigned cache;
   unsigned clock;
+  unsigned units;		/* >1 "hyperthreading" */
   char *vend_name;		/* axp: system type */
   char *model_name;		/* axp: cpu model */
   char *platform;		/* x86: NULL */
