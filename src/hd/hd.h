@@ -787,6 +787,8 @@ typedef struct {
   str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
   char *xf86;				/* the XF86 protocol name */
   char *gpm;				/* dto, gpm */
+  int buttons;				/* number of buttons, -1 --> unknown */
+  int wheels;				/* dto, wheels */
 } driver_info_mouse_t;
 
 /* X11 server info */

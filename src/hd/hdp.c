@@ -506,6 +506,8 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
       break;
 
       case di_mouse:
+        if(di->mouse.buttons >= 0) dump_line("Buttons: %d\n", di->mouse.buttons);
+        if(di->mouse.wheels >= 0) dump_line("Wheels: %d\n", di->mouse.wheels);
         if(di->mouse.xf86) dump_line("XFree86 Protocol: %s\n", di->mouse.xf86);
         if(di->mouse.gpm) dump_line("GPM Protocol: %s\n", di->mouse.gpm);
         break;

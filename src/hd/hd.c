@@ -2384,12 +2384,19 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
         break;
 
       case di_mouse:
+        di->mouse.buttons = di->mouse.wheels = -1;
         for(i = 0, sl = di->mouse.hddb0; sl; sl = sl->next, i++) {
           if(i == 0) {
             di->mouse.xf86 = new_str(sl->str);
           }
           else if(i == 1) {
             di->mouse.gpm = new_str(sl->str);
+          }
+          else if(i == 2 && *sl->str) {
+            di->mouse.buttons = strtol(sl->str, NULL, 10);
+          }
+          else if(i == 3 && *sl->str) {
+            di->mouse.wheels = strtol(sl->str, NULL, 10);
           }
         }
         break;

@@ -1,4 +1,4 @@
-#hwinfo names data from 2001-01-19 17:09:42
+#hwinfo names data from 2001-04-18 11:37:55
 #
 
 
@@ -369,6 +369,9 @@
 1002
 	5247	ATI Rage 128 RG
 
+1002
+	5452	ATI Rage 128 Pro TR (AGP)
+
 105D
 	2309	Number 9 Imagine 128
 
@@ -488,6 +491,9 @@
 
 1023
 	0194	Trident 82c194 CardBus Controller
+
+1023
+	8620	Trident CyberBlade/DSTN/Ai1
 
 1142
 	643d	3Dfx 3Dfx Voodoo Rush
@@ -721,6 +727,12 @@
 	8c12
 		1179 0001	S3 Savage IX8 Toshiba Notebook
 
+5333
+	8d01	S3 S3Twister_P
+
+5333
+	8d02	S3 S3Twister_K
+
 3D3D
 	0009	3DLabs Permedia2V 2D+3D
 
@@ -853,6 +865,12 @@
 10d2
 	0028
 		1092 4a00	Nvidia Riva TNT2 Elsa
+
+10de
+	002e	Nvidia TNT2-A
+
+10de
+	002f	Nvidia TNT2-B
 
 10C8
 	8005	Neomagic MagicMedia 256AV

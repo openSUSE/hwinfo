@@ -1,3 +1,8 @@
+18/4/2001:	v2.02
+	- reworked ps/2 mouse code
+	- provide number of buttons/wheels for mice
+	- X11 data updated (ia32)
+
 7/4/2001:	v2.01
 	- new output format for support tool
 	- more options for hwinfo

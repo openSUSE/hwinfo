@@ -23,6 +23,7 @@
  */
 
 
+static unsigned read_data(hd_data_t *hd_data, int fd, unsigned char *buf, unsigned buf_size);
 static void get_ps2_mouse(hd_data_t *hd_data);
 static void test_ps2_open(void *arg);
 #if 0
@@ -72,6 +73,32 @@ void hd_scan_mouse(hd_data_t *hd_data)
   get_sunmouse(hd_data);
 }
 
+
+unsigned read_data(hd_data_t *hd_data, int fd, unsigned char *buf, unsigned buf_size)
+{
+  int k, len = 0;
+  unsigned char *bp;
+
+  while(
+    len < buf_size &&
+    (k = read(fd, buf + len, buf_size - len)) >= 0
+  ) len += k;
+
+  bp = buf;
+  if(len && (*bp == 0xfe || *bp == 0xfa)) { bp++; len--; }
+
+  for(k = 0; k < len; k++) buf[k] = bp[k];
+
+  if((hd_data->debug & HD_DEB_MOUSE)) {
+    ADD2LOG("ps/2[%d]: ", len);
+    hexdump(&hd_data->log, 1, len, buf);
+    ADD2LOG("\n");
+  }
+
+  return len;
+}
+
+
 /*
  * How it works:
  *
@@ -98,12 +125,14 @@ static void get_ps2_mouse(hd_data_t *hd_data)
 {
   hd_t *hd, *hd1;
   hd_res_t *res;
-  int fd, k;
+  int fd;
   fd_set set;
   struct timeval tv;
-//  unsigned char cmd = 0xe9;	/* read mouse info */
-  unsigned char cmd = 0xe9;	/* read mouse info */
-  unsigned char buf[100], *bp;
+  unsigned char cmd_mouse_info = 0xe9;	/* read mouse info (3 bytes) */
+  unsigned char cmd_mouse_id = 0xf2;	/* read mouse id (1 byte) */
+  unsigned char buf[100];
+  unsigned mouse_id = -1;
+  static unsigned char intelli_init[] = { 0xf3, 200, 0xf3, 100, 0xf3, 80 };
   int buf_len = 0;
 #ifdef __PPC__
   int always_ps2_mouse = 0;
@@ -142,14 +171,106 @@ static void get_ps2_mouse(hd_data_t *hd_data)
       }
 #endif
 
-      /* ...then assume a PS/2 mouse is attached */
-      if(
-        0 /* res */
+      PROGRESS(1, 1, "ps/2");
+
+      /* open the mouse device... */
+      if(hd_timeout(test_ps2_open, NULL, 1) > 0) {
+        ADD2LOG("ps/2: open(%s) timed out\n", DEV_PSAUX);
+        fd = -2;
+      }
+      else {
+        fd = open(DEV_PSAUX, O_RDWR | O_NONBLOCK);
+      }
+
+      PROGRESS(1, 2, "ps/2");
+
+      if(fd >= 0) {
+        /* ...write the id command... */
+
+        PROGRESS(1, 3, "ps/2");
+
+        write(fd, intelli_init, sizeof intelli_init);
+        usleep(25000);
+        read_data(hd_data, fd, buf, sizeof buf);
+
+        if(write(fd, &cmd_mouse_id, 1) == 1) {
+
+          PROGRESS(1, 4, "ps/2");
+          usleep(50000);        /* ...give it a chance to react... */
+
+          /* ...read the response... */
+          buf_len = read_data(hd_data, fd, buf, sizeof buf);
+
+          if(buf_len >= 1) mouse_id = buf[buf_len - 1];
+
+          // if we didn't get any response, try this
+          if(buf_len == 0 || (hd_data->debug & HD_DEB_MOUSE)) {
+            PROGRESS(1, 5, "ps/2");
+            if(write(fd, &cmd_mouse_info, 1) == 1) {
+              usleep(50000);
+              buf_len = read_data(hd_data, fd, buf, sizeof buf);
+              /*
+               * Assume a mouse to be attached if at least 2 bytes are
+               * returned.
+               */
+              if(mouse_id == -1 && buf_len >= 2) mouse_id = 0;
+            }
+          }
+
+          PROGRESS(1, 6, "ps/2");
+        }
+        close(fd);
+
+        PROGRESS(1, 7, "ps/2");
+
+        /*
+         * The following code is apparently necessary on some board/mouse
+         * combinations. Otherwise the PS/2 mouse won't work.
+         */
+        if((fd = open(DEV_PSAUX, O_RDONLY | O_NONBLOCK)) >= 0) {
+          PROGRESS(1, 8, "ps/2");
+
+          FD_ZERO(&set);
+          FD_SET(fd, &set);
+          tv.tv_sec = 0; tv.tv_usec = 1;
+          if(select(fd + 1, &set, NULL, NULL, &tv) == 1) {
+            PROGRESS(1, 9, "ps/2");
+
+            read(fd, buf, sizeof buf);
+
+            PROGRESS(1, 10, "ps/2");
+          }
+          PROGRESS(1, 11, "ps/2");
+
+          close(fd);
+
+          PROGRESS(1, 12, "ps/2");
+        }
+      }
+      else {
+        ADD2LOG("open(" DEV_PSAUX "): %s\n", fd == -1 ? strerror(errno) : "timeout");
+      }
+
+      if(mouse_id == -1) {
+
+        /*
+         * Assume a PS/2 mouse is attached if the ps/2 controller has
+         * genetrated some events.
+         */
+
+        if(
+          res
 #ifdef __PPC__
-        || always_ps2_mouse
+          || always_ps2_mouse
 #endif
-      ) {
-        PROGRESS(1, 1, "ps/2");
+        ) {
+          PROGRESS(1, 13, "ps/2");
+          mouse_id = 0;
+        }
+      }
+
+      if(mouse_id != -1) {
+        PROGRESS(1, 14, "ps/2");
 
         hd = add_hd_entry(hd_data, __LINE__, 0);
         hd->base_class = bc_mouse;
@@ -159,102 +280,17 @@ static void get_ps2_mouse(hd_data_t *hd_data)
         hd->attached_to = hd1->idx;
 
         hd->vend = MAKE_ID(TAG_SPECIAL, 0x0200);
-        hd->dev = MAKE_ID(TAG_SPECIAL, 0x0002);
-      }
-      else {	/* if the mouse has not been used so far... */
-        PROGRESS(1, 2, "ps/2");
+        switch(mouse_id) {
+          case 3:		/* 3 buttons + wheel */
+            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0004);
+            break;
 
-	/* open the mouse device... */
-        if(hd_timeout(test_ps2_open, NULL, 1) > 0) {
-          ADD2LOG("ps/2: open(%s) timed out\n", DEV_PSAUX);
-          fd = -2;
-        }
-        else {
-          fd = open(DEV_PSAUX, O_RDWR | O_NONBLOCK);
-        }
+          case 4:		/* 5 buttons + wheel */
+            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0005);
+            break;
 
-        PROGRESS(1, 3, "ps/2");
-
-        if(fd >= 0) {
-          /* ...write the id command... */
-
-          PROGRESS(1, 4, "ps/2");
-
-          if(write(fd, &cmd, 1) == 1) {
-
-            PROGRESS(1, 5, "ps/2");
-            usleep(50000);        /* ...give it a chance to react... */
-
-            /* ...read the response... */
-            while(
-              buf_len < sizeof buf &&
-              (k = read(fd, buf + buf_len, sizeof buf - buf_len)) >= 0
-            ) buf_len += k;
-
-            PROGRESS(1, 6, "ps/2");
-
-            if((hd_data->debug & HD_DEB_MOUSE)) {
-              if(errno != EAGAIN) {
-                ADD2LOG("%s:%s\n", DEV_PSAUX, strerror(errno));
-              }
-              ADD2LOG("ps/2[%d]: ", buf_len);
-              hexdump(&hd_data->log, 1, buf_len, buf);
-              ADD2LOG("\n");
-            }
-
-            PROGRESS(1, 7, "ps/2");
-
-            /*
-             * Assume a mouse to be attached, if at least 2 bytes
-             * (besides the 0xfa) are returned.
-             */
-            bp = buf;
-            if(buf_len && (*bp == 0xfe || *bp == 0xfa)) { bp++; buf_len--; }
-            if(buf_len >= 2) {
-              PROGRESS(1, 8, "ps/2");
-
-              hd = add_hd_entry(hd_data, __LINE__, 0);
-              hd->base_class = bc_mouse;
-              hd->sub_class = sc_mou_ps2;
-              hd->bus = bus_ps2;
-              hd->unix_dev_name = new_str(DEV_PSAUX);
-              hd->attached_to = hd1->idx;
-
-              hd->vend = MAKE_ID(TAG_SPECIAL, 0x0200);
-              hd->dev = MAKE_ID(TAG_SPECIAL, 0x0002);
-            }
-
-          }
-          close(fd);
-
-          PROGRESS(1, 9, "ps/2");
-
-          /*
-           * The following code is apparently necessary on some board/mouse
-           * combinations. Otherwise the PS/2 mouse won't work.
-           */
-          if((fd = open(DEV_PSAUX, O_RDONLY | O_NONBLOCK)) >= 0) {
-            PROGRESS(1, 10, "ps/2");
-
-            FD_ZERO(&set);
-            FD_SET(fd, &set);
-            tv.tv_sec = 0; tv.tv_usec = 1;
-            if(select(fd + 1, &set, NULL, NULL, &tv) == 1) {
-              PROGRESS(1, 11, "ps/2");
-
-              read(fd, buf, sizeof buf);
-
-              PROGRESS(1, 12, "ps/2");
-            }
-            PROGRESS(1, 13, "ps/2");
-
-            close(fd);
-
-            PROGRESS(1, 14, "ps/2");
-          }
-        }
-        else {
-          ADD2LOG("open(" DEV_PSAUX "): %s\n", fd == -1 ? strerror(errno) : "timeout");
+          default:	/* 0 */
+            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0002);
         }
       }
 
