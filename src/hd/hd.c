@@ -4917,7 +4917,6 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
   free_mem(dev_class);
   free_mem(hw_class);
 }
-#endif		/* !defined(LIBHD_TINY) */
 
 
 int hd_change_status(hd_data_t *hd_data, char *id, hd_status_t status)
@@ -4941,3 +4940,4 @@ int hd_change_status(hd_data_t *hd_data, char *id, hd_status_t status)
   return i;
 }
 
+#endif		/* !defined(LIBHD_TINY) */
