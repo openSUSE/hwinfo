@@ -2,6 +2,7 @@
 	- clear hd_data struct after it has been released (#44855)
 	- updated X11 data
 	- changed sata vendor name handling a bit
+	- isdn: remove old bluetooth packages from database
 
 10/9/2004:	v9.10
 	- sata driver seems to generate a dummy scsi vendor name (#44286)
