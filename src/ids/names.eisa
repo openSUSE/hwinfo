@@ -17,6 +17,12 @@ ELS	ELSA International
 	0213	MicroLink 33.6TQV
 	0754	MicroLink 56k basic
 
+AVM	AVM
+	0900.10300	AVM ISDN-Controller FRITZ!Card
+
+GWY	Gateway
+	001c.10201	Telepath for Windows with x2
+
 KYE	Genius
 	0001	Genius PnP Mouse
 

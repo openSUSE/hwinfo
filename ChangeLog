@@ -1,3 +1,10 @@
+12/2/2000:	v0.64
+	- added some ids
+	- added Zoom modem detection
+
+11/2/2000:	v0.63
+	- fixed isapnp for ppc
+
 11/2/2000:	v0.62
 	- Makefile now knows about sparc64
 	- driver info: 3c90x vs. 3c59x; see comment in drivers.SuSE

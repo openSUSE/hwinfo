@@ -91,6 +91,8 @@ C 101	Internally Used Class
 	04	FPU
 	05	BIOS
 C 102	Modem
+	00	Modem
+	01	Win-Modem
 C 103	ISDN Adapter
 C 104	PS/2 Controller
 C 105	Mouse

@@ -12,7 +12,7 @@ SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
 endif
 
 ifeq "$(ARCH)" "ppc"
-SUBDIRS	:= $(filter-out pnpdump isdn, $(SUBDIRS))
+SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
 endif
 
 ifeq "$(ARCH)" "sparc"

@@ -18,7 +18,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#if defined(__i386__) || defined(__alpha__)
+#if defined(__i386__) || defined(__alpha__) || defined(__PPC__)
 
 static void dump_raw_isapnp(hd_data_t *hd_data);
 static void get_read_port(isapnp_t *);
@@ -525,5 +525,5 @@ void dump_pnp_res(hd_data_t *hd_data, isapnp_card_t *c)
   }
 }
 
-#endif /* defined(__i386__) || defined(__alpha__) */
+#endif /* defined(__i386__) || defined(__alpha__) || defined(__PPC__) */
 

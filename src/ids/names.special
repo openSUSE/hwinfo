@@ -24,12 +24,19 @@ s1002	EPSON
 s1003	Kyocera
 	0001.10900	FS-1700+
 
+s1004	Hewlett-Packard
+s1004	HEWLETT-PACKARD
+	0001.10900	DESKJET 810C
+
 # modem
 s2001	U.S. Robotics, Inc.
 	0001.10200	USRobotics Sportster Vi 33600 Faxmodem
 
 s2002	ZyXEL
 	0001.10200	U1496C
+
+s2003	Zoom Telephonics, Inc.
+	0001.10200	Zoom FaxModem V.34X Plus Model 2836
 
 # isa isdn cards
 s3000	Unknown

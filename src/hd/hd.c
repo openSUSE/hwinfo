@@ -478,7 +478,7 @@ void hd_scan(hd_data_t *hd_data)
 #endif
 #endif	/* LIBHD_TINY */
 
-#if defined(__i386__) || defined(__alpha__)
+#if defined(__i386__) || defined(__alpha__) || defined(__PPC__)
   hd_scan_isapnp(hd_data);
 #endif
 

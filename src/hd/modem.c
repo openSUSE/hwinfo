@@ -292,6 +292,15 @@ void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
     return;
   }
 
+  if(strstr(sl->str, "-V34_DS -d Z201 2836")) {
+    /* looks like a Zoom V34X */
+
+    sm->vend = new_str("Zoom Telephonics, Inc.");
+    sm->user_name = new_str("Zoom FaxModem V.34X Plus Model 2836");
+
+    return;
+  }
+
   at_cmd(hd_data, "ATI2\r", 0, 1);
   sl = sm->at_resp;
   if(sl && !strcmp(sl->str, "ATI2")) sl = sl->next;	/* skip AT cmd echo */

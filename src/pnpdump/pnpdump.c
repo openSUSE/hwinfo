@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-#  if defined __GLIBC__ && __GLIBC__ >= 2
+#  if defined __GLIBC__ && __GLIBC__ >= 2 && !defined(__powerpc__)
 #    include <sys/io.h>
 #  else
 #    ifdef __alpha__
@@ -26,6 +26,7 @@
 #include "hd.h"
 #include "hd_int.h"
 #include "isapnp.h"
+#include "iopl.h"
 
 #define NUM_CARDS 128
 #define IDENT_LEN 9
@@ -234,7 +235,8 @@ int pnpdump(hd_data_t *hd_data_loc, int read_boards)
 	 * Have to get unrestricted access to io ports, as WRITE_DATA port >
 	 * 0x3ff
 	 */
-	if (iopl(3) < 0)
+	if (acquire_pnp_io_privileges() != 0)
+//	if (iopl(3) < 0)
 #endif
 	{
 		perror("Unable to get io permission for WRITE_DATA");
@@ -275,12 +277,15 @@ int pnpdump(hd_data_t *hd_data_loc, int read_boards)
 		alloc_result = 0;
 	}
 
+#if 0
 	/* Release resources */
 #ifdef __alpha__
 	ioperm(MIN_READ_ADDR, WRITEDATA_ADDR - MIN_READ_ADDR + 1, 0);
 #else
 	(void) iopl(0);
 #endif
+#endif
+        relinquish_pnp_io_privileges();
 
 	return 0;
 }
