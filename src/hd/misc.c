@@ -569,6 +569,7 @@ void read_irqs(misc_t *m)
 
   for(sl = m->proc_irq; sl; sl = sl->next) {
     /* irq */
+    i = 0;
     if(sscanf(sl->str, " %u: %n", &u, &i) < 1) continue;
     v = 0;
     j = i;

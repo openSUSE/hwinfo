@@ -1,3 +1,6 @@
+7/10/2004:	v9.29
+	- fixed segfault with large /proc/interrupt entries (e.g. 512 cpus) (#46582)
+
 1/10/2004:	v9.28
 	- list bluetooth isdn box as bt device, too (#46626)
 

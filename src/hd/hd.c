@@ -2122,7 +2122,7 @@ void str_printf(char **buf, int offset, char *format, ...)
   static char *last_buf = NULL;
   static int last_len = 0;
   int len, use_cache;
-  char b[1024];
+  char b[0x10000];
   va_list args;
 
 #ifdef LIBHD_MEMCHECK
@@ -2253,7 +2253,7 @@ str_list_t *free_str_list(str_list_t *list)
 str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines)
 {
   FILE *f;
-  char buf[1024];
+  char buf[0x10000];
   int pipe = 0;
   str_list_t *sl_start = NULL, *sl_end = NULL, *sl;
 
