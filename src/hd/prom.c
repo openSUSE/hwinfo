@@ -43,7 +43,7 @@ void hd_scan_prom(hd_data_t *hd_data)
 
   /* some clean-up */
   remove_hd_entries(hd_data);
-  hd_data->devtree = NULL;
+  hd_data->devtree = free_devtree(hd_data);
 
   PROGRESS(1, 0, "devtree");
 
@@ -466,7 +466,7 @@ void add_devices(hd_data_t *hd_data)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(ID_TAG(hd->dev) == TAG_PCI && ID_TAG(hd->vend) == TAG_PCI) {
       hd->rom_id = free_mem(hd->rom_id);
-      hd->detail = free_mem(hd->detail);
+      hd->detail = free_hd_detail(hd->detail);
     }
   }
 

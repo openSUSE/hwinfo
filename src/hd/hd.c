@@ -111,8 +111,29 @@ static void get_probe_env(hd_data_t *hd_data);
 static void hd_scan_xtra(hd_data_t *hd_data);
 static void hd_add_id(hd_t *hd);
 
-#ifndef __i386__
+static void hd_copy(hd_t *dst, hd_t *src);
+
+#if defined(__i386__) || defined(__PPC__)
+
+/*
+ * f: function we are in
+ * a: first argument
+ */
+
+#ifdef __i386__
+#define CALLED_FROM(f, a) ((void *) ((unsigned *) &a)[-1] - 5)
+#endif
+
+#ifdef __PPC__
+/* (1-arg funcs only) #define CALLED_FROM(f, a) ((void *) *((unsigned *) ((void *) &a - ((short *) f)[1] - 4)) - 4) */
+static inline void *getr1() { void *p; asm("mr %0,1" : "=r" (p) :); return p; }
+#define CALLED_FROM(f, a) ((void *) ((unsigned *) (getr1() - ((short *) f)[1]))[1] - 4)
+#endif
+
+#else
+
 #undef LIBHD_MEMCHECK
+
 #endif
 
 #ifdef LIBHD_MEMCHECK
@@ -385,7 +406,7 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->bios_ram = free_mem(hd_data->bios_ram);
   hd_data->cmd_line = free_mem(hd_data->cmd_line);
   hd_data->xtra_hd = free_str_list(hd_data->xtra_hd);
-  // hd_data->devtree
+  hd_data->devtree = free_devtree(hd_data);
 
   return NULL;
 }
@@ -612,7 +633,7 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
       break;
 
     case hd_detail_devtree:
-      free_mem(d->devtree.data);
+      /* is freed with hd_data->dev_tree */
       break;
   }
 
@@ -739,8 +760,7 @@ void *new_mem(size_t size)
 
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &size)[-1] - 5;
-    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", f, p, size);
+    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", CALLED_FROM(new_mem, size), p, size);
   }
 #endif
 
@@ -756,8 +776,7 @@ void *resize_mem(void *p, size_t n)
 {
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &p)[-1] - 5;
-    if(libhd_log && p) fprintf(libhd_log, "%p\t%p\n", f, p);
+    if(libhd_log && p) fprintf(libhd_log, "%p\t%p\n", CALLED_FROM(resize_mem, p), p);
   }
 #endif
 
@@ -765,8 +784,7 @@ void *resize_mem(void *p, size_t n)
 
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &p)[-1] - 5;
-    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", f, p, n);
+    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", CALLED_FROM(resize_mem, p), p, n);
   }
 #endif
 
@@ -782,8 +800,7 @@ void *add_mem(void *p, size_t elem_size, size_t n)
 {
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &p)[-1] - 5;
-    if(libhd_log && p) fprintf(libhd_log, "%p\t%p\n", f, p);
+    if(libhd_log && p) fprintf(libhd_log, "%p\t%p\n", CALLED_FROM(add_mem, p), p);
   }
 #endif
 
@@ -791,8 +808,7 @@ void *add_mem(void *p, size_t elem_size, size_t n)
 
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &p)[-1] - 5;
-    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", f, p, (n + 1) * elem_size);
+    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", CALLED_FROM(add_mem, p), p, (n + 1) * elem_size);
   }
 #endif
 
@@ -816,8 +832,7 @@ char *new_str(const char *s)
 
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &s)[-1] - 5;
-    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", f, t, strlen(t) + 1);
+    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", CALLED_FROM(new_str, s), t, strlen(t) + 1);
   }
 #endif
 
@@ -834,8 +849,7 @@ void *free_mem(void *p)
 {
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &p)[-1] - 5;
-    if(libhd_log && p) fprintf(libhd_log, "%p\t%p\n", f, p);
+    if(libhd_log && p) fprintf(libhd_log, "%p\t%p\n", CALLED_FROM(free_mem, p), p);
   }
 #endif
 
@@ -1319,8 +1333,7 @@ char *canon_str(char *s, int len)
 
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &s)[-1] - 5;
-    if(libhd_log) fprintf(libhd_log, ">%p\n", f);
+    if(libhd_log) fprintf(libhd_log, ">%p\n", CALLED_FROM(canon_str, s));
   }
 #endif
 
@@ -1338,8 +1351,7 @@ char *canon_str(char *s, int len)
 
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &s)[-1] - 5;
-    if(libhd_log) fprintf(libhd_log, "<%p\n", f);
+    if(libhd_log) fprintf(libhd_log, "<%p\n", CALLED_FROM(canon_str, s));
   }
 #endif
 
@@ -1471,8 +1483,7 @@ void str_printf(char **buf, int offset, char *format, ...)
 
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &buf)[-1] - 5;
-    if(libhd_log) fprintf(libhd_log, ">%p\n", f);
+    if(libhd_log) fprintf(libhd_log, ">%p\n", CALLED_FROM(str_printf, buf));
   }
 #endif
 
@@ -1507,8 +1518,7 @@ void str_printf(char **buf, int offset, char *format, ...)
 
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &buf)[-1] - 5;
-    if(libhd_log) fprintf(libhd_log, "<%p\n", f);
+    if(libhd_log) fprintf(libhd_log, "<%p\n", CALLED_FROM(str_printf, buf));
   }
 #endif
 }
@@ -1557,8 +1567,7 @@ str_list_t *add_str_list(str_list_t **sl, char *str)
 {
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &sl)[-1] - 5;
-    if(libhd_log) fprintf(libhd_log, ">%p\n", f);
+    if(libhd_log) fprintf(libhd_log, ">%p\n", CALLED_FROM(add_str_list, sl));
   }
 #endif
 
@@ -1569,8 +1578,7 @@ str_list_t *add_str_list(str_list_t **sl, char *str)
 
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &sl)[-1] - 5;
-    if(libhd_log) fprintf(libhd_log, "<%p\n", f);
+    if(libhd_log) fprintf(libhd_log, "<%p\n", CALLED_FROM(add_str_list, sl));
   }
 #endif
 
@@ -1607,8 +1615,7 @@ str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines)
 
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &file_name)[-1] - 5;
-    if(libhd_log) fprintf(libhd_log, ">%p\n", f);
+    if(libhd_log) fprintf(libhd_log, ">%p\n", CALLED_FROM(read_file, file_name));
   }
 #endif
 
@@ -1618,8 +1625,7 @@ str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines)
     if(!(f = popen(file_name, "r"))) {
 #ifdef LIBHD_MEMCHECK
       {
-        void *f = (void *) ((unsigned *) &file_name)[-1] - 5;
-        if(libhd_log) fprintf(libhd_log, "<%p\n", f);
+        if(libhd_log) fprintf(libhd_log, "<%p\n", CALLED_FROM(read_file, file_name));
       }
 #endif
       return NULL;
@@ -1629,8 +1635,7 @@ str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines)
     if(!(f = fopen(file_name, "r"))) {
 #ifdef LIBHD_MEMCHECK
       {
-        void *f = (void *) ((unsigned *) &file_name)[-1] - 5;
-        if(libhd_log) fprintf(libhd_log, "<%p\n", f);
+        if(libhd_log) fprintf(libhd_log, "<%p\n", CALLED_FROM(read_file, file_name));
       }
 #endif
       return NULL;
@@ -1661,8 +1666,7 @@ str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines)
 
 #ifdef LIBHD_MEMCHECK
   {
-    void *f = (void *) ((unsigned *) &file_name)[-1] - 5;
-    if(libhd_log) fprintf(libhd_log, "<%p\n", f);
+    if(libhd_log) fprintf(libhd_log, "<%p\n", CALLED_FROM(read_file, file_name));
   }
 #endif
 
@@ -2849,6 +2853,31 @@ enum boot_arch hd_boot_arch(hd_data_t *hd_data)
   return hd_data->boot;
 }
 
+/*
+ * makes a (shallow) copy; does some magic fixes
+ */
+void hd_copy(hd_t *dst, hd_t *src)
+{
+  hd_t *tmp;
+
+  tmp = dst->next;
+
+  *dst = *src;
+  src->ref_cnt++;
+  dst->ref = src;
+
+  dst->next = tmp;
+
+  /* needed to keep in sync with the real devce tree */
+  if(
+    dst->detail &&
+    dst->detail->type == hd_detail_devtree
+  ) {
+    dst->detail = free_mem(dst->detail);
+  }
+}
+
+
 hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 {
   hd_t *hd, *hd1, *hd_list = NULL, *bridge_hd;
@@ -3149,10 +3178,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         }
         if(add_it) {
           hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-          *hd1 = *hd;
-          hd->ref_cnt++;
-          hd1->ref = hd;
-          hd1->next = NULL;
+          hd_copy(hd1, hd);
         }
       }
     }
@@ -3187,10 +3213,7 @@ hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
       )
     ) {
       hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-      *hd1 = *hd;
-      hd->ref_cnt++;
-      hd1->ref = hd;
-      hd1->next = NULL;
+      hd_copy(hd1, hd);
     }
   }
 
@@ -3204,10 +3227,7 @@ hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_cl
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class == base_class && hd->sub_class == sub_class) {
       hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-      *hd1 = *hd;
-      hd->ref_cnt++;
-      hd1->ref = hd;
-      hd1->next = NULL;
+      hd_copy(hd1, hd);
     }
   }
 
@@ -3221,10 +3241,7 @@ hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->bus == bus) {
       hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
-      *hd1 = *hd;
-      hd->ref_cnt++;
-      hd1->ref = hd;
-      hd1->next = NULL;
+      hd_copy(hd1, hd);
     }
   }
 
@@ -3243,9 +3260,6 @@ int timeout(void(*func)(void *), void *arg, int timeout)
 
   child1 = fork();
   if(child1 == -1) return -1;
-
-#ifdef LIBHD_MEMCHECK
-#endif
 
   if(child1) {
     if(waitpid(child1, &status, 0) == -1) return -1;
@@ -3920,36 +3934,36 @@ void hd_add_id(hd_t *hd)
 #undef STR_CRC
 
 
-#if 0
-  if(!hd1 || !hd2) return 1;
+devtree_t *free_devtree(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  devtree_t *dt, *next;
 
-  if(
-    hd1->bus != hd2->bus ||
-    hd1->slot != hd2->slot ||
-    hd1->func != hd2->func ||
-    hd1->base_class != hd2->base_class ||
-    hd1->sub_class != hd2->sub_class ||
-    hd1->prog_if != hd2->prog_if ||
-    hd1->dev != hd2->dev ||
-    hd1->vend != hd2->vend ||
-    hd1->sub_vend != hd2->sub_vend ||
-    hd1->rev != hd2->rev ||
-    hd1->compat_dev != hd2->compat_dev ||
-
-    hd1->module != hd2->module ||
-    hd1->line != hd2->line
-  ) {
-    return 1;
-  }
-
-  if(hd1->unix_dev_name || hd2->unix_dev_name) {
-    if(hd1->unix_dev_name && hd2->unix_dev_name) {
-      if(strcmp(hd1->unix_dev_name, hd2->unix_dev_name)) return 1;
-    }
-    else {
-      return 1;
+  /*
+   * first, remove all references in the current device tree
+   * (refs in hd_old can remain)
+   */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->detail && hd->detail->type == hd_detail_devtree) {
+      hd->detail = free_mem(hd->detail);
     }
   }
 
-#endif
+  for(dt = hd_data->devtree; dt; dt = next) {
+    next = dt->next;
+
+    free_mem(dt->path);
+    free_mem(dt->filename);
+    free_mem(dt->name);
+    free_mem(dt->model);
+    free_mem(dt->device_type);
+    free_mem(dt->compatible);
+    free_mem(dt->edid);
+
+    free_mem(dt);
+  }
+
+  return hd_data->devtree = NULL;
+}
+
 
