@@ -38,7 +38,7 @@ tinyinstall:
 	@make EXTRA_FLAGS=-DLIBHD_TINY LIBHD_BASE=libhd_tiny LIBS="$(TLIBS)" install
 
 tinystatic:
-	@make EXTRA_FLAGS=-DLIBHD_TINY SHARED_FLAGS= LIBS="$(SLIBS)"
+	@make EXTRA_FLAGS=-DLIBHD_TINY LIBHD_BASE=libhd_tiny SHARED_FLAGS= LIBS="$(SLIBS)"
 
 diet:
 	@make CC="diet gcc" EXTRA_FLAGS="-fno-pic -DDIET" SHARED_FLAGS= LIBS="$(SLIBS)"
