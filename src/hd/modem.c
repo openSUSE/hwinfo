@@ -277,6 +277,7 @@ void get_serial_modem(hd_data_t *hd_data)
 	  free_mem(sm->init_string2);
 	  sm->init_string1 = new_str("AT&F");
 	  sm->init_string2 = new_str("AT$IBP=HDLCP");
+	  free_mem(sm->pppd_option);
 	  sm->pppd_option = new_str("default-asyncmap");
 	}
 	if(atx == 6 && check_for_responce(responces[j], "643", 3) &&
