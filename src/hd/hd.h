@@ -1,3 +1,6 @@
+#ifndef _HD_H
+#define _HD_H
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -691,3 +694,4 @@ cdrom_info_t *hd_read_cdrom_info(hd_t *hd);
 }
 #endif
 
+#endif	/* _HD_H */
