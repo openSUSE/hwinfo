@@ -122,7 +122,7 @@ static void get_ps2_mouse(hd_data_t *hd_data)
             (st = hd->detail->sys.data) &&
             (
               !strcmp(st->system_type, "PReP") ||
-              !strcmp(st->system_type, "CHRP")
+              strstr(st->system_type, "CHRP") == st->system_type	/* CHRP && CHRP64 */
             )
           ) {
             always_ps2_mouse = 1;
