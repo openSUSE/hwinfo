@@ -952,11 +952,13 @@ typedef struct s_pci_t {
   unsigned base_class, sub_class, prog_if;	/* PCI device classes */
   unsigned dev, vend, sub_dev, sub_vend, rev;	/* vendor & device ids */
   unsigned irq;					/* used irq, if any */
-  uint64_t base_addr[6];			/* I/O or memory base */
-  uint64_t base_len[6];				/* I/O or memory ranges */
+  uint64_t base_addr[7];			/* I/O or memory base */
+  uint64_t base_len[7];				/* I/O or memory ranges */
+  unsigned addr_flags[7];			/* I/O or memory address flags */
   uint64_t rom_base_addr;			/* memory base for card ROM */
   uint64_t rom_base_len;			/* memory range for card ROM */
-  char *sysfs;					/* sysfs path */
+  char *sysfs_id;				/* sysfs path */
+  char *sysfs_bus_id;				/* sysfs bus id */
 } pci_t;
 
 /*
@@ -1879,6 +1881,11 @@ typedef struct s_hd_t {
    * sysfs entry for this hardware, if any.
    */
   char *sysfs_id;
+
+  /**
+   * sysfs bus id for this hardware, if any.
+   */
+  char *sysfs_bus_id;
 
   /**
    * Special %device file.

@@ -22,7 +22,7 @@ $(LIBHD): $(OBJS)
 ifdef SHARED_FLAGS
 $(LIBHD_SO): $(LIBHD)
 	echo $(SHARED_FLAGS)
-	$(CC) -shared -Wl,--whole-archive $(LIBHD) -Wl,--no-whole-archive \
+	$(CC) -shared -lsysfs -Wl,--whole-archive $(LIBHD) -Wl,--no-whole-archive \
 		-Wl,-soname=libhd.so.$(LIBHD_MAJOR_VERSION) \
 		-o $(LIBHD_SO) 
 	ln -snf libhd.so.$(LIBHD_VERSION) libhd.so.$(LIBHD_MAJOR_VERSION)

@@ -960,7 +960,8 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
         pci_t *p = d->pci.data;
 
         free_mem(p->log);
-        free_mem(p->sysfs);
+        free_mem(p->sysfs_id);
+        free_mem(p->sysfs_bus_id);
         free_mem(p);
       }
       break;
@@ -1618,9 +1619,7 @@ void hd_scan(hd_data_t *hd_data)
   if(hd_data->last_idx == 0) {
     hd_set_probe_feature(hd_data, pr_fork);
     if(!hd_probe_feature(hd_data, pr_fork)) hd_data->flags.nofork = 1;
-#if 0	/* not yet default */
     hd_set_probe_feature(hd_data, pr_sysfs);
-#endif
     if(!hd_probe_feature(hd_data, pr_sysfs)) hd_data->flags.nosysfs = 1;
     if(hd_probe_feature(hd_data, pr_cpuemu)) hd_data->flags.cpuemu = 1;
   }
@@ -4036,7 +4035,11 @@ void hd_add_id(hd_data_t *hd_data, hd_t *hd)
   INT_CRC(id1, sub_device.id);
   INT_CRC(id1, sub_vendor.id);
   INT_CRC(id1, revision.id);
-  if(hd->detail && hd->detail->ccw.data) INT_CRC(id1, detail->ccw.data->cu_model);
+  if(
+    hd->detail &&
+    hd->detail->type == hd_detail_ccw &&
+    hd->detail->ccw.data
+  ) INT_CRC(id1, detail->ccw.data->cu_model);
   INT_CRC(id1, compat_device.id);
   INT_CRC(id1, compat_vendor.id);
   // make sure we get the same id even if, say, the pci name list changes
@@ -5357,5 +5360,19 @@ void read_udevinfo(hd_data_t *hd_data)
 char *hd_version()
 {
   return HD_VERSION_STRING;
+}
+
+
+hd_t *hd_find_sysfs_id(hd_data_t *hd_data, char *id)
+{
+  hd_t *hd;
+
+  if(id && *id) {
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      if(hd->sysfs_id && !strcmp(hd->sysfs_id, id)) return hd;
+    }
+  }
+
+  return NULL;
 }
 

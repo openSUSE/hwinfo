@@ -3,7 +3,8 @@ SUBDIRS		= src
 TARGETS		= hwinfo hwscan
 CLEANFILES	= hwinfo hwinfo.static hwscan hwscan.static doc/libhd doc/*~
 LIBDIR		= /usr/lib
-LIBS		= -lhd -lsysfs
+LIBS		= -lhd
+SLIBS		= -lhd -lsysfs
 
 include Makefile.common
 
@@ -23,27 +24,26 @@ shared:
 	@make
 
 tiny:
-	@make EXTRA_FLAGS=-DLIBHD_TINY SHARED_FLAGS=
+	@make EXTRA_FLAGS=-DLIBHD_TINY SHARED_FLAGS= LIBS="$(SLIBS)"
 
 diet:
-	@make CC="diet gcc" EXTRA_FLAGS="-fno-pic -DDIET" SHARED_FLAGS=
+	@make CC="diet gcc" EXTRA_FLAGS="-fno-pic -DDIET" SHARED_FLAGS= LIBS="$(SLIBS)"
 
 tinydiet:
-	@make CC="diet gcc" EXTRA_FLAGS="-fno-pic -DLIBHD_TINY -DDIET" SHARED_FLAGS=
+	@make CC="diet gcc" EXTRA_FLAGS="-fno-pic -DLIBHD_TINY -DDIET" SHARED_FLAGS= LIBS="$(SLIBS)"
 
 uc:
-#	@make CC="/opt/i386-linux-uclibc/usr/bin/gcc" EXTRA_FLAGS="-fno-pic -DUCLIBC" SHARED_FLAGS=
-	@make CC="/opt/i386-linux-uclibc/bin/i386-uclibc-gcc" EXTRA_FLAGS="-fno-pic -DUCLIBC" SHARED_FLAGS=
+	@make CC="/opt/i386-linux-uclibc/bin/i386-uclibc-gcc" EXTRA_FLAGS="-fno-pic -DUCLIBC" SHARED_FLAGS= LIBS="$(SLIBS)"
 
 tinyuc:
-	@make CC="/opt/i386-linux-uclibc/usr/bin/gcc" EXTRA_FLAGS="-fno-pic -DLIBHD_TINY -DUCLIBC" SHARED_FLAGS=
+	@make CC="/opt/i386-linux-uclibc/usr/bin/gcc" EXTRA_FLAGS="-fno-pic -DLIBHD_TINY -DUCLIBC" SHARED_FLAGS= LIBS="$(SLIBS)"
 
 static:
-	@make SHARED_FLAGS=
+	make SHARED_FLAGS= LIBS="$(SLIBS)"
 
 fullstatic: static
-	$(CC) -static hwinfo.o $(LDFLAGS) $(LIBS) -o hwinfo.static
-	$(CC) -static hwscan.o $(LDFLAGS) $(LIBS) -o hwscan.static
+	$(CC) -static hwinfo.o $(LDFLAGS) $(SLIBS) -o hwinfo.static
+	$(CC) -static hwscan.o $(LDFLAGS) $(SLIBS) -o hwscan.static
 	strip -R .note -R .comment hwinfo.static
 	strip -R .note -R .comment hwscan.static
 

@@ -226,6 +226,8 @@ void hd_move_to_shm(hd_data_t *hd_data);
 
 void read_udevinfo(hd_data_t *hd_data);
 
+hd_t *hd_find_sysfs_id(hd_data_t *hd_data, char *id);
+
 #ifdef __cplusplus
 }
 #endif

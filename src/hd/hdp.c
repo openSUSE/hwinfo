@@ -118,6 +118,10 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("SysFS ID: %s\n", h->sysfs_id);
   }
 
+  if(h->sysfs_bus_id) {
+    dump_line("SysFS BusID: %s\n", h->sysfs_bus_id);
+  }
+
   if(h->hw_class && (s = hd_hw_item_name(h->hw_class))) {
     dump_line("Hardware Class: %s\n", s);
   }

@@ -17,6 +17,21 @@
 #include "hddb.h"
 #include "pci.h"
 
+
+/*
+ * linux/ioport.h
+ */
+#define IORESOURCE_BITS		0x000000ff
+#define IORESOURCE_IO		0x00000100
+#define IORESOURCE_MEM		0x00000200
+#define IORESOURCE_IRQ		0x00000400
+#define IORESOURCE_DMA		0x00000800
+#define IORESOURCE_PREFETCH	0x00001000
+#define IORESOURCE_READONLY	0x00002000
+#define IORESOURCE_CACHEABLE	0x00004000
+#define IORESOURCE_DISABLED	0x10000000
+
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * pci stuff
  *
@@ -24,10 +39,14 @@
  */
 
 static void get_pci_data(hd_data_t *hd_data);
+static void get_pci_drivers(hd_data_t *hd_data);
 static int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u);
+static str_list_t *hd_attr_list(struct sysfs_attribute *attr);
+static char *hd_attr_str(struct sysfs_attribute *attr);
 static void add_pci_data(hd_data_t *hd_data);
 static void add_driver_info(hd_data_t *hd_data);
 static pci_t *add_pci_entry(hd_data_t *hd_data, pci_t *new_pci);
+static unsigned char pci_cfg_byte(pci_t *pci, int fd, unsigned idx);
 static void dump_pci_data(hd_data_t *hd_data);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
@@ -47,6 +66,7 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
 
   add_pci_data(hd_data);
 
+  get_pci_drivers(hd_data);
 }
 
 
@@ -58,9 +78,13 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
  */
 void get_pci_data(hd_data_t *hd_data)
 {
-  uint64_t u;
-  unsigned u0, u1, u2, u3;
+  uint64_t ul0, ul1, ul2;
+  unsigned u, u0, u1, u2, u3;
+  unsigned char nxt;
+  str_list_t *sl;
+  char *s;
   pci_t *pci;
+  int fd;
 
   struct sysfs_bus *sf_bus;
   struct dlist *sf_dev_list;
@@ -76,7 +100,7 @@ void get_pci_data(hd_data_t *hd_data)
   sf_dev_list = sysfs_get_bus_devices(sf_bus);
   if(sf_dev_list) dlist_for_each_data(sf_dev_list, sf_dev, struct sysfs_device) {
     ADD2LOG(
-      "  device: name = %s, bus_id = %s, bus = %s\n    path = %s\n",
+      "  pci device: name = %s, bus_id = %s, bus = %s\n    path = %s\n",
       sf_dev->name,
       sf_dev->bus_id,
       sf_dev->bus,
@@ -87,75 +111,183 @@ void get_pci_data(hd_data_t *hd_data)
 
     pci = add_pci_entry(hd_data, new_mem(sizeof *pci));
 
-    pci->sysfs = new_str(sf_dev->path);
+    pci->sysfs_id = new_str(sf_dev->path);
+    pci->sysfs_bus_id = new_str(sf_dev->bus_id);
 
     pci->bus = (u0 << 8) + u1;
     pci->slot = u2;
     pci->func = u3;
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "class"), &u)) {
-      ADD2LOG("    class = 0x%x\n", (unsigned) u);
-      pci->prog_if = u & 0xff;
-      pci->sub_class = (u >> 8) & 0xff;
-      pci->base_class = (u >> 16) & 0xff;
+    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "class"), &ul0)) {
+      ADD2LOG("    class = 0x%x\n", (unsigned) ul0);
+      pci->prog_if = ul0 & 0xff;
+      pci->sub_class = (ul0 >> 8) & 0xff;
+      pci->base_class = (ul0 >> 16) & 0xff;
     }
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "vendor"), &u)) {
-      ADD2LOG("    vendor = 0x%x\n", (unsigned) u);
-      pci->vend = u & 0xffff;
+    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "vendor"), &ul0)) {
+      ADD2LOG("    vendor = 0x%x\n", (unsigned) ul0);
+      pci->vend = ul0 & 0xffff;
     }
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "device"), &u)) {
-      ADD2LOG("    device = 0x%x\n", (unsigned) u);
-      pci->dev = u & 0xffff;
+    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "device"), &ul0)) {
+      ADD2LOG("    device = 0x%x\n", (unsigned) ul0);
+      pci->dev = ul0 & 0xffff;
     }
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "subsystem_vendor"), &u)) {
-      ADD2LOG("    subvendor = 0x%x\n", (unsigned) u);
-      pci->sub_vend = u & 0xffff;
+    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "subsystem_vendor"), &ul0)) {
+      ADD2LOG("    subvendor = 0x%x\n", (unsigned) ul0);
+      pci->sub_vend = ul0 & 0xffff;
     }
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "subsystem_device"), &u)) {
-      ADD2LOG("    subdevice = 0x%x\n", (unsigned) u);
-      pci->sub_dev = u & 0xffff;
+    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "subsystem_device"), &ul0)) {
+      ADD2LOG("    subdevice = 0x%x\n", (unsigned) ul0);
+      pci->sub_dev = ul0 & 0xffff;
     }
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "irq"), &u)) {
-      ADD2LOG("    irq = %d\n", (unsigned) u);
-      pci->irq = u;
+    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "irq"), &ul0)) {
+      ADD2LOG("    irq = %d\n", (unsigned) ul0);
+      pci->irq = ul0;
+    }
+
+    sl = hd_attr_list(sysfs_get_device_attr(sf_dev, "resource"));
+    for(u = 0; sl; sl = sl->next, u++) {
+      if(
+        sscanf(sl->str, "0x%"SCNx64" 0x%"SCNx64" 0x%"SCNx64, &ul0, &ul1, &ul2) == 3 &&
+        ul1 &&
+        u < sizeof pci->base_addr / sizeof *pci->base_addr
+      ) {
+        ADD2LOG("    res[%u] = 0x%"PRIx64" 0x%"PRIx64" 0x%"PRIx64"\n", u, ul0, ul1, ul2);
+        pci->base_addr[u] = ul0;
+        pci->base_len[u] = ul1 + 1 - ul0;
+        pci->addr_flags[u] = ul2;
+      }
+    }
+
+    s = NULL;
+    str_printf(&s, 0, "%s/config", sf_dev->path);
+    if((fd = open(s, O_RDONLY)) != -1) {
+      pci->data_len = pci->data_ext_len = read(fd, pci->data, 0x40);
+      ADD2LOG("    config[%u]\n", pci->data_len);
+
+      if(pci->data_len >= 0x40) {
+        pci->hdr_type = pci->data[PCI_HEADER_TYPE] & 0x7f;
+        pci->cmd = pci->data[PCI_COMMAND] + (pci->data[PCI_COMMAND + 1] << 8);
+
+        if(pci->hdr_type == 1 || pci->hdr_type == 2) {	/* PCI or CB bridge */
+          pci->secondary_bus = pci->data[PCI_SECONDARY_BUS];
+          /* PCI_SECONDARY_BUS == PCI_CB_CARD_BUS */
+        }
+
+        for(u = 0; u < sizeof pci->base_addr / sizeof *pci->base_addr; u++) {
+          if((pci->addr_flags[u] & IORESOURCE_IO)) {
+            if(!(pci->cmd & PCI_COMMAND_IO)) pci->addr_flags[u] |= IORESOURCE_DISABLED;
+          }
+
+          if((pci->addr_flags[u] & IORESOURCE_MEM)) {
+            if(!(pci->cmd & PCI_COMMAND_MEMORY)) pci->addr_flags[u] |= IORESOURCE_DISABLED;
+          }
+        }
+
+        /* let's get through the capability list */
+        if(
+          pci->hdr_type == PCI_HEADER_TYPE_NORMAL &&
+          (nxt = pci->data[PCI_CAPABILITY_LIST])
+        ) {
+          /*
+           * Cut out after 16 capabilities to avoid infinite recursion due
+           * to (potentially) malformed data. 16 is more or less
+           * arbitrary, though (the capabilities are bits in a byte, so 8 entries
+           * should suffice).
+           */
+          for(u = 0; u < 16 && nxt && nxt <= 0xfe; u++) {
+            switch(pci_cfg_byte(pci, fd, nxt)) {
+              case PCI_CAP_ID_PM:
+                pci->flags |= (1 << pci_flag_pm);
+                break;
+
+              case PCI_CAP_ID_AGP:
+                pci->flags |= (1 << pci_flag_agp);
+                break;
+            }
+            nxt = pci_cfg_byte(pci, fd, nxt + 1);
+          }
+        }
+      }
+
+      close(fd);
+    }
+    s = free_mem(s);
+
+    pci->rev = pci->data[PCI_REVISION_ID];
+
+    if((pci->addr_flags[6] & IORESOURCE_MEM)) {
+      if(!(pci->data[PCI_ROM_ADDRESS] & PCI_ROM_ADDRESS_ENABLE)) {
+        pci->addr_flags[6] |= IORESOURCE_DISABLED;
+      }
     }
 
     pci->flags |= (1 << pci_flag_ok);
-
-#if 0
-          p->rev = p->data[PCI_REVISION_ID];
-
-    for(i = 0; i < 6; i++) p->base_addr[i] = ul[i + 3];
-    p->rom_base_addr = ul[9];
-#endif
-
-
-
   }
 
   sysfs_close_bus(sf_bus);
 }
+
+
+void get_pci_drivers(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  char *s;
+
+  struct sysfs_bus *sf_bus;
+  struct sysfs_device *sf_dev;
+  struct sysfs_driver *sf_drv;
+  struct dlist *sf_drv_list;
+  struct dlist *sf_dev_list;
+
+  sf_bus = sysfs_open_bus("pci");
+
+  if(!sf_bus) {
+    ADD2LOG("sysfs: no such bus: pci\n");
+    return;
+  }
+
+  sf_drv_list = sysfs_get_bus_drivers(sf_bus);
+  if(sf_drv_list) dlist_for_each_data(sf_drv_list, sf_drv, struct sysfs_driver) {
+    sf_dev_list = sysfs_get_driver_devices(sf_drv);
+    if(sf_dev_list) dlist_for_each_data(sf_dev_list, sf_dev, struct sysfs_device) {
+      ADD2LOG(
+        "  pci driver: name = %s, path = %s\n",
+        sf_dev->driver_name, sf_dev->path
+      );
+
+      if(sf_dev->path && *sf_dev->path && (s = strchr(sf_dev->path + 1, '/'))) {
+        hd = hd_find_sysfs_id(hd_data, s);
+        if(hd) {
+          free_mem(hd->driver);
+          hd->driver = new_str(sf_dev->driver_name);
+        }
+      }
+    }
+  }
+
+  sysfs_close_bus(sf_bus);
+}
+
 
 /*
  * Parse attribute and return integer value.
  */
 int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u)
 {
-  char *buf, *s;
+  char *s;
   uint64_t u2;
   int ok;
 
-  if(!attr || !attr->len) return 0;
-  buf = new_mem(attr->len + 1);
-  memcpy(buf, attr->value, attr->len);
-  u2 = strtoull(buf, &s, 0);
+  if(!(s = hd_attr_str(attr))) return 0;
+
+  u2 = strtoull(s, &s, 0);
   ok = !*s || isspace(*s) ? 1 : 0;
-  free_mem(buf);
 
   if(ok && u) *u = u2;
 
@@ -163,37 +295,55 @@ int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u)
 }
 
 
+/*
+ * Return attribute as string list.
+ */
+str_list_t *hd_attr_list(struct sysfs_attribute *attr)
+{
+  static str_list_t *sl = NULL;
+
+  free_str_list(sl);
+
+  return sl = hd_split('\n', hd_attr_str(attr));
+}
+
+
+/*
+ * Return attribute as string.
+ */
+char *hd_attr_str(struct sysfs_attribute *attr)
+{
+  return attr ? attr->value : NULL;
+}
+
+
 void add_pci_data(hd_data_t *hd_data)
 {
-  hd_t *hd;
-  pci_t *p, *pnext;
+  hd_t *hd, *hd2;
+  pci_t *pci, *pnext;
   hd_res_t *res;
-  int j;
-  unsigned u, bus;
-  uint64_t u64;
-  struct {
-    unsigned hd_idx, bus;
-  } bridge[32];
-  unsigned bridges;
-  char *s;
+  unsigned u;
+  char *s, *t;
 
   PROGRESS(4, 0, "build list");
 
-  bridges = 0;
-  memset(bridge, 0, sizeof bridge);
-
-  for(p = hd_data->pci; p; p = pnext) {
-    pnext = p->next;
+  for(pci = hd_data->pci; pci; pci = pnext) {
+    pnext = pci->next;
     hd = add_hd_entry(hd_data, __LINE__, 0);
 
-    if(p->sysfs && *p->sysfs && (s = strchr(p->sysfs + 1, '/'))) hd->sysfs_id = new_str(s);
+    if(pci->sysfs_id && *pci->sysfs_id && (s = strchr(pci->sysfs_id + 1, '/'))) {
+      hd->sysfs_id = new_str(s);
+    }
+    if(pci->sysfs_bus_id && *pci->sysfs_bus_id) {
+      hd->sysfs_bus_id = new_str(pci->sysfs_bus_id);
+    }
 
     hd->bus.id = bus_pci;
-    hd->slot = p->slot + (p->bus << 8);
-    hd->func = p->func;
-    hd->base_class.id = p->base_class;
-    hd->sub_class.id = p->sub_class;
-    hd->prog_if.id = p->prog_if;
+    hd->slot = pci->slot + (pci->bus << 8);
+    hd->func = pci->func;
+    hd->base_class.id = pci->base_class;
+    hd->sub_class.id = pci->sub_class;
+    hd->prog_if.id = pci->prog_if;
 
     /* fix up old VGA's entries */
     if(hd->base_class.id == bc_none && hd->sub_class.id == 0x01) {
@@ -201,85 +351,71 @@ void add_pci_data(hd_data_t *hd_data)
       hd->sub_class.id = sc_dis_vga;
     }
 
-    if(p->dev || p->vend) {
-      hd->device.id = MAKE_ID(TAG_PCI, p->dev);
-      hd->vendor.id = MAKE_ID(TAG_PCI, p->vend);
+    if(pci->dev || pci->vend) {
+      hd->device.id = MAKE_ID(TAG_PCI, pci->dev);
+      hd->vendor.id = MAKE_ID(TAG_PCI, pci->vend);
     }
-    if(p->sub_dev || p->sub_vend) {
-      hd->sub_device.id = MAKE_ID(TAG_PCI, p->sub_dev);
-      hd->sub_vendor.id = MAKE_ID(TAG_PCI, p->sub_vend);
+    if(pci->sub_dev || pci->sub_vend) {
+      hd->sub_device.id = MAKE_ID(TAG_PCI, pci->sub_dev);
+      hd->sub_vendor.id = MAKE_ID(TAG_PCI, pci->sub_vend);
     }
-    hd->revision.id = p->rev;
+    hd->revision.id = pci->rev;
 
     if((u = device_class(hd_data, hd->vendor.id, hd->device.id))) {
       hd->base_class.id = u >> 8;
       hd->sub_class.id = u & 0xff;
     }
 
-    if(p->secondary_bus && bridges < sizeof bridge / sizeof *bridge) {
-      bridge[bridges].hd_idx = hd->idx;
-      bridge[bridges++].bus = p->secondary_bus;
-    }
+    for(u = 0; u < sizeof pci->base_addr / sizeof *pci->base_addr; u++) {
+      if((pci->addr_flags[u] & IORESOURCE_IO)) {
+        res = new_mem(sizeof *res);
+        res->io.type = res_io;
+        res->io.enabled = pci->addr_flags[u] & IORESOURCE_DISABLED ? 0 : 1;
+        res->io.base = pci->base_addr[u];
+        res->io.range = pci->base_len[u];
+        res->io.access = pci->addr_flags[u] & IORESOURCE_READONLY ? acc_ro : acc_rw;
+        add_res_entry(&hd->res, res);
+      }
 
-    for(j = 0; j < 6; j++) {
-      u64 = p->base_addr[j];
-      if(u64 & ~PCI_BASE_ADDRESS_SPACE) {
-        if((u64 & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO) {
-          res = new_mem(sizeof *res);
-          res->io.type = res_io;
-          res->io.enabled = p->cmd & PCI_COMMAND_IO ? 1 : 0;
-          res->io.base =  u64 & PCI_BASE_ADDRESS_IO_MASK;
-          res->io.range = p->base_len[j];
-          res->io.access = acc_rw;
-          add_res_entry(&hd->res, res);
-        }
-        if((u64 & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_MEMORY) {
-          res = new_mem(sizeof *res);
-          res->mem.type = res_mem;
-          res->mem.enabled = p->cmd & PCI_COMMAND_MEMORY ? 1 : 0;
-          res->mem.base =  u64 & PCI_BASE_ADDRESS_MEM_MASK;
-          res->mem.range = p->base_len[j];
-          res->mem.access = acc_rw;
-          res->mem.prefetch = u64 & PCI_BASE_ADDRESS_MEM_PREFETCH ? flag_yes : flag_no;
-          add_res_entry(&hd->res, res);
-        }
+      if((pci->addr_flags[u] & IORESOURCE_MEM)) {
+        res = new_mem(sizeof *res);
+        res->mem.type = res_mem;
+        res->mem.enabled = pci->addr_flags[u] & IORESOURCE_DISABLED ? 0 : 1;
+        res->mem.base = pci->base_addr[u];
+        res->mem.range = pci->base_len[u];
+        res->mem.access = pci->addr_flags[u] & IORESOURCE_READONLY ? acc_ro : acc_rw;
+        res->mem.prefetch = pci->addr_flags[u] & IORESOURCE_PREFETCH ? flag_yes : flag_no;
+        add_res_entry(&hd->res, res);
       }
     }
-    if((u64 = p->rom_base_addr)) {
-      res = new_mem(sizeof *res);
-      res->mem.type = res_mem;
-      res->mem.enabled = u64 & PCI_ROM_ADDRESS_ENABLE ? 1 : 0;
-      res->mem.base =  u64 & PCI_ROM_ADDRESS_MASK;
-      res->mem.range = p->rom_base_len;
-      res->mem.access = acc_ro;
-      add_res_entry(&hd->res, res);
-    }
 
-    if(p->irq) {
+    if(pci->irq) {
       res = new_mem(sizeof *res);
       res->irq.type = res_irq;
       res->irq.enabled = 1;
-      res->irq.base = p->irq;
+      res->irq.base = pci->irq;
       add_res_entry(&hd->res, res);
     }
 
     hd->detail = new_mem(sizeof *hd->detail);
     hd->detail->type = hd_detail_pci;
-    hd->detail->pci.data = p;
-    if(p->flags & (1 << pci_flag_agp)) hd->is.agp = 1;
-    p->next = NULL;
+    hd->detail->pci.data = pci;
+    if(pci->flags & (1 << pci_flag_agp)) hd->is.agp = 1;
+    pci->next = NULL;
   }
   hd_data->pci = NULL;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->bus.id == bus_pci) {
-      bus = hd->slot >> 8;
-      for(j = 0; (unsigned) j < bridges; j++) {
-        if(bridge[j].bus == bus) {
-          hd->attached_to = bridge[j].hd_idx;
-          break;
+    if(hd->bus.id == bus_pci && hd->sysfs_id) {
+      s = new_str(hd->sysfs_id);
+
+      if((t = strrchr(s, '/'))) {
+        *t = 0;
+        if((hd2 = hd_find_sysfs_id(hd_data, s))) {
+          hd->attached_to = hd2->idx;
         }
       }
+      free_mem(s);
     }
   }
 
@@ -319,282 +455,6 @@ void add_driver_info(hd_data_t *hd_data)
 
 
 #if 0
-static unsigned char pci_cfg_byte(pci_t *pci, int fd, unsigned idx);
-static void get_pci_data(hd_data_t *hd_data);
-static int f_read(int fd, off_t ofs, void *buf, size_t len);
-static int f_write(int fd, off_t ofs, void *buf, size_t len);
-static unsigned get_pci_addr_range(hd_data_t *hd_data, pci_t *pci, int fd, unsigned addr, unsigned mask);
-static pci_t *add_pci_entry(hd_data_t *hd_data, pci_t *new_pci);
-
-/*
- * get a byte from pci config space
- */
-unsigned char pci_cfg_byte(pci_t *pci, int fd, unsigned idx)
-{
-  unsigned char uc;
-
-  if(idx >= sizeof pci->data) return 0;
-  if(idx < pci->data_len) return pci->data[idx];
-  if(idx < pci->data_ext_len && pci->data[idx]) return pci->data[idx];
-  if(lseek(fd, idx, SEEK_SET) != (off_t) idx) return 0;
-  if(read(fd, &uc, 1) != 1) return 0;
-  pci->data[idx] = uc;
-
-  if(idx >= pci->data_ext_len) pci->data_ext_len = idx + 1;
-
-  return uc;
-}
-
-
-  unsigned char *t;
-  unsigned long u, ul[10], nxt;
-  uint64_t u64;
-  int fd, i, j, o_fl;
-  pci_t *p;
-  char *pci_data_file = NULL;
-  str_list_t *sl, *sl0;
-  int prog_cnt = 0;
-
-  /*
-   * Read the devices file and build a list of all PCI devices.
-   * The list holds preliminary info that gets extended later.
-   */
-  if(!(sl0 = read_file(PROC_PCI_DEVICES, 0, 0))) return;
-  for(sl = sl0; sl; sl = sl->next) {
-    if(
-      sscanf(sl->str,
-        " %lx %lx %lx %lx %lx %lx %lx %lx %lx %lx",
-        ul, ul + 1, ul + 2, ul + 3, ul + 4, ul + 5, ul + 6, ul + 7, ul + 8, ul + 9
-      ) == 10
-    ) {
-      p = add_pci_entry(hd_data, new_mem(sizeof *p));
-
-      p->bus = ul[0] >> 8;
-      /* combine them, as we have no extra field for the bus index */
-      p->slot = PCI_SLOT(ul[0] & 0xff);
-      p->func = PCI_FUNC(ul[0] & 0xff);
-
-      p->dev = ul[1] & 0xffff;
-      p->vend = (ul[1] >> 16) & 0xffff;
-
-      p->irq = ul[2];
-      for(i = 0; i < 6; i++) p->base_addr[i] = ul[i + 3];
-      p->rom_base_addr = ul[9];
-    }
-  }
-
-  sl0 = free_str_list(sl0);
-
-  /*
-   * Now add the full PCI info.
-   */
-  for(p = hd_data->pci; p; p = p->next) {
-    str_printf(&pci_data_file, 0, PROC_PCI_BUS "/%02x/%02x.%x", p->bus, p->slot, p->func);
-    if(
-      (fd = open(pci_data_file, o_fl = O_RDWR)) >= 0 ||
-      (fd = open(pci_data_file, o_fl = O_RDONLY)) >= 0
-    ) {
-      PROGRESS(2, ++prog_cnt, "raw data");
-
-      /* ##### for CARDBUS things: 0x80 bytes? */
-      p->data_len = p->data_ext_len =
-        read(fd, p->data, hd_probe_feature(hd_data, pr_pci_ext) ? sizeof p->data : 0x40);
-      if(p->data_len >= 0x40) {
-        p->hdr_type = p->data[PCI_HEADER_TYPE] & 0x7f;
-        if(p->hdr_type == 1 || p->hdr_type == 2) {	/* PCI or CB bridge */
-          p->secondary_bus = p->data[PCI_SECONDARY_BUS];
-          /* PCI_SECONDARY_BUS == PCI_CB_CARD_BUS */
-        }
-        p->cmd = p->data[PCI_COMMAND] + (p->data[PCI_COMMAND + 1] << 8);
-        ul[0] = p->data[PCI_VENDOR_ID] + (p->data[PCI_VENDOR_ID + 1] << 8);
-        ul[1] = p->data[PCI_DEVICE_ID] + (p->data[PCI_DEVICE_ID + 1] << 8);
-/* on ppc, these data are inconsistent */
-#if !defined(__PPC__)
-        if(ul[0] == p->vend && ul[1] == p->dev) {
-#else
-        {
-#endif
-          /* these are header type specific */
-          if(p->hdr_type == PCI_HEADER_TYPE_NORMAL) {
-            p->sub_dev = p->data[PCI_SUBSYSTEM_ID] + (p->data[PCI_SUBSYSTEM_ID + 1] << 8);
-            p->sub_vend = p->data[PCI_SUBSYSTEM_VENDOR_ID] + (p->data[PCI_SUBSYSTEM_VENDOR_ID + 1] << 8);
-          }
-          else if(p->hdr_type == PCI_HEADER_TYPE_CARDBUS) {
-            p->sub_dev = p->data[PCI_CB_SUBSYSTEM_ID] + (p->data[PCI_CB_SUBSYSTEM_ID + 1] << 8);
-            p->sub_vend = p->data[PCI_CB_SUBSYSTEM_VENDOR_ID] + (p->data[PCI_CB_SUBSYSTEM_VENDOR_ID + 1] << 8);
-          }
-
-          p->rev = p->data[PCI_REVISION_ID];
-          p->prog_if = p->data[PCI_CLASS_PROG];
-          p->sub_class = p->data[PCI_CLASS_DEVICE];
-          p->base_class = p->data[PCI_CLASS_DEVICE + 1];
-          p->flags |= (1 << pci_flag_ok);
-
-          /*
-           * See if we can get the adress *ranges*. This does actuall imply
-           * reprogramming the PCI devices. As this is somewhat dangerous in
-           * a running system, this feature (pr_pci_range) is normally turned
-           * off. (The check is actually in get_pci_addr_range().)
-           */
-          if(p->hdr_type == PCI_HEADER_TYPE_NORMAL) {
-            PROGRESS(3, prog_cnt, "address ranges");
-
-            for(j = 0; j < 6; j++) {
-              t = p->data + PCI_BASE_ADDRESS_0 + 4 * j;
-              u = t[0] + (t[1] << 8) + (t[2] << 16) + ((unsigned long) t[3] << 24);
-              /* just checking; actually it's paranoid... */
-              if(u == p->base_addr[j]) {
-                if(u && o_fl == O_RDWR)
-                  p->base_len[j] = get_pci_addr_range(hd_data, p, fd, PCI_BASE_ADDRESS_0 + 4 * j, 0);
-              }
-              else {
-                p->base_addr[j] = u;
-                if(u && o_fl == O_RDWR)
-                  p->base_len[j] = get_pci_addr_range(hd_data, p, fd, PCI_BASE_ADDRESS_0 + 4 * j, 0);
-              }
-              if(
-                (u & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_MEMORY &&
-                (u & PCI_BASE_ADDRESS_MEM_TYPE_MASK) == PCI_BASE_ADDRESS_MEM_TYPE_64 &&
-                j < 5
-              ) {
-                u64 = t[4] + (t[5] << 8) + (t[6] << 16) + ((uint64_t) t[7] << 24);
-                p->base_addr[j] += u64 << 32;
-                // get the range!
-                // ##### the get_pci_addr_range() stuff is awkward
-                j++;
-              }
-            }
-            if(p->rom_base_addr)
-              p->rom_base_len = get_pci_addr_range(hd_data, p, fd, PCI_ROM_ADDRESS, (unsigned) PCI_ROM_ADDRESS_MASK);
-          }
-
-          /* let's get through the capability list */
-          if(p->hdr_type == PCI_HEADER_TYPE_NORMAL && (nxt = p->data[PCI_CAPABILITY_LIST])) {
-            /*
-             * Cut out after 10 capabilities to avoid infinite recursion due
-             * to (potentially) malformed data. 10 is more or less
-             * arbitrary, though (the capabilities are bits in a byte, so 8 entries
-             * should suffice).
-             */
-            for(j = 0; j < 10 && nxt && nxt <= 0xfe; j++) {
-              switch(pci_cfg_byte(p, fd, nxt)) {
-                case PCI_CAP_ID_PM:
-                  p->flags |= (1 << pci_flag_pm);
-                  break;
-
-                case PCI_CAP_ID_AGP:
-                  p->flags |= (1 << pci_flag_agp);
-                  break;
-              }
-              nxt = pci_cfg_byte(p, fd, nxt + 1);
-            }
-          }
-        }
-      }
-      close(fd);
-    }
-  }
-
-  free_mem(pci_data_file);
-}
-
-
-/*
- * Read from a file.
- */
-int f_read(int fd, off_t ofs, void *buf, size_t len)
-{
-  if(lseek(fd, ofs, SEEK_SET) == -1) return -1;
-  return read(fd, buf, len);
-}
-
-/*
- * Write to a file.
- */
-int f_write(int fd, off_t ofs, void *buf, size_t len)
-{
-  if(lseek(fd, ofs, SEEK_SET) == -1) return -1;
-  return write(fd, buf, len);
-}
-
-
-/*
- * Determine the address ranges by writing -1 to the base regs and
- * looking on the number of 1-bits.
- * This assumes the range to be a power of 2.
- *
- * This function *is* dangerous to execute - you have been warned... :-)
- *
- * ##### FIX: 32bit vs. 64bit !!!!!!!!!!
- * ##### It breaks if unsigned != 32 bit!
- */
-unsigned get_pci_addr_range(hd_data_t *hd_data, pci_t *pci, int fd, unsigned addr, unsigned mask)
-{
-  unsigned u, u0, u1 = -1, cmd = 0, cmd1;
-  int err = 0;
-
-  /* it's easier to do the check *here* */
-  if(!hd_probe_feature(hd_data, pr_pci_range)) return 0;
-
-  /* PCI_COMMAND is a 16 bit value */
-  if(f_read(fd, PCI_COMMAND, &cmd, 2) != 2) return 0;
-
-  if(f_read(fd, addr, &u0, sizeof u0) != sizeof u0) return 0;
-
-  /* disable memory and i/o adresses */
-  cmd1 = cmd & ~(PCI_COMMAND_IO | PCI_COMMAND_MEMORY);
-  if(f_write(fd, PCI_COMMAND, &cmd1, 2) != 2) err = 1;
-
-  if(!err) {
-    /* remember error conditions, but we must get through... */
-
-    /*
-     * write -1 and read the value back
-     *
-     * ???: What about the address type bits? Should they be preserved?
-     */
-    if(f_write(fd, addr, &u1, sizeof u1) != sizeof u1) err = 2;
-    if(f_read(fd, addr, &u1, sizeof u1) != sizeof u1) err = 3;
-
-    /* restore original value */
-    if(f_write(fd, addr, &u0, sizeof u0) != sizeof u0) err = 4;
-  }
-
-  /* restore original value */
-  if(f_write(fd, PCI_COMMAND, &cmd, 2) != 2) err = 5;
-
-  if(!err) {
-    /* a mask of 0 is slightly magic... */
-    if(mask) {
-      u = u1 & mask;
-    }
-    else {
-#if defined(__i386__) || defined (__x86_64__)
-      /* Intel and Hammer processors have 16 bit i/o space */
-      if((u0 & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO) u1 |= 0xffff0000;
-#endif
-      u = u1 & (
-        (u0 & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO ?
-          PCI_BASE_ADDRESS_IO_MASK :
-          PCI_BASE_ADDRESS_MEM_MASK
-      );
-    }
-  }
-  else {
-    u = 0;
-  }
-
-  if(err)
-    str_printf(&pci->log, -1, "  err %d: %x %x\n", err, u0, -u);
-
-  return -u;
-}
-
-
-#endif
-
-
-#if 0
 /*
  * Store a raw PCI entry; just for convenience.
  */
@@ -623,57 +483,75 @@ pci_t *add_pci_entry(hd_data_t *hd_data, pci_t *new_pci)
 
 
 /*
+ * get a byte from pci config space
+ */
+unsigned char pci_cfg_byte(pci_t *pci, int fd, unsigned idx)
+{
+  unsigned char uc;
+
+  if(idx >= sizeof pci->data) return 0;
+  if(idx < pci->data_len) return pci->data[idx];
+  if(idx < pci->data_ext_len && pci->data[idx]) return pci->data[idx];
+  if(lseek(fd, idx, SEEK_SET) != (off_t) idx) return 0;
+  if(read(fd, &uc, 1) != 1) return 0;
+  pci->data[idx] = uc;
+
+  if(idx >= pci->data_ext_len) pci->data_ext_len = idx + 1;
+
+  return uc;
+}
+/*
  * Add a dump of all raw PCI data to the global log.
  */
 void dump_pci_data(hd_data_t *hd_data)
 {
-  pci_t *p;
+  pci_t *pci;
   char *s = NULL;
   char buf[32];
   int i, j;
 
   ADD2LOG("---------- PCI raw data ----------\n");
 
-  for(p = hd_data->pci; p; p = p->next) {
+  for(pci = hd_data->pci; pci; pci = pci->next) {
 
-    if(!(p->flags & (1 << pci_flag_ok))) str_printf(&s, -1, "oops");
-    if(p->flags & (1 << pci_flag_pm)) str_printf(&s, -1, ",pm");
-    if(p->flags & (1 << pci_flag_agp)) str_printf(&s, -1, ",agp");
+    if(!(pci->flags & (1 << pci_flag_ok))) str_printf(&s, -1, "oops");
+    if(pci->flags & (1 << pci_flag_pm)) str_printf(&s, -1, ",pm");
+    if(pci->flags & (1 << pci_flag_agp)) str_printf(&s, -1, ",agp");
     if(!s) str_printf(&s, 0, "%s", "");
 
     *buf = 0;
-    if(p->secondary_bus) {
-      sprintf(buf, "->%02x", p->secondary_bus);
+    if(pci->secondary_bus) {
+      sprintf(buf, "->%02x", pci->secondary_bus);
     }
 
     ADD2LOG(
       "bus %02x%s, slot %02x, func %x, vend:dev:s_vend:s_dev:rev %04x:%04x:%04x:%04x:%02x\n",
-      p->bus, buf, p->slot, p->func, p->vend, p->dev, p->sub_vend, p->sub_dev, p->rev
+      pci->bus, buf, pci->slot, pci->func, pci->vend, pci->dev, pci->sub_vend, pci->sub_dev, pci->rev
     );
     ADD2LOG(
       "class %02x, sub_class %02x prog_if %02x, hdr %x, flags <%s>, irq %u\n",
-      p->base_class, p->sub_class, p->prog_if, p->hdr_type, *s == ',' ? s + 1 : s, p->irq 
+      pci->base_class, pci->sub_class, pci->prog_if, pci->hdr_type, *s == ',' ? s + 1 : s, pci->irq 
     );
 
     s = free_mem(s);
 
     for(i = 0; i < 6; i++) {
-      if(p->base_addr[i] || p->base_len[i])
-        ADD2LOG("  addr%d %08"PRIx64", size %08"PRIx64"\n", i, p->base_addr[i], p->base_len[i]);
+      if(pci->base_addr[i] || pci->base_len[i])
+        ADD2LOG("  addr%d %08"PRIx64", size %08"PRIx64"\n", i, pci->base_addr[i], pci->base_len[i]);
     }
-    if(p->rom_base_addr)
-      ADD2LOG("  rom   %08"PRIx64"\n", p->rom_base_addr);
+    if(pci->rom_base_addr)
+      ADD2LOG("  rom   %08"PRIx64"\n", pci->rom_base_addr);
 
-    if(p->log) ADD2LOG("%s", p->log);
+    if(pci->log) ADD2LOG("%s", pci->log);
 
-    for(i = 0; (unsigned) i < p->data_ext_len; i += 0x10) {
+    for(i = 0; (unsigned) i < pci->data_ext_len; i += 0x10) {
       ADD2LOG("  %02x: ", i);
-      j = p->data_ext_len - i;
-      hexdump(&hd_data->log, 1, j > 0x10 ? 0x10 : j, p->data + i);
+      j = pci->data_ext_len - i;
+      hexdump(&hd_data->log, 1, j > 0x10 ? 0x10 : j, pci->data + i);
       ADD2LOG("\n");
     }
 
-    if(p->next) ADD2LOG("\n");
+    if(pci->next) ADD2LOG("\n");
   }
 
   ADD2LOG("---------- PCI raw data end ----------\n");
