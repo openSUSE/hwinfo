@@ -148,7 +148,37 @@ void get_block_devs(hd_data_t *hd_data)
 
     hd = NULL;
 
-    if((sl = search_str_list(hd_data->disks, hd_sysfs_name2_dev(sf_cdev->name)))) {
+    /* check if disk is DASD and has already been found by s390.c */
+    if(sf_dev && sf_dev->driver_name && strstr(sf_dev->driver_name,"dasd"))
+    {
+      char bid[9];
+      hd_res_t* res;
+      //fprintf(stderr,"dn %s bi %s\n",sf_dev->driver_name,sf_dev->bus_id);
+      for(hd=hd_data->hd;hd;hd=hd->next)
+      {
+	//fprintf(stderr,"bcid %d\n",hd->base_class.id);
+	if(hd->base_class.id == bc_storage_device
+	   && hd->detail
+	   && hd->detail->ccw.type == hd_detail_ccw)
+	{
+	  for(res=hd->res;res;res=res->next)
+	  {
+	    if(res->io.type==res_io)
+	    {
+	      sprintf(bid,"%01x.%01x.%04x",
+		      hd->detail->ccw.data->lcss >> 8,
+		      hd->detail->ccw.data->lcss & 0xff,
+		      (unsigned short)res->io.base);
+	      //fprintf(stderr,"bid %s\n",bid);
+	      if (strcmp(bid,sf_dev->bus_id)==0) goto out;
+	    }
+	  }
+	}
+      }
+      hd=NULL;
+      out:;
+    }
+    else if((sl = search_str_list(hd_data->disks, hd_sysfs_name2_dev(sf_cdev->name)))) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->sub_class.id = sc_sdev_disk;
     }

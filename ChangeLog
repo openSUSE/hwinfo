@@ -1,3 +1,5 @@
+	- added duplicate DASD detection code from the late dasd.c
+	  to block.c (bug #37068)
 	- changed bios probing to do less things
 	- another winmodem (#37335)
 
