@@ -46,7 +46,7 @@ subdirs:
 endif
 
 clean: subdirs
-	@rm -f $(OBJS) .depend $(CLEANFILES) *~
+	@rm -rf $(OBJS) .depend $(CLEANFILES) *~
 
 ifneq "$(CFILES)" ""
 ifneq "$(MAKECMDGOALS)" "clean"

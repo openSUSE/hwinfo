@@ -1,0 +1,35 @@
+/*! \mainpage libhd documentation
+
+<h2>Introduction</h2>
+
+libhd is a hardware detection lib.
+
+<h2>Examples</h2>
+
+\ref example1
+
+\ref example2
+
+*/
+
+
+/*! \page examples Examples
+
+\ref example1
+
+\ref example2
+
+<hr>
+
+\subsection example1 Get list of SCSI controllers
+
+\include example1.c
+
+<hr>
+
+\subsection example2 Get primary display controller
+
+\include example2.c
+
+*/
+

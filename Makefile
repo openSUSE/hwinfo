@@ -1,7 +1,7 @@
 TOPDIR		= $(CURDIR)
 SUBDIRS		= src
 TARGETS		= hwinfo hwscan
-CLEANFILES	= hwinfo hwinfo.static hwscan hwscan.static
+CLEANFILES	= hwinfo hwinfo.static hwscan hwscan.static doc/libhd doc/*~
 LIBDIR		= /usr/lib
 
 include Makefile.common
@@ -9,7 +9,7 @@ include Makefile.common
 SHARED_FLAGS	=
 OBJS_NO_TINY	= names.o parallel.o modem.o
 
-.PNONY:	fullstatic static shared tiny
+.PHONY:	fullstatic static shared tiny doc
 
 hwscan: hwscan.o $(LIBHD)
 	$(CC) hwscan.o $(LDFLAGS) -lhd -o $@
@@ -36,6 +36,9 @@ fullstatic: static
 	strip -R .note -R .comment hwinfo.static
 	strip -R .note -R .comment hwscan.static
 
+doc:
+	@cd doc ; doxygen libhd.doxy
+
 install:
 	install -d -m 755 $(DESTDIR)/usr/sbin $(DESTDIR)$(LIBDIR) $(DESTDIR)/usr/include
 	install -m 755 -s hwinfo $(DESTDIR)/usr/sbin
@@ -50,3 +53,4 @@ install:
 	install -m 644 src/hd/hd.h $(DESTDIR)/usr/include
 	install -m 755 hwbootscan $(DESTDIR)/usr/sbin
 	install -m 755 hwbootscan.rc $(DESTDIR)/etc/init.d/hwscan
+
