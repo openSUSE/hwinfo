@@ -166,11 +166,6 @@ void hd_scan_misc(hd_data_t *hd_data)
     remove_tagged_hd_entries(hd_data);
   }
 
-  if(hd_probe_feature(hd_data, pr_isapnp_mod) && !hd_probe_feature(hd_data, pr_isapnp_old)) {
-    PROGRESS(1, 4, "isa-pnp");
-    load_module_with_params(hd_data, "isa-pnp", "isapnp_reset=0");
-  }
-
   PROGRESS(2, 1, "io");
   read_ioports(hd_data->misc);
 

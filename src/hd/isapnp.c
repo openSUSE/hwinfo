@@ -16,15 +16,21 @@
 
 #if defined(__i386__) || defined(__alpha__)
 
+static void get_pnp_devs(hd_data_t *hd_data);
+
+#if 0
 static void get_read_port(hd_data_t *hd_data, isapnp_t *);
 static void build_list(hd_data_t *hd_data, str_list_t *isapnp_list);
+#endif
 
 void hd_scan_isapnp(hd_data_t *hd_data)
 {
+#if 0
   hd_t *hd;
   hd_res_t *res;
   int isapnp_ok;
   str_list_t *isapnp_list = NULL, *sl;
+#endif
   
   if(!hd_probe_feature(hd_data, pr_isapnp)) return;
 
@@ -33,6 +39,11 @@ void hd_scan_isapnp(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
 
+  PROGRESS(1, 0, "pnp devices");
+
+  get_pnp_devs(hd_data);
+
+#if 0
   PROGRESS(1, 0, "read port");
 
   if(!hd_data->isapnp) {
@@ -59,7 +70,7 @@ void hd_scan_isapnp(hd_data_t *hd_data)
     ADD2LOG("----- %s end -----\n", PROC_ISAPNP);
   }
 
-  isapnp_ok = isapnp_list && hd_data->isapnp->read_port ? 1 : 0;
+  isapnp_ok = isapnp_list && hd_data->isapnp->read_port ? 1 : 1;
 
   PROGRESS(4, 0, "build list");
 
@@ -94,8 +105,104 @@ void hd_scan_isapnp(hd_data_t *hd_data)
   build_list(hd_data, isapnp_list);
 
   free_str_list(isapnp_list);
+#endif
+
 }
 
+
+void get_pnp_devs(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  char *s, *t, buf[4];
+  unsigned u1, u2, u3;
+
+  struct sysfs_bus *sf_bus;
+  struct dlist *sf_dev_list;
+  struct sysfs_device *sf_dev;
+  struct sysfs_device *sf_dev_2;
+
+  sf_bus = sysfs_open_bus("pnp");
+
+  if(!sf_bus) {
+    ADD2LOG("sysfs: no such bus: pnp\n");
+    return;
+  }
+
+  sf_dev_list = sysfs_get_bus_devices(sf_bus);
+
+
+  if(sf_dev_list) dlist_for_each_data(sf_dev_list, sf_dev, struct sysfs_device) {
+    ADD2LOG(
+      "  pnp device: name = %s, bus_id = %s, bus = %s\n    path = %s\n",
+      sf_dev->name,
+      sf_dev->bus_id,
+      sf_dev->bus,
+      hd_sysfs_id(sf_dev->path)
+    );
+
+    if((s = hd_attr_str(sysfs_get_device_attr(sf_dev, "id")))) {
+      if(sscanf(s, "%3s%4x", buf, &u1) == 2 && (u2 = name2eisa_id(buf))) {
+        ADD2LOG("    id = %s %04x\n", eisa_vendor_str(u2), u1);
+
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+
+        hd->sysfs_id = new_str(hd_sysfs_id(sf_dev->path));
+        hd->sysfs_bus_id = new_str(sf_dev->bus_id);
+
+        hd->bus.id = bus_isa;
+        hd->is.isapnp = 1;
+
+        hd->sub_vendor.id = u2;
+        hd->sub_device.id = MAKE_ID(TAG_EISA, u1);
+
+        if(sscanf(hd->sysfs_bus_id, "%2x:%2x.%2x", &u1, &u2, &u3) == 3) {
+          hd->slot = u2;
+          hd->func = u3;
+        }
+
+        s = new_str(sf_dev->path);
+        if((t = strrchr(s, '/'))) *t = 0;
+
+        sf_dev_2 = sysfs_open_device_path(s);
+        if(sf_dev_2) {
+          if((t = hd_attr_str(sysfs_get_device_attr(sf_dev_2, "card_id")))) {
+            if(sscanf(t, "%3s%4x", buf, &u1) == 2 && (u2 = name2eisa_id(buf))) {
+              ADD2LOG("    card id = %s %04x\n", eisa_vendor_str(u2), u1);
+
+              hd->vendor.id = u2;
+              hd->device.id = MAKE_ID(TAG_EISA, u1);
+            }
+          }
+          if((t = hd_attr_str(sysfs_get_device_attr(sf_dev_2, "name")))) {
+             hd->device.name = canon_str(t, strlen(t));
+             if(!strcasecmp(hd->device.name, "unknown")) {
+               hd->device.name = free_mem(hd->device.name);
+             }
+          }
+
+          sysfs_close_device(sf_dev_2);
+        }
+
+
+        free_mem(s);
+
+
+        if(hd->sub_vendor.id == hd->vendor.id && hd->sub_device.id == hd->device.id) {
+          hd->sub_vendor.id = hd->sub_device.id = 0;
+        }
+
+      }
+    }
+
+  }
+
+
+  sysfs_close_bus(sf_bus);
+
+}
+
+
+#if 0
 unsigned char *add_isapnp_card_res(isapnp_card_t *ic, int len, int type)
 {
   ic->res = add_mem(ic->res, sizeof *ic->res, ic->res_len);
@@ -324,6 +431,7 @@ void build_list(hd_data_t *hd_data, str_list_t *isapnp_list)
   free_mem(dev_name);
   free_mem(ldev_name);
 }
+#endif
 
 
 #endif /* defined(__i386__) || defined(__alpha__) */
