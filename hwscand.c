@@ -164,8 +164,7 @@ int main( int argc, char **argv )
 					char buf[MESSAGE_BUFFER];
 					dev_counter[i] = 0;
 					fd = open( devices[i], O_RDONLY );
-					strcpy( buf, "/usr/sbin/hwscan --partition --only=");
-					strcat( buf, devices[i] );
+					strcpy( buf, "/usr/sbin/hwscan --partition");
 					if ( fd < 0 ){
 						if ( dev_last_state[i] )
 							system(buf);
@@ -197,8 +196,10 @@ int main( int argc, char **argv )
 					if ( !command_device[i][j] )
 						break;
 					if ( command_device_last[i][j] == 0 ){
+#if 0
 						strcat( buf, " --only=" );
 						strcat( buf, command_device[i][j] );
+#endif
 						command_device_last[i][j] = time(0L);
 				 		run_really = 1;
 					}
