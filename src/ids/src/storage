@@ -85,8 +85,14 @@
 +driver.module.insmod	eata
 
 # scsi/dpti.c
- vendor.id		pci 0x1044
+ baseclass.id           0x00e
+&subclass.id            0x00
+&vendor.id		pci 0x1044
 &device.id		pci 0xa501
+|baseclass.id           0x00e
+&subclass.id            0x00
+&vendor.id		pci 0x1044
+&device.id		pci 0xa511
 +driver.module.insmod	dpt_i2o
 
 # scsi/BusLogic.c

@@ -2692,6 +2692,10 @@ int hd_smp_support(hd_data_t *hd_data)
   }
 #endif
 
+#if defined(__s390__) || defined(__s390x__)
+  if(!is_smp) is_smp = 1;
+#endif
+
   return is_smp;
 }
 

@@ -3259,7 +3259,7 @@
 
  vendor.id		pci 0x1022
 &device.id		pci 0x2000
-+device.name		79c970 [PCnet LANCE]
++device.name		79c970 [PCnet32 LANCE]
 
  vendor.id		pci 0x1022
 &device.id		pci 0x2000

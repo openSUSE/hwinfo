@@ -1,3 +1,9 @@
+5/9/2002:	v5.27
+	- added amd-8111 info
+	- fixed dpt info (#18914)
+	- always smp on s390* (#18990)
+	- changed pcnet32 description (#18892)
+
 4/9/2002:	v5.26
 	- show boot catalog address in cd info
 
