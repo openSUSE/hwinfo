@@ -1,4 +1,4 @@
-	- work around x86-64 assembler weirdness
+	- push/pop don't work with 32bit regs on amd64 (#43531)
 
 4/8/2004:	v9.1
 	- get netcard link state via ethtool ioctl
