@@ -26,7 +26,7 @@ void hd_scan_s390(hd_data_t *hd_data)
 	
 	remove_hd_entries(hd_data);
 	
-	sl0=sl=read_file("/proc/subchannels", 2, 0);
+	sl0=sl=read_file(PROCSUBCHANNELS, 2, 0);
 
 	if(!sl)
 	{
@@ -37,7 +37,8 @@ void hd_scan_s390(hd_data_t *hd_data)
 	for(;sl;sl=sl->next)
 	{
 		/* segment line */
-		sl->str[4]=sl->str[11]=sl->str[17]=sl->str[20]=sl->str[27]=sl->str[30]=sl->str[35]=sl->str[42]=sl->str[46]=sl->str[50]=sl->str[60]=sl->str[69]=0;
+		sl->str[4]=sl->str[11]=sl->str[17]=sl->str[20]=sl->str[27]=sl->str[30]
+			=sl->str[35]=sl->str[42]=sl->str[46]=sl->str[50]=sl->str[60]=sl->str[69]=0;
 		
 		chid=strtol(sl->str,NULL,16);
 		schid=strtol(sl->str+7,NULL,16);
