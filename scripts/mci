@@ -94,15 +94,19 @@ printf "total: %u bytes in %u blocks\n", $total, $cnt;
 
 sub addr2line
 {
-  my ($x);
+  my ($x, $y);
 
   return $_[0] unless $bin;
 
-  $x = sprintf "0x%x", $_[0] + $ofs;
+  $y = sprintf "0x%x", $_[0] + $ofs;
 
-  $x = `addr2line -s -e $bin $x`;
+  return $addr_cache{$y} if exists $addr_cache{$y};
+
+  $x = `addr2line -s -e $bin $y`;
   chomp $x;
   $x = $x =~ /\?{2}/ ? $_[0] : $x;
+
+  $addr_cache{$y} = $x;
 
   return $x;
 }

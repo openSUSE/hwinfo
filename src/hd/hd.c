@@ -989,6 +989,7 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->sub_vend_name);
   free_mem(hd->rev_name);
   free_mem(hd->serial);
+  free_mem(hd->model);
   free_mem(hd->unix_dev_name);
   free_mem(hd->rom_id);
   free_mem(hd->unique_id);

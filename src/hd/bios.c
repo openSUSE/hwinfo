@@ -18,6 +18,8 @@
 
 #if defined(__i386__)
 
+#define BIOS_TEST
+
 static void read_memory(memory_range_t *mem);
 static void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *label);
 static void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt);
@@ -354,7 +356,9 @@ void hd_scan_bios(hd_data_t *hd_data)
 void read_memory(memory_range_t *mem)
 {
   int fd;
+#ifdef BIOS_TEST
   char *s = getenv("LIBHD_MEM");
+#endif
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -367,7 +371,11 @@ void read_memory(memory_range_t *mem)
   fd = -1;
   if(
     !(
+#ifdef BIOS_TEST
       (fd = open(s ? s : DEV_MEM, O_RDONLY)) >= 0 &&
+#else
+      (fd = open(DEV_MEM, O_RDONLY)) >= 0 &&
+#endif
       lseek(fd, mem->start, SEEK_SET) >= 0 &&
       read(fd, mem->data, mem->size) == mem->size
     )
