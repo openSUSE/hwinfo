@@ -90,8 +90,10 @@ int main(int argc, char **argv)
 #endif
 
   if(f) {
+#if 0
     fseek(f, l, SEEK_SET);
     while((i = fgetc(f)) != EOF) putchar(i);
+#endif
     fclose(f);
   }
 

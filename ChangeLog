@@ -1,3 +1,6 @@
+	- improved boot floppy: now with usb support
+	- changed hw behavior: no listing on console if a logfile is used
+
 4/2/2000:	v0.58
 	- added generic ne2000 info
 	- improved printing of modules.conf entries
