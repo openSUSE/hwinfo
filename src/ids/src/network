@@ -1248,3 +1248,57 @@
 &device.id		usb 0x2033
 +requires		bluez-firmware
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# usbnet devices
+
+ vendor.id		usb 0x0402
+&device.id		usb 0x5632
+|vendor.id		usb 0x0411
+&device.id		usb 0x003d
+|vendor.id		usb 0x049f
+&device.id		usb 0x505a
+|vendor.id		usb 0x050d
+&device.id		usb 0x0004
+|vendor.id		usb 0x0525
+&device.id		usb 0x1080
+|vendor.id		usb 0x0525
+&device.id		usb 0x2888
+|vendor.id		usb 0x0525
+&device.id		usb 0x9901
+|vendor.id		usb 0x0547
+&device.id		usb 0x2720
+|vendor.id		usb 0x0547
+&device.id		usb 0x2727
+|vendor.id		usb 0x0557
+&device.id		usb 0x2009
+|vendor.id		usb 0x056c
+&device.id		usb 0x8100
+|vendor.id		usb 0x05e3
+&device.id		usb 0x0502
+|vendor.id		usb 0x067b
+&device.id		usb 0x0000+0x0002
+|vendor.id		usb 0x06d0
+&device.id		usb 0x0622
+|vendor.id		usb 0x077b
+&device.id		usb 0x2226
+|vendor.id		usb 0x07b8
+&device.id		usb 0x420a
+|vendor.id		usb 0x0846
+&device.id		usb 0x1040
+|vendor.id		usb 0x08dd
+&device.id		usb 0x90ff
+|vendor.id		usb 0x0b95
+&device.id		usb 0x1720
+|vendor.id		usb 0x0e7e
+&device.id		usb 0x1001
+|vendor.id		usb 0x2001
+&device.id		usb 0x1a00
+|vendor.id		usb 0x6189
+&device.id		usb 0x182d
+|vendor.id		usb 0x8086
+&device.id		usb 0x07d3
++driver.module.modprobe	usbnet
++baseclass.id		0x002
++subclass.id		0x91
+

@@ -199,6 +199,10 @@ void hd_scan_net(hd_data_t *hd_data)
       hd->sub_class.id = sc_nif_xp;
       hd->slot = u;
     }
+    else if(sscanf(hd->unix_dev_name, "usb%u", &u) == 1) {
+      hd->sub_class.id = sc_nif_usb;
+      hd->slot = u;
+    }
     /* ##### add more interface names here */
     else {
       hd->sub_class.id = sc_nif_other;

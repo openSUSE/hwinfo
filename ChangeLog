@@ -1,3 +1,6 @@
+12/10/2004:	v9.31
+	- report usb host-to-host links as network devs (#22739)
+
 11/10/2004:	v9.30
 	- find ide devices != cdrom & disk (#39911, #45229)
 	- return special ids for synaptics touchpad (#46649)

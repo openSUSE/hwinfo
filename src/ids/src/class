@@ -109,6 +109,10 @@
 &subclass.id		0x90
 +subclass.name		IUCV connection
 
+ baseclass.id		0x002
+&subclass.id		0x91
++subclass.name		USB Host-to-Host link
+
  baseclass.id		0x003
 +baseclass.name		Display controller
 
@@ -859,6 +863,10 @@
  baseclass.id		0x107
 &subclass.id		0x0b
 +subclass.name		XPNET
+
+ baseclass.id		0x107
+&subclass.id		0x0c
++subclass.name		USB-Link
 
  baseclass.id		0x107
 &subclass.id		0x80

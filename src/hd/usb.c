@@ -360,7 +360,13 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
 
   switch(cls) {
     case 2:
-      hd->base_class.id = bc_modem;
+      if(usb->i_sub == 6 && usb->i_prot == 0) {
+        hd->base_class.id = bc_network;
+        hd->sub_class.id = 0x91;
+      }
+      else if(usb->i_sub == 2 && usb->i_prot >= 1 && usb->i_prot <= 6) {
+        hd->base_class.id = bc_modem;
+      }
       break;
 
     case 3:
