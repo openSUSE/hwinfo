@@ -926,6 +926,18 @@
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
+&device.id		pci 0x554d
++device.name		Radeon X800 XL
++driver.xfree		4|radeon
++driver.xfree.config	ChipID 0x554b
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x554d
+&subvendor.id		pci 0x174b
+&subdevice.id		pci 0x0600
++subdevice.name		Sapphire Radeon X800 XL
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x5551
 +device.name		FireGL V7200 (R423) UQ (PCIE)
 +driver.xfree		4|radeon
@@ -2797,14 +2809,12 @@
 &subvendor.id		pci 0x1025
 &subdevice.id		pci 0x0033
 +subdevice.name		Acer Incorporated VIA VT 7205
-+driver.xfree		4|fbdev
 
  vendor.id		pci 0x1106
 &device.id		pci 0x7205
 &subvendor.id		pci 0x1584
 &subdevice.id		pci 0x800a
 +subdevice.name		Uniwill VIA VT 7205
-+driver.xfree		4|fbdev
 
  vendor.id		pci 0x1142
 +vendor.name		Alliance Semiconductor Corporation
@@ -3171,6 +3181,11 @@
 +device.name		915 G
 +driver.xfree		4|i810
 +driver.xfree		4|i810|3d||dri
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x2592
++device.name		915 GM
++driver.xfree		4|i810
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3577
