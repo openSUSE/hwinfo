@@ -505,6 +505,8 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_de
   hd_res_t *res;
   FILE *f;
 
+  if(!hd_report_this(hd_data, hd)) return;
+
   if(hd->sysfs_bus_id && sscanf(hd->sysfs_bus_id, "%u.%u", &u0, &u1) == 2) {
     /* host.master/slave */
     hd->slot = (u0 << 1) + u1;
@@ -642,6 +644,8 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
   scsi_t *scsi;
   hd_res_t *geo, *size;
   uint64_t ul0;
+
+  if(!hd_report_this(hd_data, hd)) return;
 
   hd->detail = new_mem(sizeof *hd->detail);
   hd->detail->type = hd_detail_scsi;

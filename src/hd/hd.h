@@ -2192,7 +2192,7 @@ typedef struct {
   } flags;
 
 
-  /** Concentrate on tses devices.
+  /** Concentrate on these devices.
    * List of sysfs ids for devices to look for.
    */
   str_list_t *only;
