@@ -398,3 +398,27 @@
 +subclass.id		0x00
 +driver.module.modprobe	saa7134
 
+ vendor.id		pci 0x1131
+&device.id		pci 0x7134
+&subvendor.id		pci 0x1131
+&subdevice.id		pci 0x2001
++subdevice.name		Proteus Pro [philips reference design]
+
+ vendor.id		pci 0x1131
+&device.id		pci 0x7134
+&subvendor.id		pci 0x1131
+&subdevice.id		pci 0x6752
++subdevice.name		EMPRESS
+
+ vendor.id		pci 0x1131
+&device.id		pci 0x7134
+&subvendor.id		pci 0x1131
+&subdevice.id		pci 0x4e85
++subdevice.name		SKNet Monster TV
+
+ vendor.id		pci 0x1131
+&device.id		pci 0x7134
+&subvendor.id		pci 0x153b
+&subdevice.id		pci 0x1142
++subdevice.name		Terratec Cinergy 400 TV
+
