@@ -44,13 +44,13 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(4, 0, "media");
   int_media_check(hd_data);
 
+  PROGRESS(5, 0, "floppy");
+  int_floppy(hd_data);
+
 #if defined(__i386__)
-  PROGRESS(5, 0, "bios");
+  PROGRESS(6, 0, "bios");
   int_bios(hd_data);
 #endif
-
-  PROGRESS(6, 0, "floppy");
-  int_floppy(hd_data);
 }
 
 /*
