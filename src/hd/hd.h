@@ -99,7 +99,7 @@ typedef enum probe_feature {
   pr_braille_ht, pr_ignx11, pr_sys, pr_dasd, pr_i2o, pr_cciss, pr_bios_vbe,
   pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
   pr_fb, pr_bios_vbe2, pr_veth, pr_partition, pr_disk, pr_ataraid, pr_pppoe,
-  pr_scan,
+  pr_scan, pr_partition_add,
   /* pr_bios_32, */
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
@@ -139,7 +139,7 @@ typedef enum base_classes {
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,
   bc_storage_device, bc_network_interface, bc_keyboard, bc_printer,
   bc_hub, bc_braille, bc_scanner, bc_joystick, bc_chipcard, bc_camera,
-  bc_framebuffer, bc_dvb, bc_tv
+  bc_framebuffer, bc_dvb, bc_tv, bc_partition
 } hd_base_classes_t;
 
 /* subclass values of bc_monitor */
