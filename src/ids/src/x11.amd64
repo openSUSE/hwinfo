@@ -3011,6 +3011,19 @@
 +device.name		VMWARE0710
 +driver.xfree		4|vmware
 
+ vendor.id		pci 0x18ca
++vendor.name		XGI Technology Inc.
+
+ vendor.id		pci 0x18ca
+&device.id		pci 0x0020
++device.name		Volari Z7
++driver.xfree		4|xgi
+
+ vendor.id		pci 0x18ca
+&device.id		pci 0x0040
++device.name		Volari V8_V5_V3XT
++driver.xfree		4|xgi
+
  vendor.id		pci 0x3d3d
 +vendor.name		3DLabs
 
