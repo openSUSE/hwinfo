@@ -642,6 +642,7 @@ int braille_install_info(hd_data_t *hd_data)
  */
 int get_fb_mode()
 {
+#ifndef __PPC__
   FILE *f;
   char buf[256], *s, *t;
   int i, fb_mode = 0;
@@ -658,6 +659,17 @@ int get_fb_mode()
   }
 
   return fb_mode > 0x10 ? fb_mode : 0;
+#else /* __PPC__ */
+  /* this is the only valid test for active framebuffer ... */
+  FILE *f = NULL;
+  int fb_mode = 0;
+  if((f = fopen("/dev/fb", "r"))) {
+    fb_mode++;
+    fclose(f);
+  }
+
+  return fb_mode;
+#endif
 }
 
 
