@@ -13,5 +13,5 @@ typedef struct msgbuf {
         char mtext[MESSAGE_BUFFER+1];
 } message;
 
-#define DEBUG 1
+#define DEBUG 0
 
