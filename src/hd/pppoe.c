@@ -564,8 +564,8 @@ void hd_scan_pppoe(hd_data_t *hd_data2)
   for(interfaces = 0, hd = hd_data->hd; hd; hd = hd->next) {
     if(
       hd->base_class.id == bc_network_interface &&
-      hd->unix_dev_name &&
-      !strncmp(hd->unix_dev_name, "eth", 3)
+      hd->sub_class.id == sc_nif_ethernet &&
+      hd->unix_dev_name
     ) {
       interfaces++;
     }
@@ -578,8 +578,8 @@ void hd_scan_pppoe(hd_data_t *hd_data2)
   for(cnt = 0, hd = hd_data->hd; hd && cnt < interfaces; hd = hd->next) {
     if(
       hd->base_class.id == bc_network_interface &&
-      hd->unix_dev_name &&
-      !strncmp(hd->unix_dev_name, "eth", 3)
+      hd->sub_class.id == sc_nif_ethernet &&
+      hd->unix_dev_name
     ) {
       conn[cnt].hd = hd;
       conn[cnt].fd = -1;

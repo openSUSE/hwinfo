@@ -7,6 +7,7 @@
 	- ibm notebook data updated
 	- avoid libsysfs accidentally reading pci config space
 	- fixed parsing of scsi serial id (#48757)
+	- look at /sys/class/net/*/type, too (#48812)
 
 13/10/2004:	v9.32
 	- report network interfaces correctly even though udev lists them

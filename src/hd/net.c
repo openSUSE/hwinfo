@@ -17,6 +17,7 @@
 #include <linux/if.h>
 #include <linux/sockios.h>
 #include <linux/ethtool.h>
+#include <linux/if_arp.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -41,9 +42,11 @@ static void add_uml(hd_data_t *hdata);
 void hd_scan_net(hd_data_t *hd_data)
 {
   unsigned u;
+  int if_type;
   hd_t *hd, *hd2, *hd_card;
   char *s, *hw_addr;
   hd_res_t *res, *res1;
+  uint64_t ul0;
 
   struct sysfs_class *sf_class;
   struct sysfs_class_device *sf_cdev;
@@ -77,6 +80,12 @@ void hd_scan_net(hd_data_t *hd_data)
       hd_sysfs_id(sf_cdev->path)
     );
 
+    if_type = -1;
+    if(hd_attr_uint(sysfs_get_classdev_attr(sf_cdev, "type"), &ul0, 0)) {
+      if_type = ul0;
+      ADD2LOG("    type = %d\n", if_type);
+    }
+
     hw_addr = NULL;
     if((s = hd_attr_str(sysfs_get_classdev_attr(sf_cdev, "address")))) {
       hw_addr = canon_str(s, strlen(s));
@@ -99,6 +108,7 @@ void hd_scan_net(hd_data_t *hd_data)
 
     hd = add_hd_entry(hd_data, __LINE__, 0);
     hd->base_class.id = bc_network_interface;
+    hd->sub_class.id = sc_nif_other;
 
     res1 = NULL;
     if(hw_addr && strspn(hw_addr, "0:") != strlen(hw_addr)) {
@@ -146,6 +156,40 @@ void hd_scan_net(hd_data_t *hd_data)
           }
         }
       }
+    }
+
+#if 0
+    "ctc"	sc_nif_ctc
+    "iucv"	sc_nif_iucv
+    "hsi"	sc_nif_hsi
+    "qeth"	sc_nif_qeth
+    "escon"	sc_nif_escon
+    "myri"	sc_nif_myrinet
+    "wlan"	sc_nif_wlan
+    "xp"	sc_nif_xp
+    "usb"	sc_nif_usb
+#endif
+    switch(if_type) {
+      case ARPHRD_ETHER:	/* eth */
+        hd->sub_class.id = sc_nif_ethernet;
+        break;
+      case ARPHRD_LOOPBACK:	/* lo */
+        hd->sub_class.id = sc_nif_loopback;
+        break;
+      case ARPHRD_SIT:		/* sit */
+        hd->sub_class.id = sc_nif_sit;
+        break;
+      case ARPHRD_FDDI:		/* fddi */
+        hd->sub_class.id = sc_nif_fddi;
+        break;
+      case ARPHRD_IEEE802_TR:	/* tr */
+        hd->sub_class.id = sc_nif_tokenring;
+        break;
+#if 0
+      case ARPHRD_IEEE802:	/* fc */
+        hd->sub_class.id = sc_nif_fc;
+        break;
+#endif
     }
 
     if(!strcmp(hd->unix_dev_name, "lo")) {
@@ -204,9 +248,6 @@ void hd_scan_net(hd_data_t *hd_data)
       hd->slot = u;
     }
     /* ##### add more interface names here */
-    else {
-      hd->sub_class.id = sc_nif_other;
-    }
 
     hd->bus.id = bus_none;
   }
