@@ -231,8 +231,19 @@
 &device.id		pci 0x0391
 +driver.module.insmod	dc395x_trm
 
-# scsi/aic7xxx.c
+# scsi/aic7xxx/aic79xx_pci.c
+ vendor.id		pci 0x9005
+&device.id		pci 0x8000
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0060
+|vendor.id		pci 0x9005
+&device.id		pci 0x8010+0x0010
++driver.module.insmod	aic79xx
+
+# scsi/aic7xxx/aic7xxx_pci.c
  vendor.id		pci 0x9004
+&device.id		pci 0x0078
+|vendor.id		pci 0x9004
 &device.id		pci 0x1078
 |vendor.id		pci 0x9004
 &device.id		pci 0x2178
@@ -261,6 +272,16 @@
 |vendor.id		pci 0x9004
 &device.id		pci 0x7478
 |vendor.id		pci 0x9004
+&device.id		pci 0x7578
+|vendor.id		pci 0x9004
+&device.id		pci 0x7678
+|vendor.id		pci 0x9004
+&device.id		pci 0x7815
+|vendor.id		pci 0x9004
+&device.id		pci 0x7890+0x0010
+&subvendor.id		pci 0x9004
+&subdevice.id		pci 0x7893
+|vendor.id		pci 0x9004
 &device.id		pci 0x7895
 |vendor.id		pci 0x9004
 &device.id		pci 0x8078
@@ -281,27 +302,21 @@
 |vendor.id		pci 0x9004
 &device.id		pci 0x8878
 |vendor.id		pci 0x9005
-&device.id		pci 0x0010+0x0002
+&device.id		pci 0x0010+0x0005
 |vendor.id		pci 0x9005
-&device.id		pci 0x0013
+&device.id		pci 0x0016+0x000a
 |vendor.id		pci 0x9005
-&device.id		pci 0x001f
+&device.id		pci 0x0050+0x0005
 |vendor.id		pci 0x9005
-&device.id		pci 0x0050+0x0002
+&device.id		pci 0x0056+0x000a
 |vendor.id		pci 0x9005
-&device.id		pci 0x005f
+&device.id		pci 0x0080+0x0005
 |vendor.id		pci 0x9005
-&device.id		pci 0x0080+0x0002
+&device.id		pci 0x0086+0x000a
 |vendor.id		pci 0x9005
-&device.id		pci 0x0083
+&device.id		pci 0x00c0+0x0005
 |vendor.id		pci 0x9005
-&device.id		pci 0x008f
-|vendor.id		pci 0x9005
-&device.id		pci 0x00c0+0x0002
-|vendor.id		pci 0x9005
-&device.id		pci 0x00c3
-|vendor.id		pci 0x9005
-&device.id		pci 0x00cf
+&device.id		pci 0x00c6+0x000a
 +driver.module.insmod	aic7xxx
 +driver.module.insmod	aic7xxx_old
 
