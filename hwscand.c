@@ -40,6 +40,39 @@ int main( int argc, char **argv )
 	char buffer[32];
 	message m;
 
+	// are we running already, maybe ?
+	{
+		do {
+			ssize_t r;
+			char b[1024];
+			char link[1024];
+			int fd = open( PID_FILE, O_RDONLY );
+			if ( fd >= 0 && (r=read(fd,b,1023)) > 0 ){
+			        close(fd);
+			        b[r]='\0';
+			        snprintf(link, 1023, "/proc/%s/exe", b);
+			        if ( (r=readlink( link, b, 1023 )) > 0 ){
+			                b[r]='\0';
+			                if ( r<8 )
+			                        unlink(PID_FILE);
+			                else if ( strcmp("/hwscand", b+strlen(b)-8) )
+			                        unlink(PID_FILE);
+					else
+						exit(1);
+			        }else
+		                        unlink(PID_FILE);
+		        }else if ( fd >= 0 )
+	                        unlink(PID_FILE);
+		} while ( 0 > (ret = open( PID_FILE, O_WRONLY|O_CREAT|O_EXCL, S_IRUSR|S_IWUSR ) ) );
+		sprintf(buffer, "%d", getpid());
+		if ( ret < 0 || write(ret,buffer,strlen(buffer)) <= 0 ){
+			perror("hwscand: unable to write pid file "PID_FILE);
+			exit(1);
+		}
+		close(ret);
+	}
+
+	// initialize ...
 	for ( i=0; i<NR_COMMANDS; i++ ){
 		command_device[i][0] = 0;
 		command_device_last[i][0] = 1;
@@ -48,14 +81,6 @@ int main( int argc, char **argv )
 	last=block=usb=firewire=pci=0;
 	commands = (char**) malloc( BUFFERS * sizeof(char*) );
 	devices  = (char**) malloc( BUFFERS * sizeof(char*) );
-
-	ret = open( PID_FILE, O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR );
-	sprintf(buffer, "%d", getpid());
-	if ( ret < 0 || write(ret,buffer,strlen(buffer)) <= 0 ){
-		perror("hwscand: unable to write pid file "PID_FILE);
-		exit(1);
-	}
-	close(ret);
 
 	while (1) {
 		if ( last || dev_nr )
