@@ -57,7 +57,20 @@
 &device.id		pci 0x01bd
 +driver.module.insmod	ips
 
+# modules.pcimap
  vendor.id		pci 0x1014
+&device.id		pci 0x0180
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x0264
+|vendor.id		pci 0x1069
+&device.id		pci 0xb166
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x0266
+|vendor.id		pci 0x1069
+&device.id		pci 0xb166
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x0278
+|vendor.id		pci 0x1014
 &device.id		pci 0x0096
 +driver.module.insmod	ibmsis
 

@@ -1707,7 +1707,7 @@ void hd_scan(hd_data_t *hd_data)
 #endif
   hd_scan_kbd(hd_data);
 #ifndef LIBHD_TINY
-#if !defined(__sparc__)
+#if !defined(__sparc__) && !defined(__ia64__)
   hd_scan_braille(hd_data);
 #endif
   hd_scan_modem(hd_data);	/* do it before hd_scan_mouse() */

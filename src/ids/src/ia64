@@ -6,7 +6,8 @@
 &device.id		pci 0x1209
 |vendor.id		pci 0x8086
 &device.id		pci 0x1229
-+driver.module.insmod	eepro100
++driver.module.modprobe	eepro100
++driver.module.insmod	mii|eepro100
 +driver.module.insmod	e100
 
 # #21984

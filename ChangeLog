@@ -1,3 +1,8 @@
+13/10/2003:	v5.61
+	- more modules need mii.o (#32141)
+	- ibmsis driver info updated (#31676)
+	- no braille detection on ia64 (#26235)
+
 26/9/2003:	v5.60
 	- serial mouse probing could hang in some cases (#31440)
 
