@@ -472,23 +472,11 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
           dump_line0("\n");
         }
         if(di->x11.raw) {
-          char *s = di->x11.raw;
-
-          dump_line_str("XF86Config Entry: \"");
-          for(; *s; s++) {
-            if(isprint(*s)) {
-              dump_line0("%c", *s);
-            }
-            else {
-              switch(*s) {
-                case '\n': dump_line0("\\n"); break;
-                case '\r': dump_line0("\\r"); break;
-                case '\t': dump_line0("\t"); break;	/* *no* typo! */
-                default: dump_line0("\\%03o", *s); 
-              }
-            }
+          dump_line("XF86Config Entry: %s", di->x11.raw->str);
+          for(sl = di->x11.raw->next; sl; sl = sl->next) {
+            dump_line0("\\n%s", sl->str);
           }
-          dump_line0("\"\n");
+          dump_line0("\n");
         }
         if(di->x11.packages) {
           dump_line("Packages: %s", di->x11.packages->str);

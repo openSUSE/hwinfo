@@ -92,6 +92,7 @@ static int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len);
 static isdn_parm_t *new_isdn_parm(isdn_parm_t **ip);
 static driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici);
 static char *module_cmd(hd_t *, char *);
+static char *get_cmdline(hd_data_t *hd_data, char *key);
 static void timeout_alarm_handler(int signal);
 static void get_probe_env(hd_data_t *hd_data);
 static void hd_scan_xtra(hd_data_t *hd_data);
@@ -194,7 +195,8 @@ static struct s_pr_flags {
   { pr_braille,      0,          8|4|2|1, "braille"      },
   { pr_braille_alva, pr_braille, 8|4|2|1, "braille.alva" },
   { pr_braille_fhp,  pr_braille, 8|4|2|1, "braille.fhp"  },
-  { pr_braille_ht,   pr_braille, 8|4|2|1, "braille.ht"   }
+  { pr_braille_ht,   pr_braille, 8|4|2|1, "braille.ht"   },
+  { pr_ignx11,       0,                0, "ignx11"       }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -1555,6 +1557,54 @@ driver_info_t *monitor_driver(hd_data_t *hd_data, hd_t *hd)
   return di;
 }
 
+driver_info_t *reorder_x11(driver_info_t *di0, char *info)
+{
+  driver_info_t *di, *di_new, **di_list;
+  int i, dis;
+
+  for(dis = 0, di = di0; di; di = di->next) dis++;
+
+  di_list = new_mem(dis * sizeof *di_list);
+
+  for(i = 0, di = di0; di; di = di->next) {
+    di_list[i++] = di;
+  }
+
+  di = di_new = NULL;
+  for(i = 0; i < dis; i++) {
+    if(
+      !strcmp(di_list[i]->x11.xf86_ver, info) ||
+      !strcmp(di_list[i]->x11.server, info)
+    ) {
+      if(di) {
+        di = di->next = di_list[i];
+      }
+      else {
+        di = di_new = di_list[i];
+      }
+      di->next = NULL;
+      di_list[i] = NULL;
+    }
+  }
+
+  for(i = 0; i < dis; i++) {
+    if(di_list[i]) {
+      if(di) {
+        di = di->next = di_list[i];
+      }
+      else {
+        di = di_new = di_list[i];
+      }
+      di->next = NULL;
+      di_list[i] = NULL;
+    }
+  }
+
+  free_mem(di_list);
+
+  return di_new;
+}
+
 
 /*
  * Reads the driver info.
@@ -1709,13 +1759,21 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
           }
         }
         for(i = 0, sl = di->x11.hddb1; sl; sl = sl->next, i++) {
-          str_printf(&di->x11.raw, -1, "%s\n", sl->str);
+          add_str_list(&di->x11.raw, sl->str);
         }
         break;
 
       default:
         break;
     }
+  }
+
+  if(di0 && di0->any.type == di_x11 && !hd_probe_feature(hd_data, pr_ignx11)) {
+    s = get_cmdline(hd_data, "x11");
+    if(s && *s) {
+      di0 = reorder_x11(di0, s);
+    }
+    free_mem(s);
   }
 
   return di0;

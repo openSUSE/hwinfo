@@ -1,3 +1,9 @@
+21/6/2000:	v1.05
+	- changed (driver_info_x11_t).x11.raw to str_list_t
+
+21/6/2000:	v1.04
+	- added 'x11' kernel cmdline param
+
 20/6/2000:	v1.03
 	- fixed mk_ids (used to drop all non-x11 ids)
 	- improved 'hwprobe=' functionality

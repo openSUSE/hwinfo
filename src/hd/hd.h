@@ -74,7 +74,7 @@ typedef enum probe_feature {
   pr_scsi, pr_scsi_geo, pr_usb, pr_usb_mods, pr_adb, pr_modem, pr_modem_usb,
   pr_parallel, pr_isa, pr_isa_isdn, pr_dac960, pr_smart, pr_isdn, pr_kbd,
   pr_prom, pr_sbus, pr_int, pr_braille, pr_braille_alva, pr_braille_fhp,
-  pr_braille_ht,
+  pr_braille_ht, pr_ignx11,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
@@ -665,7 +665,7 @@ typedef struct {
   str_list_t *packages;			/* extra packages to install */
   str_list_t *extensions;		/* additional X extensions to load ('Module' section) */
   str_list_t *options;			/* special server options */
-  char *raw;				/* extra info to add to XF86Config */
+  str_list_t *raw;			/* extra info to add to XF86Config */
 } driver_info_x11_t;
 
 /* isdn info */
