@@ -61,11 +61,6 @@ int main(int argc, char **argv)
   if((hd = hd_data->hd))
     while(hd_dump_entry(hd_data, hd, f ? f : stdout), (hd = hd->next));
 
-  fprintf(f ? f : stdout, "--------\n");
-
-  if((hd = hd_disk_list(hd_data, 1)))
-    while(hd_dump_entry(hd_data, hd, f ? f : stdout), (hd = hd->next));
-
   if(f) {
     fseek(f, l, SEEK_SET);
     while((i = fgetc(f)) != EOF) putchar(i);
