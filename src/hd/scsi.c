@@ -655,7 +655,7 @@ void get_proc_scsi(hd_data_t *hd_data)
   scsi_t *scsi = NULL;
   str_list_t *sl;
   char scsi_type[32];
-  unsigned sd_cnt = 0, sr_cnt = 0, st_cnt = 0;
+  unsigned sd_cnt = 0, sr_cnt = 0, st_cnt = 0, osst_cnt = 0;
 
   PROGRESS(1, 1, "proc");
 
@@ -712,30 +712,6 @@ void get_proc_scsi(hd_data_t *hd_data)
         scsi->type = sc_sdev_other;
       }
 
-      switch(scsi->type) {
-        case sc_sdev_disk:
-          if(sd_cnt < 26) {
-            s[0] = sd_cnt + 'a';
-            s[1] = 0;
-          }
-          else {
-            s[0] = sd_cnt / 26 + 'a' - 1;
-            s[1] = sd_cnt % 26 + 'a';
-            s[2] = 0;
-          }
-          str_printf(&scsi->guessed_dev_name, 0, "/dev/sd%s", s);
-          sd_cnt++;
-          break;
-
-        case sc_sdev_cdrom:
-          str_printf(&scsi->guessed_dev_name, 0, "/dev/sr%u", sr_cnt++);
-          break;
-
-        case sc_sdev_tape:
-          str_printf(&scsi->guessed_dev_name, 0, "/dev/st%u", st_cnt++);
-          break;
-      }
-
       scsi->type_str = canon_str(scsi_type, strlen(scsi_type));
       scsi = NULL;
       continue;
@@ -759,6 +735,49 @@ void get_proc_scsi(hd_data_t *hd_data)
   }
 
   free_str_list(proc_scsi);
+
+  for(scsi = hd_data->scsi; scsi; scsi = scsi->next) {
+    switch(scsi->type) {
+      case sc_sdev_disk:
+        if(sd_cnt < 26) {
+          s[0] = sd_cnt + 'a';
+          s[1] = 0;
+        }
+        else {
+          s[0] = sd_cnt / 26 + 'a' - 1;
+          s[1] = sd_cnt % 26 + 'a';
+          s[2] = 0;
+        }
+        str_printf(&scsi->guessed_dev_name, 0, "/dev/sd%s", s);
+        sd_cnt++;
+        break;
+
+      case sc_sdev_cdrom:
+        str_printf(&scsi->guessed_dev_name, 0, "/dev/sr%u", sr_cnt++);
+        break;
+
+      case sc_sdev_tape:
+        if(
+          scsi->vendor &&
+          scsi->model &&
+          /* list taken from drivers/scsi/osst_detect.h */
+          !strcmp(scsi->vendor, "OnStream") &&
+          (
+            !strncmp(scsi->model, "SC-", 3) ||
+            !strncmp(scsi->model, "DI-", 3) ||
+            !strncmp(scsi->model, "DP-", 3) ||
+            !strncmp(scsi->model, "FW-", 3) ||
+            !strncmp(scsi->model, "USB", 3)
+          )
+        ) {
+          str_printf(&scsi->guessed_dev_name, 0, "/dev/osst%u", osst_cnt++);
+        }
+        else {
+          str_printf(&scsi->guessed_dev_name, 0, "/dev/st%u", st_cnt++);
+        }
+        break;
+    }
+  }
 
   if((hd_data->debug & HD_DEB_SCSI)) dump_scsi_data(hd_data, hd_data->scsi, "proc scsi");
 }

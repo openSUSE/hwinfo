@@ -1,0 +1,35 @@
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ia64 fixes
+
+# pcimap
+ vendor.id		pci 0x8086
+&device.id		pci 0x1029
+|vendor.id		pci 0x8086
+&device.id		pci 0x1030+0x0005
+|vendor.id		pci 0x8086
+&device.id		pci 0x1038+0x0007
+|vendor.id		pci 0x8086
+&device.id		pci 0x1059
+|vendor.id		pci 0x8086
+&device.id		pci 0x1209
+|vendor.id		pci 0x8086
+&device.id		pci 0x1229
+|vendor.id		pci 0x8086
+&device.id		pci 0x2449
+|vendor.id		pci 0x8086
+&device.id		pci 0x2459
+|vendor.id		pci 0x8086
+&device.id		pci 0x245d
++driver.module.modprobe	eepro100
++driver.module.insmod	mii|eepro100
++driver.module.insmod	e100
+
+
+# #21984
+ vendor.id              pci 0x14e4
+&device.id              pci 0x1644+0x0004
+|vendor.id              pci 0x14e4
+&device.id              pci 0x16a6+2
++driver.module.insmod   tg3
++driver.module.insmod   bcm5700
+
