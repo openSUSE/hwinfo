@@ -118,6 +118,17 @@ void hd_scan_serial(hd_data_t *hd_data)
     free_mem(ser);
   }
   hd_data->serial = NULL;
+
+#if 0
+  if(hd_module_is_active(hd_data, "irda")) {
+    hd = add_hd_entry(hd_data, __LINE__, 0); 
+    hd->base_class.id = bc_comm;
+    hd->sub_class.id = sc_com_ser;
+    hd->prog_if.id = 0x80;
+    hd->device.name = new_str("IrDA Serial");
+    hd->unix_dev_name = new_str("/dev/ircomm0");
+  }
+#endif
 }
 
 void get_serial_info(hd_data_t *hd_data)

@@ -39,7 +39,7 @@ void hd_scan_ataraid(hd_data_t *hd_data)
       hd->base_class.id == bc_storage &&
       hd->sub_class.id == sc_sto_raid
     ) {
-      if(hd->driver_info) hddb_add_info(hd_data, hd);
+      if(!hd->driver_info) hddb_add_info(hd_data, hd);
       for(di = hd->driver_info; di; di = di->next) {
         if(
           di->any.type == di_module &&
