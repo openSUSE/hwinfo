@@ -354,7 +354,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 
   if(h->compat_vendor.id || h->compat_device.id) {
     dump_line(
-      "Comaptible to: %s\n",
+      "Compatible to: %s\n",
       dump_hid2(hd_data, &h->compat_vendor, &h->compat_device, buf, sizeof buf)
     );
   }
@@ -400,9 +400,14 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line_str("Tags: ser_skip\n");
   }
 
-  if(h->is.cdr || h->is.cdrw || h->is.dvd || h->is.dvdr || h->is.dvdram | h->is.pppoe) {
+  if(
+    h->is.zip ||
+    h->is.cdr || h->is.cdrw || h->is.dvd ||
+    h->is.dvdr || h->is.dvdram | h->is.pppoe
+  ) {
     dump_line_str("Features:");
     i = 0;
+    if(h->is.zip) dump_line0("%s ZIP", i++ ? "," : "");
     if(h->is.cdr) dump_line0("%s CD-R", i++ ? "," : "");
     if(h->is.cdrw) dump_line0("%s CD-RW", i++ ? "," : "");
     if(h->is.dvd) dump_line0("%s DVD", i++ ? "," : "");

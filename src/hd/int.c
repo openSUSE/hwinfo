@@ -22,6 +22,8 @@ static int bios_ctrl_order(hd_data_t *hd_data, unsigned *sctrl, int sctrl_len);
 static void int_bios(hd_data_t *hd_data);
 #endif
 static void int_media_check(hd_data_t *hd_data);
+static int contains_word(char *str, char *str2);
+static int is_zip(hd_t *hd);
 static void int_floppy(hd_data_t *hd_data);
 static void int_fix_ide_scsi(hd_data_t *hd_data);
 static void int_fix_usb_scsi(hd_data_t *hd_data);
@@ -429,6 +431,72 @@ void int_media_check(hd_data_t *hd_data)
 
 
 /*
+ * Check if str has str2 in it.
+ */
+int contains_word(char *str, char *str2)
+{
+  int i, len, len2, found = 0;
+  char *s;
+
+  if(!str2 || !*str2 || !str || !*str) return 0;
+
+  str = new_str(str);
+
+  len = strlen(str);
+  len2 = strlen(str2);
+
+  for(i = 0; i < len; i++) {
+    if(str[i] >= 'a' && str[i] <= 'z') str[i] -= 'a' - 'A';
+  }
+
+  for(s = str; (s = strstr(s, str2)); s++) {
+    if(
+      (s == str || s[-1] < 'A' || s[-1] > 'Z') &&
+      (s[len2] < 'A' || s[len2] > 'Z')
+    ) {
+      found = 1;
+      break;
+    }
+  }
+
+  free_mem(str);
+
+  return found;
+}
+
+
+/*
+ * Check for zip drive.
+ */
+int is_zip(hd_t *hd)
+{
+  if(
+    hd->base_class.id == bc_storage_device &&
+    (
+      hd->sub_class.id == sc_sdev_disk ||
+      hd->sub_class.id == sc_sdev_floppy
+    )
+  ) {
+    if(
+      (
+        contains_word(hd->vendor.name, "IOMEGA") ||
+        contains_word(hd->sub_vendor.name, "IOMEGA") ||
+        contains_word(hd->device.name, "IOMEGA") ||
+        contains_word(hd->sub_device.name, "IOMEGA")
+      ) && (
+        contains_word(hd->device.name, "ZIP") ||
+        contains_word(hd->sub_device.name, "ZIP")
+      )
+    ) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+
+/*
  * Turn some drives into floppies.
  */
 void int_floppy(hd_data_t *hd_data)
@@ -437,24 +505,13 @@ void int_floppy(hd_data_t *hd_data)
   hd_res_t *res;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(is_zip(hd)) hd->is.zip = 1;
     if(
       hd->base_class.id == bc_storage_device &&
       hd->sub_class.id == sc_sdev_disk
     ) {
-      if(
-        (
-          (
-            (hd->vendor.name && !strcasecmp(hd->vendor.name, "iomega")) ||
-            (hd->sub_vendor.name && !strcasecmp(hd->sub_vendor.name, "iomega"))
-          ) &&
-          (
-            (hd->device.name && strstr(hd->device.name, "ZIP")) ||
-            (hd->sub_device.name && strstr(hd->sub_device.name, "Zip"))
-          )
-        )
-      ) {
+      if(is_zip(hd)) {
         hd->sub_class.id = sc_sdev_floppy;
-        hd->is.zip = 1;
         new_id(hd_data, hd);
       }
       else {

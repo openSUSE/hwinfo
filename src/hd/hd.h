@@ -650,7 +650,8 @@ typedef struct usb_s {
    * see Linux USB docu for the meaning of the above;
    * c: active config, ci: other configs
    */
-  int bus, dev_nr, lev, parent, port, count, conns, used_conns;
+  struct usb_s *cloned;
+  int bus, dev_nr, lev, parent, port, count, conns, used_conns, ifdescr;
   unsigned speed;
   unsigned vendor, device, rev;
   char *manufact, *product, *serial;

@@ -107,6 +107,8 @@ void hd_scan_usb(hd_data_t *hd_data)
 
       hd->slot = (usb->bus << 8) + usb->dev_nr;
 
+      hd->func = usb->ifdescr;
+
       if(usb->vendor || usb->device) {
         hd->vendor.id = MAKE_ID(TAG_USB, usb->vendor);
         hd->device.id = MAKE_ID(TAG_USB, usb->device);
@@ -184,7 +186,7 @@ void hd_scan_usb(hd_data_t *hd_data)
       usb_t *hd_usb = hd->detail->usb.data;
 
       if(hd_usb->parent) {
-        usb_idx = (hd_usb->bus << 8) + hd_usb->parent;
+        usb_idx = (hd_usb->bus << 16) + (hd_usb->parent << 8);
         usb = find_usb_entry(hd_data, &usb_idx);
         if(usb && usb->hd_idx) {
           hd->attached_to = usb->hd_idx;
@@ -254,10 +256,10 @@ void get_usb_data(hd_data_t *hd_data)
 {
   int i0, i1, i2, i3, i4, i5, i6;
   char buf[256];
-  str_list_t *sl;
-  usb_t *usb = NULL;
+  str_list_t *sl, *sl_next;
+  usb_t *usb = NULL, *usb_next;
   char *s;
-  int fd, cfg_descr_size, i;
+  int fd, cfg_descr_size, i, ifcnt;
   unsigned char *cfg_descr, *hid_descr;
 
   if(
@@ -291,6 +293,29 @@ void get_usb_data(hd_data_t *hd_data)
         add_str_list(&usb->s, s); break;
       case 'T':
         add_str_list(&usb->t, s); break;
+    }
+  }
+
+  /*
+   * Create individual entries for every interface descriptor.
+   */
+  for(usb = hd_data->usb; usb; usb = usb_next) {
+    usb_next = usb->next;
+
+    if(usb->i && (sl = usb->i->next)) {
+      usb->i->next = NULL;
+      ifcnt = 1;
+      for(; sl; sl = sl_next, ifcnt++) {
+        sl_next = sl->next;
+        if(!usb->cloned) usb->cloned = usb;
+        usb->next = new_mem(sizeof *usb);
+        memcpy(usb->next, usb, sizeof *usb);
+        usb = usb->next;
+        usb->next = usb_next;
+        usb->i = sl;
+        usb->i->next = NULL;
+        usb->ifdescr = ifcnt;
+      }
     }
   }
 
@@ -364,55 +389,63 @@ void get_usb_data(hd_data_t *hd_data)
     }
 
     if(usb->i_cls == 3) {	/* hid */
-      s = NULL;
-      str_printf(&s, 0, "/proc/bus/usb/%03u/%03u", usb->bus, usb->dev_nr);
-      fd = open(s, O_RDWR);
-      if(fd >= 0) {
-        if(
-          usb_control_msg(fd,
-            USB_DIR_IN,
-            USB_REQ_GET_DESCRIPTOR,
-            (USB_DT_CONFIG << 8) + 0,
-            0, USB_DT_CONFIG_SIZE, buf
-          ) >= 0 &&
-          buf[0] >= USB_DT_CONFIG_SIZE &&
-          buf[1] == USB_DT_CONFIG
-        ) {
-          cfg_descr_size = buf[2] | buf[3] << 8;
-          cfg_descr = new_mem(cfg_descr_size);
+      /*
+       * Check only the first interface for country info.
+       */
+      if(!usb->cloned) {
+        s = NULL;
+        str_printf(&s, 0, "/proc/bus/usb/%03u/%03u", usb->bus, usb->dev_nr);
+        fd = open(s, O_RDWR);
+        if(fd >= 0) {
           if(
             usb_control_msg(fd,
               USB_DIR_IN,
               USB_REQ_GET_DESCRIPTOR,
               (USB_DT_CONFIG << 8) + 0,
-              0, cfg_descr_size, cfg_descr
-            ) >= 0
+              0, USB_DT_CONFIG_SIZE, buf
+            ) >= 0 &&
+            buf[0] >= USB_DT_CONFIG_SIZE &&
+            buf[1] == USB_DT_CONFIG
           ) {
-            ADD2LOG("  got config descr for %03u/%03u (%u bytes):\n    ", usb->bus, usb->dev_nr, cfg_descr_size);
-            hexdump(&hd_data->log, 0, cfg_descr_size, cfg_descr);
-            ADD2LOG("\n");
+            cfg_descr_size = buf[2] | buf[3] << 8;
+            cfg_descr = new_mem(cfg_descr_size);
+            if(
+              usb_control_msg(fd,
+                USB_DIR_IN,
+                USB_REQ_GET_DESCRIPTOR,
+                (USB_DT_CONFIG << 8) + 0,
+                0, cfg_descr_size, cfg_descr
+              ) >= 0
+            ) {
+              ADD2LOG("  got config descr for %03u/%03u (%u bytes):\n    ", usb->bus, usb->dev_nr, cfg_descr_size);
+              hexdump(&hd_data->log, 0, cfg_descr_size, cfg_descr);
+              ADD2LOG("\n");
 
-            /* ok, we have it, now parse it */
+              /* ok, we have it, now parse it */
 
-            for(i = 0; i < cfg_descr_size; i += cfg_descr[i]) {
-              if(cfg_descr[i] < 2 || cfg_descr[i] + i > cfg_descr_size) break;
-              if(cfg_descr[i + 1] == USB_DT_CS_DEVICE) {
-                hid_descr = cfg_descr + i;
-                if(hid_descr[0] >= 6 + 3 * hid_descr[5]) {
-                  ADD2LOG("    hid descr: ");
-                  hexdump(&hd_data->log, 0, hid_descr[0], hid_descr);
-                  ADD2LOG("\n");
-                  usb->country = hid_descr[4];
-                  // ADD2LOG("    country code: %u\n", usb->country);
+              for(i = 0; i < cfg_descr_size; i += cfg_descr[i]) {
+                if(cfg_descr[i] < 2 || cfg_descr[i] + i > cfg_descr_size) break;
+                if(cfg_descr[i + 1] == USB_DT_CS_DEVICE) {
+                  hid_descr = cfg_descr + i;
+                  if(hid_descr[0] >= 6 + 3 * hid_descr[5]) {
+                    ADD2LOG("    hid descr: ");
+                    hexdump(&hd_data->log, 0, hid_descr[0], hid_descr);
+                    ADD2LOG("\n");
+                    usb->country = hid_descr[4];
+                    // ADD2LOG("    country code: %u\n", usb->country);
+                  }
                 }
               }
             }
+            cfg_descr = free_mem(cfg_descr);
           }
-          cfg_descr = free_mem(cfg_descr);
+          close(fd);
         }
-        close(fd);
+        s = free_mem(s);
       }
-      s = free_mem(s);
+      else {
+        usb->country = usb->cloned->country;
+      }
     }
   }
 }
@@ -537,7 +570,7 @@ usb_t *find_usb_entry(hd_data_t *hd_data, int *dev_idx)
   int search_idx = *dev_idx, cur_idx, next_idx = 0;
 
   for(usb = hd_data->usb; usb; usb = usb->next) {
-    cur_idx = (usb->bus << 8) + usb->dev_nr;
+    cur_idx = (usb->bus << 16) + (usb->dev_nr << 8) + usb->ifdescr;
     if(cur_idx == search_idx) found_usb = usb;
     if(
       cur_idx > search_idx &&
@@ -581,7 +614,7 @@ void dump_usb_data(hd_data_t *hd_data)
 
   ADD2LOG("----- usb device info -----\n");
   for(usb = hd_data->usb; usb; usb = usb->next) {
-    ADD2LOG("  %d:%d (@%d:%d) %d %d\n", usb->bus, usb->dev_nr, usb->bus, usb->parent, usb->conns, usb->speed);
+    ADD2LOG("  %d:%d.%d (@%d:%d) %d %d\n", usb->bus, usb->dev_nr, usb->ifdescr, usb->bus, usb->parent, usb->conns, usb->speed);
     ADD2LOG("  vend 0x%04x, dev 0x%04x, rev 0x%04x\n", usb->vendor, usb->device, usb->rev);
     ADD2LOG(
       "  cls/sub/prot: 0x%02x/0x%02x/0x%02x  0x%02x/0x%02x/0x%02x\n",

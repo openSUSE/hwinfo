@@ -913,15 +913,17 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
       {
         usb_t *u = d->usb.data;
 
-        free_str_list(u->b);
-        free_str_list(u->c);
-        free_str_list(u->ci);
-        free_str_list(u->d);
-        free_str_list(u->e);
-        free_str_list(u->i);
-        free_str_list(u->p);
-        free_str_list(u->s);
-        free_str_list(u->t);
+        if(!u->cloned) {
+          free_str_list(u->b);
+          free_str_list(u->c);
+          free_str_list(u->ci);
+          free_str_list(u->d);
+          free_str_list(u->e);
+          free_str_list(u->i);
+          free_str_list(u->p);
+          free_str_list(u->s);
+          free_str_list(u->t);
+        }
 
         free_mem(u->manufact);
         free_mem(u->product);
