@@ -105,7 +105,7 @@ typedef enum probe_feature {
   pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
   pr_fb, pr_bios_vbe2, pr_veth, pr_partition, pr_disk, pr_ataraid, pr_pppoe,
   pr_scan, pr_partition_add, pr_pcmcia, pr_fork, pr_parallel_imm, pr_s390,
-  /* pr_bios_32, */ pr_cpuemu, pr_sysfs,
+  /* pr_bios_32, */ pr_cpuemu, pr_sysfs, pr_s390disks,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
@@ -1063,6 +1063,7 @@ typedef struct scsi_s {
 #if defined(__s390__) || defined(__s390x__)
   uint64_t wwpn;
   uint64_t fcp_lun;
+  char *controller_id;
 #endif
 } scsi_t;
 

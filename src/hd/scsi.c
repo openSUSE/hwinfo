@@ -300,6 +300,16 @@ void hd_scan_scsi(hd_data_t *hd_data)
 	scsi->fcp_lun=strtoull(attr->value,0,16);
       else
 	ADD2LOG("failed to read sysfs attribute %s\n",sysfs_path);
+
+      sprintf(sysfs_path,"/sys/block%s/device",hd->unix_dev_name+4);
+      if(readlink(sysfs_path,sysfs_path,SYSFS_PATH_MAX)<0)
+	ADD2LOG("failed to determine controller (unable to follow device link)");
+      else
+      {
+	rindex(sysfs_path,'/')[0]=0;
+	rindex(sysfs_path,'/')[0]=0;
+	scsi->controller_id=new_str(rindex(sysfs_path,'/')+1);
+      }
     }
 #endif
     

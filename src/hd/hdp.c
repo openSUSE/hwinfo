@@ -249,6 +249,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
       dump_line("WWPN: 0x%llx\n",(unsigned long long)h->detail->scsi.data->wwpn);
     if(h->detail->scsi.data->wwpn != (uint64_t)-1)
       dump_line("FCP LUN: 0x%llx\n",(unsigned long long)h->detail->scsi.data->fcp_lun);
+    dump_line("SCSI Host CCW ID: %s\n",h->detail->scsi.data->controller_id);
   }
 #endif
 

@@ -14,7 +14,7 @@
 
 #define BUSNAME "ccw"
 
-void hd_scan_s390(hd_data_t *hd_data)
+static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
 {
   hd_t* hd;
   hd_res_t* res;
@@ -29,8 +29,6 @@ void hd_scan_s390(hd_data_t *hd_data)
   /* list of each channel's cutype, used for finding multichannel devices */
   int cutypes[1<<16]={0};
   int i;
-
-  if (!hd_probe_feature(hd_data, pr_s390)) return;
 
   hd_data->module=mod_s390;
 
@@ -110,6 +108,10 @@ void hd_scan_s390(hd_data_t *hd_data)
     if(cutypes[res->io.base] == -1)
       continue;
 
+    if(disks_only && cutype!=0x3990 &&
+       (cutype != 0x1731 || devtype != 0x1732 || cumod != 3))
+      continue;
+
     res->io.range=1;
     switch (cutype)
     {
@@ -147,6 +149,18 @@ void hd_scan_s390(hd_data_t *hd_data)
     hddb_add_info(hd_data,hd);
   }
 
+}
+
+void hd_scan_s390(hd_data_t *hd_data)
+{
+  if (!hd_probe_feature(hd_data, pr_s390)) return;
+  hd_scan_s390_ex(hd_data, 0);
+}
+
+void hd_scan_s390disks(hd_data_t *hd_data)
+{
+  if (!hd_probe_feature(hd_data, pr_s390disks)) return;
+  hd_scan_s390_ex(hd_data, 1);
 }
 
 #endif
