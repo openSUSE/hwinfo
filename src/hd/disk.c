@@ -88,6 +88,7 @@ void hd_scan_disk(hd_data_t *hd_data)
       str_printf(&hd->device.name, 0, "Disk");
       if(sscanf(sl->str, "ataraid/d%u", &u0) == 1) {
         hd->slot = u0;
+        hd->bus.id = bus_ide;
         str_printf(&hd->device.name, 0, "IDE RAID Array %u", u0);
       }
       else if(sscanf(sl->str, "cciss/c%ud%u", &u0, &u1) == 2) {
