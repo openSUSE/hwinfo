@@ -7,14 +7,16 @@ CLEANFILES	= $(LIBHD) $(LIBHD_D) $(LIBHD_T)
 
 include $(TOPDIR)/Makefile.common
 
-# remove the isa-pnp stuff for ppc's
-ifeq "$(ARCH)" "ppc"
-SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
+ifeq "$(ARCH)" "alpha"
+SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
 endif
 
-# remove the isa-pnp stuff for sparc's
+ifeq "$(ARCH)" "ppc"
+SUBDIRS	:= $(filter-out pnpdump isdn, $(SUBDIRS))
+endif
+
 ifeq "$(ARCH)" "sparc"
-SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
+SUBDIRS	:= $(filter-out pnpdump isdn, $(SUBDIRS))
 endif
 
 $(LIBHD): $(OBJS)

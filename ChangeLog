@@ -1,3 +1,8 @@
+10/2/2000:	v0.61
+	- added peliminary usb storage device handling
+	- added ISA-PnP memory range decoding
+	- added ISDN probing for ISA cards (*very* preliminary)
+
 8/2/2000:	v0.60
 	- added UMAX USB scanner ids
 	- small modem fix (open fds)

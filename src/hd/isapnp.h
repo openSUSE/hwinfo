@@ -32,15 +32,16 @@
 /*
  * ISA PnP configuration regs
  */
+#define CFG_MEM24		0x40
+#define CFG_MEM32_0		0x76
+#define CFG_MEM32_1		0x80
+#define CFG_MEM32_2		0x90
+#define CFG_MEM32_3		0xa0
 #define CFG_IO_HI_BASE		0x60
 #define CFG_IO_LO_BASE		0x61
-/* both the above repeat 8 times */
-#define CFG_IRQ_0		0x70
-#define CFG_IRQ_0_TYPE		0x71
-#define CFG_IRQ_1		0x72
-#define CFG_IRQ_1_TYPE		0x73
-#define CFG_DMA_0		0x74
-#define CFG_DMA_1		0x75
+#define CFG_IRQ			0x70
+#define CFG_IRQ_TYPE		0x71
+#define CFG_DMA			0x74
 
 
 /* gather ISA-PnP info */

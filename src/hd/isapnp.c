@@ -30,7 +30,8 @@ void hd_scan_isapnp(hd_data_t *hd_data)
 {
   hd_t *hd;
   int i, j, k;
-  unsigned u;
+  unsigned u, u2;
+  static unsigned mem32_cfgs[4] = { CFG_MEM32_0, CFG_MEM32_1, CFG_MEM32_2, CFG_MEM32_3 };
   unsigned char *t, *v, *s;
   isapnp_card_t *c;
   isapnp_res_t *r;
@@ -201,9 +202,57 @@ void hd_scan_isapnp(hd_data_t *hd_data)
 
       v = c->ldev_regs[j];
 
+      for(k = 0; k < 4; k++) {
+        u = (v[CFG_MEM24     - 0x30 + 8 * k] << 16) +
+            (v[CFG_MEM24 + 1 - 0x30 + 8 * k] << 8) +
+             v[CFG_MEM24 + 2 - 0x30 + 8 * k];
+        if(u) {
+          res = add_res_entry(&hd->res, new_mem(sizeof *res));
+          res->mem.type = res_mem;
+          res->mem.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
+          res->mem.access = acc_rw;
+          res->mem.base = u & ~0xff;
+          u2 = (v[CFG_MEM24 + 3 - 0x30 + 8 * k] << 16) +
+               (v[CFG_MEM24 + 4 - 0x30 + 8 * k] << 8);
+          if(u & 1) {
+            if(u2 >= res->mem.base)
+              res->mem.range = u2 - res->mem.base;
+          }
+          else {
+            res->mem.range = u2 + 0x100;
+          }
+        }
+      }
+
+      for(k = 0; k < 4; k++) {
+        u = (v[mem32_cfgs[k]     - 0x30] << 24) +
+            (v[mem32_cfgs[k] + 1 - 0x30] << 16) +
+            (v[mem32_cfgs[k] + 2 - 0x30] << 8) +
+             v[mem32_cfgs[k] + 3 - 0x30];
+        if(u) {
+          res = add_res_entry(&hd->res, new_mem(sizeof *res));
+          res->mem.type = res_mem;
+          res->mem.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
+          res->mem.access = acc_rw;
+          res->mem.base = u;
+          u2 = (v[mem32_cfgs[k] + 5 - 0x30] << 24) +
+               (v[mem32_cfgs[k] + 6 - 0x30] << 16) +
+               (v[mem32_cfgs[k] + 7 - 0x30] << 8) +
+                v[mem32_cfgs[k] + 8 - 0x30];
+          if(v[mem32_cfgs[k] + 4 - 0x30] & 1) {
+            if(u2 >= res->mem.base)
+              res->mem.range = u2 - res->mem.base;
+          }
+          else {
+            res->mem.range = u2;
+            res->mem.range++;
+          }
+        }
+      }
+
       for(k = 0; k < 8; k++) {
-        u = (v[CFG_IO_HI_BASE - 0x30 + 2*k] << 8) +
-             v[CFG_IO_LO_BASE - 0x30 + 2*k];
+        u = (v[CFG_IO_HI_BASE - 0x30 + 2 * k] << 8) +
+             v[CFG_IO_LO_BASE - 0x30 + 2 * k];
         if(u) {
           res = add_res_entry(&hd->res, new_mem(sizeof *res));
           res->io.type = res_io;
@@ -214,37 +263,26 @@ void hd_scan_isapnp(hd_data_t *hd_data)
         }
       }
 
-      u = v[CFG_IRQ_0 - 0x30] & 15;
-      if(u) {
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->irq.type = res_irq;
-        res->irq.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
-        res->irq.base = u;
+      for(k = 0; k < 2; k++) {
+        u = v[CFG_IRQ - 0x30 + 2 * k] & 15;
+        if(u) {
+          res = add_res_entry(&hd->res, new_mem(sizeof *res));
+          res->irq.type = res_irq;
+          res->irq.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
+          res->irq.base = u;
+        }
       }
 
-      u = v[CFG_IRQ_1 - 0x30] & 15;
-      if(u) {
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->irq.type = res_irq;
-        res->irq.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
-        res->irq.base = u;
+      for(k = 0; k < 2; k++) {
+        u = v[CFG_DMA - 0x30 + k] & 7;
+        if(u != 4) {
+          res = add_res_entry(&hd->res, new_mem(sizeof *res));
+          res->dma.type = res_dma;
+          res->dma.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
+          res->dma.base = u;
+        }
       }
 
-      u = v[CFG_DMA_0 - 0x30] & 7;
-      if(u != 4) {
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->dma.type = res_dma;
-        res->dma.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
-        res->dma.base = u;
-      }
-
-      u = v[CFG_DMA_1 - 0x30] & 7;
-      if(u != 4) {
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->dma.type = res_dma;
-        res->dma.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
-        res->dma.base = u;
-      }
     }
   }
 

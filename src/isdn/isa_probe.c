@@ -1,18 +1,21 @@
 #include <stdio.h>
 #include <sys/io.h>
 
-int guess=0;
+#include "hd.h"
+#include "hd_int.h"
+#include "isa.h"
 
 #define AVM_CONFIG_OFF	0x1800	/* offset for config register */
 #define AVM_TEST_MASK	0x28    /* allways zero */
 #define AVM_HSCX_A_VSTR	0x40e   /* HSCX A version reg */
 #define AVM_HSCX_B_VSTR	0xc0e   /* HSCX B version reg */
 
-int avm_a1_detect(void) {
+int avm_a1_detect(isa_isdn_t **ii) {
 	int adr,i;
 	unsigned char val,v1,v2;
 	int found=0;
 	unsigned short AVM_ADR[4]={0x200,0x240,0x300,0x340};
+	isa_isdn_t *card;
 
 	for (i=0;i<4;i++) {
 		adr=AVM_ADR[i] + AVM_CONFIG_OFF;
@@ -28,9 +31,10 @@ int avm_a1_detect(void) {
 		if (v1 != v2)
 			continue;
 		/* 99% we found an AVM A1 or AVM Fritz!Classic */
-		printf("# AVM A1 or Fritz!Classic found\n");
-		printf("TYPE=5 SUBTYPE=0 IO=0x%3x\n",
-			AVM_ADR[i]);
+		/* printf("# AVM A1 or Fritz!Classic found\n");
+		printf("TYPE=5 SUBTYPE=0 IO=0x%3x\n", AVM_ADR[i]); */
+		card = new_isa_isdn(ii);
+		card->type = 5; card->has_io = 1; card->io = AVM_ADR[i];
 		found++;
 	}
 	return(found);
@@ -79,10 +83,11 @@ probe_elsa_adr(unsigned int adr)
 }
 
 int
-probe_elsa(void)
+probe_elsa(isa_isdn_t **ii)
 {
 	int i, subtyp, val, irq, found=0;
-	
+	isa_isdn_t *card;
+
 	unsigned int CARD_portlist[] =
 	{0x160, 0x170, 0x260, 0x360, 0};
 
@@ -105,29 +110,30 @@ probe_elsa(void)
 			}
 			switch(subtyp) {
 				case ELSA_PC:
-					printf("# Elsa ML PC found\n");
+					/* printf("# Elsa ML PC found\n");
 					printf("TYPE=6 SUBTYPE=%d IO=0x%03x IRQ=%d\n",
-						subtyp, CARD_portlist[i], irq);
-					break;
+						subtyp, CARD_portlist[i], irq); */
 				case ELSA_PCC8:
-					printf("# Elsa ML PCC-8 found\n");
+					/* printf("# Elsa ML PCC-8 found\n");
 					printf("TYPE=6 SUBTYPE=%d IO=0x%03x IRQ=%d\n",
-						subtyp, CARD_portlist[i], irq);
-					break;
+						subtyp, CARD_portlist[i], irq); */
 				case ELSA_PCC16:
-					printf("# Elsa ML PCC-16 found\n");
+					/* printf("# Elsa ML PCC-16 found\n");
 					printf("TYPE=6 SUBTYPE=%d IO=0x%03x IRQ=%d\n",
-						subtyp, CARD_portlist[i], irq);
-					break;
+						subtyp, CARD_portlist[i], irq); */
 				case ELSA_PCF:
-					printf("# Elsa ML PCF found\n");
+					/* printf("# Elsa ML PCF found\n");
 					printf("TYPE=6 SUBTYPE=%d IO=0x%03x IRQ=%d\n",
-						subtyp, CARD_portlist[i], irq);
-					break;
+						subtyp, CARD_portlist[i], irq); */
 				case ELSA_PCFPRO:
-					printf("# Elsa ML PCFPro found\n");
+					/* printf("# Elsa ML PCFPro found\n");
 					printf("TYPE=6 SUBTYPE=%d IO=0x%03x IRQ=%d\n",
-						subtyp, CARD_portlist[i], irq);
+						subtyp, CARD_portlist[i], irq); */
+
+				        card = new_isa_isdn(ii);
+				        card->type = 6; card->subtype = subtyp;
+				        card->has_io = 1; card->io = CARD_portlist[i];
+				        card->has_irq = 1; card->irq = irq;
 					break;
 			}
 		}
@@ -147,11 +153,12 @@ probe_elsa(void)
 #define TELES_16_3_AB		0x46
 
 
-int telesdetect(void) {
+int telesdetect(isa_isdn_t **ii) {
 	int adr,val,i;
 	int found=0;
 	unsigned short TELES_ADR[3]={0x380,0x280,0x180};
-	
+	isa_isdn_t *card;
+
 	for (i=0;i<3;i++) {
 		adr=TELES_ADR[i] + TELES_CONFIG_OFF;
 
@@ -166,43 +173,43 @@ int telesdetect(void) {
 		val = inb(adr);
 		switch(val) {
 			case TELES_16_0:
-				printf("# Teles 16.0 found\n");
+				/* printf("# Teles 16.0 found\n");
 				printf("TYPE=1 SUBTYPE=0 IO=0x%3x\n",
-					TELES_ADR[i] + TELES_CONFIG_OFF);
-				found++;
-				break;
+					TELES_ADR[i] + TELES_CONFIG_OFF); */
 			case TELES_16_0_AB:
-				printf("# Teles 16.0 AB found\n");
+				/* printf("# Teles 16.0 AB found\n");
 				printf("TYPE=1 SUBTYPE=1 IO=0x%3x\n",
-					TELES_ADR[i] + TELES_CONFIG_OFF);
+					TELES_ADR[i] + TELES_CONFIG_OFF); */
+			        card = new_isa_isdn(ii);
+			        card->type = 1;
+			        if(val == TELES_16_0_AB) card->subtype = 1;
+			        card->has_io = 1; card->io = TELES_ADR[i] + TELES_CONFIG_OFF;
 				found++;
 				break;
 			case TELES_16_3_0:
-				printf("# Teles 16.3 v1.0 found\n");
+				/* printf("# Teles 16.3 v1.0 found\n");
 				printf("TYPE=2 SUBTYPE=0 IO=0x%3x\n",
-					TELES_ADR[i]);
-				found++;
-				break;
+					TELES_ADR[i]); */
 			case TELES_16_3_1:
-				printf("# Teles 16.3 v1.1 found\n");
+				/* printf("# Teles 16.3 v1.1 found\n");
 				printf("TYPE=2 SUBTYPE=0 IO=0x%3x\n",
-					TELES_ADR[i]);
-				found++;
-				break;
+					TELES_ADR[i]); */
 			case TELES_16_3_3:
-				printf("# Teles 16.3 v1.3 found\n");
+				/* printf("# Teles 16.3 v1.3 found\n");
 				printf("TYPE=2 SUBTYPE=0 IO=0x%3x\n",
-					TELES_ADR[i]);
-				found++;
-				break;
+					TELES_ADR[i]); */
 			case TELES_16_3_AB:
-				printf("# Teles 16.3 AB Video found\n");
+				/* printf("# Teles 16.3 AB Video found\n");
 				printf("TYPE=2 SUBTYPE=1 IO=0x%3x\n",
-					TELES_ADR[i]);
+					TELES_ADR[i]); */
+			        card = new_isa_isdn(ii);
+			        card->type = 2;
+			        if(val == TELES_16_3_AB) card->subtype = 1;
+			        card->has_io = 1; card->io = TELES_ADR[i];
 				found++;
 				break;
 			default:
-				if (guess)
+				if (0 /* guess */)
 					printf("# may be a Teles 16.0/16.3 detected at IO=0x%3x byte 3 is 0x%02x\n",
 						TELES_ADR[i] + TELES_CONFIG_OFF, val);
 				break;
@@ -211,28 +218,17 @@ int telesdetect(void) {
 	return(found);
 }
 
-int isdn_detect() {
-	int ret,count=0;
-	
-	ret = iopl(3);
-	if (ret < 0) {
-		printf("Error %d to get iopl()\n", ret);
-		return(1);
-	}
-	
-	ret = avm_a1_detect();
-	count += ret;
-	ret = probe_elsa();
-	count += ret;
-	ret = telesdetect();
-	count += ret;
-	
-	printf("# Total %d ISA ISDN Cards detected\n", count);
-	
-	ret = iopl(0);
-	if (ret < 0) {
-		printf("Error %d to release iopl()\n", ret);
-		return(1);
-	}
-	return(0);
+isa_isdn_t *isdn_detect()
+{
+  isa_isdn_t *ii = NULL;
+
+  if(iopl(3) < 0) return ii;
+
+  avm_a1_detect(&ii);
+  probe_elsa(&ii);
+  telesdetect(&ii);
+
+  iopl(0);
+
+  return ii;
 }

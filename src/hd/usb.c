@@ -207,7 +207,10 @@ void get_usb_data(hd_data_t *hd_data)
   usb_t *usb = NULL;
   char *s;
 
-  if(!(hd_data->proc_usb = read_file(PROC_USB_DEVICES, 0, 0))) return;
+  if(
+    !(hd_data->proc_usb = read_file(PROC_USB_DEVICES, 0, 0)) &&
+    !(hd_data->proc_usb = read_file(DEV_USB_DEVICES, 0, 0))
+  ) return;
 
   for(sl = hd_data->proc_usb; sl; sl = sl->next) {
     if(*sl->str == 'T') {
@@ -337,6 +340,11 @@ void set_class_entries(hd_t *hd, usb_t *usb)
 
     case 7:
       hd->base_class = bc_printer;
+      break;
+
+    case 8:
+      hd->base_class = bc_storage_device;
+      hd->sub_class = sc_sdev_other;
       break;
 
     case 9:

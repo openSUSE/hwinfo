@@ -88,7 +88,7 @@ sub show_entry
       $s .= "-   "
     }
 
-    if($d{"Device Driver Info"}) {
+    if(exists $d{"Driver Info #0"}) {
       $s .= "  known"
     }
     else {
@@ -122,7 +122,7 @@ sub show_entry
       $s .= "-   "
     }
 
-    if($d{"Device Driver Info"}) {
+    if(exists $d{"Driver Info #0"}) {
       $s .= "  known"
     }
     else {
@@ -169,7 +169,7 @@ sub show_entry
       $s .= "-   "
     }
 
-    if($d{"Device Driver Info"}) {
+    if(exists $d{"Driver Info #0"}) {
       $s .= "  known"
     }
     else {

@@ -37,6 +37,7 @@ extern "C" {
 #define HD_DEB_ADB		(1 << 18)
 #define HD_DEB_MODEM		(1 << 19)
 #define HD_DEB_PARALLEL		(1 << 20)
+#define HD_DEB_ISA		(1 << 21)
 
 #include <inttypes.h>
 #include <termios.h>
@@ -73,8 +74,8 @@ typedef enum probe_feature {
   pr_cdrom, pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial,
   pr_misc_par, pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor,
   pr_mouse, pr_ide, pr_scsi, pr_usb, pr_adb, pr_modem, pr_modem_usb,
-  pr_parallel,
-  pr_all		/* pr_all must be the last */
+  pr_parallel, pr_isa, pr_isa_isdn,
+  pr_all		/* 29; pr_all must be the last */
 } hd_probe_feature_t;
 
 

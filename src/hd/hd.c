@@ -33,6 +33,7 @@
 #include "adb.h"
 #include "modem.h"
 #include "parallel.h"
+#include "isa.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -92,7 +93,8 @@ static struct s_mod_names {
   { mod_usb, "usb"},
   { mod_adb, "adb"},
   { mod_modem, "modem"},
-  { mod_parallel, "parallel" }
+  { mod_parallel, "parallel" },
+  { mod_isa, "isa" }
 };
 
 /*
@@ -130,7 +132,9 @@ static struct s_pr_flags {
   { pr_adb, "adb" },
   { pr_modem, "modem" },
   { pr_modem_usb, "modem.usb" },
-  { pr_parallel, "parallel" }
+  { pr_parallel, "parallel" },
+  { pr_isa, "isa" },
+  { pr_isa_isdn, "isa.isdn" }
 };
 
 #define PR_OFS			2		/* skip 0, default */
@@ -476,6 +480,10 @@ void hd_scan(hd_data_t *hd_data)
 
 #if defined(__i386__) || defined(__alpha__)
   hd_scan_isapnp(hd_data);
+#endif
+
+#if defined(__i386__)
+  hd_scan_isa(hd_data);
 #endif
 
   hd_scan_pci(hd_data);
@@ -1654,8 +1662,8 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
   hd_t *hd;
   unsigned crc, hd_idx = 0;
   char *s;
-  int i, fd;
-  disk_t *dl, *dl0 = NULL;
+  int i, j, fd;
+  disk_t *dl, *dl0 = NULL, *dl1 = NULL;
 
   if(matches) *matches = 0;
 
@@ -1705,8 +1713,19 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
   for(i = 0, dl = dl0; dl; dl = dl->next) {
     if(crc == dl->crc && dl->data_len == sizeof dl->data) {
       dl->crc_match = 1;
+      dl1 = dl;
       if(!i++) hd_idx = dl->hd_idx;
     }
+  }
+
+  if(i == 1 && dl1 && hd_data->debug) {
+    ADD2LOG("----- MBR -----\n");
+    for(j = 0; j < sizeof dl1->data; j += 0x10) {
+      ADD2LOG("  %03x  ", j);
+      hexdump(&hd_data->log, 1, 0x10, dl1->data + j);
+      ADD2LOG("\n");
+    }
+    ADD2LOG("----- MBR end -----\n");
   }
 
   free_disk_list(dl0);
