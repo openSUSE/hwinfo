@@ -1256,7 +1256,7 @@ void help()
     "    mouse, joystick, keyboard, chipcard, sound, isdn, modem, storage-ctrl,\n"
     "    netcard, printer, tv, dvb, scanner, braille, sys, bios, cpu, partition,\n"
     "    usb-ctrl, usb, pci, isapnp, ide, scsi, bridge, hub, memory, smp, pppoe,\n"
-    "    all, reallyall\n\n"
+    "    pcmcia, pcmcia-ctrl, wlan, zip, all, reallyall\n\n"
     "  Note: debug info is shown only in the log file. (If you specify a\n"
     "  log file the debug level is implicitly set to a reasonable value.)\n"
   );

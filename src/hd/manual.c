@@ -88,7 +88,7 @@ static hash_t hw_items[] = {
 
 typedef enum {
   hw_id_unique = 1, hw_id_parent, hw_id_child, hw_id_hwclass, hw_id_model,
-  hw_id_configured, hw_id_available, hw_id_needed, hw_id_cfgstring
+  hw_id_configured, hw_id_available, hw_id_needed, hw_id_cfgstring, hw_id_active
 } hw_id_t;
 
 #define MAN_SECT_GENERAL	"General"
@@ -109,6 +109,7 @@ static hash_t hw_ids_status[] = {
   { hw_id_available,  "Available"    },
   { hw_id_needed,     "Needed"       },
   { hw_id_cfgstring,  "ConfigString" },
+  { hw_id_active,     "Active"       },
   { 0,                NULL           }
 };
 
@@ -231,11 +232,13 @@ void hd_scan_manual(hd_data_t *hd_data)
       !hd->status.configured &&
       !hd->status.available &&
       !hd->status.needed &&
+      !hd->status.active &&
       !hd->status.invalid
     ) {
       hd->status.configured = status_new;
       hd->status.available = hd->module == mod_manual ? status_unknown : status_yes;
       hd->status.needed = status_no;
+      hd->status.active = status_unknown;
     }
   }
 
@@ -449,6 +452,12 @@ hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
           if(!j) err = 1;
           break;
 
+        case hw_id_active:
+          j = value2key(status_names, s);
+          entry->status.active = j;
+          if(!j) err = 1;
+          break;
+
         case hw_id_cfgstring:
           entry->config_string = s;
           s = NULL;
@@ -499,10 +508,13 @@ hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
     entry->status.needed = status_no;
   }
 
+  if(!entry->status.active) entry->status.active = status_unknown;
+
   if(
     !entry->status.configured ||
     !entry->status.available ||
-    !entry->status.needed
+    !entry->status.needed ||
+    !entry->status.active
   ) {
     ADD2LOG("  %s: incomplete status\n", id);
     err = 1;
@@ -625,6 +637,14 @@ int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
   ) error = 4;
 
   if(
+    (entry->status.active && key2value(status_names, entry->status.active)) &&
+    !fprintf(f, "%s=%s\n",
+      key2value(hw_ids_status, hw_id_active),
+      key2value(status_names, entry->status.active)
+    )
+  ) error = 4;
+
+  if(
     entry->config_string &&
     !fprintf(f, "%s=%s\n",
       key2value(hw_ids_status, hw_id_cfgstring),
@@ -702,6 +722,10 @@ void dump_manual(hd_data_t *hd_data)
     ADD2LOG("    %s=%s\n",
       key2value(hw_ids_status, hw_id_needed),
       key2value(status_names, entry->status.needed)
+    );
+    ADD2LOG("    %s=%s\n",
+      key2value(hw_ids_status, hw_id_active),
+      key2value(status_names, entry->status.active)
     );
     if(entry->config_string)
       ADD2LOG("    %s=%s\n",
@@ -1098,11 +1122,13 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
     !entry->status.configured &&
     !entry->status.available &&
     !entry->status.needed &&
+    !entry->status.active &&
     !entry->status.invalid
   ) {
     entry->status.configured = status_new;
     entry->status.available = hd->module == mod_manual ? status_unknown : status_yes;
     entry->status.needed = status_no;
+    entry->status.active = status_unknown;
   }
 
   s = NULL;

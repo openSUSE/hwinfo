@@ -18,6 +18,7 @@ struct option options[] = {
   { "fast", 0, NULL, 506 },
   { "silent", 0, NULL, 507 },
   { "boot", 0, NULL, 508 },
+  { "active", 1, NULL, 509 },
   { "sys", 0, NULL, 1000 + hw_sys },
   { "cpu", 0, NULL, 1000 + hw_cpu },
   { "keyboard", 0, NULL, 1000 + hw_keyboard },
@@ -70,6 +71,7 @@ struct option options[] = {
   { "pppoe", 0, NULL, 1000 + hw_pppoe },
   { "dsl", 0, NULL, 1000 + hw_pppoe },
   { "wlan", 0, NULL, 1000 + hw_wlan },
+  { "all", 0, NULL, 1000 + hw_all },
   { }
 };
 
@@ -85,6 +87,7 @@ struct {
   unsigned config_cfg:1;
   unsigned config_avail:1;
   unsigned config_need:1;
+  unsigned config_active:1;
   unsigned new:1;
   unsigned fast:1;
   unsigned silent:1;
@@ -111,6 +114,7 @@ int main(int argc, char **argv)
   char *config_cfg = NULL;
   char *config_avail = NULL;
   char *config_need = NULL;
+  char *config_active = NULL;
   int i;
   int ok = 0;
   FILE *f;
@@ -161,6 +165,11 @@ int main(int argc, char **argv)
 
       case 508:
         opt.boot = 1;
+        break;
+
+      case 509:
+        opt.config_active = 1;
+        config_active = optarg;
         break;
 
       case 1000 ... 1100:
@@ -217,6 +226,12 @@ int main(int argc, char **argv)
     ok = 1;
   }
 
+  if(opt.config_active) {
+    if(!argv[optind]) return help(), 1;
+    do_config(4, config_active, argv[optind]);
+    ok = 1;
+  }
+
   if(!ok) help();
 
 #endif		/* !defined(LIBHD_TINY) */
@@ -237,12 +252,14 @@ void help()
     "                    state is one of new, no, yes\n"
     "  --avail=state id  change 'available' status\n"
     "  --need=state id   change 'needed' status\n"
+    "  --active=state id change 'active' status\n"
     "  --hw_item         probe for hw_item and update status info\n"
     "  hw_item is one of:\n"
-    "    cdrom, floppy, disk, mouse, gfxcard, monitor, network, sound, modem,\n"
-    "    printer, storage-ctrl, netcard, camera, isdn, tv, dvb, scanner, joystick,\n"
-    "    usb, pci, isapnp, framebuffer, keyboard, chipcard, braille, partition,\n"
-    "    usb-ctrl, sys, cpu, bios, bridge, hub, memory\n"
+    "    cdrom, floppy, disk, network, gfxcard, framebuffer, monitor, camera,\n"
+    "    mouse, joystick, keyboard, chipcard, sound, isdn, modem, storage-ctrl,\n"
+    "    netcard, printer, tv, dvb, scanner, braille, sys, bios, cpu, partition,\n"
+    "    usb-ctrl, usb, pci, isapnp, ide, scsi, bridge, hub, memory, smp, pppoe,\n"
+    "    pcmcia, pcmcia-ctrl, wlan, zip\n"
   );
 }
 
@@ -283,12 +300,13 @@ int do_scan(hd_hw_item_t *items)
     err = hd_write_config(hd_data, hd1);
     if(verbose >= 2) {
       printf(
-        "write=%d %s: (cfg=%s, avail=%s, need=%s",
+        "write=%d %s: (cfg=%s, avail=%s, need=%s, active=%s",
         err,
         hd1->unique_id,
         hd_status_value_name(hd1->status.configured),
         hd_status_value_name(hd1->status.available),
-        hd_status_value_name(hd1->status.needed)
+        hd_status_value_name(hd1->status.needed),
+        hd_status_value_name(hd1->status.active)
       );
       if(hd1->unix_dev_name) {
         printf(", dev=%s", hd1->unix_dev_name);
@@ -326,11 +344,12 @@ int do_scan(hd_hw_item_t *items)
   if(verbose) {
     for(hd1 = hd; hd1; hd1 = hd1->next) {
       printf(
-        "%s: (cfg=%s, avail=%s, need=%s",
+        "%s: (cfg=%s, avail=%s, need=%s, active=%s",
         hd1->unique_id,
         hd_status_value_name(hd1->status.configured),
         hd_status_value_name(hd1->status.available),
-        hd_status_value_name(hd1->status.needed)
+        hd_status_value_name(hd1->status.needed),
+        hd_status_value_name(hd1->status.active)
       );
       if(hd1->unix_dev_name) {
         printf(", dev=%s", hd1->unix_dev_name);
@@ -412,6 +431,11 @@ int do_list(hd_hw_item_t *items)
       i++;
     }
 
+    if(hd->status.active && (s = hd_status_value_name(hd->status.active))) {
+      sprintf(status + strlen(status), "%sactive=%s", i ? ", " : "", s);
+      i++;
+    }
+
     strcat(status, ")");
 
     s = hd_hw_item_name(hd->hw_class);
@@ -467,6 +491,10 @@ int do_config(int type, char *val, char *id)
 
         case 3:
           hd->status.needed = status;
+          break;
+
+        case 4:
+          hd->status.active = status;
           break;
       }
       hd_write_config(hd_data, hd);

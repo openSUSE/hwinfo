@@ -174,6 +174,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
       h->status.configured ||
       h->status.available ||
       h->status.needed ||
+      h->status.active ||
       h->status.invalid ||
       h->is.manual
     )
@@ -203,6 +204,11 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
 
     if(h->status.needed && (s = hd_status_value_name(h->status.needed))) {
       dump_line0("%sneed=%s", i ? ", " : "", s);
+      i++;
+    }
+
+    if(h->status.active && (s = hd_status_value_name(h->status.active))) {
+      dump_line0("%sactive=%s", i ? ", " : "", s);
       i++;
     }
 

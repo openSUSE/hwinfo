@@ -324,6 +324,11 @@ typedef struct {
    * is automatically updated during the detection process.)
    */
   unsigned available_orig:3;
+
+  /**
+   * Hardware is active.
+   */
+  unsigned active:3;
 } hd_status_t;
 
 /* hardware config status values */

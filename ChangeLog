@@ -1,3 +1,7 @@
+2/9/2003:	v7.17
+	- catch more vm86() faults (#28381)
+	- added 'active' status flag (not modified by libhd)
+
 1/9/2003:	v7.16
 	- update ISDN CDB data
 	- catch faults inside vm86() code (#29571)

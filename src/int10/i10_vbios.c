@@ -151,8 +151,9 @@ void sigsegv_handler(int num)
 int CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
 {
   i86biosRegs bRegs;
-  void (*old_sigsegv_handler)(int);
-  void (*old_sigill_handler)(int);
+  void (*old_sigsegv_handler)(int) = SIG_DFL;
+  void (*old_sigill_handler)(int) = SIG_DFL;
+  void (*old_sigtrap_handler)(int) = SIG_DFL;
   int jmp;
 
   if(!int10inited) return -1;
@@ -165,14 +166,15 @@ int CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
   bRegs.di = 0x0;
   if(buf) memcpy((unsigned char *) 0x7e00, buf, len);
 
-  old_sigsegv_handler = signal(SIGSEGV, sigsegv_handler);
-  old_sigill_handler = signal(SIGILL, sigsegv_handler);
-
   iopl(3);
 
   jmp = sigsetjmp(longjmp_buf, 1);
 
   if(!jmp) {
+    old_sigsegv_handler = signal(SIGSEGV, sigsegv_handler);
+    old_sigill_handler = signal(SIGILL, sigsegv_handler);
+    old_sigtrap_handler = signal(SIGTRAP, sigsegv_handler);
+
     loadCodeToMem((unsigned char *) BIOS_START, code);
     do_x86(BIOS_START, &bRegs);
   }
@@ -181,10 +183,11 @@ int CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
     log_err("oops: got signal %d in vm86() code\n", jmp - 1000);
   }
 
-  iopl(0);
-
+  signal(SIGTRAP, old_sigtrap_handler);
   signal(SIGILL, old_sigill_handler);
   signal(SIGSEGV, old_sigsegv_handler);
+
+  iopl(0);
 
   if(buf) memcpy(buf, (unsigned char *) 0x7e00, len);
 

@@ -722,6 +722,9 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_all:
+      hd_set_probe_feature(hd_data, pr_default);
+      break;
+
     case hw_unknown:
     case hw_ieee1394:
     case hw_hotplug:
@@ -4900,6 +4903,8 @@ void hd_set_hw_class(hd_t *hd, hd_hw_item_t hw_class)
 int hd_is_hw_class(hd_t *hd, hd_hw_item_t hw_class)
 {
   unsigned ofs, bit;
+
+  if(hw_class == hw_all) return 1;
 
   ofs = (unsigned) hw_class >> 3;
   bit = (unsigned) hw_class & 7;
