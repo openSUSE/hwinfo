@@ -1,3 +1,8 @@
+14/12/2000:	v1.0.61
+	- updated x11 data
+	- build pnpdump only on i386 and alpha
+	- hwinfo can now update x11 info in install.inf
+
 13/12/2000:	v1.0.60
 	- hwinfo can now update braille info in install.inf
 	- activate alva braille detection

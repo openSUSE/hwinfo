@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-12-13 11:55:55
+#hwinfo data from 2000-12-15 11:06:08
 #
 
 
@@ -291,11 +291,6 @@
 
 # Matrox:MGA 2064W
 102B 0519  
-	x	4||3d||||||
-
-
-# Matrox:MGA 2064W
-102B 0519  
 	x	3|SVGA|||||8,16,24||
 
 
@@ -409,6 +404,19 @@
 	x	3|SVGA|3d||||||
 
 
+# Diamond:Fire GL1
+1014 00b7  
+	x	4|firegl1||xfiregl1||DDCInfo||
+		Option "no_accel" "no"
+		Option "NumDMABuffers2D" "4"
+		Option "NumDMABuffers" "24"
+		Option "NumTMBuffers" "4"
+		Option "Capabilities" "0x00000000"
+		Option "Capabilities2" "0x00000000"
+		#Option "TFT Display" "off"
+		#Option "PipelineSpeed" "100"|
+
+
 # Diamond:Viper 330
 1092 1092  
 	x	4|nv|||||||
@@ -431,24 +439,19 @@
 
 # Diamond:Fire GL2
 1014 0170  
-	x	4|firegl23|3d|xfiregl1|dri,glx,fgl23|||
+	x	4|firegl23||xfiregl1|dri|||
 		Option "no_accel" "no"
 		Option "PnP Monitor" "off"
 		Option "NumDMABuffers" "24"
 		Option "NumTMBuffers" "4"
 		Option "Capabilities" "0x00000000"
 		Option "Capabilities2" "0x00000000"
-		Option "TFT Display" "off"|switch2xfiregl1
+		Option "TFT Display" "off|switch2xfiregl1
 
 
 # Diamond:Fire GL3
 1014 0170 1092 1073
 	x	4|firegl23||xfiregl1|dri|DDCInfo|||switch2xfiregl1
-
-
-# Diamond:Fire GL3
-1014 0170 1092 1073
-	x	4|firegl23|3d|xfiregl1|dri,glx,fgl23|DDCInfo|||switch2xfiregl1
 
 
 # Elsa:Gloria Synergy
@@ -504,11 +507,6 @@
 # ATI:Mach64 VT
 1002 5654  
 	x	4|ati|||||||
-
-
-# ATI:Mach64 VT
-1002 5654  
-	x	4||3d||||||
 
 
 # ATI:Mach64 VT
@@ -933,11 +931,6 @@
 
 # ATI:Rage P/M Mobility AGP 2x
 1002 4C4D  
-	x	4||3d||||||
-
-
-# ATI:Rage P/M Mobility AGP 2x
-1002 4C4D  
 	x	3|MACH64|||||||
 
 
@@ -1039,6 +1032,11 @@
 # ATI:Rage 3D IIC
 1002 4759  
 	x	3|MACH64|3d||||||
+
+
+# ATI:Mach64 GX (21088)
+1002 4758  
+	x	4|ati|||||||
 
 
 # ATI:Mach64 GX (21088)
@@ -1333,6 +1331,11 @@
 
 # ATI:Mach64 CX
 1002 4358  
+	x	4|ati|||||||
+
+
+# ATI:Mach64 CX
+1002 4358  
 	x	3|MACH64|||||||
 
 
@@ -1393,22 +1396,12 @@
 
 # ATI:Rage P/M Mobility AGP 2x (HP Omnibook)
 1002 4C4D 103c 000a
-	x	4||3d||||||
-
-
-# ATI:Rage P/M Mobility AGP 2x (HP Omnibook)
-1002 4C4D 103c 000a
 	x	3|SVGA|3d|glx|glx.so|no_pixmap_cache,no_font_cache|||switch2glx
 
 
 # ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
 1002 4C4D 14c0 000a
 	x	4|ati|||||||
-
-
-# ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
-1002 4C4D 14c0 000a
-	x	4||3d||||||
 
 
 # ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
@@ -1768,6 +1761,11 @@
 
 # Trident:TGUI 9440
 1023 9440  
+	x	4|trident|||||||
+
+
+# Trident:TGUI 9440
+1023 9440  
 	x	3|SVGA|||||||
 
 
@@ -2014,16 +2012,6 @@
 # Trident:82c194 CardBus Controller
 1023 0194  
 	x	3|SVGA|3d||||||
-
-
-# 3Dfx:3Dfx Voodoo Rush
-1142 643d  
-	x	4||||||||
-
-
-# 3Dfx:3Dfx Voodoo Rush
-1142 643d  
-	x	4||3d||||||
 
 
 # 3Dfx:3Dfx Voodoo Rush
@@ -2068,7 +2056,27 @@
 
 # 3Dfx:3Dfx Voodoo2
 121A 0002  
+	x	4|glide||glide_v2|||||
+
+
+# 3Dfx:3Dfx Voodoo2
+121A 0002  
+	x	4||3d|dev3dfx,mesa3dfx,glide_v2|||||switch2mesa3dfx
+
+
+# 3Dfx:3Dfx Voodoo2
+121A 0002  
 	x	3||3d|glide_v2,mesa3dfx,dev3dfx|||||switch2mesa3dfx
+
+
+# 3Dfx:3Dfx Voodoo
+121A 0001  
+	x	4|glide||glide_vg|||||
+
+
+# 3Dfx:3Dfx Voodoo
+121A 0001  
+	x	4||3d|glide_vg,dev3dfx,mesa3dfx|||||switch2mesa3dfx
 
 
 # 3Dfx:3Dfx Voodoo
@@ -2108,12 +2116,22 @@
 
 # Intel:I810_DC100
 8086 7123  
+	x	4|i810|||||||
+
+
+# Intel:I810_DC100
+8086 7123  
 	x	4|i810|3d|xf86_glx|dri,glx||||switch2xf86_glx
 
 
 # Intel:I810_DC100
 8086 7123  
 	x	3|SVGA|||||||
+
+
+# Intel:i810
+8086 7121  
+	x	4|i810|||||||
 
 
 # Intel:i810
@@ -2183,6 +2201,11 @@
 
 # Intel:I815
 8086 1132  
+	x	4|i810|||||||
+
+
+# Intel:I815
+8086 1132  
 	x	4|i810|3d|xf86_glx|dri,glx||||switch2xf86_glx
 
 
@@ -2198,7 +2221,7 @@
 
 # S3:ViRGE
 5333 5631  
-	x	4||3d||||||
+	x	4|s3virge|||||||
 
 
 # S3:ViRGE
@@ -2253,11 +2276,6 @@
 
 # S3:Savage3D+MacroVision
 5333 8A21  
-	x	4|savage|||||||
-
-
-# S3:Savage3D+MacroVision
-5333 8A21  
 	x	4||3d||||||
 
 
@@ -2269,11 +2287,6 @@
 # S3:Savage3D+MacroVision
 5333 8A21  
 	x	3|SVGA|3d|glx|glx.so|no_pixmap_cache|||switch2glx
-
-
-# S3:Savage3D (86E391)
-5333 8A20  
-	x	4|savage|||||||
 
 
 # S3:Savage3D (86E391)
@@ -2309,6 +2322,11 @@
 # S3:ViRGE/GX2
 5333 8a10  
 	x	3|SVGA|3d|glx|glx.so||15||switch2glx
+
+
+# S3:ViRGE/DX or /GX
+5333 8a01  
+	x	4|s3virge|||||||
 
 
 # S3:ViRGE/DX or /GX
@@ -2329,11 +2347,6 @@
 # S3:PLATO/PX
 5333 0551  
 	x	3|SVGA|||||||
-
-
-# S3:SAVAGE2000
-5333 9102  
-	x	4|savage|||||||
 
 
 # S3:SAVAGE2000
@@ -2498,6 +2511,11 @@
 
 # S3:Vision 968
 5333 88f0  
+	x	4||3d||||||
+
+
+# S3:Vision 968
+5333 88f0  
 	x	3|S3|||||||
 
 
@@ -2519,11 +2537,6 @@
 # S3:Trio64V2/DX GUI Accelerator
 5333 8900  
 	x	3|SVGA|||||||
-
-
-# S3:Trio64V2/DX or /GX
-5333 8901  
-	x	4||||||||
 
 
 # S3:Trio64V2/DX or /GX
@@ -2618,22 +2631,12 @@
 
 # S3:Savage 4
 5333 8a22  
-	x	4|savage|||||||
-
-
-# S3:Savage 4
-5333 8a22  
 	x	4||3d||||||
 
 
 # S3:Savage 4
 5333 8a22  
 	x	3|SVGA|||||||
-
-
-# S3:Savage 4
-5333 8a23  
-	x	4|savage|||||||
 
 
 # S3:Savage 4
@@ -2673,11 +2676,6 @@
 
 # S3:Savage IX8
 5333 8c12  
-	x	4|savage|||||||
-
-
-# S3:Savage IX8
-5333 8c12  
 	x	4||3d||||||
 
 
@@ -2693,16 +2691,6 @@
 
 # S3:Savage  MX (Macrovision)
 5333 8c10  
-	x	4|savage|||||||
-
-
-# S3:Savage  MX (Macrovision)
-5333 8c10  
-	x	4||3d||||||
-
-
-# S3:Savage  MX (Macrovision)
-5333 8c10  
 	x	3|SVGA|||||||
 
 
@@ -2713,32 +2701,12 @@
 
 # S3:Savage MX
 5333 8c11  
-	x	4|savage|||||||
-
-
-# S3:Savage MX
-5333 8c11  
-	x	4||3d||||||
-
-
-# S3:Savage MX
-5333 8c11  
 	x	3|SVGA|||||||
 
 
 # S3:Savage MX
 5333 8c11  
 	x	3|SVGA|3d|glx|glx.so|no_pixmap_cache|||switch2glx
-
-
-# S3:Savage IX
-5333 8c13  
-	x	4|savage|||||||
-
-
-# S3:Savage IX
-5333 8c13  
-	x	4||3d||||||
 
 
 # S3:Savage IX
@@ -2761,9 +2729,29 @@
 	x	3|3DLABS|||||||
 
 
+# 3DLabs:GLINT Gamma
+3D3D 0008  
+	x	4|glint|||||||
+
+
+# 3DLabs:3D Extreme Permedia II
+3D3D 0007  
+	x	4|glint|||||||
+
+
 # 3DLabs:3D Extreme Permedia II
 3D3D 0007  
 	x	3|3DLABS|||||||
+
+
+# 3DLabs:Glint MX
+3D3D 0006  
+	x	4|glint|||||||
+
+
+# 3DLabs:Glint MX
+3D3D 0006  
+	x	4|glint|3d|xf86_glx|dri,glx||||switch2xf86_glx
 
 
 # 3DLabs:Glint MX
@@ -2773,7 +2761,17 @@
 
 # 3DLabs:3C0SX 2D+3D Accelerator
 3D3D 0004  
+	x	4|glint|||||||
+
+
+# 3DLabs:3C0SX 2D+3D Accelerator
+3D3D 0004  
 	x	3|3DLABS|||||||
+
+
+# 3DLabs:GLINT 500TX Sapphire 3D
+3D3D 0002  
+	x	4|glint|||||||
 
 
 # 3DLabs:GLINT 500TX Sapphire 3D
@@ -2793,6 +2791,11 @@
 
 # Rendition:Verite 2x00
 1163 2000  
+	x	4|rendition|||||||
+
+
+# Rendition:Verite 2x00
+1163 2000  
 	x	4||3d||||||
 
 
@@ -2804,11 +2807,6 @@
 # Rendition:Verite 2x00
 1163 2000  
 	x	3|SVGA|3d||||||
-
-
-# Rendition:Verite 1000
-1163 0001  
-	x	4|rendition|||||||
 
 
 # Rendition:Verite 1000
@@ -3298,11 +3296,6 @@
 
 # Neomagic:NM2160 [MagicGraph 128XD]
 10c8 0004  
-	x	4|neomagic|||||||
-
-
-# Neomagic:NM2160 [MagicGraph 128XD]
-10c8 0004  
 	x	3|SVGA|||||||
 
 
@@ -3388,11 +3381,6 @@
 		Chipset "neo2380"|
 
 
-# Neomagic:256XL(2380)
-10c8 0016  
-	x	4||3d||||||
-
-
 # Texas Instruments:Permedia 2D+3D
 104c 3D04  
 	x	4|glint|||||||
@@ -3401,6 +3389,11 @@
 # Texas Instruments:Permedia 2D+3D
 104c 3D04  
 	x	3|3DLABS|||||||
+
+
+# Texas Instruments:Permedia 2
+104c 3d07  
+	x	4|glint|||||||
 
 
 # Texas Instruments:Permedia 2
@@ -3795,7 +3788,7 @@
 
 # Tseng Lab:ET4000W32P Rev C
 100C 3206  
-	x	4||3d||||||
+	x	4|tseng|||||||
 
 
 # Tseng Lab:ET4000W32P Rev C
@@ -4035,22 +4028,12 @@
 
 # Cirrus Logic:GD 5480
 1013 00bc  
-	x	4|cirrus|||||||
-
-
-# Cirrus Logic:GD 5480
-1013 00bc  
 	x	4||3d||||||
 
 
 # Cirrus Logic:GD 5480
 1013 00bc  
 	x	3|SVGA|||||||
-
-
-# Cirrus Logic:GD 5446
-1013 00b8  
-	x	4||3d||||||
 
 
 # Cirrus Logic:GD 5446

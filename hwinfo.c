@@ -20,7 +20,8 @@ static int listplus = 0;
 
 static int test = 0;
 
-static int find_braille(hd_data_t *hd_data);
+static int braille_install_info(hd_data_t *hd_data);
+static int x11_install_info(hd_data_t *hd_data);
 
 /*
  * Just scan the hardware and dump all info.
@@ -41,7 +42,11 @@ int main(int argc, char **argv)
   hd_data->debug=~(HD_DEB_DRIVER_INFO | HD_DEB_HDDB);
 
   if(argc == 1 && !strcmp(*argv, "--special=braille")) {
-    return find_braille(hd_data);
+    return braille_install_info(hd_data);
+  }
+
+  if(argc == 1 && !strcmp(*argv, "--special=x11")) {
+    return x11_install_info(hd_data);
   }
 
   if(argc == 1 && !strcmp(*argv, "--test")) {
@@ -233,7 +238,7 @@ void progress(char *pos, char *msg)
 
 #define INSTALL_INF	"/etc/install.inf"
 
-int find_braille(hd_data_t *hd_data)
+int braille_install_info(hd_data_t *hd_data)
 {
   hd_t *hd;
   int ok = 0;
@@ -286,6 +291,245 @@ int find_braille(hd_data_t *hd_data)
   fprintf(f, "Braille: %s\n", braille);
   fprintf(f, "Brailledevice: %s\n", braille_dev);
   
+  fclose(f);
+
+  return 0;
+}
+
+
+/*
+ * get VGA parameter from /proc/cmdline
+ */
+int get_fb_mode()
+{
+  FILE *f;
+  char buf[256], *s, *t;
+  int i, fb_mode = 0;
+
+  if((f = fopen("/proc/cmdline", "r"))) {
+    if(fread(buf, 1, sizeof buf, f)) {
+      t = buf;
+      while((s = strsep(&t, " "))) {
+        if(sscanf(s, "vga=%i", &i) == 1) fb_mode = i;
+      }
+    }
+    fclose(f);
+  }
+
+  return fb_mode > 0x10 ? fb_mode : 0;
+}
+
+
+/*
+ * read "x11i=" entry from /proc/cmdline
+ */
+char *get_x11i()
+{
+  FILE *f;
+  char buf[256], *s, *t;
+  static char x11i[64] = { };
+
+  if(!*x11i) return x11i;
+
+  if((f = fopen("/proc/cmdline", "r"))) {
+    if(fread(buf, 1, sizeof buf, f)) {
+      t = buf;
+      while((s = strsep(&t, " "))) {
+        if(sscanf(s, "x11i=%60s", x11i) == 1) break;
+      }
+    }
+    fclose(f);
+  }
+
+  return x11i;
+}
+
+
+/*
+ * Assumes xf86_ver to be either "3" or "4" (or empty).
+ */
+char *get_xserver(hd_data_t *hd_data, char **version, char **busid, driver_info_t **x11_driver)
+{
+  static char display[16];
+  static char xf86_ver[2];
+  static char id[32];
+  char c, *x11i = get_x11i();
+  static driver_info_t *di0 = NULL;
+  driver_info_t *di;
+  hd_t *hd;
+
+  di0 = hd_free_driver_info(di0);
+  *x11_driver = NULL;
+
+  *display = *xf86_ver = *id = c = 0;
+  *version = xf86_ver;
+  *busid = id;
+
+  if(x11i) {
+    if(*x11i == '3' || *x11i == '4') {
+      c = *x11i;
+    }
+    else {
+      if(*x11i >= 'A' && *x11i <= 'Z') {
+        c = '3';
+      }
+      if(*x11i >= 'a' && *x11i <= 'z') {
+        c = '4';
+      }
+      if(c) {
+        strncpy(display, x11i, sizeof display - 1);
+        display[sizeof display - 1] = 0;
+      }
+    }
+  }
+
+#ifdef __PPC__
+  /* temporary hack due to XF4 problems */
+  if(!c) c = '3';
+#endif
+
+  if(c) { xf86_ver[0] = c; xf86_ver[1] = 0; }
+
+  hd = hd_get_device_by_idx(hd_data, hd_display_adapter(hd_data));
+  if(hd && hd->bus == bus_pci)
+    sprintf(id, "%d:%d:%d", hd->slot >> 8, hd->slot & 0xff, hd->func);
+
+  if(*display) return display;
+
+  di0 = hd_driver_info(hd_data, hd);
+  for(di = di0; di; di = di->next) {
+    if(di->any.type == di_x11 && di->x11.server && di->x11.xf86_ver && !di->x11.x3d) {
+      if(c == 0 || c == di->x11.xf86_ver[0]) {
+        xf86_ver[0] = di->x11.xf86_ver[0];
+        xf86_ver[1] = 0;
+        strncpy(display, di->x11.server, sizeof display - 1);
+        display[sizeof display - 1] = 0;
+        *x11_driver = di;
+        break;
+      }
+    }
+  }
+
+
+  if(*display) return display;
+
+  if(c == 0) c = '3';	/* default to XF 3, if nothing else is known  */
+
+  xf86_ver[0] = c;
+  xf86_ver[1] = 0;
+  strcpy(display, c == '3' ? "FBDev" : "fbdev");
+
+  return display;
+}
+
+int x11_install_info(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  driver_info_t *di;
+  char *x11i;
+  int fb_mode, kbd_ok = 0;
+  unsigned yast2_color = 0;
+  char *xkbrules = NULL, *xkbmodel = NULL, *xkblayout = NULL;
+  char *xserver, *version, *busid;
+  driver_info_t *x11_driver;
+  str_list_t *sl0, *sl;
+  FILE *f;
+
+  /* get color info */
+  hd_set_probe_feature(hd_data, pr_cpu);
+  hd_set_probe_feature(hd_data, pr_prom);
+  hd_scan(hd_data);
+
+  x11i = get_x11i();
+  fb_mode = get_fb_mode();
+
+  hd_list(hd_data, hw_display, 1, NULL);
+  xserver = get_xserver(hd_data, &version, &busid, &x11_driver);
+
+  for(hd = hd_list(hd_data, hw_keyboard, 1, NULL); hd; hd = hd->next) {
+    kbd_ok = 1;
+    di = hd_driver_info(hd_data, hd);
+    if(di && di->any.type == di_kbd) {
+      xkbrules = di->kbd.XkbRules;
+      xkbmodel = di->kbd.XkbModel;
+      xkblayout = di->kbd.XkbLayout;
+      break;
+    }
+    /* don't free di */
+  }
+  
+  switch(hd_mac_color(hd_data)) {
+    case 0x01:
+      yast2_color = 0x5a4add;
+      break;
+    case 0x04:
+      yast2_color = 0x32cd32;
+      break;
+    case 0x05:
+      yast2_color = 0xff7f50;
+      break;
+    case 0x07:
+      yast2_color = 0x000000;
+      break;
+    case 0xff:
+      yast2_color = 0x7f7f7f;
+      break;
+  }
+
+  if(hd_data->progress) {
+    printf("\r%64s\r", "");
+    fflush(stdout);
+  }
+
+  sl0 = read_file(INSTALL_INF, 0, 0);
+  f = fopen(INSTALL_INF, "w");
+  if(!f) {
+    perror(INSTALL_INF);
+    return 1;
+  }
+  
+  for(sl = sl0; sl; sl = sl->next) {
+    if(
+      strstr(sl->str, "Framebuffer:") != sl->str &&
+      strstr(sl->str, "XServer:") != sl->str &&
+      strstr(sl->str, "XVersion:") != sl->str &&
+      strstr(sl->str, "XBusID:") != sl->str &&
+      strstr(sl->str, "X11i:") != sl->str &&
+      strstr(sl->str, "Keyboard:") != sl->str &&
+      strstr(sl->str, "XkbRules:") != sl->str &&
+      strstr(sl->str, "XkbModel:") != sl->str &&
+      strstr(sl->str, "XkbLayout:") != sl->str &&
+      strstr(sl->str, "XF86Ext:") != sl->str &&
+      strstr(sl->str, "XF86Raw:") != sl->str
+    ) {
+      fprintf(f, "%s", sl->str);
+    }
+  }
+
+  fprintf(f, "Keyboard: %d\n", kbd_ok);
+  if(fb_mode) fprintf(f, "Framebuffer: 0x%04x\n", fb_mode);
+  if(x11i) fprintf(f, "X11i: %s\n", x11i);
+  if(xserver && *xserver) {
+    fprintf(f, "XServer: %s\n", xserver);
+    if(*version) fprintf(f, "XVersion: %s\n", version);
+    if(*busid) fprintf(f, "XBusID: %s\n", busid);
+  }
+  if(xkbrules && *xkbrules) fprintf(f, "XkbRules: %s\n", xkbrules);
+  if(xkbmodel && *xkbmodel) fprintf(f, "XkbModel: %s\n", xkbmodel);
+  if(xkblayout && *xkblayout) fprintf(f, "XkbLayout: %s\n", xkblayout);
+
+  if(x11_driver) {
+    for(sl = x11_driver->x11.extensions; sl; sl = sl->next) {
+      if(*sl->str) fprintf(f, "XF86Ext:   Load\t\t\"%s\"\n", sl->str);
+    }
+    for(sl = x11_driver->x11.options; sl; sl = sl->next) {
+      if(*sl->str) fprintf(f, "XF86Raw:   Option\t\"%s\"\n", sl->str);
+    }
+    for(sl = x11_driver->x11.raw; sl; sl = sl->next) {
+      if(*sl->str) fprintf(f, "XF86Raw:   %s\n", sl->str);
+    }
+  }
+
   fclose(f);
 
   return 0;
