@@ -1,3 +1,11 @@
+24/9/2001:	v3.24
+	- added LSIFC9xx/LSI409xx Fibre Channel (#11251)
+
+24/9/2001:	v3.23
+	- use aic7xxx_old one some controllers (#11202)
+	- use de4x5 instead of tulip for one card (#11093)
+	- updated X11 data
+
 20/9/2001:	v3.22
 	- make AIPTEK tablet a mouse again
 	- added old_unique_id field

@@ -5,13 +5,17 @@
 
 #
 
-# generated at: Wed Sep 19 17:35:15 2001
+# generated at: Mon Sep 24 12:06:44 2001
 
 # data source:  CDB
 
 # distribution: Stable
 
 #
+
+# ATI Technologies Inc:3D Rage Pro
+1002 4749
+	x	4|ati||||dpms||||
 
 # ATI Technologies Inc:3D Rage Pro 215GP
 1002 4750
@@ -95,7 +99,7 @@
 
 #
 
-# generated at: Wed Sep 19 17:35:15 2001
+# generated at: Mon Sep 24 12:06:44 2001
 
 # data source:  CDB
 
@@ -122,6 +126,10 @@ s4001 0004
 # Sun Microsystems:Sun|Graphics Tower (gt)
 s4001 0005
 	x	3|||||||||
+
+# ATI Technologies Inc:3D Rage Pro
+1002 4749
+	x	3|FBDEV||||||||
 
 # ATI Technologies Inc:3D Rage Pro 215GP
 1002 4750
@@ -178,10 +186,6 @@ s4001 0005
 # Matrox Graphics, Inc.:MGA 1064SG [Mystique]
 102b 051a
 	x	3|FBDEV|||||7|||
-
-# ATI Technologies Inc:264VT4 [Mach64 VT4]
-1002 5656
-	x	3|FBDEV||||||||
 
 # ATI Technologies Inc:3D Rage LT-G 215LG
 1002 4c47

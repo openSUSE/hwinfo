@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Wed Sep 19 17:35:15 2001
+# generated at: Mon Sep 24 12:06:44 2001
 
 # data source:  CDB
 
@@ -75,10 +75,6 @@
 
 # Cirrus Logic:GD 5462
 1013 00d0
-	x	4|cirrus||||||||
-
-# Cirrus Logic:GD 5446
-1013 00b8
 	x	4|cirrus||||||||
 
 # Cirrus Logic:GD 5436 [Alpine]
@@ -188,10 +184,6 @@
 # ATI Technologies Inc:Mobility M3 AGP 2x
 1002 4c46
 	x	4|r128||||||||
-
-# ATI Technologies Inc:3D Rage P/M Mobility AGP 2x
-1002 4c4d
-	x	4|ati|||||e|||
 
 # ATI Technologies Inc:3D Rage L Mobility AGP 2x
 1002 4c4e
@@ -316,10 +308,6 @@
 # Trident Microsystems:TGUI 9660/968x/968x
 1023 9660
 	x	4|trident||||||||
-
-# Trident Microsystems:3DIm`age 975
-1023 9750
-	x	4|trident|||||f|||
 
 # Matrox Graphics, Inc.:MGA 2164W [Millennium II]
 102b 051b
@@ -1060,11 +1048,11 @@ edd8 a099
 
 # Matrox Graphics, Inc.:G550
 102b 2527
-	x	4|mga|||||d|||
+	x	4|mga||||NoHal|d|||
 
 # Matrox Graphics, Inc.:G550
 102b 2527
-	x	4|mga|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
+	x	4|mga|3d|xf86_glx|glx,dri|NoHal|4||switch2xf86_glx|
 
 #
 
@@ -1072,7 +1060,7 @@ edd8 a099
 
 #
 
-# generated at: Wed Sep 19 17:35:15 2001
+# generated at: Mon Sep 24 12:06:44 2001
 
 # data source:  CDB
 
@@ -1186,10 +1174,6 @@ edd8 a099
 
 # Cirrus Logic:GD 5462
 1013 00d0
-	x	3|SVGA||||||||
-
-# Cirrus Logic:GD 5446
-1013 00b8
 	x	3|SVGA||||||||
 
 # Cirrus Logic:GD 5440
@@ -1314,10 +1298,6 @@ edd8 a099
 
 # ATI Technologies Inc:3D Rage LT Pro AGP-66
 1002 4c44
-	x	3|MACH64||||||||
-
-# ATI Technologies Inc:3D Rage P/M Mobility AGP 2x
-1002 4c4d
 	x	3|MACH64||||||||
 
 # ATI Technologies Inc:3D Rage L Mobility AGP 2x

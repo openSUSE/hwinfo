@@ -21,6 +21,13 @@
 134a 0002
 	i	initio
 
+# scsi/aic7xxx_old.c
+# see bug #11202
+9005 0080 9005 e220
+9005 008f 9005 008f
+	i	aic7xxx_old
+	i	aic7xxx
+
 # scsi/aic7xxx.c
 9004 1078
 9004 2178
@@ -58,6 +65,7 @@
 9005 00c3
 9005 00cf
 	i	aic7xxx
+	i	aic7xxx_old
 
 # scsi/atp870u.c
 1191 8002
@@ -114,6 +122,10 @@
 1000 000a+4
 	i	ncr53c8xx
 	i	sym53c8xx
+
+# message/fusion/
+1000 0621+5
+	i	mptbase|mptscsih
 
 # scsi/qlogicisp.c
 1077 1020

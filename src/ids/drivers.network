@@ -101,6 +101,11 @@
 108d 0012+3
 	i	tlan
 
+# see bug #11093
+1011 0019 146c 1430
+	i	de4x5
+	i	tulip
+
 # net/de4x5.c
 # prefer tulip over de4x5 (bug #7317)
 1011 0002
