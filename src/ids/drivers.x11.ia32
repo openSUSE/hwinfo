@@ -559,10 +559,6 @@
 10de 0113
 	x	4|fbdev||||||||
 
-# nVidia Corporation:Quadro2 MXR/EX/Go
-10de 0113
-	x	4|fbdev|3d|||||||
-
 # nVidia Corporation:GeForce2 GTS
 10de 0150
 	x	4|nv||||||||
@@ -1458,18 +1454,6 @@ edd8 a099
 # Matrox Graphics, Inc.:G450 PCI
 102b 0525 102b 0d41
 	x	4|mga|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
-
-# Siemens Nixdorf AG:FSC Celsius Mobile WF1H
-10de 0113 110a 0082
-	x	4|nv||||FlatPanel||||
-		#Option "CrtcNumber" "0"
-		#Option "CrtcNumber" "1"
-
-# Siemens Nixdorf AG:FSC Celsius Mobile WF1H
-10de 0113 110a 0082
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx|FlatPanel|4||switch2nvidia_glx|
-		#Option "CrtcNumber" "0"
-		#Option "CrtcNumber" "1"
 
 # Matrox Graphics, Inc.:G550
 102b 2527

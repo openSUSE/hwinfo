@@ -104,8 +104,9 @@
 108d 0012+3
 	i	tlan
 
-# see bug #11093
+# see bugs #11093, #15303
 1011 0019 146c 1430
+1011 0019 1113 1207
 	i	de4x5
 	i	tulip
 
@@ -327,4 +328,9 @@ PNP 80f7+2
 # net/dl2k.c
 1186 4000
 	i	dl2k
+
+# see #14848
+1385 4100
+	m	prism2_plx
+	i	p80211|prism2_plx
 

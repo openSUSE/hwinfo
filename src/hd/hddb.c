@@ -880,7 +880,9 @@ void init_hddb_pci(hd_data_t *hd_data)
 
   if(hd_data->hddb_pci) return;
 
-  if(!uname(&ubuf)) {
+  /* during installation, the file is in /etc */
+  sl0 = read_file("/etc/modules.pcimap", 1, 0);
+  if(!sl0 && !uname(&ubuf)) {
     str_printf(&s, 0, "/lib/modules/%s/modules.pcimap", ubuf.release);
     sl0 = read_file(s, 1, 0);
     s = free_mem(s);

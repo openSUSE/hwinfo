@@ -1,3 +1,10 @@
+24/3/2002:	v4.21
+	- read bios data in libhd_tiny (to allow vaio handling in linuxrc, #12075)
+	- read /etc/module.pcimap, too (it's there during installation)
+	- new x11 data
+	- de4x5.o vs. tulip.o issue (#15303)
+	- added Netgear WLAN-Card data (#14848)
+
 21/3/2002:	v4.20
 	- remove /var/lib/hardware/LOCK in hwbootscan (#15217)
 	- updated X11 data

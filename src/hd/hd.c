@@ -1597,10 +1597,8 @@ void hd_scan(hd_data_t *hd_data)
    * to be able to read the right parport io,
    * we have to do this before scan_misc()
    */
-#ifndef LIBHD_TINY
 #if defined(__i386__)
   hd_scan_bios(hd_data);
-#endif
 #endif
   
   /* before hd_scan_misc(): we need some ppc info later */

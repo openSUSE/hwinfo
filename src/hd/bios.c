@@ -92,6 +92,8 @@ void hd_scan_bios(hd_data_t *hd_data)
   hd->detail->type = hd_detail_bios;
   hd->detail->bios.data = bt = new_mem(sizeof *bt);
 
+#ifndef LIBHD_TINY
+
   /*
    * first, look for APM support
    */
@@ -147,6 +149,8 @@ void hd_scan_bios(hd_data_t *hd_data)
     free_str_list(sl0);
   }
 
+#endif		/* !defined(LIBHD_TINY) */
+
   /*
    * get the i/o ports for the parallel & serial interfaces from the BIOS
    * memory area starting at 0x40:0
@@ -160,6 +164,8 @@ void hd_scan_bios(hd_data_t *hd_data)
   hd_data->bios_rom.start = BIOS_ROM_START;
   hd_data->bios_rom.size = BIOS_ROM_SIZE;
   read_memory(&hd_data->bios_rom);
+
+#ifndef LIBHD_TINY
 
   if(hd_data->bios_ram.data) {
     bios_ram = hd_data->bios_ram.data;
@@ -353,6 +359,8 @@ void hd_scan_bios(hd_data_t *hd_data)
     }
 
   }
+
+#endif		/* !defined(LIBHD_TINY) */
 
 }
 
