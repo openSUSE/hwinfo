@@ -793,6 +793,216 @@
 +device.name		DSB-650X(PNA)
 
 
+ vendor.id		usb 0x03e8
+&device.id		usb 0x0008
+|vendor.id		usb 0x04bb
+&device.id		usb 0x0901
+|vendor.id		usb 0x0506
+&device.id		usb 0x03e8
+|vendor.id		usb 0x0506
+&device.id		usb 0x11f8
+|vendor.id		usb 0x0557
+&device.id		usb 0x2002
+|vendor.id		usb 0x0557
+&device.id		usb 0x4000
+|vendor.id		usb 0x0565
+&device.id		usb 0x0002+0x0002
+|vendor.id		usb 0x0565
+&device.id		usb 0x0005
+|vendor.id		usb 0x05e9
+&device.id		usb 0x0008+0x0002
+|vendor.id		usb 0x06e1
+&device.id		usb 0x0008+0x0002
+|vendor.id		usb 0x0707
+&device.id		usb 0x0100
+|vendor.id		usb 0x07aa
+&device.id		usb 0x0001
+|vendor.id		usb 0x07b8
+&device.id		usb 0x4000
+|vendor.id		usb 0x0846
+&device.id		usb 0x1001+0x0002
+|vendor.id		usb 0x085a
+&device.id		usb 0x0008+0x0002
+|vendor.id		usb 0x087d
+&device.id		usb 0x5704
+|vendor.id		usb 0x0951
+&device.id		usb 0x0008
+|vendor.id		usb 0x095a
+&device.id		usb 0x3003
+|vendor.id		usb 0x10bd
+&device.id		usb 0x1427
+|vendor.id		usb 0x1342
+&device.id		usb 0x0204
+|vendor.id		usb 0x13d2
+&device.id		usb 0x0400
+|vendor.id		usb 0x1485
+&device.id		usb 0x0001
+|vendor.id		usb 0x1645
+&device.id		usb 0x0005
+|vendor.id		usb 0x1645
+&device.id		usb 0x0008
+|vendor.id		usb 0x1645
+&device.id		usb 0x8005
+|vendor.id		usb 0x2001
+&device.id		usb 0x4000
++baseclass.id		0x002
++subclass.id		0x00
++driver.module.modprobe	kaweth
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x811c
+|vendor.id		usb 0x0411
+&device.id		usb 0x0001
+|vendor.id		usb 0x0411
+&device.id		usb 0x0005
+|vendor.id		usb 0x0411
+&device.id		usb 0x0009
+|vendor.id		usb 0x045e
+&device.id		usb 0x007a
+|vendor.id		usb 0x049f
+&device.id		usb 0x8511
+|vendor.id		usb 0x04bb
+&device.id		usb 0x0904
+|vendor.id		usb 0x04bb
+&device.id		usb 0x0913
+|vendor.id		usb 0x0506
+&device.id		usb 0x4601
+|vendor.id		usb 0x050d
+&device.id		usb 0x0121
+|vendor.id		usb 0x0557
+&device.id		usb 0x2007
+|vendor.id		usb 0x056e
+&device.id		usb 0x200c
+|vendor.id		usb 0x056e
+&device.id		usb 0x4002
+|vendor.id		usb 0x056e
+&device.id		usb 0x400b
+|vendor.id		usb 0x056e
+&device.id		usb 0xabc1
+|vendor.id		usb 0x05cc
+&device.id		usb 0x3000
+|vendor.id		usb 0x066b
+&device.id		usb 0x200c
+|vendor.id		usb 0x066b
+&device.id		usb 0x2203+0x0002
+|vendor.id		usb 0x066b
+&device.id		usb 0x2206
+|vendor.id		usb 0x066b
+&device.id		usb 0x400b
+|vendor.id		usb 0x067c
+&device.id		usb 0x1001
+|vendor.id		usb 0x0707
+&device.id		usb 0x0200+0x0002
+|vendor.id		usb 0x07a6
+&device.id		usb 0x07c2
+|vendor.id		usb 0x07a6
+&device.id		usb 0x0986
+|vendor.id		usb 0x07a6
+&device.id		usb 0x8511
+|vendor.id		usb 0x07a6
+&device.id		usb 0x8513
+|vendor.id		usb 0x07a6
+&device.id		usb 0x8515
+|vendor.id		usb 0x07aa
+&device.id		usb 0x0004
+|vendor.id		usb 0x07aa
+&device.id		usb 0x000d
+|vendor.id		usb 0x07b8
+&device.id		usb 0x110c
+|vendor.id		usb 0x07b8
+&device.id		usb 0x200c
+|vendor.id		usb 0x07b8
+&device.id		usb 0x4002
+|vendor.id		usb 0x07b8
+&device.id		usb 0x4004
+|vendor.id		usb 0x07b8
+&device.id		usb 0x4007
+|vendor.id		usb 0x07b8
+&device.id		usb 0x400b+0x0002
+|vendor.id		usb 0x07b8
+&device.id		usb 0x4102
+|vendor.id		usb 0x07b8
+&device.id		usb 0x4104
+|vendor.id		usb 0x07b8
+&device.id		usb 0xabc1
+|vendor.id		usb 0x07c9
+&device.id		usb 0xb100
+|vendor.id		usb 0x083a
+&device.id		usb 0x1046
+|vendor.id		usb 0x083a
+&device.id		usb 0x5046
+|vendor.id		usb 0x0846
+&device.id		usb 0x1020
+|vendor.id		usb 0x08d1
+&device.id		usb 0x0003
+|vendor.id		usb 0x08dd
+&device.id		usb 0x0986+0x0003
+|vendor.id		usb 0x08dd
+&device.id		usb 0x8511
+|vendor.id		usb 0x0951
+&device.id		usb 0x000a
+|vendor.id		usb 0x0b39
+&device.id		usb 0x0109
+|vendor.id		usb 0x0b39
+&device.id		usb 0x0901
+|vendor.id		usb 0x0db7
+&device.id		usb 0x0002
+|vendor.id		usb 0x0e66
+&device.id		usb 0x400c
+|vendor.id		usb 0x1044
+&device.id		usb 0x8002
+|vendor.id		usb 0x1342
+&device.id		usb 0x0304
+|vendor.id		usb 0x15e8
+&device.id		usb 0x9100
+|vendor.id		usb 0x15e8
+&device.id		usb 0x9110
+|vendor.id		usb 0x2001
+&device.id		usb 0x200c
+|vendor.id		usb 0x2001
+&device.id		usb 0x4001+0x0003
+|vendor.id		usb 0x2001
+&device.id		usb 0x400b
+|vendor.id		usb 0x2001
+&device.id		usb 0x4102
+|vendor.id		usb 0x2001
+&device.id		usb 0xabc1
+|vendor.id		usb 0x3334
+&device.id		usb 0x1701
++baseclass.id		0x002
++subclass.id		0x00
++driver.module.modprobe	pegasus
+
+ vendor.id		usb 0x0411
+&device.id		usb 0x0012
+|vendor.id		usb 0x07b8
+&device.id		usb 0x401a
+|vendor.id		usb 0x0bda
+&device.id		usb 0x8150
+|vendor.id		usb 0x3980
+&device.id		usb 0x0003
++baseclass.id		0x002
++subclass.id		0x00
++driver.module.modprobe	rtl8150
+
+ vendor.id		usb 0x0423
+&device.id		usb 0x000a
+|vendor.id		usb 0x0423
+&device.id		usb 0x000c
+|vendor.id		usb 0x08d1
+&device.id		usb 0x0001
++baseclass.id		0x002
++subclass.id		0x00
++driver.module.modprobe	catc
+
+ vendor.id		usb 0x066b
+&device.id		usb 0x2202
++baseclass.id		0x002
++subclass.id		0x00
++driver.module.modprobe	pegasus
++driver.module.modprobe	kaweth
+
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # myrinet adapter
 

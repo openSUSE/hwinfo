@@ -1,0 +1,62 @@
+#! /usr/bin/perl
+
+#
+# read /etc/pcmcia/config file
+#
+
+while(<>) {
+  if(/^\s*card\s+"(.*)"\s*$/) {
+    push @cards, $card;
+    undef $card;
+    $card->{name} = $1;
+    next;
+  }
+
+  if(/^\s*bind\s+"(\S+)"\s*$/) {
+    push @{$card->{modules}}, $1;
+    next;
+  }
+
+  if(/^\s*bind\s+"(\S+)"\s*to\s*\d,\s*"(\S+)"\s*to\s*\d\s*$/) {
+    push @{$card->{modules}}, $1;
+    push @{$card->{modules}}, $2;
+    next;
+  }
+
+  if(/^\s*manfid\s+(0x\S+),\s*(0x\S+)\s*$/) {
+    $card->{vendor} = sprintf("0x%04x", hex $1);
+    $card->{device} = sprintf("0x%04x", hex $2);
+    next;
+  }
+
+}
+
+for (@cards) {
+  next unless $_->{modules};
+  next unless $_->{name} =~ /ethernet/i;
+  for $mods (@{$_->{modules}}) {
+    $eth{$mods} = 1;
+  }
+}
+
+
+for (@cards) {
+  next unless $_->{vendor};
+  next unless $_->{modules};
+  print "# $_->{name}\n";
+  print " vendor.id\t\tpcmcia $_->{vendor}\n";
+  print "&device.id\t\tpcmcia $_->{device}\n";
+  if($_->{modules}) {
+    $eth = 1;
+    for $mods (@{$_->{modules}}) {
+      $eth = 0 unless $eth{$mods};
+      print "+driver.module.modprobe\t$mods\n";
+    }
+    if($eth) {
+      print "+baseclass.id\t\t0x002\n";
+      print "+subclass.id\t\t0x00\n";
+    }
+  }
+  print "\n";
+}
+

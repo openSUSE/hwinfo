@@ -1,293 +1,792 @@
- vendor.id		pcmcia 0x0004
-&device.id		pcmcia 0x0004
-+driver.module.modprobe	fmvj18x_cs
+# Generic AX88190 or pcnet Fast Ethernet
+ vendor.id		pcmcia 0x0149
+&device.id		pcmcia 0xc1ab
++driver.module.modprobe	axnet_cs
++baseclass.id		0x002
++subclass.id		0x00
 
- vendor.id		pcmcia 0x000b
-&device.id		pcmcia 0x7300
-|vendor.id		pcmcia 0x0089
-&device.id		pcmcia 0x0001
-|vendor.id		pcmcia 0x0138
-&device.id		pcmcia 0x0002
-|vendor.id		pcmcia 0x014d
-&device.id		pcmcia 0x0001
-|vendor.id		pcmcia 0x0156
-&device.id		pcmcia 0x0002
-|vendor.id		pcmcia 0x016b
-&device.id		pcmcia 0x0001
-|vendor.id		pcmcia 0x01eb
-&device.id		pcmcia 0x080a
-|vendor.id		pcmcia 0x0261
-&device.id		pcmcia 0x0002
-|vendor.id		pcmcia 0x0268
-&device.id		pcmcia 0x0001
-|vendor.id		pcmcia 0x0274
-&device.id		pcmcia 0x1613
-|vendor.id		pcmcia 0x028a
-&device.id		pcmcia 0x0002
-|vendor.id		pcmcia 0x028a
-&device.id		pcmcia 0x0673
-|vendor.id		pcmcia 0x02ac
-&device.id		pcmcia 0x0002
-|vendor.id		pcmcia 0xd601
-&device.id		pcmcia 0x0002
-|vendor.id		pcmcia 0xd601
-&device.id		pcmcia 0x0005
-+driver.module.modprobe	orinoco_cs
-
- vendor.id		pcmcia 0x0032
-&device.id		pcmcia 0x0704
-|vendor.id		pcmcia 0x00a4
-&device.id		pcmcia 0x002d
-+driver.module.modprobe	ide-cs
-
- vendor.id		pcmcia 0x0057
-&device.id		pcmcia 0x0021
-|vendor.id		pcmcia 0x0104
-&device.id		pcmcia 0x000a
-|vendor.id		pcmcia 0x0105
-&device.id		pcmcia 0xea15
-|vendor.id		pcmcia 0x0143
-&device.id		pcmcia 0x3341
-|vendor.id		pcmcia 0x0143
-&device.id		pcmcia 0xc0ab
-|vendor.id		pcmcia 0x0175
-&device.id		pcmcia 0x0000
-|vendor.id		pcmcia 0x021b
-&device.id		pcmcia 0x0101
-|vendor.id		pcmcia 0x08a1
-&device.id		pcmcia 0xc0ab
-+driver.module.modprobe	pcnet_cs
-+driver.module.modprobe	serial_cs
-
- vendor.id		pcmcia 0x0057
-&device.id		pcmcia 0x1004
-|vendor.id		pcmcia 0x0104
-&device.id		pcmcia 0x000d
-|vendor.id		pcmcia 0x0104
-&device.id		pcmcia 0x0075
-|vendor.id		pcmcia 0x0104
-&device.id		pcmcia 0x0145
-|vendor.id		pcmcia 0x0149
-&device.id		pcmcia 0x0230
-|vendor.id		pcmcia 0x0149
-&device.id		pcmcia 0x4530
-|vendor.id		pcmcia 0x0186
-&device.id		pcmcia 0x0110
-|vendor.id		pcmcia 0x01bf
-&device.id		pcmcia 0x2216
-|vendor.id		pcmcia 0x01bf
-&device.id		pcmcia 0x2328
-|vendor.id		pcmcia 0x01bf
-&device.id		pcmcia 0x8041
-|vendor.id		pcmcia 0x0213
-&device.id		pcmcia 0x2452
-|vendor.id		pcmcia 0x021b
-&device.id		pcmcia 0x0202
-|vendor.id		pcmcia 0x026f
-&device.id		pcmcia 0x0300
-|vendor.id		pcmcia 0x026f
-&device.id		pcmcia 0x030a
-|vendor.id		pcmcia 0x0274
-&device.id		pcmcia 0x1103
-|vendor.id		pcmcia 0x0274
-&device.id		pcmcia 0x1121
-|vendor.id		pcmcia 0xc00f
-&device.id		pcmcia 0x0002
-+driver.module.modprobe	pcnet_cs
-
- vendor.id		pcmcia 0x0089
-&device.id		pcmcia 0x0102
-|vendor.id		pcmcia 0x0089
-&device.id		pcmcia 0x0113
-|vendor.id		pcmcia 0x00a4
-&device.id		pcmcia 0x0113
-|vendor.id		pcmcia 0x0105
-&device.id		pcmcia 0x0500
-|vendor.id		pcmcia 0x0149
-&device.id		pcmcia 0x0231
-|vendor.id		pcmcia 0x0149
-&device.id		pcmcia 0xc2ab
-|vendor.id		pcmcia 0x0186
-&device.id		pcmcia 0x0101
-|vendor.id		pcmcia 0x01bf
-&device.id		pcmcia 0x2220
-|vendor.id		pcmcia 0x01bf
-&device.id		pcmcia 0x2225
-|vendor.id		pcmcia 0x01bf
-&device.id		pcmcia 0x2227
-|vendor.id		pcmcia 0x01bf
-&device.id		pcmcia 0x8036
-|vendor.id		pcmcia 0x01da
-&device.id		pcmcia 0x0081
-|vendor.id		pcmcia 0x01da
-&device.id		pcmcia 0x0090
-|vendor.id		pcmcia 0x021b
-&device.id		pcmcia 0x0510
-|vendor.id		pcmcia 0x022d
-&device.id		pcmcia 0x2103
-|vendor.id		pcmcia 0x02ac
-&device.id		pcmcia 0x1012
-|vendor.id		pcmcia 0x13d1
-&device.id		pcmcia 0xab02+0x0002
-|vendor.id		pcmcia 0x50c7
-&device.id		pcmcia 0xcafe
-|vendor.id		pcmcia 0x9513
-&device.id		pcmcia 0x0081
-|vendor.id		pcmcia 0xe815
-&device.id		pcmcia 0x0081
-+driver.module.modprobe	tulip_cb
-
- vendor.id		pcmcia 0x0089
-&device.id		pcmcia 0x0103
-+driver.module.modprobe	eepro100_cb
-
- vendor.id		pcmcia 0x0089
-&device.id		pcmcia 0x0301
-|vendor.id		pcmcia 0x0101
-&device.id		pcmcia 0x0039
-|vendor.id		pcmcia 0x0104
-&device.id		pcmcia 0x0006
-|vendor.id		pcmcia 0x010b
-&device.id		pcmcia 0x0d50+0x0004
-|vendor.id		pcmcia 0x010b
-&device.id		pcmcia 0xd180
-|vendor.id		pcmcia 0x0137
-&device.id		pcmcia 0x000e
-|vendor.id		pcmcia 0x0137
-&device.id		pcmcia 0x001b
-|vendor.id		pcmcia 0x0137
-&device.id		pcmcia 0x0025
-|vendor.id		pcmcia 0x0137
-&device.id		pcmcia 0x0045
-|vendor.id		pcmcia 0x0137
-&device.id		pcmcia 0x0052
-+driver.module.modprobe	serial_cs
-
- vendor.id		pcmcia 0x0089
-&device.id		pcmcia 0x1103
-+driver.module.modprobe	eepro100_cb
-+driver.module.modprobe	serial_cb
-
- vendor.id		pcmcia 0x0089
-&device.id		pcmcia 0x110a
-|vendor.id		pcmcia 0x0138
-&device.id		pcmcia 0x110a
-+driver.module.modprobe	xirc2ps_cs
-+driver.module.modprobe	serial_cs
-
- vendor.id		pcmcia 0x00a4
-&device.id		pcmcia 0x0103
-+driver.module.modprobe	tulip_cb
-+driver.module.modprobe	serial_cb
-
- vendor.id		pcmcia 0x0101
-&device.id		pcmcia 0x0035
-|vendor.id		pcmcia 0x0101
-&device.id		pcmcia 0x003d
-|vendor.id		pcmcia 0x0101
-&device.id		pcmcia 0x0562
-+driver.module.modprobe	3c589_cs
-+driver.module.modprobe	serial_cs
-
- vendor.id		pcmcia 0x0101
-&device.id		pcmcia 0x0556
-+driver.module.modprobe	3c574_cs
-+driver.module.modprobe	serial_cs
-
- vendor.id		pcmcia 0x0101
-&device.id		pcmcia 0x0574
-+driver.module.modprobe	3c574_cs
-
+# 3Com 589 Ethernet
  vendor.id		pcmcia 0x0101
 &device.id		pcmcia 0x0589
 +driver.module.modprobe	3c589_cs
++baseclass.id		0x002
++subclass.id		0x00
 
- vendor.id		pcmcia 0x0101
-&device.id		pcmcia 0x5057
-|vendor.id		pcmcia 0x0101
-&device.id		pcmcia 0x5157
-|vendor.id		pcmcia 0x0101
-&device.id		pcmcia 0x5257
-|vendor.id		pcmcia 0x0102
-&device.id		pcmcia 0x6560
-|vendor.id		pcmcia 0x0102
-&device.id		pcmcia 0x6562
-|vendor.id		pcmcia 0x0102
-&device.id		pcmcia 0x6564
-+driver.module.modprobe	3c575_cb
+# Allied Telesis LA-PCM Ethernet
+ vendor.id		pcmcia 0xc00f
+&device.id		pcmcia 0x0002
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
 
+# Buffalo LPC2-CLT Ethernet
+ vendor.id		pcmcia 0x026f
+&device.id		pcmcia 0x0300
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Buffalo LPC-CF-CLT Ethernet
+ vendor.id		pcmcia 0x026f
+&device.id		pcmcia 0x0307
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Buffalo LPC3-CLT Ethernet
+ vendor.id		pcmcia 0x026f
+&device.id		pcmcia 0x030a
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Connectware LANdingGear Ethernet
+ vendor.id		pcmcia 0x0057
+&device.id		pcmcia 0x1004
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Eagle NE200 Ethernet
+ vendor.id		pcmcia 0x0004
+&device.id		pcmcia 0x0004
++driver.module.modprobe	fmvj18x_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# iPort 10Mbps Ethernet
+ vendor.id		pcmcia 0x0274
+&device.id		pcmcia 0x1121
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Kingston CIO10T Ethernet
+ vendor.id		pcmcia 0x0186
+&device.id		pcmcia 0x0110
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Linksys NP10T Ethernet
+ vendor.id		pcmcia 0x0149
+&device.id		pcmcia 0xc1ab
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Melco LPC2-T Ethernet
+ vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x2216
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# NE2000 Compatible CF Ethernet
+ vendor.id		pcmcia 0x0149
+&device.id		pcmcia 0xc1ab
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Socket LP-E Ethernet
  vendor.id		pcmcia 0x0104
-&device.id		pcmcia 0x0070
-+driver.module.modprobe	serial_cs
+&device.id		pcmcia 0x000d
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
 
- vendor.id		pcmcia 0x0105
-&device.id		pcmcia 0x0007
-|vendor.id		pcmcia 0x015f
-&device.id		pcmcia 0x0005
-|vendor.id		pcmcia 0x015f
-&device.id		pcmcia 0x0007
-|vendor.id		pcmcia 0x015f
+# Socket LP-E CF+ Ethernet
+ vendor.id		pcmcia 0x0104
+&device.id		pcmcia 0x0075
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# WiseCom WC-PC400 Fast Ethernet
+ vendor.id		pcmcia 0x0186
+&device.id		pcmcia 0x0100
++driver.module.modprobe	smc91c92_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# 3Com 572/574 Fast Ethernet
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x0574
++driver.module.modprobe	3c574_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Accton Fast EtherCard-16
+ vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x010a
++driver.module.modprobe	xirc2ps_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Asix AX88190 Fast Ethernet
+ vendor.id		pcmcia 0x0274
+&device.id		pcmcia 0x1106
++driver.module.modprobe	axnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Belkin F5D5020 Fast Ethernet
+ vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x2328
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Buffalo LPC3-CLX Fast Ethernet
+ vendor.id		pcmcia 0x018a
+&device.id		pcmcia 0x0301
++driver.module.modprobe	axnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Buffalo LPC3-CLX Fast Ethernet
+ vendor.id		pcmcia 0x026f
+&device.id		pcmcia 0x0301
++driver.module.modprobe	axnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Buffalo LPC4-TX Fast Ethernet
+ vendor.id		pcmcia 0x026f
+&device.id		pcmcia 0x0303
++driver.module.modprobe	axnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Buffalo LPC4-CLX Fast Ethernet
+ vendor.id		pcmcia 0x026f
+&device.id		pcmcia 0x0309
++driver.module.modprobe	axnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# D-Link DFE-670-TXD Fast Ethernet
+ vendor.id		pcmcia 0x0149
+&device.id		pcmcia 0x4530
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# NE2000 Compatible Fast Ethernet
+ vendor.id		pcmcia 0x0149
+&device.id		pcmcia 0x0230
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# NE2000 Compatible Fast Ethernet
+ vendor.id		pcmcia 0x021b
+&device.id		pcmcia 0x0202
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Asix AX88190 Fast Ethernet
+ vendor.id		pcmcia 0x021b
+&device.id		pcmcia 0x0202
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Asix AX88190 Fast Ethernet
+ vendor.id		pcmcia 0x8a01
+&device.id		pcmcia 0xc1ab
++driver.module.modprobe	axnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Psion Gold Card NetGlobal 10/100 Fast Ethernet
+ vendor.id		pcmcia 0x016c
+&device.id		pcmcia 0x0023
++driver.module.modprobe	smc91c92_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# SMC 8041TX 10/100 Fast Ethernet
+ vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x8041
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Socket CF+ 10/100 Fast Ethernet
+ vendor.id		pcmcia 0x0104
+&device.id		pcmcia 0x0145
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# WiseCom iPort 10/100 Fast Ethernet
+ vendor.id		pcmcia 0x0274
+&device.id		pcmcia 0x1103
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Intersil PRISM2 11 Mbps Wireless Adapter
+ vendor.id		pcmcia 0x0156
+&device.id		pcmcia 0x0002
++driver.module.modprobe	orinoco_cs
+
+# 350 Series Wireless LAN Adapter
+ vendor.id		pcmcia 0x015f
 &device.id		pcmcia 0x000a
 +driver.module.modprobe	airo_cs
 
- vendor.id		pcmcia 0x0109
-&device.id		pcmcia 0x0501
-|vendor.id		pcmcia 0x0140
-&device.id		pcmcia 0x000a
-|vendor.id		pcmcia 0x016c
-&device.id		pcmcia 0x0020
-+driver.module.modprobe	smc91c92_cs
-+driver.module.modprobe	serial_cs
-
- vendor.id		pcmcia 0x012f
-&device.id		pcmcia 0xcb01
-+driver.module.modprobe	apa1480_cb
-
- vendor.id		pcmcia 0x0137
-&device.id		pcmcia 0x0003
-+driver.module.modprobe	parport_cs
-
- vendor.id		pcmcia 0x0140
-&device.id		pcmcia 0x000f
-|vendor.id		pcmcia 0x0140
-&device.id		pcmcia 0x0012
-|vendor.id		pcmcia 0x016c
+# Adaptec Ultra Wireless ANW-8030
+ vendor.id		pcmcia 0x9005
 &device.id		pcmcia 0x0021
-+driver.module.modprobe	epic_cb
-+driver.module.modprobe	serial_cb
++driver.module.modprobe	orinoco_cs
 
- vendor.id		pcmcia 0x0140
-&device.id		pcmcia 0x0011
-+driver.module.modprobe	epic_cb
+# Aironet PC4500
+ vendor.id		pcmcia 0x015f
+&device.id		pcmcia 0x0005
++driver.module.modprobe	airo_cs
 
- vendor.id		pcmcia 0x0149
-&device.id		pcmcia 0xc1ab
-|vendor.id		pcmcia 0x018a
-&device.id		pcmcia 0x0301
-|vendor.id		pcmcia 0x026f
-&device.id		pcmcia 0x0301
-|vendor.id		pcmcia 0x026f
-&device.id		pcmcia 0x0303
-|vendor.id		pcmcia 0x8a01
-&device.id		pcmcia 0xc1ab
-+driver.module.modprobe	axnet_cs
+# Aironet PC4800
+ vendor.id		pcmcia 0x015f
+&device.id		pcmcia 0x0007
++driver.module.modprobe	airo_cs
 
- vendor.id		pcmcia 0x016c
-&device.id		pcmcia 0x0023
-|vendor.id		pcmcia 0x0186
-&device.id		pcmcia 0x0100
-+driver.module.modprobe	smc91c92_cs
+# Airvast WN-100
+ vendor.id		pcmcia 0x50c2
+&device.id		pcmcia 0x7300
++driver.module.modprobe	orinoco_cs
 
- vendor.id		pcmcia 0x016c
-&device.id		pcmcia 0x0081
-+driver.module.modprobe	axnet_cs
-+driver.module.modprobe	serial_cs
+# AirWay 802.11 Adapter (PCMCIA)
+ vendor.id		pcmcia 0x0261
+&device.id		pcmcia 0x0002
++driver.module.modprobe	orinoco_cs
 
+# ARtem Onair Version 1.0
+ vendor.id		pcmcia 0x0268
+&device.id		pcmcia 0x0001
++driver.module.modprobe	orinoco_cs
+
+# ASUS SpaceLink WL-100
+ vendor.id		pcmcia 0x02aa
+&device.id		pcmcia 0x0002
++driver.module.modprobe	orinoco_cs
+
+# Buffalo WLI-PCM-S11
+ vendor.id		pcmcia 0x026f
+&device.id		pcmcia 0x0305
++driver.module.modprobe	orinoco_cs
+
+# Compaq WL100 11 Mbps Wireless Adapter
+ vendor.id		pcmcia 0x0138
+&device.id		pcmcia 0x0002
++driver.module.modprobe	orinoco_cs
+
+# Compaq HNW-100 11 Mbps Wireless Adapter
+ vendor.id		pcmcia 0x028a
+&device.id		pcmcia 0x0002
++driver.module.modprobe	orinoco_cs
+
+# Conceptronic CON11Cpro
+ vendor.id		pcmcia 0xc250
+&device.id		pcmcia 0x0002
++driver.module.modprobe	orinoco_cs
+
+# D-Link DCF660
+ vendor.id		pcmcia 0xd601
+&device.id		pcmcia 0x0005
++driver.module.modprobe	orinoco_cs
+
+# Intel PRO/Wireless 2011
+ vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x0001
++driver.module.modprobe	orinoco_cs
+
+# Linksys WPC11 11Mbps 802.11b WLAN Card
+ vendor.id		pcmcia 0x0274
+&device.id		pcmcia 0x1613
++driver.module.modprobe	orinoco_cs
+
+# Linksys WCF12 Wireless CompactFlash Card
+ vendor.id		pcmcia 0x028a
+&device.id		pcmcia 0x0673
++driver.module.modprobe	orinoco_cs
+
+# Nortel Networks eMobility 802.11 Wireless Adapter
+ vendor.id		pcmcia 0x01eb
+&device.id		pcmcia 0x080a
++driver.module.modprobe	orinoco_cs
+
+# PLANEX RoadLannerWave GW-NS11H
+ vendor.id		pcmcia 0x14ea
+&device.id		pcmcia 0xb001
++driver.module.modprobe	orinoco_cs
+
+# RayLink PC Card WLAN Adapter
  vendor.id		pcmcia 0x01a6
 &device.id		pcmcia 0x0000
 +driver.module.modprobe	ray_cs
 
+# Safeway 802.11b Wireless Adapter
+ vendor.id		pcmcia 0xd601
+&device.id		pcmcia 0x0002
++driver.module.modprobe	orinoco_cs
+
+# Sandisk Connect SDWCFB-000
+ vendor.id		pcmcia 0xd601
+&device.id		pcmcia 0x0005
++driver.module.modprobe	orinoco_cs
+
+# Sohoware NCP110
+ vendor.id		pcmcia 0x000b
+&device.id		pcmcia 0x7300
++driver.module.modprobe	orinoco_cs
+
+# SpeedStream SS1021 Wireless Adapter
+ vendor.id		pcmcia 0x02ac
+&device.id		pcmcia 0x0002
++driver.module.modprobe	orinoco_cs
+
+# Xircom Wireless Network Adapter
+ vendor.id		pcmcia 0x0105
+&device.id		pcmcia 0x0007
++driver.module.modprobe	airo_cs
+
+# ZCOMAX AirRunner/XI-300
+ vendor.id		pcmcia 0xd601
+&device.id		pcmcia 0x0002
++driver.module.modprobe	orinoco_cs
+
+# 3Com 3CCM156 56K Global Modem
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x0039
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# TDK Global Pro ISDN V.90 Modem
+ vendor.id		pcmcia 0x0105
+&device.id		pcmcia 0x410a
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# National Instruments PCMCIA-232
+ vendor.id		pcmcia 0x010b
+&device.id		pcmcia 0x0d50
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# National Instruments PCMCIA-232/2
+ vendor.id		pcmcia 0x010b
+&device.id		pcmcia 0x0d51
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# National Instruments PCMCIA-485
+ vendor.id		pcmcia 0x010b
+&device.id		pcmcia 0x0d52
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# National Instruments PCMCIA-485/2
+ vendor.id		pcmcia 0x010b
+&device.id		pcmcia 0x0d53
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# National Instruments PCMCIA-232/4
+ vendor.id		pcmcia 0x010b
+&device.id		pcmcia 0xd180
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Omega Engineering QSP-100
+ vendor.id		pcmcia 0x0137
+&device.id		pcmcia 0x0025
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Quatech Dual RS-232
+ vendor.id		pcmcia 0x0137
+&device.id		pcmcia 0x0052
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Quatech Quad RS-232
+ vendor.id		pcmcia 0x0137
+&device.id		pcmcia 0x001b
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Quatech Dual RS-422
+ vendor.id		pcmcia 0x0137
+&device.id		pcmcia 0x000e
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Quatech Quad RS-422
+ vendor.id		pcmcia 0x0137
+&device.id		pcmcia 0x0045
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Silicom 2S100 Dual Serial
+ vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x0301
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Socket Communications Dual RS-232
+ vendor.id		pcmcia 0x0104
+&device.id		pcmcia 0x0006
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Socket Communications Dual I/O Card
+ vendor.id		pcmcia 0x0104
+&device.id		pcmcia 0x0070
++driver.module.modprobe	serial_cs
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# 3Com 3c562/3c563 Ethernet/Modem
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x0562
++driver.module.modprobe	3c589_cs
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# 3Com/Megahertz 3CXEM556 Ethernet/Modem
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x0035
++driver.module.modprobe	3c589_cs
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# 3Com/Megahertz 3CXEM556 B-INT Ethernet/Modem
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x003d
++driver.module.modprobe	3c589_cs
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# 3Com/Megahertz 3CCFEM556 Ethernet/Modem
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x0556
++driver.module.modprobe	3c574_cs
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# NSC DP83903-based Ethernet/Modem
+ vendor.id		pcmcia 0x0175
+&device.id		pcmcia 0x0000
++driver.module.modprobe	pcnet_cs
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Psion Gold Card Netglobal 56K+10Mb Ethernet
+ vendor.id		pcmcia 0x016c
+&device.id		pcmcia 0x0020
++driver.module.modprobe	smc91c92_cs
++driver.module.modprobe	serial_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# Reliable Combo-L/M-56K
+ vendor.id		pcmcia 0x0213
+&device.id		pcmcia 0x2452
++driver.module.modprobe	pcnet_cs
++baseclass.id		0x002
++subclass.id		0x00
+
+# ATronics PCMCIA-IDE-CDROM/HDD
+ vendor.id		pcmcia 0x2080
+&device.id		pcmcia 0x0001
++driver.module.modprobe	ide-cs
+
+# IBM Max Portable CD-ROM
+ vendor.id		pcmcia 0x00a4
+&device.id		pcmcia 0x002d
++driver.module.modprobe	ide-cs
+
+# KME KXLC005 CD-ROM
+ vendor.id		pcmcia 0x0032
+&device.id		pcmcia 0x0704
++driver.module.modprobe	ide-cs
+
+# Quatech SPP-100 Parallel Port Card
+ vendor.id		pcmcia 0x0137
+&device.id		pcmcia 0x0003
++driver.module.modprobe	parport_cs
+
+# 3Com 3c575-TX Fast EtherLink XL
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x5057
++driver.module.modprobe	3c575_cb
+
+# 3Com 3CCFE575B/3CXFE575B Fast EtherLink XL
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x5157
++driver.module.modprobe	3c575_cb
+
+# 3Com 3CCFE575CT/3CXFE575CT Fast EtherLink XL
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x5257
++driver.module.modprobe	3c575_cb
+
+# 3Com 3CCFEM656B w/Winmodem
+ vendor.id		pcmcia 0x0102
+&device.id		pcmcia 0x6560
++driver.module.modprobe	3c575_cb
+
+# 3Com 3CCFEM656B w/Winmodem
+ vendor.id		pcmcia 0x0102
+&device.id		pcmcia 0x6562
++driver.module.modprobe	3c575_cb
+
+# 3Com 3CXFEM656C w/Winmodem
+ vendor.id		pcmcia 0x0102
+&device.id		pcmcia 0x6564
++driver.module.modprobe	3c575_cb
+
+# Accton EN2227 Fast Ethernet
  vendor.id		pcmcia 0x01bf
-&device.id		pcmcia 0x010a
-+driver.module.modprobe	xirc2ps_cs
+&device.id		pcmcia 0x2227
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Adaptec APA-1480 SCSI Host Adapter
+ vendor.id		pcmcia 0x012f
+&device.id		pcmcia 0xcb01
++driver.module.modprobe	apa1480_cb
+
+# Ambicom AMB8100 Fast Ethernet
+ vendor.id		pcmcia 0x9513
+&device.id		pcmcia 0x0081
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# AmbiCom CB100-EZ EzPort Fast Ethernet
+ vendor.id		pcmcia 0x022d
+&device.id		pcmcia 0x2103
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# D-Link DFE-660 Fast Ethernet
+ vendor.id		pcmcia 0x50c7
+&device.id		pcmcia 0xcafe
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# IBM 10/100 EtherJet CardBus
+ vendor.id		pcmcia 0x00a4
+&device.id		pcmcia 0x0113
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# IBM 10/100 EtherJet 56K CardBus
+ vendor.id		pcmcia 0x00a4
+&device.id		pcmcia 0x0103
++driver.module.modprobe	tulip_cb
++driver.module.modprobe	serial_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Intel EtherExpress PRO/100 CardBus
+ vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x0102
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Intel EtherExpress PRO/100 CardBus
+ vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x0113
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Intel EtherExpress PRO/100 CardBus II
+ vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x0103
++driver.module.modprobe	eepro100_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Intel EtherExpress PRO/100 LAN+Modem 56K CardBus II
+ vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x1103
++driver.module.modprobe	eepro100_cb
++driver.module.modprobe	serial_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Kingston KNE-CB4TX Fast Ethernet
+ vendor.id		pcmcia 0x0186
+&device.id		pcmcia 0x0101
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Linksys EtherFast 10/100
+ vendor.id		pcmcia 0x0149
+&device.id		pcmcia 0x0231
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Linksys EtherFast 10/100
+ vendor.id		pcmcia 0x0149
+&device.id		pcmcia 0xc2ab
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Linksys EtherFast PCMPC200 v2
+ vendor.id		pcmcia 0x13d1
+&device.id		pcmcia 0xab02
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Linksys EtherFast PCMPC200 v2
+ vendor.id		pcmcia 0x13d1
+&device.id		pcmcia 0xab03
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# NDC NCB100 Fast Ethernet
+ vendor.id		pcmcia 0xe815
+&device.id		pcmcia 0x0081
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# NetGear FA510C Fast Ethernet
+ vendor.id		pcmcia 0x9513
+&device.id		pcmcia 0x0081
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# PrimeXPress 10/100 Fast Ethernet
+ vendor.id		pcmcia 0x021b
+&device.id		pcmcia 0x0510
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Siemens SpeedStream SS1012 Fast Ethernet
+ vendor.id		pcmcia 0x02ac
+&device.id		pcmcia 0x1012
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Silicom Fast Ethernet
+ vendor.id		pcmcia 0x01da
+&device.id		pcmcia 0x0081
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Silicom FEM56 Fast Ethernet
+ vendor.id		pcmcia 0x01da
+&device.id		pcmcia 0x0090
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# SMC EZ 10/100 Fast Ethernet
+ vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x2220
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# SMC EZ 10/100 Fast Ethernet
+ vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x2225
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# SMC 8036TX EZ 10/100 Fast Ethernet
+ vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x8036
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# TDK NetworkFlyer 10/100 Fast Ethernet
+ vendor.id		pcmcia 0x0105
+&device.id		pcmcia 0x0500
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# UMAX Technologies UMAX250 Fast Ethernet
+ vendor.id		pcmcia 0x9513
+&device.id		pcmcia 0x0081
++driver.module.modprobe	tulip_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Ositech Seven of Spades Fast Ethernet
+ vendor.id		pcmcia 0x0140
+&device.id		pcmcia 0x0011
++driver.module.modprobe	epic_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Ositech Jack of Spades Fast Ethernet/Modem
+ vendor.id		pcmcia 0x0140
+&device.id		pcmcia 0x000f
++driver.module.modprobe	epic_cb
++driver.module.modprobe	serial_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Ositech Jack of Spades Fast Ethernet/Modem
+ vendor.id		pcmcia 0x0140
+&device.id		pcmcia 0x0012
++driver.module.modprobe	epic_cb
++driver.module.modprobe	serial_cb
++baseclass.id		0x002
++subclass.id		0x00
+
+# Psion Gold Card Netglobal 56K+10/100Mb CardBus
+ vendor.id		pcmcia 0x016c
+&device.id		pcmcia 0x0021
++driver.module.modprobe	epic_cb
++driver.module.modprobe	serial_cb
++baseclass.id		0x002
++subclass.id		0x00
 
