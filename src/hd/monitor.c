@@ -342,9 +342,14 @@ void add_monitor(hd_data_t *hd_data, devtree_t *dt)
 
 #endif	/* defined(__PPC__) */
 
+/* do some checks to ensure we got a reasonable block */
 int chk_edid_info(hd_data_t *hd_data, unsigned char *edid)
 {
+  // no vendor or model info
+  if(!(edid[0x08] || edid[0x09] || edid[0x0a] || edid[0x0b])) return 0;
 
+  // no edid version or revision
+  if(!(edid[0x12] || edid[0x13])) return 0;
 
   return 1;
 }
