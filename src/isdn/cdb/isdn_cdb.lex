@@ -39,7 +39,7 @@ SMP=			{item=SMP; BEGIN Value;}
 drv_id=			{item=drv_id; BEGIN Value;}
 drv_subtyp=		{item=drv_subtyp; BEGIN Value;}
 drv_typ=		{item=drv_typ; BEGIN Value;}
-interface=		{item=interface; BEGIN Value;}
+[iI]nterface=		{item=interface; BEGIN Value;}
 line_cnt=		{item=line_cnt; BEGIN Value;}
 line_protocol=		{item=line_protocol; BEGIN Value;}
 module=			{item=module; BEGIN Value;}
