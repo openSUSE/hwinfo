@@ -862,3 +862,6 @@
 &subclass.id		0x03
 +subclass.name		DVB-T Card
 
+ baseclass.id		0x112
++baseclass.name		TV Card
+

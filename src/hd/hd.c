@@ -3997,10 +3997,7 @@ char *vend_id2str(unsigned vend)
 void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 {
   int sc;		/* compare sub_class too */
-  int xtra;		/* some special test */
-  int ok;
   unsigned base_class, sub_class;
-  driver_info_t *di = NULL;
   hd_hw_item_t item;
 
   if(!hd) return;
@@ -4010,7 +4007,6 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 
       sc = 0;
       sub_class = 0;
-      xtra = 0;
 
       switch(item) {
         case hw_cdrom:
@@ -4094,10 +4090,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           break;
 
         case hw_tv:
-          base_class = bc_multimedia;
-          sub_class = sc_multi_video;
-          sc = 1;
-          xtra = 1;
+          base_class = bc_tv;
           break;
 
         case hw_dvb:
@@ -4175,16 +4168,6 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         )
       ) {
 
-#if 0
-        /* ##### fix? card bus magic: don't list card bus devices */
-        if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
-          if(
-            bridge_hd->base_class == bc_bridge &&
-            bridge_hd->sub_class == sc_bridge_cardbus
-          ) continue;
-        }
-#endif
-
         /* ISA-PnP sound cards: just one entry per card */
         if(
           item == hw_sound &&
@@ -4193,29 +4176,9 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           hd->func
         ) continue;
 
-        ok = 0;
 
-        switch(xtra) {
-          case 1:		/* tv cards */
-            di = hd->driver_info;
-            if(
-              di &&
-              (di->any.type == di_any || di->any.type == di_module) &&
-              di->any.hddb0 && di->any.hddb0->str &&
-              !strcmp(di->any.hddb0->str, "bttv")
-            ) {
-              ok = 1;
-            }
-            break;
-
-          default:
-            ok = 1;
-        }
-
-        if(ok) {
-          hd->hw_class = item;
-          break;
-        }
+        hd->hw_class = item;
+        break;
       }
     }
 

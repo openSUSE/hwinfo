@@ -1,6 +1,9 @@
+8/8/2002:	v5.06
 	- extended isdn package info
 	- detect dvb cards
 	- fixed reading driver info
+	- updated driver info
+	- changed tv card detection code
 
 6/8/2002:	v5.05
 	- minor libhd interface changes

@@ -1,0 +1,475 @@
+# network controller
+
+
+# net/tokenring/tmspci.c
+ vendor.id		pci 0x0e11
+&device.id		pci 0x0508
+|vendor.id		pci 0x10b7
+&device.id		pci 0x3390
+|vendor.id		pci 0x10da
+&device.id		pci 0x0508
+|vendor.id		pci 0x1148
+&device.id		pci 0x4200
++driver.module.insmod	tmspci
+
+# net/tlan.c
+ vendor.id		pci 0x0e11
+&device.id		pci 0xae32
+|vendor.id		pci 0x0e11
+&device.id		pci 0xae34+0x0002
+|vendor.id		pci 0x0e11
+&device.id		pci 0xae40
+|vendor.id		pci 0x0e11
+&device.id		pci 0xae43
+|vendor.id		pci 0x0e11
+&device.id		pci 0xb011+0x0002
+|vendor.id		pci 0x0e11
+&device.id		pci 0xb030
+|vendor.id		pci 0x0e11
+&device.id		pci 0xf130
+|vendor.id		pci 0x0e11
+&device.id		pci 0xf150
+|vendor.id		pci 0x108d
+&device.id		pci 0x0012+0x0003
++driver.module.insmod	tlan
+
+# net/yellowfin.c
+ vendor.id		pci 0x1000
+&device.id		pci 0x0701+0x0002
++driver.module.insmod	yellowfin
+
+# net/natsemi.c
+ vendor.id		pci 0x100b
+&device.id		pci 0x0020
++driver.module.insmod	natsemi
+
+# net/ns83820.c
+ vendor.id		pci 0x100b
+&device.id		pci 0x0022
++driver.module.insmod	ns83820
+
+# for an overview of de4x5 vs. tulip see bugs:
+# #7317, #11093, #15303, #16036, #17303
+
+# net/de4x5.c
+# net/tulip.c
+ vendor.id		pci 0x1011
+&device.id		pci 0x0014
+|vendor.id		pci 0x1011
+&device.id		pci 0x0019
+&subvendor.id		pci 0x1113
+&subdevice.id		pci 0x1207
++driver.module.insmod	de4x5
++driver.module.insmod	tulip
+
+ vendor.id		pci 0x1011
+&device.id		pci 0x0002
+|vendor.id		pci 0x1011
+&device.id		pci 0x0009
+|vendor.id		pci 0x1011
+&device.id		pci 0x0019
++driver.module.insmod	tulip
++driver.module.insmod	de4x5
+
+ vendor.id		pci 0x104a
+&device.id		pci 0x0981
+|vendor.id		pci 0x104a
+&device.id		pci 0x2774
+|vendor.id		pci 0x10d9
+&device.id		pci 0x0512
+|vendor.id		pci 0x10d9
+&device.id		pci 0x0531
+|vendor.id		pci 0x1113
+&device.id		pci 0x1217
+|vendor.id		pci 0x11ad
+&device.id		pci 0x0002
+|vendor.id		pci 0x11ad
+&device.id		pci 0xc115
+|vendor.id		pci 0x11f6
+&device.id		pci 0x9881
+|vendor.id		pci 0x125b
+&device.id		pci 0x1400
+|vendor.id		pci 0x1317
+&device.id		pci 0x0981
+|vendor.id		pci 0x1317
+&device.id		pci 0x0985
+|vendor.id		pci 0x1317
+&device.id		pci 0x1985
+|vendor.id		pci 0x13d1
+&device.id		pci 0xab02+0x0002
+|vendor.id		pci 0x8086
+&device.id		pci 0x0039
++driver.module.insmod	tulip
+
+# net/wan/lmc/lmc_main.c
+ vendor.id		pci 0x1011
+&device.id		pci 0x0009
+&subvendor.id		pci 0x1379
++driver.module.insmod	lmc
+
+# net/defxx.c
+ vendor.id		pci 0x1011
+&device.id		pci 0x000f
++driver.module.insmod	defxx
+
+# net/acenic.c
+ vendor.id		pci 0x1011
+&device.id		pci 0x001a
+|vendor.id		pci 0x10a9
+&device.id		pci 0x0009
+|vendor.id		pci 0x10b7
+&device.id		pci 0x0001
+|vendor.id		pci 0x12ae
+&device.id		pci 0x0001+0x0002
+|vendor.id		pci 0x1385
+&device.id		pci 0x620a
+|vendor.id		pci 0x1385
+&device.id		pci 0x630a
++driver.module.insmod	acenic
+
+# net/tokenring/lanstreamer.c 
+ vendor.id		pci 0x1014
+&device.id		pci 0x0018
++driver.module.insmod	lanstreamer
+
+# net/olympic.c
+ vendor.id		pci 0x1014
+&device.id		pci 0x003e
++driver.module.insmod	olympic
+
+# net/hp100.c
+ vendor.id		pci 0x101a
+&device.id		pci 0x0005
+|vendor.id		pci 0x103c
+&device.id		pci 0x1030+0x0002
+|vendor.id		pci 0x11f6
+&device.id		pci 0x0112
++driver.module.insmod	hp100
+
+# net/pcnet32.c
+ vendor.id		pci 0x1022
+&device.id		pci 0x2000+0x0002
++driver.module.modprobe	pcnet32
++driver.module.insmod	mii|pcnet32
+
+# net/sis900.c
+ vendor.id		pci 0x1039
+&device.id		pci 0x0900
+|vendor.id		pci 0x1039
+&device.id		pci 0x7016
++driver.module.insmod	sis900
+
+# net/winbond-840.c
+ vendor.id		pci 0x1050
+&device.id		pci 0x0840
+|vendor.id		pci 0x11f6
+&device.id		pci 0x2011
++driver.module.modprobe	winbond-840
++driver.module.insmod	mii|winbond-840
+
+# net/ne2k-pci.c
+ vendor.id		pci 0x1050
+&device.id		pci 0x0940
+|vendor.id		pci 0x1050
+&device.id		pci 0x5a5a
+|vendor.id		pci 0x10bd
+&device.id		pci 0x0e34
+|vendor.id		pci 0x10ec
+&device.id		pci 0x8029
+|vendor.id		pci 0x1106
+&device.id		pci 0x0926
+|vendor.id		pci 0x11f6
+&device.id		pci 0x1401
+|vendor.id		pci 0x12c3
+&device.id		pci 0x0058
+|vendor.id		pci 0x12c3
+&device.id		pci 0x5598
+|vendor.id		pci 0x4a14
+&device.id		pci 0x5000
+|vendor.id		pci 0x8e2e
+&device.id		pci 0x3000
++driver.module.modprobe	ne2k-pci
++driver.module.insmod	8390|ne2k-pci
+
+# net/sungem.c (pci)
+# (used to be gmac)
+ vendor.id		pci 0x106b
+&device.id		pci 0x0021
+|vendor.id		pci 0x106b
+&device.id		pci 0x0024
+|vendor.id		pci 0x108e
+&device.id		pci 0x1101
+|vendor.id		pci 0x108e
+&device.id		pci 0x2bad
++driver.module.insmod	sungem
+
+# net/fc/iph5526.c
+ vendor.id		pci 0x107e
+&device.id		pci 0x0004+0x0002
++driver.module.insmod	iph5526
+
+# net/sunhme.c (pci, sbus)
+ vendor.id		pci 0x108e
+&device.id		pci 0x1001
+|vendor.id		special 0x4001
+&device.id		special 0x3001
++driver.module.insmod	sunhme
+
+# net/tokenring/abyss.c
+ vendor.id		pci 0x10b6
+&device.id		pci 0x0002
++driver.module.insmod	abyss
+
+# net/3c59x.c
+ vendor.id		pci 0x10b7
+&device.id		pci 0x4500
+|vendor.id		pci 0x10b7
+&device.id		pci 0x5055
+|vendor.id		pci 0x10b7
+&device.id		pci 0x5057
+|vendor.id		pci 0x10b7
+&device.id		pci 0x5157
+|vendor.id		pci 0x10b7
+&device.id		pci 0x5257
+|vendor.id		pci 0x10b7
+&device.id		pci 0x5900
+|vendor.id		pci 0x10b7
+&device.id		pci 0x5920
+|vendor.id		pci 0x10b7
+&device.id		pci 0x5950+0x0003
+|vendor.id		pci 0x10b7
+&device.id		pci 0x5970
+|vendor.id		pci 0x10b7
+&device.id		pci 0x5b57
+|vendor.id		pci 0x10b7
+&device.id		pci 0x6055+0x0002
+|vendor.id		pci 0x10b7
+&device.id		pci 0x6560
+|vendor.id		pci 0x10b7
+&device.id		pci 0x6562
+|vendor.id		pci 0x10b7
+&device.id		pci 0x6564
+|vendor.id		pci 0x10b7
+&device.id		pci 0x7646
+|vendor.id		pci 0x10b7
+&device.id		pci 0x9000+0x0002
+|vendor.id		pci 0x10b7
+&device.id		pci 0x9004+0x0003
+|vendor.id		pci 0x10b7
+&device.id		pci 0x900a
+|vendor.id		pci 0x10b7
+&device.id		pci 0x9050+0x0002
+|vendor.id		pci 0x10b7
+&device.id		pci 0x9055
+|vendor.id		pci 0x10b7
+&device.id		pci 0x9058
+|vendor.id		pci 0x10b7
+&device.id		pci 0x905a
+|vendor.id		pci 0x10b7
+&device.id		pci 0x9200
+|vendor.id		pci 0x10b7
+&device.id		pci 0x9800
+|vendor.id		pci 0x10b7
+&device.id		pci 0x9805
++driver.module.insmod	3c59x
+
+# net/epic100.c
+ vendor.id		pci 0x10b8
+&device.id		pci 0x0005+0x0002
++driver.module.modprobe	epic100
++driver.module.insmod	mii|epic100
+
+# net/8139too.c
+ vendor.id		pci 0x10ec
+&device.id		pci 0x8129
+|vendor.id		pci 0x10ec
+&device.id		pci 0x8138+0x0002
+|vendor.id		pci 0x1113
+&device.id		pci 0x1211
+|vendor.id		pci 0x1186
+&device.id		pci 0x1300
+|vendor.id		pci 0x1500
+&device.id		pci 0x1360
+|vendor.id		pci 0x4033
+&device.id		pci 0x1360
++driver.module.modprobe	8139too
++driver.module.insmod	mii|8139too
+
+# net/via_rhine.c
+ vendor.id		pci 0x1106
+&device.id		pci 0x3043
+|vendor.id		pci 0x1106
+&device.id		pci 0x3065
+|vendor.id		pci 0x1106
+&device.id		pci 0x6100
++driver.module.modprobe	via-rhine
++driver.module.insmod	mii|via-rhine
+
+# net/skfp/
+ vendor.id		pci 0x1148
+&device.id		pci 0x4000
++driver.module.insmod	skfp
+
+# net/sk98lin/
+ vendor.id		pci 0x1148
+&device.id		pci 0x4300
++driver.module.insmod	sk98lin
+
+# net/dgrs.c
+ vendor.id		pci 0x114f
+&device.id		pci 0x0003
++driver.module.insmod	dgrs
+
+# net/irda/toshoboe.c
+ vendor.id		pci 0x1179
+&device.id		pci 0x0701
++driver.module.insmod	toshoboe
+
+# net/sundance.c
+ vendor.id		pci 0x1186
+&device.id		pci 0x1002
+|vendor.id		pci 0x13f0
+&device.id		pci 0x0201
++driver.module.insmod	sundance
+
+# net/dl2k.c
+ vendor.id		pci 0x1186
+&device.id		pci 0x4000
++driver.module.insmod	dl2k
+
+# net/wan/sdladrv.c
+ vendor.id		pci 0x11b0
+&device.id		pci 0x0002
++driver.module.insmod	sdladrv
+
+# net/rrunner.c
+ vendor.id		pci 0x120f
+&device.id		pci 0x0001
++driver.module.insmod	rrunner
+
+# net/dmfe.c
+ vendor.id		pci 0x1282
+&device.id		pci 0x9009
+|vendor.id		pci 0x1282
+&device.id		pci 0x9132
++driver.module.insmod	dmfe
+
+ vendor.id		pci 0x1282
+&device.id		pci 0x9100
+|vendor.id		pci 0x1282
+&device.id		pci 0x9102
++driver.module.insmod	tulip
++driver.module.insmod	dmfe
+
+# net/hamachi.c
+ vendor.id		pci 0x1318
+&device.id		pci 0x0911
++driver.module.insmod	hamachi
+
+# see #14848
+ vendor.id		pci 0x1385
+&device.id		pci 0x4100
++driver.module.modprobe	prism2_plx
++driver.module.insmod	p80211|prism2_plx
+
+# net/aironet4500_card.c
+ vendor.id		pci 0x14b9
+&device.id		pci 0x0001
+|vendor.id		pci 0x14b9
+&device.id		pci 0x4500
+|vendor.id		pci 0x14b9
+&device.id		pci 0x4800
++driver.module.insmod	aironet4500
+
+# net/tg3.c
+# net/bcm/b57um.c
+ vendor.id		pci 0x14e4
+&device.id		pci 0x1644+0x0002
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1647
++driver.module.insmod	tg3
++driver.module.insmod	bcm5700
+
+# net/arcnet/com20020-pci.c
+ vendor.id		pci 0x1571
+&device.id		pci 0xa001+0x0013
+|vendor.id		pci 0x1571
+&device.id		pci 0xa201+0x0006
++driver.module.insmod	om20020-pci
+
+# net/rcpci45.c
+ vendor.id		pci 0x4916
+&device.id		pci 0x1960
++driver.module.insmod	rcpci45
+
+# net/e1000_main.c
+ vendor.id		pci 0x8086
+&device.id		pci 0x1000+0x0002
+|vendor.id		pci 0x8086
+&device.id		pci 0x1004
+|vendor.id		pci 0x8086
+&device.id		pci 0x1008+2
+|vendor.id		pci 0x8086
+&device.id		pci 0x100c+7
++driver.module.insmod	e1000
+
+# net/e100.c
+ vendor.id		pci 0x8086
+&device.id		pci 0x1029
+|vendor.id		pci 0x8086
+&device.id		pci 0x2449
++driver.module.insmod	e100
+
+# net/eepro100.c
+ vendor.id		pci 0x8086
+&device.id		pci 0x1209
+|vendor.id		pci 0x8086
+&device.id		pci 0x1229
++driver.module.insmod	e100
++driver.module.insmod	eepro100
+
+# net/starfire.c
+ vendor.id		pci 0x9004
+&device.id		pci 0x6915
++driver.module.insmod	starfire
+
+# net/ne.c
+ vendor.id		AXE
+&device.id		eisa 0x2201
+|vendor.id		PNP
+&device.id		eisa 0x80d6
++driver.module.modprobe	ne
++driver.module.config	options ne		io=<io0> irq=<irq0>
++driver.module.insmod	isa-pnp|8390|ne io=<io0> irq=<irq0>
+
+# net/3c509.c
+ vendor.id		PNP
+&device.id		eisa 0x80f7+0x0002
+|vendor.id		TCM
+&device.id		eisa 0x5090+0x0002
+|vendor.id		TCM
+&device.id		eisa 0x5094+0x0002
+|vendor.id		TCM
+&device.id		eisa 0x5098
++driver.module.modprobe	3c509
+
+# mac ethernet controller
+ vendor.id		special 0x0401
+&device.id		special 0x0020
++driver.module.insmod	mace
+
+# mac ethernet controller
+ vendor.id		special 0x0401
+&device.id		special 0x0021+0x0002
++driver.module.insmod	bmac
+
+# net/sunqe.c (sbus)
+ vendor.id		special 0x4001
+&device.id		special 0x3003
++driver.module.insmod	sunqe
+
+# net/myri_sbus.c (sbus)
+ vendor.id		special 0x4001
+&device.id		special 0x3004
++driver.module.insmod	myri_sbus
+

@@ -6,15 +6,15 @@
 
  vendor.id		pci 0x11de
 &device.id		pci 0x6057
-+driver.any		buz
++driver.module.modprobe	buz
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # media/video/zr36120.c
-
+# (framegrabber)
  vendor.id		pci 0x11de
 &device.id		pci 0x6120
-+driver.any		zr36120
++driver.module.modprobe	zr36120
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -35,7 +35,9 @@
 &device.id		pci 0x0350+0x0002
 |vendor.id		pci 0x109e
 &device.id		pci 0x036e+0x0002
-+driver.any		bttv
++baseclass.id		0x112
++subclass.id		0x00
++driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
 &device.id		pci 0x036e
@@ -54,6 +56,8 @@
 &subvendor.id		pci 0x6606
 &subdevice.id		pci 0x217d
 +subdevice.name		Leadtek WinFast TV 2000
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -73,6 +77,8 @@
 &subvendor.id		pci 0xbd11
 &subdevice.id		pci 0x1200
 +subdevice.name		Pinnacle PCTV
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -92,6 +98,8 @@
 &subvendor.id		pci 0x1461
 &subdevice.id		pci 0x0003
 +subdevice.name		AVerMedia TVPhone98
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -111,6 +119,8 @@
 &subvendor.id		pci 0x153b
 &subdevice.id		pci 0x1134
 +subdevice.name		Terratec TValue
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -130,6 +140,8 @@
 &subvendor.id		pci 0x15b0
 &subdevice.id		pci 0x4010
 +subdevice.name		Zoltrix Genie TV / Radio
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -137,6 +149,8 @@
 &subvendor.id		pci 0x0070
 &subdevice.id		pci 0x13eb
 +subdevice.name		Hauppauge WinTV
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -144,6 +158,8 @@
 &subvendor.id		pci 0x0070
 &subdevice.id		pci 0x3900
 +subdevice.name		Hauppauge WinTV-D
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -151,6 +167,8 @@
 &subvendor.id		pci 0x0070
 &subdevice.id		pci 0x4500
 +subdevice.name		Hauppauge WinTV/PVR
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -158,6 +176,8 @@
 &subvendor.id		pci 0x0070
 &subdevice.id		pci 0xff00
 +subdevice.name		Osprey-100
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -165,6 +185,8 @@
 &subvendor.id		pci 0x0070
 &subdevice.id		pci 0xff01
 +subdevice.name		Osprey-200
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -172,6 +194,8 @@
 &subvendor.id		pci 0x1002
 &subdevice.id		pci 0x0001
 +subdevice.name		ATI TV Wonder
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -179,6 +203,8 @@
 &subvendor.id		pci 0x1002
 &subdevice.id		pci 0x0003
 +subdevice.name		ATI TV Wonder/VE
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -186,6 +212,8 @@
 &subvendor.id		pci 0x10b4
 &subdevice.id		pci 0x2636
 +subdevice.name		STB TV PCI FM, P/N 6000704
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -193,6 +221,8 @@
 &subvendor.id		pci 0x10fc
 &subdevice.id		pci 0x4020
 +subdevice.name		I-O Data Co. GV-BCV3/PCI
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -200,6 +230,8 @@
 &subvendor.id		pci 0x10fc
 &subdevice.id		pci 0x4050
 +subdevice.name		I-O Data Co. GV-BCV4/PCI
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -207,6 +239,8 @@
 &subvendor.id		pci 0x121a
 &subdevice.id		pci 0x3000
 +subdevice.name		VoodooTV 200
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -214,6 +248,8 @@
 &subvendor.id		pci 0x144f
 &subdevice.id		pci 0x3000
 +subdevice.name		TView 99 (CPH063)
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -221,6 +257,8 @@
 &subvendor.id		pci 0x144f
 &subdevice.id		pci 0x3002
 +subdevice.name		Askey Magic TView
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -228,6 +266,8 @@
 &subvendor.id		pci 0x1461
 &subdevice.id		pci 0x0002
 +subdevice.name		AVermedia TVCapture 98
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -235,6 +275,8 @@
 &subvendor.id		pci 0x1461
 &subdevice.id		pci 0x0004
 +subdevice.name		AVerMedia TVCapture 98
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -242,6 +284,8 @@
 &subvendor.id		pci 0x14c7
 &subdevice.id		pci 0x0101
 +subdevice.name		Modular Technology PCTV
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -249,6 +293,8 @@
 &subvendor.id		pci 0x14ff
 &subdevice.id		pci 0x3000
 +subdevice.name		TView 99 (CPH061)
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -256,6 +302,8 @@
 &subvendor.id		pci 0x14ff
 &subdevice.id		pci 0x3002
 +subdevice.name		Phoebe TV Master
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -263,6 +311,8 @@
 &subvendor.id		pci 0x153b
 &subdevice.id		pci 0x1123
 +subdevice.name		Terratec TV Radio+
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -270,6 +320,8 @@
 &subvendor.id		pci 0x153b
 &subdevice.id		pci 0x1127
 +subdevice.name		Terratec TV+
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -277,6 +329,8 @@
 &subvendor.id		pci 0x153b
 &subdevice.id		pci 0x1135
 +subdevice.name		Terratec TValue Radio
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -284,6 +338,8 @@
 &subvendor.id		pci 0x15b0
 &subdevice.id		pci 0x400a
 +subdevice.name		Zoltrix Genie TV
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -291,6 +347,8 @@
 &subvendor.id		pci 0x15cb
 &subdevice.id		pci 0x0101
 +subdevice.name		AG GMV1
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -298,6 +356,8 @@
 &subvendor.id		pci 0x1851
 &subdevice.id		pci 0x1850
 +subdevice.name		Chronos Video Shuttle II
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -305,6 +365,8 @@
 &subvendor.id		pci 0x1851
 &subdevice.id		pci 0x1851
 +subdevice.name		CyberMail AV
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -312,6 +374,8 @@
 &subvendor.id		pci 0x1852
 &subdevice.id		pci 0x1852
 +subdevice.name		Typhoon TView TV/FM Tuner
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
 
  vendor.id		pci 0x109e
@@ -319,5 +383,18 @@
 &subvendor.id		pci 0x2636
 &subdevice.id		pci 0x10b4
 +subdevice.name		STB ???
++baseclass.id		0x112
++subclass.id		0x00
 +driver.module.modprobe	bttv
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+ vendor.id		pci 0x1131
+&device.id		pci 0x7130
+|vendor.id		pci 0x1131
+&device.id		pci 0x7134
++baseclass.id		0x112
++subclass.id		0x00
++driver.module.modprobe	saa7134
 

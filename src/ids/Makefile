@@ -6,8 +6,8 @@ DISTCLEANFILES	= *.h *.xml *.ids check_hd
 include $(TOPDIR)/Makefile.common
 
 IDFILES	= src/names.SuSE src/bus src/class src/names.special \
-	  src/scanner src/names.network src/names.usbutils src/names.usb\
-	  src/names.eisa src/names.monitor src/names.x11 src/camera src/tv src/dvb
+	  src/scanner src/network src/names.usbutils src/names.usb \
+	  src/names.eisa src/monitor src/names.x11 src/camera src/tv src/dvb
 
 IDFILES += src/names.x11.ia32
 
@@ -35,9 +35,8 @@ ifeq "$(ARCH)" "ia64"
 IDFILES += src/x11.hwinfo.ia64
 endif
 
-IDFILES += src/names.pciutils\
-	   src/drivers.network src/storage.scsi src/storage.block src/drivers.monitor\
-	   src/sound.alsa src/sound.kernel src/mouse src/braille src/drivers.special
+IDFILES += src/names.pciutils src/storage.scsi src/storage.block \
+	   src/sound.alsa src/sound.kernel src/mouse src/braille src/special
 
 $(LIBHD_D): hd_ids.o
 	ar r $(LIBHD) $?

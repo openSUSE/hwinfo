@@ -1604,6 +1604,15 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
   ihw_card_info *ici;
 #endif
 
+  hs.base_class.id = hd->base_class;
+  hs.key |= 1 << he_baseclass_id;
+
+  hs.sub_class.id = hd->sub_class;
+  hs.key |= 1 << he_subclass_id;
+
+  hs.prog_if.id = hd->prog_if;
+  hs.key |= 1 << he_progif_id;
+
   if(hd->vend) {
     hs.vendor.id = hd->vend;
     hs.key |= 1 << he_vendor_id;
@@ -1624,6 +1633,14 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     hs.key |= 1 << he_subdevice_id;
   }
 
+  hs.revision.id = hd->rev;
+  hs.key |= 1 << he_rev_id;
+
+  if(hd->rev_name) {
+    hs.revision.name = hd->rev_name;
+    hs.key |= 1 << he_rev_name;
+  }
+
   hddb_search(hd_data, &hs);
 
   if((hs.value & (1 << he_baseclass_id))) {
@@ -1632,6 +1649,10 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
 
   if((hs.value & (1 << he_subclass_id))) {
     hd->sub_class = hs.sub_class.id;
+  }
+
+  if((hs.value & (1 << he_progif_id))) {
+    hd->prog_if = hs.prog_if.id;
   }
 
   if((hs.value & (1 << he_requires))) {
