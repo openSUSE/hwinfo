@@ -1,15 +1,16 @@
 
-
-// gcc test2.c -o test2 -Wall -O2 -std=c99
-
+/*
+ *  License: GPL
+ *
+ *  Much inspired by rp-pppoe from Roaring Penguin Software Inc.
+ *  which itself is inspired by earlier code from Luke Stras.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <stdarg.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <sys/time.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <fcntl.h>
@@ -50,109 +51,99 @@ static hd_data_t *hd_data;
 #define TAG_AC_SYSTEM_ERROR	0x0202
 #define TAG_GENERIC_ERROR	0x0203
 
-/* Number of PADI Attempts */
-#define MAX_PADI_ATTEMPTS	2
+/* Number of Attempts */
+#define MAX_ATTEMPTS		2
 
-/* Timeout for PADO */
+/* Timeout for PADO Packets */
 #define PADO_TIMEOUT		3
 
 /* A PPPoE Packet, including Ethernet headers */
 typedef struct PPPoEPacketStruct {
     struct ethhdr ethHdr;	/* Ethernet header */
-#ifdef PACK_BITFIELDS_REVERSED
-    unsigned int type:4;	/* PPPoE Type (must be 1) */
-    unsigned int ver:4;		/* PPPoE Version (must be 1) */
-#else
     unsigned int ver:4;		/* PPPoE Version (must be 1) */
     unsigned int type:4;	/* PPPoE Type (must be 1) */
-#endif
     unsigned int code:8;	/* PPPoE code */
     unsigned int session:16;	/* PPPoE session */
     unsigned int length:16;	/* Payload length */
     unsigned char payload[ETH_DATA_LEN];	/* A bit of room to spare */
 } PPPoEPacket;
 
-/* Header size of a PPPoE packet */
+/* Header size of a PPPoE Packet */
 #define PPPOE_OVERHEAD 6	/* type, code, session, length */
-
 #define HDR_SIZE (sizeof (struct ethhdr) + PPPOE_OVERHEAD)
 #define MAX_PPPOE_PAYLOAD (ETH_DATA_LEN - PPPOE_OVERHEAD)
 
 /* PPPoE Tag */
-
 typedef struct PPPoETagStruct {
     unsigned int type:16;	/* tag type */
     unsigned int length:16;	/* Length of payload */
     unsigned char payload[ETH_DATA_LEN];	/* A LOT of room to spare */
 } PPPoETag;
 
-/* Header size of a PPPoE tag */
+/* Header size of a PPPoE Tag */
 #define TAG_HDR_SIZE 4
 
-
-/* Function passed to parse_packet. */
+/* Function passed to parse_packet */
 typedef void parse_func (uint16_t type, uint16_t len,
 			 unsigned char* data, void* extra);
 
-
-/* Keep track of the state of a connection -- collect everything in
-   one spot */
-
+/* Keep track of the state of a connection */
 typedef struct PPPoEConnectionStruct {
-    int received_pado;		/* Where we are in discovery */
+    char* ifname;		/* Interface name */
     int fd;			/* Raw socket for discovery frames */
+    int received_pado;		/* Where we are in discovery */
     unsigned char my_mac[ETH_ALEN];	/* My MAC address */
     unsigned char peer_mac[ETH_ALEN];	/* Peer's MAC address */
-    char* ifname;		/* Interface name */
     hd_t *hd;
 } PPPoEConnection;
 
 /* Structure used to determine acceptable PADO packet */
-struct PacketCriteria {
+typedef struct PacketCriteriaStruct {
     PPPoEConnection* conn;
-    int acNameOK;
-    int serviceNameOK;
+    int acname_ok;
+    int servicename_ok;
     int error;
-};
+} PacketCriteria;
+
+/* True if Ethernet address is broadcast or multicast */
+#define NOT_UNICAST(e) ((e[0] & 0x01) != 0)
 
 
 int
-check_room (unsigned char* cursor, unsigned char* start, uint16_t len)
+check_room (PPPoEConnection* conn, unsigned char* cursor, unsigned char* start,
+	    uint16_t len)
 {
     if (((cursor)-(start))+(len) > MAX_PPPOE_PAYLOAD) {
-	ADD2LOG ("Would create too-long packet\n");
+	ADD2LOG ("%s: Would create too-long packet\n", conn->ifname);
 	return 0;
     }
     return 1;
 }
 
 
-/* True if Ethernet address is broadcast or multicast */
-#define NOT_UNICAST(e) ((e[0] & 0x01) != 0)
-#define BROADCAST(e) ((e[0] & e[1] & e[2] & e[3] & e[4] & e[5]) == 0xFF)
-#define NOT_BROADCAST(e) ((e[0] & e[1] & e[2] & e[3] & e[4] & e[5]) != 0xFF)
-
-
 int
-parse_packet (PPPoEPacket* packet, parse_func* func, void* extra)
+parse_packet (PPPoEConnection* conn, PPPoEPacket* packet, parse_func* func,
+	      void* extra)
 {
     uint16_t len = ntohs (packet->length);
     unsigned char* curTag;
     uint16_t tagType, tagLen;
 
     if (packet->ver != 1) {
-	ADD2LOG ("invalid PPPoE version (%d)\n", (int) packet->ver);
+	ADD2LOG ("%s: Invalid PPPoE version (%d)\n", conn->ifname,
+		 (int) packet->ver);
 	return 0;
     }
 
     if (packet->type != 1) {
-	ADD2LOG ("invalid PPPoE type (%d)\n", (int) packet->type);
+	ADD2LOG ("%s: Invalid PPPoE type (%d)\n", conn->ifname,
+		 (int) packet->type);
 	return 0;
     }
 
     /* Do some sanity checks on packet. */
     if (len > ETH_DATA_LEN - 6) { /* 6-byte overhead for PPPoE header */
-	ADD2LOG ("invalid PPPoE packet length (%u)\n", len);
+	ADD2LOG ("%s: Invalid PPPoE packet length (%u)\n", conn->ifname, len);
 	return 0;
     }
 
@@ -165,7 +156,8 @@ parse_packet (PPPoEPacket* packet, parse_func* func, void* extra)
 	if (tagType == TAG_END_OF_LIST)
 	    break;
 	if ((curTag - packet->payload) + tagLen + TAG_HDR_SIZE > len) {
-	    ADD2LOG ("Invalid PPPoE tag length (%u)\n", tagLen);
+	    ADD2LOG ("%s: Invalid PPPoE tag length (%u)\n", conn->ifname,
+		     tagLen);
 	    return 0;
 	}
 	func (tagType, tagLen, curTag + TAG_HDR_SIZE, extra);
@@ -187,16 +179,14 @@ open_interfaces (int n, PPPoEConnection* conns)
 
 	conn->fd = socket (PF_PACKET, SOCK_RAW, htons (ETH_PPPOE_DISCOVERY));
 	if (conn->fd < 0) {
-	    ADD2LOG ("socket: %m\n");
+	    ADD2LOG ("%s: socket failed: %m\n", conn->ifname);
 	    continue;
 	}
-
-	ADD2LOG ("%s %d\n", conn->ifname, conn->fd);
 
 	int one = 1;
 	if (setsockopt (conn->fd, SOL_SOCKET, SO_BROADCAST, &one,
 			sizeof (one)) < 0) {
-	    ADD2LOG ("setsockopt: %m\n");
+	    ADD2LOG ("%s: setsockopt failed: %m\n", conn->ifname);
 	    goto error;
 	}
 
@@ -206,18 +196,18 @@ open_interfaces (int n, PPPoEConnection* conns)
 	memset (&sa, 0, sizeof (sa));
 	strncpy (ifr.ifr_name, conn->ifname, sizeof (ifr.ifr_name));
 	if (ioctl (conn->fd, SIOCGIFHWADDR, &ifr) < 0) {
-	    ADD2LOG ("ioctl (SIOCGIFHWADDR): %m\n");
+	    ADD2LOG ("%s: ioctl (SIOCGIFHWADDR) failed: %m\n", conn->ifname);
 	    goto error;
 	}
 
 	memcpy (conn->my_mac, ifr.ifr_hwaddr.sa_data, ETH_ALEN);
 	if (ifr.ifr_hwaddr.sa_family != ARPHRD_ETHER) {
-	    ADD2LOG ("Interface %s is not Ethernet\n", conn->ifname);
+	    ADD2LOG ("%s: Interface is not ethernet\n", conn->ifname);
 	    goto error;
 	}
 
 	if (NOT_UNICAST (conn->my_mac)) {
-	    ADD2LOG ("Interface %s has broadcast/multicast MAC address?\n",
+	    ADD2LOG ("%s: Interface has broadcast/multicast MAC address?\n",
 		    conn->ifname);
 	    goto error;
 	}
@@ -225,11 +215,11 @@ open_interfaces (int n, PPPoEConnection* conns)
 	/* Sanity check on MTU */
 	strncpy (ifr.ifr_name, conn->ifname, sizeof (ifr.ifr_name));
 	if (ioctl (conn->fd, SIOCGIFMTU, &ifr) < 0) {
-	    ADD2LOG ("ioctl(SIOCGIFMTU): %m\n");
+	    ADD2LOG ("%s: ioctl (SIOCGIFMTU) failed: %m\n", conn->ifname);
 	    goto error;
 	}
 	if (ifr.ifr_mtu < ETH_DATA_LEN) {
-	    ADD2LOG ("interface has to low MTU\n");
+	    ADD2LOG ("%s: Interface has to low MTU\n", conn->ifname);
 	    goto error;
 	}
 
@@ -238,14 +228,15 @@ open_interfaces (int n, PPPoEConnection* conns)
 	sa.sll_protocol = htons (ETH_PPPOE_DISCOVERY);
 	strncpy (ifr.ifr_name, conn->ifname, sizeof (ifr.ifr_name));
 	if (ioctl (conn->fd, SIOCGIFINDEX, &ifr) < 0) {
-	    ADD2LOG ("ioctl(SIOCFIGINDEX): Could not get interface index\n");
+	    ADD2LOG ("%s: ioctl (SIOCFIGINDEX) failed: Could not get interface "
+		     "index\n", conn->ifname);
 	    goto error;
 	}
 	sa.sll_ifindex = ifr.ifr_ifindex;
 
 	/* We're only interested in packets on specified interface */
-	if (bind (conn->fd, (struct sockaddr *) &sa, sizeof (sa)) < 0) {
-	    ADD2LOG ("bind: %m\n");
+	if (bind (conn->fd, (struct sockaddr*) &sa, sizeof (sa)) < 0) {
+	    ADD2LOG ("%s: bind failed: %m\n", conn->ifname);
 	    goto error;
 	}
 
@@ -284,7 +275,7 @@ int
 send_packet (int fd, PPPoEPacket* pkt, int size)
 {
     if (send (fd, pkt, size, 0) < 0) {
-	ADD2LOG ("send %d\n", fd);
+	ADD2LOG ("send failed: %m\n");
 	return 0;
     }
 
@@ -296,7 +287,7 @@ int
 receive_packet (int fd, PPPoEPacket* pkt, int* size)
 {
     if ((*size = recv (fd, pkt, sizeof (PPPoEPacket), 0)) < 0) {
-	ADD2LOG ("recv %d\n", fd);
+	ADD2LOG ("recv failed: %m\n");
 	return 0;
     }
 
@@ -304,95 +295,60 @@ receive_packet (int fd, PPPoEPacket* pkt, int* size)
 }
 
 
-/**********************************************************************
-*%FUNCTION: parseForHostUniq
-*%ARGUMENTS:
-* type -- tag type
-* len -- tag length
-* data -- tag data.
-* extra -- user-supplied pointer.  This is assumed to be a pointer to int.
-*%RETURNS:
-* Nothing
-*%DESCRIPTION:
-* If a HostUnique tag is found which matches our PID, sets *extra to 1.
-***********************************************************************/
 void
-parseForHostUniq (uint16_t type, uint16_t len, unsigned char* data, void* extra)
+parse_hostuniq (uint16_t type, uint16_t len, unsigned char* data, void* extra)
 {
-    int* val = (int*) extra;
     if (type == TAG_HOST_UNIQ && len == sizeof (pid_t)) {
 	pid_t tmp;
 	memcpy (&tmp, data, len);
 	if (tmp == getpid ()) {
+	    int* val = (int*) extra;
 	    *val = 1;
 	}
     }
 }
 
 
-/**********************************************************************
-*%FUNCTION: packetIsForMe
-*%ARGUMENTS:
-* conn -- PPPoE connection info
-* packet -- a received PPPoE packet
-*%RETURNS:
-* 1 if packet is for this PPPoE daemon; 0 otherwise.
-*%DESCRIPTION:
-* If we are using the Host-Unique tag, verifies that packet contains
-* our unique identifier.
-***********************************************************************/
 int
-packetIsForMe (PPPoEConnection* conn, PPPoEPacket* packet)
+packet_for_me (PPPoEConnection* conn, PPPoEPacket* packet)
 {
     /* If packet is not directed to our MAC address, forget it. */
     if (memcmp (packet->ethHdr.h_dest, conn->my_mac, ETH_ALEN))
 	return 0;
 
     /* Check for HostUniq tag. */
-    int forMe = 0;
-    parse_packet (packet, parseForHostUniq, &forMe);
-    return forMe;
+    int for_me = 0;
+    parse_packet (conn, packet, parse_hostuniq, &for_me);
+    return for_me;
 }
 
 
-/**********************************************************************
-*%FUNCTION: parsePADOTags
-*%ARGUMENTS:
-* type -- tag type
-* len -- tag length
-* data -- tag data
-* extra -- extra user data.  Should point to a PacketCriteria structure
-*          which gets filled in according to selected AC name and service
-*          name.
-*%RETURNS:
-* Nothing
-*%DESCRIPTION:
-* Picks interesting tags out of a PADO packet
-***********************************************************************/
 void
-parsePADOTags (uint16_t type, uint16_t len, unsigned char* data, void* extra)
+parse_pado_tags (uint16_t type, uint16_t len, unsigned char* data, void* extra)
 {
-    struct PacketCriteria* pc = (struct PacketCriteria*) extra;
+    PacketCriteria* pc = (PacketCriteria*) extra;
     PPPoEConnection *conn = pc->conn;
 
     switch (type) {
 	case TAG_AC_NAME:
-	    pc->acNameOK = 1;
-	    ADD2LOG ("%s: service-name: %.*s\n", conn->ifname, (int) len, data);
+	    pc->acname_ok = 1;
+	    ADD2LOG ("%s: Service-Name is: %.*s\n", conn->ifname, (int) len,
+		     data);
 	    break;
 	case TAG_SERVICE_NAME:
-	    pc->serviceNameOK = len == 0;
+	    pc->servicename_ok = len == 0;
 	    break;
 	case TAG_SERVICE_NAME_ERROR:
-	    ADD2LOG ("PADO: Service-Name-Error: %.*s\n", (int) len, data);
+	    ADD2LOG ("%s: Service-Name-Error: %.*s\n", conn->ifname, (int) len,
+		     data);
 	    pc->error = 1;
 	    break;
 	case TAG_AC_SYSTEM_ERROR:
-	    ADD2LOG ("PADO: System-Error: %.*s\n", (int) len, data);
+	    ADD2LOG ("%s: System-Error: %.*s\n", conn->ifname, (int) len, data);
 	    pc->error = 1;
 	    break;
 	case TAG_GENERIC_ERROR:
-	    ADD2LOG ("PADO: Generic-Error: %.*s\n", (int) len, data);
+	    ADD2LOG ("%s: Generic-Error: %.*s\n", conn->ifname, (int) len, data);
 	    pc->error = 1;
 	    break;
     }
@@ -400,7 +356,7 @@ parsePADOTags (uint16_t type, uint16_t len, unsigned char* data, void* extra)
 
 
 int
-sendPADI (int n, PPPoEConnection* conns)
+send_padi (int n, PPPoEConnection* conns)
 {
     int ret = 0, i;
 
@@ -419,7 +375,7 @@ sendPADI (int n, PPPoEConnection* conns)
 
 	namelen = 0;
 	plen = TAG_HDR_SIZE + namelen;
-	if (!check_room (cursor, packet.payload, TAG_HDR_SIZE))
+	if (!check_room (conn, cursor, packet.payload, TAG_HDR_SIZE))
 	    continue;
 
 	/* Set destination to Ethernet broadcast address */
@@ -434,7 +390,7 @@ sendPADI (int n, PPPoEConnection* conns)
 
 	svc->type = TAG_SERVICE_NAME;
 	svc->length = htons (0);
-	if (!check_room (cursor, packet.payload, namelen + TAG_HDR_SIZE))
+	if (!check_room (conn, cursor, packet.payload, namelen + TAG_HDR_SIZE))
 	    continue;
 
 	cursor += namelen + TAG_HDR_SIZE;
@@ -444,7 +400,7 @@ sendPADI (int n, PPPoEConnection* conns)
 	hostUniq.type = htons (TAG_HOST_UNIQ);
 	hostUniq.length = htons (sizeof (pid));
 	memcpy (hostUniq.payload, &pid, sizeof (pid));
-	if (!check_room (cursor, packet.payload, sizeof (pid) + TAG_HDR_SIZE))
+	if (!check_room (conn, cursor, packet.payload, sizeof (pid) + TAG_HDR_SIZE))
 	    continue;
 	memcpy (cursor, &hostUniq, sizeof (pid) + TAG_HDR_SIZE);
 	cursor += sizeof (pid) + TAG_HDR_SIZE;
@@ -452,7 +408,7 @@ sendPADI (int n, PPPoEConnection* conns)
 
 	packet.length = htons (plen);
 
-	ADD2LOG ("sending padi for %s\n", conn->ifname);
+	ADD2LOG ("%s: Sending PADI packet\n", conn->ifname);
 
 	if (send_packet (conn->fd, &packet, (int) (plen + HDR_SIZE)))
 	    ret = 1;
@@ -463,11 +419,11 @@ sendPADI (int n, PPPoEConnection* conns)
 
 
 int
-waitForPADO (int n, PPPoEConnection* conns)
+wait_for_pado (int n, PPPoEConnection* conns)
 {
     int r, i, all, len;
     PPPoEPacket packet;
-    struct PacketCriteria pc;
+    PacketCriteria pc;
 
     struct timeval tv;
     tv.tv_sec = PADO_TIMEOUT;
@@ -492,7 +448,7 @@ waitForPADO (int n, PPPoEConnection* conns)
 	}
 
 	if (r == 0) {
-	    ADD2LOG ("timeout\n");
+	    ADD2LOG ("Timeout waiting for PADO packets\n");
 	    return 0;
 	}
 
@@ -504,8 +460,8 @@ waitForPADO (int n, PPPoEConnection* conns)
 		continue;
 
 	    pc.conn = conn;
-	    pc.acNameOK = 0;
-	    pc.serviceNameOK = 0;
+	    pc.acname_ok = 0;
+	    pc.servicename_ok = 0;
 	    pc.error = 0;
 
 	    /* Get the packet */
@@ -514,42 +470,45 @@ waitForPADO (int n, PPPoEConnection* conns)
 
 	    /* Check length */
 	    if (ntohs (packet.length) + HDR_SIZE > len) {
-		ADD2LOG ("Bogus PPPoE length field (%u)\n",
+		ADD2LOG ("%s: Bogus PPPoE length field (%u)\n", conn->ifname,
 			(unsigned int) ntohs (packet.length));
 		continue;
 	    }
 
 	    /* If it's not for us, loop again */
-	    if (!packetIsForMe (conn, &packet))
+	    if (!packet_for_me (conn, &packet))
 		continue;
 
 	    if (packet.code != CODE_PADO)
 		continue;
 
 	    if (NOT_UNICAST (packet.ethHdr.h_source)) {
-		ADD2LOG ("Ignoring PADO packet from non-unicast MAC address\n");
+		ADD2LOG ("%s: Ignoring PADO packet from non-unicast MAC "
+			 "address\n", conn->ifname);
 		continue;
 	    }
 
-	    parse_packet (&packet, parsePADOTags, &pc);
+	    parse_packet (conn, &packet, parse_pado_tags, &pc);
 
-	    if (!pc.acNameOK) {
-		ADD2LOG ("wrong or missing AC-Name tag\n");
+	    if (!pc.acname_ok) {
+		ADD2LOG ("%s: Wrong or missing AC-Name tag\n", conn->ifname);
 		continue;
 	    }
 
-	    if (!pc.serviceNameOK) {
-		ADD2LOG ("wrong or missing Service-Name tag\n");
+	    if (!pc.servicename_ok) {
+		ADD2LOG ("%s: Wrong or missing Service-Name tag\n",
+			 conn->ifname);
 		continue;
 	    }
 
 	    if (pc.error) {
-		ADD2LOG ("Ignoring PADO packet with error tag\n");
+		ADD2LOG ("%s: Ignoring PADO packet with some Error tag\n",
+			 conn->ifname);
 		continue;
 	    }
 
 	    memcpy (conn->peer_mac, packet.ethHdr.h_source, ETH_ALEN);
-	    ADD2LOG ("receive pado for %s\n", conn->ifname);
+	    ADD2LOG ("%s: Received correct PADO packet\n", conn->ifname);
 	    conn->received_pado = 1;
 	}
 
@@ -570,14 +529,14 @@ discovery (int n, PPPoEConnection* conns)
 
     if (open_interfaces (n, conns))
     {
-	for (a = 0; a < MAX_PADI_ATTEMPTS; a++)
+	for (a = 0; a < MAX_ATTEMPTS; a++)
 	{
-	    ADD2LOG ("attemp %d\n", a + 1);
+	    ADD2LOG ("Attempt number %d\n", a + 1);
 
-	    if (!sendPADI (n, conns))
+	    if (!send_padi (n, conns))
 		break;
 
-	    if (waitForPADO (n, conns))
+	    if (wait_for_pado (n, conns))
 		break;
 	}
     }
@@ -648,4 +607,3 @@ void hd_scan_pppoe(hd_data_t *hd_data2)
     }
   }
 }
-
