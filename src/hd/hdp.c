@@ -198,6 +198,15 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("Device File: %s\n", h->unix_dev_name);
   }
 
+  if(h->rom_id) {
+#ifdef __i386__
+    dump_line("BIOS id: %s\n", h->rom_id);
+#endif
+#if defined(__PPC__) || defined(__sparc__)
+    dump_line("PROM id: %s\n", h->rom_id);
+#endif
+  }
+
   for(res = h->res; res; res = res->next) {
     switch(res->any.type) {
       case res_phys_mem:

@@ -38,6 +38,7 @@ extern "C" {
 #define HD_DEB_MODEM		(1 << 19)
 #define HD_DEB_PARALLEL		(1 << 20)
 #define HD_DEB_ISA		(1 << 21)
+#define HD_DEB_BOOT		(1 << 22)
 
 #include <inttypes.h>
 #include <termios.h>
@@ -72,7 +73,7 @@ typedef enum probe_feature {
   pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide,
   pr_scsi, pr_scsi_geo, pr_usb, pr_usb_mods, pr_adb, pr_modem, pr_modem_usb,
   pr_parallel, pr_isa, pr_isa_isdn, pr_dac960, pr_smart, pr_isdn, pr_kbd,
-  pr_prom, pr_sbus,
+  pr_prom, pr_sbus, pr_int,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
@@ -762,6 +763,7 @@ typedef struct s_hd_t {
 
   unsigned attached_to;		/* idx field of 'parent' entry */
   char *unix_dev_name;		/* name of special device file, if any */
+  char *rom_id;			/* BIOS/PROM device name (if any) */
 
   unsigned module, line, count;	/* place where the entry was created */
   hd_res_t *res;

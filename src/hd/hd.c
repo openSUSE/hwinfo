@@ -40,6 +40,7 @@
 #include "kbd.h"
 #include "prom.h"
 #include "sbus.h"
+#include "int.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -114,7 +115,8 @@ static struct s_mod_names {
   { mod_isdn, "isdn" },
   { mod_kbd, "kbd" },
   { mod_prom, "prom" },
-  { mod_sbus, "sbus" }
+  { mod_sbus, "sbus" },
+  { mod_int, "int" }
 };
 
 /*
@@ -170,7 +172,8 @@ static struct s_pr_flags {
   { pr_isdn,         0,          4|2|1, "isdn"        },
   { pr_kbd,          0,        8|4|2|1, "kbd"         },
   { pr_prom,         0,        8|4|2|1, "prom"        },
-  { pr_sbus,         0,        8|4|2|1, "sbus"        }
+  { pr_sbus,         0,        8|4|2|1, "sbus"        },
+  { pr_int,          0,        8|4|2|1, "int"         }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -591,6 +594,9 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_cdrom(hd_data);
   hd_scan_net(hd_data);
   hd_scan_isdn(hd_data);
+
+  /* some final fixup's */
+  hd_scan_int(hd_data);
 
   /* we are done... */
   hd_data->module = mod_none;
@@ -1937,6 +1943,7 @@ hd_t *hd_disk_list(hd_data_t *hd_data, int rescan)
     hd_set_probe_feature(hd_data, pr_scsi);
     hd_set_probe_feature(hd_data, pr_dac960);
     hd_set_probe_feature(hd_data, pr_smart);
+    hd_set_probe_feature(hd_data, pr_int);
     hd_scan(hd_data);
     memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
   }
@@ -2363,7 +2370,7 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
 
   s = free_mem(s);
 
-  if(hd_data->debug) {
+  if((hd_data->debug & HD_DEB_BOOT)) {
     ADD2LOG("    boot dev crc 0x%x\n", crc);
   }
 
@@ -2386,7 +2393,7 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
 
   if(!dl0) return 0;
 
-  if(hd_data->debug) {
+  if((hd_data->debug & HD_DEB_BOOT)) {
     for(dl = dl0; dl; dl = dl->next) {
       ADD2LOG("    crc %s 0x%08x\n", dl->dev_name, dl->crc);
     }
@@ -2400,7 +2407,7 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
     }
   }
 
-  if(i == 1 && dl1 && hd_data->debug) {
+  if(i == 1 && dl1 && (hd_data->debug & HD_DEB_BOOT)) {
     ADD2LOG("----- MBR -----\n");
     for(j = 0; j < sizeof dl1->data; j += 0x10) {
       ADD2LOG("  %03x  ", j);
@@ -2413,6 +2420,8 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
   free_disk_list(dl0);
 
   if(matches) *matches = i;
+
+  hd_data->debug &= ~HD_DEB_BOOT;
 
   return hd_idx;
 }

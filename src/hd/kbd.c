@@ -115,7 +115,7 @@ void hd_scan_kbd(hd_data_t *hd_data)
 
 void hd_scan_kbd(hd_data_t *hd_data)
 {
-  int fd, kid, kid2, klay, ser_cons;
+  int fd, kid, kid2, klay, ser_cons, i;
   unsigned u, u1, u2;
   char c1, c2;
   struct serial_struct ser_info;
@@ -196,14 +196,14 @@ void hd_scan_kbd(hd_data_t *hd_data)
           hd->vend = MAKE_ID(TAG_SPECIAL, 0x0203);
           hd->dev = MAKE_ID(TAG_SPECIAL, 0x0000);
           str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%d", ser_cons);
-          if(sscanf(opio->oprom_array, "%u,%u,%c,%u,%c", &u, &u1, &c1, &u2, &c2) == 5) {
+          if((i = sscanf(opio->oprom_array, "%u,%u,%c,%u,%c", &u, &u1, &c1, &u2, &c2)) >= 1) {
             res = add_res_entry(&hd->res, new_mem(sizeof *res));
             res->baud.type = res_baud;
             res->baud.speed = u;
-            res->baud.bits = u1;
-            res->baud.stopbits = u2;
-            res->baud.parity = c1;
-            res->baud.handshake = c2;
+            if(i >= 2) res->baud.bits = u1;
+            if(i >= 3) res->baud.parity = c1;
+            if(i >= 4) res->baud.stopbits = u2;
+            if(i >= 5) res->baud.handshake = c2;
           }
         }
       }

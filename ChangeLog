@@ -1,3 +1,6 @@
+31/5/2000:	v0.97
+	- provides info about bios disk ids
+
 30/5/2000:	v0.96
 	- extended X11 driver info (for XF86 4.0)
 	- added Thorsten's small SPARC patch
