@@ -102,7 +102,7 @@ void add_serial_console(hd_data_t *hd_data)
   str_list_t *cmd, *sl;
   unsigned u, u1;
   struct serial_struct ser_info;
-  unsigned tty_major = 0, tty_minor;
+  unsigned tty_major = 0, tty_minor = 0;
   char c, *dev = NULL, *s;
 
   /* first, try console= option */
