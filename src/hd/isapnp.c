@@ -30,7 +30,7 @@ void hd_scan_isapnp(hd_data_t *hd_data)
 {
   hd_t *hd;
   int i, j, k;
-  unsigned u, u2;
+  unsigned u, u2, ser;
   static unsigned mem32_cfgs[4] = { CFG_MEM32_0, CFG_MEM32_1, CFG_MEM32_2, CFG_MEM32_3 };
   unsigned char *t, *v, *s;
   isapnp_card_t *c;
@@ -128,8 +128,10 @@ void hd_scan_isapnp(hd_data_t *hd_data)
         }
       }
 
-      hd->serial = new_mem(11);
-      sprintf(hd->serial, "%u", (t[7] << 24) + (t[6] << 16) + (t[5] << 8)+ t[4]);
+      ser = (t[7] << 24) + (t[6] << 16) + (t[5] << 8)+ t[4];
+      if(ser != -1) {
+        str_printf(&hd->serial, 0, "%u", ser);
+      }
 
       if((c->ldev_regs[j][0] & 1)) {
         dev->flags |= (1 << isapnp_flag_act);

@@ -1,3 +1,8 @@
+20/6/2000:	v1.02
+	- updated pciutils & sax/sax2 data
+	- added fire gl1
+	- added 'hwprobe' env resp. kernel cmdline param
+
 13/6/2000:	v1.01
 	- new module info
 	- fix old VGA entries

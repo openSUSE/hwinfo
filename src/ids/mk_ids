@@ -1126,10 +1126,13 @@ sub merge_x
       $k = 4 if ($x->[1][1] ne $x4[0]->[1][1]) && ($x->[1][2] eq $x4[0]->[1][2])
     }
     if($i > 2 || $j > 2 || $k) {
-      print "*** invalid X11 info: ***:\n";
+      print "*** Conflicting X11 info! ***\n";
+      print STDERR "*** conflicting X11 info: ***:\n";
       @driver = ( $d );
+      select STDERR;
       dump_drivers;
-      die "*** Fix it! ***\n";
+      select STDOUT
+      # die "*** Fix it! ***\n";
     }
     # step 4a: fix some entries
     @x = @{$d->[1]};

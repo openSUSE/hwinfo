@@ -73,7 +73,8 @@ typedef enum probe_feature {
   pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide,
   pr_scsi, pr_scsi_geo, pr_usb, pr_usb_mods, pr_adb, pr_modem, pr_modem_usb,
   pr_parallel, pr_isa, pr_isa_isdn, pr_dac960, pr_smart, pr_isdn, pr_kbd,
-  pr_prom, pr_sbus, pr_int,
+  pr_prom, pr_sbus, pr_int, pr_braille, pr_braille_alva, pr_braille_fhp,
+  pr_braille_ht,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
@@ -83,7 +84,7 @@ typedef enum probe_feature {
 typedef enum hw_item {
   hw_cdrom = 1, hw_floppy, hw_disk, hw_network, hw_display, hw_monitor,
   hw_mouse, hw_keyboard, hw_sound, hw_isdn, hw_modem, hw_storage_ctrl,
-  hw_network_ctrl, hw_printer, hw_tv, hw_scanner
+  hw_network_ctrl, hw_printer, hw_tv, hw_scanner, hw_braille
 } hd_hw_item_t;
 
 /*
@@ -101,7 +102,7 @@ typedef enum base_classes {
   // add our own classes here (starting at 0x100 as PCI values are 8 bit)
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,
   bc_storage_device, bc_network_interface, bc_keyboard, bc_printer,
-  bc_hub
+  bc_hub, bc_braille
 } hd_base_classes_t;
 
 /* subclass values of bc_storage */
@@ -816,6 +817,8 @@ typedef struct {
    * The following entries should *not* be accessed outside of libhd!!!
    */
   unsigned char probe[(pr_all + 7) / 8];	/* bitmask of probing features */
+  unsigned char probe_set[(pr_all + 7) / 8];	/* bitmask of probing features taht will always be set */
+  unsigned char probe_clr[(pr_all + 7) / 8];	/* bitmask of probing features that will always be reset */
   unsigned last_idx;		/* index of the last hd entry generated */
   unsigned module;		/* the current probing module we are in */
   enum boot_arch boot;		/* boot method */
@@ -851,6 +854,7 @@ typedef struct {
   unsigned display;		/* hd_idx of the active (vga) display */
   unsigned color_code;		/* color, if any */
   char *cmd_line;		/* kernel command line */
+  str_list_t *xtra_hd;		/* fake hd entries (for testing) */
 } hd_data_t;
 
 

@@ -41,6 +41,7 @@
 #include "prom.h"
 #include "sbus.h"
 #include "int.h"
+#include "braille.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -72,7 +73,19 @@
 #define MOD_INFO_SEP		'|'
 #define MOD_INFO_SEP_STR	"|"
 
+typedef struct disk_s {
+  struct disk_s *next;
+  unsigned crc;
+  unsigned crc_match:1;
+  unsigned hd_idx;
+  char *dev_name;
+  unsigned data_len;
+  unsigned char data[0x200];
+} disk_t;
+
 static struct s_pr_flags *get_pr_flags(enum probe_feature feature);
+static void fix_probe_features(hd_data_t *hd_data);
+static void set_probe_feature(hd_data_t *hd_data, enum probe_feature feature, unsigned val);
 static hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd);
 static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
 static int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len);
@@ -80,6 +93,8 @@ static isdn_parm_t *new_isdn_parm(isdn_parm_t **ip);
 static driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici);
 static char *module_cmd(hd_t *, char *);
 static void timeout_alarm_handler(int signal);
+static void get_probe_env(hd_data_t *hd_data);
+static void hd_scan_xtra(hd_data_t *hd_data);
 
 /*
  * Names of the probing modules.
@@ -116,7 +131,9 @@ static struct s_mod_names {
   { mod_kbd, "kbd" },
   { mod_prom, "prom" },
   { mod_sbus, "sbus" },
-  { mod_int, "int" }
+  { mod_int, "int" },
+  { mod_braille, "braille" },
+  { mod_xtra, "hd" }
 };
 
 /*
@@ -128,52 +145,56 @@ static struct s_pr_flags {
   unsigned mask;	/* bit 0: default, bit 1: all, bit 2: max, bit 3: linuxrc */
   char *name;
 } pr_flags[] = {
-  { pr_default,     -1,              1, "default"     },
-  { pr_all,         -1,            2  , "all"         },
-  { pr_max,         -1,          4    , "max"         },
-  { pr_lxrc,        -1,        8      , "lxrc"        },
-  { pr_memory,       0,        8|4|2|1, "memory"      },
-  { pr_pci,          0,        8|4|2|1, "pci"         },
-  { pr_pci_range,    pr_pci,     4|2  , "pci.range"   },
-  { pr_pci_ext,      pr_pci,     4|2  , "pci.ext"     },
-  { pr_isapnp,       0,        8|4|2|1, "isapnp"      },
-  { pr_isapnp,       0,              0, "pnpdump"     },	/* alias for isapnp */
-  { pr_cdrom,        0,        8|4|2|1, "cdrom"       },
-  { pr_cdrom_info,   pr_cdrom, 8|4|2|1, "cdrom.info"  },
-  { pr_net,          0,        8|4|2|1, "net"         },
-  { pr_floppy,       0,        8|4|2|1, "floppy"      },
-  { pr_misc,         0,        8|4|2|1, "misc"        },
-  { pr_misc_serial,  pr_misc,  8|4|2|1, "misc.serial" },
-  { pr_misc_par,     pr_misc,    4|2|1, "misc.par"    },
-  { pr_misc_floppy,  pr_misc,  8|4|2|1, "misc.floppy" },
-  { pr_bios,         0,        8|4|2|1, "bios"        },
-  { pr_cpu,          0,        8|4|2|1, "cpu"         },
-  { pr_monitor,      0,        8|4|2|1, "monitor"     },
-  { pr_serial,       0,          4|2|1, "serial"      },
+  { pr_default,     -1,                1, "default"      },
+  { pr_all,         -1,              2  , "all"          },
+  { pr_max,         -1,            4    , "max"          },
+  { pr_lxrc,        -1,          8      , "lxrc"         },
+  { pr_memory,       0,          8|4|2|1, "memory"       },
+  { pr_pci,          0,          8|4|2|1, "pci"          },
+  { pr_pci_range,    pr_pci,       4|2  , "pci.range"    },
+  { pr_pci_ext,      pr_pci,       4|2  , "pci.ext"      },
+  { pr_isapnp,       0,          8|4|2|1, "isapnp"       },
+  { pr_isapnp,       0,                0, "pnpdump"      },	/* alias for isapnp */
+  { pr_cdrom,        0,          8|4|2|1, "cdrom"        },
+  { pr_cdrom_info,   pr_cdrom,   8|4|2|1, "cdrom.info"   },
+  { pr_net,          0,          8|4|2|1, "net"          },
+  { pr_floppy,       0,          8|4|2|1, "floppy"       },
+  { pr_misc,         0,          8|4|2|1, "misc"         },
+  { pr_misc_serial,  pr_misc,    8|4|2|1, "misc.serial"  },
+  { pr_misc_par,     pr_misc,      4|2|1, "misc.par"     },
+  { pr_misc_floppy,  pr_misc,    8|4|2|1, "misc.floppy"  },
+  { pr_bios,         0,          8|4|2|1, "bios"         },
+  { pr_cpu,          0,          8|4|2|1, "cpu"          },
+  { pr_monitor,      0,          8|4|2|1, "monitor"      },
+  { pr_serial,       0,            4|2|1, "serial"       },
 #if defined(__sparc__)
   /* Probe for mouse on SPARC */
-  { pr_mouse,        0,        8|4|2|1, "mouse"       },
+  { pr_mouse,        0,          8|4|2|1, "mouse"        },
 #else
-  { pr_mouse,        0,          4|2|1, "mouse"       },
+  { pr_mouse,        0,            4|2|1, "mouse"        },
 #endif
-  { pr_ide,          0,        8|4|2|1, "ide"         },
-  { pr_scsi,         0,        8|4|2|1, "scsi"        },
-  { pr_scsi_geo,     0,          4|2  , "scsi.geo"    },
-  { pr_usb,          0,        8|4|2|1, "usb"         },
-  { pr_usb_mods,     0,          4    , "usb.mods"    },
-  { pr_adb,          0,        8|4|2|1, "adb"         },
-  { pr_modem,        0,          4|2|1, "modem"       },
-  { pr_modem_usb,    pr_modem,   4|2|1, "modem.usb"   },
-  { pr_parallel,     0,          4|2|1, "parallel"    },
-  { pr_isa,          0,          4|2|1, "isa"         },
-  { pr_isa_isdn,     pr_isa,     4|2|1, "isa.isdn"    },
-  { pr_dac960,       0,        8|4|2|1, "dac960"      },
-  { pr_smart,        0,        8|4|2|1, "smart"       },
-  { pr_isdn,         0,          4|2|1, "isdn"        },
-  { pr_kbd,          0,        8|4|2|1, "kbd"         },
-  { pr_prom,         0,        8|4|2|1, "prom"        },
-  { pr_sbus,         0,        8|4|2|1, "sbus"        },
-  { pr_int,          0,        8|4|2|1, "int"         }
+  { pr_ide,          0,          8|4|2|1, "ide"          },
+  { pr_scsi,         0,          8|4|2|1, "scsi"         },
+  { pr_scsi_geo,     0,            4|2  , "scsi.geo"     },
+  { pr_usb,          0,          8|4|2|1, "usb"          },
+  { pr_usb_mods,     0,            4    , "usb.mods"     },
+  { pr_adb,          0,          8|4|2|1, "adb"          },
+  { pr_modem,        0,            4|2|1, "modem"        },
+  { pr_modem_usb,    pr_modem,     4|2|1, "modem.usb"    },
+  { pr_parallel,     0,            4|2|1, "parallel"     },
+  { pr_isa,          0,            4|2|1, "isa"          },
+  { pr_isa_isdn,     pr_isa,       4|2|1, "isa.isdn"     },
+  { pr_dac960,       0,          8|4|2|1, "dac960"       },
+  { pr_smart,        0,          8|4|2|1, "smart"        },
+  { pr_isdn,         0,            4|2|1, "isdn"         },
+  { pr_kbd,          0,          8|4|2|1, "kbd"          },
+  { pr_prom,         0,          8|4|2|1, "prom"         },
+  { pr_sbus,         0,          8|4|2|1, "sbus"         },
+  { pr_int,          0,          8|4|2|1, "int"          },
+  { pr_braille,      0,          8|4|2|1, "braille"      },
+  { pr_braille_alva, pr_braille, 8|4|2|1, "braille.alva" },
+  { pr_braille_fhp,  pr_braille, 8|4|2|1, "braille.fhp"  },
+  { pr_braille_ht,   pr_braille, 8|4|2|1, "braille.ht"   }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -185,6 +206,49 @@ struct s_pr_flags *get_pr_flags(enum probe_feature feature)
   }
 
   return NULL;
+}
+
+void fix_probe_features(hd_data_t *hd_data)
+{
+  int i;
+
+  for(i = 0; i < sizeof hd_data->probe; i++) {
+    hd_data->probe[i] |= hd_data->probe_set[i];
+    hd_data->probe[i] &= ~hd_data->probe_clr[i];
+  }
+}
+
+void set_probe_feature(hd_data_t *hd_data, enum probe_feature feature, unsigned val)
+{
+  unsigned ofs, bit, mask;
+  int i;
+  struct s_pr_flags *pr;
+
+  if(!(pr = get_pr_flags(feature))) return;
+
+  if(pr->parent == -1) {
+    mask = pr->mask;
+    for(i = 0; i < sizeof pr_flags / sizeof *pr_flags; i++) {
+      if(pr_flags[i].parent != -1 && (pr_flags[i].mask & mask))
+        set_probe_feature(hd_data, pr_flags[i].val, val);
+    }
+  }
+  else {
+    ofs = feature >> 3; bit = feature & 7;
+    if(ofs < sizeof hd_data->probe) {
+      if(val) {
+        hd_data->probe_set[ofs] |= 1 << bit;
+        hd_data->probe_clr[ofs] &= ~(1 << bit);
+      }
+      else {
+        hd_data->probe_clr[ofs] |= 1 << bit;
+        hd_data->probe_set[ofs] &= ~(1 << bit);
+      }
+    }
+    if(pr->parent) set_probe_feature(hd_data, pr->parent, val);
+  }
+
+  fix_probe_features(hd_data);
 }
 
 void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
@@ -208,6 +272,8 @@ void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
       hd_data->probe[ofs] |= 1 << bit;
     if(pr->parent) hd_set_probe_feature(hd_data, pr->parent);
   }
+
+  fix_probe_features(hd_data);
 }
 
 void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
@@ -517,13 +583,21 @@ void hd_scan(hd_data_t *hd_data)
 
   /* log the debug & probe flags */
   if(hd_data->debug) {
+    ADD2LOG("libhd version %s%s (%s)\n", HD_VERSION, getuid() ? "u" : "", HD_ARCH);
+  }
+
+  /* needed only on 1st call */
+  if(hd_data->last_idx == 0) {
+    get_probe_env(hd_data);
+  }
+
+  fix_probe_features(hd_data);
+
+  if(hd_data->debug) {
     for(i = sizeof hd_data->probe - 1; i >= 0; i--) {
       str_printf(&s, -1, "%02x", hd_data->probe[i]);
     }
-    ADD2LOG(
-      "libhd version %s%s (%s)\ndebug = 0x%x\nprobe = 0x%s (",
-      HD_VERSION, getuid() ? "u" : "", HD_ARCH, hd_data->debug, s
-    );
+    ADD2LOG("debug = 0x%x\nprobe = 0x%s (", hd_data->debug, s);
     s = free_mem(s);
 
     for(i = 1; i < pr_default; i++) {		/* 1 because of pr_memory */
@@ -587,6 +661,7 @@ void hd_scan(hd_data_t *hd_data)
 #ifndef LIBHD_TINY
   hd_scan_modem(hd_data);	/* do it before hd_scan_mouse() */
 #endif
+  hd_scan_braille(hd_data);
   hd_scan_mouse(hd_data);
   hd_scan_sbus(hd_data);
 
@@ -594,6 +669,9 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_cdrom(hd_data);
   hd_scan_net(hd_data);
   hd_scan_isdn(hd_data);
+
+  /* add test entries */
+  hd_scan_xtra(hd_data);
 
   /* some final fixup's */
   hd_scan_int(hd_data);
@@ -2273,6 +2351,14 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 
       case hw_scanner:
         break;
+
+      case hw_braille:
+        hd_set_probe_feature(hd_data, pr_misc);
+        hd_set_probe_feature(hd_data, pr_serial);
+        hd_set_probe_feature(hd_data, pr_braille_alva);
+        hd_set_probe_feature(hd_data, pr_braille_fhp);
+        hd_set_probe_feature(hd_data, pr_braille_ht);
+        break;
     }
     hd_scan(hd_data);
     memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
@@ -2354,6 +2440,10 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 
     case hw_scanner:
       base_class = -1;
+      break;
+
+    case hw_braille:
+      base_class = bc_braille;
       break;
 
     default:
@@ -2541,16 +2631,11 @@ str_list_t *read_kmods(hd_data_t *hd_data)
 }
 
 
-/*
- * Return field 'field' (starting with 0) from the 'SuSE='
- * kernel cmd line parameter.
- */
-char *get_cmd_param(hd_data_t *hd_data, int field)
+char *get_cmdline(hd_data_t *hd_data, char *key)
 {
   str_list_t *sl0, *sl1;
-  char c_str[] = "SuSE=";
   char *s, *t, *t0;
-  int i;
+  int i, l = strlen(key);
 
   if(!hd_data->cmd_line) {
     sl0 = read_file(PROC_CMDLINE, 0, 1);
@@ -2586,11 +2671,31 @@ char *get_cmd_param(hd_data_t *hd_data, int field)
   t = t0 = new_str(hd_data->cmd_line);
   while((s = strsep(&t, " "))) {
     if(!*s) continue;
-    if(!strncmp(s, c_str, sizeof c_str - 1)) {
-      s += sizeof c_str - 1;
+    if(!strncmp(s, key, l) && s[l] == '=') {
+      s += l + 1;
       break;
     }
   }
+
+  s = new_str(s);
+
+  free_mem(t0);
+
+  return s;
+}
+
+
+/*
+ * Return field 'field' (starting with 0) from the 'SuSE='
+ * kernel cmd line parameter.
+ */
+char *get_cmd_param(hd_data_t *hd_data, int field)
+{
+  char *s, *t, *t0;
+
+  s = t0 = get_cmdline(hd_data, "SuSE");
+
+  if(!t0) return NULL;
 
   t = NULL;
 
@@ -2610,16 +2715,6 @@ char *get_cmd_param(hd_data_t *hd_data, int field)
   return t;
 }
 
-
-typedef struct disk_s {
-  struct disk_s *next;
-  unsigned crc;
-  unsigned crc_match:1;
-  unsigned hd_idx;
-  char *dev_name;
-  unsigned data_len;
-  unsigned char data[0x200];
-} disk_t;
 
 void get_disk_crc(int fd, disk_t *dl)
 {
@@ -2860,4 +2955,68 @@ int cmp_hd(hd_t *hd1, hd_t *hd2)
 
   return 0;
 }
+
+
+void get_probe_env(hd_data_t *hd_data)
+{
+  char *s, *t, *env;
+  int i, j, k;
+
+  env = getenv("hwprobe");
+  if(!env) env = get_cmdline(hd_data, "hwprobe");
+  s = env = new_str(env);
+  if(!env) return;
+
+  hd_data->xtra_hd = free_str_list(hd_data->xtra_hd);
+
+  while((t = strsep(&s, ","))) {
+    if(*t == '+') {
+      k = 1;
+    }
+    else if(*t == '-') {
+      k = 0;
+    }
+    else {
+      ADD2LOG("hwprobe: what is \"%s\"?\n", t);
+      return;
+    }
+
+    t++;
+
+    if((j = hd_probe_feature_by_name(t))) {
+      set_probe_feature(hd_data, j, k ? 1 : 0);
+    }
+    else if(k && sscanf(t, "%i:%i:%i", &i, &i, &i) == 3) {
+      add_str_list(&hd_data->xtra_hd, t);
+    }
+    else {
+      ADD2LOG("hwprobe: what is \"%s\"?\n", t);
+      return;
+    }
+  }
+
+  free_mem(env);
+}
+
+void hd_scan_xtra(hd_data_t *hd_data)
+{
+  str_list_t *sl;
+  hd_t *hd;
+  int i0, i1, i2;
+
+  hd_data->module = mod_xtra;
+
+  remove_hd_entries(hd_data);
+
+  for(sl = hd_data->xtra_hd; sl; sl = sl->next) {
+    if(sscanf(sl->str, "%i:%i:%i", &i0, &i1, &i2) == 3) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class = i0 >> 8;
+      hd->sub_class = i0 & 0xff;
+      hd->vend = i1;
+      hd->dev = i2;
+    }
+  }
+}
+
 

@@ -1,4 +1,5 @@
 Real docu will come soon.
+Sorry, even this one is out of date. :-(((
 
 Tested platforms:
 
@@ -31,12 +32,14 @@ Examples:
   - hwinfo debug=-1 -all
     does *no* probing at all; useful if you want to see all supported probing flags
 
-You can specify probing flags via the environment variable 'probe' (yes,
+You can specify probing flags via the environment variable 'hwprobe' (yes,
 lower case); e.g.
 
-  probe=-all,+pci,+cdrom hwinfo
+  hwprobe=-isapnp,-usb hwinfo
 
-The 'probe' environment variable is parsed *after* the command line options.
+The 'hwprobe' environment variable will override *all* other probing flag
+settings. This way you can e.g. get hwinfo to ignore all isapnp & usb
+devices completely.
 
 Note: the order of arguments is relevant *only* for building the internal
 representation of the probing flags. It has *no* effect on the order the

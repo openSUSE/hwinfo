@@ -119,3 +119,4 @@ C 108	Keyboard
 C 109	Printer
 C 10a	Hub
 	01	USB Hub
+C 10b	Braille Display
