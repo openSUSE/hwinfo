@@ -24,6 +24,7 @@ static void int_floppy(hd_data_t *hd_data);
 static void int_fix_ide_scsi(hd_data_t *hd_data);
 static void int_fix_usb_scsi(hd_data_t *hd_data);
 static void int_mouse(hd_data_t *hd_data);
+static void new_id(hd_data_t *hd_data, hd_t *hd);
 
 void hd_scan_int(hd_data_t *hd_data)
 {
@@ -36,9 +37,6 @@ void hd_scan_int(hd_data_t *hd_data)
 
   PROGRESS(1, 0, "idescsi");
   int_fix_ide_scsi(hd_data);
-
-  PROGRESS(2, 0, "usbscsi");
-  int_fix_usb_scsi(hd_data);
 
   PROGRESS(3, 0, "pcmcia");
   int_pcmcia(hd_data);
@@ -59,6 +57,10 @@ void hd_scan_int(hd_data_t *hd_data)
 
   PROGRESS(8, 0, "mouse");
   int_mouse(hd_data);
+
+  PROGRESS(9, 0, "usbscsi");
+  int_fix_usb_scsi(hd_data);
+
 }
 
 /*
@@ -239,6 +241,7 @@ void int_floppy(hd_data_t *hd_data)
         )
       ) {
         hd->sub_class = sc_sdev_floppy;
+        new_id(hd_data, hd);
       }
     }
   }
@@ -279,10 +282,7 @@ void int_fix_ide_scsi(hd_data_t *hd_data)
           COPY_ENTRY(rev_name);
           COPY_ENTRY(serial);
 
-          hd_scsi->unique_id = free_mem(hd_scsi->unique_id);
-          hd_scsi->unique_id1 = free_mem(hd_scsi->unique_id1);
-          hd_scsi->old_unique_id = free_mem(hd_scsi->old_unique_id);
-          hd_add_id(hd_data, hd_scsi);
+          new_id(hd_data, hd_scsi);
         }
       }
     }
@@ -344,10 +344,7 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
           add_res_entry(&hd_usb->res, hd_scsi->res);
           hd_scsi->res = NULL;
 
-          hd_usb->unique_id = free_mem(hd_usb->unique_id);
-          hd_usb->unique_id1 = free_mem(hd_usb->unique_id1);
-          hd_usb->old_unique_id = free_mem(hd_usb->old_unique_id);
-          hd_add_id(hd_data, hd_usb);
+          new_id(hd_data, hd_usb);
         }
       }
     }
@@ -383,20 +380,31 @@ void int_mouse(hd_data_t *hd_data)
       hd->sub_class == sc_mou_ps2 &&
       hd->bus == bt->mouse.bus
     ) {
-      free_mem(hd->vend_name);
-      free_mem(hd->dev_name);
+      hd->vend_name = free_mem(hd->vend_name);
+      hd->dev_name = free_mem(hd->dev_name);
       hd->vend = hd->dev = 0;
+#if 1
+      hd->vend = bt->mouse.compat_vend;
+      hd->dev = bt->mouse.compat_dev;
+#else
       hd->vend_name = new_str(bt->mouse.vendor);
       hd->dev_name = new_str(bt->mouse.type);
       hd->compat_vend = bt->mouse.compat_vend;
       hd->compat_dev = bt->mouse.compat_dev;
-
-      hd->unique_id = free_mem(hd->unique_id);
-      hd->unique_id1 = free_mem(hd->unique_id1);
-      hd->old_unique_id = free_mem(hd->old_unique_id);
-      hd_add_id(hd_data, hd);
+#endif
+      new_id(hd_data, hd);
     }
   }
 }
 
 
+void new_id(hd_data_t *hd_data, hd_t *hd)
+{
+#if 0
+  hd->unique_id = free_mem(hd->unique_id);
+  hd->unique_id1 = free_mem(hd->unique_id1);
+  hd->old_unique_id = free_mem(hd->old_unique_id);
+  hd_add_id(hd_data, hd);
+#endif
+}
+ 

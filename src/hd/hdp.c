@@ -934,7 +934,7 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
     "RIMM", "SODIMM"
   };
   static char *mice[] = {
-    NULL, NULL, NULL, "Mouse",
+    NULL, "Other", NULL, "Mouse",
     "Track Ball", "Track Point", "Glide Point", "Touch Pad"
   };
   static char *mifaces[] = {

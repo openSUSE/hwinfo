@@ -501,7 +501,7 @@ void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
     dump_memory(hd_data, &memory, 0, "SMBIOS Structure Table");
   }
 
-  for(type = 0, u = 0, ofs = 0; u < structs && ofs + 4 < len; u++) {
+  for(type = 0, u = 0, ofs = 0; u < structs && ofs + 3 < len; u++) {
     type = memory.data[ofs];
     slen = memory.data[ofs + 1];
     if(ofs + slen > len || slen < 4) break;
@@ -841,7 +841,7 @@ void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt)
   char *vendor, *name, *type;
   hd_smbios_t *sm;
   static char *mice[] = {
-    NULL, NULL, NULL, "Mouse",
+    NULL, "Touch Pad" /* normally "Other" */, NULL, "Mouse",
     "Track Ball", "Track Point", "Glide Point", "Touch Pad"
   };
 

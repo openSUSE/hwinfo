@@ -1700,6 +1700,13 @@ void hd_scan(hd_data_t *hd_data)
 #endif
   }
 
+#if 0
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    hd_data->debug = -1;
+    hd_dump_entry(hd_data, hd, stderr);
+  }
+#endif
+
 #ifndef LIBHD_TINY
   /* must be _after_ we have valid hw_class entries */
   hd_scan_manual2(hd_data);
