@@ -205,3 +205,7 @@ s4001 3003
 s4001 3004
 	i	myri_sbus
 
+# net/hamachi.c
+1318 0911
+	i	hamachi
+

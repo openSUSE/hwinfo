@@ -7,7 +7,7 @@
 # PCI device classes and subclasses
 
 C 000	Unclassified device
-	00	Non-VGA unclassified device
+	00	Unclassified device
 	01	VGA compatible unclassified device
 C 001	Mass storage controller
 	00	SCSI storage controller
@@ -77,7 +77,7 @@ C 00c	Serial bus controller
 	04	Fiber Channel
 C 00e	Intelligent controller
 	00	I2O
-
+C 0ff	Unclassified device
 
 # our own class definitions
 

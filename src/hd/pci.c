@@ -69,6 +69,12 @@ void hd_scan_pci(hd_data_t *hd_data)
     hd->sub_class = p->sub_class;
     hd->prog_if = p->prog_if;
 
+    /* fix up old VGA's entries */
+    if(hd->base_class == bc_none && hd->sub_class == 0x01) {
+      hd->base_class = bc_display;
+      hd->sub_class = sc_dis_vga;
+    }
+
     if(p->dev || p->vend) {
       hd->dev = MAKE_ID(TAG_PCI, p->dev);
       hd->vend = MAKE_ID(TAG_PCI, p->vend);
