@@ -126,7 +126,7 @@ void hd_scan_kbd(hd_data_t *hd_data)
       unsigned int tty;
 
       if(!ioctl(fd, TIOCGDEV, &tty)) {
-	fprintf(stderr,"console at tty 0x%x\n", tty);
+	ADD2LOG("console at tty 0x%x\n", tty);
 
 	if (tty == 0xe500) { /* /dev/hvc0 */
 	  hd = add_hd_entry(hd_data, __LINE__, 0);
