@@ -57,24 +57,141 @@
 &device.id		pci 0x0096
 +driver.module.modprobe	ibmsis
 
-# scsi/megaraid.c
-# scsi/megaraid2.c
- vendor.id		pci 0x1028
-&device.id		pci 0x000e+2
+# modinfo
+ vendor.id		pci 0x1000
+&device.id		pci 0x0407
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+|vendor.id		pci 0x101e
+&device.id		pci 0x1960
 |vendor.id		pci 0x101e
 &device.id		pci 0x9010
 |vendor.id		pci 0x101e
 &device.id		pci 0x9060
-|vendor.id		pci 0x101e
-&device.id		pci 0x1960
+|vendor.id		pci 0x1028
+&device.id		pci 0x000e+0x0002
 |vendor.id		pci 0x8086
 &device.id		pci 0x1960
++driver.module.modprobe	megaraid
+
+# modinfo
+ vendor.id		pci 0x1000
+&device.id		pci 0x0407
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x0530+0x0003
 |vendor.id		pci 0x1000
 &device.id		pci 0x0407
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0531
+|vendor.id		pci 0x1000
+&device.id		pci 0x0407
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x0530
+|vendor.id		pci 0x1000
+&device.id		pci 0x0407
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x0532
+|vendor.id		pci 0x1000
+&device.id		pci 0x0408
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x0001+0x0002
+|vendor.id		pci 0x1000
+&device.id		pci 0x0408
+&subvendor.id		pci 0x1025
+&subdevice.id		pci 0x004d
+|vendor.id		pci 0x1000
+&device.id		pci 0x0408
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0001+0x0002
+|vendor.id		pci 0x1000
+&device.id		pci 0x0408
+&subvendor.id		pci 0x1734
+&subdevice.id		pci 0x1065
+|vendor.id		pci 0x1000
+&device.id		pci 0x0408
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x0002
+|vendor.id		pci 0x1000
+&device.id		pci 0x0408
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x3431
+|vendor.id		pci 0x1000
+&device.id		pci 0x0408
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x3499
+|vendor.id		pci 0x1000
+&device.id		pci 0x0409
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x3004
+|vendor.id		pci 0x1000
+&device.id		pci 0x0409
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x3008
+|vendor.id		pci 0x1000
+&device.id		pci 0x0409
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x3008
 |vendor.id		pci 0x1000
 &device.id		pci 0x1960
-+driver.module.modprobe	megaraid
-+driver.module.modprobe	megaraid2
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x0518
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x0520
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x0522+0x0002
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x4523
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0xa520
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0518
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0520
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x0520
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x0523
+|vendor.id		pci 0x101e
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0471
+|vendor.id		pci 0x101e
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0475
+|vendor.id		pci 0x101e
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0493
+|vendor.id		pci 0x1028
+&device.id		pci 0x000e
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0123
+|vendor.id		pci 0x1028
+&device.id		pci 0x000f
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x014a
+|vendor.id		pci 0x1028
+&device.id		pci 0x0013
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x016c+0x0005
++driver.module.modprobe	megaraid_mbox
 
 # override qla1280 info (#26325)
  vendor.id		pci 0x1077
@@ -86,7 +203,6 @@
 &subvendor.id		pci 0x101e
 &subdevice.id		pci 0x8471
 +driver.module.modprobe	megaraid
-+driver.module.modprobe	megaraid2
 
 # scsi/tmscsim.c
 # scsi/AM53C974.c
