@@ -757,7 +757,8 @@ typedef enum cpu_arch {
   arch_ia64,
   arch_s390, arch_s390x,
   arch_arm,
-  arch_mips
+  arch_mips,
+  arch_x86_64
 } hd_cpu_arch_t;
 
 // ###### drop boot_arch at all?

@@ -1804,6 +1804,9 @@ void hd_scan(hd_data_t *hd_data)
       case arch_ia64:
         s = "ia64";
         break;
+      case arch_x86_64:
+        s = "x86_64";
+        break;
       default:
         s = "unknown";
     }
@@ -2538,6 +2541,7 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
 
   switch(arch) {
     case arch_intel:
+    case arch_x86_64:
     case arch_alpha:
       ki->XkbRules = new_str("xfree86");
       ki->XkbModel = new_str("pc104");
@@ -3761,7 +3765,11 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 #ifdef __ia64__
   return arch_ia64;
 #else
+#ifdef __x86_64__
+  return arch_x86_64;
+#else
   return arch_unknown;
+#endif
 #endif
 #endif
 #endif

@@ -221,7 +221,7 @@ void read_cpuinfo(hd_data_t *hd_data)
 #endif	/* sparc */
 
 
-#ifdef __i386__
+#if defined(__i386__) || defined (__x86_64__)
   *model_id = *vendor_id = *features = 0;
   bogo = mhz = cache = family = model = stepping = 0;
 
@@ -240,7 +240,12 @@ void read_cpuinfo(hd_data_t *hd_data)
     if(strstr(sl->str, "processor") == sl->str || !sl->next) {		/* EOF */
       if(*model_id || *vendor_id) {	/* at least one of those */
         ct = new_mem(sizeof *ct);
+#ifdef __i386__
 	ct->architecture = arch_intel;
+#endif
+#ifdef __x86_64__
+	ct->architecture = arch_x86_64;
+#endif
         if(model_id) ct->model_name = new_str(model_id);
         if(vendor_id) ct->vend_name = new_str(vendor_id);
         ct->family = family;
@@ -299,7 +304,7 @@ void read_cpuinfo(hd_data_t *hd_data)
       }
     }
   }
-#endif /* __i386__  */
+#endif /* __i386__ || __x86_64__ */
 
 
 #ifdef __PPC__
