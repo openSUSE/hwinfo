@@ -111,6 +111,7 @@
 
 # net/ne.c
 AXE 2201
+PNP 80d6
 	m	ne
 		options ne		io=<io0> irq=<irq0>
 

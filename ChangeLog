@@ -1,9 +1,14 @@
+4/2/2000:	v0.58
+	- added generic ne2000 info
+	- improved printing of modules.conf entries
+	- moved ID handling macros (MAKE_ID, etc) to hd.h
+
 3/2/2000:	v0.57
 	- added lp-devices to mk_floppy
 	- added usb vendor list
 	- NOTE: hd_class_list() interface slightly changed!!!
 	- USB support complete rewritten
-	- modem fix: aviod selecting a device twice!
+	- modem fix: avoid selecting a device twice!
 	- driver info: take compatible devices into account
 
 2/2/2000:	v0.56

@@ -42,6 +42,27 @@ extern "C" {
 #include <termios.h>
 
 /*
+ * macros to handle device & vendor ids
+ *
+ * example: to check if an id is a pci id and get its value,
+ * do something like this:
+ *
+ * if(ID_TAG(hd->dev) == TAG_PCI) {
+ *   pci_id = ID_VALUE(hd->dev)
+ * }
+ */
+#define TAG_PCI		1	/* pci ids */
+#define TAG_EISA	2	/* eisa ids (incl. monitors) */
+#define TAG_USB		3	/* usb ids */
+#define TAG_SPECIAL	4	/* internally used ids */
+#define TAG_BUS		5	/* purely internal, you should never see this tag */
+#define TAG_CLASS	6	/* dto */
+
+#define ID_VALUE(id)		((id) & 0xffff)
+#define ID_TAG(id)		(((id) >> 16) & 0xf)
+#define MAKE_ID(tag, id_val)	((tag << 16) | (id_val))
+
+/*
  * flags to control the probing.
  *
  * Note: only 32 features are supported at this time; if you want more,

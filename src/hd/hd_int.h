@@ -28,18 +28,6 @@
 #define NAME_LIST		"hd.names"
 #define DRIVER_LIST		"hd.drivers"
 
-/* some  macros to handle internal id numbers */
-#define TAG_PCI		1
-#define TAG_EISA	2
-#define TAG_USB		3
-#define TAG_SPECIAL	4	/* e.g. ADB */
-#define TAG_BUS		5
-#define TAG_CLASS	6
-
-#define ID_VALUE(a)	((a) & 0xffff)
-#define ID_TAG(a)	(((a) >> 16) & 0xf)
-#define MAKE_ID(a, b)	((a << 16) | (b))
-
 #define PROGRESS(a, b, c) progress(hd_data, a, b, c)
 #define ADD2LOG(a...) str_printf(&hd_data->log, -2, a)
 

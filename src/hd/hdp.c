@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -371,8 +372,25 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
           di->module.mod_args ? di->module.mod_args : ""
         );
 
-        if(di->module.conf)
-          dump_line("Driver \"modules.conf\" Entry: \"%s\"\n", di->module.conf);
+        if(di->module.conf) {
+          char *s = di->module.conf;
+
+          dump_line_str("Driver \"modules.conf\" Entry: \"");
+          for(; *s; s++) {
+            if(isprint(*s)) {
+              dump_line0("%c", *s);
+            }
+            else {
+              switch(*s) {
+                case '\n': dump_line0("\\n"); break;
+                case '\r': dump_line0("\\r"); break;
+                case '\t': dump_line0("\t"); break;	/* *no* typo! */
+                default: dump_line0("\\%03o", *s); 
+              }
+            }
+          }
+          dump_line0("\"\n");
+        }
       break;
 
       case di_mouse:
