@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "hd.h"
@@ -55,6 +56,26 @@ void hd_scan_monitor(hd_data_t *hd_data)
 
   /* first, see if we got the full edid record from bios */
   bt = NULL;
+
+#if 0
+  /* for testing: LIBHD_EDID points to a file with valid edid record */
+  {
+    char *s = getenv("LIBHD_EDID");
+    unsigned char edid[0x80];
+    FILE *f;
+
+    if(s && (f = fopen(s, "r"))) {
+      if(fread(edid, sizeof edid, 1, f) == 1) {
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+        hd->base_class.id = bc_monitor;
+        add_edid_info(hd_data, hd, edid);
+      }
+      fclose(f);
+      return;
+    }
+  }
+#endif
+
   if(
     hd &&
     hd->detail &&
@@ -117,24 +138,24 @@ void hd_scan_monitor(hd_data_t *hd_data)
   }
 
   i = hex(s, 2); s+= 2;
-  if(i & (1 << 0)) add_monitor_res(hd, 720, 400, 70, 0);
-  if(i & (1 << 1)) add_monitor_res(hd, 720, 400, 88, 0);
-  if(i & (1 << 2)) add_monitor_res(hd, 640, 480, 60, 0);
-  if(i & (1 << 3)) add_monitor_res(hd, 640, 480, 67, 0);
-  if(i & (1 << 4)) add_monitor_res(hd, 640, 480, 72, 0);
-  if(i & (1 << 5)) add_monitor_res(hd, 640, 480, 75, 0);
-  if(i & (1 << 6)) add_monitor_res(hd, 800, 600, 56, 0);
-  if(i & (1 << 7)) add_monitor_res(hd, 800, 600, 60, 0);
+  if(i & (1 << 7)) add_monitor_res(hd, 720, 400, 70, 0);
+  if(i & (1 << 6)) add_monitor_res(hd, 720, 400, 88, 0);
+  if(i & (1 << 5)) add_monitor_res(hd, 640, 480, 60, 0);
+  if(i & (1 << 4)) add_monitor_res(hd, 640, 480, 67, 0);
+  if(i & (1 << 3)) add_monitor_res(hd, 640, 480, 72, 0);
+  if(i & (1 << 2)) add_monitor_res(hd, 640, 480, 75, 0);
+  if(i & (1 << 1)) add_monitor_res(hd, 800, 600, 56, 0);
+  if(i & (1 << 0)) add_monitor_res(hd, 800, 600, 60, 0);
 
   i = hex(s, 2); s+= 2;
-  if(i & (1 << 0)) add_monitor_res(hd,  800,  600, 72, 0);
-  if(i & (1 << 1)) add_monitor_res(hd,  800,  600, 75, 0);
-  if(i & (1 << 2)) add_monitor_res(hd,  832,  624, 75, 0);
-  if(i & (1 << 3)) add_monitor_res(hd, 1024,  768, 87, 1);
-  if(i & (1 << 4)) add_monitor_res(hd, 1024,  768, 60, 0);
-  if(i & (1 << 5)) add_monitor_res(hd, 1024,  768, 70, 0);
-  if(i & (1 << 6)) add_monitor_res(hd, 1024,  768, 75, 0);
-  if(i & (1 << 7)) add_monitor_res(hd, 1280, 1024, 75, 0);
+  if(i & (1 << 7)) add_monitor_res(hd,  800,  600, 72, 0);
+  if(i & (1 << 6)) add_monitor_res(hd,  800,  600, 75, 0);
+  if(i & (1 << 5)) add_monitor_res(hd,  832,  624, 75, 0);
+  if(i & (1 << 4)) add_monitor_res(hd, 1024,  768, 87, 1);
+  if(i & (1 << 3)) add_monitor_res(hd, 1024,  768, 60, 0);
+  if(i & (1 << 2)) add_monitor_res(hd, 1024,  768, 70, 0);
+  if(i & (1 << 1)) add_monitor_res(hd, 1024,  768, 75, 0);
+  if(i & (1 << 0)) add_monitor_res(hd, 1280, 1024, 75, 0);
 
   if(((se - s) & 1) || se - s > 8 * 4 + 2) {
     ADD2LOG("  ddc oops: %d bytes left?\n", (int) (se - s));
@@ -424,24 +445,24 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
   }
 
   u = edid[0x23];
-  if(u & (1 << 0)) add_monitor_res(hd, 720, 400, 70, 0);
-  if(u & (1 << 1)) add_monitor_res(hd, 720, 400, 88, 0);
-  if(u & (1 << 2)) add_monitor_res(hd, 640, 480, 60, 0);
-  if(u & (1 << 3)) add_monitor_res(hd, 640, 480, 67, 0);
-  if(u & (1 << 4)) add_monitor_res(hd, 640, 480, 72, 0);
-  if(u & (1 << 5)) add_monitor_res(hd, 640, 480, 75, 0);
-  if(u & (1 << 6)) add_monitor_res(hd, 800, 600, 56, 0);
-  if(u & (1 << 7)) add_monitor_res(hd, 800, 600, 60, 0);
+  if(u & (1 << 7)) add_monitor_res(hd, 720, 400, 70, 0);
+  if(u & (1 << 6)) add_monitor_res(hd, 720, 400, 88, 0);
+  if(u & (1 << 5)) add_monitor_res(hd, 640, 480, 60, 0);
+  if(u & (1 << 4)) add_monitor_res(hd, 640, 480, 67, 0);
+  if(u & (1 << 3)) add_monitor_res(hd, 640, 480, 72, 0);
+  if(u & (1 << 2)) add_monitor_res(hd, 640, 480, 75, 0);
+  if(u & (1 << 1)) add_monitor_res(hd, 800, 600, 56, 0);
+  if(u & (1 << 0)) add_monitor_res(hd, 800, 600, 60, 0);
 
   u = edid[0x24];
-  if(u & (1 << 0)) add_monitor_res(hd,  800,  600, 72, 0);
-  if(u & (1 << 1)) add_monitor_res(hd,  800,  600, 75, 0);
-  if(u & (1 << 2)) add_monitor_res(hd,  832,  624, 75, 0);
-  if(u & (1 << 3)) add_monitor_res(hd, 1024,  768, 87, 1);
-  if(u & (1 << 4)) add_monitor_res(hd, 1024,  768, 60, 0);
-  if(u & (1 << 5)) add_monitor_res(hd, 1024,  768, 70, 0);
-  if(u & (1 << 6)) add_monitor_res(hd, 1024,  768, 75, 0);
-  if(u & (1 << 7)) add_monitor_res(hd, 1280, 1024, 75, 0);
+  if(u & (1 << 7)) add_monitor_res(hd,  800,  600, 72, 0);
+  if(u & (1 << 6)) add_monitor_res(hd,  800,  600, 75, 0);
+  if(u & (1 << 5)) add_monitor_res(hd,  832,  624, 75, 0);
+  if(u & (1 << 4)) add_monitor_res(hd, 1024,  768, 87, 1);
+  if(u & (1 << 3)) add_monitor_res(hd, 1024,  768, 60, 0);
+  if(u & (1 << 2)) add_monitor_res(hd, 1024,  768, 70, 0);
+  if(u & (1 << 1)) add_monitor_res(hd, 1024,  768, 75, 0);
+  if(u & (1 << 0)) add_monitor_res(hd, 1280, 1024, 75, 0);
 
   for(i = 0; i < 4; i++) {
     u1 = (edid[0x26 + 2 * i] + 31) * 8;

@@ -1,3 +1,6 @@
+10/9/2003:	v7.21
+	- fixed monitor data interpretation bug (#29718)
+
 9/9/2003:	v7.20
 	- more ltmodem ids
 	- uli: implementation of S/390 hardware detection
