@@ -478,7 +478,7 @@ D "AVM B1 PCMCIA"; "b1pcmcia"; 8001; 2; 0x10001; 0x30000f; ""; "capi"; ""; "b1-%
 P 1; 0x0; 0x0; 0;
 P 3; 0x0; 0x0; 0;
 C "AVM C4"; 1; 0x1011; 0x1065; 0x1244; 0x800; 0x1; 0x4;
-D "AVM C4"; "c4"; 8001; 3; 0x10001; 0x30000f; ""; "capi"; ""; "c4.bin"; ""; "i4l-base,i4l-isdnlog,i4lfirm,capi4linux";
+D "AVM C4"; "c4"; 8001; 3; 0x10001; 0x300002; ""; "capi"; ""; "c4.bin"; ""; "i4l-base,i4l-isdnlog,i4lfirm,capi4linux";
 P 1; 0x0; 0x2000; 0;
 P 8; 0x0; 0x2000; 0;
 P 9; 0x0; 0x2000; 0;
@@ -491,7 +491,7 @@ D "AVM B1 PCMCIA"; "b1pcmcia"; 8001; 5; 0x10001; 0x30000f; ""; "capi"; ""; "b1-%
 P 1; 0x0; 0x0; 0;
 P 3; 0x0; 0x0; 0;
 C "AVM C2"; 1; 0x1011; 0x1065; 0x1244; 0x1100; 0x1; 0x2;
-D "AVM C2"; "c4"; 8001; 6; 0x10001; 0x30000f; ""; "capi"; ""; "c2.bin"; ""; "i4l-base,i4l-isdnlog,i4lfirm,capi4linux";
+D "AVM C2"; "c4"; 8001; 6; 0x10001; 0x300002; ""; "capi"; ""; "c2.bin"; ""; "i4l-base,i4l-isdnlog,i4lfirm,capi4linux";
 P 1; 0x0; 0x2000; 0;
 P 8; 0x0; 0x2000; 0;
 P 9; 0x0; 0x2000; 0;
