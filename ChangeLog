@@ -1,3 +1,6 @@
+21/3/2005:	v10.14
+	- updated X11 data (#74022)
+
 19/3/2005:	v10.13
 	- fix wrong entry for Fritz!Card DSL SL USB and
 	  make ppp mode detection safer (#71995)

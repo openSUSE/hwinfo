@@ -1940,7 +1940,7 @@
 &subdevice.id		pci 0x3124
 +subdevice.name		GeForce 6600 (Gigabyte)
 +driver.xfree		4|nv
-+driver.xfree.config	Option "noaccel"
++driver.xfree.config	Option "XaaNoScreenToScreenCopy"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -3252,36 +3252,47 @@
 &device.id		pci 0x2562
 +device.name		i845
 +driver.xfree		4|i810
++driver.xfree.config	Option "NoDDC"
 +driver.xfree		4|i810|3d||dri
++driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2572
 +device.name		865 G
 +driver.xfree		4|i810
++driver.xfree.config	Option "NoDDC"
 +driver.xfree		4|i810|3d||dri
++driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2582
 +device.name		915 G
 +driver.xfree		4|i810
++driver.xfree.config	Option "NoDDC"
 +driver.xfree		4|i810|3d||dri
++driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2592
 +device.name		915 GM
 +driver.xfree		4|i810
++driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3577
 +device.name		i830
 +driver.xfree		4|i810
++driver.xfree.config	Option "NoDDC"
 +driver.xfree		4|i810|3d||dri
++driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3582
 +device.name		855 GM
 +driver.xfree		4|i810
++driver.xfree.config	Option "NoDDC"
 +driver.xfree		4|i810|3d||dri
++driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x7121
