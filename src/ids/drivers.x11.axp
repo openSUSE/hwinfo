@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Fri Oct  5 16:32:23 2001
+# generated at: Sun Jan 20 15:15:15 2002
 
 # data source:  CDB
 
@@ -269,7 +269,7 @@
 1011 0004
 	x	4|tga|||||1|||
 
-# IBM:256-bit Graphics Rasterizer [Fire GL1]
+# IBM:fgl1
 1014 00b7
 	x	4|firegl1|||||8|||
 		Option "no_accel" "no"
@@ -279,7 +279,7 @@
 		Option "Capabilities" "0x00000000"
 		Option "Capabilities2" "0x00000000"
 
-# IBM:256-bit Graphics Rasterizer [Fire GL1]
+# IBM:fgl1
 1014 00b7
 	x	4|firegl1|3d|xfiregl1,xf86_glx|fgl1,dri,glx|DDCInfo,accel|8||switch2xf86_glx|
 		Option "no_accel" "no"
@@ -638,7 +638,7 @@
 1163 2000
 	x	4|rendition||||||||
 
-# IBM:Fire GL2
+# IBM:fgl2
 1014 0170
 	x	4|firegl23||xfiregl1|||8|||
 		Option "no_accel" "no"
@@ -648,7 +648,7 @@
 		Option "Capabilities" "0x00000000"
 		Option "Capabilities2" "0x00000000"
 
-# IBM:Fire GL2
+# IBM:fgl2
 1014 0170
 	x	4|firegl23|3d|xf86_glx,xfiregl1|fgl23,glx,dri||8||switch2xf86_glx|
 		Option "no_accel" "no"
@@ -746,7 +746,7 @@
 
 #
 
-# generated at: Fri Oct  5 16:32:23 2001
+# generated at: Sun Jan 20 15:15:15 2002
 
 # data source:  CDB
 
@@ -792,10 +792,6 @@
 
 # S3 Inc.:86c795 [Savage 3D/MV]
 5333 8a21
-	x	3|SVGA||||||||
-
-# S3 Inc.:Trio 64 3D
-5333 8904
 	x	3|SVGA||||||||
 
 # S3 Inc.:86c325 [ViRGE]
@@ -1540,10 +1536,6 @@
 
 # S3 Inc.:86cM65 [Aurora 128]
 5333 8815
-	x	3|S3||||||||
-
-# S3 Inc.:FireGL
-5333 8870
 	x	3|S3||||||||
 
 # S3 Inc.:86c868 [Vision 868 VRAM] vers 1

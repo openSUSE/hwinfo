@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Fri Oct  5 16:32:23 2001
+# generated at: Sun Jan 20 15:15:15 2002
 
 # data source:  CDB
 
@@ -13,17 +13,25 @@
 
 #
 
+# S3 Inc.:86cM65 [Aurora64V+]
+5333 8812
+	x	4|s3||||||||
+
 # S3 Inc.:86c988 [ViRGE/VX]
 5333 883d
 	x	4|s3virge||||||||
 
+# S3 Inc.:86c968 [Vision 968 VRAM] rev 0
+5333 88f0
+	x	4|s3||||||||
+
+# S3 Inc.:86c764/765 [Trio32/64/64V+]
+5333 8811
+	x	4|s3||||||||
+
 # S3 Inc.:86c795 [Savage 3D/MV]
 5333 8a21
 	x	4|savage||||||||
-
-# S3 Inc.:Trio 64 3D
-5333 8904
-	x	4|s3virge||||||||
 
 # S3 Inc.:86c325 [ViRGE]
 5333 5631
@@ -193,6 +201,10 @@
 1002 4c50
 	x	4|ati||||||||
 
+# ATI Technologies Inc:3D Rage LT Pro
+1002 4c51
+	x	4|ati||||||||
+
 # ATI Technologies Inc:3D Rage P/M Mobility
 1002 4c52
 	x	4|ati||||||||
@@ -207,6 +219,14 @@
 
 # ATI Technologies Inc:Rage 128 PF
 1002 5046
+	x	4|r128||||||||
+
+# ATI Technologies Inc:Rage 128 PP
+1002 5050
+	x	4|r128||||||||
+
+# ATI Technologies Inc:Rage 128 PR
+1002 5052
 	x	4|r128||||||||
 
 # ATI Technologies Inc:Rage 128 RE
@@ -257,9 +277,9 @@
 1013 00d4
 	x	4|cirrus||||||||
 
-# IBM:256-bit Graphics Rasterizer [Fire GL1]
+# IBM:fgl1
 1014 00b7
-	x	4|firegl1|||||8|||
+	x	4|firegl1||xfiregl1|||8|||
 		Option "no_accel" "no"
 		Option "NumDMABuffers2D" "4"
 		Option "NumDMABuffers" "24"
@@ -267,7 +287,7 @@
 		Option "Capabilities" "0x00000000"
 		Option "Capabilities2" "0x00000000"
 
-# IBM:256-bit Graphics Rasterizer [Fire GL1]
+# IBM:fgl1
 1014 00b7
 	x	4|firegl1|3d|xfiregl1,xf86_glx|fgl1,dri,glx|DDCInfo,accel|8||switch2xf86_glx|
 		Option "no_accel" "no"
@@ -324,10 +344,6 @@
 # Chips and Technologies:F68554 HiQVision
 102c 00f4
 	x	4|chips||||||||
-
-# Silicon Integrated Systems [SiS]:5591/5592 AGP
-1039 0001
-	x	4|sis||||||||
 
 # Silicon Integrated Systems [SiS]:5597/5598 VGA
 1039 0200
@@ -393,22 +409,6 @@
 10de 002d
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-# nVidia Corporation:Vanta [NV6]
-10de 002e
-	x	4|nv||||||||
-
-# nVidia Corporation:Vanta [NV6]
-10de 002e
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
-
-# nVidia Corporation:Vanta [NV6]
-10de 002f
-	x	4|nv||||||||
-
-# nVidia Corporation:Vanta [NV6]
-10de 002f
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
-
 # nVidia Corporation:GeForce 256 DDR
 10de 0101
 	x	4|nv||||||||
@@ -423,7 +423,7 @@
 
 # nVidia Corporation:NV11
 10de 0110
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx|sw_cursor|4||switch2nvidia_glx|
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
 # nVidia Corporation:NV11 DDR
 10de 0111
@@ -477,10 +477,6 @@
 1142 6424
 	x	4|apm||||||||
 
-# Rendition:Verite 1000
-1163 0001
-	x	4|rendition||||||||
-
 # 3Dfx Interactive, Inc.:Voodoo
 121a 0001
 	x	4|glide||glide_vg|||4|||
@@ -512,6 +508,14 @@
 # 3DLabs:GLINT R3
 3d3d 000a
 	x	4|glint||||||||
+
+# S3 Inc.:86c964 [Vision 964 VRAM] vers 0
+5333 88d0
+	x	4|s3||||||||
+
+# S3 Inc.:86c964 [Vision 964 VRAM] vers 1
+5333 88d1
+	x	4|s3||||||||
 
 # S3 Inc.:86c368 [Trio 3D/2X]
 5333 8a13
@@ -579,6 +583,10 @@
 # S3 Inc.:S3Twister_P
 5333 8d01
 	x	4|savage||||||||
+
+# ATI Technologies Inc:Rage 128 Pro TR (AGP)
+1002 5452
+	x	4|r128||||||||
 
 # Trident Microsystems:CyberBlade/DSTN/Ai1
 1023 8620
@@ -658,6 +666,10 @@
 1002 5147
 	x	4|radeon||||||||
 
+# S3 Inc.:Integrated Trio3D
+5333 8904
+	x	4|s3virge||||||||
+
 # 3DLabs:Permedia II 2D+3D
 3d3d 0009
 	x	4|glint|||||f|||
@@ -714,10 +726,6 @@
 8086 7800
 	x	4|i740||||||||
 
-# Rendition:Verite V2000/V2100/V2200
-1163 2000
-	x	4|rendition||||||||
-
 # S3 Inc.:Savage 4
 5333 8a22
 	x	4|savage||||||||
@@ -734,9 +742,9 @@
 1002 5159
 	x	4|radeon||||||||
 
-# IBM:Fire GL2
+# IBM:fgl2
 1014 0170
-	x	4|firegl23||xfiregl1|||8|||
+	x	4|firegl23||xfiregl23|||8|||
 		Option "no_accel" "no"
 		Option "enable DVI" "off"
 		Option "NumDMABuffers" "24"
@@ -745,9 +753,9 @@
 		Option "Capabilities2" "0x00000000"
 		Option "Overlay" "off"
 
-# IBM:Fire GL2
+# IBM:fgl2
 1014 0170
-	x	4|firegl23|3d|xf86_glx,xfiregl1|fgl23,glx,dri||8||switch2xf86_glx|
+	x	4|firegl23|3d|xf86_glx,xfiregl23|fgl23,glx,dri||8||switch2xf86_glx|
 		Option "no_accel" "no"
 		Option "enable DVI" "off"
 		Option "NumDMABuffers" "24"
@@ -866,6 +874,10 @@
 5333 8a01
 	x	4|s3virge||||||||
 
+# S3 Inc.:SuperSavage/MX 64C
+5333 8c26
+	x	4|savage||||||||
+
 # Alliance Semiconductor Corporation:ProVideo 6422
 1142 6422
 	x	4|apm||||||||
@@ -894,21 +906,161 @@ edd8 a099
 1002 4755
 	x	4|ati||||||||
 
+# ATI Technologies Inc:3D Rage IIC
+1002 4759
+	x	4|ati||||||||
+
 # Silicon Integrated Systems [SiS]:6306 3D-AGP
 1039 6306
 	x	4|sis|||||4|||
 
-# Silicon Integrated Systems [SiS]:SG86C202
-1039 0002
-	x	4|sis||||||||
+# ATI Technologies Inc:R200 QN
+1002 514e
+	x	4|radeon||||||||
 
-# Silicon Integrated Systems [SiS]:SG86C205
-1039 0205
-	x	4|sis||||||||
+# ATI Technologies Inc:R200 QO
+1002 514f
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:R200 Ql
+1002 516c
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:R200 BB
+1002 4242
+	x	4|ati||||||||
+
+# ATI Technologies Inc:Radeon 8500
+1002 514c 1002 013a
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon 7500
+1002 5157 1002 013a
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon 7500
+1002 5157 1002 013a
+	x	4|radeon|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
+# nVidia Corporation:0x0258
+10de 0258
+	x	4|nv||||||||
+
+# nVidia Corporation:0x0258
+10de 0258
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+# nVidia Corporation:0x0250
+10de 0250
+	x	4|nv||||||||
+
+# nVidia Corporation:0x0250
+10de 0250
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+# nVidia Corporation:IGeForce2
+10de 01a0
+	x	4|nv||||||||
+
+# nVidia Corporation:IGeForce2
+10de 01a0
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+# nVidia Corporation:0x017c
+10de 017c
+	x	4|nv||||||||
+
+# nVidia Corporation:0x017c
+10de 017c
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+# nVidia Corporation:0x017b
+10de 017b
+	x	4|nv||||||||
+
+# nVidia Corporation:0x017b
+10de 017b
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+# nVidia Corporation:0x017a
+10de 017a
+	x	4|nv||||||||
+
+# nVidia Corporation:0x017a
+10de 017a
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+# nVidia Corporation:0x0178
+10de 0178
+	x	4|nv||||||||
+
+# nVidia Corporation:0x0178
+10de 0178
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+# nVidia Corporation:0x0175
+10de 0175
+	x	4|nv||||||||
+
+# nVidia Corporation:0x0175
+10de 0175
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+# nVidia Corporation:0x0174
+10de 0174
+	x	4|nv||||||||
+
+# nVidia Corporation:0x0174
+10de 0174
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+# nVidia Corporation:0x0173
+10de 0173
+	x	4|nv||||||||
+
+# nVidia Corporation:0x0173
+10de 0173
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+# nVidia Corporation:0x0172
+10de 0172
+	x	4|nv||||||||
+
+# nVidia Corporation:0x0172
+10de 0172
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+# nVidia Corporation:0x0171
+10de 0171
+	x	4|nv||||||||
+
+# nVidia Corporation:0x0171
+10de 0171
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+# nVidia Corporation:0x0170
+10de 0170
+	x	4|nv||||||||
+
+# nVidia Corporation:0x0170
+10de 0170
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
 # Trident Microsystems:TGUI 9420
 1023 9420
 	x	4|trident||||||||
+
+# S3 Inc.:SuperSavage/IXC 64 DDR
+5333 8c2f
+	x	4|savage||||||||
+
+# S3 Inc.:SuperSavage/IXC 64 SDR
+5333 8c2e
+	x	4|savage||||||||
+
+# S3 Inc.:SuperSavage/IX 64 DDR
+5333 8c2d
+	x	4|savage||||||||
 
 # Trident Microsystems:Cyber 9388
 1023 9388
@@ -918,13 +1070,77 @@ edd8 a099
 1023 9397
 	x	4|trident||||||||
 
+# S3 Inc.:SuperSavage/IX 64 SDR
+5333 8c2c
+	x	4|savage||||||||
+
+# S3 Inc.:SuperSavage/IX 128 DDR
+5333 8c2b
+	x	4|savage||||||||
+
+# S3 Inc.:SuperSavage/IX 128 SDR
+5333 8c2a
+	x	4|savage||||||||
+
+# S3 Inc.:SuperSavage/MX 64
+5333 8c24
+	x	4|savage||||||||
+
+# S3 Inc.:SuperSavage/MX 128
+5333 8c22
+	x	4|savage||||||||
+
+# 3DLabs:R4
+3d3d 000d
+	x	4|glint||||||||
+
+# 3DLabs:Permedia 4
+3d3d 000c
+	x	4|glint||||||||
+
 # Tseng Labs Inc:ET4000/W32p rev A
 100c 3202
 	x	4|tseng||||||||
 
+# Intel Corporation:i830
+8086 3577
+	x	4|i810||||||||
+
 # Tseng Labs Inc:ET6000
 100c 3208
 	x	4|tseng||||||||
+
+# ATI Technologies Inc:Rage128 TL
+1002 544c
+	x	4|r128||||||||
+
+# Trident Microsystems:8820
+1023 8820
+	x	4|trident||||||||
+
+# ATI Technologies Inc:Radeon QZ
+1002 515a
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:RV200 QW
+1002 5157
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:R200 QL
+1002 514c
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon LZ
+1002 4c5a
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon LY
+1002 4c59
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon LW
+1002 4c57
+	x	4|radeon||||||||
 
 # ATI Technologies Inc:Mach64 LI
 1002 4c49
@@ -1062,7 +1278,7 @@ edd8 a099
 
 #
 
-# generated at: Fri Oct  5 16:32:23 2001
+# generated at: Sun Jan 20 15:15:15 2002
 
 # data source:  CDB
 
@@ -1108,10 +1324,6 @@ edd8 a099
 
 # S3 Inc.:86c795 [Savage 3D/MV]
 5333 8a21
-	x	3|SVGA||||||||
-
-# S3 Inc.:Trio 64 3D
-5333 8904
 	x	3|SVGA||||||||
 
 # S3 Inc.:86c325 [ViRGE]
@@ -1766,10 +1978,6 @@ edd8 a099
 1142 6424
 	x	3|SVGA||||||||
 
-# Rendition:Verite 1000
-1163 0001
-	x	3|SVGA||||||||
-
 # 3Dfx Interactive, Inc.:Voodoo
 121a 0001
 	x	3||3d|mesa3dfx,glide_vg|||4||switch2mesa3dfx|
@@ -1836,10 +2044,6 @@ edd8 a099
 
 # S3 Inc.:86cM65 [Aurora 128]
 5333 8815
-	x	3|S3||||||||
-
-# S3 Inc.:FireGL
-5333 8870
 	x	3|S3||||||||
 
 # S3 Inc.:86c868 [Vision 868 VRAM] vers 1
@@ -2030,13 +2234,13 @@ edd8 a099
 10c8 0000
 	x	3|SVGA||||||||
 
-# Alliance Semiconductor Corporation:ProMotion AT3D
-1142 643d
-	x	3|RUSH||xrush|||15|||
+# S3 Inc.:Integrated Trio3D
+5333 8904
+	x	3|SVGA||||||||
 
 # Alliance Semiconductor Corporation:ProMotion AT3D
 1142 643d
-	x	3|RUSH|3d|xrush,rushlibs,mesa3dfx,glide_vr|||4||switch2mesa3dfx|
+	x	3|SVGA||xsvga|||15|||
 
 # 3DLabs:Permedia II 2D+3D
 3d3d 0009
@@ -2088,10 +2292,6 @@ edd8 a099
 
 # Intel Corporation:i740
 8086 7800
-	x	3|SVGA||||||||
-
-# Rendition:Verite V2000/V2100/V2200
-1163 2000
 	x	3|SVGA||||||||
 
 # S3 Inc.:Savage 4

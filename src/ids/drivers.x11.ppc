@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Fri Oct  5 16:32:23 2001
+# generated at: Sun Jan 20 15:15:15 2002
 
 # data source:  CDB
 
@@ -117,6 +117,10 @@
 	x	4|fbdev||||dpms,hw_cursor|c|||
 		DacSpeed     200
 
+# Matrox Graphics, Inc.:MGA 2064W [Millennium]
+102b 0519
+	x	4|mga||||hw_cursor,dpms,DDCInfo|1f|||
+
 # Matrox Graphics, Inc.:MGA 1064SG [Mystique]
 102b 051a
 	x	4|fbdev||||dpms,hw_cursor|c|||
@@ -145,7 +149,7 @@
 
 #
 
-# generated at: Fri Oct  5 16:32:23 2001
+# generated at: Sun Jan 20 15:15:15 2002
 
 # data source:  CDB
 
@@ -228,6 +232,10 @@ s4001 0005
 # Matrox Graphics, Inc.:MGA G200
 102b 0520
 	x	3|FBDEV|||||1|||
+
+# Matrox Graphics, Inc.:MGA 2064W [Millennium]
+102b 0519
+	x	3||||||3|||
 
 # Matrox Graphics, Inc.:MGA 1064SG [Mystique]
 102b 051a

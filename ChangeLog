@@ -1,5 +1,6 @@
 20/1/2002:	v3.40
 	- updated hwscan so it does something useful
+	- updated x11 data
 
 14/1/2002:	v3.39
 	- next try with dietlibc on sparc
