@@ -1,8 +1,7 @@
-27/8/2002:	v5.37
+27/8/2002:	v5.36
+	- fixed floppy detection (#20269)
 	- x11 data update (#20182)
-
-26/9/2002:	v5.36
-	- fixed floppy detection
+	- added IBM ServeRAID ids (#20268)
 
 23/9/2002:	v5.35
 	- 'hwscan --pci' should add prom id (#19648)
