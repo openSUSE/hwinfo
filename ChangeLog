@@ -1,3 +1,6 @@
+15/9/2003:	v7.23
+	- ignore alternative usb interface settings
+
 11/9/2003:	v7.22
 	- updated X11 data
 	- don't read from cd drives that don't exist (#23248)

@@ -407,6 +407,7 @@ void get_usb_data(hd_data_t *hd_data)
          &i0, &i1, &i2, &i3, &i4, &i5, buf
       ) >= 7
     ) {
+      usb->i_alt = i1;
       usb->i_cls = i3;
       usb->i_sub = i4;
       usb->i_prot = i5;
@@ -623,6 +624,7 @@ usb_t *find_usb_entry(hd_data_t *hd_data, int *dev_idx)
   int search_idx = *dev_idx, cur_idx, next_idx = 0;
 
   for(usb = hd_data->usb; usb; usb = usb->next) {
+    if(usb->i_alt) continue;
     cur_idx = (usb->bus << 16) + (usb->dev_nr << 8) + usb->ifdescr;
     if(cur_idx == search_idx) found_usb = usb;
     if(
@@ -668,6 +670,7 @@ void dump_usb_data(hd_data_t *hd_data)
 
   ADD2LOG("----- usb device info -----\n");
   for(usb = hd_data->usb; usb; usb = usb->next) {
+    if(usb->i_alt) continue;
     ADD2LOG("  %d:%d.%d (@%d:%d.0) %d %d", usb->bus, usb->dev_nr, usb->ifdescr, usb->bus, usb->parent, usb->conns, usb->speed);
     if(usb->cloned) ADD2LOG(" from %d:%d.%d", usb->cloned->bus, usb->cloned->dev_nr, usb->cloned->ifdescr);
     ADD2LOG("\n  vend 0x%04x, dev 0x%04x, rev 0x%04x\n", usb->vendor, usb->device, usb->rev);
