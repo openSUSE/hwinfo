@@ -247,6 +247,7 @@ void int_fix_ide_scsi(hd_data_t *hd_data)
   for(hd_scsi = hd_ide = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
     if(
       hd_scsi->bus == bus_scsi &&
+      hd_scsi->driver &&
       !strcmp(hd_scsi->driver, "ide-scsi")
     ) {
       for(; hd_ide ; hd_ide = hd_ide->next) {
