@@ -3196,7 +3196,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
       case hw_monitor:
         hd_set_probe_feature(hd_data, pr_misc);
         hd_set_probe_feature(hd_data, pr_prom);
-//        hd_set_probe_feature(hd_data, pr_bios_vbe);
+        hd_set_probe_feature(hd_data, pr_bios_vbe);
         hd_set_probe_feature(hd_data, pr_monitor);
         break;
 
