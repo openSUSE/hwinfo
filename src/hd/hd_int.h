@@ -56,7 +56,7 @@
 #define PROG_MODPROBE		"/sbin/modprobe"
 #define PROG_RMMOD		"/sbin/rmmod"
 #define PROG_CARDCTL		"/sbin/cardctl"
-#define PROG_UDEVINFO		"/sbin/udevinfo"
+#define PROG_UDEVINFO		"/usr/bin/udevinfo"
 
 #define KLOG_BOOT		"/var/log/boot.msg"
 #define ISAPNP_CONF		"/etc/isapnp.conf"

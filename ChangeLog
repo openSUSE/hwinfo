@@ -1,3 +1,6 @@
+9/3/2004:	v8.17
+	- udevinfo moved to /usr/bin
+
 8/3/2004:	v8.16
 	- added host info for s390 SCSI devices
 	- added disk-only probing method for s390
