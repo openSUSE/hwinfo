@@ -75,6 +75,11 @@ int main(int argc, char **argv)
   printf("-- new --\n");
   getchar();
 
+  hd = hd_net_list(hd_data, 3); printf("\n");
+  for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
+
+  printf("-- new again --\n");
+
   hd = hd_net_list(hd_data, 2); printf("\n");
   for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
 

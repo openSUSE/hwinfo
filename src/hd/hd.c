@@ -1312,7 +1312,7 @@ hd_t *hd_cd_list(hd_data_t *hd_data, int rescan)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class == bc_storage_device && hd->sub_class == sc_sdev_cdrom) {
-      if(rescan != 2 || !search_str_list(hd_data->cd_list, hd->unix_dev_name)) {
+      if(!((rescan == 2 || rescan == 3) && search_str_list(hd_data->cd_list, hd->unix_dev_name))) {
         if(rescan == 2) {
           add_str_list(&hd_data->cd_list, hd->unix_dev_name);
         }
@@ -1343,7 +1343,7 @@ hd_t *hd_disk_list(hd_data_t *hd_data, int rescan)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class == bc_storage_device && hd->sub_class == sc_sdev_disk) {
-      if(rescan != 2 || !search_str_list(hd_data->disk_list, hd->unix_dev_name)) {
+      if(!((rescan == 2 || rescan == 3) && search_str_list(hd_data->disk_list, hd->unix_dev_name))) {
         if(rescan == 2) {
           add_str_list(&hd_data->disk_list, hd->unix_dev_name);
         }
@@ -1373,7 +1373,7 @@ hd_t *hd_net_list(hd_data_t *hd_data, int rescan)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class == bc_network_interface) {
-      if(rescan != 2 || !search_str_list(hd_data->net_list, hd->unix_dev_name)) {
+      if(!((rescan == 2 || rescan == 3) && search_str_list(hd_data->net_list, hd->unix_dev_name))) {
         if(rescan == 2) {
           add_str_list(&hd_data->net_list, hd->unix_dev_name);
         }

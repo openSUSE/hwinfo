@@ -8,7 +8,7 @@
 
 Author: Steffen Winterfeldt <a href="wfeldt@suse.de">wfeldt@suse.de</a><p>
 
-Current version (27 Jan 2000): 0.53<p>
+Current version (27 Jan 2000): 0.54<p>
 
 <h2>Simple Expample</h2>
 
@@ -104,6 +104,8 @@ of these values:
   1: re-probe the hardware before building the list<br>
   2: similar to 1, but return only devices that have not already been returned in a
      previous call with rescan == 2<br>
+  3: exactly as 2: returns the new stuff since the last call with rescan == 2
+     (use this if you need the list more than once)<br>
 </ul>
 <p>
 
