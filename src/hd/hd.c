@@ -2863,7 +2863,16 @@ int hd_smp_support(hd_data_t *hd_data)
   hd = hd_free_hd_list(hd);
 
 #ifdef __i386__
-  if(!is_smp) is_smp = detectSMP() > 0 ? 1 : 0;
+  if(is_smp < 2) {
+    if(!hd_data->bios_ram) {
+      int bf = hd_probe_feature(hd_data, pr_bios);
+      if(!bf) hd_set_probe_feature(hd_data, pr_bios);
+      hd_scan_bios(hd_data);
+      if(!bf) hd_clear_probe_feature(hd_data, pr_bios);
+    }
+    is_smp = detect_smp(hd_data);
+    if(is_smp < 0) is_smp = 0;
+  }
 #endif
 
   return is_smp;
@@ -3098,7 +3107,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
       case hw_disk:
         hd_set_probe_feature(hd_data, pr_ide);
         hd_set_probe_feature(hd_data, pr_scsi_cache);
-        hd_set_probe_feature(hd_data, pr_scsi_geo);
+//        hd_set_probe_feature(hd_data, pr_scsi_geo);
         hd_set_probe_feature(hd_data, pr_dac960);
         hd_set_probe_feature(hd_data, pr_smart);
         hd_set_probe_feature(hd_data, pr_i2o);

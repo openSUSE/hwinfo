@@ -89,6 +89,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
     for(scsi2 = ioctl_scsi; scsi2; scsi2 = scsi2->next) {
       if(
         !scsi2->deleted &&
+        !scsi2->fake &&
         scsi2->host == scsi->host &&
         scsi2->channel == scsi->channel &&
         scsi2->id == scsi->id &&
@@ -734,8 +735,9 @@ void dump_scsi_data(hd_data_t *hd_data, scsi_t *scsi, char *text)
   for(; scsi; scsi = scsi->next) {
     if(scsi->deleted) continue;
     ADD2LOG(
-      "  host %u, channel %u, id %u, lun %u, type %d, cache 0x%02x\n",
-      scsi->host, scsi->channel, scsi->id, scsi->lun, scsi->type, scsi->cache
+      "  host %u, channel %u, id %u, lun %u, type %d, cache 0x%02x%s\n",
+      scsi->host, scsi->channel, scsi->id, scsi->lun, scsi->type, scsi->cache,
+      scsi->fake ? " [*]" : ""
     );
     if(scsi->dev_name || scsi->guessed_dev_name || scsi->generic_dev != -1) {
       ADD2LOG(

@@ -58,7 +58,7 @@ struct option options[] = {
   { "braille", 0, NULL, 1000 + hw_braille },
   { "sys", 0, NULL, 1000 + hw_sys },
   { "cpu", 0, NULL, 1000 + hw_cpu },
-  { }
+  { "smp", 0, NULL, 3000 }
 };
 
 
@@ -120,6 +120,10 @@ int main(int argc, char **argv)
 
         case 1000 ... 1100:
           do_hw(hd_data, f, i - 1000);
+          break;
+
+        case 3000:
+          do_hw(hd_data, f, 3000);
           break;
 
         default:
@@ -231,9 +235,17 @@ int main(int argc, char **argv)
 void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
 {
   hd_t *hd, *hd0;
+  int smp = -1;
 
-  hd0 = hd_list(hd_data, hw_item, 1, NULL);
+  if(hw_item == 3000) {
+    smp = hd_smp_support(hd_data);
+    hd0 = NULL;
+  }
+  else {
+    hd0 = hd_list(hd_data, hw_item, 1, NULL);
+  }
   printf("\r%64s\r", "");
+  fflush(stdout);
 
   if(f) {
     if((hd_data->debug & HD_DEB_SHOW_LOG) && hd_data->log) {
@@ -255,7 +267,17 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
     );
   }
 
-  for(hd = hd0; hd; hd = hd->next) hd_dump_entry(hd_data, hd, f ? f : stdout);
+  if(hw_item == 3000) {
+    fprintf(f ? f : stdout,
+      "SMP support: %s",
+      smp < 0 ? "unknown" : smp > 0 ? "yes" : "no"
+    );
+    if(smp > 0) fprintf(f ? f : stdout, " (%u cpus)", smp);
+    fprintf(f ? f : stdout, "\n");
+  }
+  else {
+    for(hd = hd0; hd; hd = hd->next) hd_dump_entry(hd_data, hd, f ? f : stdout);
+  }
 
   if(hw_item == hw_display && hd0) {
     fprintf(f ? f : stdout, "\nPrimary display adapter: #%u\n", hd_display_adapter(hd_data));

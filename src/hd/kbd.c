@@ -127,6 +127,17 @@ void hd_scan_kbd(hd_data_t *hd_data)
           break;
         }
       }
+
+      /* get baud settings from /proc/cmdline */
+      s = get_cmdline(hd_data, "console");
+      if(s) {
+        unsigned u0, u1;
+        if(sscanf(s, "ttyS%u,%u", &u0, &u1) == 2) {
+          if(ser_info.line == u0 && u1) u = u1;
+        }
+      }
+      free_mem(s);
+
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
       res->baud.type = res_baud;
       res->baud.speed = u;

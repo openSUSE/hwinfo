@@ -1,3 +1,12 @@
+20/2/2001:	v1.92
+	- backport of new SMP detection code (ia32)
+	- get console speed from kernel command line (ppc)
+
+15/2/2001:	v1.91
+	- fixed evil scsi device detection bug
+	  (missing scsi devices under some strange circumstances)
+	- don't probe physical scsi geometry
+
 12/2/2001:	v1.90
 	- changed display adapter detection code to prefer sbus cards
 
