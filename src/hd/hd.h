@@ -730,6 +730,7 @@ typedef struct {
   str_list_t *extensions;		/* additional X extensions to load ('Module' section) */
   str_list_t *options;			/* special server options */
   str_list_t *raw;			/* extra info to add to XF86Config */
+  char *script;				/* 3d script to run */
 } driver_info_x11_t;
 
 /* isdn info */

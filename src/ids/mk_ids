@@ -915,7 +915,7 @@ sub issue_drv
 sub dump_drivers
 {
   local ( $_ );
-  my ( $d, $i, @i, $id0, $id1, $id2, $id3, $v0, $v1, $v2, $v3 );
+  my ( $d, $i, @i, $id0, $id1, $id2, $id3, $v0, $v1, $v2, $v3, $last_ids, $current_ids );
 
   return unless @driver;
 
@@ -932,14 +932,24 @@ sub dump_drivers
 
     $id0 = $id1 = $id2 = $id3 = undef;
 
+    $last_ids = 0;
+    $current_ids = 0;
+
     for $i (@i) {
+      $current_ids = @{$i};
+      
       if(cmp_id $id0, $i->[0]) {
         $id0 = $i->[0];
         $id1 = $id2 = $id3 = undef;
         issue_drv 0, $id0;
       }
 
-      if(cmp_id $id1, $i->[1]) {
+      # tricky!
+      if(
+        cmp_id($id1, $i->[1]) ||
+        ($current_ids == 4 && $last_ids < 4) ||
+        ($current_ids == 2 && $last_ids > 2)
+      ) {
         $id1 = $i->[1];
         $id2 = $id3 = undef;
         issue_drv 1, $id1;
@@ -971,7 +981,10 @@ sub dump_drivers
       print "$v0 $v1";
       print " $v2 $v3" if defined $v2;
       print "\n";
+
+      $last_ids = $current_ids;
     }
+
 
     # now the driver info
 
@@ -1178,7 +1191,10 @@ sub merge_x
           $x = $xdrv[$i][0][-1];
           $y = $xdrv[$j][0][-1];
           $k = 0;
-          if($x->[0][0] == $y->[0][0] && !$x->[0][2] && !defined($x[2])) {
+          if(
+            $x->[0][0] == $y->[0][0] && !$x->[0][2] &&
+            !defined($x->[2]) && !defined($y->[2])
+          ) {
             if($x->[1][2]) {
               if($x->[1][1] + $x->[1][2] == $y->[1][1]) {
                 $x->[1][2]++;
@@ -1201,6 +1217,5 @@ sub merge_x
   @xdrv = grep { defined } @xdrv;
 
   @driver = ( @other_drvs, @xdrv );
-
 }
 

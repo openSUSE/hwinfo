@@ -1,16 +1,16 @@
 #! /bin/sh
 
-# check in libhd to /work/src/done/STABLE
-# call from the libhd directory
+# check in hwinfo to /work/src/done/STABLE
+# call from the hwinfo directory
 
 ver=`cat VERSION`
-libhd=/tmp/libhd-$ver
+hwinfo=/tmp/hwinfo-$ver
 
 make clean
-rm -rf $libhd
-mkdir $libhd
-tar -cf - * | tar -C $libhd -xf -
-cd $libhd
+rm -rf $hwinfo
+mkdir $hwinfo
+tar -cf - * | tar -C $hwinfo -xf -
+cd $hwinfo
 find . -depth -name CVS -exec rm -r {} \;
 find . -depth -name .cvsignore -exec rm -r {} \;
 cd src/ids
@@ -24,16 +24,16 @@ cd ../..
 rm MAINTAINER scripts/ci_*
 cd /tmp
 
-tar -zcf $libhd.tar.gz libhd-$ver
+tar -Icf $hwinfo.tar.bz2 hwinfo-$ver
 
-if mkdir /work/src/done/STABLE/libhd ; then
-  cd /work/src/done/STABLE/libhd
-  cp $libhd.tar.gz /work/SRC/all/libhd/libhd.{changes,spec} .
-  perl -pi -e 's/^(Version:\s+)\S+/${1}'$ver'/' /work/src/done/STABLE/libhd/libhd.spec
-  perl -pi -e 's/^(Source.+?-)\S+?(\.tar\.gz)/${1}'$ver'${2}/' /work/src/done/STABLE/libhd/libhd.spec
+if mkdir /work/src/done/STABLE/hwinfo ; then
+  cd /work/src/done/STABLE/hwinfo
+  cp $hwinfo.tar.gz /work/SRC/all/hwinfo/hwinfo.{changes,spec} .
+  perl -pi -e 's/^(Version:\s+)\S+/${1}'$ver'/' /work/src/done/STABLE/hwinfo/hwinfo.spec
+  perl -pi -e 's/^(Source.+?-)\S+?(\.tar\.bz2)/${1}'$ver'${2}/' /work/src/done/STABLE/hwinfo/hwinfo.spec
   . /work/src/bin/.profile
-  vc libhd
-  rm /work/src/done/STABLE/libhd/*~
+  vc hwinfo
+  rm /work/src/done/STABLE/hwinfo/*~
   echo "done"
 else
   echo oops

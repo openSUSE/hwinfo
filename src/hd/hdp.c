@@ -461,6 +461,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
           );
         }
         if(di->x11.x3d) dump_line_str("3D Support: yes\n");
+        if(di->x11.script) dump_line("3D Script: %s\n", di->x11.script);
         if(di->x11.colors.all) {
           dump_line_str("Color Depths: ");
           j = 0;

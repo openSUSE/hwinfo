@@ -1,2095 +1,4040 @@
 #x11DB
-#hwinfo data from 2000-09-18 17:19:41
+#hwinfo data from 2000-12-07 15:23:22
 #
 
 
 
 # Matrox:MGA G200 AGP
 102b 0521  
-	x	4|mga||||sw_cursor|
+	x	4|mga||||sw_cursor|||
 
 
 # Matrox:MGA G200 AGP
 102b 0521  
-	x	3|SVGA|||||
+	x	4||3d||||||
+
+
+# Matrox:MGA G200 AGP
+102b 0521  
+	x	3|SVGA|||||||
 
 
 # Matrox:Marvel G200 SD
 102b ff04  
-	x	3|SVGA|||||
+	x	4|mga||||sw_cursor|||
+
+
+# Matrox:Marvel G200 SD
+102b ff04  
+	x	4||3d|||sw_cursor|||
+
+
+# Matrox:Marvel G200 SD
+102b ff04  
+	x	3|SVGA|||||||
+
+
+# Matrox:Marvel G200 SD
+102b ff04  
+	x	3|SVGA|3d||||||
 
 
 # Matrox:Millennium G200 SG
 102b ff03  
-	x	3|SVGA|||||
+	x	4|mga||||sw_cursor|||
+
+
+# Matrox:Millennium G200 SG
+102b ff03  
+	x	4||3d|||sw_cursor|||
+
+
+# Matrox:Millennium G200 SG
+102b ff03  
+	x	3|SVGA|||||||
+
+
+# Matrox:Millennium G200 SG
+102b ff03  
+	x	3|SVGA|3d||||||
 
 
 # Matrox:Mystique G200 SG
 102b ff02  
-	x	3|SVGA|||||
+	x	4|mga||||sw_cursor|||
+
+
+# Matrox:Mystique G200 SG
+102b ff02  
+	x	4||3d|||sw_cursor|||
+
+
+# Matrox:Mystique G200 SG
+102b ff02  
+	x	3|SVGA|||||||
+
+
+# Matrox:Mystique G200 SG
+102b ff02  
+	x	3|SVGA|3d||||||
 
 
 # Matrox:Mistral GUI+3D Accelerator
 102B 2007  
-	x	3|SVGA|||||
+	x	4|mga|||||||
+
+
+# Matrox:Mistral GUI+3D Accelerator
+102B 2007  
+	x	4||3d||||||
+
+
+# Matrox:Mistral GUI+3D Accelerator
+102B 2007  
+	x	3|SVGA|||||||
+
+
+# Matrox:Mistral GUI+3D Accelerator
+102B 2007  
+	x	3|SVGA|3d||||||
 
 
 # Matrox:Mystique
 102b 1100  
-	x	3|SVGA|||||
+	x	4|mga|||||||
+
+
+# Matrox:Mystique
+102b 1100  
+	x	4||3d||||||
+
+
+# Matrox:Mystique
+102b 1100  
+	x	3|SVGA|||||||
+
+
+# Matrox:Mystique
+102b 1100  
+	x	3|SVGA|3d||||||
 
 
 # Matrox:MGA G100 AGP
 102B 1001  
-	x	3|SVGA|||||
+	x	4|mga|||||||
+
+
+# Matrox:MGA G100 AGP
+102B 1001  
+	x	4||3d||||||
+
+
+# Matrox:MGA G100 AGP
+102B 1001  
+	x	3|SVGA|||||||
 
 
 # Matrox:MGA G100 PCI
 102B 1000  
-	x	3|SVGA|||||
+	x	4|mga|||||||
+
+
+# Matrox:MGA G100 PCI
+102B 1000  
+	x	4||3d||||||
+
+
+# Matrox:MGA G100 PCI
+102B 1000  
+	x	3|SVGA|||||||
+
+
+# Matrox:MGA G100 PCI
+102B 1000  
+	x	3|SVGA|3d||||||
 
 
 # Matrox:MGA Impression
 102B 0d10  
-	x	3|SVGA|||||
+	x	4|mga|||||||
+
+
+# Matrox:MGA Impression
+102B 0d10  
+	x	4||3d||||||
+
+
+# Matrox:MGA Impression
+102B 0d10  
+	x	3|SVGA|||||||
+
+
+# Matrox:MGA Impression
+102B 0d10  
+	x	3|SVGA|3d||||||
 
 
 # Matrox:MGA G400
 102B 0525  
-	x	4|mga||||sw_cursor|d
+	x	4|mga|||||||
 
 
 # Matrox:MGA G400
 102B 0525  
-	x	3|SVGA|||||
+	x	4||3d||||||
 
 
 # Matrox:MGA G400
 102B 0525  
-	x	3|SVGA|3d|glx|glx.so||4
+	x	3|SVGA|||||||
+
+
+# Matrox:MGA G400
+102B 0525  
+	x	3|SVGA|3d|glx|glx.so||16||
 
 
 # Matrox:MGA G200 SD PCI
 102B 0520  
-	x	4|mga||||sw_cursor|d
-
-
-# Matrox:MGA G200 SD PCI
-102B 0520  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Matrox:Millennium II (AGP)
 102B 051F  
-	x	4|mga|||||d
+	x	4|mga|||||||
 
 
 # Matrox:Millennium II (AGP)
 102B 051F  
-	x	3|SVGA|||||
+	x	4||3d||||||
+
+
+# Matrox:Millennium II (AGP)
+102B 051F  
+	x	3|SVGA|||||||
+
+
+# Matrox:Millennium II (AGP)
+102B 051F  
+	x	3|SVGA|3d||||16||
 
 
 # Matrox:Mystique 220 (AGP)
 102B 051E  
-	x	3|SVGA|||||
+	x	4|mga|||||||
+
+
+# Matrox:Mystique 220 (AGP)
+102B 051E  
+	x	4||3d||||||
+
+
+# Matrox:Mystique 220 (AGP)
+102B 051E  
+	x	3|SVGA|||||||
+
+
+# Matrox:Mystique 220 (AGP)
+102B 051E  
+	x	3|SVGA|3d||||||
 
 
 # Matrox:MGA 2164W
 102B 051b  
-	x	4|mga|||||d
+	x	4|mga|||||||
 
 
 # Matrox:MGA 2164W
 102B 051b  
-	x	3|SVGA|||||
+	x	4||3d||||||
+
+
+# Matrox:MGA 2164W
+102B 051b  
+	x	3|SVGA|||||||
 
 
 # Matrox:Mystique MGA 1064SG
 102B 051a  
-	x	4|mga|||||
+	x	4|mga|||||||
 
 
 # Matrox:Mystique MGA 1064SG
 102B 051a  
-	x	3|SVGA|||||
+	x	4||3d||||||
+
+
+# Matrox:Mystique MGA 1064SG
+102B 051a  
+	x	3|SVGA|||||||
 
 
 # Matrox:MGA 2064W
 102B 0519  
-	x	4|mga|||||d
+	x	4|mga|||||||
 
 
 # Matrox:MGA 2064W
 102B 0519  
-	x	3|SVGA|||||d
+	x	4||3d||||||
+
+
+# Matrox:MGA 2064W
+102B 0519  
+	x	3|SVGA|||||8,16,24||
 
 
 # Matrox:MGA 2085PX
 102B 0518  
-	x	3|SVGA|||||
+	x	4|mga|||||||
+
+
+# Matrox:MGA 2085PX
+102B 0518  
+	x	4||3d||||||
+
+
+# Matrox:MGA 2085PX
+102B 0518  
+	x	3|SVGA|||||||
+
+
+# Matrox:MGA 2085PX
+102B 0518  
+	x	3|SVGA|3d||||||
 
 
 # Matrox:Millennium II
 102b 0100  
-	x	3|SVGA|||||
+	x	4|mga|||||||
+
+
+# Matrox:Millennium II
+102b 0100  
+	x	4||3d||||||
+
+
+# Matrox:Millennium II
+102b 0100  
+	x	3|SVGA|||||||
+
+
+# Matrox:Millennium II
+102b 0100  
+	x	3|SVGA|3d||||||
 
 
 # Matrox:Matrox G400
 102b 0525 102b 0378
-	x	3|SVGA|||||
+	x	4|mga||||sw_cursor|||
 
 
 # Matrox:Matrox G400
 102b 0525 102b 0378
-	x	3|SVGA|3d|glx|glx.so||4
+	x	4||3d|||sw_cursor|||
+
+
+# Matrox:Matrox G400
+102b 0525 102b 0378
+	x	3|SVGA|||||||
+
+
+# Matrox:Matrox G400
+102b 0525 102b 0378
+	x	3|SVGA|3d|glx|glx.so||16||
 
 
 # Miro:Video I/O & motion JPEG compressor
 1031 5607  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Miro:Video I/O & motion JPEG compressor
+1031 5607  
+	x	3|SVGA|3d||||||
 
 
 # Miro:Media 3D
 1031 5631  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Miro:Media 3D
+1031 5631  
+	x	3|SVGA|3d||||||
 
 
 # Miro:MiroVIDEO DC10/DC30 (plus)
 1031 6057  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Miro:MiroVIDEO DC10/DC30 (plus)
+1031 6057  
+	x	3|SVGA|3d||||||
 
 
 # Miro:ZR36050
 1031 5601  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
-# Diamond:Fire GL1
-1014 00b7  
-	x	4|firegl1||xfiregl1||accel,DDCInfo|8
-		Option "NumDMABuffers2D" "4"
-		Option "NumDMABuffers" "24"
-		Option "NumTMBuffers" "4"
-		Option "Capabilities" "0x00000000"
-		#Option "PipelineSpeed" "125"
-
-
-# Diamond:Fire GL1
-1014 00b7  
-	x	4|firegl1|3d|xfiregl1|glx,dri,fgl1|accel,DDCInfo|8
-		Option "NumDMABuffers2D" "4"
-		Option "NumDMABuffers" "24"
-		Option "NumTMBuffers" "4"
-		Option "Capabilities" "0x00000000"
-		#Option "PipelineSpeed" "125"
+# Miro:ZR36050
+1031 5601  
+	x	3|SVGA|3d||||||
 
 
 # Diamond:Viper 330
 1092 1092  
-	x	4|nv|||||
+	x	4|nv|||||||
 
 
 # Diamond:Viper 330
 1092 1092  
-	x	3|SVGA|||||1d
+	x	3|SVGA|||||32,24,16,8||
 
 
 # Diamond:Viper 550
 1092 0550  
-	x	3|SVGA|||||f
+	x	3|SVGA|||||24,16,8,15||
 
 
 # Diamond:Viper 550
 1092 0550  
-	x	3|SVGA|3d|glx|glx.so||4
+	x	3|SVGA|3d|glx|glx.so||16||
 
 
 # Elsa:Gloria Synergy
 1048 0a32  
-	x	3|3DLABS|||||
+	x	3|3DLABS|||||||
+
+
+# Elsa:Gloria Synergy
+1048 0a32  
+	x	3|3DLABS|3d||||||
 
 
 # Elsa:Winner 2000 Office
 104c 3d07 1048 0a31
-	x	3|3DLABS|||||
+	x	4|glint|||||||
+
+
+# Elsa:Winner 2000 Office
+104c 3d07 1048 0a31
+	x	3|3DLABS|||||||
 
 
 # ATI:Mach64 VT4 PCI
 1002 5656  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64 VT4 PCI
+1002 5656  
+	x	3|MACH64|||||||
+
+
+# ATI:Mach64 VT4 PCI
+1002 5656  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Mach64 VT3
 1002 5655  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64 VT3
+1002 5655  
+	x	3|MACH64|||||||
+
+
+# ATI:Mach64 VT3
+1002 5655  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Mach64 VT
 1002 5654  
-	x	4|ati|||||
+	x	4|ati|||||||
 
 
 # ATI:Mach64 VT
 1002 5654  
-	x	3|MACH64|||||
+	x	3|MACH64|||||||
 
 
 # ATI:Mach64 ST
 1002 5354  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64 ST
+1002 5354  
+	x	3|MACH64|||||||
+
+
+# ATI:Mach64 ST
+1002 5354  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Rage 128 4x
 1002 534E  
-	x	3|SVGA|||||
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 4x
+1002 534E  
+	x	3|SVGA|||||||
+
+
+# ATI:Rage 128 4x
+1002 534E  
+	x	3|SVGA|3d||||||
 
 
 # ATI:Rage 128 4x AGP 4x
 1002 534D  
-	x	3|SVGA|||||
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 4x AGP 4x
+1002 534D  
+	x	3|SVGA|||||||
+
+
+# ATI:Rage 128 4x AGP 4x
+1002 534D  
+	x	3|SVGA|3d||||||
 
 
 # ATI:Rage 128 4x AGP 2x
 1002 534C  
-	x	3|SVGA|||||
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 4x AGP 2x
+1002 534C  
+	x	3|SVGA|||||||
+
+
+# ATI:Rage 128 4x AGP 2x
+1002 534C  
+	x	3|SVGA|3d||||||
 
 
 # ATI:Rage 128 4x PCI
 1002 534B  
-	x	3|SVGA|||||
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 4x PCI
+1002 534B  
+	x	3|SVGA|||||||
+
+
+# ATI:Rage 128 4x PCI
+1002 534B  
+	x	3|SVGA|3d||||||
 
 
 # ATI:Rage 128 4x
 1002 5348  
-	x	3|SVGA|||||
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 4x
+1002 5348  
+	x	3|SVGA|||||||
+
+
+# ATI:Rage 128 4x
+1002 5348  
+	x	3|SVGA|3d||||||
 
 
 # ATI:Rage 128 4x AGP 4x
 1002 5347  
-	x	3|SVGA|||||
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 4x AGP 4x
+1002 5347  
+	x	3|SVGA|||||||
+
+
+# ATI:Rage 128 4x AGP 4x
+1002 5347  
+	x	3|SVGA|3d||||||
 
 
 # ATI:Rage 128 4x AGP 2x
 1002 5346  
-	x	3|SVGA|||||
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 4x AGP 2x
+1002 5346  
+	x	3|SVGA|||||||
+
+
+# ATI:Rage 128 4x AGP 2x
+1002 5346  
+	x	3|SVGA|3d||||||
 
 
 # ATI:Rage 128 4x PCI
 1002 5345  
-	x	3|SVGA|||||
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 4x PCI
+1002 5345  
+	x	3|SVGA|||||||
+
+
+# ATI:Rage 128 4x PCI
+1002 5345  
+	x	3|SVGA|3d||||||
 
 
 # ATI:Rage 128 RL
 1002 524C  
-	x	3|SVGA|||||
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 RL
+1002 524C  
+	x	3|SVGA|||||||
 
 
 # ATI:Rage 128 VR PCI
 1002 524B  
-	x	3|SVGA|||||
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 VR PCI
+1002 524B  
+	x	3|SVGA|||||||
+
+
+# ATI:Rage 128 VR PCI
+1002 524B  
+	x	3|SVGA|3d||||||
 
 
 # ATI:Rage 128 GL AGP 2x
 1002 5246  
-	x	3|SVGA|||||
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 GL AGP 2x
+1002 5246  
+	x	4||3d||||||
+
+
+# ATI:Rage 128 GL AGP 2x
+1002 5246  
+	x	3|SVGA|||||||
 
 
 # ATI:Rage 128 GL PCI
 1002 5245  
-	x	3|SVGA|||||
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 GL PCI
+1002 5245  
+	x	3|SVGA|||||||
 
 
 # ATI:Rage 128 Pro AGP 4x (TMDS)
 1002 5058  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 2x (TMDS)
 1002 5057  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro PCI (TMDS)
 1002 5056  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 4x
 1002 5055  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 2x
 1002 5054  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro PCI
 1002 5053  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 4x (TMDS)
 1002 5052  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 2x (TMDS)
 1002 5051  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro PCI (TMDS)
 1002 5050  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 4x
 1002 504F  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 2x
 1002 504E  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro PCI
 1002 504D  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 4x (TMDS)
 1002 504C  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 2x (TMDS)
 1002 504B  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro PCI (TMDS)
 1002 504A  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 4x
 1002 5049  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 2x
 1002 5048  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro PCI
 1002 5047  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 4x (TMDS)
 1002 5046  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 2x (TMDS)
 1002 5045  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro PCI (TMDS)
 1002 5044  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 4x
 1002 5043  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro AGP 2x
 1002 5042  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Rage 128 Pro PCI
 1002 5041  
-	x	4|r128|||||
+	x	4|r128|||||||
 
 
 # ATI:Mach64 LT
 1002 4C54  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64 LT
+1002 4C54  
+	x	3|MACH64|||||||
+
+
+# ATI:Mach64 LT
+1002 4C54  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Rage L Mobility PCI
 1002 4C53  
-	x	3|SVGA|||||
+	x	4|ati|||||||
+
+
+# ATI:Rage L Mobility PCI
+1002 4C53  
+	x	3|SVGA|||||||
+
+
+# ATI:Rage L Mobility PCI
+1002 4C53  
+	x	3|SVGA|3d||||||
 
 
 # ATI:Rage P/M Mobility PCI
 1002 4C52  
-	x	3|SVGA|||||
+	x	4|ati|||||||
+
+
+# ATI:Rage P/M Mobility PCI
+1002 4C52  
+	x	3|SVGA|||||||
+
+
+# ATI:Rage P/M Mobility PCI
+1002 4C52  
+	x	3|SVGA|3d||||||
 
 
 # ATI:Rage 3D LT Pro PCI
 1002 4C51  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Rage 3D LT Pro PCI
+1002 4C51  
+	x	3|MACH64|||||||
+
+
+# ATI:Rage 3D LT Pro PCI
+1002 4C51  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Mach64 LP
 1002 4C50  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64 LP
+1002 4C50  
+	x	3|MACH64|||||||
+
+
+# ATI:Mach64 LP
+1002 4C50  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Rage L Mobility AGP 2x
 1002 4C4E  
-	x	3|SVGA|||||
+	x	4|ati|||||||
+
+
+# ATI:Rage L Mobility AGP 2x
+1002 4C4E  
+	x	3|SVGA|||||||
 
 
 # ATI:Rage P/M Mobility AGP 2x
 1002 4C4D  
-	x	3|SVGA|||||
+	x	4|ati|||||||
+
+
+# ATI:Rage P/M Mobility AGP 2x
+1002 4C4D  
+	x	4||3d||||||
+
+
+# ATI:Rage P/M Mobility AGP 2x
+1002 4C4D  
+	x	3|MACH64|||||||
 
 
 # ATI:Mach64 LI
 1002 4C49  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64 LI
+1002 4C49  
+	x	3|MACH64|||||||
+
+
+# ATI:Mach64 LI
+1002 4C49  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Rage 3D LT-G
 1002 4C47  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Rage 3D LT-G
+1002 4C47  
+	x	3|MACH64|||||||
+
+
+# ATI:Rage 3D LT-G
+1002 4C47  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Mach64 LD
 1002 4C44  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64 LD
+1002 4C44  
+	x	3|MACH64|||||||
+
+
+# ATI:Mach64 LD
+1002 4C44  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Rage 3D LT Pro AGP
 1002 4C42  
-	x	3|MACH64|||||
+	x	4|ati|||||||
 
 
 # ATI:Rage 3D LT Pro AGP
 1002 4C42  
-	x	3|MACH64|3d|glx|glx.so||4
+	x	3|MACH64|||||||
+
+
+# ATI:Rage 3D LT Pro AGP
+1002 4C42  
+	x	3|MACH64|3d|glx|glx.so||16||
 
 
 # ATI:Rage 3D IIC AGP
 1002 475A  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Rage 3D IIC AGP
+1002 475A  
+	x	4||3d||||||
+
+
+# ATI:Rage 3D IIC AGP
+1002 475A  
+	x	3|MACH64|||||||
 
 
 # ATI:Rage 3D IIC
 1002 4759  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Rage 3D IIC
+1002 4759  
+	x	3|MACH64|||||||
+
+
+# ATI:Rage 3D IIC
+1002 4759  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Mach64 GX (21088)
 1002 4758  
-	x	4|ati|||||
-
-
-# ATI:Mach64 GX (21088)
-1002 4758  
-	x	3|MACH64|||||
+	x	3|MACH64|||||||
 
 
 # ATI:Mach64 based
 1002 4757  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64 based
+1002 4757  
+	x	3|MACH64|||||||
+
+
+# ATI:Mach64 based
+1002 4757  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Mach64 based
 1002 4756  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64 based
+1002 4756  
+	x	3|MACH64|||||||
 
 
 # ATI:Rage 3D II+
 1002 4755  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Rage 3D II+
+1002 4755  
+	x	3|MACH64|||||||
+
+
+# ATI:Rage 3D II+
+1002 4755  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Mach64 GT (Rage II)
 1002 4754  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64 GT (Rage II)
+1002 4754  
+	x	3|MACH64|||||||
 
 
 # ATI:Rage XC PCI
 1002 4753  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Rage XC PCI
+1002 4753  
+	x	3|MACH64|||||||
+
+
+# ATI:Rage XC PCI
+1002 4753  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Mach64 XL or XC
 1002 4752  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64 XL or XC
+1002 4752  
+	x	3|MACH64|||||||
+
+
+# ATI:Mach64 XL or XC
+1002 4752  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Rage 3D Pro PCI
 1002 4751  
-	x	3|MACH64|||||
+	x	4|ati|||||||
 
 
 # ATI:Rage 3D Pro PCI
 1002 4751  
-	x	3|MACH64|3d|glx|glx.so||4
+	x	3|MACH64|||||||
+
+
+# ATI:Rage 3D Pro PCI
+1002 4751  
+	x	3|MACH64|3d|glx|glx.so||16||
 
 
 # ATI:Rage 3D Pro PCI
 1002 4750  
-	x	3|MACH64|||||
+	x	4|ati|||||||
 
 
 # ATI:Rage 3D Pro PCI
 1002 4750  
-	x	3|MACH64|3d|glx|glx.so||4
+	x	3|MACH64|||||||
+
+
+# ATI:Rage 3D Pro PCI
+1002 4750  
+	x	3|MACH64|3d|glx|glx.so||16||
 
 
 # ATI:Rage XL PCI-66
 1002 474F  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Rage XL PCI-66
+1002 474F  
+	x	3|MACH64|||||||
+
+
+# ATI:Rage XL PCI-66
+1002 474F  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Mach64 XL or XC
 1002 474E  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64 XL or XC
+1002 474E  
+	x	3|MACH64|||||||
+
+
+# ATI:Mach64 XL or XC
+1002 474E  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Mach64 XL or XC
 1002 474D  
-	x	4|ati|||||d
+	x	4|ati|||||||
 
 
 # ATI:Mach64 XL or XC
 1002 474D  
-	x	3|MACH64|||||d
+	x	4||3d||||||
+
+
+# ATI:Mach64 XL or XC
+1002 474D  
+	x	3|MACH64|||||8,16,24||
 
 
 # ATI:Rage XC PCI-66
 1002 474C  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Rage XC PCI-66
+1002 474C  
+	x	3|MACH64|||||||
+
+
+# ATI:Rage XC PCI-66
+1002 474C  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Rage 3D Pro PCI
 1002 4749  
-	x	3|MACH64|||||
+	x	4|ati|||||||
 
 
 # ATI:Rage 3D Pro PCI
 1002 4749  
-	x	3|MACH64|3d|glx|glx.so||4
+	x	3|MACH64|||||||
+
+
+# ATI:Rage 3D Pro PCI
+1002 4749  
+	x	3|MACH64|3d|glx|glx.so||16||
 
 
 # ATI:Rage 3D Pro
 1002 4747  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Rage 3D Pro
+1002 4747  
+	x	3|MACH64|||||||
+
+
+# ATI:Rage 3D Pro
+1002 4747  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Rage3D III
 1002 4744  
-	x	3|MACH64|||||
+	x	4|ati|||||||
 
 
 # ATI:Rage3D III
 1002 4744  
-	x	3|MACH64|3d|glx|glx.so||4
+	x	3|MACH64|||||||
+
+
+# ATI:Rage3D III
+1002 4744  
+	x	3|MACH64|3d|glx|glx.so||16||
 
 
 # ATI:Rage 3D Pro AGP
 1002 4742  
-	x	3|MACH64|||||
+	x	4|ati|||||||
 
 
 # ATI:Rage 3D Pro AGP
 1002 4742  
-	x	3|MACH64|3d|glx|glx.so||4
+	x	4||3d||||||
+
+
+# ATI:Rage 3D Pro AGP
+1002 4742  
+	x	3|MACH64|||||||
+
+
+# ATI:Rage 3D Pro AGP
+1002 4742  
+	x	3|MACH64|3d|glx|glx.so||16||
 
 
 # ATI:Mach64 VT
 1002 4654  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64 VT
+1002 4654  
+	x	3|MACH64|||||||
+
+
+# ATI:Mach64 VT
+1002 4654  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Mach64 ET
 1002 4554  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64 ET
+1002 4554  
+	x	3|MACH64|||||||
+
+
+# ATI:Mach64 ET
+1002 4554  
+	x	3|MACH64|3d||||||
 
 
 # ATI:Mach64 CX
 1002 4358  
-	x	3|MACH64|||||
+	x	3|MACH64|||||||
 
 
 # ATI:Mach64 CT
 1002 4354  
-	x	4|ati|||||
+	x	4|ati|||||||
 
 
 # ATI:Mach64 CT
 1002 4354  
-	x	3|MACH64|||||
+	x	3|MACH64|||||||
 
 
 # ATI:Mach32
 1002 4158  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach32
+1002 4158  
+	x	3|MACH64|||||||
 
 
 # ATI:Mach64
 1002 0088  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:Mach64
+1002 0088  
+	x	3|MACH64|||||||
+
+
+# ATI:Mach64
+1002 0088  
+	x	3|MACH64|3d||||||
 
 
 # ATI:RageIIC
 1002 0084  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# ATI:RageIIC
+1002 0084  
+	x	4||3d||||||
+
+
+# ATI:RageIIC
+1002 0084  
+	x	3|MACH64|||||||
+
+
+# ATI:Rage P/M Mobility AGP 2x (HP Omnibook)
+1002 4C4D 103c 000a
+	x	4|ati|||||||
 
 
 # ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
 1002 4C4D 14c0 000a
-	x	3|SVGA|||||
+	x	4|ati|||||||
+
+
+# ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
+1002 4C4D 14c0 000a
+	x	3|SVGA|||||||
+
+
+# ATI:Rage Mobility M3 AGP 2x
+1002 4c46  
+	x	4|r128|||||||
+
+
+# ATI:Rage Mobility M3 AGP 2x
+1002 4c46  
+	x	3||||||||
+
+
+# ATI:Rage Mobility M3 AGP 2x
+1002 4c46  
+	x	3||3d||||||
 
 
 # Number 9:Imagine 128
 105D 2309  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Number 9:Imagine 128 II
 105D 2339  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Number 9:Imagine 128 T2R
 105D 493D  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Number 9:Imagine 128 T2R4
 105D 5348  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Trident:Blade3D
 1023 9880  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:Blade3D
+1023 9880  
+	x	3|SVGA|||||||
 
 
 # Trident:3DImage985
 1023 9850  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:3DImage985
+1023 9850  
+	x	3|SVGA|||||||
+
+
+# Trident:3DImage985
+1023 9850  
+	x	3|SVGA|3d||||||
 
 
 # Trident:TGUI9785
 1023 9785  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:TGUI9785
+1023 9785  
+	x	3|SVGA|||||||
+
+
+# Trident:TGUI9785
+1023 9785  
+	x	3|SVGA|3d||||||
 
 
 # Trident:TGUI9783
 1023 9783  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:TGUI9783
+1023 9783  
+	x	3|SVGA|||||||
+
+
+# Trident:TGUI9783
+1023 9783  
+	x	3|SVGA|3d||||||
 
 
 # Trident:TGUI975
 1023 9759  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:TGUI975
+1023 9759  
+	x	3|SVGA|||||||
+
+
+# Trident:TGUI975
+1023 9759  
+	x	3|SVGA|3d||||||
 
 
 # Trident:TGUI9753
 1023 9754  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:TGUI9753
+1023 9754  
+	x	3|SVGA|||||||
+
+
+# Trident:TGUI9753
+1023 9754  
+	x	3|SVGA|3d||||||
 
 
 # Trident:TGUI9753
 1023 9753  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:TGUI9753
+1023 9753  
+	x	3|SVGA|||||||
+
+
+# Trident:TGUI9753
+1023 9753  
+	x	3|SVGA|3d||||||
 
 
 # Trident:3DImage975
 1023 9750  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:3DImage975
+1023 9750  
+	x	3|SVGA|||||||
+
+
+# Trident:3DImage975
+1023 9750  
+	x	3|SVGA|3d||||||
 
 
 # Trident:ProVIDIA 9685
 1023 9685  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:ProVIDIA 9685
+1023 9685  
+	x	3|SVGA|||||||
+
+
+# Trident:ProVIDIA 9685
+1023 9685  
+	x	3|SVGA|3d||||||
 
 
 # Trident:TGUI9683
 1023 9683  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:TGUI9683
+1023 9683  
+	x	3|SVGA|||||||
+
+
+# Trident:TGUI9683
+1023 9683  
+	x	3|SVGA|3d||||||
 
 
 # Trident:TGUI9682
 1023 9682  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:TGUI9682
+1023 9682  
+	x	3|SVGA|||||||
+
+
+# Trident:TGUI9682
+1023 9682  
+	x	3|SVGA|3d||||||
 
 
 # Trident:TGUI9680
 1023 9680  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:TGUI9680
+1023 9680  
+	x	3|SVGA|||||||
+
+
+# Trident:TGUI9680
+1023 9680  
+	x	3|SVGA|3d||||||
 
 
 # Trident:TGUI 96xx
 1023 9660  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:TGUI 96xx
+1023 9660  
+	x	3|SVGA|||||||
+
+
+# Trident:TGUI 96xx
+1023 9660  
+	x	3|SVGA|3d||||||
 
 
 # Trident:Cyber 9525 DVD
 1023 9525  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:Cyber 9525 DVD
+1023 9525  
+	x	3|SVGA|||||||
+
+
+# Trident:Cyber 9525 DVD
+1023 9525  
+	x	3|SVGA|3d||||||
 
 
 # Trident:Cyber 9520
 1023 9520  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:Cyber 9520
+1023 9520  
+	x	3|SVGA|||||||
+
+
+# Trident:Cyber 9520
+1023 9520  
+	x	3|SVGA|3d||||||
 
 
 # Trident:TGUI9470
 1023 9470  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:TGUI9470
+1023 9470  
+	x	3|SVGA|||||||
+
+
+# Trident:TGUI9470
+1023 9470  
+	x	3|SVGA|3d||||||
 
 
 # Trident:TGUI9460
 1023 9460  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:TGUI9460
+1023 9460  
+	x	3|SVGA|||||||
+
+
+# Trident:TGUI9460
+1023 9460  
+	x	3|SVGA|3d||||||
 
 
 # Trident:TGUI 9440
 1023 9440  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Trident:TGUI9430
 1023 9430  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:TGUI9430
+1023 9430  
+	x	3|SVGA|||||||
+
+
+# Trident:TGUI9430
+1023 9430  
+	x	3|SVGA|3d||||||
 
 
 # Trident:TGUI 9420
 1023 9420  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:TGUI 9420
+1023 9420  
+	x	3|SVGA|||||||
+
+
+# Trident:TGUI 9420
+1023 9420  
+	x	3|SVGA|3d||||||
 
 
 # Trident:Cyber 939A/DVD
 1023 939A  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:Cyber 939A/DVD
+1023 939A  
+	x	3|SVGA|||||||
+
+
+# Trident:Cyber 939A/DVD
+1023 939A  
+	x	3|SVGA|3d||||||
 
 
 # Trident:Cyber 9397
 1023 9397  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:Cyber 9397
+1023 9397  
+	x	3|SVGA|||||||
+
+
+# Trident:Cyber 9397
+1023 9397  
+	x	3|SVGA|3d||||||
 
 
 # Trident:Cyber 9388
 1023 9388  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:Cyber 9388
+1023 9388  
+	x	3|SVGA|||||||
 
 
 # Trident:Cyber 9386
 1023 9386  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:Cyber 9386
+1023 9386  
+	x	3|SVGA|||||||
+
+
+# Trident:Cyber 9386
+1023 9386  
+	x	3|SVGA|3d||||||
 
 
 # Trident:Cyber 9385
 1023 9385  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:Cyber 9385
+1023 9385  
+	x	3|SVGA|||||||
+
+
+# Trident:Cyber 9385
+1023 9385  
+	x	3|SVGA|3d||||||
 
 
 # Trident:Cyber 9383
 1023 9383  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:Cyber 9383
+1023 9383  
+	x	3|SVGA|||||||
+
+
+# Trident:Cyber 9383
+1023 9383  
+	x	3|SVGA|3d||||||
 
 
 # Trident:Cyber 9382
 1023 9382  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:Cyber 9382
+1023 9382  
+	x	3|SVGA|||||||
+
+
+# Trident:Cyber 9382
+1023 9382  
+	x	3|SVGA|3d||||||
 
 
 # Trident:GUI Accelerator
 1023 9360  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:GUI Accelerator
+1023 9360  
+	x	3|SVGA|||||||
+
+
+# Trident:GUI Accelerator
+1023 9360  
+	x	3|SVGA|3d||||||
 
 
 # Trident:GUI Accelerator
 1023 9350  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:GUI Accelerator
+1023 9350  
+	x	3|SVGA|||||||
+
+
+# Trident:GUI Accelerator
+1023 9350  
+	x	3|SVGA|3d||||||
 
 
 # Trident:TGUI 9320
 1023 9320  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:TGUI 9320
+1023 9320  
+	x	3|SVGA|||||||
+
+
+# Trident:TGUI 9320
+1023 9320  
+	x	3|SVGA|3d||||||
 
 
 # Trident:CyberBlade/i1
 1023 8500  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:CyberBlade/i1
+1023 8500  
+	x	3|SVGA|||||||
+
+
+# Trident:CyberBlade/i1
+1023 8500  
+	x	3|SVGA|3d||||||
 
 
 # Trident:CyberBlade/i7/DSTN
 1023 8420  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:CyberBlade/i7/DSTN
+1023 8420  
+	x	3|SVGA|||||||
+
+
+# Trident:CyberBlade/i7/DSTN
+1023 8420  
+	x	3|SVGA|3d||||||
 
 
 # Trident:CyberBlade/i7
 1023 8400  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:CyberBlade/i7
+1023 8400  
+	x	3|SVGA|||||||
+
+
+# Trident:CyberBlade/i7
+1023 8400  
+	x	3|SVGA|3d||||||
 
 
 # Trident:Video Adapter
 1023 2000  
-	x	3|SVGA|||||
+	x	4|trident|||||||
+
+
+# Trident:Video Adapter
+1023 2000  
+	x	3|SVGA|||||||
+
+
+# Trident:Video Adapter
+1023 2000  
+	x	3|SVGA|3d||||||
 
 
 # Trident:82c194 CardBus Controller
 1023 0194  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Trident:82c194 CardBus Controller
+1023 0194  
+	x	3|SVGA|3d||||||
 
 
 # 3Dfx:3Dfx Voodoo Rush
 1142 643d  
-	x	3|RUSH|||||
+	x	4||||||||
+
+
+# 3Dfx:3Dfx Voodoo Rush
+1142 643d  
+	x	4||3d||||||
+
+
+# 3Dfx:3Dfx Voodoo Rush
+1142 643d  
+	x	3|RUSH|||||||
 
 
 # 3Dfx:Voodoo3
 121a 0005  
-	x	3|SVGA|||||
+	x	4|tdfx|||||||
+
+
+# 3Dfx:Voodoo3
+121a 0005  
+	x	4||3d|glide_v3,dev3dfx,mesa3dfx|dri||||
+
+
+# 3Dfx:Voodoo3
+121a 0005  
+	x	3|SVGA|||||||
 
 
 # 3Dfx:Banshee
 121A 0003  
-	x	3|SVGA|||||
+	x	4|tdfx|||dri||||
+
+
+# 3Dfx:Banshee
+121A 0003  
+	x	4||3d||dri||||
+
+
+# 3Dfx:Banshee
+121A 0003  
+	x	3|SVGA|||||||
 
 
 # 3Dfx:3Dfx Voodoo2
 121A 0002  
-	x	4||3d|glide_v2,mesa3dfx,dev3dfx|||4
+	x	4|glide|||||||
 
 
 # 3Dfx:3Dfx Voodoo2
 121A 0002  
-	x	3||3d|glide_v2,mesa3dfx,dev3dfx|||4
+	x	4||3d|dev3dfx,mesa3dfx,glide_v2|||||
+
+
+# 3Dfx:3Dfx Voodoo2
+121A 0002  
+	x	3||3d|glide_v2,mesa3dfx,dev3dfx|||16||
 
 
 # 3Dfx:3Dfx Voodoo
 121A 0001  
-	x	4|glide|||||4
-
-
-# 3Dfx:3Dfx Voodoo
-121A 0001  
-	x	4||3d|mesa3dfx,dev3dfx,glide_vg|||4
-
-
-# 3Dfx:3Dfx Voodoo
-121A 0001  
-	x	3||3d|mesa3dfx,dev3dfx,glide_vg|||4
+	x	3||3d|mesa3dfx,dev3dfx,glide_vg|||16||
 
 
 # 3Dfx:Voodoo5 5500
 121A 0009  
-	x	4|tdfx|||||
+	x	4|tdfx|||||||
+
+
+# 3Dfx:Voodoo5 5500
+121A 0009  
+	x	4|tdfx|3d||||||switch2xf86_glx
 
 
 # Intel:I810_E
 8086 7125  
-	x	3|SVGA|||||
+	x	4|i810|||||||
+
+
+# Intel:I810_E
+8086 7125  
+	x	3|SVGA|||||||
+
+
+# Intel:I810_E
+8086 7125  
+	x	3|SVGA|3d|glx|glx.so||16||
 
 
 # Intel:I810_DC100
 8086 7123  
-	x	3|SVGA|||||
+	x	4||3d||||||
+
+
+# Intel:I810_DC100
+8086 7123  
+	x	3|SVGA|||||||
 
 
 # Intel:i810
 8086 7121  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Intel:i740 (AGP)
 8086 7800  
-	x	3|SVGA|||||
+	x	4|i740|||||||
+
+
+# Intel:i740 (AGP)
+8086 7800  
+	x	3|SVGA|||||||
+
+
+# Intel:i740 (AGP)
+8086 7800  
+	x	3|SVGA|3d||||||
 
 
 # Intel:I810_BRIDGE
 8086 7120  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Intel:I810_BRIDGE
+8086 7120  
+	x	3|SVGA|3d||||||
 
 
 # Intel:I810_DC100_BRIDGE
 8086 7122  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Intel:I810_DC100_BRIDGE
+8086 7122  
+	x	3|SVGA|3d||||||
 
 
 # Intel:I810_E_BRIDGE
 8086 7124  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Intel:I810_E_BRIDGE
+8086 7124  
+	x	3|SVGA|3d||||||
+
+
+# Intel:I815
+8086 1132  
+	x	4||3d||||||
 
 
 # S3:ViRGE
 5333 5631  
-	x	4|s3virge|||||
-
-
-# S3:ViRGE
-5333 5631  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # S3:SVGA based
 5333 8c03  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # S3:VIRGE_MX
 5333 8c01  
-	x	3|SVGA|||||
+	x	4|s3virge|||||||
+
+
+# S3:VIRGE_MX
+5333 8c01  
+	x	3|SVGA|||||||
+
+
+# S3:VIRGE_MX
+5333 8c01  
+	x	3|SVGA|3d||||||
 
 
 # S3:Savage3D+MacroVision
 5333 8A21  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # S3:Savage3D (86E391)
 5333 8A20  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # S3:ViRGE/GX2
 5333 8a10  
-	x	4|s3virge|||||
+	x	4|s3virge|||||||
 
 
 # S3:ViRGE/GX2
 5333 8a10  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# S3:ViRGE/GX2
+5333 8a10  
+	x	3|SVGA|3d||||||
 
 
 # S3:ViRGE/DX or /GX
 5333 8a01  
-	x	4|s3virge|||||
-
-
-# S3:ViRGE/DX or /GX
-5333 8a01  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # S3:PLATO/PX
 5333 0551  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # S3:SAVAGE2000
 5333 9102  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # S3:86C866 Vision 866 GUI Accelerator
 5333 8800  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C964 Vision 964 GUI Accelerator
 5333 8801  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C732 TRIO32 GUI Accelerator, Rev 00
 5333 8810  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C764/765 TRIO32/64/64V+ GUI Accelerator, Rev 01
 5333 8811  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86CM65 Aurora64V+
 5333 8812  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C764 TRIO32/64 GUI Accelerator, Rev 03
 5333 8813  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C767 TRIO64UV+ GUI Accelerator
 5333 8814  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86CM65 Aurora128
 5333 8815  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C988 ViRGE/VX GUI Accelerator
 5333 883D  
-	x	4||||||
-
-
-# S3:86C988 ViRGE/VX GUI Accelerator
-5333 883D  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # S3:Fire GL
 5333 8870  
-	x	3|S3|||||
+	x	3|S3|||||||
+
+
+# S3:Fire GL
+5333 8870  
+	x	3|S3|3d||||||
 
 
 # S3:86C868 Vision 868 GUI Accelerator VRAM, Rev 00
 5333 8880  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C868 Vision 868 GUI Accelerator VRAM, Rev 01
 5333 8881  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C868 Vision 868 GUI Accelerator VRAM, Rev 02
 5333 8882  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C868 Vision 868 GUI Accelerator VRAM, Rev 03
 5333 8883  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C928 GUI Accelerator VRAM, Rev 00
 5333 88b0  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C928 GUI Accelerator VRAM, Rev 01
 5333 88B1  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C928 GUI Accelerator VRAM, Rev 02
 5333 88b2  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C928 GUI Accelerator VRAM, Rev 03
 5333 88b3  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Vision 864-P
 5333 88c0  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Vision 864-P
 5333 88c1  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C864 Vision 864-P GUI Accelerator DRAM, Rev 02
 5333 88c2  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C864 Vision 864-P GUI Accelerator DRAM, Rev 03
 5333 88c3  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Vision 964-P
 5333 88d0  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Vision 964-P
 5333 88d1  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C964 Vision 964-P GUI Accelerator VRAM, Rev 02
 5333 88D2  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C964 Vision 964-P GUI Accelerator VRAM, Rev 03
 5333 88D3  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Vision 968
 5333 88f0  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C968 Vision 968 GUI Accelerator VRAM, Rev 01
 5333 88F1  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C968 Vision 968 GUI Accelerator VRAM, Rev 02
 5333 88f2  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:86C968 Vision 968 GUI Accelerator VRAM, Rev 03
 5333 88f3  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Trio64V2/DX GUI Accelerator
 5333 8900  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # S3:Trio64V2/DX or /GX
 5333 8901  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # S3:PLATO/PX (graphics)
 5333 8902  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Trio64V+ Family
 5333 8903  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Trio3D
 5333 8904  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# S3:Trio3D
+5333 8904  
+	x	3|SVGA|3d||||||
 
 
 # S3:Trio64V+ Family
 5333 8905  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Trio64V+ Family
 5333 8906  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Trio64V+ Family
 5333 8907  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Trio64V+ Family
 5333 8908  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Trio64V+ Family
 5333 8909  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Trio64V+ Family
 5333 890a  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Trio64V+ Family
 5333 890b  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Trio64V+ Family
 5333 890c  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Trio64V+ Family
 5333 890d  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Trio64V+ Family
 5333 890e  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Trio64V+ Family
 5333 890f  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:Trio3D/2X (C368)
 5333 8A13  
-	x	3|S3|||||
+	x	3|S3|||||||
+
+
+# S3:Trio3D/2X (C368)
+5333 8A13  
+	x	3|S3|3d||||||
 
 
 # S3:Savage 4
 5333 8a22  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # S3:Savage 4
 5333 8a23  
-	x	3|S3|||||
+	x	3|S3|||||||
 
 
 # S3:ViRGE/M3
 5333 8c00  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# S3:ViRGE/M3
+5333 8c00  
+	x	3|SVGA|3d||||||
 
 
 # S3:ViRGE/MXC
 5333 8c02  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# S3:ViRGE/MXC
+5333 8c02  
+	x	3|SVGA|3d||||||
 
 
 # S3:SonicVibes Audio Accelerator
 5333 ca00  
-	x	3|S3|||||
+	x	3|S3|||||||
+
+
+# S3:Savage IX8
+5333 8c12  
+	x	4||||||||
+
+
+# S3:Savage IX8
+5333 8c12  
+	x	4||3d||||||
 
 
 # 3DLabs:Permedia2V 2D+3D
 3D3D 0009  
-	x	3|3DLABS|||||
+	x	4|glint|||||||
+
+
+# 3DLabs:Permedia2V 2D+3D
+3D3D 0009  
+	x	3|3DLABS|||||||
 
 
 # 3DLabs:3D Extreme Permedia II
 3D3D 0007  
-	x	4|glint|||||
-
-
-# 3DLabs:3D Extreme Permedia II
-3D3D 0007  
-	x	3|3DLABS|||||
+	x	3|3DLABS|||||||
 
 
 # 3DLabs:Glint MX
 3D3D 0006  
-	x	3|3DLABS|||||
+	x	3|3DLABS|||||||
 
 
 # 3DLabs:3C0SX 2D+3D Accelerator
 3D3D 0004  
-	x	3|3DLABS|||||
+	x	3|3DLABS|||||||
 
 
 # 3DLabs:GLINT 500TX Sapphire 3D
 3D3D 0002  
-	x	3|3DLABS|||||
+	x	3|3DLABS|||||||
 
 
 # 3DLabs:GLINT 300SX 3D
 3D3D 0001  
-	x	3|S3|||||
+	x	3|S3|||||||
+
+
+# 3DLabs:Oxygen II
+3d3d 000a  
+	x	4|glint|||||||
 
 
 # Rendition:Verite 2x00
 1163 2000  
-	x	3|SVGA|||||
+	x	4|rendition|||||||
+
+
+# Rendition:Verite 2x00
+1163 2000  
+	x	3|SVGA|||||||
+
+
+# Rendition:Verite 2x00
+1163 2000  
+	x	3|SVGA|3d||||||
 
 
 # Rendition:Verite 1000
 1163 0001  
-	x	3|SVGA|||||
+	x	4|rendition|||||||
+
+
+# Rendition:Verite 1000
+1163 0001  
+	x	3|SVGA|||||||
+
+
+# Rendition:Verite 1000
+1163 0001  
+	x	3|SVGA|3d||||||
 
 
 # Alliance:ProMotion 6410
 1142 3210  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Alliance:ProMotion 6410
+1142 3210  
+	x	3|SVGA|3d||||||
 
 
 # Alliance:ProMotion 6422
 1142 6422  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Alliance:ProMotion AT24
 1142 6424  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Alliance:ProMotion AT24
+1142 6424  
+	x	3|SVGA|3d||||||
 
 
 # Intergraphics:IGA-1682
 10EA 1682  
-	x	3|SVGA|||||
+	x	4|tga|||||||
+
+
+# Intergraphics:IGA-1682
+10EA 1682  
+	x	3|SVGA|||||||
+
+
+# Intergraphics:IGA-1682
+10EA 1682  
+	x	3|SVGA|3d||||||
 
 
 # Intergraphics:IGA-1680
 10EA 1680  
-	x	3|SVGA|||||
+	x	4|tga|||||||
+
+
+# Intergraphics:IGA-1680
+10EA 1680  
+	x	3|SVGA|||||||
+
+
+# Intergraphics:IGA-1680
+10EA 1680  
+	x	3|SVGA|3d||||||
 
 
 # Nvidia:GeForce-2
 10de 0150  
-	x	4|nvidia||nv_glx|||
+	x	4|nv||nv_glx|||||
 
 
 # Nvidia:GeForce-2
 10de 0150  
-	x	4|nvidia|3d|nv_glx|glx||4
+	x	4|nvidia|3d|nv_glx|glx||||
 
 
 # Nvidia:Quadro
 10de 0103  
-	x	4|nv||||sw_cursor|4
+	x	4|nv||||sw_cursor|||
 
 
 # Nvidia:Quadro
 10de 0103  
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|4
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||
 
 
 # Nvidia:Quadro
 10de 0103  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Nvidia:GEFORCEDDR
 10de 0101  
-	x	4|nv||||sw_cursor|
+	x	4|nv||||sw_cursor|||
 
 
 # Nvidia:GEFORCEDDR
 10de 0101  
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||
 
 
 # Nvidia:GEFORCEDDR
 10de 0101  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Nvidia:GEFORCEDDR
+10de 0101  
+	x	3|SVGA|3d||||||
 
 
 # Nvidia:GEFORCE256
 10de 0100  
-	x	4|nv||||sw_cursor|
+	x	4|nv||||sw_cursor|||
 
 
 # Nvidia:GEFORCE256
 10de 0100  
-	x	3|SVGA|||||
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||switch2nv_glx
+
+
+# Nvidia:GEFORCE256
+10de 0100  
+	x	3|SVGA|||||||
+
+
+# Nvidia:GEFORCE256
+10de 0100  
+	x	3|SVGA|3d|glx|glx.so||16||
 
 
 # Nvidia:RIVA 128 2D/3D
 12D2 0018  
-	x	4|nv|||||d
+	x	4|nv|||||||
 
 
 # Nvidia:RIVA 128 2D/3D
 12D2 0018  
-	x	3|SVGA|||||d
+	x	4||3d||||||
+
+
+# Nvidia:RIVA 128 2D/3D
+12D2 0018  
+	x	3|SVGA|||||8,16,24||
 
 
 # Nvidia:RIVA 128ZX 2D/3D
 12D2 0019  
-	x	3|SVGA|||||
+	x	4|nv|||||||
+
+
+# Nvidia:RIVA 128ZX 2D/3D
+12D2 0019  
+	x	3|SVGA|||||||
+
+
+# Nvidia:RIVA 128ZX 2D/3D
+12D2 0019  
+	x	3|SVGA|3d||||||
 
 
 # Nvidia:Riva Integrated
 10DE 00A0  
-	x	3|SVGA|||||
+	x	4|nv|||||||
+
+
+# Nvidia:Riva Integrated
+10DE 00A0  
+	x	4|nvidia|3d|nv_glx|glx||||
+
+
+# Nvidia:Riva Integrated
+10DE 00A0  
+	x	3|SVGA|||||||
+
+
+# Nvidia:Riva Integrated
+10DE 00A0  
+	x	3|SVGA|3d||||16||
 
 
 # Nvidia:RIVA TNT2 Model 64
 10DE 002D  
-	x	4|nv|||||
+	x	4|nv|||||||
 
 
 # Nvidia:RIVA TNT2 Model 64
 10DE 002D  
-	x	3|SVGA|||||
+	x	4|nvidia|3d|nv_glx|glx||||
+
+
+# Nvidia:RIVA TNT2 Model 64
+10DE 002D  
+	x	3|SVGA|||||||
+
+
+# Nvidia:RIVA TNT2 Model 64
+10DE 002D  
+	x	3|SVGA|3d|glx|glx.so||16||
 
 
 # Nvidia:Riva Vanta TNT2
 10DE 002C  
-	x	4|nv|||||
+	x	4|nv|||||||
 
 
 # Nvidia:Riva Vanta TNT2
 10DE 002C  
-	x	4|nvidia|3d|nv_glx|glx||4
+	x	4|nvidia|3d|nv_glx|glx||||
 
 
 # Nvidia:Riva Vanta TNT2
 10DE 002C  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
-# Nvidia:Riva Ultra TNT2
+# Nvidia:Riva Vanta TNT2
+10DE 002C  
+	x	3|SVGA|3d|glx|glx.so||16||
+
+
+# Nvidia:Riva TNT2 Ultra
 10DE 0029  
-	x	3|SVGA|||||
+	x	4|nv|||||||
+
+
+# Nvidia:Riva TNT2 Ultra
+10DE 0029  
+	x	4|nvidia|3d|nv_glx|glx||||
+
+
+# Nvidia:Riva TNT2 Ultra
+10DE 0029  
+	x	3|SVGA|||||||
+
+
+# Nvidia:Riva TNT2 Ultra
+10DE 0029  
+	x	3|SVGA|3d||||||
 
 
 # Nvidia:Riva TNT2
 10DE 0028  
-	x	4|nv||||sw_cursor|f
+	x	4|nv||||sw_cursor|||
 
 
 # Nvidia:Riva TNT2
 10DE 0028  
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|4
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||
 
 
 # Nvidia:Riva TNT2
 10DE 0028  
-	x	3|SVGA|||||f
+	x	3|SVGA|||||15,8,16,24||
 
 
 # Nvidia:Riva TNT
 10DE 0020  
-	x	4|nv||||sw_cursor|f
+	x	4|nv||||sw_cursor|||
 
 
 # Nvidia:Riva TNT
 10DE 0020  
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|4
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||
 
 
 # Nvidia:Riva TNT
 10DE 0020  
-	x	3|SVGA|||||f
+	x	3|SVGA|||||24,16,15,8||
 
 
 # Nvidia:DAC64
 10DE 0009  
-	x	3|SVGA|||||
+	x	4|nv|||||||
+
+
+# Nvidia:DAC64
+10DE 0009  
+	x	4|nvidia|3d||||||
+
+
+# Nvidia:DAC64
+10DE 0009  
+	x	3|SVGA|||||||
+
+
+# Nvidia:DAC64
+10DE 0009  
+	x	3|SVGA|3d||||||
 
 
 # Nvidia:NV1
 10DE 0008  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Nvidia:Riva TNT (PCI)
 10de 0020 1092 4820
-	x	3|SVGA|||||f
+	x	4|nv||||sw_cursor|||
 
 
 # Nvidia:Riva TNT (PCI)
 10de 0020 1092 4820
-	x	3|SVGA|3d|glx|glx.so||4
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||
+
+
+# Nvidia:Riva TNT (PCI)
+10de 0020 1092 4820
+	x	3|SVGA|||||16,15,8,24||
+
+
+# Nvidia:Riva TNT (PCI)
+10de 0020 1092 4820
+	x	3|SVGA|3d|glx|glx.so||16||
 
 
 # Nvidia:Elsa Erazor 2 (TNT)
 10de 0020 1048 0c1c
-	x	4|nv||||sw_cursor|
+	x	4|nv||||sw_cursor|||
 
 
 # Nvidia:Elsa Erazor 2 (TNT)
 10de 0020 1048 0c1c
-	x	3|SVGA|||||
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||
 
 
 # Nvidia:Elsa Erazor 2 (TNT)
 10de 0020 1048 0c1c
-	x	3|SVGA|3d|glx|glx.so||4
+	x	3|SVGA|||||||
+
+
+# Nvidia:Elsa Erazor 2 (TNT)
+10de 0020 1048 0c1c
+	x	3|SVGA|3d|glx|glx.so||16||
 
 
 # Nvidia:Elsa Erazor LT
 10de 002d 1048 0c3a
-	x	4|nv|||||
+	x	4|nv|||||||
 
 
 # Nvidia:Elsa Erazor LT
 10de 002d 1048 0c3a
-	x	4|nvidia|3d|nv_glx|glx||4
+	x	4|nvidia|3d|nv_glx|glx||||
 
 
 # Nvidia:Elsa Erazor LT
 10de 002d 1048 0c3a
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Nvidia:Elsa Erazor LT
+10de 002d 1048 0c3a
+	x	3|SVGA|3d|glx|glx.so||16||
+
+
+# Nvidia:GeForce 2 MX
+10de 0110 1462 8816
+	x	4|nvidia|||||||
+
+
+# Nvidia:GeForce 2 MX
+10de 0110 1462 8816
+	x	4|nvidia|3d|nv_glx|glx||||
 
 
 # Neomagic:MagicMedia 256AV
 10C8 8005  
-	x	3|SVGA|||||
+	x	4|neomagic|||||||
+
+
+# Neomagic:MagicMedia 256AV
+10C8 8005  
+	x	3|SVGA|||||||
 
 
 # Neomagic:NM2097
 10c8 0083  
-	x	3|SVGA|||||
+	x	4|neomagic|||||||
+
+
+# Neomagic:NM2097
+10c8 0083  
+	x	3|SVGA|||||||
+
+
+# Neomagic:NM2097
+10c8 0083  
+	x	3|SVGA|3d|||sw_cursor|||
 
 
 # Neomagic:MagicGraph 256ZX
 10c8 0006  
-	x	3|SVGA|||||
+	x	4|neomagic|||||||
+
+
+# Neomagic:MagicGraph 256ZX
+10c8 0006  
+	x	3|SVGA|||||||
 
 
 # Neomagic:NM2200
 10c8 0005  
-	x	3|SVGA|||||
+	x	4|neomagic|||||||
+
+
+# Neomagic:NM2200
+10c8 0005  
+	x	3|SVGA|||||||
 
 
 # Neomagic:NM2160 [MagicGraph 128XD]
 10c8 0004  
-	x	3|SVGA|||||
+	x	4|neomagic|||||||
+
+
+# Neomagic:NM2160 [MagicGraph 128XD]
+10c8 0004  
+	x	3|SVGA|||||||
 
 
 # Neomagic:NM2093
 10c8 0003  
-	x	3|SVGA|||||
+	x	4|neomagic|||||||
+
+
+# Neomagic:NM2093
+10c8 0003  
+	x	3|SVGA|||||||
+
+
+# Neomagic:NM2093
+10c8 0003  
+	x	3|SVGA|3d|||sw_cursor|||
 
 
 # Neomagic:MagicGraph 128V
 10c8 0002  
-	x	3|SVGA|||||
+	x	4|neomagic|||||||
+
+
+# Neomagic:MagicGraph 128V
+10c8 0002  
+	x	3|SVGA|||||||
+
+
+# Neomagic:MagicGraph 128V
+10c8 0002  
+	x	3|SVGA|3d|||sw_cursor|||
 
 
 # Neomagic:Magicgraph NM2070
 10c8 0001  
-	x	3|SVGA|||||
+	x	4|neomagic|||||||
+
+
+# Neomagic:Magicgraph NM2070
+10c8 0001  
+	x	3|SVGA|||||||
+
+
+# Neomagic:Magicgraph NM2070
+10c8 0001  
+	x	3|SVGA|3d|||sw_cursor|||
 
 
 # Neomagic:Graphics Controller
 10C8 0000  
-	x	3|SVGA|||||
+	x	4|neomagic|||||||
+
+
+# Neomagic:Graphics Controller
+10C8 0000  
+	x	3|SVGA|||||||
+
+
+# Neomagic:Graphics Controller
+10C8 0000  
+	x	3|SVGA|3d|||sw_cursor|||
+
+
+# Neomagic:NM2200
+10c8 0005 1014 00dd
+	x	4||3d||||||
+
+
+# Neomagic:NM2200
+10c8 0005 1014 00dd
+	x	3|SVGA|||||||
+
+
+# Neomagic:NM2200
+10c8 0005 1014 00dd
+	x	3|SVGA|3d||||||
 
 
 # Texas Instruments:Permedia 2D+3D
 104c 3D04  
-	x	3|3DLABS|||||
+	x	4|glint|||||||
+
+
+# Texas Instruments:Permedia 2D+3D
+104c 3D04  
+	x	3|3DLABS|||||||
 
 
 # Texas Instruments:Permedia 2
 104c 3d07  
-	x	4|glint|||||
-
-
-# Texas Instruments:Permedia 2
-104c 3d07  
-	x	3|3DLABS|||||
+	x	3|3DLABS|||||||
 
 
 # SGS-Thomson:STG2000
 104A 0008  
-	x	3|SVGA|||||
+	x	4|glint|||||||
+
+
+# SGS-Thomson:STG2000
+104A 0008  
+	x	3|SVGA|||||||
+
+
+# SGS-Thomson:STG2000
+104A 0008  
+	x	3|SVGA|3d||||||
 
 
 # SiS:SIS540
 1039 5300  
-	x	3|SVGA|||||
+	x	4|sis|||||||
+
+
+# SiS:SIS540
+1039 5300  
+	x	3|SVGA|||||||
+
+
+# SiS:SIS540
+1039 5300  
+	x	3|SVGA|3d||||||
 
 
 # SiS:SIS630
 1039 6300  
-	x	3|SVGA|||||
+	x	4|sis|||||||
+
+
+# SiS:SIS630
+1039 6300  
+	x	3|SVGA|||||||
+
+
+# SiS:SIS630
+1039 6300  
+	x	3|SVGA|3d||||||
 
 
 # SiS:SIS630
 1039 0300  
-	x	3|SVGA|||||
+	x	4|sis|||||||
+
+
+# SiS:SIS630
+1039 0300  
+	x	3|SVGA|||||||
+
+
+# SiS:SIS630
+1039 0300  
+	x	3|SVGA|3d||||||
 
 
 # SiS:SIS300
 1039 1039  
-	x	3|SVGA|||||
+	x	4|sis|||||||
+
+
+# SiS:SIS300
+1039 1039  
+	x	3|SVGA|||||||
+
+
+# SiS:SIS300
+1039 1039  
+	x	3|SVGA|3d||||||
 
 
 # SiS:SiS6326
 1039 6326  
-	x	3|SVGA|||||
+	x	4|sis|||||||
+
+
+# SiS:SiS6326
+1039 6326  
+	x	3|SVGA|||||||
+
+
+# SiS:SiS6326
+1039 6326  
+	x	3|SVGA|3d||||||
 
 
 # SiS:530
 1039 6306  
-	x	3|SVGA|||||
+	x	4|sis|||||||
+
+
+# SiS:530
+1039 6306  
+	x	4||3d||||||
 
 
 # SiS:SG86C225
 1039 0225  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # SiS:SG86C215
 1039 0215  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # SiS:SG86C205
 1039 0205  
-	x	3|SVGA|||||
+	x	4|sis|||||||
+
+
+# SiS:SG86C205
+1039 0205  
+	x	3|SVGA|||||||
+
+
+# SiS:SG86C205
+1039 0205  
+	x	3|SVGA|3d||||||
 
 
 # SiS:5597
 1039 0200  
-	x	3|SVGA|||||
+	x	4|sis|||||||
+
+
+# SiS:5597
+1039 0200  
+	x	3|SVGA|||||||
 
 
 # SiS:SG86C202
 1039 0002  
-	x	3|SVGA|||||
+	x	4|sis|||||||
+
+
+# SiS:SG86C202
+1039 0002  
+	x	3|SVGA|||||||
 
 
 # SiS:SG86C201
 1039 0001  
-	x	3|SVGA|||||
+	x	4|sis|||||||
+
+
+# SiS:SG86C201
+1039 0001  
+	x	3|SVGA|||||||
 
 
 # Chips&Technologies:F68555
 102C 00F5  
-	x	3|SVGA|||||
+	x	4|chips|||||||
+
+
+# Chips&Technologies:F68555
+102C 00F5  
+	x	3|SVGA|||||||
+
+
+# Chips&Technologies:F68555
+102C 00F5  
+	x	3|SVGA|3d||||||
 
 
 # Chips&Technologies:HiQVision
 102C 00F4  
-	x	3|SVGA|||||
+	x	4|chips|||||||
+
+
+# Chips&Technologies:HiQVision
+102C 00F4  
+	x	3|SVGA|||||||
+
+
+# Chips&Technologies:HiQVision
+102C 00F4  
+	x	3|SVGA|3d||||||
 
 
 # Chips&Technologies:F68554
 102C 00F0  
-	x	3|SVGA|||||
+	x	4|chips|||||||
+
+
+# Chips&Technologies:F68554
+102C 00F0  
+	x	3|SVGA|||||||
+
+
+# Chips&Technologies:F68554
+102C 00F0  
+	x	3|SVGA|3d||||||
 
 
 # Chips&Technologies:F65555 HiQVPro
 102C 00E5  
-	x	4|chips|||||
+	x	4|chips|||||||
 
 
 # Chips&Technologies:F65555 HiQVPro
 102C 00E5  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Chips&Technologies:F65555 HiQVPro
+102C 00E5  
+	x	3|SVGA|3d||||||
 
 
 # Chips&Technologies:65554
 102c 00e4  
-	x	3|SVGA|||||
+	x	4|chips|||||||
+
+
+# Chips&Technologies:65554
+102c 00e4  
+	x	3|SVGA|||||||
+
+
+# Chips&Technologies:65554
+102c 00e4  
+	x	3|SVGA|3d||||||
 
 
 # Chips&Technologies:65550
 102c 00e0  
-	x	3|SVGA|||||
+	x	4|chips|||||||
+
+
+# Chips&Technologies:65550
+102c 00e0  
+	x	3|SVGA|||||||
+
+
+# Chips&Technologies:65550
+102c 00e0  
+	x	3|SVGA|3d||||||
 
 
 # Chips&Technologies:F65548
 102C 00DC  
-	x	3|SVGA|||||
+	x	4|chips|||||||
+
+
+# Chips&Technologies:F65548
+102C 00DC  
+	x	3|SVGA|||||||
+
+
+# Chips&Technologies:F65548
+102C 00DC  
+	x	3|SVGA|3d||||||
 
 
 # Chips&Technologies:65545
 102C 00D8  
-	x	3|SVGA|||||
+	x	4|chips|||||||
+
+
+# Chips&Technologies:65545
+102C 00D8  
+	x	3|SVGA|||||||
+
+
+# Chips&Technologies:65545
+102C 00D8  
+	x	3|SVGA|3d||||||
 
 
 # Chips&Technologies:F65545
 102C 00D0  
-	x	3|SVGA|||||
+	x	4|chips|||||||
+
+
+# Chips&Technologies:F65545
+102C 00D0  
+	x	3|SVGA|||||||
+
+
+# Chips&Technologies:F65545
+102C 00D0  
+	x	3|SVGA|3d||||||
 
 
 # Chips&Technologies:69000
 102c 00C0  
-	x	3|SVGA|||||
+	x	4|chips|||||||
+
+
+# Chips&Technologies:69000
+102c 00C0  
+	x	3|SVGA|||||||
+
+
+# Chips&Technologies:69000
+102c 00C0  
+	x	3|SVGA|3d||||||
 
 
 # Chips&Technologies:CT64310
 102C 00B8  
-	x	3|SVGA|||||
+	x	4|chips|||||||
+
+
+# Chips&Technologies:CT64310
+102C 00B8  
+	x	3|SVGA|||||||
+
+
+# Chips&Technologies:CT64310
+102C 00B8  
+	x	3|SVGA|3d||||||
 
 
 # REAL 3D:i740 (PCI)
 003D 00D1  
-	x	3|SVGA|||||
+	x	4|i740|||||||
+
+
+# REAL 3D:i740 (PCI)
+003D 00D1  
+	x	3|SVGA|||||||
+
+
+# REAL 3D:i740 (PCI)
+003D 00D1  
+	x	3|SVGA|3d||||||
 
 
 # NS:87410
 100b d001  
-	x	3|MACH64|||||
+	x	4|ati|||||||
+
+
+# NS:87410
+100b d001  
+	x	3|MACH64|||||||
+
+
+# NS:87410
+100b d001  
+	x	3|MACH64|3d||||||
 
 
 # Tseng Lab:ET6300
 100c 4702  
-	x	3|SVGA|||||
+	x	4|tseng|||||||
+
+
+# Tseng Lab:ET6300
+100c 4702  
+	x	3|SVGA|||||||
+
+
+# Tseng Lab:ET6300
+100c 4702  
+	x	3|SVGA|3d||||||
 
 
 # Tseng Lab:ET6000
 100c 3208  
-	x	3|SVGA|||||
+	x	4|tseng|||||||
+
+
+# Tseng Lab:ET6000
+100c 3208  
+	x	3|SVGA|||||||
 
 
 # Tseng Lab:ET4000W32P rev D
 100c 3207  
-	x	3|SVGA|||||
+	x	4|tseng|||||||
+
+
+# Tseng Lab:ET4000W32P rev D
+100c 3207  
+	x	3|SVGA|||||||
 
 
 # Tseng Lab:ET4000W32P Rev C
 100C 3206  
-	x	3|SVGA|||||
+	x	4|tseng|||||||
+
+
+# Tseng Lab:ET4000W32P Rev C
+100C 3206  
+	x	3|SVGA|||||||
 
 
 # Tseng Lab:ET4000W32P rev B
 100c 3205  
-	x	3|SVGA|||||
+	x	4|tseng|||||||
+
+
+# Tseng Lab:ET4000W32P rev B
+100c 3205  
+	x	3|SVGA|||||||
 
 
 # Tseng Lab:ET4000W32P
 100c 3202  
-	x	3|SVGA|||||
+	x	4|tseng|||||||
+
+
+# Tseng Lab:ET4000W32P
+100c 3202  
+	x	3|SVGA|||||||
 
 
 # Digital:TGA2
 1011 000D  
-	x	3|TGA|||||
+	x	4|tga|||||||
+
+
+# Digital:TGA2
+1011 000D  
+	x	3|TGA|||||||
+
+
+# Digital:TGA2
+1011 000D  
+	x	3|TGA|3d||||||
 
 
 # Digital:21030/TGA
 1011 0004  
-	x	3|TGA|||||
+	x	4|tga|||||||
+
+
+# Digital:21030/TGA
+1011 0004  
+	x	3|TGA|||||||
+
+
+# Digital:21030/TGA
+1011 0004  
+	x	3|TGA|3d||||||
 
 
 # Cirrus Logic:CL-CD4400
 1013 4400  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:CL-CD4400
+1013 4400  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:CL-CD4400
+1013 4400  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:CL 7541
 1013 1204  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Cirrus Logic:CL 7543
 1013 1202  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Cirrus Logic:CL 7542
 1013 1200  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Cirrus Logic:CL-PD6833
 1013 1113  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:CL-PD6833
+1013 1113  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:CL-PD6833
+1013 1113  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:CL-PD6834
 1013 1112  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:CL-PD6834
+1013 1112  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:CL-PD6834
+1013 1112  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:PD 6832
 1013 1110  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:PD 6832
+1013 1110  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:PD 6832
+1013 1110  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:CL 6729
 1013 1100  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:CL 6729
+1013 1100  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:CL 6729
+1013 1100  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:CL-GD5436U
 1013 00E8  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:CL-GD5436U
+1013 00E8  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:CL-GD5436U
+1013 00E8  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:GD 5465
 1013 00d6  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:GD 5465
+1013 00d6  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:GD 5465
+1013 00d6  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:GD5464BD
 1013 00D5  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:GD5464BD
+1013 00D5  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:GD5464BD
+1013 00D5  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:GD 5464
 1013 00d4  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:GD 5464
+1013 00d4  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:GD 5464
+1013 00d4  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:CL-GD5462(Laguna I)
 1013 00D2  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:CL-GD5462(Laguna I)
+1013 00D2  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:CL-GD5462(Laguna I)
+1013 00D2  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:GD5462
 1013 00D0  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:GD5462
+1013 00D0  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:GD5462
+1013 00D0  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:GD 5480
 1013 00bc  
-	x	3|SVGA||||sw_cursor|
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:GD 5480
+1013 00bc  
+	x	3|SVGA|||||||
 
 
 # Cirrus Logic:GD 5446
 1013 00b8  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:GD 5446
+1013 00b8  
+	x	3|SVGA|||||||
 
 
 # Cirrus Logic:CL-GD5440
 1013 00B0  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:CL-GD5440
+1013 00B0  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:CL-GD5440
+1013 00B0  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:GD 5436
 1013 00ac  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:GD 5436
+1013 00ac  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:GD 5436
+1013 00ac  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:GD 5434
 1013 00a8  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:GD 5434
+1013 00a8  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:GD 5434
+1013 00a8  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:CL-GD5434-A
 1013 00A4  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:CL-GD5434-A
+1013 00A4  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:CL-GD5434-A
+1013 00A4  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:CL-GD5432(Alpine)
 1013 00A2  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:CL-GD5432(Alpine)
+1013 00A2  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:CL-GD5432(Alpine)
+1013 00A2  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:GD 5430
 1013 00a0  
-	x	3|SVGA|||||
+	x	4|cirrus|||||||
+
+
+# Cirrus Logic:GD 5430
+1013 00a0  
+	x	3|SVGA|||||||
+
+
+# Cirrus Logic:GD 5430
+1013 00a0  
+	x	3|SVGA|3d||||||
 
 
 # Cirrus Logic:CL-GD7556 Video
 1013 004C  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Cirrus Logic:CL-GD7555
 1013 0040  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Cirrus Logic:GD 7548
 1013 0038  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Weitek:WeitekPower P9000
 100E 9000  
-	x	3|P9000|||||
+	x	3|P9000|||||||
 
 
 # Weitek:WeitekPower P9000
 100E 9001  
-	x	3|P9000|||||
+	x	3|P9000|||||||
 
 
 # Weitek:WeitekPower P9100
 100E 9100  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # IBM:Fire Coral
 1014 000a  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# IBM:Fire Coral
+1014 000a  
+	x	3|SVGA|3d||||||
 
 
 # IBM:82G2675
 1014 001d  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# IBM:82G2675
+1014 001d  
+	x	3|SVGA|3d||||||
 
 
 # IBM:82351
 1014 0022  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# IBM:82351
+1014 0022  
+	x	3|SVGA|3d||||||
 
 
 # Spea Software AG:SPEA 3D Acccelerator
 1017 5343  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Spea Software AG:SPEA 3D Acccelerator
+1017 5343  
+	x	3|SVGA|3d||||||
 
 
 # NEC:PC-98 PCI to Core Graph Bridge
 1033 0009  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# NEC:PC-98 PCI to Core Graph Bridge
+1033 0009  
+	x	3|SVGA|3d||||||
 
 
 # Silicon Motion:SMI-910
 126F 0910  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Silicon Motion:SMI-810
 126F 0810  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Silicon Motion:SMI-820
 126F 0820  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Silicon Motion:SMI-710
 126F 0710  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Silicon Motion:SMI-712
 126F 0712  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Silicon Motion:SMI-720
 126F 0720  
-	x	3|SVGA|||||
+	x	4|siliconmotion|||||||
+
+
+# Silicon Motion:SMI-720
+126F 0720  
+	x	4||3d||||||
+
+
+# Silicon Motion:SMI-720
+126F 0720  
+	x	3|SVGA|||||||
 
 
 # PCTECH:RZ1000 (buggy)
 1042 1000  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# PCTECH:RZ1000 (buggy)
+1042 1000  
+	x	3|SVGA|3d||||||
 
 
 # PCTECH:RZ1001 (buggy?)
 1042 1001  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# PCTECH:RZ1001 (buggy?)
+1042 1001  
+	x	3|SVGA|3d||||||
 
 
 # Oak Technology Inc:OTI-64017
 104E 0017  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Oak Technology Inc:OTI107
 104e 0107  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Oak Technology Inc:Video Adapter
 104E 0109  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Oak Technology Inc:OTI-64111 Spitfire
 104E 0111  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Oak Technology Inc:OTI-64217
 104E 0217  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Oak Technology Inc:OTI-64317
 104E 0317  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # X:ITT AGX016
 1061 0001  
-	x	3|AGX|||||
+	x	3|AGX|||||||
 
 
 # Nexgen:82C501
 1074 4e78  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Nexgen:82C501
+1074 4e78  
+	x	3|SVGA|3d||||||
 
 
 # Cyrix:MEDIAGX
 1078 0001  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Cyrix:CYRIX_5520
 1078 0002  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Cyrix:CYRIX_5520
+1078 0002  
+	x	3|SVGA|3d||||||
 
 
 # Cyrix:CYRIX_5530
 1078 0104  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Cyrix:CYRIX_5530
+1078 0104  
+	x	3|SVGA|3d||||||
 
 
 # Vision:QD 8500
 1098 0001  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Vision:QD 8500
+1098 0001  
+	x	3|SVGA|3d||||||
 
 
 # Vision:QD 8580
 1098 0002  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Vision:QD 8580
+1098 0002  
+	x	3|SVGA|3d||||||
 
 
 # Brooktree:Bt848
 109e 0350  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Brooktree:Bt848
+109e 0350  
+	x	3|SVGA|3d||||||
 
 
 # Sierra:STB Horizon 64
 10a8 0000  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Sierra:STB Horizon 64
+10a8 0000  
+	x	3|SVGA|3d||||||
 
 
 # Tundra:CA91C042 Universe
 10e3 0000  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Tundra:CA91C042 Universe
+10e3 0000  
+	x	3|SVGA|3d||||||
 
 
 # Toshiba:Toshiba-4010CDT
 1179 0001  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Toshiba:Toshiba-4010CDT
+1179 0001  
+	x	3|SVGA|3d||||||
 
 
 # SIGMA:REALmagic64/GX (SD 6425)
 1236 6401  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# SIGMA:REALmagic64/GX (SD 6425)
+1236 6401  
+	x	3|SVGA|3d||||||
 
 
 # Optibase:MPEG Forge
 1255 1110  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Optibase:MPEG Forge
+1255 1110  
+	x	3|SVGA|3d||||||
 
 
 # Optibase:MPEG Fusion
 1255 1210  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Optibase:MPEG Fusion
+1255 1210  
+	x	3|SVGA|3d||||||
 
 
 # Optibase:VideoPlex
 1255 2110  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Optibase:VideoPlex
+1255 2110  
+	x	3|SVGA|3d||||||
 
 
 # Optibase:VideoPlex CC
 1255 2120  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Optibase:VideoPlex CC
+1255 2120  
+	x	3|SVGA|3d||||||
 
 
 # Optibase:VideoQuest
 1255 2130  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Optibase:VideoQuest
+1255 2130  
+	x	3|SVGA|3d||||||
 
 
 # Avance:ALG2064i
 4005 2064  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Avance:ALG2064i
+4005 2064  
+	x	3|SVGA|3d||||||
 
 
 # Avance:ALG-2302
 4005 2302  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Avance:ALG-2302
+4005 2302  
+	x	3|SVGA|3d||||||
 
 
 # ARK Logic:Stingray
 edd8 a091  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # ARK Logic:Stingray ARK 2000PV
 edd8 a099  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # ARK Logic:2000MT
 edd8 a0a1  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
 
 
 # Hewlett Packard:J2585A
 103c 1030  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Hewlett Packard:J2585A
+103c 1030  
+	x	3|SVGA|3d||||||
 
 
 # Hewlett Packard:J2585B (Lassen)
 103c 1031  
-	x	3|SVGA|||||
+	x	3|SVGA|||||||
+
+
+# Hewlett Packard:J2585B (Lassen)
+103c 1031  
+	x	3|SVGA|3d||||||
 

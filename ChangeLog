@@ -1,3 +1,7 @@
+7/12/2000:	v1.55
+	- fixed evil hddb bug
+	- added 3d script field
+
 9/11/2000:	v1.54
 	- started work on hddb fix
 	- renamed timeout -> hd_timeout

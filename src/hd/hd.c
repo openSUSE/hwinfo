@@ -445,6 +445,7 @@ driver_info_t *hd_free_driver_info(driver_info_t *di)
         free_str_list(di->x11.extensions);
         free_str_list(di->x11.options);
         free_str_list(di->x11.raw);
+        free_mem(di->x11.script);
         break;
 
       case di_isdn:
@@ -2353,6 +2354,9 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
           }
           else if(i == 7) {
             di->x11.dacspeed = strtol(sl->str, NULL, 10);
+          }
+          else if(i == 8) {
+            di->x11.script = new_str(sl->str);
           }
         }
         for(i = 0, sl = di->x11.hddb1; sl; sl = sl->next, i++) {

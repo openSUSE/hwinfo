@@ -14,11 +14,16 @@ sub getit
 
   $arch = shift;
 
-  system "~adrian/bin/x11DB $arch tmp";
-  system "rm -f tmp.sax1 tmp.sax2";
-  system "mv tmp.names names.x11.$arch";
+  if($arch ne 'susedb') {
+    system "~adrian/bin/x11DB $arch 7.1 tmp beta";
+    system "rm -f tmp.sax1 tmp.sax2";
+    system "mv tmp.names names.x11.$arch";
+    die "oops" unless open F, "tmp.hwinfo";
+  }
+  else {
+    die "oops" unless open F, "/usr/X11R6/share/x11DB/x11.hwinfo";
+  }
 
-  die "oops" unless open F, "tmp.hwinfo";
   @f = (<F>);
   close F;
 

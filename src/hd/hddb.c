@@ -90,6 +90,15 @@ unsigned find_entry2(hddb_data_t *x, unsigned flag, unsigned level, unsigned *id
     /* check if we found an id */
     if(level != cur_level) continue;	/* must match */
 
+    /* this one is tricky... */
+    if(
+      u < x->data_len &&
+      DATA_FLAG(x->data[u + 1]) < 4 &&
+      DATA_FLAG(x->data[u + 1]) > cur_level
+    ) {
+      continue;
+    }
+
     for(v = 0; v <= level; v++) {
       if(ids[v] - cur_ids[v] >= cur_ranges[v]) break;
     }
@@ -566,8 +575,8 @@ void init_hddb(hd_data_t *hd_data)
   char *s;
   int line, no_init = -1;
   str_list_t *sl, *sl0;
-  hwid_t id;
-  unsigned u, tag;
+  hwid_t id_0, id_1, id_2, id_3;
+  unsigned u, tag, last_ids;
   unsigned id0, id1, id2;
 
   if(hd_data->hddb_dev && hd_data->hddb_drv) return;
@@ -590,17 +599,17 @@ void init_hddb(hd_data_t *hd_data)
     if(*s == '\t') {
       if(s[1] == '\t') {	/* level 2 & 3 entries */
 
-        id = read_id(&s);
-        if(id.ok) {
+        id_0 = read_id(&s);
+        if(id_0.ok) {
           if(tag == TAG_CLASS) {	/* only level 2 (prog-if) */
-            store_id(hd_data->hddb_dev, &id, tag, 2, s);
+            store_id(hd_data->hddb_dev, &id_0, tag, 2, s);
             continue;
           }
           else {
-            store_id(hd_data->hddb_dev, &id, tag, 2, NULL);
-            id = read_id(&s);
-            if(id.ok) {
-              store_id(hd_data->hddb_dev, &id, tag, 3, s);
+            store_id(hd_data->hddb_dev, &id_0, tag, 2, NULL);
+            id_0 = read_id(&s);
+            if(id_0.ok) {
+              store_id(hd_data->hddb_dev, &id_0, tag, 3, s);
               continue;
             }
           }
@@ -612,9 +621,9 @@ void init_hddb(hd_data_t *hd_data)
       }
 
       /* level 1 entries */
-      id = read_id(&s);
-      if(id.ok) {
-        store_id(hd_data->hddb_dev, &id, tag, 1, s);
+      id_0 = read_id(&s);
+      if(id_0.ok) {
+        store_id(hd_data->hddb_dev, &id_0, tag, 1, s);
         continue;
       }
 
@@ -636,10 +645,10 @@ void init_hddb(hd_data_t *hd_data)
       tag = TAG_CLASS;
     }
 
-    id = read_id(&s);
-    if(id.ok) {
-      if(id.tag_ok) tag = id.tag;
-      store_id(hd_data->hddb_dev, &id, tag, 0, s);
+    id_0 = read_id(&s);
+    if(id_0.ok) {
+      if(id_0.tag_ok) tag = id_0.tag;
+      store_id(hd_data->hddb_dev, &id_0, tag, 0, s);
       continue;
     }
 
@@ -657,6 +666,7 @@ void init_hddb(hd_data_t *hd_data)
   sl0 = read_file(DRIVER_LIST, 0, 0);
 
   id0 = id1 = id2 = 0;
+  last_ids = 0;
 
   for(sl = sl0, line = tag = 0; sl; sl = sl->next) {
     s = sl->str;
@@ -667,6 +677,8 @@ void init_hddb(hd_data_t *hd_data)
 
     /* driver info */
     if(*s == '\t') {
+      last_ids = 0;
+
       if(s[1] == '\t') {	/* extra driver info */
 
         /* remove new-line char at end of line */
@@ -697,33 +709,42 @@ void init_hddb(hd_data_t *hd_data)
 
     tag = TAG_PCI;
 
-    id = read_id(&s);
-    if(id.ok) {
-      if(id.tag_ok) tag = id.tag;
-      if(id0 != id.val || id.range_ok) {
-        id0 = id.val;
-        store_id(hd_data->hddb_drv, &id, tag, 0, NULL);
+    id_1.ok = id_2.ok = id_3.ok = 0;
+    id_0 = read_id(&s);
+    if(id_0.ok) id_1 = read_id(&s);
+    if(id_1.ok) id_2 = read_id(&s);
+    if(id_2.ok) id_3 = read_id(&s);
+
+    if(id_0.ok && (id_1.ok || id_3.ok)) {
+      if(id_0.tag_ok) tag = id_0.tag;
+
+      if(id0 != id_0.val || id_0.range_ok) {
+        id0 = id_0.val;
+        store_id(hd_data->hddb_drv, &id_0, tag, 0, NULL);
       }
-      id = read_id(&s);
-      if(id.ok) {
-        if(id1 != id.val || id.range_ok) {
-          id1 = id.val;
-          store_id(hd_data->hddb_drv, &id, tag, 1, NULL);
-        }
-        id = read_id(&s);
-        if(id.ok) {
-          if(id2 != id.val || id.range_ok) {
-            id2 = id.val;
-            store_id(hd_data->hddb_drv, &id, tag, 2, NULL);
-          }
-          id = read_id(&s);
-          if(id.ok) {
-            store_id(hd_data->hddb_drv, &id, tag, 3, NULL);
-            continue;
-          }
-        }
-        continue;
+      if(id_1.ok && (
+        id1 != id_1.val ||
+        id_1.range_ok ||
+        (id_3.ok && last_ids < 4) ||
+        (!id_3.ok && last_ids > 2)
+      )) {
+        id1 = id_1.val;
+        store_id(hd_data->hddb_drv, &id_1, tag, 1, NULL);
       }
+      if(id_2.ok && (id2 != id_2.val || id_2.range_ok)) {
+        id2 = id_2.val;
+        store_id(hd_data->hddb_drv, &id_2, tag, 2, NULL);
+      }
+      if(id_3.ok) {
+        store_id(hd_data->hddb_drv, &id_3, tag, 3, NULL);
+      }
+
+      last_ids = 1;
+      if(id_1.ok) last_ids++;
+      if(id_2.ok) last_ids++;
+      if(id_3.ok) last_ids++;
+
+      continue;
     }
 
     ADD2LOG("invalid id spec (tag %u) at line %d\n", tag, line);

@@ -1,31 +1,31 @@
 #! /bin/sh
 
-# check in libhd to /work/src/done/STABLE
-# call from the libhd directory
+# check in hwinfo to /work/src/done/STABLE
+# call from the hwinfo directory
 
 ver=`cat VERSION`
-libhdint=/tmp/libhdint-$ver
+hwinfo_internal=/tmp/hwinfo-internal-$ver
 
 make clean
-rm -rf $libhdint
-mkdir $libhdint
-tar -cf - src/ids | tar -C $libhdint -xf -
-cd $libhdint
+rm -rf $hwinfo_internal
+mkdir $hwinfo_internal
+tar -cf - src/ids | tar -C $hwinfo_internal -xf -
+cd $hwinfo_internal
 find . -depth -name CVS -exec rm -r {} \;
 find . -depth -name .cvsignore -exec rm -r {} \;
 rm -f MAINTAINER scripts/ci_*
 cd /tmp
 
-tar -zcf $libhdint.tar.gz libhdint-$ver
+tar -Icf $hwinfo_internal.tar.bz2 hwinfo-internal-$ver
 
-if mkdir /work/src/done/STABLE/libhdint ; then
-  cd /work/src/done/STABLE/libhdint
-  cp $libhdint.tar.gz /work/SRC/all/libhdint/libhdint.{changes,spec} .
-  perl -pi -e 's/^(Version:\s+)\S+/${1}'$ver'/' /work/src/done/STABLE/libhdint/libhdint.spec
-  perl -pi -e 's/^(Source.+?-)\S+?(\.tar\.gz)/${1}'$ver'${2}/' /work/src/done/STABLE/libhdint/libhdint.spec
+if mkdir /work/src/done/STABLE/hwinfo-internal ; then
+  cd /work/src/done/STABLE/hwinfo-internal
+  cp $hwinfo_internal.tar.bz2 /work/SRC/all/hwinfo-internal/hwinfo-internal.{changes,spec} .
+  perl -pi -e 's/^(Version:\s+)\S+/${1}'$ver'/' /work/src/done/STABLE/hwinfo-internal/hwinfo-internal.spec
+  perl -pi -e 's/^(Source.+?-)\S+?(\.tar\.bz2)/${1}'$ver'${2}/' /work/src/done/STABLE/hwinfo-internal/hwinfo-internal.spec
   . /work/src/bin/.profile
-  vc libhdint
-  rm /work/src/done/STABLE/libhdint/*~
+  vc hwinfo-internal
+  rm /work/src/done/STABLE/hwinfo-internal/*~
   echo "done"
 else
   echo oops
