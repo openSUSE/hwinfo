@@ -448,6 +448,7 @@ void hd_scan_misc2(hd_data_t *hd_data)
                 }
                 break;
               default:		/* gcc -Wall */
+		break;
             }
           }
         }
@@ -590,7 +591,7 @@ void read_irqs(misc_t *m)
 #else
 #if defined(__alpha__) || defined(__sparc__)
     if(sscanf(sl->str + j, " %99[^\n]", buf) == 1) {
-#else	/* __i386__ || __ia64__ */
+#else	/* __i386__ || __x86_64__ || __ia64__ */
     if(sscanf(sl->str + j, " %*s %99[^\n]", buf) == 1) {
 #endif
 #endif

@@ -105,6 +105,10 @@
 #define HD_ARCH "mips"
 #endif
 
+#ifdef __x86_64__
+#define HD_ARCH "x86-64"
+#endif
+
 #if defined(__s390__) || defined(__s390x__) || defined(__alpha__) || defined(LIBHD_TINY)
 #define WITH_ISDN	0
 #else
@@ -260,7 +264,7 @@ static struct s_pr_flags {
   { pr_prom,         0,           8|4|2|1, "prom"         },
   { pr_sbus,         0,           8|4|2|1, "sbus"         },
   { pr_int,          0,           8|4|2|1, "int"          },
-#ifdef __i386__
+#if defined(__i386__) || defined (__x86_64__)
   { pr_braille,      0,             4|2|1, "braille"      },
   { pr_braille_alva, pr_braille,    4|2|1, "braille.alva" },
   { pr_braille_fhp,  pr_braille,    4|2|1, "braille.fhp"  },
@@ -1382,6 +1386,7 @@ int have_common_res(hd_res_t *res1, hd_res_t *res2)
             break;
 
           default: /* gcc -Wall */
+	    break;
         }
       }
     }
@@ -1490,6 +1495,7 @@ hd_smbios_t *free_smbios_list(hd_smbios_t *sm)
         break;
 
       default:
+	break;
     }
 
     free_mem(sm);
@@ -1613,7 +1619,7 @@ void hd_scan(hd_data_t *hd_data)
    * to be able to read the right parport io,
    * we have to do this before scan_misc()
    */
-#if defined(__i386__)
+#if defined(__i386__) || defined (__x86_64__)
   hd_scan_bios(hd_data);
 #endif
   
@@ -3581,7 +3587,7 @@ int hd_smp_support(hd_data_t *hd_data)
   hd = hd_free_hd_list(hd);
 
 #ifndef LIBHD_TINY
-#ifdef __i386__
+#if defined(__i386__) || defined (__x86_64__)
   if(is_smp < 2) {
     if(!hd_data->bios_ram.data) {
       int bf = hd_probe_feature(hd_data, pr_bios);

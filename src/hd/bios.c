@@ -16,7 +16,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#if defined(__i386__)
+#if defined(__i386__) || defined (__x86_64__)
 
 // #define BIOS_TEST
 
@@ -1022,4 +1022,4 @@ void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
 }
 
 
-#endif /* defined(__i386__) */
+#endif /* defined(__i386__) || defined (__x86_64__) */

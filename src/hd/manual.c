@@ -829,6 +829,7 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
         break;
 
       default:
+	break;
     }
   }
 

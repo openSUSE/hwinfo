@@ -15,7 +15,7 @@
 
 static void int_pcmcia(hd_data_t *hd_data);
 static void int_cdrom(hd_data_t *hd_data);
-#if defined(__i386__)
+#if defined(__i386__) || defined (__x86_64__)
 static int set_bios_id(hd_data_t *hd_data, char *dev_name, int bios_id);
 static void int_bios(hd_data_t *hd_data);
 #endif
@@ -50,7 +50,7 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(6, 0, "floppy");
   int_floppy(hd_data);
 
-#if defined(__i386__)
+#if defined(__i386__) || defined (__x86_64__)
   PROGRESS(7, 0, "bios");
   int_bios(hd_data);
 #endif
@@ -101,7 +101,7 @@ void int_cdrom(hd_data_t *hd_data)
   }
 }
 
-#if defined(__i386__)
+#if defined(__i386__) || defined (__x86_64__)
 
 int set_bios_id(hd_data_t *hd_data, char *dev_name, int bios_id)
 {
@@ -184,7 +184,7 @@ void int_bios(hd_data_t *hd_data)
   }
 
 }
-#endif	/* defined(__i386__) */
+#endif	/* defined(__i386__) || defined (__x86_64__) */
 
 /*
  * Try to read block 0 for block devices.

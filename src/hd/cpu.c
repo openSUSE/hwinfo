@@ -83,7 +83,7 @@ void read_cpuinfo(hd_data_t *hd_data)
   cpu_info_t *ct;
   str_list_t *sl;
 
-#ifdef __i386__
+#if defined(__i386__) || defined (__x86_64__)
   char model_id[80], vendor_id[80], features[0x100];
   unsigned bogo, mhz, cache, family, model, stepping;
   char *t0, *t;

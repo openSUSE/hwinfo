@@ -349,7 +349,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
   }
 
   if(h->rom_id) {
-#ifdef __i386__
+#if defined(__i386__) || defined (__x86_64__)
     dump_line("BIOS id: %s\n", h->rom_id);
 #endif
 #if defined(__PPC__) || defined(__sparc__)
@@ -1151,6 +1151,7 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
         }
 
       default:
+	break;
     }
   }
 
