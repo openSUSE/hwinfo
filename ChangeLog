@@ -1,3 +1,7 @@
+6/3/2003:	v6.08
+	- updated X11 data
+	- added '--dsl' option to hwscan
+
 6/3/2003:	v6.07
 	- write ff to /dev/lp0 if imm.o didn't load (#14175)
 	- probe for scsi cache even in fast mode, else we miss scsi cd writers
