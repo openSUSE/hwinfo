@@ -21,6 +21,8 @@
 static void add_old_mac_monitor(hd_data_t *hd_data);
 static void add_monitor(hd_data_t *hd_data, devtree_t *dt);
 #endif
+static int chk_edid_info(hd_data_t *hd_data, unsigned char *edid);
+static void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid);
 static void add_monitor_res(hd_t *hd, unsigned x, unsigned y, unsigned hz, unsigned il);
 
 #if !defined(__PPC__)
@@ -32,6 +34,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
   unsigned u;
   hd_res_t *res;
   monitor_info_t *mi = NULL;
+  bios_info_t *bt;
 
   if(!hd_probe_feature(hd_data, pr_monitor)) return;
 
@@ -42,7 +45,29 @@ void hd_scan_monitor(hd_data_t *hd_data)
 
   PROGRESS(1, 0, "ddc");
 
-  if(!(s = s0 = t = get_cmd_param(hd_data, 0))) return;
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_internal && hd->sub_class == sc_int_bios) break;
+  }
+
+  /* first, see if we got the full edid record from bios */
+  if(
+    hd &&
+    hd->detail &&
+    hd->detail->type == hd_detail_bios &&
+    (bt = hd->detail->bios.data) &&
+    bt->vbe.ok
+  ) {
+    if(chk_edid_info(hd_data, bt->vbe.ddc)) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class = bc_monitor;
+      add_edid_info(hd_data, hd, bt->vbe.ddc);
+
+      return;
+    }
+  }
+
+  /* Maybe we have hidden edid info here? */
+  if(!(s = s0 = t = get_cmd_param(hd_data, 0))) return;		/* no :-( */
 
   s = strsep(&t, "^");
 
@@ -299,6 +324,8 @@ void add_monitor(hd_data_t *hd_data, devtree_t *dt)
   unsigned char *edid = dt->edid;
   unsigned u, u1, u2;
 
+  if(!chk_edid_info(hd_data, edid)) return;
+
   hd = add_hd_entry(hd_data, __LINE__, 0);
 
   hd->base_class = bc_monitor;
@@ -313,6 +340,25 @@ void add_monitor(hd_data_t *hd_data, devtree_t *dt)
       break;
     }
   }
+
+  add_edid_info(hd_data, hd, edid);
+}
+
+#endif	/* defined(__PPC__) */
+
+int chk_edid_info(hd_data_t *hd_data, unsigned char *edid)
+{
+
+
+  return 1;
+}
+
+void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
+{
+  hd_res_t *res;
+  monitor_info_t *mi = NULL;
+  int i;
+  unsigned u, u1, u2;
 
   u = (edid[8] << 8) + edid[9];
   hd->vend = MAKE_ID(TAG_EISA, u);
@@ -451,8 +497,6 @@ void add_monitor(hd_data_t *hd_data, devtree_t *dt)
     }
   }
 }
-
-#endif	/* defined(__PPC__) */
 
 void add_monitor_res(hd_t *hd, unsigned width, unsigned height, unsigned vfreq, unsigned il)
 {

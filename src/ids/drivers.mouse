@@ -51,5 +51,10 @@ u0458 0002
 
 # MS IntelliMouse Explorer
 u045e 001e
+# Logitech Wheelmouse Model M-BB48
+u046d c001
 	p	imps/2|ps2|3|1
 
+# Razer Boomslang USB Mouse
+u05e3 000b
+	p	imps/2|ps2|5|1

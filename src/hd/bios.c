@@ -61,6 +61,7 @@ void hd_scan_bios(hd_data_t *hd_data)
   unsigned u, u1;
   memory_range_t mem;
   unsigned smp_ok;
+  vbe_info_t *vbe;
 
   if(!hd_probe_feature(hd_data, pr_bios)) return;
 
@@ -237,6 +238,17 @@ void hd_scan_bios(hd_data_t *hd_data)
       dump_memory(hd_data, &mem, 0, "MP config table");
       mem.data = free_mem(mem.data);
     }
+  }
+
+  if(hd_probe_feature(hd_data, pr_bios_vbe)) {
+    PROGRESS(4, 0, "vbe");
+
+    vbe = &bt->vbe;
+    vbe->ok = 0;
+
+
+    get_vbe_info(hd_data, vbe);
+
   }
 
 }

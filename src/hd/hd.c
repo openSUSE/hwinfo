@@ -185,6 +185,7 @@ static struct s_pr_flags {
   { pr_misc_par,     pr_misc,       4|2|1, "misc.par"     },
   { pr_misc_floppy,  pr_misc,     8|4|2|1, "misc.floppy"  },
   { pr_bios,         0,           8|4|2|1, "bios"         },
+  { pr_bios_vbe,     pr_bios,       4    , "bios.vbe"     },
   { pr_cpu,          0,           8|4|2|1, "cpu"          },
   { pr_monitor,      0,           8|4|2|1, "monitor"      },
   { pr_serial,       0,             4|2|1, "serial"       },
@@ -606,7 +607,17 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
       break;
 
     case hd_detail_bios:
-      free_mem(d->bios.data);
+      {
+        bios_info_t *b = d->bios.data;
+
+        free_mem(b->vbe.oem_name);
+        free_mem(b->vbe.vendor_name);
+        free_mem(b->vbe.product_name);
+        free_mem(b->vbe.product_revision);
+        free_mem(b->vbe.mode);
+
+        free_mem(b);
+      }
       break;
 
     case hd_detail_cpu:
@@ -1070,11 +1081,11 @@ void hd_scan(hd_data_t *hd_data)
 {
   char *s = NULL;
   int i, j;
-  unsigned u;
+//  unsigned u;
   hd_t *hd;
   uint64_t irqs;
   str_list_t *sl, *sl0;
-  driver_info_t *di;
+//  driver_info_t *di;
 
 #ifdef LIBHD_MEMCHECK
   if(!libhd_log) {
@@ -1164,7 +1175,7 @@ void hd_scan(hd_data_t *hd_data)
 
   hd_scan_sys(hd_data);
 
-  /* after hd_scan_prom() */
+  /* after hd_scan_prom() and hd_scan_bios() */
   hd_scan_monitor(hd_data);
 
 #if defined(__i386__) || defined(__alpha__)
@@ -1246,6 +1257,9 @@ void hd_scan(hd_data_t *hd_data)
     }
     ADD2LOG("\n");
   }
+
+#if 0
+  /* drop this */
 
   if(hd_data->debug && !hd_data->flags.internal) {
     i = hd_usb_support(hd_data);
@@ -1330,6 +1344,8 @@ void hd_scan(hd_data_t *hd_data)
       ADD2LOG("  color code: 0x%02x\n", i);
     }
   }
+#endif
+
 }
 
 
@@ -3159,6 +3175,8 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 
       case hw_monitor:
         hd_set_probe_feature(hd_data, pr_misc);
+        hd_set_probe_feature(hd_data, pr_prom);
+//        hd_set_probe_feature(hd_data, pr_bios_vbe);
         hd_set_probe_feature(hd_data, pr_monitor);
         break;
 

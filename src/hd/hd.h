@@ -76,7 +76,7 @@ typedef enum probe_feature {
   pr_parallel, pr_parallel_lp, pr_parallel_zip, pr_isa, pr_isa_isdn,
   pr_dac960, pr_smart, pr_isdn, pr_kbd, pr_prom, pr_sbus, pr_int,
   pr_braille, pr_braille_alva, pr_braille_fhp, pr_braille_ht, pr_ignx11,
-  pr_sys, pr_dasd, pr_i2o, pr_cciss,
+  pr_sys, pr_dasd, pr_i2o, pr_cciss, pr_bios_vbe,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
@@ -238,6 +238,41 @@ typedef struct {
   char prod_id[13];		/* product id */
   unsigned cpus, cpus_en;	/* number of cpus & ennabled cpus */
 } smp_info_t;
+
+
+/*
+ * vesa bios extensions info
+ */
+typedef struct vbe_mode_info_s {
+  unsigned number;		/* mode number */
+  unsigned attributes;		/* mode attributes */
+  unsigned width, height;	/* mode size */
+  unsigned bytes_p_line;	/* line length */
+  unsigned pixel_size;		/* bits per pixel */
+  unsigned fb_start;		/* frame buffer start address (if any) */
+  unsigned win_A_start;		/* window A start address */
+  unsigned win_A_attr;		/* window A attributes */
+  unsigned win_B_start;		/* window B start address */
+  unsigned win_B_attr;		/* window B attributes */
+  unsigned win_size;		/* window size in bytes */
+  unsigned win_gran;		/* window granularity in bytes */
+  unsigned pixel_clock;		/* maximum pixel clock */
+} vbe_mode_info_t;
+
+
+typedef struct {
+  unsigned ok:1;		/* data are valid */
+  unsigned version;		/* vbe version */
+  unsigned oem_version;		/* oem version info */
+  unsigned memory;		/* in bytes */
+  char *oem_name;		/* oem name */
+  char *vendor_name;		/* vendor name */
+  char *product_name;		/* product name */
+  char *product_revision;	/* product revision */
+  unsigned modes;		/* number of supported video modes */
+  vbe_mode_info_t *mode;	/* video mode list */
+  unsigned char ddc[0x80];	/* ddc monitor info */
+} vbe_info_t;
 
 
 /*
@@ -434,6 +469,7 @@ typedef struct {
 
   unsigned low_mem_size;
   smp_info_t smp;
+  vbe_info_t vbe;
 
 } bios_info_t;
 

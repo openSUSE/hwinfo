@@ -1,3 +1,7 @@
+3/5/2001:	v2.09
+	- support vbe bios calls to get monitor data (default: disabled)
+	- added more usb wheel mice
+
 3/5/2001:	v2.08
 	- added vmware check
 	- don't do scsi write cache detection in vmware
