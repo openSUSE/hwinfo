@@ -1615,6 +1615,11 @@ void hd_scan(hd_data_t *hd_data)
   /* get shm segment, if we didn't do it already */
   hd_shm_init(hd_data);
 
+  if(!hd_data->shm.ok && !hd_data->flags.nofork) {
+    hd_data->flags.nofork = 1;
+    ADD2LOG("shm: failed to get shm segment; will not fork\n");
+  }
+
 #ifndef LIBHD_TINY
   /*
    * There might be old 'manual' entries left from an earlier scan. Remove
@@ -5078,9 +5083,16 @@ void hd_shm_init(hd_data_t *hd_data)
 
   hd_data->shm.id = shmget(IPC_PRIVATE, hd_data->shm.size, IPC_CREAT | 0600);
 
-  if(hd_data->shm.id == -1) return;
+  if(hd_data->shm.id == -1) {
+    ADD2LOG("shm: shmget failed (errno %d)\n", errno);
+    return;
+  }
 
   p = shmat(hd_data->shm.id, NULL, 0);
+
+  if(p == (void *) -1) {
+    ADD2LOG("shm: shmat for segment %d failed (errno %d)\n", hd_data->shm.id, errno);
+  }
 
   shmctl(hd_data->shm.id, IPC_RMID, NULL);
 

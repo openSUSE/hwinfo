@@ -30,7 +30,7 @@
 #
 #############################################################################
 
-TARGETLIB = ../libx86emu.a
+TARGETLIB = ../libhd.a
 TARGETDEBUGLIB = ../libx86emud.a
 
 OBJS=\
@@ -52,23 +52,24 @@ DEBUGOBJS=debug.d \
 
 .SUFFIXES: .d
 
-all: $(TARGETLIB) $(TARGETDEBUGLIB)
+all: $(TARGETLIB)
 
 $(TARGETLIB): $(OBJS)
-	ar rv $(TARGETLIB) $(OBJS)
+# prefix objects with x86emu_
+	@for i in $? ; do cp -p $$i x86emu_$$i ; ar rv $@ x86emu_$$i || exit ; rm -f x86emu_$$i ; done
 
 $(TARGETDEBUGLIB): $(DEBUGOBJS)
 	ar rv $(TARGETDEBUGLIB) $(DEBUGOBJS)
 
 INCS   = -I. -Ix86emu -Iinclude
-CFLAGS = -fPIC -D__DRIVER__ -DFORCE_POST -D_CEXPORT= -DNO_LONG_LONG
+CFLAGS += -D__DRIVER__ -DFORCE_POST -D_CEXPORT= -DNO_LONG_LONG
 CDEBUGFLAGS = -DDEBUG
 
 .c.o:
-	gcc -g -O -Wall -c $(CFLAGS) $(INCS) $*.c
+	gcc -c $(CFLAGS) $(INCS) $*.c
 
 .c.d:
-	gcc -g -O -Wall -c -o$*.d $(CFLAGS) $(CDEBUGFLAGS) $(INCS) $*.c
+	gcc -c -o$*.d $(CFLAGS) $(CDEBUGFLAGS) $(INCS) $*.c
 
 .cpp.o:
 	gcc -c $(CFLAGS) $(INCS) $*.cpp
@@ -79,7 +80,7 @@ distclean: clean
 	@rm -f *~
 
 clean:
-	@rm -f *.o *.d $(TARGETLIB) $(TARGETDEBUGLIB)
+	@rm -f *.o *.d
 
 validate:	validate.o ../libx86emu.a
 	gcc -o validate validate.o -lx86emu -L..

@@ -1,5 +1,6 @@
 24/2/2004:	v8.13
 	- include x86emu into libhd.so
+	- don't segfault if we couldn't get a shared memory segment
 
 23/2/2004:	v8.12
 	- fixed Makefile
