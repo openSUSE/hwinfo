@@ -1,9 +1,100 @@
 # dvb cards
 
+ vendor.id		pci 0x13d0
+&device.id		pci 0x2103
+|vendor.id		pci 0x13d0
+&device.id		pci 0x2200
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	skystar2
+
+ vendor.id		pci 0x109e
+&device.id		pci 0x0878
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	bt878
 
  vendor.id		pci 0x1131
 &device.id		pci 0x7146
+&subvendor.id		pci 0x00a1
+&subdevice.id		pci 0x00a1
+|vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x00a1
+&subdevice.id		pci 0xa1a0
+|vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x110a
+&subdevice.id		pci 0x0000
+|vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x110a
+&subdevice.id		pci 0xffff
+|vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x13c2
+&subdevice.id		pci 0x0000+0x0005
+|vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x13c2
+&subdevice.id		pci 0x0006
+|vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x13c2
+&subdevice.id		pci 0x0008
+|vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x13c2
+&subdevice.id		pci 0x000a
+|vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x13c2
+&subdevice.id		pci 0x1002
+|vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x13c2
+&subdevice.id		pci 0x1102
+|vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0xffc2
+&subdevice.id		pci 0x0000
 +baseclass.id		0x111
 +subclass.id		0x00
 +driver.module.modprobe	dvb-ttpci
+
+ vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x1131
+&subdevice.id		pci 0x4f56
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	budget-av
+
+ vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x13c2
+&subdevice.id		pci 0x1003+0x0003
+|vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x13c2
+&subdevice.id		pci 0x1013
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	budget
+
+ vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x13c2
+&subdevice.id		pci 0x100c
+|vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x13c2
+&subdevice.id		pci 0x100f
+|vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x13c2
+&subdevice.id		pci 0x1011
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	budget-ci
 

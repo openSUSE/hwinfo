@@ -3,6 +3,7 @@
 	- hwbootscan: move icon creation from coldplug
 	- lt modem (#36552)
 	- fixed some module names (#37285, #37518)
+	- added dvb cards (#32730)
 
 1/4/2004:	v8.30
 	- wlan card detection fix (#37872)
