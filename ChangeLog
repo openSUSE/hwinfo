@@ -9,6 +9,7 @@
 	  as serial mice or parport zips unless they had been found
 	  previously
 	- boot.hwscan: probe for mice & pci hardware only (to be faster)
+	- don't try to access 'not available' devices
 
 25/2/2002:	v4.13
 	- meissner: boot.hwscan:

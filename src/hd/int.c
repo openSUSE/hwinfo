@@ -194,7 +194,8 @@ void int_media_check(hd_data_t *hd_data)
       ) &&
       hd->unix_dev_name &&
       !hd->block0 &&
-      !hd->is.notready
+      !hd->is.notready &&
+      hd->status.available != status_no
     ) {
       i = 5;
       PROGRESS(4, ++j, hd->unix_dev_name);
