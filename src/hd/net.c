@@ -124,7 +124,7 @@ void hd_scan_net(hd_data_t *hd_data)
 #if defined(__s390__) || defined(__s390x__)
       if(
         hd->sub_class.id != sc_nif_loopback &&
-        hd->sub_class.id != sc_nif_sit
+        hd->sub_class.id != sc_nif_sit && !hd->sub_class.id != sc_nif_ethernet && !hd->sub_class.id != sc_nif_qeth
       ) {
         hd0 = hd;
         hd = add_hd_entry(hd_data, __LINE__, 0);
@@ -133,11 +133,6 @@ void hd_scan_net(hd_data_t *hd_data)
         hd->slot = hd0->slot;
         hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);	// IBM
         switch(hd0->sub_class.id) {
-          case sc_nif_ethernet:
-            hd->sub_class.id = 0;
-            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0000);
-            str_printf(&hd->device.name, 0, "Ethernet card %d", hd->slot);
-            break;
           case sc_nif_tokenring:
             hd->sub_class.id = 1;
             hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
@@ -157,11 +152,6 @@ void hd_scan_net(hd_data_t *hd_data)
             hd->sub_class.id = 0x06;
             hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0006);
             str_printf(&hd->device.name, 0, "HSI %d", hd->slot);
-            break;
-          case sc_nif_qeth:
-            hd->sub_class.id = 0x07;
-            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0007);
-            str_printf(&hd->device.name, 0, "QETH %d", hd->slot);
             break;
           case sc_nif_escon:
             hd->sub_class.id = 0x08;
