@@ -1,4 +1,6 @@
 9/1/2003:	v5.49
+	- fixed some network card names (#22795)
+	- added wheel mouse data (#22797)
 	- make it compile on x86_64 & ia64 again
 
 13/12/2002:	v5.48
