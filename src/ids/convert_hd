@@ -928,21 +928,21 @@ sub read_pcimap_file
     $n = num $l[6];
 
     if($mask = ($n >> 16) & 0xff) {
-      $key->[$he_baseclass_id] = [ $flag_id, $tag_pci, (num($l[5]) >> 16) & 0xff ];
+      $key->[$he_baseclass_id] = [ $flag_id, $tag_none, (num($l[5]) >> 16) & 0xff ];
       if($mask != 0xff) {
         $key->[$he_baseclass_id][4] = (~$mask & 0xff);
       }
     }
 
     if($mask = ($n >> 8) & 0xff) {
-      $key->[$he_subclass_id] = [ $flag_id, $tag_pci, (num($l[5]) >> 8) & 0xff ];
+      $key->[$he_subclass_id] = [ $flag_id, $tag_none, (num($l[5]) >> 8) & 0xff ];
       if($mask != 0xff) {
         $key->[$he_subclass_id][4] = (~$mask & 0xff);
       }
     }
 
     if($mask = $n & 0xff) {
-      $key->[$he_progif_id] = [ $flag_id, $tag_pci, num($l[5]) & 0xff ];
+      $key->[$he_progif_id] = [ $flag_id, $tag_none, num($l[5]) & 0xff ];
       if($mask != 0xff) {
         $key->[$he_progif_id][4] = (~$mask & 0xff);
       }
@@ -1039,9 +1039,9 @@ sub read_alias_file
     $key->[$he_device_id] = [ $flag_id, $tag_pci, hex $2 ] if $2 ne '*';
     $key->[$he_subvendor_id] = [ $flag_id, $tag_pci, hex $3 ] if $3 ne '*';
     $key->[$he_subdevice_id] = [ $flag_id, $tag_pci, hex $4 ] if $4 ne '*';
-    $key->[$he_baseclass_id] = [ $flag_id, $tag_pci, hex $5 ] if $5 ne '*';
-    $key->[$he_subclass_id] = [ $flag_id, $tag_pci, hex $6 ] if $6 ne '*';
-    $key->[$he_progif_id] = [ $flag_id, $tag_pci, hex $7 ] if $7 ne '*';
+    $key->[$he_baseclass_id] = [ $flag_id, $tag_none, hex $5 ] if $5 ne '*';
+    $key->[$he_subclass_id] = [ $flag_id, $tag_none, hex $6 ] if $6 ne '*';
+    $key->[$he_progif_id] = [ $flag_id, $tag_none, hex $7 ] if $7 ne '*';
 
     push @hd, [ "$file_name($line)", [ $key ], $val ];
   }
