@@ -80,6 +80,7 @@ char *mod_name_by_idx(unsigned idx);
 int timeout(void(*func)(void *), void *arg, int timeout);
 
 str_list_t *read_kmods(hd_data_t *hd_data);
+char *get_cmd_param(int field);
 
 /* smp/smp.c */
 int detectSMP(void);

@@ -26,11 +26,9 @@ static void add_monitor_res(hd_t *hd, unsigned x, unsigned y, unsigned hz);
 void hd_scan_monitor(hd_data_t *hd_data)
 {
   hd_t *hd;
-  int i, j, k, ok = 0;
-  char *s = NULL /* gcc -Wall */, *se, m[8];
-  char c_str[] = "SuSE=";
+  int i, j, k;
+  char *s, *s0, *se, m[8];
   unsigned u;
-  str_list_t *sl;
   hd_res_t *res;
 
   if(!hd_probe_feature(hd_data, pr_monitor)) return;
@@ -42,25 +40,12 @@ void hd_scan_monitor(hd_data_t *hd_data)
 
   PROGRESS(1, 0, "cmdline");
 
-  if(!(sl = read_file(PROC_CMDLINE, 0, 1))) return;
+  if(!(s = s0 = get_cmd_param(0))) return;
 
-  se = sl->str;
-  while((s = strsep(&se, " "))) {
-    if(!*s) continue;
-    if(!strncmp(s, c_str, sizeof c_str - 1)) {
-      s += sizeof c_str - 1;
+  se = s + strlen(s);
 
-      /* ok, now strip off the APM info (separated by',') */
-      for(se = s; *se; se++) if(*se == ',') { *se = 0; break; }
-
-      if(se - s >= 7 + 2 * 4) ok = 1;
-
-      break;
-    }
-  }
-
-  if(!ok) {
-    free_str_list(sl);
+  if(se - s < 7 + 2 * 4) {
+    free_mem(s0);
     return;
   }
 
@@ -114,7 +99,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
   if(((se - s) & 1) || se - s > 8 * 4) {
 //    h->error = 1;
 //    h->err_text1 = "strange timing data";
-    free_str_list(sl);
+    free_mem(s0);
     return;
   }
 
@@ -129,8 +114,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
     if(k) add_monitor_res(hd, i, k, (j & 0x3f) + 60);
   }
 
-  free_str_list(sl);
-
+  free_mem(s0);
 }
 
 void add_monitor_res(hd_t *hd, unsigned width, unsigned height, unsigned vfreq)

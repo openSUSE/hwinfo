@@ -29,13 +29,11 @@ static void get_pnp_support_status(unsigned char *, bios_info_t *);
 void hd_scan_bios(hd_data_t *hd_data)
 {
   hd_t *hd;
-  char *s = NULL /* gcc -Wall */, *t;
-  char c_str[] = "SuSE=";
+  char *s;
   unsigned char bios_vars[BIOS_VARS_SIZE];
   unsigned char bios[BIOS_SIZE];
-  int fd, ok = 0;
+  int fd;
   bios_info_t *bt;
-  str_list_t *sl;
 
   if(!hd_probe_feature(hd_data, pr_bios)) return;
 
@@ -56,23 +54,8 @@ void hd_scan_bios(hd_data_t *hd_data)
   /*
    * first, look for APM support
    */
-  if((sl = read_file(PROC_CMDLINE, 0, 1))) {
-    t = sl->str;
-    while((s = strsep(&t, " "))) {
-      if(!*s) continue;
-      if(!strncmp(s, c_str, sizeof c_str - 1)) {
-        s += sizeof c_str - 1;
-
-        /* ok, now strip off the monitor info (separated by',') */
-        for(t = s; *s; s++) if(*s == ',') break;
-        if(*s++ == ',')
-          if(strlen(s) == 10) ok = 1;
-
-        break;
-      }
-    }
-
-    if(ok) {
+  if((s = get_cmd_param(1))) {
+    if(strlen(s) >= 10) {
       bt->apm_supported = 1;
       bt->apm_ver = hex(s, 1);
       bt->apm_subver = hex(s + 1, 1);
@@ -92,9 +75,9 @@ void hd_scan_bios(hd_data_t *hd_data)
       bt->vbe_ver = hex(s + 4, 2);
       bt->vbe_video_mem = hex(s + 6, 4) << 16;
     }
-  }
 
-  sl = free_str_list(sl);
+    s = free_mem(s);
+  }
 
   /*
    * get the i/o ports for the parallel & serial interfaces from the BIOS

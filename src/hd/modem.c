@@ -98,8 +98,8 @@ void get_serial_modem(hd_data_t *hd_data)
         (chk_usb && hd->bus == bus_usb && hd->base_class == bc_modem)
       ) && hd->unix_dev_name
     ) {
+      if(dev_name_duplicate(hd_data, hd->unix_dev_name)) continue;
       if((fd = open(hd->unix_dev_name, O_RDWR)) >= 0) {
-        if(dev_name_duplicate(hd_data, hd->unix_dev_name)) continue;
         sm = add_ser_modem_entry(&hd_data->ser_modem, new_mem(sizeof *sm));
         sm->dev_name = new_str(hd->unix_dev_name);
         sm->fd = fd;

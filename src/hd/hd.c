@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 #include <linux/pci.h>
 
 #include "hd.h"
@@ -435,6 +436,7 @@ void hd_scan(hd_data_t *hd_data)
 {
   char *s;
   int i, j;
+  hd_t *hd;
 
   /* log the debug & probe flags */
   if(hd_data->debug) {
@@ -551,6 +553,9 @@ void hd_scan(hd_data_t *hd_data)
         s = "unknown";
     }
     ADD2LOG("  boot concept: %s\n", s);
+    hd = hd_get_device_by_idx(hd_data, hd_boot_disk(hd_data, &i));
+    s = "unknown"; if(hd && (s = hd->unix_dev_name));
+    ADD2LOG("  boot device: %s (%d)\n", s, i);
   }
 }
 
@@ -705,6 +710,8 @@ char *float2str(int f, int n)
 hd_t *hd_get_device_by_idx(hd_data_t *hd_data, int idx)  
 {
   hd_t *hd;
+
+  if(!idx) return NULL;		/* early out: idx is always != 0 */
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->idx == idx) return hd;
@@ -1526,4 +1533,187 @@ str_list_t *read_kmods(hd_data_t *hd_data)
 
   return sl1;
 }
+
+
+/*
+ * Return field 'field' (starting with 0) from the 'SuSE='
+ * kernel cmd line parameter.
+ */
+char *get_cmd_param(int field)
+{
+  str_list_t *sl;
+  char c_str[] = "SuSE=";
+  char *s, *t;
+
+  if(!(sl = read_file(PROC_CMDLINE, 0, 1))) return NULL;
+
+  t = sl->str;
+  while((s = strsep(&t, " "))) {
+    if(!*s) continue;
+    if(!strncmp(s, c_str, sizeof c_str - 1)) {
+      s += sizeof c_str - 1;
+      break;
+    }
+  }
+
+  t = NULL;
+
+  if(s) {
+    for(; field; field--) {
+      if(!(s = strchr(s, ','))) break;
+      s++;
+    }
+
+    if(s && (t = strchr(s, ','))) *t = 0;
+  }
+
+  t = new_str(s);
+
+  free_str_list(sl);
+
+  return t;
+}
+
+
+typedef struct disk_s {
+  struct disk_s *next;
+  unsigned crc;
+  unsigned crc_match:1;
+  unsigned hd_idx;
+  char *dev_name;
+  unsigned data_len;
+  unsigned char data[0x200];
+} disk_t;
+
+void get_disk_crc(int fd, disk_t *dl)
+{
+  int i, sel;
+  fd_set set, set0;
+  struct timeval to;
+  unsigned crc;
+  
+  FD_ZERO(&set0);
+  FD_SET(fd, &set0);
+
+  for(;;) {
+    to.tv_sec = 0; to.tv_usec = 500000;
+    set = set0;
+    
+    if((sel = select(fd + 1, &set, NULL, NULL, &to)) > 0) {
+//    fprintf(stderr, "sel: %d\n", sel);
+      if(FD_ISSET(fd, &set)) {
+        if((i = read(fd, dl->data + dl->data_len, sizeof dl->data - dl->data_len)) > 0) {
+          dl->data_len += i;
+        }
+//        fprintf(stderr, "%s: got %d\n", dl->dev_name, i);
+        if(i <= 0) break;
+      }
+    }
+    else {
+      break;
+    }
+  }
+
+//  fprintf(stderr, "got %d from %s\n", dl->data_len, dl->dev_name);
+
+  crc = -1;
+  for(i = 0; i < sizeof dl->data; i++) {
+    crc += dl->data[i];
+    crc *= 57;
+  }
+
+  dl->crc = crc;
+}
+
+disk_t *add_disk_entry(disk_t **dl, disk_t *new_dl)
+{
+  while(*dl) dl = &(*dl)->next;
+  return *dl = new_dl;
+}
+
+disk_t *free_disk_list(disk_t *dl)
+{
+  disk_t *l;
+
+  for(; dl; dl = (l = dl)->next, free_mem(l));
+
+  return NULL;
+}
+
+int dev_name_duplicate(disk_t *dl, char *dev_name)
+{
+  for(; dl; dl = dl->next) {
+    if(!strcmp(dl->dev_name, dev_name)) return 1;
+  }
+
+  return 0;
+}
+
+unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
+{
+  hd_t *hd;
+  unsigned crc, hd_idx = 0;
+  char *s;
+  int i, fd;
+  disk_t *dl, *dl0 = NULL;
+
+  if(matches) *matches = 0;
+
+  if(!(s = get_cmd_param(2))) return 0;
+
+  i = strlen(s);
+  
+  if(i > 0 && i <= 8) {
+    crc = hex(s, i);
+  }
+  else {
+    free_mem(s);
+    return 0;
+  }
+
+  s = free_mem(s);
+
+  if(hd_data->debug) {
+    ADD2LOG("    boot dev crc 0x%x\n", crc);
+  }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class == bc_storage_device &&
+      hd->sub_class == sc_sdev_disk &&
+      hd->unix_dev_name
+    ) {
+      if(dev_name_duplicate(dl0, hd->unix_dev_name)) continue;
+      if((fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK)) >= 0) {
+        dl = add_disk_entry(&dl0, new_mem(sizeof *dl0));
+        dl->dev_name = hd->unix_dev_name;
+        dl->hd_idx = hd->idx;
+        get_disk_crc(fd, dl);
+        close(fd);
+      }
+    }
+  }
+
+  if(!dl0) return 0;
+
+  if(hd_data->debug) {
+    for(dl = dl0; dl; dl = dl->next) {
+      ADD2LOG("    crc %s 0x%08x\n", dl->dev_name, dl->crc);
+    }
+  }
+
+  for(i = 0, dl = dl0; dl; dl = dl->next) {
+    if(crc == dl->crc && dl->data_len == sizeof dl->data) {
+      dl->crc_match = 1;
+      if(!i++) hd_idx = dl->hd_idx;
+    }
+  }
+
+  free_disk_list(dl0);
+
+  if(matches) *matches = i;
+
+  return hd_idx;
+}
+
 

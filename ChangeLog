@@ -1,3 +1,8 @@
+8/2/2000:	v0.60
+	- added UMAX USB scanner ids
+	- small modem fix (open fds)
+	- determines boot device
+
 5/2/2000:	v0.59
 	- improved boot floppy: now with usb support
 	- changed hw behavior: no listing on console if a logfile is used
