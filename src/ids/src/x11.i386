@@ -26,18 +26,12 @@
 &subvendor.id		pci 0x1002
 &subdevice.id		pci 0x000a
 +subdevice.name		Radeon 8500 DV (0x000A)
-+driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri,glx||24||switch2xf86_glx
-+requires		xf86_glx|xfglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4242
 &subvendor.id		pci 0x1002
 &subdevice.id		pci 0x02aa
 +subdevice.name		Radeon 8500 DV (0x02AA)
-+driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri,glx||24||switch2xf86_glx
-+requires		xf86_glx|xfglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4354
@@ -351,9 +345,7 @@
  vendor.id		pci 0x1002
 &device.id		pci 0x5148
 +device.name		fgl8x00
-+driver.xfree		4|fglrx|||||24
-+driver.xfree		4|fglrx|3d||dri,glx||24||switch2xf86_glx
-+requires		xf86_glx|xfglrx
++driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x514c
@@ -365,36 +357,24 @@
 &subvendor.id		pci 0x1002
 &subdevice.id		pci 0x000a
 +subdevice.name		Radeon 8500 (0x000A)
-+driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri,glx||24||switch2xf86_glx
-+requires		xf86_glx|xfglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x514c
 &subvendor.id		pci 0x1002
 &subdevice.id		pci 0x010a
 +subdevice.name		Radeon 8500 (0x010A)
-+driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri,glx||24||switch2xf86_glx
-+requires		xf86_glx|xfglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x514c
 &subvendor.id		pci 0x1002
 &subdevice.id		pci 0x013a
 +subdevice.name		Radeon 8500
-+driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri,glx||24||switch2xf86_glx
-+requires		xf86_glx|xfglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x514c
 &subvendor.id		pci 0x1002
 &subdevice.id		pci 0x113a
 +subdevice.name		Radeon 8500 (0x113A)
-+driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri,glx||24||switch2xf86_glx
-+requires		xf86_glx|xfglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x514e
@@ -443,36 +423,24 @@
 &subvendor.id		pci 0x1002
 &subdevice.id		pci 0x000a
 +subdevice.name		Radeon 8500 LE (0x000A)
-+driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri,glx||24||switch2xf86_glx
-+requires		xf86_glx|xfglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x516c
 &subvendor.id		pci 0x1002
 &subdevice.id		pci 0x010a
 +subdevice.name		Radeon 8500 LE (0x010A)
-+driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri,glx||24||switch2xf86_glx
-+requires		xf86_glx|xfglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x516c
 &subvendor.id		pci 0x1002
 &subdevice.id		pci 0x013a
 +subdevice.name		Radeon 8500 LE (0x013A)
-+driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri,glx||24||switch2xf86_glx
-+requires		xf86_glx|xfglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x516c
 &subvendor.id		pci 0x1002
 &subdevice.id		pci 0x113a
 +subdevice.name		Radeon 8500 LE (0x113A)
-+driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri,glx||24||switch2xf86_glx
-+requires		xf86_glx|xfglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5245
@@ -822,14 +790,7 @@
 +driver.xfree.config	Option "NumTMBuffers" "4"
 +driver.xfree.config	Option "Capabilities" "0x00000000"
 +driver.xfree.config	Option "Capabilities2" "0x00000000"
-+driver.xfree		4|firegl1|3d||dri,fgl1,glx|DDCInfo,accel|24||switch2xf86_glx
-+driver.xfree.config	Option "no_accel" "no"
-+driver.xfree.config	Option "NumDMABuffers2D" "4"
-+driver.xfree.config	Option "NumDMABuffers" "24"
-+driver.xfree.config	Option "NumTMBuffers" "4"
-+driver.xfree.config	Option "Capabilities" "0x00000000"
-+driver.xfree.config	Option "Capabilities2" "0x00000000"
-+requires		xf86_glx|xfiregl1
++requires		xfiregl1
 
  vendor.id		pci 0x1014
 &device.id		pci 0x0170
@@ -844,17 +805,7 @@
 +driver.xfree.config	Option "Overlay" "off"
 +driver.xfree.config	Option "Qbs" "off"
 +driver.xfree.config	Option "PBuffer" "0"
-+driver.xfree		4|firegl23|3d||dri,fgl23,glx||24||switch2xf86_glx
-+driver.xfree.config	Option "no_accel" "no"
-+driver.xfree.config	Option "enable DVI" "off"
-+driver.xfree.config	Option "NumDMABuffers" "24"
-+driver.xfree.config	Option "NumTMBuffers" "4"
-+driver.xfree.config	Option "Capabilities" "0x00000000"
-+driver.xfree.config	Option "Capabilities2" "0x00000000"
-+driver.xfree.config	Option "Overlay" "off"
-+driver.xfree.config	Option "Qbs" "off"
-+driver.xfree.config	Option "PBuffer" "0"
-+requires		xf86_glx|xfiregl23
++requires		xfiregl23
 
  vendor.id		pci 0x1017
 +vendor.name		SPEA Software AG
