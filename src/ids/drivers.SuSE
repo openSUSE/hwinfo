@@ -32,9 +32,14 @@
 10b8	0005+2
 	i	epic100
 
+# net/pcnet32.c
 # net/lance.c
 1022 2000
+	i	pcnet32
 	i	lance
+
+1022 2001
+	i	pcnet32
 
 # net/ne2k-pci.c
 10ec 8029
