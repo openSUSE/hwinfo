@@ -1284,8 +1284,6 @@ int braille_install_info(hd_data_t *hd_data)
   str_list_t *sl0, *sl;
   FILE *f;
 
-  printf("Looking for a braille display...\n");
-
   hd = hd_list(hd_data, hw_braille, 1, NULL);
 
   if(hd_data->progress) {

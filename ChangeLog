@@ -1,6 +1,7 @@
 26/2/2003:	v6.03
 	- better ZIP drive handling
 	- handle usb devices with multiple interfaces (#21487, #22223, #22843)
+	- removed 'Looking for braille...' line
 
 25/2/2003:	v6.02
 	- fixed 64 bit int -> pointer gcc warnings
