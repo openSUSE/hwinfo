@@ -466,7 +466,7 @@ void do_test(hd_data_t *hd_data)
 void help()
 {
   fprintf(stderr,
-    "usage: hwinfo [--log log_file] [--debug debug_level] --<hardware_item>\n"
+    "usage: hwinfo [--short] [--log log_file] [--debug debug_level] [--<hardware_item1> --<hardware_item2> ...]\n"
     "  <hardware_item> is one of:\n"
     "    cdrom, floppy, disk, network, display, monitor, mouse, keyboard,\n"
     "    sound, isdn, modem, storage_ctrl, network_ctrl, printer, tv,\n"
