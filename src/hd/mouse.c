@@ -22,6 +22,7 @@
 
 
 static void get_ps2_mouse(hd_data_t *hd_data);
+static void test_ps2_open(void *arg);
 static void get_serial_mouse(hd_data_t* hd_data);
 
 static int _setspeed(int fd, int old, int new, int needtowrite, unsigned short flags);
@@ -110,7 +111,13 @@ void get_ps2_mouse(hd_data_t *hd_data)
         PROGRESS(1, 2, "ps/2");
 
 	/* open the mouse device... */
-        fd = open(DEV_PSAUX, O_RDWR | O_NONBLOCK);
+        if(timeout(test_ps2_open, NULL, 1) > 0) {
+          ADD2LOG("ps/2: open(%s) timed out\n", DEV_PSAUX);
+          fd = -2;
+        }
+        else {
+          fd = open(DEV_PSAUX, O_RDWR | O_NONBLOCK);
+        }
 
         PROGRESS(1, 3, "ps/2");
 
@@ -134,9 +141,9 @@ void get_ps2_mouse(hd_data_t *hd_data)
 
             if((hd_data->debug & HD_DEB_MOUSE)) {
               if(errno != EAGAIN) {
-                ADD2LOG("  %s:%s\n", DEV_PSAUX, strerror(errno));
+                ADD2LOG("%s:%s\n", DEV_PSAUX, strerror(errno));
               }
-              ADD2LOG("  ps/2[%d]: ", buf_len);
+              ADD2LOG("ps/2[%d]: ", buf_len);
               hexdump(&hd_data->log, 1, buf_len, buf);
               ADD2LOG("\n");
             }
@@ -192,12 +199,20 @@ void get_ps2_mouse(hd_data_t *hd_data)
             PROGRESS(1, 14, "ps/2");
           }
         }
+        else {
+          ADD2LOG("open(" DEV_PSAUX "): %s\n", fd == -1 ? strerror(errno) : "timeout");
+        }
       }
 
       /* there can only be one... */
       break;
     }
   }
+}
+
+void test_ps2_open(void *arg)
+{
+  open(DEV_PSAUX, O_RDWR | O_NONBLOCK);
 }
 
 void get_serial_mouse(hd_data_t *hd_data)

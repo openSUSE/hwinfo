@@ -108,6 +108,22 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     }
   }
 
+  if(
+    h->base_class == bc_storage_device &&
+    h->sub_class == sc_sdev_floppy &&
+    h->detail &&
+    h->detail->type == hd_detail_floppy
+  ) {
+    floppy_info_t *fi = h->detail->floppy.data;
+
+    if(fi) {
+      dump_line_str("Drive status: floppy found\n");
+    }
+    else {
+      dump_line_str("Drive status: no floppy found\n");
+    }
+  }
+
   ind -= 2;
 
   if(h->next) dump_line_str("\n");

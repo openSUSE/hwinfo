@@ -70,12 +70,15 @@ void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg);
 hd_t *get_device_by_idx(hd_data_t *hd_data, int idx);
 
 void remove_hd_entries(hd_data_t *hd_data);
+void remove_tagged_hd_entries(hd_data_t *hd_data);
 
 int str2float(char *s, int n);
 char *float2str(int i, int n);
 
 /* return the file name of a module */
 char *mod_name_by_idx(unsigned idx);
+
+int timeout(void(*func)(void *), void *arg, int timeout);
 
 
 #ifdef __cplusplus

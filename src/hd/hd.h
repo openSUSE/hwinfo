@@ -214,11 +214,14 @@ enum isapnp_flags {
 /*
  * special CDROM entry
  */
-// ###### rename this type! (cf. mouse_info_t!!!)
+// ###### rename these! (cf. mouse_info_t!!!)
 typedef struct {
   char *volume, *publisher, *preparer, *application, *creation_date;
 } cdrom_info_t;
 
+typedef struct {
+  unsigned char block0[512];
+} floppy_info_t;
 
 /*
  * bios data
@@ -448,8 +451,8 @@ typedef struct s_ser_mouse_t {
  * stuff is stored in hd_detail_t.
  */
 enum hd_detail_type {
-  hd_detail_pci, hd_detail_isapnp, hd_detail_cdrom, hd_detail_bios,
-  hd_detail_cpu
+  hd_detail_pci, hd_detail_isapnp, hd_detail_cdrom, hd_detail_floppy,
+  hd_detail_bios, hd_detail_cpu
 };
 
 typedef struct {
@@ -469,6 +472,11 @@ typedef struct {
 
 typedef struct {
   enum hd_detail_type type;
+  floppy_info_t *data;
+} hd_detail_floppy_t;
+
+typedef struct {
+  enum hd_detail_type type;
   bios_info_t *data;
 } hd_detail_bios_t;
 
@@ -482,6 +490,7 @@ typedef union {
   hd_detail_pci_t pci;
   hd_detail_isapnp_t isapnp;
   hd_detail_cdrom_t cdrom;
+  hd_detail_floppy_t floppy;
   hd_detail_bios_t bios;
   hd_detail_cpu_t cpu;
 } hd_detail_t;
@@ -506,9 +515,13 @@ typedef struct s_hd_t {
   char *unix_dev_name;		/* name of special device file, if any */
 
   unsigned module, line, count;	/* place where the entry was created */
-
   hd_res_t *res;
   hd_detail_t *detail;
+
+  struct {			/* this struct is for internal purposes only */
+    unsigned remove:1;			/* schedule for removal */
+  } tag;
+
 } hd_t;
 
 typedef struct {

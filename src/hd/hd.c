@@ -3,7 +3,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <fcntl.h>
+#include <signal.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <linux/pci.h>
 
 #include "hd.h"
@@ -55,6 +59,7 @@ static hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd);
 static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
 static char *module_cmd(hd_t *, char *);
 static int module_is_active(char *mod);
+static void timeout_alarm_handler(int signal);
 
 /*
  * Names of the probing modules.
@@ -77,7 +82,7 @@ static struct s_mod_names {
   { mod_cpu, "cpu"},
   { mod_monitor, "monitor"},
   { mod_serial, "serial"},
-  { mod_mouse, "mod_mouse"},
+  { mod_mouse, "mouse"},
   { mod_ide, "ide"},
   { mod_scsi, "scsi"}
 };
@@ -853,15 +858,31 @@ char *hd_probe_feature_by_value(enum probe_feature feature)
 /*
  * Removes all hd_data->hd entries created by the current module from the
  * list. The old entries are added to hd_data->old_hd.
- *
- * // ##### Returns a linked list of the removed entries.
  */
 void remove_hd_entries(hd_data_t *hd_data)
 {
+  hd_t *hd;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->module == hd_data->module) {
+      hd->tag.remove = 1;
+    }
+  }
+
+  remove_tagged_hd_entries(hd_data);
+}
+
+
+/*
+ * Removes all hd_data->hd entries that have the remove tag set from the
+ * list. The old entries are added to hd_data->old_hd.
+ */
+void remove_tagged_hd_entries(hd_data_t *hd_data)
+{
   hd_t *hd, **prev, **h;
 
-  for(hd = *(prev = &hd_data->hd); hd; /* hd = *(prev = &hd->next) */) {
-    if(hd->module == hd_data->module) {
+  for(hd = *(prev = &hd_data->hd); hd;) {
+    if(hd->tag.remove) {
       /* find end of the old list... */
       h = &hd_data->old_hd;
       while(*h) h = &(*h)->next;
@@ -1336,5 +1357,59 @@ hd_t *hd_net_list(hd_data_t *hd_data, int rescan)
   }
 
   return hd_list;
+}
+
+/*
+ * Check if the execution of (*func)() takes longer than timeout seconds. 
+ * This is useful to work around long kernel-timeouts as in the floppy
+ * detection and ps/2 mosue detection.
+ */
+int timeout(void(*func)(void *), void *arg, int timeout)
+{
+  int child1, child2;
+  int status = 0;
+
+  child1 = fork();
+  if(child1 == -1) return -1;
+
+  if(child1) {
+    if(waitpid(child1, &status, 0) == -1) return -1;
+//    fprintf(stderr, ">child1 status: 0x%x\n", status);
+
+    if(WIFEXITED(status)) {
+      status = WEXITSTATUS(status);
+//      fprintf(stderr, ">normal child1 status: 0x%x\n", status);
+      /* != 0 if we timed out */
+    }
+    else {
+      status = 0;
+    }
+  }
+  else {
+    /* fork again */
+
+    child2 = fork();
+    if(child2 == -1) return -1;
+
+    if(child2) {
+//      fprintf(stderr, ">signal\n");
+      signal(SIGALRM, timeout_alarm_handler);
+      alarm(timeout);
+      if(waitpid(child2, &status, 0) == -1) return -1;
+//      fprintf(stderr, ">child2 status: 0x%x\n", status);
+      exit(0);
+    }
+    else {
+      (*func)(arg);
+      exit(0);
+    }
+  }
+
+  return status ? 1 : 0;
+}
+
+void timeout_alarm_handler(int signal)
+{
+  exit(63);
 }
 

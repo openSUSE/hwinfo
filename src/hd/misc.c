@@ -16,6 +16,8 @@
 #define W_DMA	(1 << 1)
 #define W_IRQ	(1 << 2)
 
+static void test_floppy_open(void *arg);
+static void test_floppy_read(void *arg);
 static void read_ioports(misc_t *m);
 static void read_dmas(misc_t *m);
 static void read_irqs(misc_t *m);
@@ -37,7 +39,8 @@ void hd_scan_misc(hd_data_t *hd_data)
   hd_t *hd;
   hd_res_t *res;
   int fd;
-  char *s, buf[1];
+  char *s;
+  floppy_info_t *fi;
   int fd_ser0, fd_ser1;
 
   if(!hd_probe_feature(hd_data, pr_misc)) return;
@@ -79,17 +82,36 @@ void hd_scan_misc(hd_data_t *hd_data)
 
         PROGRESS(1, 3, "open floppy");
         /* ...then try to read from it... */
-        fd = open(s, O_RDONLY | O_NONBLOCK);
+        if(timeout(test_floppy_open, s, 5) > 0) {
+          ADD2LOG("misc.floppy: open(%s) timed out\n", s);
+          fd = -2;
+        }
+        else {
+          fd = open(s, O_RDONLY | O_NONBLOCK);
+        }
         if(fd >= 0) {
           PROGRESS(1, 4, "read floppy");
-          read(fd, buf, sizeof buf);
+          if(timeout(test_floppy_read, &fd, 5) > 0) {
+            hd->tag.remove = 1;
+            ADD2LOG("misc.floppy: read(%s) timed out\n", s);
+            ADD2LOG("misc.floppy: removing floppy entry %u\n", hd->idx);
+          }
+          else {
+            hd->detail = new_mem(sizeof *hd->detail);
+            hd->detail->type = hd_detail_floppy;
+            hd->detail->floppy.data = fi = new_mem(sizeof *fi);
+            if(read(fd, fi->block0, sizeof fi->block0) != sizeof fi->block0) {
+              hd->detail->floppy.data = free_mem(fi);
+            }
+            // we might as well have a look at the floppy data...
+          }
           close(fd);
         }
 
         break;
       }
     }
-
+    remove_tagged_hd_entries(hd_data);
   }
 
   PROGRESS(2, 1, "io");
@@ -393,6 +415,18 @@ void hd_scan_misc2(hd_data_t *hd_data)
   }
 
   if((hd_data->debug & HD_DEB_MISC)) dump_misc_data(hd_data);
+}
+
+void test_floppy_open(void *arg)
+{
+  open((char *) arg, O_RDWR | O_NONBLOCK);
+}
+
+void test_floppy_read(void *arg)
+{
+  unsigned char buf[1];
+
+  read(*(int *) arg, buf, sizeof buf);
 }
 
 
