@@ -1,3 +1,8 @@
+7/3/2003:	v6.09
+	- usb multiple interfaces again: only for HID devices (#24824)
+	- add monitor vendor & device name
+	- allow hwscan to be disabled at boot time via 'hwprobe=-scan'
+
 6/3/2003:	v6.08
 	- updated X11 data
 	- added '--dsl' option to hwscan

@@ -286,7 +286,10 @@ void get_usb_data(hd_data_t *hd_data)
       case 'E':
         add_str_list(&usb->e, s); break;
       case 'I':
-        add_str_list(&usb->i, s); break;
+        if(!usb->i || strstr(s, "Cls=03") /* HID only */) {
+          add_str_list(&usb->i, s);
+        }
+        break;
       case 'P':
         add_str_list(&usb->p, s); break;
       case 'S':

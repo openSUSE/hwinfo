@@ -279,7 +279,9 @@ static struct s_pr_flags {
   { pr_partition,    0,           8|4|2|1, "partition"    },
   { pr_disk,         0,           8|4|2|1, "disk"         },
   { pr_ataraid,      0,           8|4|2|1, "ataraid"      },
-  { pr_pppoe,        0,           8|4|2|1, "pppoe"        }
+  { pr_pppoe,        0,           8|4|2|1, "pppoe"        },
+  /* dummy, used to turn off hwscan */
+  { pr_scan,         0,                 0, "scan"         }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)

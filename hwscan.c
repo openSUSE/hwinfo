@@ -17,6 +17,7 @@ struct option options[] = {
   { "new", 0, NULL, 505 },
   { "fast", 0, NULL, 506 },
   { "silent", 0, NULL, 507 },
+  { "boot", 0, NULL, 508 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -77,6 +78,7 @@ struct {
   unsigned new:1;
   unsigned fast:1;
   unsigned silent:1;
+  unsigned boot:1;
 } opt;
 
 void help(void);
@@ -144,6 +146,10 @@ int main(int argc, char **argv)
         opt.silent = 1;
         break;
 
+      case 508:
+        opt.boot = 1;
+        break;
+
       case 1000 ... 1100:
         opt.scan = 1;
         scan_item = i - 1000;
@@ -207,6 +213,8 @@ void help()
     "Usage: hwscan [options]\n"
     "Show information about currently known hardware.\n"
     "  --list            show list of known hardware\n"
+    "  --silent          don't show hardware config changes\n"
+    "  --boot            run only if we haven't been disabled via 'hwprobe=-scan'\n"
     "  --cfg=state id    change 'configured' status; id is one of the\n"
     "                    ids from 'hwscan --list'\n"
     "                    state is one of new, no, yes\n"
@@ -234,6 +242,18 @@ int do_scan(hd_hw_item_t item)
   if(opt.fast) opt.fast = fast_ok(item);
 
   hd_data = calloc(1, sizeof *hd_data);
+
+  if(opt.boot) {
+    /* look if we have been disabled */
+    hd_clear_probe_feature(hd_data, pr_all);
+    hd_scan(hd_data);
+    hd_set_probe_feature(hd_data, pr_scan);
+    if(!hd_probe_feature(hd_data, pr_scan)) {
+      hd_free_hd_data(hd_data);
+      free(hd_data);
+      return 0;
+    }
+  }
 
   hd_data->flags.list_all = 1;
   hd_data->flags.fast = opt.fast;

@@ -506,28 +506,8 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
     hd->detail->monitor.data = mi;
 
     hd->serial = new_str(mi->serial);
-
-#if 0
-// ####### FIXME
-    if(
-      mi->vendor &&
-      ID_VALUE(hd->vendor.id) &&
-      !hd_vendor_name(hd_data, hd->vendor.id)
-    ) {
-      add_vendor_name(hd_data, hd->vend, mi->vendor);
-    }
-#endif
-
-#if 0
-// ######## FIXME
-    if(
-      mi->name &&
-      (ID_VALUE(hd->vendor.id) || ID_VALUE(hd->device.id)) &&
-      !hd_device_name(hd_data, hd->vend, hd->device.id)
-    ) {
-      add_device_name(hd_data, hd->vend, hd->dev, mi->name);
-    }
-#endif
+    hd->vendor.name = new_str(mi->vendor);
+    hd->device.name = new_str(mi->name);
 
     if(hd_data->debug) {
       ADD2LOG("----- DDC info -----\n");
