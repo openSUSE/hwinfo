@@ -176,7 +176,7 @@ typedef enum sc_mouse {
 
 /* subclass values of bc_storage_device */
 typedef enum sc_std {
-  sc_sdev_disk, sc_sdev_tape, sc_sdev_cdrom, sc_sdev_floppy,
+  sc_sdev_disk, sc_sdev_tape, sc_sdev_cdrom, sc_sdev_floppy, sc_sdev_scanner,
   sc_sdev_other = 0x80
 } hd_sc_std_t;
 

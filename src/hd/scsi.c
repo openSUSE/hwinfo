@@ -228,8 +228,12 @@ void hd_scan_scsi(hd_data_t *hd_data)
     read_more_proc_info(hd_data, scsi, &pl0);
 
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_storage_device;
-    hd->sub_class = scsi->type;
+    if (scsi->type != sc_sdev_scanner) {
+      hd->base_class = bc_storage_device;
+      hd->sub_class = scsi->type;
+    } else {
+      hd->base_class = bc_scanner;
+    }
     hd->bus = bus_scsi;
     hd->slot = (scsi->host << 8) + (scsi->channel << 4) + (scsi->id);
     hd->func = scsi->lun;
@@ -671,6 +675,13 @@ void get_proc_scsi(hd_data_t *hd_data)
       }
       else if(strstr(scsi_type, "Sequential-Access") == scsi_type) {
         scsi->type = sc_sdev_tape;
+      }
+      else if(strstr(scsi_type, "Scanner") == scsi_type) {
+        scsi->type = sc_sdev_scanner;
+      }
+      else if(strstr(scsi_type, "Processor") == scsi_type) {
+      	if (strstr(scsi->vendor,"HP") == scsi->vendor)
+		scsi->type = sc_sdev_scanner;
       }
       else {
         scsi->type = sc_sdev_other;

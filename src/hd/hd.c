@@ -584,6 +584,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_scanner:
       hd_set_probe_feature(hd_data, pr_usb); 
+      hd_set_probe_feature(hd_data, pr_scsi); 
       break;
 
     case hw_braille:
