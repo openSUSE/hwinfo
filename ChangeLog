@@ -1,3 +1,6 @@
+9/10/2001:	v3.28
+	- work around incorrect iMac monitor data
+
 8/10/2001:	v3.27
 	- ppc: detect swim3 floppy (#11643)
 	- ppc: pr_prom needs pr_pci in some cases

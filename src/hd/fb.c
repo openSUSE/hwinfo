@@ -35,6 +35,8 @@ void hd_scan_fb(hd_data_t *hd_data)
   fb_info_t *fb;
   hd_t *hd;
   hd_res_t *res;
+  unsigned imac_dev, imac_vend;
+  unsigned imac = 0;
 
   if(!hd_probe_feature(hd_data, pr_fb)) return;
 
@@ -48,16 +50,32 @@ void hd_scan_fb(hd_data_t *hd_data)
   fb = fb_get_info(hd_data);
 
   if(fb) {
+    imac_dev = MAKE_ID(TAG_EISA, 0x9d03);
+    imac_vend = name2eisa_id("APP");
+
     for(hd = hd_data->hd; hd; hd = hd->next) {
       if(hd->base_class == bc_monitor) break;
+    }
+
+    if(hd && hd->dev == imac_dev && hd->vend == imac_vend) {
+      hd->tag.remove = 1;
+      remove_tagged_hd_entries(hd_data);
+      imac = 1;
+      hd = NULL;
     }
 
     /* add monitor entry based on fb data if we have no other info */
     if(!hd) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class = bc_monitor;
-      hd->dev_name = new_str("Monitor");
-      hd->vend_name = new_str("Generic");
+      if(imac) {
+        hd->vend = imac_vend;
+        hd->dev = imac_dev;
+      }
+      else {
+        hd->dev_name = new_str("Monitor");
+        hd->vend_name = new_str("Generic");
+      }
 
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
       res->monitor.type = res_monitor;
