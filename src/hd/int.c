@@ -63,13 +63,13 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(6, 0, "mouse");
   int_mouse(hd_data);
 
-  PROGRESS(7, 0, "usbscsi");
-  int_fix_usb_scsi(hd_data);
-
-  PROGRESS(8, 0, "hdb");
+  PROGRESS(7, 0, "hdb");
   for(hd = hd_data->hd; hd; hd = hd->next) {
     hddb_add_info(hd_data, hd);
   }
+
+  PROGRESS(8, 0, "usbscsi");
+  int_fix_usb_scsi(hd_data);
 
   PROGRESS(9, 0, "hotplug");
   int_hotplug(hd_data);
@@ -596,8 +596,42 @@ void int_floppy(hd_data_t *hd_data)
 void int_fix_usb_scsi(hd_data_t *hd_data)
 {
   hd_t *hd_scsi, *hd_usb;
-  usb_t *usb;
 
+  for(hd_usb = hd_data->hd; hd_usb; hd_usb= hd_usb->next) {
+    if(
+      hd_usb->bus.id == bus_usb &&
+      hd_usb->sysfs_id &&
+      search_str_list(hd_usb->drivers, "usb-storage")
+    ) {
+      for(hd_scsi = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
+        if(
+          hd_scsi->bus.id == bus_scsi &&
+          hd_scsi->sysfs_device_link &&
+          search_str_list(hd_scsi->drivers, "usb-storage")
+        ) {
+          if(!strncmp(hd_scsi->sysfs_device_link, hd_usb->sysfs_id, strlen(hd_usb->sysfs_id))) {
+            hd_set_hw_class(hd_scsi, hw_usb);
+
+            free_mem(hd_scsi->unique_id);
+            hd_scsi->unique_id = hd_usb->unique_id;
+            hd_usb->unique_id = NULL;
+
+            add_res_entry(&hd_scsi->res, hd_usb->res);
+            hd_usb->res = NULL;
+
+            new_id(hd_data, hd_scsi);
+
+            hd_usb->tag.remove = 1;
+          }
+        }
+      }
+    }
+
+  }
+
+
+
+#if 0
   for(hd_scsi = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
     if(
       hd_scsi->bus.id == bus_scsi &&
@@ -654,6 +688,9 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
       }
     }
   }
+#endif
+
+
 
   remove_tagged_hd_entries(hd_data);
 }

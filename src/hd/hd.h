@@ -1922,6 +1922,11 @@ typedef struct s_hd_t {
   char *sysfs_bus_id;
 
   /**
+   * sysfs device link.
+   */
+  char *sysfs_device_link;
+
+  /**
    * Special %device file.
    * Device file name to access this hardware. Normally something below /dev.
    * For network interfaces this is the interface name.
@@ -2236,6 +2241,7 @@ typedef struct {
   hd_udevinfo_t *udevinfo;	/**< (Internal) udev info */
   hd_sysfsdrv_t *sysfsdrv;	/**< (Internal) sysfs driver info */
   uint64_t sysfsdrv_id;		/**< (Internal) sysfs driver info id */
+  str_list_t *scanner_db;	/**< (Internal) list of scanner modules */
 } hd_data_t;
 
 

@@ -167,6 +167,8 @@ void get_block_devs(hd_data_t *hd_data)
 
       hd->sysfs_id = new_str(hd_sysfs_id(sf_cdev->path));
 
+      if(sf_dev) hd->sysfs_device_link = new_str(hd_sysfs_id(sf_dev->path));
+
       hd->unix_dev_num = dev_num;
 
       hd->bus.id = bus_none;

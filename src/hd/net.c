@@ -104,6 +104,8 @@ void hd_scan_net(hd_data_t *hd_data)
     if(sf_drv) add_str_list(&hd->drivers, sf_drv->name);
 
     if(sf_dev) {
+      hd->sysfs_device_link = new_str(hd_sysfs_id(sf_dev->path)); 
+
       hd2 = hd_find_sysfs_id(hd_data, hd_sysfs_id(sf_dev->path));
       if(hd2) {
         hd->attached_to = hd2->idx;

@@ -425,6 +425,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
   switch(item) {
     case hw_cdrom:
       hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_block);
       if(!hd_data->flags.fast) {
         hd_set_probe_feature(hd_data, pr_block_cdrom);
@@ -447,6 +448,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_s390disks);
       hd_set_probe_feature(hd_data, pr_bios);		// bios disk order
       hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_block);
       break;
 
@@ -457,6 +459,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_s390disks);
       hd_set_probe_feature(hd_data, pr_bios);		// bios disk order
       hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_block);
       if(!hd_data->flags.fast) {
         hd_set_probe_feature(hd_data, pr_block_cdrom);
@@ -808,6 +811,7 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->sysfsdrv = hd_free_sysfsdrv(hd_data->sysfsdrv);
 
   hd_data->only = free_str_list(hd_data->only);
+  hd_data->scanner_db = free_str_list(hd_data->scanner_db);
 
   hd_data->last_idx = 0;
 
@@ -1114,6 +1118,10 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->compat_vendor.name);
   free_mem(hd->compat_device.name);
   free_mem(hd->model);
+  free_mem(hd->sysfs_id);
+  free_mem(hd->sysfs_bus_id);
+  free_mem(hd->sysfs_device_link);
+  free_str_list(hd->unix_dev_names);
   free_mem(hd->unix_dev_name);
   free_mem(hd->unix_dev_name2);
   free_mem(hd->rom_id);
@@ -5392,5 +5400,33 @@ int hd_report_this(hd_data_t *hd_data, hd_t *hd)
   if(!hd_data->only) return 1;
 
   return search_str_list(hd_data->only, hd->sysfs_id) ? 1 : 0;
+}
+
+
+str_list_t *hd_module_list(hd_data_t *hd_data, unsigned id)
+{
+  hd_t *hd;
+  str_list_t *drivers = NULL, *sl;
+  driver_info_t *di;
+
+  hd = new_mem(sizeof *hd);
+  hd->tag.freeit = 1; 
+
+  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0xf000);
+  hd->device.id = MAKE_ID(TAG_SPECIAL, id);
+
+  hddb_add_info(hd_data, hd);
+
+  for(di = hd->driver_info; di; di = di->next) {
+    if(di->any.type == di_module && di->module.modprobe) {
+      for(sl = di->module.names; sl; sl = sl->next) {
+        add_str_list(&drivers, sl->str);
+      }
+    }
+  }
+
+  hd_free_hd_list(hd);
+
+  return drivers;
 }
 

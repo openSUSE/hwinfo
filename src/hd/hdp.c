@@ -122,6 +122,10 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("SysFS BusID: %s\n", h->sysfs_bus_id);
   }
 
+  if(h->sysfs_device_link) {
+    dump_line("SysFS Device Link: %s\n", h->sysfs_device_link);
+  }
+
   if(h->hw_class && (s = hd_hw_item_name(h->hw_class))) {
     dump_line("Hardware Class: %s\n", s);
   }
@@ -434,19 +438,6 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("Driver: \"%s\"\n", h->driver);
   }
 #endif
-
-  if(
-    h->bus.id == bus_usb &&
-    h->detail &&
-    h->detail->type == hd_detail_usb
-  ) {
-    usb_t *usb = h->detail->usb.data;
-
-    if(usb && usb->driver)
-      dump_line("USB Device status: driver active (\"%s\")\n", usb->driver);
-    else
-      dump_line_str("USB Device status: no driver loaded\n");
-  }
 
   if(h->broken) {
     dump_line_str("Warning: might be broken\n");

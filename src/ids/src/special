@@ -619,3 +619,10 @@
 +device.name		Virtual Ethernet card
 +driver.module.modprobe	veth
 
+
+# internal: usb scanner driver list
+ vendor.id		special 0xf000
+&device.id		special 0x0001
++driver.module.modprobe	usbscanner
++driver.module.modprobe	microtek
+

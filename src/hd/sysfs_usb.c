@@ -31,7 +31,11 @@ void hd_scan_sysfs_usb(hd_data_t *hd_data)
   hd_data->proc_usb = free_str_list(hd_data->proc_usb);
   hd_data->usb = NULL;
 
-  PROGRESS(1, 0, "usb");
+  PROGRESS(1, 0, "sysfs drivers");
+  
+  hd_sysfs_driver_list(hd_data);
+
+  PROGRESS(2, 0, "usb");
 
   get_usb_devs(hd_data);
 
@@ -42,11 +46,12 @@ void get_usb_devs(hd_data_t *hd_data)
 {
   uint64_t ul0, ul1;
   unsigned u1, u2, u3;
-  hd_t *hd;
+  hd_t *hd, *hd1;
   usb_t *usb;
   str_list_t *sl, *usb_devs = NULL;
-  char *s;
+  char *s, *s1, *t;
   hd_res_t *res;
+  size_t l;
 
   struct sysfs_bus *sf_bus;
   struct dlist *sf_dev_list;
@@ -205,21 +210,67 @@ void get_usb_devs(hd_data_t *hd_data)
         res->baud.speed = usb->speed;
       }
 
+      s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+      if(s) add_str_list(&hd->drivers, s);
+
       set_class_entries(hd_data, hd, usb);
 
+      if(!hd_data->scanner_db) {
+        hd_data->scanner_db = hd_module_list(hd_data, 1);
+      }
 
+      if(
+        hd->drivers &&
+        search_str_list(hd_data->scanner_db, hd->drivers->str)
+      ) {
+        hd->base_class.id = bc_scanner;
+      }
 
-
+      if(hd->base_class.id == bc_mouse) {
+        hd->unix_dev_name = new_str(DEV_MICE);
+      }
     }
-
-
   }
 
-
-
-
-
   sysfs_close_bus(sf_bus);
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->module == hd_data->module && hd->sysfs_id) {
+
+      s = new_str(hd->sysfs_id);
+      t = strrchr(s, '/');
+      if(t) *t = 0;
+
+      /* parent has longest matching sysfs id */
+      u2 = strlen(s);
+      for(u3 = 0, hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
+        if(hd1->sysfs_id) {
+          s1 = new_str(hd1->sysfs_id);
+
+          if(hd1->module == hd_data->module) {
+            t = strrchr(s1, ':');
+            if(t) *t = 0;
+            l = strlen(s1);
+            if(l > 2 && s1[l-2] == '-' && s1[l-1] == '0') {
+              /* root hub */
+              s1[l-2] = 0 ;
+            }
+          }
+
+          u1 = strlen(s1);
+          if(u1 > u3 && u1 <= u2 && !strncmp(s, s1, u1)) {
+            u3 = u1;
+            hd->attached_to = hd1->idx;
+          }
+
+          s1 = free_mem(s1);
+        }
+      }
+
+      s = free_mem(s);
+    }
+  }
+
 
 }
 

@@ -225,6 +225,7 @@ char *hd_sysfs_dev2_name(char *str);
 void hd_sysfs_driver_list(hd_data_t *hd_data);
 char *hd_sysfs_find_driver(hd_data_t *hd_data, char *sysfs_id, int exact);
 int hd_report_this(hd_data_t *hd_data, hd_t *hd);
+str_list_t *hd_module_list(hd_data_t *hd_data, unsigned id);
 
 
 #ifdef __cplusplus
