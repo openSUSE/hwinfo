@@ -58,6 +58,8 @@ u045e 001e
 u046d c001
 # Optical(?) Logitech Wheel Mouse
 u046d c00c
+# Optical Logitech Wheel Mouse (#16003)
+u046d c00e
 	p	imps/2|imps2|3|1
 
 # Razer Boomslang USB Mouse

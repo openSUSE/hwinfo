@@ -1,5 +1,6 @@
-TOPDIR	= ../..
-TARGETS	= $(LIBHD_D)
+TOPDIR		= ../..
+TARGETS		= $(LIBHD_D)
+CLEANFILES	= version.h
 
 include $(TOPDIR)/Makefile.common
 

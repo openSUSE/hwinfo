@@ -1,3 +1,5 @@
+	- don't _change_ config status in hwbootscan
+
 13/6/2002:	v5.01
 	- made ia64 cpu model entry more useful
 	- get bios led status

@@ -4,17 +4,11 @@ rm -f /var/lib/hardware/LOCK
 
 neededchanged=`/usr/sbin/hwscan --mouse`
 if [ -n "$neededchanged" ] ; then
-	for i in $neededchanged ; do
-		/usr/sbin/hwscan --cfg=no --need=no $i
-	done
 	/sbin/yast2 mouse '(.reprobe)'
 fi
 
 neededchanged=`/usr/sbin/hwscan --gfxcard`
 if [ -n "$neededchanged" ] ; then
-	for i in $neededchanged ; do
-		/usr/sbin/hwscan --cfg=no --need=no $i
-	done
 	/sbin/yast2 x11 '(.reprobe)'
 fi
 /usr/sbin/hwscan --pci
