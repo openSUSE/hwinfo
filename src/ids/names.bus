@@ -16,7 +16,6 @@ B 06	NuBUS
 B 07	CardBus
 B 08	Unknown
 
-
 # our own bus/interface types
 
 B 80	PS/2
@@ -29,3 +28,4 @@ B 86	USB
 B 87	ADB
 B 88	RAID
 B 89	SBUS
+B 8a	I2O

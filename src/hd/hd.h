@@ -75,7 +75,7 @@ typedef enum probe_feature {
   pr_parallel, pr_parallel_lp, pr_parallel_zip, pr_isa, pr_isa_isdn,
   pr_dac960, pr_smart, pr_isdn, pr_kbd, pr_prom, pr_sbus, pr_int,
   pr_braille, pr_braille_alva, pr_braille_fhp, pr_braille_ht, pr_ignx11,
-  pr_sys, pr_dasd,
+  pr_sys, pr_dasd, pr_i2o,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
@@ -196,7 +196,7 @@ typedef enum bus_types {
 
   /* outside the range of the PCI values */
   bus_ps2 = 0x80, bus_serial, bus_parallel, bus_floppy, bus_scsi, bus_ide, bus_usb,
-  bus_adb, bus_raid, bus_sbus
+  bus_adb, bus_raid, bus_sbus, bus_i2o
 } hd_bus_types_t;
 
 /*

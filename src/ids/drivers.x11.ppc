@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-08-24 14:35:55
+#hwinfo data from 2000-09-08 15:26:53
 #
 
 
@@ -11,7 +11,7 @@
 
 # ATI:Mach64 VT4 PCI
 1002 5656  
-	x	4|r128|||||
+	x	4|ati||||usefbdev|
 
 
 # ATI:Mach64 VT4 PCI
@@ -92,6 +92,11 @@
 # ATI:Mach64 GT (Rage II)
 1002 4754  
 	x	3|FBDEV|||||
+
+
+# ATI:Rage Mobility M3 AGP 2x
+ 4c46  
+	x	4|r128|||||
 
 
 # Chips&Technologies:65550
