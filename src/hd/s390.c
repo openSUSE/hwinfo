@@ -81,7 +81,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
   
   dlist_for_each_data(devlist, curdev, struct sysfs_device)
   {
-
+    int readonly=0;
     res=new_mem(sizeof *res);
 
     attributes = sysfs_get_device_attributes(curdev);
@@ -97,11 +97,14 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
       {
 	devtype=strtol(curattr->value,NULL,16);
 	devmod=strtol(index(curattr->value,'/')+1,NULL,16);
+      } else if (strcmp("readonly",curattr->name)==0)
+      {
+        readonly=atoi(curattr->value);
       }
     }
 
     res->io.type=res_io;
-    res->io.access=acc_rw;  /* fix-up RO/WO devices in IDs file */
+    res->io.access=readonly?acc_ro:acc_rw;
     res->io.base=strtol(rindex(curdev->bus_id,'.')+1,NULL,16);
 
     /* Skip additional channels for multi-channel devices */

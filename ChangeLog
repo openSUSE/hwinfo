@@ -1,3 +1,4 @@
+	- s390: implement rw/ro info properly
 	- s390: fake geometry and size of unformatted DASDs to most likely
 	  values
 
