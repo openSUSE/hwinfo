@@ -292,11 +292,24 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
   if(h->model) dump_line("Model: \"%s\"\n", h->model);
 
   s = NULL;
-  if(h->is.cardbus) {
-    s = "PCCard";
-  }
-  else if(h->is.pcmcia) {
-    s = "PCMCIA";
+  switch(h->hotplug) {
+    case hp_none:
+      break;
+    case hp_pcmcia:
+      s = "PCMCIA";
+      break;
+    case hp_cardbus:
+      s = "CardBus";
+      break;
+    case hp_pci:
+      s = "PCI";
+      break;
+    case hp_usb:
+      s = "USB";
+      break;
+    case hp_ieee1394:
+      s = "IEEE1394 (FireWire)";
+      break;
   }
 
   if(s) {

@@ -13,7 +13,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-static void int_pcmcia(hd_data_t *hd_data);
+static void int_hotplug(hd_data_t *hd_data);
 static void int_cdrom(hd_data_t *hd_data);
 #if defined(__i386__) || defined (__x86_64__)
 static int set_bios_id(hd_data_t *hd_data, char *dev_name, int bios_id);
@@ -38,8 +38,8 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(1, 0, "idescsi");
   int_fix_ide_scsi(hd_data);
 
-  PROGRESS(3, 0, "pcmcia");
-  int_pcmcia(hd_data);
+  PROGRESS(3, 0, "hotplug");
+  int_hotplug(hd_data);
 
   PROGRESS(4, 0, "cdrom");
   int_cdrom(hd_data);
@@ -64,23 +64,32 @@ void hd_scan_int(hd_data_t *hd_data)
 }
 
 /*
- * Identify cardbus cards.
+ * Identify hotpluggable devices.
  */
-void int_pcmcia(hd_data_t *hd_data)
+void int_hotplug(hd_data_t *hd_data)
 {
   hd_t *hd;
   hd_t *bridge_hd;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->bus == bus_usb || hd->usb_guid) {
+      hd->hotplug = hp_usb;
+    }
     if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
       if(
         bridge_hd->base_class == bc_bridge &&
         bridge_hd->sub_class == sc_bridge_cardbus
-      ) hd->is.cardbus = 1;
+      ) {
+        hd->is.cardbus = 1;
+        hd->hotplug = hp_cardbus;
+      }
      else if(
         bridge_hd->base_class == bc_bridge &&
         bridge_hd->sub_class == sc_bridge_pcmcia
-      ) hd->is.pcmcia = 1;
+      ) {
+        hd->is.pcmcia = 1;
+        hd->hotplug = hp_pcmcia;
+      }
     }
   }
 }

@@ -248,6 +248,12 @@ typedef enum {
   status_no = 1, status_yes, status_unknown, status_new
 } hd_status_value_t;
 
+/* different types of hotplug devices */
+typedef enum {
+  hp_none, hp_pcmcia, hp_cardbus, hp_pci, hp_usb, hp_ieee1394
+} hd_hotplug_t;
+
+
 /*
  * Used whenever we create a list of strings (e.g. file read).
  */
@@ -1323,6 +1329,8 @@ typedef struct s_hd_t {
   hd_status_t status;		/* hardware config status (if available) */
   char *config_string;		/* tag used to indicate how the device has been configured */
 
+  hd_hotplug_t hotplug;		/* set if this device is managed by some hotplug controller */
+
   struct {
     unsigned agp:1;		/* AGP device */
     unsigned isapnp:1;		/* ISA-PnP device */
@@ -1351,6 +1359,10 @@ typedef struct s_hd_t {
   char *usb_guid;		/* USB GUID */
 
   unsigned drv_dev, drv_vend;	/* sometimes used for driver info lookups */
+
+  driver_info_t *driver_info;	/* device driver info */
+
+  str_list_t *requires;		/* packages/programs required for this hardware */
 
   /*
    * These are used internally for memory management.

@@ -1049,6 +1049,9 @@ hd_t *free_hd_entry(hd_t *hd)
 
   free_hd_detail(hd->detail);
 
+  hd_free_driver_info(hd->driver_info);
+  free_str_list(hd->requires);
+
   memset(hd, 0, sizeof *hd);
 
   return NULL;
