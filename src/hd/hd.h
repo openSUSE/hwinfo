@@ -1073,11 +1073,9 @@ typedef struct scsi_s {
   unsigned pci_bus;
   unsigned pci_slot;
   unsigned pci_func;
-#if defined(__s390__) || defined(__s390x__)
   uint64_t wwpn;
   uint64_t fcp_lun;
   char *controller_id;
-#endif
 } scsi_t;
 
 

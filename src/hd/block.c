@@ -579,9 +579,7 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_de
 
 void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev)
 {
-#ifdef __PPC__
   hd_t *hd1;
-#endif
   char *s, *cs;
   unsigned u0, u1, u2, u3;
   int fd, k;
@@ -649,49 +647,26 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
     }
   }
 
-#ifdef __PPC__
+  /* s390: wwpn & fcp lun */
+  if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "wwpn"), &ul0)) {
+    ADD2LOG("    wwpn = 0x%016"PRIx64"\n", ul0);
+    scsi->wwpn = ul0;
+
+    /* it's a bit of a hack, actually */
+    scsi->controller_id = new_str(hd_sysfs_id(sf_dev->path));
+    if((s = strrchr(scsi->controller_id, '/'))) *s =  0;
+    if((s = strrchr(scsi->controller_id, '/'))) *s =  0;
+  }
+
+  if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "fcp_lun"), &ul0)) {
+    ADD2LOG("    fcp_lun = 0x%016"PRIx64"\n", ul0);
+    scsi->fcp_lun = ul0;
+  }
+
+  /* ppc: get rom id */
   if((hd1 = hd_get_device_by_idx(hd_data, hd->attached_to)) && hd1->rom_id) {
     str_printf(&hd->rom_id, 0, "%s/@%u", hd1->rom_id, (hd->slot & 0xf));
   }
-#endif
-
-
-// ###### FIXME
-#if 1
-#if defined(__s390__) || defined(__s390x__)
-  /* find out WWPN and FCP LUN */
-  scsi->wwpn=scsi->fcp_lun=(uint64_t)-1;
-  if(hd->unix_dev_name)
-  {
-    char sysfs_path[SYSFS_PATH_MAX];
-    struct sysfs_attribute* attr;
-    
-    sprintf(sysfs_path,"/sys/block%s/device/wwpn",hd->unix_dev_name+4);
-    attr=sysfs_open_attribute(sysfs_path);
-    if(!sysfs_read_attribute(attr))
-      scsi->wwpn=strtoull(attr->value,0,16);
-    else
-      ADD2LOG("failed to read sysfs attribute %s\n",sysfs_path);
-    
-    sprintf(sysfs_path,"/sys/block%s/device/fcp_lun",hd->unix_dev_name+4);
-    attr=sysfs_open_attribute(sysfs_path);
-    if(!sysfs_read_attribute(attr))
-      scsi->fcp_lun=strtoull(attr->value,0,16);
-    else
-      ADD2LOG("failed to read sysfs attribute %s\n",sysfs_path);
-
-    sprintf(sysfs_path,"/sys/block%s/device",hd->unix_dev_name+4);
-    if(readlink(sysfs_path,sysfs_path,SYSFS_PATH_MAX)<0)
-      ADD2LOG("failed to determine controller (unable to follow device link)");
-    else
-    {
-      rindex(sysfs_path,'/')[0]=0;
-      rindex(sysfs_path,'/')[0]=0;
-      scsi->controller_id=new_str(rindex(sysfs_path,'/')+1);
-    }
-  }
-#endif
-#endif
 
   if(
     hd_report_this(hd_data, hd) &&

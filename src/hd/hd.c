@@ -1193,6 +1193,7 @@ scsi_t *free_scsi(scsi_t *scsi, int free_all)
     free_mem(scsi->info);
     free_mem(scsi->usb_guid);
     free_str_list(scsi->host_info);
+    free_mem(scsi->controller_id);
 
     if(!free_all) {
       next = scsi->next;
