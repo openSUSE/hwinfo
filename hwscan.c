@@ -18,52 +18,64 @@ struct option options[] = {
   { "fast", 0, NULL, 506 },
   { "silent", 0, NULL, 507 },
   { "boot", 0, NULL, 508 },
-  { "cdrom", 0, NULL, 1000 + hw_cdrom },
-  { "floppy", 0, NULL, 1000 + hw_floppy },
-  { "disk", 0, NULL, 1000 + hw_disk },
+  { "sys", 0, NULL, 1000 + hw_sys },
+  { "cpu", 0, NULL, 1000 + hw_cpu },
+  { "keyboard", 0, NULL, 1000 + hw_keyboard },
+  { "braille", 0, NULL, 1000 + hw_braille },
   { "mouse", 0, NULL, 1000 + hw_mouse },
-  { "gfxcard", 0, NULL, 1000 + hw_display },
-  { "monitor", 0, NULL, 1000 + hw_monitor },
-  { "network", 0, NULL, 1000 + hw_network },
-  { "sound", 0, NULL, 1000 + hw_sound },
-  { "modem", 0, NULL, 1000 + hw_modem },
+  { "joystick", 0, NULL, 1000 + hw_joystick },
   { "printer", 0, NULL, 1000 + hw_printer },
+  { "scanner", 0, NULL, 1000 + hw_scanner },
+  { "chipcard", 0, NULL, 1000 + hw_chipcard },
+  { "monitor", 0, NULL, 1000 + hw_monitor },
+  { "tv", 0, NULL, 1000 + hw_tv },
+  { "gfxcard", 0, NULL, 1000 + hw_display },
+  { "framebuffer", 0, NULL, 1000 + hw_framebuffer },
+  { "camera", 0, NULL, 1000 + hw_camera },
+  { "sound", 0, NULL, 1000 + hw_sound },
   { "storage-ctrl", 0, NULL, 1000 + hw_storage_ctrl },
   { "storage_ctrl", 0, NULL, 1000 + hw_storage_ctrl },
   { "netcard", 0, NULL, 1000 + hw_network_ctrl },
   { "network-ctrl", 0, NULL, 1000 + hw_network_ctrl },
   { "network_ctrl", 0, NULL, 1000 + hw_network_ctrl },
-  { "camera", 0, NULL, 1000 + hw_camera },
   { "isdn", 0, NULL, 1000 + hw_isdn },
-  { "tv", 0, NULL, 1000 + hw_tv },
+  { "modem", 0, NULL, 1000 + hw_modem },
+  { "network", 0, NULL, 1000 + hw_network },
+  { "disk", 0, NULL, 1000 + hw_disk },
+  { "partition", 0, NULL, 1000 + hw_partition },
+  { "cdrom", 0, NULL, 1000 + hw_cdrom },
+  { "floppy", 0, NULL, 1000 + hw_floppy },
+  { "update", 0, NULL, 1000 + hw_manual },
+  { "usb-ctrl", 0, NULL, 1000 + hw_usb_ctrl },
+  { "usb_ctrl", 0, NULL, 1000 + hw_usb_ctrl },
+  { "usb", 0, NULL, 1000 + hw_usb },
+  { "bios", 0, NULL, 1000 + hw_bios },
+  { "pci", 0, NULL, 1000 + hw_pci },
+  { "isapnp", 0, NULL, 1000 + hw_isapnp },
+  { "bridge", 0, NULL, 1000 + hw_bridge },
+  { "hub", 0, NULL, 1000 + hw_hub },
+  { "scsi", 0, NULL, 1000 + hw_scsi },
+  { "ide", 0, NULL, 1000 + hw_ide },
+  { "memory", 0, NULL, 1000 + hw_memory },
   { "dvb", 0, NULL, 1000 + hw_dvb },
+  { "pcmcia", 0, NULL, 1000 + hw_pcmcia },
+  { "pcmcia_ctrl", 0, NULL, 1000 + hw_pcmcia_ctrl },
+  { "ieee1394", 0, NULL, 1000 + hw_ieee1394 },
+  { "firewire", 0, NULL, 1000 + hw_ieee1394 },
+  { "ieee1394_ctrl", 0, NULL, 1000 + hw_ieee1394_ctrl },
+  { "firewire_ctrl", 0, NULL, 1000 + hw_ieee1394_ctrl },
+  { "hotplug", 0, NULL, 1000 + hw_hotplug },
+  { "hotplug_ctrl", 0, NULL, 1000 + hw_hotplug_ctrl },
+  { "zip", 0, NULL, 1000 + hw_zip },
   { "pppoe", 0, NULL, 1000 + hw_pppoe },
   { "dsl", 0, NULL, 1000 + hw_pppoe },
   { "wlan", 0, NULL, 1000 + hw_wlan },
-  { "scanner", 0, NULL, 1000 + hw_scanner },
-  { "joystick", 0, NULL, 1000 + hw_joystick },
-  { "usb", 0, NULL, 1000 + hw_usb },
-  { "pci", 0, NULL, 1000 + hw_pci },
-  { "isapnp", 0, NULL, 1000 + hw_isapnp },
-  { "framebuffer", 0, NULL, 1000 + hw_framebuffer },
-  { "keyboard", 0, NULL, 1000 + hw_keyboard },
-  { "chipcard", 0, NULL, 1000 + hw_chipcard },
-  { "braille", 0, NULL, 1000 + hw_braille },
-  { "partition", 0, NULL, 1000 + hw_partition },
-  { "usb-ctrl", 0, NULL, 1000 + hw_usb_ctrl },
-  { "usb_ctrl", 0, NULL, 1000 + hw_usb_ctrl },
-  { "sys", 0, NULL, 1000 + hw_sys },
-  { "cpu", 0, NULL, 1000 + hw_cpu },
-  { "bios", 0, NULL, 1000 + hw_bios },
-  { "bridge", 0, NULL, 1000 + hw_bridge },
-  { "hub", 0, NULL, 1000 + hw_hub },
-  { "memory", 0, NULL, 1000 + hw_memory },
-  { "update", 0, NULL, 1000 + hw_manual },
   { }
 };
 
 int verbose = 0;
-hd_hw_item_t scan_item = 0;
+hd_hw_item_t scan_item[100] = { };
+unsigned scan_items = 0;
 int found_items = 0;
 
 struct {
@@ -80,11 +92,14 @@ struct {
 } opt;
 
 void help(void);
-int do_scan(hd_hw_item_t item);
+int do_scan(hd_hw_item_t *items);
 int do_show(char *id);
-int do_list(hd_hw_item_t item);
+int do_list(hd_hw_item_t *items);
 int do_config(int type, char *val, char *id);
-int fast_ok(hd_hw_item_t item);
+int fast_ok(hd_hw_item_t *items);
+int has_item(hd_hw_item_t *items, hd_hw_item_t item);
+int has_hw_class(hd_t *hd, hd_hw_item_t *items);
+
 
 int main(int argc, char **argv)
 {
@@ -105,7 +120,7 @@ int main(int argc, char **argv)
   while((i = getopt_long(argc, argv, "hv", options, NULL)) != -1) {
     switch(i) {
       case 'v':
-        verbose = 1;
+        verbose++;
         break;
 
       case 500:
@@ -150,7 +165,9 @@ int main(int argc, char **argv)
 
       case 1000 ... 1100:
         opt.scan = 1;
-        scan_item = i - 1000;
+        if(scan_items + 1 < sizeof scan_item / sizeof *scan_item) {
+          scan_item[scan_items++] = i - 1000;
+        }
         break;
 
       default:
@@ -159,8 +176,10 @@ int main(int argc, char **argv)
     }
   }
 
+  scan_item[scan_items] = 0;
+
   if(opt.scan && !opt.list) {
-    if(argv[optind] || !scan_item) return help(), 1;
+    if(argv[optind] || !scan_items) return help(), 1;
     rc = do_scan(scan_item);
     if(found_items) {
       unlink(HARDWARE_DIR "/.update");		/* the old file */
@@ -229,7 +248,7 @@ void help()
 
 #ifndef LIBHD_TINY
 
-int do_scan(hd_hw_item_t item)
+int do_scan(hd_hw_item_t *items)
 {
   int run_config = 0;
   hd_status_t status = { };
@@ -237,7 +256,7 @@ int do_scan(hd_hw_item_t item)
   hd_t *hd, *hd1;
   int err = 0;
 
-  if(opt.fast) opt.fast = fast_ok(item);
+  if(opt.fast) opt.fast = fast_ok(items);
 
   hd_data = calloc(1, sizeof *hd_data);
 
@@ -256,14 +275,13 @@ int do_scan(hd_hw_item_t item)
   hd_data->flags.list_all = 1;
   hd_data->flags.fast = opt.fast;
 
-  hd = hd_list(hd_data, item, 1, NULL);
+  hd = hd_list2(hd_data, items, 1);
 
   if(hd) found_items = 1;
 
   for(hd1 = hd; hd1; hd1 = hd1->next) {
     err = hd_write_config(hd_data, hd1);
-#if 0
-    if(verbose) {
+    if(verbose >= 2) {
       printf(
         "write=%d %s: (cfg=%s, avail=%s, need=%s",
         err,
@@ -281,7 +299,6 @@ int do_scan(hd_hw_item_t item)
       );
       
     }
-#endif
     if(err) break;
   }
 
@@ -303,7 +320,7 @@ int do_scan(hd_hw_item_t item)
     status.reconfig = status_yes;
   }
 
-  hd = hd_list_with_status(hd_data, item, status);
+  hd = hd_list_with_status2(hd_data, items, status);
   if(hd) run_config = 1;
 
   if(verbose) {
@@ -362,7 +379,7 @@ int do_show(char *id)
 }
 
 
-int do_list(hd_hw_item_t item)
+int do_list(hd_hw_item_t *items)
 {
   hd_data_t *hd_data;
   hd_t *hd, *hd_manual;
@@ -374,40 +391,35 @@ int do_list(hd_hw_item_t item)
 
   hd_manual = hd_list(hd_data, hw_manual, 1, NULL);
 
-  if(opt.scan) {
-    hd = hd_list(hd_data, item, 0, NULL);
-    for(hd = hd; hd; hd = hd->next) printf("%s\n", hd->unique_id);
-    hd = hd_free_hd_list(hd);
-  }
-  else {
-    for(hd = hd_manual; hd; hd = hd->next) {
-      strcpy(status, "(");
+  for(hd = hd_manual; hd; hd = hd->next) {
+    if(opt.scan && ! has_hw_class(hd, items)) continue;
 
-      i = 0;
-      if(hd->status.configured && (s = hd_status_value_name(hd->status.configured))) {
-        sprintf(status + strlen(status), "%scfg=%s", i ? ", " : "", s);
-        i++;
-      }
+    strcpy(status, "(");
 
-      if(hd->status.available && (s = hd_status_value_name(hd->status.available))) {
-        sprintf(status + strlen(status), "%savail=%s", i ? ", " : "", s);
-        i++;
-      }
+    i = 0;
+    if(hd->status.configured && (s = hd_status_value_name(hd->status.configured))) {
+      sprintf(status + strlen(status), "%scfg=%s", i ? ", " : "", s);
+      i++;
+    }
 
-      if(hd->status.needed && (s = hd_status_value_name(hd->status.needed))) {
-        sprintf(status + strlen(status), "%sneed=%s", i ? ", " : "", s);
-        i++;
-      }
+    if(hd->status.available && (s = hd_status_value_name(hd->status.available))) {
+      sprintf(status + strlen(status), "%savail=%s", i ? ", " : "", s);
+      i++;
+    }
 
-      strcat(status, ")");
+    if(hd->status.needed && (s = hd_status_value_name(hd->status.needed))) {
+      sprintf(status + strlen(status), "%sneed=%s", i ? ", " : "", s);
+      i++;
+    }
 
-      s = hd_hw_item_name(hd->hw_class);
-      if(!s) s = "???";
+    strcat(status, ")");
 
-      printf("%s: %-32s %-16s %s\n", hd->unique_id, status, s, hd->model);
-      if(hd->config_string) {
-        printf("   configured as: \"%s\"\n", hd->config_string);
-      }
+    s = hd_hw_item_name(hd->hw_class);
+    if(!s) s = "???";
+
+    printf("%s: %-32s %-16s %s\n", hd->unique_id, status, s, hd->model);
+    if(hd->config_string) {
+      printf("   configured as: \"%s\"\n", hd->config_string);
     }
   }
 
@@ -476,13 +488,13 @@ int do_config(int type, char *val, char *id)
  * Check whether a 'fast' scan would suffice to re-check the presence
  * of all known hardware.
  */
-int fast_ok(hd_hw_item_t item)
+int fast_ok(hd_hw_item_t *items)
 {
   hd_data_t *hd_data;
   hd_t *hd, *hd1;
   int ok = 1;
 
-  if(item != hw_mouse && item != hw_storage_ctrl) {
+  if(!has_item(items, hw_mouse) && !has_item(items, hw_storage_ctrl)) {
     return 1;
   }
 
@@ -510,5 +522,24 @@ int fast_ok(hd_hw_item_t item)
 
   return ok;
 }
+
+
+/* check if item is in items */
+int has_item(hd_hw_item_t *items, hd_hw_item_t item)
+{
+  while(*items) if(*items++ == item) return 1;
+
+  return 0;
+}
+
+
+/* check if one of items is in hw_class */
+int has_hw_class(hd_t *hd, hd_hw_item_t *items)
+{
+  while(*items) if(hd_is_hw_class(hd, *items++)) return 1;
+
+  return 0;
+}
+
 
 #endif		/* !defined(LIBHD_TINY) */

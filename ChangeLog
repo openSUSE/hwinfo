@@ -1,3 +1,6 @@
+27/8/2003:	v7.14
+	- probe for multiple hardware classes at a time
+
 26/8/2003:	v7.13
 	- default ISDN data for all ARCH
 	- update ISDN CDB data

@@ -133,6 +133,8 @@ static void timeout_alarm_handler(int signal);
 static void get_probe_env(hd_data_t *hd_data);
 static void hd_scan_xtra(hd_data_t *hd_data);
 static hd_t *hd_get_device_by_id(hd_data_t *hd_data, char *id);
+static int has_item(hd_hw_item_t *items, hd_hw_item_t item);
+static int has_hw_class(hd_t *hd, hd_hw_item_t *items);
 
 static void test_read_block0_open(void *arg);
 static void get_kernel_version(hd_data_t *hd_data);
@@ -3094,6 +3096,122 @@ hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t sta
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd_is_hw_class(hd, item)) {
+      if(
+        (status.configured == 0 || status.configured == hd->status.configured) &&
+        (status.available == 0 || status.available == hd->status.available) &&
+        (status.needed == 0 || status.needed == hd->status.needed) &&
+        (status.reconfig == 0 || status.reconfig == hd->status.reconfig)
+      ) {
+        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+        hd_copy(hd1, hd);
+      }
+    }
+  }
+
+  return hd_list;
+}
+
+
+/* check if item is in items */
+int has_item(hd_hw_item_t *items, hd_hw_item_t item)
+{
+  while(*items) if(*items++ == item) return 1;
+
+  return 0;
+}
+
+
+/* check if one of items is in hw_class */
+int has_hw_class(hd_t *hd, hd_hw_item_t *items)
+{
+  while(*items) if(hd_is_hw_class(hd, *items++)) return 1;
+
+  return 0;
+}
+
+
+/*
+ * items must be a 0 terminated list
+ */
+hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan)
+{
+  hd_t *hd, *hd1, *hd_list = NULL;
+  unsigned char probe_save[sizeof hd_data->probe];
+  unsigned fast_save;
+  hd_hw_item_t *item_ptr;
+  int is_manual;
+
+  if(!items) return NULL;
+
+  is_manual = has_item(items, hw_manual);
+
+  if(rescan) {
+    memcpy(probe_save, hd_data->probe, sizeof probe_save);
+    fast_save = hd_data->flags.fast;
+    hd_clear_probe_feature(hd_data, pr_all);
+#ifdef __powerpc__
+    hd_set_probe_feature(hd_data, pr_sys);
+    hd_scan(hd_data);
+#endif
+    for(item_ptr = items; *item_ptr; item_ptr++) {
+      hd_set_probe_feature_hw(hd_data, *item_ptr);
+    }
+    hd_scan(hd_data);
+    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
+    hd_data->flags.fast = fast_save;
+  }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      (
+        is_manual || has_hw_class(hd, items)
+      )
+#ifndef LIBHD_TINY
+/* with LIBHD_TINY hd->status is not maintained (cf. manual.c) */
+      && (
+        hd->status.available == status_yes ||
+        hd->status.available == status_unknown ||
+        is_manual ||
+        hd_data->flags.list_all
+      )
+#endif
+    ) {
+      if(hd->is.softraiddisk) continue;		/* don't report them */
+
+      /* don't report old entries again */
+      hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+      hd_copy(hd1, hd);
+    }
+  }
+
+  if(is_manual) {
+    for(hd = hd_list; hd; hd = hd->next) {
+      hd->status.available = hd->status.available_orig;
+    }
+  }
+
+  return hd_list;
+}
+
+
+/*
+ * items must be a 0 terminated list
+ */
+hd_t *hd_list_with_status2(hd_data_t *hd_data, hd_hw_item_t *items, hd_status_t status)
+{
+  hd_t *hd, *hd1, *hd_list = NULL;
+  unsigned char probe_save[sizeof hd_data->probe];
+
+  if(!items) return NULL;
+
+  memcpy(probe_save, hd_data->probe, sizeof probe_save);
+  hd_clear_probe_feature(hd_data, pr_all);
+  hd_set_probe_feature(hd_data, pr_manual);
+  hd_scan(hd_data);
+  memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(has_hw_class(hd, items)) {
       if(
         (status.configured == 0 || status.configured == hd->status.configured) &&
         (status.available == 0 || status.available == hd->status.available) &&

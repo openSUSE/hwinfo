@@ -28,7 +28,7 @@ static int is_short = 0;
 
 static char *showconfig = NULL;
 static char *saveconfig = NULL;
-static int hw_item[100] = { };
+static hd_hw_item_t hw_item[100] = { };
 static int hw_items = 0;
 
 int braille_install_info(hd_data_t *hd_data);
@@ -37,6 +37,7 @@ int oem_install_info(hd_data_t *hd_data);
 int dump_packages(hd_data_t *hd_data);
 
 void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item);
+void do_hw_multi(hd_data_t *hd_data, FILE *f, hd_hw_item_t *hw_items);
 void do_short(hd_data_t *hd_data, hd_t *hd, FILE *f);
 void do_test(hd_data_t *hd_data);
 void help(void);
@@ -46,6 +47,7 @@ void dump_db(hd_data_t *hd_data);
 
 struct {
   unsigned db_idx;
+  unsigned separate:1;
 } opt;
 
 struct option options[] = {
@@ -62,6 +64,7 @@ struct option options[] = {
   { "fast", 0, NULL, 305 },
   { "dump-db", 1, NULL, 306 },
   { "dump-db-raw", 1, NULL, 307 },
+  { "separate", 0, NULL, 308 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -213,8 +216,13 @@ int main(int argc, char **argv)
           dump_db_raw(hd_data);
           break;
 
+        case 308:
+          /* basically for debugging */
+          opt.separate = 1;
+          break;
+
         case 1000 ... 1100:
-          if((unsigned) hw_items < sizeof hw_item / sizeof *hw_item)
+          if(hw_items < (int) (sizeof hw_item / sizeof *hw_item) - 1)
             hw_item[hw_items++] = i - 1000;
           break;
 
@@ -222,7 +230,7 @@ int main(int argc, char **argv)
         case 2001:
         case 2002:
         case 2003:
-          if((unsigned) hw_items < sizeof hw_item / sizeof *hw_item)
+          if(hw_items < (int) (sizeof hw_item / sizeof *hw_item) - 1)
             hw_item[hw_items++] = i;
           break;
 
@@ -237,9 +245,15 @@ int main(int argc, char **argv)
     if(hw_items >= 0 || showconfig || saveconfig) {
       if(*log_file) f = fopen(log_file, "w+");
 
-      for(i = 0; i < hw_items; i++) {
-        if(i) fputc('\n', f ? f : stdout);
-        do_hw(hd_data, f, hw_item[i]);
+      if(opt.separate || hw_items <= 1) {
+        for(i = 0; i < hw_items; i++) {
+          if(i) fputc('\n', f ? f : stdout);
+          do_hw(hd_data, f, hw_item[i]);
+        }
+      }
+      else {
+        hw_item[hw_items] = 0;
+        do_hw_multi(hd_data, f, hw_item);
       }
 
 #ifndef LIBHD_TINY
@@ -372,6 +386,7 @@ int main(int argc, char **argv)
 
   return 0;
 }
+
 
 void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
 {
@@ -543,6 +558,52 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
   }
 
   if(hd0 != hd_data->hd) hd_free_hd_list(hd0);
+}
+
+
+void do_hw_multi(hd_data_t *hd_data, FILE *f, hd_hw_item_t *hw_items)
+{
+  hd_t *hd, *hd0;
+
+  hd0 = hd_list2(hd_data, hw_items, 1);
+
+  if(hd_data->progress) {
+    printf("\r%64s\r", "");
+    fflush(stdout);
+  }
+
+  if(f) {
+    if((hd_data->debug & HD_DEB_SHOW_LOG) && hd_data->log) {
+      fprintf(f,
+        "============ start hardware log ============\n"
+      );
+      fprintf(f,
+        "============ start debug info ============\n%s=========== end debug info ============\n",
+        hd_data->log
+      );
+    }
+
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      hd_dump_entry(hd_data, hd, f);
+    }
+
+    fprintf(f,
+      "============ end hardware log ============\n"
+    );
+  }
+
+  if(is_short) {
+    /* always to stdout */
+    do_short(hd_data, hd0, stdout);
+    if(f) do_short(hd_data, hd0, f);
+  }
+  else {
+    for(hd = hd0; hd; hd = hd->next) {
+      hd_dump_entry(hd_data, hd, f ? f : stdout);
+    }
+  }
+
+  hd_free_hd_list(hd0);
 }
 
 

@@ -12,17 +12,11 @@ kbd_ok=
 
 rm -f /var/lib/hardware/LOCK
 
-# do not scan serial mice, it may hang ...
-/usr/sbin/hwscan --silent --boot --fast --mouse
-
 neededchanged=`/usr/sbin/hwscan --boot --gfxcard`
 if [ -n "$neededchanged" ] ; then
   has_keyboard && /sbin/yast2 x11 reprobe
 fi
 
-/usr/sbin/hwscan --silent --boot --pci
-/usr/sbin/hwscan --silent --boot --isapnp
-/usr/sbin/hwscan --silent --boot --fast --cdrom
-/usr/sbin/hwscan --silent --boot --disk
+/usr/sbin/hwscan --silent --boot --fast --pci --isapnp --cdrom --disk --mouse
 
 exit 0

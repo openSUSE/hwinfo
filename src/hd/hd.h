@@ -1855,6 +1855,8 @@ hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_cl
 hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus);
 hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old);
 hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t status);
+hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan);
+hd_t *hd_list_with_status2(hd_data_t *hd_data, hd_hw_item_t *items, hd_status_t status);
 
 int hd_has_special_eide(hd_data_t *hd_data);
 int hd_has_pcmcia(hd_data_t *hd_data);
