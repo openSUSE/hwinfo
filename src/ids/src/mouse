@@ -121,7 +121,7 @@
 &device.id		special 0x0000
 +driver.mouse		mousesystems|sun|3|0
 
-# very special
+# very special (mouse devices)
  vendor.id		special 0x0210
 &device.id		special 0x0000+0x0100
 +driver.mouse		explorerps/2|exps2

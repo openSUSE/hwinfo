@@ -146,6 +146,14 @@ void get_input_devices(hd_data_t *hd_data)
             hd->device.id = MAKE_ID(TAG_SPECIAL, (mouse_wheels << 4) + mouse_buttons);
             hd->device.name = new_str(name);
 
+            /* Synaptics/Alps TouchPad */
+            if(vendor == 2 && (product == 7 || product == 8)) {
+              hd->compat_vendor.id = hd->vendor.id;
+              hd->compat_device.id = hd->device.id;
+              hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0212);
+              hd->device.id = MAKE_ID(TAG_SPECIAL, product - 6);
+            }
+
             hd->unix_dev_name = new_str(DEV_MICE);
             dev_num.major = 13;
             dev_num.minor = 63;
