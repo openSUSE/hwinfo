@@ -34,7 +34,7 @@ void hd_scan_sys(hd_data_t *hd_data)
   hd_t *hd;
   sys_info_t *st;
 #if defined(__PPC__) || defined(__sparc__)
-  char buf0[80];
+  char buf0[80], *s, *t;
   str_list_t *sl;
 #endif
 
@@ -71,8 +71,10 @@ void hd_scan_sys(hd_data_t *hd_data)
 #endif
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(sscanf(sl->str, "motherboard : %79[^\n]", buf0) == 1) {
-      if(strstr(buf0, "MacRISC")) {
-        st->system_type = new_str("MacRISC");
+      if((s = strstr(buf0, "MacRISC"))) {
+        for(t = s + sizeof "MacRISC" - 1; isalnum(*t); t++);
+        *t = 0;
+        st->system_type = new_str(s);
         hd_data->flags.no_parport = 1;
       }
     }

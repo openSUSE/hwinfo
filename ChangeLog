@@ -2,6 +2,7 @@
 	- check for hyperthreading on amd64 (#34742)
 	- removed last references to ataraid from hardware db
 	- added new x86 emulator (#34545)
+	- return MacRISC<n> (#34591)
 
 17/2/2004:	v8.09
 	- handle '-' vs. '_' in module names
