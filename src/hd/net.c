@@ -3,8 +3,20 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <inttypes.h>
+#include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+
+#define u8 uint8_t
+#define u16 uint16_t
+#define u32 uint32_t
+#define u64 uint64_t
+#include <linux/if.h>
+#include <linux/sockios.h>
+#include <linux/ethtool.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -16,6 +28,10 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+static void get_driverinfo(hd_data_t *hd_data, hd_t *hd);
+static void add_xpnet(hd_data_t *hdata);
+static void add_iseries(hd_data_t *hdata);
+static void add_uml(hd_data_t *hdata);
 
 /*
  * This is independent of the other scans.
@@ -89,7 +105,7 @@ void hd_scan_net(hd_data_t *hd_data)
     hd->base_class.id = bc_network_interface;
 
     res1 = NULL;
-    if(hw_addr && sf_dev) {
+    if(hw_addr && strspn(hw_addr, "0:") != strlen(hw_addr)) {
       res1 = new_mem(sizeof *res1);
       res1->hwaddr.type = res_hwaddr;
       res1->hwaddr.addr = new_str(hw_addr);
@@ -101,7 +117,12 @@ void hd_scan_net(hd_data_t *hd_data)
     hd->unix_dev_name = new_str(sf_cdev->name);
     hd->sysfs_id = new_str(hd_sysfs_id(sf_cdev->path));
 
-    if(sf_drv) add_str_list(&hd->drivers, sf_drv->name);
+    if(sf_drv) {
+      add_str_list(&hd->drivers, sf_drv->name);
+    }
+    else if(hd->res) {
+      get_driverinfo(hd_data, hd);
+    }
 
     if(sf_dev) {
       hd->sysfs_device_link = new_str(hd_sysfs_id(sf_dev->path)); 
@@ -178,6 +199,10 @@ void hd_scan_net(hd_data_t *hd_data)
       hd->sub_class.id = sc_nif_wlan;
       hd->slot = u;
     }
+    else if(sscanf(hd->unix_dev_name, "xp%u", &u) == 1) {
+      hd->sub_class.id = sc_nif_xp;
+      hd->slot = u;
+    }
     /* ##### add more interface names here */
     else {
       hd->sub_class.id = sc_nif_other;
@@ -188,6 +213,9 @@ void hd_scan_net(hd_data_t *hd_data)
 
   sysfs_close_class(sf_class);
 
+  if(hd_is_sgi_altix(hd_data)) add_xpnet(hd_data);
+  if(hd_is_iseries(hd_data)) add_iseries(hd_data);
+  add_uml(hd_data);
 
 #if 0
 
@@ -240,4 +268,164 @@ void hd_scan_net(hd_data_t *hd_data)
 
 
 }
+
+
+/*
+ * Get it the classical way, for drivers that don't support sysfs (veth).
+ */
+void get_driverinfo(hd_data_t *hd_data, hd_t *hd)
+{
+  int fd;
+  struct ethtool_drvinfo drvinfo = { cmd:ETHTOOL_GDRVINFO };
+  struct ifreq ifr;
+
+  if(!hd->unix_dev_name) return;
+
+  if(strlen(hd->unix_dev_name) > sizeof ifr.ifr_name - 1) return;
+
+  if((fd = socket(PF_INET, SOCK_DGRAM, 0)) == -1) return;
+
+  /* get driver info */
+  memset(&ifr, 0, sizeof ifr);
+  strcpy(ifr.ifr_name, hd->unix_dev_name);
+  ifr.ifr_data = (caddr_t) &drvinfo;
+  if(ioctl(fd, SIOCETHTOOL, &ifr) == 0) {
+    ADD2LOG("    ethtool driver: %s\n", drvinfo.driver);
+    ADD2LOG("    ethtool    bus: %s\n", drvinfo.bus_info);
+
+    add_str_list(&hd->drivers, drvinfo.driver);
+  }
+  else {
+    ADD2LOG("    ethtool error: %s\n", strerror(errno));
+  }
+
+  close(fd);
+}
+
+
+/*
+ * SGI Altix cross partition network.
+ */
+void add_xpnet(hd_data_t *hd_data)
+{
+  hd_t *hd, *hd_card;
+  hd_res_t *res, *res2;
+
+  hd_card = add_hd_entry(hd_data, __LINE__, 0);
+  hd_card->base_class.id = bc_network;
+  hd_card->sub_class.id = 0x83;
+
+  hd_card->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4002);
+  hd_card->device.id = MAKE_ID(TAG_SPECIAL, 1);
+
+  if(hd_module_is_active(hd_data, "xpnet")) {
+    add_str_list(&hd_card->drivers, "xpnet");
+  }
+
+  for(hd = hd_data->hd ; hd; hd = hd->next) {
+    if(
+      hd->module == hd_data->module &&
+      hd->base_class.id == bc_network_interface &&
+      hd->sub_class.id == sc_nif_xp
+    ) {
+      hd->attached_to = hd_card->idx;
+
+      for(res = hd->res; res; res = res->next) {
+        if(res->any.type == res_hwaddr) break;
+      }
+
+      if(res) {
+        res2 = new_mem(sizeof *res2);
+        res2->hwaddr.type = res_hwaddr;
+        res2->hwaddr.addr = new_str(res->hwaddr.addr);
+        add_res_entry(&hd_card->res, res2);
+      }
+
+      break;
+    }
+  }
+}
+
+
+/*
+ * iSeries veth devices.
+ */
+void add_iseries(hd_data_t *hd_data)
+{
+  hd_t *hd, *hd_card;
+  hd_res_t *res, *res2;
+  unsigned card_cnt = 0;
+
+  for(hd = hd_data->hd ; hd; hd = hd->next) {
+    if(
+      hd->module == hd_data->module &&
+      hd->base_class.id == bc_network_interface &&
+      search_str_list(hd->drivers, "veth")
+    ) {
+      hd_card = add_hd_entry(hd_data, __LINE__, 0);
+      hd_card->base_class.id = bc_network;
+      hd_card->sub_class.id = 0x00;
+      hd_card->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);	// IBM
+      hd_card->device.id = MAKE_ID(TAG_SPECIAL, 0x1000);
+      hd_card->slot = card_cnt++;
+      str_printf(&hd_card->device.name, 0, "Virtual Ethernet card %d", hd_card->slot);
+      add_str_list(&hd_card->drivers, "veth");
+
+      hd->attached_to = hd_card->idx;
+
+      for(res = hd->res; res; res = res->next) {
+        if(res->any.type == res_hwaddr) break;
+      }
+
+      if(res) {
+        res2 = new_mem(sizeof *res2);
+        res2->hwaddr.type = res_hwaddr;
+        res2->hwaddr.addr = new_str(res->hwaddr.addr);
+        add_res_entry(&hd_card->res, res2);
+      }
+    }
+  }
+}
+
+
+/*
+ * UML veth devices.
+ */
+void add_uml(hd_data_t *hd_data)
+{
+  hd_t *hd, *hd_card;
+  hd_res_t *res, *res2;
+  unsigned card_cnt = 0;
+
+  for(hd = hd_data->hd ; hd; hd = hd->next) {
+    if(
+      hd->module == hd_data->module &&
+      hd->base_class.id == bc_network_interface &&
+      !search_str_list(hd->drivers, "uml virtual ethernet")
+    ) {
+      hd_card = add_hd_entry(hd_data, __LINE__, 0);
+      hd_card->base_class.id = bc_network;
+      hd_card->sub_class.id = 0x00;
+      hd_card->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6010);	// UML
+      hd_card->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
+      hd_card->slot = card_cnt++;
+      str_printf(&hd_card->device.name, 0, "Virtual Ethernet card %d", hd_card->slot);
+//      add_str_list(&hd_card->drivers, "veth");
+
+      hd->attached_to = hd_card->idx;
+
+      for(res = hd->res; res; res = res->next) {
+        if(res->any.type == res_hwaddr) break;
+      }
+
+      if(res) {
+        res2 = new_mem(sizeof *res2);
+        res2->hwaddr.type = res_hwaddr;
+        res2->hwaddr.addr = new_str(res->hwaddr.addr);
+        add_res_entry(&hd_card->res, res2);
+      }
+    }
+  }
+}
+
 

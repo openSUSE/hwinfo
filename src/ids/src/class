@@ -825,6 +825,10 @@
 +subclass.name		WLAN
 
  baseclass.id		0x107
+&subclass.id		0x0b
++subclass.name		XPNET
+
+ baseclass.id		0x107
 &subclass.id		0x80
 +subclass.name		Network Interface
 

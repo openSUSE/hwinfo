@@ -47,6 +47,7 @@ void dump_db_raw(hd_data_t *hd_data);
 void dump_db(hd_data_t *hd_data);
 void do_chroot(hd_data_t *hd_data, char *dir);
 void ask_db(hd_data_t *hd_data, char *query);
+void get_mapping(hd_data_t *hd_data);
 
 
 struct {
@@ -75,6 +76,7 @@ struct option options[] = {
   { "db", 1, NULL, 310 },
   { "only", 1, NULL, 311 },
   { "listmd", 0, NULL, 312 },
+  { "map", 0, NULL, 313 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -249,6 +251,10 @@ int main(int argc, char **argv)
 
         case 312:
           hd_data->flags.list_md = 1;
+          break;
+
+        case 313:
+          get_mapping(hd_data);
           break;
 
         case 400:
@@ -1956,5 +1962,116 @@ void ask_db(hd_data_t *hd_data, char *query)
       }
     }
   }
+}
+
+
+int is_same_block_dev(hd_t *hd1, hd_t *hd2)
+{
+  if(!hd1 || !hd2 || hd1 == hd2) return 0;
+
+  if(
+    hd1->base_class.id != hd2->base_class.id ||
+    hd1->sub_class.id != hd2->sub_class.id
+  ) return 0;
+
+  if(
+    !hd1->model ||
+    !hd2->model ||
+    strcmp(hd1->model, hd2->model)
+  ) return 0;
+
+  if(hd1->revision.name || hd2->revision.name) {
+    if(
+      !hd1->revision.name ||
+      !hd2->revision.name ||
+      strcmp(hd1->revision.name, hd2->revision.name)
+    ) return 0;
+  }
+
+  if(hd1->serial || hd2->serial) {
+    if(
+      !hd1->serial ||
+      !hd2->serial ||
+      strcmp(hd1->serial, hd2->serial)
+    ) return 0;
+  }
+
+  return 1;
+}
+
+
+hd_t *get_same_block_dev(hd_t *hd_list, hd_t *hd, hd_status_value_t status)
+{
+  for(; hd_list; hd_list = hd_list->next) {
+    if(hd_list->status.available != status) continue;
+    if(is_same_block_dev(hd_list, hd)) return hd_list;
+  }
+
+  return NULL;
+}
+
+
+void get_mapping(hd_data_t *hd_data)
+{
+  hd_t *hd_manual, *hd, *hd2;
+  struct {
+    hd_t *hd;
+    unsigned unknown:1;
+  } map[256] = { };
+  unsigned maps = 0, u;
+  int broken, first;
+
+  hd_data->progress = NULL;
+
+  hd_manual = hd_list(hd_data, hw_manual, 1, NULL);
+  for(hd = hd_manual; hd && maps < sizeof map / sizeof *map; hd = hd->next) {
+    if(!hd->unix_dev_name) continue;
+
+    if(
+      !hd_is_hw_class(hd, hw_disk) &&
+      !hd_is_hw_class(hd, hw_cdrom)
+    ) continue;
+
+    if(hd->status.available == status_yes) {
+      /* check if we already have an active device with the same name */
+      for(broken = u = 0; u < maps; u++) {
+        if(!strcmp(map[u].hd->unix_dev_name, hd->unix_dev_name)) {
+          map[u].unknown = 1;
+          broken = 1;
+        }
+      }
+      if(broken) continue;
+
+      /* ensure we really can tell different devices apart */
+      if(get_same_block_dev(hd_manual, hd, status_yes)) {
+        map[maps].hd = hd;
+        map[maps].unknown = 1;
+      }
+      else {
+        map[maps].hd = hd;
+      }
+      maps++;
+    }
+  }
+
+  /* ok, we have a list of all new devs */
+
+  for(u = 0; u < maps; u++) {
+    if(map[u].unknown) {
+      printf("%s\n", map[u].hd->unix_dev_name);
+    }
+    else {
+      first = 1;
+      for(hd2 = hd_manual; (hd2 = get_same_block_dev(hd2, map[u].hd, status_no)); hd2 = hd2->next) {
+        if(hd2->unix_dev_name && strcmp(map[u].hd->unix_dev_name, hd2->unix_dev_name)) {
+          printf("%s\t%s", first ? map[u].hd->unix_dev_name : "", hd2->unix_dev_name);
+          first = 0;
+        }
+      }
+      if(!first) printf("\n");
+    }
+
+  }
+
 }
 
