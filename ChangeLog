@@ -1,4 +1,7 @@
+25/8/2003:	v7.10
 	- added lots of new camera ids.
+	- new isdn data taken from cdb
+	- updated X11 data
 
 18/8/2003:	v7.09
 	- add ChildIDs field (reverse of ParentID)

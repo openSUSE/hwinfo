@@ -12,7 +12,7 @@ use IO::Handle;
 use Getopt::Long;
 
 # MySQL-Host / MySQL-User
-my $hostname     = "Jackson.suse.de";
+my $hostname     = "cdbintern.suse.de";
 my $mysql_user   = "cdbclient";
 my $mysql_passwd = "cdb";
 my $target       = "cdb";

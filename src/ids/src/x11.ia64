@@ -1150,7 +1150,7 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0288
-+device.name		0x0288
++device.name		Quadro4 980 XGL
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
