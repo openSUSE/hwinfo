@@ -647,3 +647,47 @@
 +subclass.id		0x00
 +device.name		Typhoon Webcam 100k
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# usbmap: ov511.o
+ vendor.id		usb 0x05a9
+&device.id		usb 0x0511
+|vendor.id		usb 0x05a9
+&device.id		usb 0x0518
+|vendor.id		usb 0x05a9
+&device.id		usb 0xa511
+|vendor.id		usb 0x05a9
+&device.id		usb 0xa518
+|vendor.id		usb 0x0813
+&device.id		usb 0x0002
++baseclass.id		0x10f
++subclass.id		0x00
+
+# usbmap: pwc.o
+ vendor.id		usb 0x041e
+&device.id		usb 0x400c
+|vendor.id		usb 0x041e
+&device.id		usb 0x4011
+|vendor.id		usb 0x046d
+&device.id		usb 0x08b0+0x0009
+|vendor.id		usb 0x0471
+&device.id		usb 0x0302+0x0003
+|vendor.id		usb 0x0471
+&device.id		usb 0x0307+0x0002
+|vendor.id		usb 0x0471
+&device.id		usb 0x030c
+|vendor.id		usb 0x0471
+&device.id		usb 0x0310+0x0004
+|vendor.id		usb 0x04cc
+&device.id		usb 0x8116
+|vendor.id		usb 0x055d
+&device.id		usb 0x9000+0x0002
+|vendor.id		usb 0x069a
+&device.id		usb 0x0001
+|vendor.id		usb 0x0d81
+&device.id		usb 0x1900
+|vendor.id		usb 0x0d81
+&device.id		usb 0x1910
++baseclass.id		0x10f
++subclass.id		0x00
+

@@ -1479,7 +1479,6 @@
 &subdevice.id		pci 0x0d41
 +subdevice.name		G450 DH G450
 +driver.xfree		4|mga
-+driver.xfree		4|mga|3d||dri
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0525
