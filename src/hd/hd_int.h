@@ -62,7 +62,7 @@
 #define PROGRESS(a, b, c) progress(hd_data, a, b, c)
 #define ADD2LOG(a...) str_printf(&hd_data->log, -2, a)
 
-#undef LIBHD_MEMCHECK
+#define LIBHD_MEMCHECK
 
 #if defined(__i386__) || defined(__PPC__)
 /*

@@ -5080,12 +5080,16 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
 
   *geo = *size = NULL;
 
+  ADD2LOG("  dev = >%s<, fd = %d\n", dev, fd);
+
   if(fd < 0) {
     if(!dev) return;
     fd = open(dev, O_RDONLY | O_NONBLOCK);
     close_fd = 1;
     if(fd < 0) return;
   }
+
+  ADD2LOG("  open ok, fd = %d\n", fd);
 
   if(!ioctl(fd, HDIO_GETGEO_BIG, &big_geo_s)) {
     if(dev) ADD2LOG("%s: ioctl(big geo) ok\n", dev);
@@ -5096,14 +5100,20 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
     res->disk_geo.sectors = big_geo_s.sectors;
     res->disk_geo.logical = 1;
   }
-  else if(!ioctl(fd, HDIO_GETGEO, &geo_s)) {
-    if(dev) ADD2LOG("%s: ioctl(geo) ok\n", dev);
-    res = add_res_entry(geo, new_mem(sizeof *res));
-    res->disk_geo.type = res_disk_geo;
-    res->disk_geo.cyls = geo_s.cylinders;
-    res->disk_geo.heads = geo_s.heads;
-    res->disk_geo.sectors = geo_s.sectors;
-    res->disk_geo.logical = 1;
+  else {
+    ADD2LOG("  big geo failed: %s\n", strerror(errno));
+    if(!ioctl(fd, HDIO_GETGEO, &geo_s)) {
+      if(dev) ADD2LOG("%s: ioctl(geo) ok\n", dev);
+      res = add_res_entry(geo, new_mem(sizeof *res));
+      res->disk_geo.type = res_disk_geo;
+      res->disk_geo.cyls = geo_s.cylinders;
+      res->disk_geo.heads = geo_s.heads;
+      res->disk_geo.sectors = geo_s.sectors;
+      res->disk_geo.logical = 1;
+    }
+    else {
+      ADD2LOG("  geo failed: %s\n", strerror(errno));
+    }
   }
 
   if(!ioctl(fd, BLKGETSIZE, &secs)) {
@@ -5125,6 +5135,8 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
       if(sec_size) res->size.val2 = sec_size;
     }
   }
+
+  ADD2LOG("  geo = %p, size = %p\n", *geo, *size);
 
   if(close_fd) close(fd);
 }

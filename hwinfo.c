@@ -469,6 +469,7 @@ void *free_mem(void *);
 
 void do_test(hd_data_t *hd_data)
 {
+#if 0
   hd_t *hd;
   hd_t *hd0 = NULL;
 
@@ -479,20 +480,26 @@ void do_test(hd_data_t *hd_data)
   for(hd = hd_list(hd_data, hw_cdrom, 1, hd0); hd; hd = hd->next) {
     fprintf(stderr, "cdrom: %s, %s\n", hd->unix_dev_name, hd->model);
   }
+#endif
 
+#if 1
+  hd_t *hd;
 
-#if 0
-  int i;
-
-  hd_set_probe_feature(hd_data, pr_pci);
-  hd_scan(hd_data);
-
-  i = hd_usb_support(hd_data);
-  fprintf(stderr, "\nusb support: %d\n",i);
-
+  hd = hd_list(hd_data, hw_disk, 1, NULL);
+  hd_free_hd_list(hd);
   hd_free_hd_data(hd_data);
-//  memset(hd_data, 0, sizeof *hd_data);
-  hd_scan(hd_data);
+
+  hd = hd_list(hd_data, hw_cdrom, 1, NULL);
+  hd_free_hd_list(hd);
+  hd_free_hd_data(hd_data);
+
+  hd = hd_list(hd_data, hw_storage_ctrl, 1, NULL);
+  hd_free_hd_list(hd);
+  hd_free_hd_data(hd_data);
+
+  hd = hd_list(hd_data, hw_display, 1, NULL);
+  hd_free_hd_list(hd);
+  hd_free_hd_data(hd_data);
 
 #if 0
   for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -502,10 +509,6 @@ void do_test(hd_data_t *hd_data)
   printf("%s\n", hd_data->log);
 #endif
 
-  printf(">%s< >%s<\n", getenv("hwprobe"), hd_data->cmd_line);
-
-  i = hd_usb_support(hd_data);
-  fprintf(stderr, "usb support: %d\n",i);
 #endif
 
 #if 0
