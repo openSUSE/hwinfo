@@ -51,7 +51,6 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
   PROGRESS(4, 3, "ddc info");
 
   memset(vbeinfo, 0, sizeof vbeinfo);
-  strcpy(vbeinfo, "VBE2");
   ax = 0x4f15; bx = 1; cx = 0;
   i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo) & 0xffff;
 
