@@ -400,3 +400,7 @@
 &progif.id		0x10
 +driver.module.insmod	ieee1394|ohci1394
 
+ vendor.id		pci 0x104c
+&device.id		pci 0x8000
++driver.module.insmod	ieee1394|pcilynx
+
