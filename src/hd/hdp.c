@@ -35,8 +35,6 @@ static char *make_sub_device_name_str(hd_data_t *hd_data, hd_t *h, char *buf, in
 static char *make_vend_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size);
 static char *make_sub_vend_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size);
 
-static char *vend_id2str(unsigned vend);
-
 /*
  * Dump a hardware entry to FILE *f.
  */
@@ -53,6 +51,8 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
       fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_dump_entry, hd_data), hd_data);
   }
 #endif
+
+  if(!h) return;
 
   s = "";
   if(h->is.agp) s = "(AGP)";
@@ -924,26 +924,6 @@ char *make_sub_vend_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_siz
   else {
     s = hd_vendor_name(hd_data, h->sub_vend);
     snprintf(buf, buf_size - 1, "%s \"%s\"", vend_id2str(h->sub_vend), s ? s : "?");
-  }
-
-  return buf;
-}
-
-
-char *vend_id2str(unsigned vend)
-{
-  static char buf[32];
-  char *s;
-
-  *(s = buf) = 0;
-
-  if(ID_TAG(vend) == TAG_EISA) {
-    strcpy(s, eisa_vendor_str(vend));
-  }
-  else {
-    if(ID_TAG(vend) == TAG_USB) *s++ = 'u', *s = 0;
-    if(ID_TAG(vend) == TAG_SPECIAL) *s++ = 's', *s = 0;
-    sprintf(s, "%04x", ID_VALUE(vend));
   }
 
   return buf;

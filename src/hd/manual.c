@@ -104,10 +104,10 @@ static hash_t hw_ids_hd_items[] = {
 
 static char *key2value(hash_t *hash, int id);
 static int value2key(hash_t *hash, char *str);
-hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, char *id);
 static void dump_manual(hd_data_t *hd_data);
 static unsigned str2id(char *str);
 static void manual2hd(hd_manual_t *entry, hd_t *hd);
+static void hd2manual(hd_t *hd, hd_manual_t *entry);
 
 void hd_scan_manual(hd_data_t *hd_data)
 {
@@ -493,13 +493,35 @@ void dump_manual(hd_data_t *hd_data)
 
   ADD2LOG("----- %s -----\n", txt);
   for(entry = hd_data->manual; entry; entry = entry->next) {
-    ADD2LOG("  UniqueID=%s\n", entry->unique_id);
-    if(entry->parent_id) ADD2LOG("    ParentID=%s\n", entry->parent_id);
-    ADD2LOG("    HWClass=%s\n", key2value(hw_items, entry->hw_class));
-    ADD2LOG("    Model=%s\n", entry->model);
-    ADD2LOG("    Configured=%s\n", key2value(status_names, entry->status.configured));
-    ADD2LOG("    Available=%s\n", key2value(status_names, entry->status.available));
-    ADD2LOG("    Critical=%s\n", key2value(status_names, entry->status.critical));
+    ADD2LOG("  %s=%s\n",
+      key2value(hw_ids_general, hw_id_unique),
+      entry->unique_id
+    );
+    if(entry->parent_id)
+      ADD2LOG("    %s=%s\n",
+        key2value(hw_ids_general, hw_id_parent),
+        entry->parent_id
+      );
+    ADD2LOG("    %s=%s\n",
+      key2value(hw_ids_general, hw_id_hwclass),
+      key2value(hw_items, entry->hw_class)
+    );
+    ADD2LOG("    %s=%s\n",
+      key2value(hw_ids_general, hw_id_model),
+      entry->model
+    );
+    ADD2LOG("    %s=%s\n",
+      key2value(hw_ids_status, hw_id_configured),
+      key2value(status_names, entry->status.configured)
+    );
+    ADD2LOG("    %s=%s\n",
+      key2value(hw_ids_status, hw_id_available),
+      key2value(status_names, entry->status.available)
+    );
+    ADD2LOG("    %s=%s\n",
+      key2value(hw_ids_status, hw_id_critical),
+      key2value(status_names, entry->status.critical)
+    );
     for(
       sl1 = entry->key, sl2 = entry->value;
       sl1 && sl2;
@@ -548,6 +570,8 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
   str_list_t *sl1, *sl2;
   hw_hd_items_t item;
   unsigned tag;
+
+  if(!hd || !entry) return;
 
   hd->unique_id = new_str(entry->unique_id);
   hd->parent_id = new_str(entry->parent_id);
@@ -696,4 +720,167 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
     }
   }
 }
+
+
+void hd2manual(hd_t *hd, hd_manual_t *entry)
+{
+  char *s;
+
+  if(!hd || !entry) return;
+
+  entry->unique_id = new_str(hd->unique_id);
+  entry->parent_id = new_str(hd->parent_id);
+  entry->model = new_str(hd->model);
+  entry->hw_class = hd->hw_class;
+
+  entry->status = hd->status;
+
+  s = NULL;
+
+  if(hd->bus) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_bus));
+    str_printf(&s, 0, "0x%x", hd->bus);
+    add_str_list(&entry->value, s);
+  }
+
+  if(hd->slot) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_slot));
+    str_printf(&s, 0, "0x%x", hd->slot);
+    add_str_list(&entry->value, s);
+  }
+
+  if(hd->func) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_func));
+    str_printf(&s, 0, "0x%x", hd->func);
+    add_str_list(&entry->value, s);
+  }
+
+  if(hd->base_class) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_base_class));
+    str_printf(&s, 0, "0x%x", hd->base_class);
+    add_str_list(&entry->value, s);
+  }
+
+  if(hd->sub_class) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_class));
+    str_printf(&s, 0, "0x%x", hd->sub_class);
+    add_str_list(&entry->value, s);
+  }
+
+  if(hd->prog_if) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_prog_if));
+    str_printf(&s, 0, "0x%x", hd->prog_if);
+    add_str_list(&entry->value, s);
+  }
+
+  if(hd->dev || hd->vend) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_vend));
+    add_str_list(&entry->value, vend_id2str(hd->vend));
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_dev));
+    str_printf(&s, 0, "%04x", ID_VALUE(hd->dev));
+    add_str_list(&entry->value, s);
+  }
+
+  if(hd->sub_dev || hd->sub_vend) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_vend));
+    add_str_list(&entry->value, vend_id2str(hd->sub_vend));
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_dev));
+    str_printf(&s, 0, "%04x", ID_VALUE(hd->sub_dev));
+    add_str_list(&entry->value, s);
+  }
+
+  if(hd->rev) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_rev));
+    str_printf(&s, 0, "0x%x", hd->rev);
+    add_str_list(&entry->value, s);
+  }
+
+  if(hd->compat_dev || hd->compat_vend) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_compat_vend));
+    add_str_list(&entry->value, vend_id2str(hd->compat_vend));
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_compat_dev));
+    str_printf(&s, 0, "%04x", ID_VALUE(hd->compat_dev));
+    add_str_list(&entry->value, s);
+  }
+
+  if(hd->dev_name) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_dev_name));
+    add_str_list(&entry->value, hd->dev_name);
+  }
+
+  if(hd->vend_name) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_vend_name));
+    add_str_list(&entry->value, hd->vend_name);
+  }
+
+  if(hd->sub_dev_name) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_dev_name));
+    add_str_list(&entry->value, hd->sub_dev_name);
+  }
+
+  if(hd->sub_vend_name) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_vend_name));
+    add_str_list(&entry->value, hd->sub_vend_name);
+  }
+
+  if(hd->rev_name) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_rev_name));
+    add_str_list(&entry->value, hd->rev_name);
+  }
+
+  if(hd->serial) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_serial));
+    add_str_list(&entry->value, hd->serial);
+  }
+
+  if(hd->unix_dev_name) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_unix_dev_name));
+    add_str_list(&entry->value, hd->unix_dev_name);
+  }
+
+  if(hd->rom_id) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_rom_id));
+    add_str_list(&entry->value, hd->rom_id);
+  }
+
+  free_mem(s);
+}
+
+
+hd_t *hd_read_config(hd_data_t *hd_data, char *id)
+{
+  hd_t *hd = NULL;
+  hd_manual_t *entry;
+
+  entry = hd_manual_read_entry(hd_data, id);
+
+  if(entry) {
+    hd = new_mem(sizeof *hd);
+    hd->module = hd_data->module;
+    hd->line = __LINE__;
+    hd->tag.freeit = 1;		/* make it a 'stand alone' entry */
+    manual2hd(entry, hd);
+    hd_free_manual(entry);
+  }
+
+  return hd;
+}
+
+
+int hd_write_config(hd_data_t *hd_data, hd_t *hd)
+{
+  int err = 0;
+  hd_manual_t *entry;
+
+  entry = new_mem(sizeof *entry);
+
+  hd2manual(hd, entry);
+
+  err = entry->unique_id ? hd_manual_write_entry(hd_data, entry) : 5;
+
+  hd_free_manual(entry);
+
+  return err;
+}
+
 

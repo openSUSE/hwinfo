@@ -1,3 +1,8 @@
+25/7/2001:	v3.02
+	- added access functions for /var/lib/hardware/ to libhd
+	- hwinfo: no progress info if output is redirected
+	- hwinfo: multiple arguments allowed
+
 24/7/2001:	v3.01
 	- report smp capability only if >1 processors are active
 

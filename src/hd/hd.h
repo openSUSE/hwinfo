@@ -1054,6 +1054,7 @@ typedef struct s_hd_t {
 
   struct {			/* this struct is for internal purposes only */
     unsigned remove:1;		/* schedule for removal */
+    unsigned freeit:1;		/* for internal memory management */
     unsigned ser_skip:1;	/* if serial line, don't scan for devices */
     unsigned ser_device:2;	/* if != 0: info about attached serial device; see serial.c */
   } tag;
@@ -1196,6 +1197,8 @@ cdrom_info_t *hd_read_cdrom_info(hd_data_t *hd_data, hd_t *hd);
 hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, char *id);
 int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry);
 hd_manual_t *hd_free_manual(hd_manual_t *manual);
+hd_t *hd_read_config(hd_data_t *hd_data, char *id);
+int hd_write_config(hd_data_t *hd_data, hd_t *hd);
 
 #ifdef __cplusplus
 }

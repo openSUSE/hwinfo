@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include <getopt.h>
 #include <sys/types.h>
@@ -24,6 +25,11 @@ static int listplus = 0;
 
 static int test = 0;
 
+static char *showconfig = NULL;
+static char *saveconfig = NULL;
+static int hw_item[100] = { };
+static int hw_items = 0;
+
 int braille_install_info(hd_data_t *hd_data);
 int x11_install_info(hd_data_t *hd_data);
 int oem_install_info(hd_data_t *hd_data);
@@ -42,6 +48,8 @@ struct option options[] = {
   { "packages", 0, NULL, 'p' },
   { "test", 0, NULL, 300 },
   { "format", 1, NULL, 301 },
+  { "show-config", 1, NULL, 302 },
+  { "save-config", 1, NULL, 303 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -87,7 +95,7 @@ int main(int argc, char **argv)
   unsigned first_probe = 1;
 
   hd_data = calloc(1, sizeof *hd_data);
-  hd_data->progress = progress;
+  hd_data->progress = isatty(1) ? progress : NULL;
   hd_data->debug=~(HD_DEB_DRIVER_INFO | HD_DEB_HDDB);
 
   for(i = 0; i < argc; i++) {
@@ -123,7 +131,6 @@ int main(int argc, char **argv)
 
         case 'l':
           log_file = optarg;
-          if(*log_file) f = fopen(log_file, "w+");
           break;
 
         case 'p':
@@ -138,8 +145,17 @@ int main(int argc, char **argv)
           hd_data->flags.dformat = strtol(optarg, NULL, 0);
           break;
 
+        case 302:
+          showconfig = optarg;
+          break;
+
+        case 303:
+          saveconfig = optarg;
+          break;
+
         case 1000 ... 1100:
-          do_hw(hd_data, f, i - 1000);
+          if(hw_items < sizeof hw_item / sizeof *hw_item)
+            hw_item[hw_items++] = i - 1000;
           break;
 
         case 2000:
@@ -150,7 +166,8 @@ int main(int argc, char **argv)
         case 3003:
         case 3004:
         case 3005:
-          do_hw(hd_data, f, i);
+          if(hw_items < sizeof hw_item / sizeof *hw_item)
+            hw_item[hw_items++] = i;
           break;
 
         default:
@@ -159,7 +176,43 @@ int main(int argc, char **argv)
       }
     }
 
-    if(f) fclose(f);
+    if(hw_item >= 0 || showconfig || saveconfig) {
+      if(*log_file) f = fopen(log_file, "w+");
+
+      for(i = 0; i < hw_items; i++) {
+        if(i) fputc('\n', f ? f : stdout);
+        do_hw(hd_data, f, hw_item[i]);
+      }
+
+      if(showconfig) {
+        hd = hd_read_config(hd_data, showconfig);
+        if(hd) {
+          hd_dump_entry(hd_data, hd, f ? f : stdout);
+          hd = hd_free_hd_list(hd);
+        }
+        else {
+          fprintf(f ? f : stdout, "No config data: %s\n", showconfig);
+        }
+      }
+
+      if(saveconfig) {
+        for(hd = hd_data->hd; hd; hd = hd->next) {
+          if(!strcmp(hd->unique_id, saveconfig)) {
+            i = hd_write_config(hd_data, hd);
+            fprintf(f ? f : stdout, "%s: %s\n",
+              saveconfig,
+              i ? "Error writing config data" : "config saved"
+            );
+            break;
+          }
+        }
+        if(!hd) {
+          fprintf(f ? f : stdout, "No such hardware: %s\n", saveconfig);
+        }
+      }
+
+      if(f) fclose(f);
+    }
 
     hd_free_hd_data(hd_data);
     free(hd_data);
@@ -188,7 +241,7 @@ int main(int argc, char **argv)
     argc -= i; argv += i;
 
     hd_scan(hd_data);
-    printf("\r%64s\r", "");
+    if(hd_data->progress) printf("\r%64s\r", "");
 
     first_probe = 0;
   } while(argc);
@@ -309,8 +362,10 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
       hd0 = hd_list(hd_data, hw_item, 1, NULL);
   }
 
-  printf("\r%64s\r", "");
-  fflush(stdout);
+  if(hd_data->progress) {
+    printf("\r%64s\r", "");
+    fflush(stdout);
+  }
 
   if(f) {
     if((hd_data->debug & HD_DEB_SHOW_LOG) && hd_data->log) {

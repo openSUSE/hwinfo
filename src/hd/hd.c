@@ -102,6 +102,7 @@ static struct s_pr_flags *get_pr_flags(enum probe_feature feature);
 static void fix_probe_features(hd_data_t *hd_data);
 static void set_probe_feature(hd_data_t *hd_data, enum probe_feature feature, unsigned val);
 static void free_old_hd_entries(hd_data_t *hd_data);
+static hd_t *free_hd_entry(hd_t *hd);
 static hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd);
 static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
 #if WITH_ISDN
@@ -534,6 +535,12 @@ hd_t *hd_free_hd_list(hd_t *hd)
       fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_free_hd_list, hd), hd);
   }
 #endif
+
+  /* Note: hd->next should better be NULL! */
+  if(hd && hd->tag.freeit) {
+    free_hd_entry(hd);
+    return free_mem(hd);
+  }
 
   /* do nothing unless the list holds only copies of hd_t entries */
   for(h = hd; h; h = h->next) if(!h->ref) return NULL;
@@ -4394,3 +4401,24 @@ void get_kernel_version(hd_data_t *hd_data)
 
   free_str_list(sl);
 }
+
+
+char *vend_id2str(unsigned vend)
+{
+  static char buf[32];
+  char *s;
+
+  *(s = buf) = 0;
+
+  if(ID_TAG(vend) == TAG_EISA) {
+    strcpy(s, eisa_vendor_str(vend));
+  }
+  else {
+    if(ID_TAG(vend) == TAG_USB) *s++ = 'u', *s = 0;
+    if(ID_TAG(vend) == TAG_SPECIAL) *s++ = 's', *s = 0;
+    sprintf(s, "%04x", ID_VALUE(vend));
+  }
+
+  return buf;
+}
+

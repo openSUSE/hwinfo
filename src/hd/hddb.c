@@ -289,7 +289,7 @@ driver_info_t *device_driver_ind(hddb_data_t *x, unsigned ind)
 
 char *hd_bus_name(hd_data_t *hd_data, unsigned bus)
 {
-  hddb_data_t *x = hd_data->hddb_dev;
+  hddb_data_t *x;
   unsigned u;
   unsigned ids[4] = { MAKE_ID(TAG_BUS, ID_VALUE(bus)), };
 
@@ -299,6 +299,10 @@ char *hd_bus_name(hd_data_t *hd_data, unsigned bus)
       fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_bus_name, hd_data), hd_data);
   }
 #endif
+
+  init_hddb(hd_data);
+
+  x = hd_data->hddb_dev;
 
   u = find_entry(&x, 0, 0, ids);
   return name_ind(x, u);
@@ -310,7 +314,7 @@ char *hd_bus_name(hd_data_t *hd_data, unsigned bus)
 char *hd_class_name(hd_data_t *hd_data, int level, unsigned base_class, unsigned sub_class, unsigned prog_if)
 {
   static char *name = NULL;
-  hddb_data_t *x = hd_data->hddb_dev;
+  hddb_data_t *x;
   unsigned u;
   unsigned ids[4] = { MAKE_ID(TAG_CLASS, ID_VALUE(base_class)), 0, 0, 0 };
   char *s = NULL, *t;
@@ -321,6 +325,10 @@ char *hd_class_name(hd_data_t *hd_data, int level, unsigned base_class, unsigned
       fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_class_name, hd_data), hd_data);
   }
 #endif
+
+  init_hddb(hd_data);
+
+  x = hd_data->hddb_dev;
 
   if(name) name = free_mem(name);
 
@@ -350,7 +358,7 @@ char *hd_class_name(hd_data_t *hd_data, int level, unsigned base_class, unsigned
 
 char *hd_vendor_name(hd_data_t *hd_data, unsigned vendor)
 {
-  hddb_data_t *x = hd_data->hddb_dev;
+  hddb_data_t *x;
   unsigned u;
   unsigned ids[4] = { vendor, };
 
@@ -361,13 +369,17 @@ char *hd_vendor_name(hd_data_t *hd_data, unsigned vendor)
   }
 #endif
 
+  init_hddb(hd_data);
+
+  x = hd_data->hddb_dev;
+
   u = find_entry(&x, 0, 0, ids);
   return name_ind(x, u);
 }
 
 char *hd_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device)
 {
-  hddb_data_t *x = hd_data->hddb_dev;
+  hddb_data_t *x;
   unsigned u;
   unsigned ids[4] = { vendor, device, };
 
@@ -378,13 +390,17 @@ char *hd_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device)
   }
 #endif
 
+  init_hddb(hd_data);
+
+  x = hd_data->hddb_dev;
+
   u = find_entry(&x, 0, 1, ids);
   return name_ind(x, u);
 }
 
 char *hd_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device)
 {
-  hddb_data_t *x = hd_data->hddb_dev;
+  hddb_data_t *x;
   unsigned u;
   unsigned ids[4] = { vendor, device, sub_vendor, sub_device };
 
@@ -395,15 +411,23 @@ char *hd_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, u
   }
 #endif
 
+  init_hddb(hd_data);
+
+  x = hd_data->hddb_dev;
+
   u = find_entry(&x, 0, 3, ids);
   return name_ind(x, u);
 }
 
 unsigned device_class(hd_data_t *hd_data, unsigned vendor, unsigned device)
 {
-  hddb_data_t *x = hd_data->hddb_dev;
+  hddb_data_t *x;
   unsigned u;
   unsigned ids[4] = { vendor, device, };
+
+  init_hddb(hd_data);
+
+  x = hd_data->hddb_dev;
 
   u = find_entry(&x, 0, 1, ids);
   return device_class_ind(x, u);
@@ -411,9 +435,13 @@ unsigned device_class(hd_data_t *hd_data, unsigned vendor, unsigned device)
 
 unsigned sub_device_class(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device)
 {
-  hddb_data_t *x = hd_data->hddb_dev;
+  hddb_data_t *x;
   unsigned u;
   unsigned ids[4] = { vendor, device, sub_vendor, sub_device };
+
+  init_hddb(hd_data);
+
+  x = hd_data->hddb_dev;
 
   u = find_entry(&x, 0, 3, ids);
   return device_class_ind(x, u);
@@ -421,9 +449,13 @@ unsigned sub_device_class(hd_data_t *hd_data, unsigned vendor, unsigned device, 
 
 driver_info_t *device_driver(hd_data_t *hd_data, unsigned vendor, unsigned device)
 {
-  hddb_data_t *x = hd_data->hddb_drv;
+  hddb_data_t *x;
   unsigned u;
   unsigned ids[4] = { vendor, device, };
+
+  init_hddb(hd_data);
+
+  x = hd_data->hddb_drv;
 
   u = find_entry(&x, 1, 1, ids);
   return device_driver_ind(x, u);
@@ -431,9 +463,13 @@ driver_info_t *device_driver(hd_data_t *hd_data, unsigned vendor, unsigned devic
 
 driver_info_t *sub_device_driver(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device)
 {
-  hddb_data_t *x = hd_data->hddb_drv;
+  hddb_data_t *x;
   unsigned u;
   unsigned ids[4] = { vendor, device, sub_vendor, sub_device };
+
+  init_hddb(hd_data);
+
+  x = hd_data->hddb_drv;
 
   u = find_entry(&x, 1, 3, ids);
   return device_driver_ind(x, u);
@@ -806,10 +842,12 @@ void init_hddb(hd_data_t *hd_data)
  */
 void add_vendor_name(hd_data_t *hd_data, unsigned vendor, char *name)
 {
-  hddb_data_t *x = hd_data->hddb_dev;
+  hddb_data_t *x;
   unsigned u;
 
-  if(!x) return;
+  init_hddb(hd_data);
+
+  if(!(x = hd_data->hddb_dev)) return;
 
   store_data(x, MAKE_DATA(0, DATA_VALUE(vendor)));
 
@@ -821,10 +859,12 @@ void add_vendor_name(hd_data_t *hd_data, unsigned vendor, char *name)
 
 void add_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, char *name)
 {
-  hddb_data_t *x = hd_data->hddb_dev;
+  hddb_data_t *x;
   unsigned u;
 
-  if(!x) return;
+  init_hddb(hd_data);
+
+  if(!(x = hd_data->hddb_dev)) return;
 
   store_data(x, MAKE_DATA(0, DATA_VALUE(vendor)));
   store_data(x, MAKE_DATA(1, DATA_VALUE(device)));
@@ -837,10 +877,12 @@ void add_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, char 
 
 void add_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device, char *name)
 {
-  hddb_data_t *x = hd_data->hddb_dev;
+  hddb_data_t *x;
   unsigned u;
 
-  if(!x) return;
+  init_hddb(hd_data);
+
+  if(!(x = hd_data->hddb_dev)) return;
 
   store_data(x, MAKE_DATA(0, DATA_VALUE(vendor)));
   store_data(x, MAKE_DATA(1, DATA_VALUE(device)));
@@ -855,7 +897,7 @@ void add_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, u
 
 int hd_find_device_by_name(hd_data_t *hd_data, unsigned base_class, char *vendor, char *device, unsigned *vendor_id, unsigned *device_id)
 {
-  hddb_data_t *x = hd_data->hddb_dev;
+  hddb_data_t *x;
   unsigned u;
   unsigned ids[4];
   char *names[4];
@@ -866,6 +908,10 @@ int hd_find_device_by_name(hd_data_t *hd_data, unsigned base_class, char *vendor
       fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_find_device_by_name, hd_data), hd_data);
   }
 #endif
+
+  init_hddb(hd_data);
+
+  x = hd_data->hddb_dev;
 
   names[0] = vendor;
   names[1] = device;
@@ -887,8 +933,10 @@ str_list_t *get_hddb_packages(hd_data_t *hd_data)
   char *s, *t, *t0;
   char *s2, *t2, *t02;
   int i, j;
-
   hddb_data_t *x;
+
+  init_hddb(hd_data);
+
   for (j = 0; j < 2; j++) {
     x = j ? &HDDB_DRV : hd_data->hddb_drv;
     if (x == 0)
