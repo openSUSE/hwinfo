@@ -5,9 +5,9 @@ DISTCLEANFILES	= *.h *.xml *.ids check_hd
 
 include $(TOPDIR)/Makefile.common
 
-IDFILES	= src/names.SuSE src/names.bus src/names.class src/names.special \
+IDFILES	= src/names.SuSE src/bus src/names.class src/names.special \
 	  src/names.scanner src/names.network src/names.usbutils src/names.usb\
-	  src/names.eisa src/names.monitor src/names.x11 src/names.camera
+	  src/names.eisa src/names.monitor src/names.x11 src/camera src/tv src/dvb
 
 IDFILES += src/names.x11.ia32
 
@@ -16,7 +16,7 @@ IDFILES += src/x11.hwinfo.i386
 endif
 
 ifeq "$(ARCH)" "ppc"
-IDFILES += src/x11.hwinfo.ppc src/drivers.x11special.ppc
+IDFILES += src/x11.hwinfo.ppc src/x11.ppc.special
 endif
 
 ifeq "$(ARCH)" "alpha"
@@ -35,10 +35,10 @@ ifeq "$(ARCH)" "ia64"
 IDFILES += src/x11.hwinfo.ia64
 endif
 
-IDFILES += src/names.video src/names.pciutils\
+IDFILES += src/names.pciutils\
 	   src/drivers.network src/drivers.scsi src/drivers.block src/drivers.monitor\
-	   src/drivers.alsa src/drivers.audio src/drivers.mouse src/drivers.video\
-	   src/drivers.braille src/drivers.special
+	   src/drivers.alsa src/drivers.audio src/drivers.mouse\
+	   src/braille src/drivers.special
 
 $(LIBHD_D): hd_ids.o
 	ar r $(LIBHD) $?

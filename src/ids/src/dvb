@@ -1,0 +1,9 @@
+# dvb cards
+
+
+ vendor.id		pci 0x1131
+&device.id		pci 0x7146
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	saa7146_core
+

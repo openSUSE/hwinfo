@@ -579,6 +579,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_tv:
+    case hw_dvb:
       hd_set_probe_feature(hd_data, pr_pci);
       break;
 
@@ -4097,6 +4098,10 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           sub_class = sc_multi_video;
           sc = 1;
           xtra = 1;
+          break;
+
+        case hw_dvb:
+          base_class = bc_dvb;
           break;
 
         case hw_scanner:

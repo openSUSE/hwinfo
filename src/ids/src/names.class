@@ -141,3 +141,7 @@ C 10f	Camera
 	02	Digital Camera
 C 110	Framebuffer
 	01	VESA Framebuffer
+C 111	DVB Card
+	01	DVB-C Card
+	02	DVB-S Card
+	03	DVB-T Card

@@ -234,6 +234,7 @@ struct option options[] = {
   { "split", 0, NULL, 11},
   { "cfile", 1, NULL, 12},
   { "no-compact", 0, NULL, 13},
+  { "join-keys-first", 0, NULL, 14},
   { }
 };
 
@@ -252,6 +253,7 @@ struct {
   unsigned mini:1;
   unsigned split:1;
   unsigned no_compact:1;
+  unsigned join_keys_first:1;
   char *logfile;
   char *outfile;
   char *cfile;
@@ -329,6 +331,10 @@ int main(int argc, char **argv)
         opt.no_compact = 1;
         break;
 
+      case 14:
+        opt.join_keys_first = 1;
+        break;
+
       default:
         fprintf(stderr,
           "Usage: check_hd [options] [file]...\n"
@@ -392,8 +398,14 @@ int main(int argc, char **argv)
 
     fprintf(log, "- join items\n");
     fflush(log);
-    join_items_by_value(&hd);
-    join_items_by_key(&hd);
+    if(opt.join_keys_first) {
+      join_items_by_key(&hd);
+      join_items_by_value(&hd);
+    }
+    else {
+      join_items_by_value(&hd);
+      join_items_by_key(&hd);
+    }
   }
 
   if(opt.sort) {

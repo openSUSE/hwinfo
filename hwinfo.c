@@ -86,6 +86,7 @@ struct option options[] = {
   { "network_ctrl", 0, NULL, 1000 + hw_network_ctrl },
   { "printer", 0, NULL, 1000 + hw_printer },
   { "tv", 0, NULL, 1000 + hw_tv },
+  { "dvb", 0, NULL, 1000 + hw_dvb },
   { "scanner", 0, NULL, 1000 + hw_scanner },
   { "braille", 0, NULL, 1000 + hw_braille },
   { "sys", 0, NULL, 1000 + hw_sys },
@@ -1189,8 +1190,8 @@ void help()
     "  hw_item is one of:\n"
     "    cdrom, floppy, disk, network, gfxcard, framebuffer, monitor, camera,\n"
     "    mouse, joystick, keyboard, chipcard, sound, isdn, modem, storage-ctrl,\n"
-    "    netcard, printer, tv, scanner, braille, sys, bios, cpu, partition, usb-ctrl,\n"
-    "    usb, pci, isapnp, ide, scsi, bridge, hub, memory, smp,\n"
+    "    netcard, printer, tv, dvb, scanner, braille, sys, bios, cpu, partition,\n"
+    "    usb-ctrl, usb, pci, isapnp, ide, scsi, bridge, hub, memory, smp,\n"
     "    all, reallyall\n\n"
     "  Note: debug info is shown only in the log file. (If you specify a\n"
     "  log file the debug level is implicitly set to a reasonable value.)\n"

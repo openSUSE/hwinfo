@@ -1,0 +1,141 @@
+# braille displays
+
+ vendor.id		special 0x5001
++vendor.name		Alva
+
+ vendor.id		special 0x5001
+&device.id		special 0x0000
++device.name		abt320
++driver.any		abt320
+
+ vendor.id		special 0x5001
+&device.id		special 0x0001
++device.name		abt340
++driver.any		abt340
+
+ vendor.id		special 0x5001
+&device.id		special 0x0002
++device.name		abt34d
++driver.any		abt34d
+
+ vendor.id		special 0x5001
+&device.id		special 0x0003
++device.name		abt380
++driver.any		abt380
+
+ vendor.id		special 0x5001
+&device.id		special 0x0004
++device.name		abt38d
++driver.any		abt38d
+
+ vendor.id		special 0x5001
+&device.id		special 0x000b
++device.name		del440
++driver.any		del440
+
+ vendor.id		special 0x5001
+&device.id		special 0x000d
++device.name		del480
++driver.any		del480
+
+ vendor.id		special 0x5001
+&device.id		special 0x000e
++device.name		sat540
++driver.any		sat540
+
+ vendor.id		special 0x5002
++vendor.name		Papenmeier
+
+ vendor.id		special 0x5002
+&device.id		special 0x0001
++device.name		2dlite
++driver.any		2dlite
+
+ vendor.id		special 0x5002
+&device.id		special 0x0002
++device.name		tiny
++driver.any		tiny
+
+ vendor.id		special 0x5002
+&device.id		special 0x0003
++device.name		2d
++driver.any		2d
+
+ vendor.id		special 0x5002
+&device.id		special 0x0040
++device.name		el40
++driver.any		el40
+
+ vendor.id		special 0x5002
+&device.id		special 0x0041
++device.name		el66
++driver.any		el66
+
+ vendor.id		special 0x5002
+&device.id		special 0x0042
++device.name		el80
++driver.any		el80
+
+ vendor.id		special 0x5002
+&device.id		special 0x0043
++device.name		el2d
++driver.any		el2d
+
+ vendor.id		special 0x5002
+&device.id		special 0x0044
++device.name		el40p
++driver.any		el40p
+
+ vendor.id		special 0x5003
++vendor.name		Handy Tech
+
+ vendor.id		special 0x5003
+&device.id		special 0x0005
+|vendor.id		special 0x5003
+&device.id		special 0x0009
++device.name		brlwave
++driver.any		brlwave
+
+ vendor.id		special 0x5003
+&device.id		special 0x0044
++device.name		vario40-ht
++driver.any		vario40-ht
+
+ vendor.id		special 0x5003
+&device.id		special 0x0074
++device.name		brlstar40
++driver.any		brlstar40
+
+ vendor.id		special 0x5003
+&device.id		special 0x0080
++device.name		ht20
++driver.any		ht20
+
+ vendor.id		special 0x5003
+&device.id		special 0x0084
++device.name		vario80-ht
++driver.any		vario80-ht
+
+ vendor.id		special 0x5003
+&device.id		special 0x0088
++device.name		ht80
++driver.any		ht80
+
+ vendor.id		special 0x5003
+&device.id		special 0x0089
++device.name		ht40
++driver.any		ht40
+
+ vendor.id		special 0x5004
++vendor.name		Baum
+
+ vendor.id		special 0x5004
+&device.id		special 0x0001
++device.name		Vario40
++driver.any		vario40
+
+ vendor.id		special 0x5004
+&device.id		special 0x0002
++device.name		Vario80
++driver.any		vario80
+

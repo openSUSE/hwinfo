@@ -190,41 +190,6 @@ s4001	Sun Microsystems
 	3003	Sun Quad Ethernet
 	3004	MyriCOM MyriNET Gigabit Ethernet
 
-# braille displays
-s5001	Alva
-	0000	abt320
-	0001	abt340
-	0002	abt34d
-	0003	abt380
-	0004	abt38d
-	000b	del440
-	000d	del480
-	000e	sat540
-
-s5002	Papenmeier
-	0001	2dlite
-	0002	tiny
-	0003	2d
-	0040	el40
-	0041	el66
-	0042	el80
-	0043	el2d
-	0044	el40p
-
-s5003	Handy Tech
-	0005	brlwave
-	0009	brlwave
-	0044	vario40-ht
-	0074	brlstar40
-	0080	ht20
-	0084	vario80-ht
-	0088	ht80
-	0089	ht40
-
-s5004	Baum
-	0001	Vario40
-	0002	Vario80
-
 # special s390 hardware
 s6001	IBM
 	0000	Ethernet card

@@ -65,6 +65,7 @@ static hash_t hw_items[] = {
   { hw_bridge,       "bridge"            },
   { hw_hub,          "hub"               },
   { hw_memory,       "memory"            },
+  { hw_dvb,          "dvb card"          },
   { hw_unknown,      "unknown"           },
   { 0,               NULL                }
 };

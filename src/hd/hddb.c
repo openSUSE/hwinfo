@@ -1625,6 +1625,14 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
 
   hddb_search(hd_data, &hs);
 
+  if((hs.value & (1 << he_baseclass_id))) {
+    hd->base_class = hs.base_class.id;
+  }
+
+  if((hs.value & (1 << he_subclass_id))) {
+    hd->sub_class = hs.sub_class.id;
+  }
+
   if((hs.value & (1 << he_requires))) {
     hd->requires = free_str_list(hd->requires);
     hd->requires = hd_split('|', hs.requires);

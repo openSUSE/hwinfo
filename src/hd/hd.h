@@ -96,7 +96,7 @@ typedef enum hw_item {
   hw_framebuffer, hw_camera, hw_sound, hw_storage_ctrl, hw_network_ctrl,
   hw_isdn, hw_modem, hw_network, hw_disk, hw_partition, hw_cdrom, hw_floppy,
   hw_manual, hw_usb_ctrl, hw_usb, hw_bios, hw_pci, hw_isapnp, hw_bridge,
-  hw_hub, hw_scsi, hw_ide, hw_memory,
+  hw_hub, hw_scsi, hw_ide, hw_memory, hw_dvb,
   hw_unknown, hw_all					/* hw_all must be last */
 } hd_hw_item_t;
 
@@ -116,7 +116,7 @@ typedef enum base_classes {
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,
   bc_storage_device, bc_network_interface, bc_keyboard, bc_printer,
   bc_hub, bc_braille, bc_scanner, bc_joystick, bc_chipcard, bc_camera,
-  bc_framebuffer
+  bc_framebuffer, bc_dvb
 } hd_base_classes_t;
 
 /* subclass values of bc_monitor */

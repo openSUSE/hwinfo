@@ -34,6 +34,7 @@ struct option options[] = {
   { "camera", 0, NULL, 1000 + hw_camera },
   { "isdn", 0, NULL, 1000 + hw_isdn },
   { "tv", 0, NULL, 1000 + hw_tv },
+  { "dvb", 0, NULL, 1000 + hw_dvb },
   { "scanner", 0, NULL, 1000 + hw_scanner },
   { "joystick", 0, NULL, 1000 + hw_joystick },
   { "usb", 0, NULL, 1000 + hw_usb },
@@ -199,7 +200,7 @@ void help()
     "  --hw_item         probe for hw_item and update status info\n"
     "  hw_item is one of:\n"
     "    cdrom, floppy, disk, mouse, gfxcard, monitor, network, sound, modem,\n"
-    "    printer, storage-ctrl, netcard, camera, isdn, tv, scanner, joystick,\n"
+    "    printer, storage-ctrl, netcard, camera, isdn, tv, dvb, scanner, joystick,\n"
     "    usb, pci, isapnp, framebuffer, keyboard, chipcard, braille, partition,\n"
     "    usb-ctrl, sys, cpu, bios, bridge, hub, memory\n"
   );
