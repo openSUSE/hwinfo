@@ -819,10 +819,6 @@ void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt)
   unsigned compat_vend, compat_dev, bus;
   char *vendor, *name, *type;
   hd_smbios_t *sm;
-  static char *mice[] = {
-    NULL, "Touch Pad" /* normally "Other" */, NULL, "Mouse",
-    "Track Ball", "Track Point", "Glide Point", "Touch Pad"
-  };
 
   if(bt->mouse.compat_vend || !hd_data->smbios) return;
 
@@ -841,7 +837,7 @@ void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt)
       compat_vend = compat_dev = bus = 0;
       type = NULL;
       
-      switch(sm->mouse.interface) {
+      switch(sm->mouse.interface.id) {
         case 4:	/* ps/2 */
         case 7:	/* bus mouse (dell notebooks report this) */
           bus = bus_ps2;
@@ -849,7 +845,9 @@ void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt)
           compat_dev = MAKE_ID(TAG_SPECIAL, sm->mouse.buttons == 3 ? 0x0007 : 0x0006);
           break;
       }
-      type = mice[sm->mouse.mtype < sizeof mice / sizeof *mice ? sm->mouse.mtype : 0];
+      type = sm->mouse.mtype.name;
+      if(sm->mouse.mtype.id == 1) type = "Touch Pad";	/* Why??? */
+      if(sm->mouse.mtype.id == 2) type = NULL;		/* "Other" */
     }
   }
 
@@ -858,7 +856,7 @@ void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt)
   if(!type) {
     if(!strcmp(vendor, "Sony Corporation") && strstr(name, "PCG-") == name) {
       bus = bus_ps2;
-      type = mice[7];
+      type = "Touch Pad";
       compat_vend = MAKE_ID(TAG_SPECIAL, 0x0200);
       compat_dev = MAKE_ID(TAG_SPECIAL, 0x0006);
     }

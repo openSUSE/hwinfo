@@ -670,9 +670,8 @@ typedef struct {
   } *dev;			/* device list  */
 } smbios_onboard_t;
 
-/* smbios_oem_t: same as smbios_any_t, just use the 'strings' field */
-/* smbios_config_t: same as smbios_any_t, just use the 'strings' field */
 
+/* OEM information */
 typedef struct {
   union u_hd_smbios_t *next;
   hd_smbios_type_t type;
@@ -680,9 +679,35 @@ typedef struct {
   unsigned char *data;
   str_list_t *strings;
   int handle;
-  char *current;
+  str_list_t *oem_strings;	/* OEM strings */
+} smbios_oem_t;
+
+
+/* system config options */
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  str_list_t *options;		/* system config options */
+} smbios_config_t;
+
+
+/* language information */
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;		/* list of languages */
+  int handle;
+  char *current;		/* current language */
 } smbios_lang_t;
 
+
+/* physical memory array */
 typedef struct {
   union u_hd_smbios_t *next;
   hd_smbios_type_t type;
@@ -690,9 +715,14 @@ typedef struct {
   unsigned char *data;
   str_list_t *strings;
   int handle;
-  unsigned ecc;
-  unsigned max_size;		/* kB */
+  hd_id_t location;		/* memory device location */
+  hd_id_t use;			/* memory usage */
+  hd_id_t ecc;			/* ECC types */
+  unsigned max_size;		/* maximum memory size in kB */
+  int error_handle;		/* points to error info record; 0xfffe: not supported, 0xffff: no error */
+  unsigned slots;		/* slots or sockets for this device */
 } smbios_memarray_t;
+
 
 typedef struct {
   union u_hd_smbios_t *next;
@@ -712,6 +742,8 @@ typedef struct {
   unsigned speed;
 } smbios_memdevice_t;
 
+
+/* pointing device (aka 'mouse') information */
 typedef struct {
   union u_hd_smbios_t *next;
   hd_smbios_type_t type;
@@ -719,10 +751,11 @@ typedef struct {
   unsigned char *data;
   str_list_t *strings;
   int handle;
-  unsigned mtype;
-  unsigned interface;
-  unsigned buttons;
+  hd_id_t mtype;		/* mouse type */
+  hd_id_t interface;		/* interface type */
+  unsigned buttons;		/* number of buttons */
 } smbios_mouse_t;
+
 
 typedef union u_hd_smbios_t {
   union u_hd_smbios_t *next;  
@@ -736,8 +769,8 @@ typedef union u_hd_smbios_t {
   smbios_connect_t connect;
   smbios_slot_t slot;
   smbios_onboard_t onboard;
-  /* oem: same as 'any' */
-  /* config same as 'any' */
+  smbios_oem_t oem;
+  smbios_config_t config;
   smbios_lang_t lang;
   smbios_memarray_t memarray;
   smbios_memdevice_t memdevice;

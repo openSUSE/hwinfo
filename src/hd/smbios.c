@@ -230,9 +230,10 @@ SMBIOS_DEF_MAP(smbios_cache_location);
 
 static char *smbios_cache_ecc_[] = {
   NULL, "Other", "Unknown", "None",
-  "Parity", "Single-bit", "Multi-bit"
+  "Parity", "Single-bit", "Multi-bit", "CRC"
 };
 SMBIOS_DEF_MAP(smbios_cache_ecc);
+#define smbios_memarray_ecc smbios_cache_ecc
 
 
 static char *smbios_cache_type_[] = {
@@ -408,6 +409,58 @@ static char *smbios_onboard_type_[] = {
 SMBIOS_DEF_MAP(smbios_onboard_type);
 
 
+static sm_num2str_t smbios_memarray_location_[] = {
+  { 0x00, NULL },
+  { 0x01, "Other" },
+  { 0x02, "Unknown" },
+  { 0x03, "Motherboard" },
+  { 0x04, "ISA add-on card" },
+  { 0x05, "EISA add-on card" },
+  { 0x06, "PCI add-on card" },
+  { 0x07, "MCA add-on card" },
+  { 0x08, "PCMCIA add-on card" },
+  { 0x09, "Proprietary add-on card" },
+  { 0x0a, "NuBus" },
+  { 0xa0, "PC-98/C20 add-on card" },
+  { 0xa1, "PC-98/C24 add-on card" },
+  { 0xa2, "PC-98/E add-on card" },
+  { 0xa3, "PC-98/Local bus add-on card" }
+};
+SMBIOS_DEF_MAP(smbios_memarray_location);
+
+
+static char *smbios_memarray_use_[] = {
+  NULL, "Other", "Unknown", "System memory",
+  "Video memory", "Flash memory", "Non-volatile RAM", "Cache memory"
+};
+SMBIOS_DEF_MAP(smbios_memarray_use);
+
+
+static char *smbios_mouse_type_[] = {
+  NULL, "Other", "Unknown", "Mouse",
+  "Track Ball", "Track Point", "Glide Point", "Touch Pad",
+  "Touch Screen", "Optical Sensor"
+};
+SMBIOS_DEF_MAP(smbios_mouse_type);
+
+
+static sm_num2str_t smbios_mouse_interface_[] = {
+  { 0x00, NULL },
+  { 0x01, "Other" },
+  { 0x02, "Unknown" },
+  { 0x03, "Serial" },
+  { 0x04, "PS/2" },
+  { 0x05, "Infrared" },
+  { 0x06, "HP-HIL" },
+  { 0x07, "Bus Mouse" },
+  { 0x08, "ADB" },
+  { 0xa0, "Bus mouse DB-9" },
+  { 0xa1, "Bus mouse micro-DIN" },
+  { 0xa2, "USB" }
+};
+SMBIOS_DEF_MAP(smbios_mouse_interface);
+
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 /*
@@ -535,7 +588,7 @@ void smbios_bitmap2str(hd_bitmap_t *hbm, sm_str_map_t *map)
 void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
 {
   hd_smbios_t *sm;
-  str_list_t *sl;
+  str_list_t *sl_any, *sl;
   int cnt, data_len;
   unsigned char *sm_data;
   unsigned u, v;
@@ -545,15 +598,15 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
   for(cnt = 0, sm = hd_data->smbios; sm; sm = sm->next, cnt++) {
     sm_data = sm->any.data;
     data_len = sm->any.data_len;
-    sl = sm->any.strings;
+    sl_any = sm->any.strings;
     switch(sm->any.type) {
       case sm_biosinfo:
         if(data_len >= 0x12) {
           sm->biosinfo.start = (*(uint16_t *) (sm_data + 6)) << 4;
           sm->biosinfo.rom_size = (sm_data[9] + 1) << 16;
-          sm->biosinfo.vendor = get_string(sl, sm_data[4]);
-          sm->biosinfo.version = get_string(sl, sm_data[5]);
-          sm->biosinfo.date = get_string(sl, sm_data[8]);
+          sm->biosinfo.vendor = get_string(sl_any, sm_data[4]);
+          sm->biosinfo.version = get_string(sl_any, sm_data[5]);
+          sm->biosinfo.date = get_string(sl_any, sm_data[8]);
           memcpy(sm->biosinfo.feature.bitmap, sm_data + 0xa, 8);
         }
         if(data_len >= 0x13) {
@@ -568,10 +621,10 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
 
       case sm_sysinfo:
         if(data_len >= 8) {
-          sm->sysinfo.manuf = get_string(sl, sm_data[4]);
-          sm->sysinfo.product = get_string(sl, sm_data[5]);
-          sm->sysinfo.version = get_string(sl, sm_data[6]);
-          sm->sysinfo.serial = get_string(sl, sm_data[7]);
+          sm->sysinfo.manuf = get_string(sl_any, sm_data[4]);
+          sm->sysinfo.product = get_string(sl_any, sm_data[5]);
+          sm->sysinfo.version = get_string(sl_any, sm_data[6]);
+          sm->sysinfo.serial = get_string(sl_any, sm_data[7]);
         }
         if(data_len >= 0x19) {
           memcpy(sm->sysinfo.uuid, sm_data + 8, 16);
@@ -582,19 +635,19 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
 
       case sm_boardinfo:
         if(data_len >= 8) {
-          sm->boardinfo.manuf = get_string(sl, sm_data[4]);
-          sm->boardinfo.product = get_string(sl, sm_data[5]);
-          sm->boardinfo.version = get_string(sl, sm_data[6]);
-          sm->boardinfo.serial = get_string(sl, sm_data[7]);
+          sm->boardinfo.manuf = get_string(sl_any, sm_data[4]);
+          sm->boardinfo.product = get_string(sl_any, sm_data[5]);
+          sm->boardinfo.version = get_string(sl_any, sm_data[6]);
+          sm->boardinfo.serial = get_string(sl_any, sm_data[7]);
         }
         if(data_len >= 9) {
-          sm->boardinfo.asset = get_string(sl, sm_data[8]);
+          sm->boardinfo.asset = get_string(sl_any, sm_data[8]);
         }
         if(data_len >= 0x0e) {
           sm->boardinfo.feature.bitmap[0] = sm_data[9];
           sm->boardinfo.feature.bits = 8;
           smbios_bitmap2str(&sm->boardinfo.feature, &smbios_board_feature);
-          sm->boardinfo.location = get_string(sl, sm_data[0x0a]);
+          sm->boardinfo.location = get_string(sl_any, sm_data[0x0a]);
           sm->boardinfo.chassis = *(uint16_t *) (sm_data + 0x0b);
           sm->boardinfo.board_type.id = sm_data[0x0d];
           smbios_id2str(&sm->boardinfo.board_type, &smbios_board_types, 1);
@@ -613,15 +666,15 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
 
       case sm_chassis:
         if(data_len >= 6) {
-          sm->chassis.manuf = get_string(sl, sm_data[4]);
+          sm->chassis.manuf = get_string(sl_any, sm_data[4]);
           sm->chassis.lock = sm_data[5] >> 7;
           sm->chassis.ch_type.id = sm_data[5] & 0x7f;
           smbios_id2str(&sm->chassis.ch_type, &smbios_chassis_types, 1);
         }
         if(data_len >= 9) {
-          sm->chassis.version = get_string(sl, sm_data[6]);
-          sm->chassis.serial = get_string(sl, sm_data[7]);
-          sm->chassis.asset = get_string(sl, sm_data[8]);
+          sm->chassis.version = get_string(sl_any, sm_data[6]);
+          sm->chassis.serial = get_string(sl_any, sm_data[7]);
+          sm->chassis.asset = get_string(sl_any, sm_data[8]);
         }
         if(data_len >= 0x0d) {
           sm->chassis.bootup.id = sm_data[9];
@@ -640,9 +693,9 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
 
       case sm_processor:
         if(data_len >= 0x1a) {
-          sm->processor.socket = get_string(sl, sm_data[4]);
-          sm->processor.manuf = get_string(sl, sm_data[7]);
-          sm->processor.version = get_string(sl, sm_data[0x10]);
+          sm->processor.socket = get_string(sl_any, sm_data[4]);
+          sm->processor.manuf = get_string(sl_any, sm_data[7]);
+          sm->processor.version = get_string(sl_any, sm_data[0x10]);
           sm->processor.voltage = sm_data[0x11];
           if(sm->processor.voltage & 0x80) {
             sm->processor.voltage &= 0x7f;
@@ -685,17 +738,17 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
           if(sm->processor.l3_cache == 0xffff) sm->processor.l3_cache = 0;
         }
         if(data_len >= 0x21) {
-          sm->processor.serial = get_string(sl, sm_data[0x20]);
+          sm->processor.serial = get_string(sl_any, sm_data[0x20]);
         }
         if(data_len >= 0x22) {
-          sm->processor.asset = get_string(sl, sm_data[0x21]);
-          sm->processor.part = get_string(sl, sm_data[0x22]);
+          sm->processor.asset = get_string(sl_any, sm_data[0x21]);
+          sm->processor.part = get_string(sl_any, sm_data[0x22]);
         }
         break;
 
       case sm_cache:
         if(data_len >= 0x0f) {
-          sm->cache.socket = get_string(sl, sm_data[4]);
+          sm->cache.socket = get_string(sl_any, sm_data[4]);
           u = *(uint16_t *) (sm_data + 7);
           if((u & 0x8000)) u = (u & 0x7fff) << 6;
           sm->cache.max_size = u;
@@ -732,8 +785,8 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
 
       case sm_connect:
         if(data_len >= 9) {
-          sm->connect.i_des = get_string(sl, sm_data[4]);
-          sm->connect.x_des = get_string(sl, sm_data[6]);
+          sm->connect.i_des = get_string(sl_any, sm_data[4]);
+          sm->connect.x_des = get_string(sl_any, sm_data[6]);
           sm->connect.i_type.id = sm_data[5];
           sm->connect.x_type.id = sm_data[7];
           sm->connect.port_type.id = sm_data[8];
@@ -745,7 +798,7 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
 
       case sm_slot:
         if(data_len >= 0x0c) {
-          sm->slot.desig = get_string(sl, sm_data[4]);
+          sm->slot.desig = get_string(sl_any, sm_data[4]);
           sm->slot.slot_type.id = sm_data[5];
           sm->slot.bus_width.id = sm_data[6];
           sm->slot.usage.id = sm_data[7];
@@ -774,7 +827,7 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
               sm->onboard.dev = new_mem(u * sizeof *sm->onboard.dev);
             }
             for(u = 0; u < sm->onboard.dev_len; u++) {
-              sm->onboard.dev[u].name = get_string(sl, sm_data[4 + (u << 1) + 1]);
+              sm->onboard.dev[u].name = get_string(sl_any, sm_data[4 + (u << 1) + 1]);
               v = sm_data[4 + (u << 1)];
               sm->onboard.dev[u].status = v >> 7;
               sm->onboard.dev[u].type.id = v & 0x7f;
@@ -785,19 +838,35 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
         break;
 
       case sm_oem:
+        for(sl = sl_any; sl; sl = sl->next) {
+          if(sl->str && *sl->str) add_str_list(&sm->oem.oem_strings, sl->str);
+        }
+        break;
+
       case sm_config:
+        for(sl = sl_any; sl; sl = sl->next) {
+          if(sl->str && *sl->str) add_str_list(&sm->config.options, sl->str);
+        }
         break;
 
       case sm_lang:
         if(data_len >= 0x16) {
-          sm->lang.current = get_string(sl, sm_data[0x15]);
+          sm->lang.current = get_string(sl_any, sm_data[0x15]);
         }
         break;
 
       case sm_memarray:
-        if(data_len >= 0x0b) {
-          sm->memarray.ecc = sm_data[6];
-          memcpy(&sm->memarray.max_size, sm_data + 0x7, 4);
+        if(data_len >= 0x0f) {
+          sm->memarray.location.id = sm_data[4];
+          sm->memarray.use.id = sm_data[5];
+          sm->memarray.ecc.id = sm_data[6];
+          sm->memarray.max_size = *(uint32_t *) (sm_data + 7);
+          if(sm->memarray.max_size == 0x80000000) sm->memarray.max_size = 0;
+          sm->memarray.error_handle = *(uint16_t *) (sm_data + 0x0b);
+          sm->memarray.slots = *(uint16_t *) (sm_data + 0x0d);
+          smbios_id2str(&sm->memarray.location, &smbios_memarray_location, 1);
+          smbios_id2str(&sm->memarray.use, &smbios_memarray_use, 1);
+          smbios_id2str(&sm->memarray.ecc, &smbios_memarray_ecc, 1);
         }
         break;
 
@@ -822,8 +891,8 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
             sm->memdevice.size <<= 10;
           }
           sm->memdevice.form = sm_data[0xe];
-          sm->memdevice.location = get_string(sl, sm_data[0x10]);
-          sm->memdevice.bank = get_string(sl, sm_data[0x11]);
+          sm->memdevice.location = get_string(sl_any, sm_data[0x10]);
+          sm->memdevice.bank = get_string(sl_any, sm_data[0x11]);
           sm->memdevice.type1 = sm_data[0x12];
           sm->memdevice.type2 = sm_data[0x13] + (sm_data[0x14] << 8);
         }
@@ -834,9 +903,11 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
 
       case sm_mouse:
         if(data_len >= 7) {
-          sm->mouse.mtype = sm_data[4];
-          sm->mouse.interface = sm_data[5];
+          sm->mouse.mtype.id = sm_data[4];
+          sm->mouse.interface.id = sm_data[5];
           sm->mouse.buttons = sm_data[6];
+          smbios_id2str(&sm->mouse.mtype, &smbios_mouse_type, 1);
+          smbios_id2str(&sm->mouse.interface, &smbios_mouse_interface, 1);
         }
         break;
 
@@ -962,13 +1033,32 @@ hd_smbios_t *smbios_free(hd_smbios_t *sm)
         free_mem(sm->onboard.dev);
         break;
 
+      case sm_oem:
+        free_str_list(sm->oem.oem_strings);
+        break;
+
+      case sm_config:
+        free_str_list(sm->config.options);
+        break;
+
       case sm_lang:
         free_mem(sm->lang.current);
+        break;
+
+      case sm_memarray:
+        free_mem(sm->memarray.location.name);
+        free_mem(sm->memarray.use.name);
+        free_mem(sm->memarray.ecc.name);
         break;
 
       case sm_memdevice:
         free_mem(sm->memdevice.location);
         free_mem(sm->memdevice.bank);
+        break;
+
+      case sm_mouse:
+        free_mem(sm->mouse.mtype.name);
+        free_mem(sm->mouse.interface.name);
         break;
 
       default:
@@ -992,9 +1082,6 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
   char c, *s, *t;
   unsigned u;
   int i;
-  static char *eccs[5] = {
-    "No Error Correction", "Parity", "Single-bit ECC", "Multi-bit ECC", "CRC"
-  };
   static char *memtypes[] = {
     "Unknown", "Other", "Unknown", "DRAM",
     "EDRAM", "VRAM", "SRAM", "RAM",
@@ -1008,15 +1095,7 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
     "Proprietary Card", "DIMM", "TSOP", "Row of Chips",
     "RIMM", "SODIMM"
   };
-  static char *mice[] = {
-    NULL, "Other", NULL, "Mouse",
-    "Track Ball", "Track Point", "Glide Point", "Touch Pad"
-  };
-  static char *mifaces[] = {
-    NULL, NULL, NULL, "Serial",
-    "PS/2", "Infrared", "HP-HIL", "Bus Mouse",
-    "ADB"
-  };
+
   if(!hd_data->smbios) return;
 
   for(sm = hd_data->smbios; sm; sm = sm->next) {
@@ -1172,13 +1251,16 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
         break;
 
       case sm_oem:
+        fprintf(f, "  OEM Strings: #%d\n", sm->any.handle);
+        for(sl = sm->oem.oem_strings; sl; sl = sl->next) {
+          fprintf(f, "    %s\n", sl->str);
+        }
+        break;
+
       case sm_config:
-        fprintf(f,
-          sm->any.type == sm_oem ? "  OEM Strings: #%d\n" : "  System Config Options (Jumpers & Switches) #%d:\n",
-          sm->any.handle
-        );
-        for(sl = sm->any.strings; sl; sl = sl->next) {
-          if(sl->str && *sl->str) fprintf(f, "    %s\n", sl->str);
+        fprintf(f, "  System Config Options (Jumpers & Switches) #%d:\n", sm->any.handle);
+        for(sl = sm->config.options; sl; sl = sl->next) {
+          fprintf(f, "    %s\n", sl->str);
         }
         break;
 
@@ -1196,16 +1278,25 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
 
       case sm_memarray:
         fprintf(f, "  Physical Memory Array: #%d\n", sm->any.handle);
+        SMBIOS_PRINT_ID(memarray.use, "Use");
+        SMBIOS_PRINT_ID(memarray.location, "Location");
+        fprintf(f, "    Slots: %u\n", sm->memarray.slots);
         if(sm->memarray.max_size) {
           u = sm->memarray.max_size;
           c = 'k';
           if(!(u & 0x3ff)) { u >>= 10; c = 'M'; }
           if(!(u & 0x3ff)) { u >>= 10; c = 'G'; }
-          fprintf(f, "    Max. Size: %u %cB", u, c);
-          if(sm->memarray.ecc >= 3 && sm->memarray.ecc < 8) {
-            fprintf(f, " (%s)", eccs[sm->memarray.ecc - 3]);
+          fprintf(f, "    Max. Size: %u %cB\n", u, c);
+        }
+        SMBIOS_PRINT_ID(memarray.ecc, "ECC");
+        if(sm->memarray.error_handle != 0xfffe) {
+          fprintf(f, "    Error Info: ");
+          if(sm->memarray.error_handle != 0xffff) {
+            fprintf(f, "%d\n", sm->memarray.error_handle);
           }
-          fprintf(f, "\n");
+          else {
+            fprintf(f, "No Error\n");
+          }
         }
         break;
 
@@ -1249,19 +1340,9 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
 
       case sm_mouse:
         fprintf(f, "  Pointing Device: #%d\n", sm->any.handle);
-        s = mice[sm->mouse.mtype < sizeof mice / sizeof *mice ? sm->mouse.mtype : 0];
-        u = sm->mouse.interface;
-        t = mifaces[u < sizeof mifaces / sizeof *mifaces ? u : 0];
-        if(u == 0xa0) t = "DB-9 Bus Mouse";
-        if(u == 0xa1) t = "micro-DIN Bus Mouse";
-        if(u == 0xa2) t = "USB";
-        if(s) {
-          fprintf(f, "    Mouse: %s%s%s%s, %u buttons\n",
-            s,
-            t ? " (" : "", t ?: "", t ? ")" : "",
-            sm->mouse.buttons
-          );
-        }
+        SMBIOS_PRINT_ID(mouse.mtype, "Type");
+        SMBIOS_PRINT_ID(mouse.interface, "Interface");
+        if(sm->mouse.buttons) fprintf(f, "    Buttons: %u\n", sm->mouse.buttons);
         break;
 
       case sm_inactive:
