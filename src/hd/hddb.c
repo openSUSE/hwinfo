@@ -753,6 +753,21 @@ void init_hddb(hd_data_t *hd_data)
  * Should we remove a potentially existing old entry? At the moment the new
  * entry is ignored in that case.
  */
+void add_vendor_name(hd_data_t *hd_data, unsigned vendor, char *name)
+{
+  hddb_data_t *x = hd_data->hddb_dev;
+  unsigned u;
+
+  if(!x) return;
+
+  store_data(x, MAKE_DATA(0, DATA_VALUE(vendor)));
+
+  if(name) {
+    u = store_name(x, name);
+    store_data(x, MAKE_DATA(FL_VAL0, u));
+  }
+}
+
 void add_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, char *name)
 {
   hddb_data_t *x = hd_data->hddb_dev;

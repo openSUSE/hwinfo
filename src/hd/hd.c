@@ -1438,6 +1438,46 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
   return di;
 }
 
+driver_info_t *monitor_driver(hd_data_t *hd_data, hd_t *hd)
+{
+  driver_info_t *di = NULL;
+  driver_info_display_t *ddi;
+  monitor_info_t *mi;
+  hd_res_t *res;
+  unsigned width = 640, height = 480;
+
+  if(
+    hd->detail &&
+    hd->detail->type == hd_detail_monitor &&
+    (mi = hd->detail->monitor.data) &&
+    mi->min_hsync
+  ) {
+    di = new_mem(sizeof *di);
+    di->display.type = di_display;
+    ddi = &(di->display);
+
+    ddi->min_vsync = mi->min_vsync;
+    ddi->max_vsync = mi->max_vsync;
+    ddi->min_hsync = mi->min_hsync;
+    ddi->max_hsync = mi->max_hsync;
+
+    for(res = hd->res; res; res = res->next) {
+      if(res->any.type == res_monitor) {
+        if(res->monitor.width * res->monitor.height > width * height ) {
+          width = res->monitor.width;
+          height = res->monitor.height;
+        }
+      }
+    }
+
+    ddi->width = width;
+    ddi->height = height;
+  }
+
+  return di;
+}
+
+
 /*
  * Reads the driver info.
  *
@@ -1485,6 +1525,11 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 
   if(hd->base_class == bc_keyboard) {
     di0 = kbd_driver(hd_data, hd);
+    if(di0) return di0;
+  }
+
+  if(!di0 && hd->base_class == bc_monitor) {
+    di0 = monitor_driver(hd_data, hd);
     if(di0) return di0;
   }
 
@@ -2213,6 +2258,19 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_pci);
         hd_set_probe_feature(hd_data, pr_sbus);
         break;
+
+      case hw_printer:
+        hd_set_probe_feature(hd_data, pr_misc);
+        hd_set_probe_feature(hd_data, pr_parallel);
+        hd_set_probe_feature(hd_data, pr_usb);
+        break;
+
+      case hw_tv:
+        hd_set_probe_feature(hd_data, pr_pci);
+        break;
+
+      case hw_scanner:
+        break;
     }
     hd_scan(hd_data);
     memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
@@ -2279,6 +2337,18 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 
     case hw_network_ctrl:
       base_class = bc_network;
+      break;
+
+    case hw_printer:
+      base_class = bc_printer;
+      break;
+
+    case hw_tv:
+      base_class = -1;
+      break;
+
+    case hw_scanner:
+      base_class = -1;
       break;
 
     default:

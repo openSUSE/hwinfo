@@ -96,6 +96,9 @@ int main(int argc, char **argv)
     if(!strcmp(list, "modem")) i = hw_modem;
     if(!strcmp(list, "storage_ctrl")) i = hw_storage_ctrl;
     if(!strcmp(list, "network_ctrl")) i = hw_network_ctrl;
+    if(!strcmp(list, "printer")) i = hw_printer;
+    if(!strcmp(list, "tv")) i = hw_tv;
+    if(!strcmp(list, "scanner")) i = hw_scanner;
 
     if(i >= 0) {
       hd = hd_list(hd_data, i, listplus, NULL);

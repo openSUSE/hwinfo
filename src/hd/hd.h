@@ -83,7 +83,7 @@ typedef enum probe_feature {
 typedef enum hw_item {
   hw_cdrom = 1, hw_floppy, hw_disk, hw_network, hw_display, hw_monitor,
   hw_mouse, hw_keyboard, hw_sound, hw_isdn, hw_modem, hw_storage_ctrl,
-  hw_network_ctrl
+  hw_network_ctrl, hw_printer, hw_tv, hw_scanner
 } hd_hw_item_t;
 
 /*
@@ -335,6 +335,19 @@ typedef struct {
   unsigned has_color:1;
   unsigned color;
 } prom_info_t;
+
+
+/*
+ * monitor (DDC) data
+ */
+typedef struct {
+  unsigned manu_year;
+  unsigned min_vsync, max_vsync;	/* vsync range */
+  unsigned min_hsync, max_hsync;	/* hsync range */
+  char *vendor;
+  char *name;
+  char *serial;
+} monitor_info_t;
 
 
 typedef enum cpu_arch {
@@ -697,7 +710,8 @@ typedef union driver_info_u {
  */
 typedef enum hd_detail_type {
   hd_detail_pci, hd_detail_usb, hd_detail_isapnp, hd_detail_cdrom,
-  hd_detail_floppy, hd_detail_bios, hd_detail_cpu, hd_detail_prom
+  hd_detail_floppy, hd_detail_bios, hd_detail_cpu, hd_detail_prom,
+  hd_detail_monitor
 } hd_detail_type_t;
 
 typedef struct {
@@ -740,6 +754,11 @@ typedef struct {
   prom_info_t *data;
 } hd_detail_prom_t;
 
+typedef struct {
+  enum hd_detail_type type;
+  monitor_info_t *data;
+} hd_detail_monitor_t;
+
 typedef union {
   enum hd_detail_type type;
   hd_detail_pci_t pci;
@@ -750,6 +769,7 @@ typedef union {
   hd_detail_bios_t bios;
   hd_detail_cpu_t cpu;
   hd_detail_prom_t prom;
+  hd_detail_monitor_t monitor;
 } hd_detail_t;
 
 
