@@ -6,12 +6,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
-#include <sys/mount.h>
-#include <linux/hdreg.h>
-
-#ifndef BLKSSZGET
-#define BLKSSZGET  _IO(0x12,104)	/* get block device sector size */
-#endif
+#include <sys/pci.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -33,14 +28,22 @@ void hd_scan_ide(hd_data_t *hd_data)
 {
 
   hd_t *hd;
-  char *fname = NULL, buf[256], *s;
+  char *fname = NULL, buf[256], *s, *t;
   FILE *f;
-  unsigned u0, u1, u2;
+  unsigned u0, u1, u2, u3;
   int i, j;
-  str_list_t *sl, *sl0;
+  str_list_t *sl, *sl0, *sl_if, *sl_hd;
   hd_res_t *res;
   int found = 0;
-
+  unsigned vend, dev, slot, func;
+  unsigned parent;
+  struct {
+    char *name;
+    unsigned idx;
+  } *if_table = NULL;
+  int if_table_len = 0;
+  char hd_buf[] = "hda";
+  
   if(!hd_probe_feature(hd_data, pr_ide)) return;
 
   hd_data->module = mod_ide;
@@ -48,9 +51,78 @@ void hd_scan_ide(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
 
-  /* got through hda...hdp */
+  sl0 = read_dir(PROC_IDE, 'd');
+
+  for(sl_if = NULL, sl = sl0; sl; sl = sl->next) {
+    if(strstr(sl->str, "ide") == sl->str) {
+      add_str_list(&sl_if, sl->str);
+      if_table_len++;
+    }
+  }
+
+  free_str_list(sl0);
+
+  if(if_table_len) if_table = new_mem(if_table_len * sizeof *if_table);
+  if_table_len = 0;
+
+  s = NULL;
+  for(sl = sl_if; sl; sl = sl->next) {
+    // ADD2LOG("ide: %s\n", sl->str);
+    str_printf(&s, 0, PROC_IDE "/%s/config", sl->str);
+    sl0 = read_file(s, 0, 1);
+    if(sl0 && sl0->str) {
+      if(sscanf(sl0->str, "pci bus %x device %x vid %x did %x", &u0, &u1, &u2, &u3) == 4) {
+        slot = PCI_SLOT(u1 & 0xff) + (u0 << 8);
+        func = PCI_FUNC(u1 & 0xff);
+        vend = MAKE_ID(TAG_PCI, u2);
+        dev = MAKE_ID(TAG_PCI, u3);
+        for(hd = hd_data->hd; hd; hd = hd->next) {
+          if(hd->slot == slot && hd->func == func && hd->vend == vend && hd->dev == dev) {
+            if_table[if_table_len].name = sl->str;
+            if_table[if_table_len++].idx = hd->idx;
+            if(!search_str_list(hd->extra_info, sl->str)) {
+              add_str_list(&hd->extra_info, sl->str);
+            }
+          }
+        }
+      }
+    }
+    free_str_list(sl0);
+  }
+  free_mem(s);
+
+  sl0 = read_dir(PROC_IDE, 'l');
+
+  for(sl_hd = NULL, sl = sl0; sl; sl = sl->next) {
+    if(strstr(sl->str, "hd") == sl->str) {
+      add_str_list(&sl_hd, sl->str);
+    }
+  }
+
+  free_str_list(sl0);
+
+  // for(sl = sl_hd; sl; sl = sl->next) ADD2LOG("hd: %s\n", sl->str);
+
+  /* go through hda...hdp */
   for(i = 0; i < 16; i++) {
+
+    hd_buf[2] = i + 'a';
+    if(!search_str_list(sl_hd, hd_buf)) continue;
+
     PROGRESS(1, 1 + i, "read info");
+
+    parent = 0;
+    str_printf(&fname, 0, PROC_IDE "/hd%c", i + 'a');
+    s = read_symlink(fname);
+    if(s && (t = strchr(s, '/'))) {
+      *t = 0;
+      for(j = 0; j < if_table_len; j++) {
+        if(!strcmp(if_table[j].name, s)) {
+          parent = if_table[j].idx;
+          break;
+        }
+      }
+    }
 
     str_printf(&fname, 0, PROC_IDE "/hd%c/media", i + 'a');
     if((sl = read_file(fname, 0, 1))) {
@@ -60,6 +132,7 @@ void hd_scan_ide(hd_data_t *hd_data)
       hd->base_class = bc_storage_device;
       hd->bus = bus_ide;
       hd->slot = i;
+      hd->attached_to = parent;
       found++;
 
       str_printf(&hd->unix_dev_name, 0, "/dev/hd%c", i + 'a');
@@ -157,6 +230,10 @@ void hd_scan_ide(hd_data_t *hd_data)
     }
   }
 
+  free_mem(if_table);
+  free_str_list(sl_if);
+  free_str_list(sl_hd);
+
 #if defined(__PPC__)
   if(!found) scan_ide2(hd_data);
 #endif
@@ -179,12 +256,9 @@ void scan_ide2(hd_data_t *hd_data)
   hd_t *hd;
   char *s = NULL;
   str_list_t *sl, *sl0;
-  hd_res_t *res;
-  struct hd_geometry geo;
+  hd_res_t *geo, *size;
   int i, fd;
   int max_disks = 0;
-  unsigned long secs;
-  unsigned sec_size;
 
   PROGRESS(2, 0, "dasd info");
 
@@ -195,12 +269,9 @@ void scan_ide2(hd_data_t *hd_data)
   }
 
   for(i = 0; i < max_disks; i++) {
-
     str_printf(&s, 0, "/dev/hd%c", i + 'a');
-
     fd = open(s, O_RDONLY | O_NONBLOCK);
     if(fd >= 0) {
-
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class = bc_storage_device;
       hd->sub_class = sc_sdev_disk;
@@ -210,45 +281,13 @@ void scan_ide2(hd_data_t *hd_data)
       hd->unix_dev_name = new_str(s);
       str_printf(&hd->dev_name, 0, "iSeries DASD #%u", i);
 
-      secs = 0;
-      if(!ioctl(fd, BLKGETSIZE, &secs)) {
-        ADD2LOG("ide ioctl(size) ok\n");
-      }
-      else {
-        secs = 0;
-      }
-
-      sec_size = 0;
-      if(!ioctl(fd, BLKSSZGET, &sec_size)) {
-        ADD2LOG("ide ioctl(sec size) ok\n");
-      }
-      else {
-        sec_size = 512;
-      }
-
-      PROGRESS(2, i + 1, "ioctl");
-      if(!ioctl(fd, HDIO_GETGEO, &geo)) {
-        ADD2LOG("ide ioctl(geo) ok\n");
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->disk_geo.type = res_disk_geo;
-        res->disk_geo.cyls = geo.cylinders;
-        res->disk_geo.heads = geo.heads;
-        res->disk_geo.sectors = geo.sectors;
-        res->disk_geo.logical = 1;
-        if(!secs) secs = geo.cylinders * geo.heads * geo.sectors;
-      }
-
-      if(secs) {
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->size.type = res_size;
-        res->size.unit = size_unit_sectors;
-        res->size.val1 = secs;
-        res->size.val2 = sec_size;
-      }
+      hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size);
+              
+      if(geo) add_res_entry(&hd->res, geo);
+      if(size) add_res_entry(&hd->res, size);
 
       close(fd);
     }
-
   }
 
   free_mem(s);

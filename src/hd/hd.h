@@ -41,6 +41,7 @@ extern "C" {
 #define HD_DEB_BOOT		(1 << 22)
 #define HD_DEB_HDDB		(1 << 23)
 
+#include <stdio.h>
 #include <inttypes.h>
 #include <termios.h>
 
@@ -78,7 +79,7 @@ typedef enum probe_feature {
   pr_sbus, pr_int, pr_braille, pr_braille_alva, pr_braille_fhp,
   pr_braille_ht, pr_ignx11, pr_sys, pr_dasd, pr_i2o, pr_cciss, pr_bios_vbe,
   pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
-  pr_fb, pr_bios_vbe2, pr_veth,
+  pr_fb, pr_bios_vbe2, pr_veth, pr_partition, pr_disk, pr_ataraid,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
@@ -1073,6 +1074,8 @@ typedef struct s_hd_t {
   hd_res_t *res;
   hd_detail_t *detail;
 
+  str_list_t *extra_info;	/* unspecific text info */
+
   hd_status_t status;		/* hardware config status (if available) */
   char *config_string;		/* tag used to indicate how the device has been configured */
 
@@ -1083,6 +1086,7 @@ typedef struct s_hd_t {
     unsigned pcmcia:1;		/* pcmcia card */
     unsigned notready:1;	/* block devices: no medium, other: device not configured */
     unsigned manual:1;		/* undetectable, manually configured hardware */
+    unsigned softraiddisk:1;	/* disk belongs to some soft raid array */
   } is;
 
   struct {			/* this struct is for internal purposes only */
@@ -1165,6 +1169,8 @@ typedef struct {
   unsigned kernel_version;	/* kernel version */
   int in_vmware;		/* running in vmware */
   hd_manual_t *manual;		/* hardware config info */
+  str_list_t *disks;		/* disks according to /proc/partitions */
+  str_list_t *partitions;	/* dto, partitions */
 } hd_data_t;
 
 

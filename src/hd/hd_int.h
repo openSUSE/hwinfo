@@ -31,6 +31,7 @@
 #define PROC_ISAPNP		"/proc/isapnp"
 #define PROC_ISERIES		"/proc/iSeries"
 #define PROC_ISERIES_VETH	"/proc/iSeries/veth"
+#define PROC_PARTITIONS		"/proc/partitions"
 
 #define DEV_USB_DEVICES		"/dev/usb/devices"
 #define DEV_NVRAM		"/dev/nvram"
@@ -102,7 +103,7 @@ enum mod_idx {
   mod_ide, mod_scsi, mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel,
   mod_isa, mod_dac960, mod_smart, mod_isdn, mod_kbd, mod_prom, mod_sbus,
   mod_int, mod_braille, mod_xtra, mod_sys, mod_dasd, mod_i2o, mod_cciss,
-  mod_manual, mod_fb, mod_veth
+  mod_manual, mod_fb, mod_veth, mod_partition, mod_disk, mod_ataraid
 };
 
 void *new_mem(size_t size);
@@ -136,6 +137,8 @@ str_list_t *search_str_list(str_list_t *sl, char *str);
 str_list_t *add_str_list(str_list_t **sl, char *str);
 str_list_t *free_str_list(str_list_t *list);
 str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines);
+str_list_t *read_dir(char *dir_name, int type);
+char *read_symlink(char *link_name);
 void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg);
 
 void remove_hd_entries(hd_data_t *hd_data);
@@ -185,6 +188,8 @@ void hd_copy(hd_t *dst, hd_t *src);
 void gather_resources(misc_t *m, hd_res_t **r, char *name, unsigned which);
 
 char *vend_id2str(unsigned vend);
+
+void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res_t **size);
 
 #ifdef __cplusplus
 }

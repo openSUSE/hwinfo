@@ -7,11 +7,19 @@
 #include <signal.h>
 #include <ctype.h>
 #include <errno.h>
+#include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/time.h>
+#include <sys/ioctl.h>
+#include <sys/mount.h>
 #include <linux/pci.h>
+#include <linux/hdreg.h>
+
+#ifndef BLKSSZGET
+#define BLKSSZGET _IO(0x12,104)		/* get block device sector size */
+#endif
 
 #include "hd.h"
 #include "hddb.h"
@@ -51,6 +59,9 @@
 #include "manual.h"
 #include "fb.h"
 #include "veth.h"
+#include "partition.h"
+#include "disk.h"
+#include "ataraid.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -180,7 +191,10 @@ static struct s_mod_names {
   { mod_cciss, "cciss" },
   { mod_manual, "manual" },
   { mod_fb, "fb" },
-  { mod_veth, "veth" }
+  { mod_veth, "veth" },
+  { mod_partition, "partition" },
+  { mod_disk, "disk" },
+  { mod_ataraid, "ataraid" }
 };
 
 /*
@@ -266,7 +280,10 @@ static struct s_pr_flags {
   { pr_cciss,        0,           8|4|2|1, "cciss"        },
   { pr_manual,       0,           8|4|2|1, "manual"       },
   { pr_fb,           0,           8|4|2|1, "fb"           },
-  { pr_veth,         0,           8|4|2|1, "veth"         }
+  { pr_veth,         0,           8|4|2|1, "veth"         },
+  { pr_partition,    0,           8|4|2|1, "partition"    },
+  { pr_disk,         0,           8|4|2|1, "disk"         },
+  { pr_ataraid,      0,           8|4|2|1, "ataraid"      }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -406,6 +423,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
   switch(item) {
     case hw_cdrom:
+      hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_ide);
       hd_set_probe_feature(hd_data, pr_scsi_cache);
       hd_set_probe_feature(hd_data, pr_cdrom_info);
@@ -421,6 +439,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_disk:
+      hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_ide);
       hd_set_probe_feature(hd_data, pr_scsi_cache);
 //      hd_set_probe_feature(hd_data, pr_scsi_geo);
@@ -429,6 +448,9 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_i2o);
       hd_set_probe_feature(hd_data, pr_cciss);
       hd_set_probe_feature(hd_data, pr_dasd);
+      hd_set_probe_feature(hd_data, pr_partition);
+      hd_set_probe_feature(hd_data, pr_disk);
+      hd_set_probe_feature(hd_data, pr_ataraid);
       break;
 
     case hw_network:
@@ -652,6 +674,8 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->xtra_hd = free_str_list(hd_data->xtra_hd);
   hd_data->devtree = free_devtree(hd_data);
   hd_data->manual = hd_free_manual(hd_data->manual);
+  hd_data->disks = free_str_list(hd_data->disks);
+  hd_data->partitions = free_str_list(hd_data->partitions);
 
   hd_data->last_idx = 0;
 
@@ -941,6 +965,7 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->driver);
   free_mem(hd->parent_id);
   free_mem(hd->config_string);
+  free_str_list(hd->extra_info);
 
   free_res_list(hd->res);
 
@@ -1469,6 +1494,9 @@ void hd_scan(hd_data_t *hd_data)
     hd_scan_parallel(hd_data);	/* after hd_scan_misc*() */
   }
 #endif
+  /* do it rather early */
+  hd_scan_partition(hd_data);
+
   hd_scan_ide(hd_data);
   hd_scan_scsi(hd_data);
   hd_scan_dac960(hd_data);
@@ -1499,6 +1527,8 @@ void hd_scan(hd_data_t *hd_data)
   /* keep these at the end of the list */
   hd_scan_cdrom(hd_data);
   hd_scan_net(hd_data);
+  hd_scan_disk(hd_data);
+  hd_scan_ataraid(hd_data);
 
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd);
 
@@ -2059,6 +2089,73 @@ str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines)
 #endif
 
   return sl_start;
+}
+
+
+/*
+ * Read directory, return a list of entries with file type 'type'.
+ */
+str_list_t *read_dir(char *dir_name, int type)
+{
+  str_list_t *sl_start = NULL, *sl_end = NULL, *sl;
+  DIR *dir;
+  struct dirent *de;
+  struct stat sbuf;
+  char *s;
+  int dir_type;
+
+  if(dir_name && (dir = opendir(dir_name))) {
+    while((de = readdir(dir))) {
+      if(!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..")) continue;
+      dir_type = 0;
+
+      if(type) {
+        s = NULL;
+        str_printf(&s, 0, "%s/%s", dir_name, de->d_name);
+
+        if(!lstat(s, &sbuf)) {
+          if(S_ISDIR(sbuf.st_mode)) {
+            dir_type = 'd';
+          }
+          else if(S_ISREG(sbuf.st_mode)) {
+            dir_type = 'r';
+          }
+          else if(S_ISLNK(sbuf.st_mode)) {
+            dir_type = 'l';
+          }
+        }
+
+        s = free_mem(s);
+      }
+
+      if(dir_type == type) {
+        sl = new_mem(sizeof *sl);
+        sl->str = new_str(de->d_name);
+        if(sl_start)
+          sl_end->next = sl;
+        else
+          sl_start = sl;
+        sl_end = sl;
+      }
+    }
+    closedir(dir);
+  }
+
+  return sl_start;
+}
+
+
+char *read_symlink(char *link_name)
+{
+  static char buf[256];
+  int i;
+
+  i = readlink(link_name, buf, sizeof buf);
+  buf[sizeof buf - 1] = 0;
+  if(i >= 0 && i < sizeof buf) buf[i] = 0;
+  if(i < 0) *buf = 0;
+
+  return buf;
 }
 
 
@@ -3559,6 +3656,8 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
       )
 #endif
     ) {
+      if(hd->is.softraiddisk) continue;		/* don't report them */
+
       /* don't report old entries again */
       for(hd1 = hd_old; hd1; hd1 = hd1->next) {
         if(!cmp_hd(hd1, hd)) break;
@@ -4968,3 +5067,55 @@ int hd_change_status(const char *id, hd_status_t status, const char *config_stri
 }
 
 #endif		/* !defined(LIBHD_TINY) */
+
+
+void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res_t **size)
+{
+  hd_res_t *res;
+  struct hd_geometry geo_s;
+  struct hd_big_geometry big_geo_s;
+  unsigned long secs;
+  unsigned sec_size;
+
+  *geo = *size = NULL;
+
+  if(!ioctl(fd, HDIO_GETGEO_BIG, &big_geo_s)) {
+    if(dev) ADD2LOG("%s: ioctl(big geo) ok\n", dev);
+    res = add_res_entry(geo, new_mem(sizeof *res));
+    res->disk_geo.type = res_disk_geo;
+    res->disk_geo.cyls = big_geo_s.cylinders;
+    res->disk_geo.heads = big_geo_s.heads;
+    res->disk_geo.sectors = big_geo_s.sectors;
+    res->disk_geo.logical = 1;
+  }
+  else if(!ioctl(fd, HDIO_GETGEO, &geo_s)) {
+    if(dev) ADD2LOG("%s: ioctl(geo) ok\n", dev);
+    res = add_res_entry(geo, new_mem(sizeof *res));
+    res->disk_geo.type = res_disk_geo;
+    res->disk_geo.cyls = geo_s.cylinders;
+    res->disk_geo.heads = geo_s.heads;
+    res->disk_geo.sectors = geo_s.sectors;
+    res->disk_geo.logical = 1;
+  }
+
+  if(!ioctl(fd, BLKGETSIZE, &secs)) {
+    if(dev) ADD2LOG("%s: ioctl(disk size) ok\n", dev);
+  }
+  else {
+    secs = 0;
+    if(*geo) secs = (*geo)->disk_geo.cyls * (*geo)->disk_geo.heads * (*geo)->disk_geo.sectors;
+  }
+
+  if(secs) {
+    res = add_res_entry(size, new_mem(sizeof *res));
+    res->size.type = res_size;
+    res->size.unit = size_unit_sectors;
+    res->size.val1 = secs;
+    res->size.val2 = 512;
+    if(!ioctl(fd, BLKSSZGET, &sec_size)) {
+      if(dev) ADD2LOG("%s: ioctl(block size) ok\n", dev);
+      if(sec_size) res->size.val2 = sec_size;
+    }
+  }
+}
+

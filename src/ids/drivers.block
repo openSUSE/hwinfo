@@ -27,3 +27,6 @@
 s0401 0040
 	i	swim3
 
+# look at ../hd/int.c::int_driver() before changing anything
+105a 6268
+	i	ataraid|pdcraid

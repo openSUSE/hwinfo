@@ -339,10 +339,8 @@ scsi_t *do_basic_ioctl(hd_data_t *hd_data, scsi_t **ioctl_scsi, int fd)
 scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
 {
   unsigned char scsi_cmd_buf[0x400];
-  unsigned long secs;
   unsigned inode_low;
   int i, j, k, fd;
-  struct hd_geometry geo;
   char *dev_name = NULL;
   scsi_t *ioctl_scsi = NULL, *scsi, *gen;
   char *sdevs[] = { "g", "r", "t" };	/* generic first, no *disk* devices */
@@ -351,6 +349,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
   DIR *dir, *dir2;
   struct dirent *de;
   struct stat sbuf;
+  hd_res_t *geo, *size;
 
   /* TODO?: sr.c:get_capabilities */
 
@@ -431,24 +430,20 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
         dev_name = NULL;
         scsi->type = sc_sdev_disk;
 
-        PROGRESS(2, 300 + i, "geo");
+        hd_getdisksize(hd_data, scsi->dev_name, fd, &geo, &size);
 
-        secs = 0;
-        if(!ioctl(fd, BLKGETSIZE, &secs)) {
-          ADD2LOG("scsi ioctl(secs) ok\n");
-        }
-        else {
-          secs = 0;
+        if(geo) {
+          scsi->lgeo_c = geo->disk_geo.cyls;
+          scsi->lgeo_h = geo->disk_geo.heads;
+          scsi->lgeo_s = geo->disk_geo.sectors;
         }
 
-        if(!ioctl(fd, HDIO_GETGEO, &geo)) {
-          ADD2LOG("scsi ioctl(geo) ok\n");
-          scsi->lgeo_c = geo.cylinders;
-          scsi->lgeo_h = geo.heads;
-          scsi->lgeo_s = geo.sectors;
+        if(size) {
+          scsi->size = size->size.val1;
         }
 
-        scsi->size = secs ? secs : geo.cylinders * geo.heads * geo.sectors;
+        free_res_list(geo);
+        free_res_list(size);
 
         PROGRESS(2, 300 + i, "scsi cmd");
 
@@ -468,7 +463,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
           scsi->serial = canon_str(scsi_cmd_buf + 8 + 4, scsi_cmd_buf[8 + 3]);
         }
 
-        if(hd_probe_feature(hd_data, pr_scsi_geo) && secs) {
+        if(hd_probe_feature(hd_data, pr_scsi_geo) && scsi->size) {
           memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
           *((unsigned *) (scsi_cmd_buf + 4)) = sizeof scsi_cmd_buf - 0x100;
           scsi_cmd_buf[8 + 0] = 0x1a;
@@ -485,7 +480,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
             scsi->pgeo_c = (uc[0] << 16) + (uc[1] << 8) + uc[2];
             scsi->pgeo_h = uc[3];
             if(scsi->pgeo_c && scsi->pgeo_h) {
-              scsi->pgeo_s = secs / (scsi->pgeo_c * scsi->pgeo_h);
+              scsi->pgeo_s = scsi->size / (scsi->pgeo_c * scsi->pgeo_h);
             }
           }
         }

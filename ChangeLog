@@ -1,3 +1,7 @@
+7/2/2002:	v4.06
+	- first attempt to handle ide raid controller
+	- use /proc/partitions to find disks, too
+
 6/2/2002:	v4.05
 	- make hd_list() work properly if LIBHD_TINY is defined
 	- added new braille display

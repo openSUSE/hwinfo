@@ -5,9 +5,6 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <sys/mount.h>
-#include <linux/hdreg.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -23,10 +20,8 @@ void hd_scan_cciss(hd_data_t *hd_data)
 {
   hd_t *hd;
   unsigned u0, u1;
-  hd_res_t *res;
-  struct hd_geometry geo;
+  hd_res_t *geo, *size;
   int fd;
-  unsigned long secs;
   char *s = NULL;
 
   if(!hd_probe_feature(hd_data, pr_cciss)) return;
@@ -54,23 +49,11 @@ void hd_scan_cciss(hd_data_t *hd_data)
         str_printf(&hd->dev_name, 0, "CCISS disk %u/%u", u0, u1);
 
         PROGRESS(2, u1, "ioctl");
-        if(!ioctl(fd, HDIO_GETGEO, &geo)) {
-          ADD2LOG("cciss ioctl(geo) ok\n");
-          res = add_res_entry(&hd->res, new_mem(sizeof *res));
-          res->disk_geo.type = res_disk_geo;
-          res->disk_geo.cyls = geo.cylinders;
-          res->disk_geo.heads = geo.heads;
-          res->disk_geo.sectors = geo.sectors;
-          res->disk_geo.logical = 1;
-        }
 
-        if(!ioctl(fd, BLKGETSIZE, &secs)) {
-          res = add_res_entry(&hd->res, new_mem(sizeof *res));
-          res->size.type = res_size;
-          res->size.unit = size_unit_sectors;
-          res->size.val1 = secs;
-          res->size.val2 = 512;
-        }
+        hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size);
+      
+        if(geo) add_res_entry(&hd->res, geo);
+        if(size) add_res_entry(&hd->res, size);
 
         close(fd);
       }

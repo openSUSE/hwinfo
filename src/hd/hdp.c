@@ -40,10 +40,11 @@ static char *make_sub_vend_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int 
  */
 void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
 {
-  char *s, *a0, *a1;
+  char *s, *a0, *a1, *s1, *s2;
   char buf1[32], buf2[32];
   hd_t *hd_tmp;
   int i;
+  str_list_t *sl;
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -109,13 +110,29 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
   else
     dump_normal(hd_data, h, f);
 
+  s1 = s2 = NULL;
   if(h->is.notready) {
     if(h->base_class == bc_storage_device) {
-      dump_line_str("Drive status: no medium\n");
+      s1 = "no medium";
     }
     else {
-      dump_line_str("Device status: not configured\n");
+      s1 = "not configured";
     }
+  }
+  if(h->is.softraiddisk) s2 = "soft raid";
+  if(!s1) { s1 = s2; s2 = NULL; }
+
+  if(s1) {
+    dump_line("Drive status: %s%s%s\n", s1, s2 ? ", " : "", s2 ?: "");
+  }
+
+  if(h->extra_info) {
+    dump_line_str("Extra Info: ");
+    for(i = 0, sl = h->extra_info; sl; sl = sl->next) {
+      dump_line0("%s%s", i ? ", " : "", sl->str);
+      i = 1;
+    }
+    dump_line0("\n");
   }
 
   if(
