@@ -1913,9 +1913,15 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
           ki->XkbModel = new_str(ID_VALUE(hd->sub_dev) == 2 ? "type5_euro" : "type5");
         }
         s1 = s2 = NULL;
+
         switch(hd->prog_if) {
+          case  0: case  1: case 33: case 34: case 80: case 81:
+          default:
+            s1 = "us"; s2 = "sunkeymap";
+            break;
+
           case  2:
-            s1 = "fr"; s2 = "sunt5-fr-latin1";		// fr_BE?
+            s1 = "fr"; s2 = "sunt5-fr-latin1"; // fr_BE?
             break;
 
           case  3:
@@ -1953,23 +1959,23 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
             break;
 
           case 11: case 43: case 90:
-            s1 = "se"; s2 = "sunt5-fi-latin1";		// se == fi???
+            s1 = "se"; s2 = "sunt5-fi-latin1";	// se is swedish, not fi
             break;
 
           case 12: case 44: case 91:
-            s1 = "fr"; s2 = "sunt5-fr-latin1";		// fr_CH
+            s1 = "fr"; s2 = "sunt5-fr-latin1"; // fr_CH
             break;
 
           case 13: case 45: case 92:
-            s1 = "de"; s2 = "sunt5-de-latin1";		// de_CH
+            s1 = "de"; s2 = "sunt5-de-latin1";  // de_CH
             break;
 
           case 14: case 46: case 93:
-            s1 = "us"; s2 = "sunkeymap";		// en_US
+            s1 = "gb"; s2 = "sunt5-uk";
             break;
 
           case 16: case 47: case 94:
-            // korea???
+            s1 = "ko";
             break;
 
           case 17: case 48: case 95:
@@ -1981,7 +1987,7 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
             break;
 
           case 50: case 97:
-            s1 = "fr"; s2 = "sunt5-fr-latin1";		// fr_CA
+            s1 = "fr"; s2 = "sunt5-fr-latin1"; // fr_CA
             break;
 
           case 51:
@@ -1998,11 +2004,6 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
 
           case 54:
             s1 = "ru"; s2 = "sunt5-ru";
-            break;
-
-          case  0: case  1: case 33: case 34:
-          default:
-            s1 = "us"; s2 = "sunkeymap";
             break;
         }
         ki->XkbLayout = new_str(s1);
