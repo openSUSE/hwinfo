@@ -8,6 +8,7 @@
 #include <sys/ioctl.h>
 #include <scsi/scsi.h>
 #include <linux/hdreg.h>
+#define _LINUX_STRING_H_ /* HACK */
 #include <linux/fs.h>
 
 #include "hd.h"

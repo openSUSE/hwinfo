@@ -51,6 +51,10 @@
 #define HD_ARCH "ix86"
 #endif
 
+#ifdef __ia64__
+#define HD_ARCH "ia64"
+#endif
+
 #ifdef __alpha__
 #define HD_ARCH "axp"
 #endif

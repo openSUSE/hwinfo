@@ -37,7 +37,7 @@ devs="tty1 console null zero ram0 ttyS[0-3] lp[0-2] nvram psaux\
 
 # required programs (*without* the shell, see below)
 # (they are *all* copied to /bin)
-bins="/sbin/insmod /usr/bin/compress hw"
+bins="/sbin/insmod /usr/bin/compress hwinfo"
 
 # the shell to use
 our_shell=/bin/ash
@@ -123,8 +123,8 @@ write_init () {
 
 	sleep 1
 	echo "starting hardware probing..."
-	hw -all +usb log=/dev/null
-	hw debug=-1 log=hw_log
+	hwinfo -all +usb log=/dev/null
+	hwinfo debug=-1 log=hw_log
 	echo "log was written to /hw_log"
 
 	echo "writing the compressed log to the floppy..."

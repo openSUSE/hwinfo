@@ -330,12 +330,13 @@ typedef struct {
 
 typedef enum cpu_arch {
   arch_unknown = 0,
-  arch_intel, arch_alpha, arch_sparc, arch_sparc64, arch_ppc, arch_68k
+  arch_intel, arch_alpha, arch_sparc, arch_sparc64, arch_ppc, arch_68k, arch_ia64
 } hd_cpu_arch_t;
 
+// ###### drop boot_arch at all?
 typedef enum boot_arch {
   boot_unknown = 0,
-  boot_lilo, boot_milo, boot_aboot, boot_silo, boot_ppc
+  boot_lilo, boot_milo, boot_aboot, boot_silo, boot_ppc, boot_ia64
 } hd_boot_arch_t;
 
 /* special cpu entry */

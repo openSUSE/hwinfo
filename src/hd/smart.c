@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <linux/hdreg.h>
+#define _LINUX_STRING_H_ /* HACK */
 #include <linux/fs.h>
 
 #include "hd.h"

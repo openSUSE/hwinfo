@@ -26,11 +26,12 @@ s0202	Sun Microsystems
 s0203	Unknown
 	0000	Serial Console
 
-# iMac colors
+# Mac colors
 s0300
 	0001	Blueberry
 	0004	Lime
 	0005	Tangerine
+	0007	Black
 	00ff	Graphite
 # Strawberry, Grape
 

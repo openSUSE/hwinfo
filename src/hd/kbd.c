@@ -26,7 +26,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#if defined(__i386__) || defined(__PPC__) || defined(__alpha__)
+#if defined(__i386__) || defined(__PPC__) || defined(__alpha__) || defined(__ia64__)
 
 void hd_scan_kbd(hd_data_t *hd_data)
 {
@@ -88,7 +88,7 @@ void hd_scan_kbd(hd_data_t *hd_data)
   }
 }
 
-#endif	/* __i386__ || __PPC__ || __alpha__ */
+#endif	/* __i386__ || __PPC__ || __alpha__ || __ia64__ */
 
 
 #if defined(__sparc__)
