@@ -206,6 +206,8 @@ str_list_t *hd_split(char del, char *str);
 
 void hddb_add_info(hd_data_t *hd_data, hd_t *hd);
 
+int is_pnpinfo(ser_device_t *mi, int ofs);
+
 #ifdef __cplusplus
 }
 #endif

@@ -348,20 +348,128 @@
 +device.name		16550A-compatible COM port
 
  vendor.id		PNP
+&device.id		eisa 0x0f00
++device.name		Microsoft Bus Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f01
++device.name		Microsoft Serial Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f02
++device.name		Microsoft InPort Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f03
++device.name		Microsoft PS/2-style Mouse
+
+ vendor.id		PNP
 &device.id		eisa 0x0f04
 +device.name		Mouse Systems Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f05
++device.name		Mouse Systems 3-Button Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f06
++device.name		Genius Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f07
++device.name		Genius Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f08
++device.name		Logitech Serial Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f09
++device.name		Microsoft BallPoint Serial Mouse
 
  vendor.id		PNP
 &device.id		eisa 0x0f0a
 +device.name		Microsoft Mouse
 
  vendor.id		PNP
+&device.id		eisa 0x0f0b
++device.name		Microsoft Plug and Play BallPoint Mouse
+
+ vendor.id		PNP
 &device.id		eisa 0x0f0c
-+device.name		MS-Compatible Serial Mouse
++device.name		MS-compatible Serial Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f0d
++device.name		MS-compatible InPort-compatible Mouse
 
  vendor.id		PNP
 &device.id		eisa 0x0f0e
 +device.name		Generic PS/2 Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f0f
++device.name		MS-compatible Serial BallPoint-compatible Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f10
++device.name		Texas Instruments QuickPort Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f11
++device.name		MS-compatible Bus Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f12
++device.name		Logitech PS/2-style Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f13
++device.name		PS/2 Port for PS/2-style Mice
+
+ vendor.id		PNP
+&device.id		eisa 0x0f14
++device.name		Microsoft Kids Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f15
++device.name		Logitech bus mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f16
++device.name		Logitech SWIFT device
+
+ vendor.id		PNP
+&device.id		eisa 0x0f17
++device.name		Logitech-compatible serial mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f18
++device.name		Logitech-compatible bus mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f19
++device.name		Logitech-compatible PS/2-style Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f1a
++device.name		Logitech-compatible SWIFT Device
+
+ vendor.id		PNP
+&device.id		eisa 0x0f1b
++device.name		HP Omnibook Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f1c
++device.name		Compaq LTE Trackball PS/2-style Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f1d
++device.name		Compaq LTE Trackball Serial Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f1e
++device.name		Microsoft Kids Trackball Mouse
 
  vendor.id		PNP
 &device.id		eisa 0x80d6

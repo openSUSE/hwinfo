@@ -1118,39 +1118,25 @@ typedef struct s_serial_t {
   unsigned line, port, irq, baud;
 } serial_t;
 
-typedef struct s_ser_mouse_t {
-  struct s_ser_mouse_t *next;
-  unsigned hd_idx;
-  char *dev_name;
-  int fd;
-  struct termios tio;
-  unsigned is_mouse:1;
-  unsigned char buf[256];
-  int buf_len;
-  int garbage, non_pnp, pnp;
-  unsigned char pnp_id[8];
-  unsigned pnp_rev;
-  unsigned bits;
-} ser_mouse_t;
-
-typedef struct s_ser_modem_t {
-  struct s_ser_modem_t *next;
+typedef struct s_ser_device_t {
+  struct s_ser_device_t *next;
   unsigned hd_idx;
   char *dev_name;
   str_list_t *at_resp;
   int fd;
   struct termios tio;
   unsigned max_baud, cur_baud;
+  unsigned is_mouse:1;
   unsigned is_modem:1;
   unsigned do_io:1;
   unsigned char buf[0x1000];
   int buf_len;
-  int garbage, pnp;
+  int garbage, non_pnp, pnp;
   unsigned char pnp_id[8];
   char *serial, *class_name, *dev_id, *user_name, *vend, *init_string1, *init_string2, *pppd_option;
   unsigned pnp_rev;
   unsigned bits;
-} ser_modem_t;
+} ser_device_t;
 
 /*
  * Notes on isdn_parm_t:
@@ -1747,8 +1733,8 @@ typedef struct {
   misc_t *misc;			/**< (Internal) data gathered in the misc module */
   serial_t *serial;		/**< (Internal) /proc's serial info */
   scsi_t *scsi;			/**< (Internal) raw SCSI data */
-  ser_mouse_t *ser_mouse;	/**< (Internal) info about serial mice */
-  ser_modem_t *ser_modem;	/**< (Internal) info about serial modems */
+  ser_device_t *ser_mouse;	/**< (Internal) info about serial mice */
+  ser_device_t *ser_modem;	/**< (Internal) info about serial modems */
   str_list_t *cpu;		/**< (Internal) /proc/cpuinfo */
   str_list_t *klog;		/**< (Internal) kernel log */
   str_list_t *proc_usb;		/**< (Internal) /proc/bus/usb info */

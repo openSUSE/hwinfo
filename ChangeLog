@@ -1,5 +1,7 @@
 27/8/2002:	v5.18
 	- changed dasd.c to accept old and new format of /proc/dasd/devices
+	- better serial mouse detection (#18384)
+
 27/8/2002:	v5.17
 	- msvec: detect some microcom modems (#15359)
 

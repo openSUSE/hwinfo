@@ -14,12 +14,22 @@
 
  vendor.id		PNP
 &device.id		eisa 0x0f04
+|vendor.id		PNP
+&device.id		eisa 0x0f05
 +driver.mouse		mousesystems|msc|3|0
 
  vendor.id		PNP
+&device.id		eisa 0x0f01
+|vendor.id		PNP
+&device.id		eisa 0x0f02
+|vendor.id		PNP
 &device.id		eisa 0x0f0a
 |vendor.id		PNP
+&device.id		eisa 0x0f0b
+|vendor.id		PNP
 &device.id		eisa 0x0f0c
+|vendor.id		PNP
+&device.id		eisa 0x0f0d
 |vendor.id		special 0x0200
 &device.id		special 0x0003
 +driver.mouse		microsoft|ms

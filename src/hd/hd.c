@@ -1803,6 +1803,10 @@ char *eisa_vendor_str(unsigned v)
   return s;
 }
 
+
+/*
+ *  Must _not_ check that s is exactly 3 chars.
+ */
 unsigned name2eisa_id(char *s)
 {
   int i;

@@ -63,20 +63,19 @@ static char *init_strings[] = {
 
 static void get_serial_modem(hd_data_t* hd_data);
 static int dev_name_duplicate(hd_data_t *hd_data, char *dev_name);
-static void guess_modem_name(hd_data_t *hd_data, ser_modem_t *sm);
+static void guess_modem_name(hd_data_t *hd_data, ser_device_t *sm);
 static void at_cmd(hd_data_t *hd_data, char *at, int raw, int log_it);
 static void write_modem(hd_data_t *hd_data, char *msg);
 static void read_modem(hd_data_t *hd_data);
-static ser_modem_t *add_ser_modem_entry(ser_modem_t **sm, ser_modem_t *new_sm);
-static int set_modem_speed(ser_modem_t *sm, unsigned baud);    
-static int init_modem(ser_modem_t *mi);
-static int is_pnpinfo(ser_modem_t *mi, int ofs);
-static unsigned chk4id(ser_modem_t *mi);
+static ser_device_t *add_ser_modem_entry(ser_device_t **sm, ser_device_t *new_sm);
+static int set_modem_speed(ser_device_t *sm, unsigned baud);    
+static int init_modem(ser_device_t *mi);
+static unsigned chk4id(ser_device_t *mi);
 static void dump_ser_modem_data(hd_data_t *hd_data);
 
 void hd_scan_modem(hd_data_t *hd_data)
 {
-  ser_modem_t *sm, *sm_next;
+  ser_device_t *sm, *sm_next;
 
   if(!hd_probe_feature(hd_data, pr_modem)) return;
 
@@ -138,7 +137,7 @@ void get_serial_modem(hd_data_t *hd_data)
   unsigned modem_info, baud;
   char buf[4];
   char *command;
-  ser_modem_t *sm;
+  ser_device_t *sm;
   hd_res_t *res;
   int chk_usb = hd_probe_feature(hd_data, pr_modem_usb);
 
@@ -438,16 +437,25 @@ void get_serial_modem(hd_data_t *hd_data)
         hd->device.id = MAKE_ID(TAG_EISA, strtol(sm->pnp_id + 3, NULL, 16));
       }
       hd->serial = new_str(sm->serial);
-      if(sm->user_name && hd->device.id) {
-#if 0
-// ######### FIXME
-        add_device_name(hd_data, hd->vend, hd->dev, sm->user_name);
-#endif
+      if(sm->user_name) hd->device.name = new_str(sm->user_name);
+      if(sm->vend) hd->vendor.name = new_str(sm->vend);
+
+      if(sm->dev_id && strlen(sm->dev_id) >= 7) {
+        char buf[5], *s;
+        unsigned u1, u2;
+
+        u1 = name2eisa_id(sm->dev_id);
+        if(u1) {
+          strncpy(buf, sm->dev_id + 3, 4);
+          buf[4] = 0;
+          u2 = strtol(sm->dev_id + 3, &s, 16);
+          if(!*s) {
+            hd->compat_vendor.id = u1;
+            hd->compat_device.id = MAKE_ID(TAG_EISA, u2);
+          }
+        }
       }
-      else if(sm->user_name && sm->vend) {
-        hd->device.name = new_str(sm->user_name);
-        hd->vendor.name = new_str(sm->vend);
-      }
+
       if(!(hd->device.id || hd->device.name || hd->vendor.id || hd->vendor.name)) {
         hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x2000);
         hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
@@ -462,7 +470,7 @@ void get_serial_modem(hd_data_t *hd_data)
 
 int dev_name_duplicate(hd_data_t *hd_data, char *dev_name)
 {
-  ser_modem_t *sm;
+  ser_device_t *sm;
 
   for(sm = hd_data->ser_modem; sm; sm = sm->next) {
     if(!strcmp(sm->dev_name, dev_name)) return 1;
@@ -471,9 +479,9 @@ int dev_name_duplicate(hd_data_t *hd_data, char *dev_name)
   return 0;
 }
 
-void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
+void guess_modem_name(hd_data_t *hd_data, ser_device_t *modem)
 {
-  ser_modem_t *sm;
+  ser_device_t *sm;
   str_list_t *sl;
   char *s;
 #ifdef __PPC__
@@ -623,7 +631,7 @@ void at_cmd(hd_data_t *hd_data, char *at, int raw, int log_it)
 {
   static unsigned u = 1;
   char *s, *s0;
-  ser_modem_t *sm;
+  ser_device_t *sm;
   str_list_t *sl;
   int modems = 0;
 
@@ -675,7 +683,7 @@ void at_cmd(hd_data_t *hd_data, char *at, int raw, int log_it)
 
 void write_modem(hd_data_t *hd_data, char *msg)
 {
-  ser_modem_t *sm;
+  ser_device_t *sm;
   int i, len = strlen(msg);
 
   for(sm = hd_data->ser_modem; sm; sm = sm->next) {
@@ -693,7 +701,7 @@ void read_modem(hd_data_t *hd_data)
   int i, sel, fd_max = -1;
   fd_set set, set0;
   struct timeval to;
-  ser_modem_t *sm;
+  ser_device_t *sm;
 
   FD_ZERO(&set0);
 
@@ -733,7 +741,7 @@ void read_modem(hd_data_t *hd_data)
   }
 }
 
-int set_modem_speed(ser_modem_t *sm, unsigned baud)
+int set_modem_speed(ser_device_t *sm, unsigned baud)
 {
   int i;
   speed_t st;
@@ -766,7 +774,7 @@ int set_modem_speed(ser_modem_t *sm, unsigned baud)
 }
 
 
-int init_modem(ser_modem_t *sm)
+int init_modem(ser_device_t *sm)
 {
   struct termios tio;
 
@@ -795,7 +803,7 @@ int init_modem(ser_modem_t *sm)
  *
  * the minfo_t struct is updated with the PnP data
  */
-int is_pnpinfo(ser_modem_t *mi, int ofs)
+int is_pnpinfo(ser_device_t *mi, int ofs)
 {
   int i, j, k, l;
   unsigned char c, *s = mi->buf + ofs, *t;
@@ -952,7 +960,7 @@ int is_pnpinfo(ser_modem_t *mi, int ofs)
 }
 
 
-unsigned chk4id(ser_modem_t *mi)
+unsigned chk4id(ser_device_t *mi)
 {
   int i;
 
@@ -968,7 +976,7 @@ unsigned chk4id(ser_modem_t *mi)
   return 1;
 }
 
-ser_modem_t *add_ser_modem_entry(ser_modem_t **sm, ser_modem_t *new_sm)
+ser_device_t *add_ser_modem_entry(ser_device_t **sm, ser_device_t *new_sm)
 {
   while(*sm) sm = &(*sm)->next;
   return *sm = new_sm;
@@ -977,7 +985,7 @@ ser_modem_t *add_ser_modem_entry(ser_modem_t **sm, ser_modem_t *new_sm)
 void dump_ser_modem_data(hd_data_t *hd_data)
 {
   int j;
-  ser_modem_t *sm;
+  ser_device_t *sm;
 
   if(!(sm = hd_data->ser_modem)) return;
 

@@ -33,15 +33,14 @@ static void test_serial_open(void *arg);
 static void get_serial_mouse(hd_data_t* hd_data);
 static int _setspeed(int fd, int old, int new, int needtowrite, unsigned short flags);
 static void setspeed(int fd, int new, int needtowrite, unsigned short flags);
-static int is_pnpinfo(ser_mouse_t *mi, int ofs);
-static unsigned chk4id(ser_mouse_t *mi);
-static ser_mouse_t *add_ser_mouse_entry(ser_mouse_t **sm, ser_mouse_t *new_sm);
+static unsigned chk4id(ser_device_t *mi);
+static ser_device_t *add_ser_mouse_entry(ser_device_t **sm, ser_device_t *new_sm);
 static void dump_ser_mouse_data(hd_data_t *hd_data);
 static void get_sunmouse(hd_data_t *hd_data);
 
 void hd_scan_mouse(hd_data_t *hd_data)
 {
-  ser_mouse_t *sm, *sm_next;
+  ser_device_t *sm, *sm_next;
 
   if(!hd_probe_feature(hd_data, pr_mouse)) return;
 
@@ -359,7 +358,7 @@ void get_serial_mouse(hd_data_t *hd_data)
   fd_set set, set0;
   struct timeval to;
   char buf[4];
-  ser_mouse_t *sm;
+  ser_device_t *sm;
   struct termios tio;
 
   FD_ZERO(&set);
@@ -449,6 +448,26 @@ void get_serial_mouse(hd_data_t *hd_data)
         buf[3] = 0;
         hd->vendor.id = name2eisa_id(buf);
         hd->device.id = MAKE_ID(TAG_EISA, strtol(sm->pnp_id + 3, NULL, 16));
+
+        hd->serial = new_str(sm->serial);
+        if(sm->user_name) hd->device.name = new_str(sm->user_name);
+        if(sm->vend) hd->vendor.name = new_str(sm->vend);
+
+        if(sm->dev_id && strlen(sm->dev_id) >= 7) {
+          char buf[5], *s;
+          unsigned u1, u2;
+
+          u1 = name2eisa_id(sm->dev_id);
+          if(u1) {
+            strncpy(buf, sm->dev_id + 3, 4);
+            buf[4] = 0;
+            u2 = strtol(sm->dev_id + 3, &s, 16);
+            if(!*s) {
+              hd->compat_vendor.id = u1;
+              hd->compat_device.id = MAKE_ID(TAG_EISA, u2);
+            }
+          }
+        }
       }
       else {
         hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0200);
@@ -528,13 +547,14 @@ void setspeed(int fd, int new, int needtowrite, unsigned short flags)
 }
 
 
+#if 0
 /*
  * Check for a PnP info field starting at ofs;
  * returns either the length of the field or 0 if none was found.
  *
  * the minfo_t struct is updated with the PnP data
  */
-int is_pnpinfo(ser_mouse_t *mi, int ofs)
+int is_pnpinfo(ser_device_t *mi, int ofs)
 {
   int i;
   unsigned char *s = mi->buf + ofs;
@@ -618,9 +638,9 @@ int is_pnpinfo(ser_mouse_t *mi, int ofs)
 
   return 0;
 }
+#endif
 
-
-unsigned chk4id(ser_mouse_t *mi)
+unsigned chk4id(ser_device_t *mi)
 {
   int i;
 
@@ -652,7 +672,7 @@ unsigned chk4id(ser_mouse_t *mi)
   return mi->is_mouse;
 }
 
-ser_mouse_t *add_ser_mouse_entry(ser_mouse_t **sm, ser_mouse_t *new_sm)
+ser_device_t *add_ser_mouse_entry(ser_device_t **sm, ser_device_t *new_sm)
 {
   while(*sm) sm = &(*sm)->next;
   return *sm = new_sm;
@@ -662,7 +682,7 @@ ser_mouse_t *add_ser_mouse_entry(ser_mouse_t **sm, ser_mouse_t *new_sm)
 void dump_ser_mouse_data(hd_data_t *hd_data)
 {
   int j;
-  ser_mouse_t *sm;
+  ser_device_t *sm;
 
   if(!(sm = hd_data->ser_mouse)) return;
 
@@ -670,6 +690,10 @@ void dump_ser_mouse_data(hd_data_t *hd_data)
 
   for(; sm; sm = sm->next) {
     ADD2LOG("%s\n", sm->dev_name);
+    if(sm->serial) ADD2LOG("serial: \"%s\"\n", sm->serial);
+    if(sm->class_name) ADD2LOG("class_name: \"%s\"\n", sm->class_name);
+    if(sm->dev_id) ADD2LOG("dev_id: \"%s\"\n", sm->dev_id);
+    if(sm->user_name) ADD2LOG("user_name: \"%s\"\n", sm->user_name);
 
     if(sm->garbage) {
       ADD2LOG("  garbage[%u]: ", sm->garbage);
