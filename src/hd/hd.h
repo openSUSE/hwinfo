@@ -769,6 +769,39 @@ typedef struct {
 } smbios_memerror_t;
 
 
+/* memory array mapped address */
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  int array_handle;		/* memory array this mapping belongs to */
+  uint64_t start_addr;		/* memory range start address */
+  uint64_t end_addr;		/* end address */
+  unsigned part_width;		/* number of memory devices */
+} smbios_memarraymap_t;
+
+
+/* memory device mapped address */
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  int memdevice_handle;		/* memory device handle */
+  int arraymap_handle;		/* memory array mapping handle */
+  uint64_t start_addr;		/* memory range start address */
+  uint64_t end_addr;		/* end address */
+  unsigned row_pos;		/* position of the referenced memory device in a row of the address partition */
+  unsigned interleave_pos;	/* dto, in an interleave */
+  unsigned interleave_depth;	/* number of consecutive rows */
+} smbios_memdevicemap_t;
+
+
 /* pointing device (aka 'mouse') information */
 typedef struct {
   union u_hd_smbios_t *next;
@@ -781,6 +814,37 @@ typedef struct {
   hd_id_t interface;		/* interface type */
   unsigned buttons;		/* number of buttons */
 } smbios_mouse_t;
+
+
+/* hardware security */
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  hd_id_t power;		/* power-on password status */
+  hd_id_t keyboard;		/* keyboard password status */
+  hd_id_t admin;		/* admin password status */
+  hd_id_t reset;		/* front panel reset status */
+} smbios_secure_t;
+
+
+/* system power controls */
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  unsigned month;		/* next scheduled power-on month */
+  unsigned day;			/* dto, day */
+  unsigned hour;		/* dto, hour */
+  unsigned minute;		/* dto, minute */
+  unsigned second;		/* dto, second */
+} smbios_power_t;
 
 
 /* 64-bit memory error information  */
@@ -819,7 +883,11 @@ typedef union u_hd_smbios_t {
   smbios_memarray_t memarray;
   smbios_memdevice_t memdevice;
   smbios_memerror_t memerror;
+  smbios_memarraymap_t memarraymap;
+  smbios_memdevicemap_t memdevicemap;
   smbios_mouse_t mouse;
+  smbios_secure_t secure;
+  smbios_power_t power;
   smbios_mem64error_t mem64error;
 } hd_smbios_t;
 

@@ -512,6 +512,12 @@ static char *smbios_memerror_operation_[] = {
 SMBIOS_DEF_MAP(smbios_memerror_operation);
 
 
+static char *smbios_secure_state_[] = {
+  "Disabled", "Enabled", "Not Implemented", "Unknown"
+};
+SMBIOS_DEF_MAP(smbios_secure_state);
+
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 /*
@@ -981,6 +987,31 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
         }
         break;
 
+      case sm_memarraymap:
+        if(data_len >= 0x0f) {
+          sm->memarraymap.start_addr = *(uint32_t *) (sm_data + 4);
+          sm->memarraymap.start_addr <<= 10;
+          sm->memarraymap.end_addr = 1 + *(uint32_t *) (sm_data + 8);
+          sm->memarraymap.end_addr <<= 10;
+          sm->memarraymap.array_handle = *(uint16_t *) (sm_data + 0xc);
+          sm->memarraymap.part_width = sm_data[0x0e];
+        }
+        break;
+
+      case sm_memdevicemap:
+        if(data_len >= 0x13) {
+          sm->memdevicemap.start_addr = *(uint32_t *) (sm_data + 4);
+          sm->memdevicemap.start_addr <<= 10;
+          sm->memdevicemap.end_addr = 1 + *(uint32_t *) (sm_data + 8);
+          sm->memdevicemap.end_addr <<= 10;
+          sm->memdevicemap.memdevice_handle = *(uint16_t *) (sm_data + 0xc);
+          sm->memdevicemap.arraymap_handle = *(uint16_t *) (sm_data + 0xe);
+          sm->memdevicemap.row_pos = sm_data[0x10];
+          sm->memdevicemap.interleave_pos = sm_data[0x11];
+          sm->memdevicemap.interleave_depth = sm_data[0x12];
+        }
+        break;
+
       case sm_mouse:
         if(data_len >= 7) {
           sm->mouse.mtype.id = sm_data[4];
@@ -988,6 +1019,30 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
           sm->mouse.buttons = sm_data[6];
           smbios_id2str(&sm->mouse.mtype, &smbios_mouse_type, 1);
           smbios_id2str(&sm->mouse.interface, &smbios_mouse_interface, 1);
+        }
+        break;
+
+      case sm_secure:
+        if(data_len >= 5) {
+          u = sm_data[4];
+          sm->secure.power.id = u >> 6;
+          sm->secure.keyboard.id = (u >> 4) & 3;
+          sm->secure.admin.id = (u >> 2) & 3;
+          sm->secure.reset.id = u & 3;
+          smbios_id2str(&sm->secure.power, &smbios_secure_state, 3);
+          smbios_id2str(&sm->secure.keyboard, &smbios_secure_state, 3);
+          smbios_id2str(&sm->secure.admin, &smbios_secure_state, 3);
+          smbios_id2str(&sm->secure.reset, &smbios_secure_state, 3);
+        }
+        break;
+
+      case sm_power:
+        if(data_len >= 9) {
+          sm->power.month = sm_data[4];
+          sm->power.day = sm_data[5];
+          sm->power.hour = sm_data[6];
+          sm->power.minute = sm_data[7];
+          sm->power.second = sm_data[8];
         }
         break;
 
@@ -1167,6 +1222,13 @@ hd_smbios_t *smbios_free(hd_smbios_t *sm)
       case sm_mouse:
         free_mem(sm->mouse.mtype.name);
         free_mem(sm->mouse.interface.name);
+        break;
+
+      case sm_secure:
+        free_mem(sm->secure.power.name);
+        free_mem(sm->secure.keyboard.name);
+        free_mem(sm->secure.admin.name);
+        free_mem(sm->secure.reset.name);
         break;
 
       case sm_mem64error:
@@ -1449,11 +1511,69 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
         if(sm->memerror.range != (1 << 31)) fprintf(f, "    Range: 0x%08x\n", sm->memerror.range);
         break;
 
+      case sm_memarraymap:
+        fprintf(f, "  Memory Array Mapping: #%d\n", sm->any.handle);
+        fprintf(f, "    Memory Array: #%d\n", sm->memarraymap.array_handle);
+        fprintf(f, "    Partition Width: %u\n", sm->memarraymap.part_width);
+        if((sm->memarraymap.start_addr | sm->memarraymap.end_addr) >> 32) {
+          fprintf(f, "    Start Address: 0x%016"PRIx64"\n", sm->memarraymap.start_addr);
+          fprintf(f, "    End Address: 0x%016"PRIx64"\n", sm->memarraymap.end_addr);
+        }
+        else {
+          fprintf(f, "    Start Address: 0x%08x\n", (unsigned) sm->memarraymap.start_addr);
+          fprintf(f, "    End Address: 0x%08x\n", (unsigned) sm->memarraymap.end_addr);
+        }
+        break;
+
+      case sm_memdevicemap:
+        fprintf(f, "  Memory Device Mapping: #%d\n", sm->any.handle);
+        fprintf(f, "    Memory Device: #%d\n", sm->memdevicemap.memdevice_handle);
+        fprintf(f, "    Array Mapping: #%d\n", sm->memdevicemap.arraymap_handle);
+        if(sm->memdevicemap.row_pos != 0xff) fprintf(f, "    Row: %u\n", sm->memdevicemap.row_pos);
+        if(
+          !sm->memdevicemap.interleave_pos ||
+          sm->memdevicemap.interleave_pos != 0xff
+        ) {
+          fprintf(f, "    Interleave Pos: %u\n", sm->memdevicemap.interleave_pos);
+        }
+        if(
+          !sm->memdevicemap.interleave_depth ||
+          sm->memdevicemap.interleave_depth != 0xff
+        ) {
+          fprintf(f, "    Interleaved Depth: %u\n", sm->memdevicemap.interleave_depth);
+        }
+        if((sm->memdevicemap.start_addr | sm->memdevicemap.end_addr) >> 32) {
+          fprintf(f, "    Start Address: 0x%016"PRIx64"\n", sm->memdevicemap.start_addr);
+          fprintf(f, "    End Address: 0x%016"PRIx64"\n", sm->memdevicemap.end_addr);
+        }
+        else {
+          fprintf(f, "    Start Address: 0x%08x\n", (unsigned) sm->memdevicemap.start_addr);
+          fprintf(f, "    End Address: 0x%08x\n", (unsigned) sm->memdevicemap.end_addr);
+        }
+        break;
+
       case sm_mouse:
         fprintf(f, "  Pointing Device: #%d\n", sm->any.handle);
         SMBIOS_PRINT_ID(mouse.mtype, "Type");
         SMBIOS_PRINT_ID(mouse.interface, "Interface");
         if(sm->mouse.buttons) fprintf(f, "    Buttons: %u\n", sm->mouse.buttons);
+        break;
+
+      case sm_secure:
+        fprintf(f, "  Hardware Security: #%d\n", sm->any.handle);
+        SMBIOS_PRINT_ID(secure.power, "Power-on Password");
+        SMBIOS_PRINT_ID(secure.keyboard, "Keyboard Password");
+        SMBIOS_PRINT_ID(secure.admin, "Admin Password");
+        SMBIOS_PRINT_ID(secure.reset, "Front Panel Reset");
+        break;
+
+      case sm_power:
+        fprintf(f, "  System Power Controls: #%d\n", sm->any.handle);
+        fprintf(f,
+          "    Next Power-on: %02x:%02x:%02x %02x/%02x\n",
+          sm->power.hour, sm->power.minute, sm->power.second,
+          sm->power.day, sm->power.month
+        );
         break;
 
       case sm_mem64error:
@@ -1462,8 +1582,18 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
         SMBIOS_PRINT_ID(mem64error.granularity, "Granularity");
         SMBIOS_PRINT_ID(mem64error.operation, "Operation");
         if(sm->mem64error.syndrome) fprintf(f, "    Syndrome: 0x%08x\n", sm->mem64error.syndrome);
-        if(sm->mem64error.array_addr != (1ll << 63)) fprintf(f, "    Mem Array Addr: 0x%016"PRIx64"\n", sm->mem64error.array_addr);
-        if(sm->mem64error.device_addr != (1ll << 63)) fprintf(f, "    Mem Device Addr: 0x%016"PRIx64"\n", sm->mem64error.device_addr);
+        if(
+          sm->mem64error.array_addr != (1ll << 63) &&
+          sm->mem64error.array_addr != (1ll << 31)
+        ) {
+          fprintf(f, "    Mem Array Addr: 0x%016"PRIx64"\n", sm->mem64error.array_addr);
+        }
+        if(
+          sm->mem64error.device_addr != (1ll << 63) &&
+          sm->mem64error.device_addr != (1ll << 31)
+        ) {
+          fprintf(f, "    Mem Device Addr: 0x%016"PRIx64"\n", sm->mem64error.device_addr);
+        }
         if(sm->mem64error.range != (1 << 31)) fprintf(f, "    Range: 0x%08x\n", sm->mem64error.range);
         break;
 
