@@ -5,6 +5,7 @@
 	- better chipcard reader support
 	- use _exit instead of exit on some more places.
 	- prepared for uclibc
+	- save & restore resource data
 
 28/8/2002:	v5.20
 	- got rid of gcc warning
