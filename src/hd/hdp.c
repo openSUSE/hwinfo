@@ -716,7 +716,36 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
         break;
 
       case res_wlan:
-        if(res->wlan.auth_modes) dump_line("WLAN auth modes: %s\n", res->wlan.auth_modes);
+	if(res->wlan.channels) {
+		str_list_t *ptr = res->wlan.channels;
+		dump_line("WLAN channels: %s", ptr->str);
+		while((ptr=ptr->next)) dump_line0(" %s", ptr->str);
+		dump_line0("\n");
+	}
+	if(res->wlan.frequencies) {
+		str_list_t *ptr = res->wlan.frequencies;
+		dump_line("WLAN frequencies: %s", ptr->str);
+		while((ptr=ptr->next)) dump_line0(" %s", ptr->str);
+		dump_line0("\n");
+	}
+	if(res->wlan.bitrates) {
+		str_list_t *ptr = res->wlan.bitrates;
+		dump_line("WLAN bitrates: %s", ptr->str);
+		while((ptr=ptr->next)) dump_line0(" %s", ptr->str);
+		dump_line0("\n");
+	}
+	if(res->wlan.enc_modes) {
+		str_list_t *ptr = res->wlan.enc_modes;
+		dump_line("WLAN encryption modes: %s", ptr->str);
+		while((ptr=ptr->next)) dump_line0(" %s", ptr->str);
+		dump_line0("\n");
+	}
+        if(res->wlan.auth_modes) {
+		str_list_t *ptr = res->wlan.auth_modes;
+		dump_line("WLAN authentication modes: %s", ptr->str);
+		while((ptr=ptr->next)) dump_line0(" %s", ptr->str);
+		dump_line0("\n");
+	}
         break;
 
 

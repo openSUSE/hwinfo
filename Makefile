@@ -5,7 +5,7 @@ CLEANFILES	= hwinfo hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/l
 LIBDIR		= /lib
 ULIBDIR		= /usr$(LIBDIR)
 LIBS		= -lhd
-SLIBS		= -lhd -lsysfs
+SLIBS		= -lhd -lsysfs -liw
 TLIBS		= -lhd_tiny -lsysfs
 
 include Makefile.common

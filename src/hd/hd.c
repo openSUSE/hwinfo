@@ -1802,7 +1802,9 @@ void hd_scan(hd_data_t *hd_data)
 
   hd_scan_pppoe(hd_data);
 
+#ifndef LIBHD_TINY
   hd_scan_wlan(hd_data);
+#endif
 
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd_data, hd);
 

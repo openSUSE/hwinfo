@@ -1493,9 +1493,11 @@ typedef struct {
 typedef struct {
   union u_hd_res_t *next;
   enum resource_types type;
-  char *auth_modes;
-  // or: str_list_t *auth_modes ?
-  // ...
+  str_list_t *channels;
+  str_list_t *frequencies;
+  str_list_t *bitrates;
+  str_list_t *auth_modes;
+  str_list_t *enc_modes;
 } res_wlan_t;
 
 typedef union u_hd_res_t {
