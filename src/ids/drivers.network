@@ -260,7 +260,7 @@ s0401 0021+2
 
 # net/fc/iph5526.c
 107e 0004+2
-	i	iph5526 
+	i	iph5526
 
 # net/irda/toshoboe.c
 1179 0701
@@ -268,7 +268,11 @@ s0401 0021+2
 
 # net/natsemi.c
 100b 0020
-	i	natsemi 
+	i	natsemi
+
+# net/ns83820.c
+100b 0022
+	i	ns83820
 
 # net/sundance.c
 1186 1002
@@ -303,7 +307,11 @@ PNP 80f7+2
 	m	3c509
 
 # Broadcom gigabit network
-# cf. bug #9638
-14e4 1647 0e11 0099+2
+# net/bcm/b57um.c
+14e4 1644+2
+14e4 1647
 	i	bcm5700
 
+# net/dl2k.c
+1186 4000
+	i	dl2k
