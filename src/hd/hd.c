@@ -2413,7 +2413,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 
       case hw_printer:
         hd_set_probe_feature(hd_data, pr_misc);
-        hd_set_probe_feature(hd_data, pr_parallel);
+        hd_set_probe_feature(hd_data, pr_parallel_lp);
         hd_set_probe_feature(hd_data, pr_usb);
         break;
 
