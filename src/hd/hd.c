@@ -416,6 +416,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
   switch(item) {
     case hw_cdrom:
       hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_ide);
       hd_set_probe_feature(hd_data, pr_scsi_cache);
       hd_set_probe_feature(hd_data, pr_cdrom_info);
