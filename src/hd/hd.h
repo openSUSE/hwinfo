@@ -1712,6 +1712,7 @@ typedef struct {
     unsigned iseries:1;		/**< Set if we are on an iSeries machine. */
     unsigned list_all:1;	/**< Return even devices with status 'not available'. */
     unsigned fast:1;		/**< Don't check tricky hardware. */
+    unsigned list_md:1;		/**< Report md & lvm devices from /proc/partitions */
   } flags;
 
 
