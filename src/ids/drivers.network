@@ -210,3 +210,13 @@ s4001 3004
 1318 0911
 	i	hamachi
 
+# net/gmac.c
+106b 0021
+	i	gmac
+
+# mac ethernet controller
+s0401 0020
+	i	mace
+s0401 0021+2 
+	i	bmac
+

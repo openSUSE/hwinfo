@@ -323,6 +323,23 @@ typedef struct scsi_s {
 
 
 /*
+ * PROM tree on PPC
+ */
+typedef struct devtree_s {
+  struct devtree_s *next;
+  struct devtree_s *parent;
+  unsigned idx;
+  char *path, *filename;
+  unsigned pci:1;
+  char *name, *model, *device_type, *compatible;
+  int class_code;                       /* class : sub_class : prog-if */
+  int vendor_id, device_id, subvendor_id, subdevice_id;
+  int revision_id, interrupt;
+  unsigned char *edid;                  /* 128 bytes */
+} devtree_t;
+
+
+/*
  * special CDROM entry
  */
 // ###### rename these! (cf. mouse_info_t!!!)
@@ -752,7 +769,7 @@ typedef union driver_info_u {
 typedef enum hd_detail_type {
   hd_detail_pci, hd_detail_usb, hd_detail_isapnp, hd_detail_cdrom,
   hd_detail_floppy, hd_detail_bios, hd_detail_cpu, hd_detail_prom,
-  hd_detail_monitor, hd_detail_sys, hd_detail_scsi
+  hd_detail_monitor, hd_detail_sys, hd_detail_scsi, hd_detail_devtree
 } hd_detail_type_t;
 
 typedef struct {
@@ -810,6 +827,11 @@ typedef struct {
   scsi_t *data;
 } hd_detail_scsi_t;
 
+typedef struct {
+  enum hd_detail_type type;
+  devtree_t *data;
+} hd_detail_devtree_t;
+
 typedef union {
   enum hd_detail_type type;
   hd_detail_pci_t pci;
@@ -823,6 +845,7 @@ typedef union {
   hd_detail_monitor_t monitor;
   hd_detail_sys_t sys;
   hd_detail_scsi_t scsi;
+  hd_detail_devtree_t devtree;
 } hd_detail_t;
 
 
@@ -910,6 +933,7 @@ typedef struct {
   unsigned color_code;		/* color, if any */
   char *cmd_line;		/* kernel command line */
   str_list_t *xtra_hd;		/* fake hd entries (for testing) */
+  devtree_t *devtree;		/* prom device tree on ppc */
 } hd_data_t;
 
 

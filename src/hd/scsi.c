@@ -59,6 +59,9 @@ static char *exlist[][2] = {
 void hd_scan_scsi(hd_data_t *hd_data)
 {
   hd_t *hd;
+#ifdef __PPC__
+  hd_t *hd2;
+#endif
   hd_res_t *res;
   scsi_t *ioctl_scsi, *scsi, *scsi2, *scsi3;
   int i, j;
@@ -193,6 +196,15 @@ void hd_scan_scsi(hd_data_t *hd_data)
     if(scsi->host < sizeof scsi_ctrl / sizeof *scsi_ctrl) {
       hd->attached_to = scsi_ctrl[scsi->host].hd_idx;
     }
+#ifdef __PPC__
+    /* ###### move this to int.c ? */
+    if(
+      (hd2 = hd_get_device_by_idx(hd_data, hd->attached_to)) &&
+      hd2->rom_id
+    ) {
+      str_printf(&hd->rom_id, 0, "%s/@%u", hd2->rom_id, scsi->id);
+    }
+#endif
 
     if(scsi->size) {
       res = add_res_entry(&hd->res, new_mem(sizeof *res));

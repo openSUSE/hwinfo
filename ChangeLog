@@ -1,3 +1,7 @@
+14/8/2000:	v1.29
+	- added PROM parser for ppc; currently handles
+          SCSI, network, sound & floppy devices
+
 9/8/2000:	v1.28
 	- added pr_misc to hw_isdn
 	- fixed memory size detection

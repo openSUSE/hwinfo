@@ -33,8 +33,23 @@ s0300
 	0004	Lime
 	0005	Tangerine
 	0007	Black
+	0008	Snow
 	00ff	Graphite
 # Strawberry, Grape
+# Ruby, Indigo, Sage
+
+# special ppc hardware
+s0401	Apple Computer, Inc.
+	0010	Integrated Sound (awacs)
+	0011	Integrated Sound (screamer)
+	0012	Integrated Sound (burgundy)
+	0013	Integrated Sound (daca)
+	0020	MACE Ethernet Controller
+	0021	BMAC Ethernet Controller
+	0022	BMAC+ Ethernet Controller
+	0030	MESH SCSI Controller
+	0031	53c94 SCSI Controller
+	0040	Super Woz Integrated Machine 3
 
 # printer
 s1001	Minolta Co., Ltd.

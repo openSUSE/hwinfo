@@ -150,3 +150,11 @@ s1800 0001
 s1800 0002
 	m	ppa
 
+# scsi/mesh.c
+s0401 0030
+	i	mesh
+
+# scsi/mac53c94.c
+s0401 0031
+	i	mac53c94
+

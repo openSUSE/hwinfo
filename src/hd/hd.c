@@ -630,6 +630,8 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_memory(hd_data);
   hd_scan_monitor(hd_data);
 
+  hd_scan_pci(hd_data);
+
 #if defined(__i386__)
   hd_scan_bios(hd_data);
 #endif
@@ -647,7 +649,6 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_isa(hd_data);
 #endif
 
-  hd_scan_pci(hd_data);
   hd_scan_serial(hd_data);
 
   /* merge basic system info & the easy stuff */
@@ -970,9 +971,12 @@ char *mod_name_by_idx(unsigned idx)
 void str_printf(char **buf, int offset, char *format, ...)
 {
   static char *last_buf = NULL;
-  int last_len = 0;
+  static int last_len = 0;
+  int len, use_cache;
   char b[1024];
   va_list args;
+
+  use_cache = offset == -2 ? 1 : 0;
 
   if(*buf) {
     if(offset == -1) {
@@ -993,10 +997,13 @@ void str_printf(char **buf, int offset, char *format, ...)
   vsnprintf(b, sizeof b, format, args);
   va_end(args);
 
-  last_buf = resize_mem(*buf, (last_len = offset + strlen(b)) + 1);
-  strcpy(last_buf + offset, b);
+  *buf = resize_mem(*buf, (len = offset + strlen(b)) + 1);
+  strcpy(*buf + offset, b);
 
-  *buf = last_buf;
+  if(use_cache) {
+    last_buf = *buf;
+    last_len = len;
+  }
 }
 
 
@@ -1805,14 +1812,59 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 int hd_module_is_active(hd_data_t *hd_data, char *mod)
 {
   str_list_t *sl, *sl0 = read_kmods(hd_data);
+  int active = 0;
+  char *s1, *s2;
 
   for(sl = sl0; sl; sl = sl->next) {
     if(!strcmp(sl->str, mod)) break;
   }
 
   free_str_list(sl0);
+  active = sl ? 1 : 0;
 
-  return sl ? 1 : 0;
+  if(active) return active;
+
+#ifdef __PPC__
+  /* temporary hack for ppc */
+  if(!strcmp(mod, "gmac")) {
+    s1 = "<6>eth";
+    s2 = " GMAC ";
+  }
+  else if(!strcmp(mod, "mace")) {
+    s1 = "<6>eth";
+    s2 = " MACE ";
+  }
+  else if(!strcmp(mod, "bmac")) {
+    s1 = "<6>eth";
+    s2 = " BMAC";
+  }
+  else if(!strcmp(mod, "mac53c94")) {
+    s1 = "<4>scsi";
+    s2 = " 53C94";
+  }
+  else if(!strcmp(mod, "mesh")) {
+    s1 = "<4>scsi";
+    s2 = " MESH";
+  }
+  else if(!strcmp(mod, "swim3")) {
+    s1 = "<6>fd";
+    s2 = " SWIM3 ";
+  }
+  else {
+    s1 = s2 = NULL;
+  }
+
+  if(s1) {
+    for(sl = hd_data->klog; sl; sl = sl->next) {
+      if(strstr(sl->str, s1) == sl->str && strstr(sl->str, s2)) {
+        active = 1;
+        break;
+      }
+    }
+  }
+#endif
+
+  return active;
 }
 
 hd_res_t *get_res(hd_t *hd, enum resource_types t, unsigned index)
@@ -2505,6 +2557,10 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_pci);
         hd_set_probe_feature(hd_data, pr_isapnp);
         hd_set_probe_feature(hd_data, pr_sbus);
+#ifdef __PPC__
+        hd_set_probe_feature(hd_data, pr_prom);
+        hd_set_probe_feature(hd_data, pr_misc);
+#endif
         break;
 
       case hw_isdn:
@@ -2527,12 +2583,20 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_sbus);
         hd_set_probe_feature(hd_data, pr_misc_par);
         hd_set_probe_feature(hd_data, pr_parallel_zip);
+#ifdef __PPC__
+        hd_set_probe_feature(hd_data, pr_prom);
+        hd_set_probe_feature(hd_data, pr_misc);
+#endif
         break;
 
       case hw_network_ctrl:
         hd_set_probe_feature(hd_data, pr_pci);
         hd_set_probe_feature(hd_data, pr_sbus);
         hd_set_probe_feature(hd_data, pr_isdn);
+#ifdef __PPC__
+        hd_set_probe_feature(hd_data, pr_prom);
+        hd_set_probe_feature(hd_data, pr_misc);
+#endif
         break;
 
       case hw_printer:
