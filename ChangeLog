@@ -1,3 +1,6 @@
+26/9/2002:	v5.36
+	- fixed floppy detection
+
 23/9/2002:	v5.35
 	- 'hwscan --pci' should add prom id (#19648)
 
