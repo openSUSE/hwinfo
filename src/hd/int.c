@@ -786,7 +786,7 @@ void int_modem(hd_data_t *hd_data)
           break;
         case sc_mod_win4:
           if(cnt4 < 4) {
-            str_printf(&s, 0, "/dev/ttySLT%u", cnt4);
+            str_printf(&s, 0, "/dev/ttySL%u", cnt4);
             dev_num.major = 212;
             dev_num.minor = cnt4++;
           }
