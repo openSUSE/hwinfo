@@ -2335,7 +2335,7 @@ void expand_driver_info(hd_data_t *hd_data, hd_t *hd)
   unsigned u1, u2;
   char *s, *t, *t0;
   driver_info_t *di;
-  str_list_t *sl, *sl1, *sl2;
+  str_list_t *sl, *sl1, *sl2, *cmd;
 
   if(!hd || !hd->driver_info) return;
 
@@ -2494,11 +2494,11 @@ void expand_driver_info(hd_data_t *hd_data, hd_t *hd)
 
   di = hd->driver_info;
   if(di && di->any.type == di_x11 && !hd_probe_feature(hd_data, pr_ignx11)) {
-    s = get_cmdline(hd_data, "x11");
-    if(s && *s) {
-      di = reorder_x11(di, s);
+    cmd = get_cmdline(hd_data, "x11");
+    if(cmd && *cmd->str) {
+      di = reorder_x11(di, cmd->str);
     }
-    free_mem(s);
+    free_str_list(cmd);
   }
 }
 

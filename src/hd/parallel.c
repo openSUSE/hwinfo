@@ -107,6 +107,9 @@ void do_lp(hd_data_t *hd_data)
     }
     free_str_list(sl0);
 
+    /* default to printer */
+    if(!base_class) base_class = new_str("printer");
+
     s = free_mem(s);
 
 //    fprintf(stderr, "port <0x%x\n", port);

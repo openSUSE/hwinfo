@@ -1,3 +1,8 @@
+16/9/2003:	v7.26
+	- default to 'printer' if a class tag is missing in parport
+	  autoprobe data (#30982)
+	- fixed serial console detection (#30936)
+
 15/9/2003:	v7.25
 	- pcmcia data update
 

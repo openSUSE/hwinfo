@@ -31,7 +31,9 @@ void hd_scan_serial(hd_data_t *hd_data)
   serial_t *ser, *next;
   hd_res_t *res;
   int i;
-  char *s, *skip_dev[2] = { NULL, NULL }, buf[4];
+  char buf[4], *skip_dev[16];
+  str_list_t *sl, *cmd;
+  unsigned skip_devs = 0;
 
   if(!hd_probe_feature(hd_data, pr_serial)) return;
 
@@ -46,21 +48,23 @@ void hd_scan_serial(hd_data_t *hd_data)
   get_serial_info(hd_data);
   if((hd_data->debug & HD_DEB_SERIAL)) dump_serial_data(hd_data);
 
-  for(i = 0; (unsigned) i < sizeof skip_dev / sizeof *skip_dev; i++) {
-    s = get_cmdline(hd_data, i == 0 ? "yast2ser" : "console");
-    if(
-      s && *s &&
-      sscanf(s, "tty%3[^,]", buf) == 1
-    ) {
-      if(buf[1] == 0) {
-        switch(*buf) {
-          case 'a': strcpy(buf, "S0"); break;
-          case 'b': strcpy(buf, "S1"); break;
+  for(i = 0; i < 2; i++) {
+    cmd = get_cmdline(hd_data, i == 0 ? "yast2ser" : "console");
+    for(sl = cmd; sl; sl = sl->next) {
+      if(sscanf(sl->str, "tty%3[^,]", buf) == 1) {
+        if(buf[1] == 0) {
+          switch(*buf) {
+            case 'a': strcpy(buf, "S0"); break;
+            case 'b': strcpy(buf, "S1"); break;
+          }
+        }
+        if(skip_devs < sizeof skip_dev / sizeof *skip_dev) {
+          skip_dev[skip_devs] = NULL;
+          str_printf(&skip_dev[skip_devs++], 0, "/dev/tty%s", buf);
         }
       }
-      str_printf(&skip_dev[i], 0, "/dev/tty%s", buf);
     }
-    free_mem(s);
+    free_str_list(cmd);
   }
 
   PROGRESS(2, 0, "build list");
@@ -76,8 +80,8 @@ void hd_scan_serial(hd_data_t *hd_data)
     hd->device.name = new_str(ser->name);
     hd->func = ser->line;
     str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%u", ser->line);
-    for(i = 0; (unsigned) i < sizeof skip_dev / sizeof *skip_dev; i++) {
-      if(skip_dev[i] && !strcmp(skip_dev[i], hd->unix_dev_name)) {
+    for(i = 0; i < (int) skip_devs; i++) {
+      if(!strcmp(skip_dev[i], hd->unix_dev_name)) {
         hd->tag.ser_skip = 1;
         break;
       }

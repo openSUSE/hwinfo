@@ -66,6 +66,7 @@ void hd_scan_kbd(hd_data_t *hd_data)
   hd_t *hd1;
   hd_res_t *res;
   int fd;
+  str_list_t *cmd;
 #endif
   str_list_t *sl;
 #ifdef __PPC__
@@ -134,14 +135,14 @@ void hd_scan_kbd(hd_data_t *hd_data)
       }
 
       /* get baud settings from /proc/cmdline */
-      s = get_cmdline(hd_data, "console");
-      if(s) {
+      cmd = get_cmdline(hd_data, "console");
+      for(sl = cmd; sl; sl = sl->next) {
         unsigned u0, u1;
-        if(sscanf(s, "ttyS%u,%u", &u0, &u1) == 2) {
+        if(sscanf(sl->str, "ttyS%u,%u", &u0, &u1) == 2) {
           if(ser_info.line == u0 && u1) u = u1;
         }
       }
-      free_mem(s);
+      free_str_list(cmd);
 
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
       res->baud.type = res_baud;

@@ -3432,9 +3432,9 @@ str_list_t *read_kmods(hd_data_t *hd_data)
 }
 
 
-char *get_cmdline(hd_data_t *hd_data, char *key)
+str_list_t *get_cmdline(hd_data_t *hd_data, char *key)
 {
-  str_list_t *sl0, *sl1;
+  str_list_t *sl0, *sl1, *cmd = NULL;
   char *s, *t, *t0;
   int i, l = strlen(key);
 
@@ -3473,16 +3473,13 @@ char *get_cmdline(hd_data_t *hd_data, char *key)
   while((s = strsep(&t, " "))) {
     if(!*s) continue;
     if(!strncmp(s, key, l) && s[l] == '=') {
-      s += l + 1;
-      break;
+      add_str_list(&cmd, s + l + 1);
     }
   }
 
-  s = new_str(s);
-
   free_mem(t0);
 
-  return s;
+  return cmd;
 }
 
 
@@ -3492,11 +3489,12 @@ char *get_cmdline(hd_data_t *hd_data, char *key)
  */
 char *get_cmd_param(hd_data_t *hd_data, int field)
 {
-  char *s, *t, *t0;
+  char *s, *t;
+  str_list_t *cmd;
 
-  s = t0 = get_cmdline(hd_data, "SuSE");
+  if(!(cmd = get_cmdline(hd_data, "SuSE"))) return NULL;
 
-  if(!t0) return NULL;
+  s = cmd->str;
 
   t = NULL;
 
@@ -3511,7 +3509,7 @@ char *get_cmd_param(hd_data_t *hd_data, int field)
 
   t = new_str(s);
 
-  free_mem(t0);
+  free_str_list(cmd);
 
   return t;
 }
@@ -3782,12 +3780,19 @@ int cmp_hd(hd_t *hd1, hd_t *hd2)
 void get_probe_env(hd_data_t *hd_data)
 {
   char *s, *t, *env;
+  str_list_t *cmd = NULL;
   int j, k;
   char buf[10];
 
   env = getenv("hwprobe");
-  if(!env) env = get_cmdline(hd_data, "hwprobe");
+  if(!env) {
+    cmd = get_cmdline(hd_data, "hwprobe");
+    if(cmd) env = cmd->str;
+  }
   s = env = new_str(env);
+
+  free_str_list(cmd);
+
   if(!env) return;
 
   hd_data->xtra_hd = free_str_list(hd_data->xtra_hd);
