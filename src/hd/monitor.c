@@ -22,7 +22,9 @@ static void add_old_mac_monitor(hd_data_t *hd_data);
 static void add_monitor(hd_data_t *hd_data, devtree_t *dt);
 #endif
 static int chk_edid_info(hd_data_t *hd_data, unsigned char *edid);
+#if !defined(__PPC__)
 static void add_lcd_info(hd_data_t *hd_data, hd_t *hd, bios_info_t *bt);
+#endif
 static void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid);
 static void add_monitor_res(hd_t *hd, unsigned x, unsigned y, unsigned hz, unsigned il);
 static void fix_edid_info(hd_data_t *hd_data, unsigned char *edid);
@@ -374,6 +376,7 @@ int chk_edid_info(hd_data_t *hd_data, unsigned char *edid)
   return 1;
 }
 
+#if !defined(__PPC__)
 void add_lcd_info(hd_data_t *hd_data, hd_t *hd, bios_info_t *bt)
 {
   monitor_info_t *mi = NULL;
@@ -393,6 +396,7 @@ void add_lcd_info(hd_data_t *hd_data, hd_t *hd, bios_info_t *bt)
   mi->max_vsync = 75;
   mi->max_hsync = (mi->max_vsync * bt->lcd.height * 12) / 10000;
 }
+#endif
 
 void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
 {
