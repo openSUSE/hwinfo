@@ -1,5 +1,6 @@
 3/12/2004:	v9.32
 	- fixed access to undefined memory (#39238)
+	- fix segfault when using 'x11=foo' boot option
 
 1/12/2004:	v9.31
 	- fixed parsing of scsi serial id (#48757)
