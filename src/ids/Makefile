@@ -34,7 +34,7 @@ IDFILES += src/x11.ia64
 endif
 
 ifeq "$(ARCH)" "x86_64"
-IDFILES += src/x11.x86_64
+IDFILES += src/x11.amd64
 endif
 
 IDFILES += src/pci src/storage src/sound src/mouse src/braille
