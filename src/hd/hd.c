@@ -759,6 +759,8 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_bluetooth:
       hd_set_probe_feature(hd_data, pr_usb);
+      hd_set_probe_feature(hd_data, pr_isdn);	// need pr_misc, too?
+      hd_set_probe_feature(hd_data, pr_dsl);
       break;
 
     case hw_all:

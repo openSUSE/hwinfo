@@ -453,6 +453,14 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
     hd->sub_class.id = u & 0xff;
   }
 
+  /* FIXME: hack for bt isdn box */
+  if(
+    hd->vendor.id == MAKE_ID(TAG_USB, 0x057c) &&
+    hd->device.id == MAKE_ID(TAG_USB, 0x2200)
+  ) {
+    hd_set_hw_class(hd, hw_bluetooth);
+  }
+
 }
 
 

@@ -1244,3 +1244,7 @@
 +driver.module.modprobe	at76c503-rfmd-acc
 +requires		atmel-firmware
 
+ vendor.id		usb 0x0a5c
+&device.id		usb 0x2033
++requires		bluez-firmware
+

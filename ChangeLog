@@ -1,4 +1,7 @@
-1/10/1004:	v9.27
+1/10/2004:	v9.28
+	- list bluetooth isdn box as bt device, too (#46626)
+
+1/10/2004:	v9.27
 	- smartlink-softmodem is back (#46594)
 	- added some dvb cards (#46612)
 
