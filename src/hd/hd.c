@@ -304,7 +304,8 @@ static struct s_pr_flags {
   /* dummy, used to turn off hwscan */
   { pr_scan,          0,                  0, "scan"          },
   { pr_pcmcia,        0,            8|4|2|1, "pcmcia"        },
-  { pr_fork,          0,                  0, "fork"          }
+  { pr_fork,          0,                  0, "fork"          },
+  { pr_cpuemu,        0,                  0, "cpuemu"        }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -1682,6 +1683,7 @@ void hd_scan(hd_data_t *hd_data)
   if(hd_data->last_idx == 0) {
     hd_set_probe_feature(hd_data, pr_fork);
     if(!hd_probe_feature(hd_data, pr_fork)) hd_data->flags.nofork = 1;
+    if(hd_probe_feature(hd_data, pr_cpuemu)) hd_data->flags.cpuemu = 1;
   }
 
   /* get shm segment, if we didn't do it already */

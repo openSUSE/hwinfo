@@ -13,7 +13,7 @@ extern "C" {
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#define HD_VERSION	7
+#define HD_VERSION	8
 
 /*
  * debug flags
@@ -105,7 +105,7 @@ typedef enum probe_feature {
   pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
   pr_fb, pr_bios_vbe2, pr_veth, pr_partition, pr_disk, pr_ataraid, pr_pppoe,
   pr_scan, pr_partition_add, pr_pcmcia, pr_fork, pr_parallel_imm, pr_s390,
-  /* pr_bios_32, */
+  /* pr_bios_32, */ pr_cpuemu,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
@@ -1779,6 +1779,7 @@ typedef struct {
     unsigned list_md:1;		/**< Report md & lvm devices from /proc/partitions */
     unsigned nofork:1;		/**< don't run potentially hanging code in a subprocess */
     unsigned forked:1;		/**< we're running in a subprocess */
+    unsigned cpuemu:1;		/**< use CPU emulation to run BIOS code (i386 only) */
   } flags;
 
 
@@ -1834,6 +1835,7 @@ typedef struct {
     int id;
     int updated;
   } shm;			/**< (Internal) our shm segment */
+  unsigned pci_config_type;	/**< (Internal) PCI config type (1 or 2), 0: unknown */
 } hd_data_t;
 
 

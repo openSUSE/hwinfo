@@ -20,16 +20,12 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __i386__
-#define USE_CPU_EMU
-#endif
-
 #include <unistd.h>
 #include <errno.h>
 #include <asm/unistd.h>
 #include <stdio.h>
 #include <string.h>
-#ifndef USE_CPU_EMU
+#ifdef __i386__
 #include <sys/vm86.h>
 #else
 #include "vm86_struct.h"
@@ -48,7 +44,7 @@ struct vm86_struct vm86s;
 
 static int vm86_GP_fault(void);
 static int vm86_do_int(int num);
-#ifndef USE_CPU_EMU
+#ifdef __i386__
 static int vm86_rep(struct vm86_struct *ptr);
 #endif
 void log_registers(void);
@@ -121,8 +117,7 @@ collect_bios_regs(i86biosRegsPtr regs)
 	regs->si = CPU_REG(esi);
 }
 
-static int
-do_vm86(void)
+static int do_vm86(int cpuemu)
 {
   int retval;
 	
@@ -130,8 +125,13 @@ do_vm86(void)
 	dump_registers();
 #endif
 
-#ifndef USE_CPU_EMU
-	retval = vm86_rep(&vm86s);
+#ifdef __i386__
+	if(cpuemu) {
+	  retval = emu_vm86(&vm86s);
+	}
+	else {
+	  retval = vm86_rep(&vm86s);
+	}
 #else
 	retval = emu_vm86(&vm86s);
 #endif
@@ -168,10 +168,10 @@ do_vm86(void)
 }
 
 void
-do_x86(unsigned long bios_start, i86biosRegsPtr regs)
+do_x86(unsigned long bios_start, i86biosRegsPtr regs, int cpuemu)
 {
     setup_vm86(bios_start, regs);
-    while(do_vm86()) {};
+    while(do_vm86(cpuemu)) {};
     collect_bios_regs(regs);
 }
 
@@ -399,7 +399,7 @@ vm86_do_int(int num)
 #undef COPY_R
 }
 
-#ifndef USE_CPU_EMU
+#ifdef __i386__
 
 static int
 vm86_rep(struct vm86_struct *ptr) 

@@ -74,12 +74,12 @@ static sigjmp_buf longjmp_buf;
 
 static void sigsegv_handler(int);
 
-int InitInt10()
+int InitInt10(int pci_cfg_method)
 {
   if(geteuid()) return -1;
 
   if(!map()) return -1;
-	
+
   if(!setup_system_bios()) {
     unmap();
     return -1;
@@ -92,7 +92,7 @@ int InitInt10()
     return -1;
   }
 
-  scan_pci();
+  scan_pci(pci_cfg_method);
 
   for(; CurrentPci; CurrentPci = CurrentPci->next) {
     if(CurrentPci->active) break;
@@ -148,7 +148,7 @@ void sigsegv_handler(int num)
 }
 
 
-int CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
+int CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len, int cpuemu)
 {
   i86biosRegs bRegs;
   void (*old_sigsegv_handler)(int) = SIG_DFL;
@@ -176,7 +176,7 @@ int CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
     old_sigtrap_handler = signal(SIGTRAP, sigsegv_handler);
 
     loadCodeToMem((unsigned char *) BIOS_START, code);
-    do_x86(BIOS_START, &bRegs);
+    do_x86(BIOS_START, &bRegs, cpuemu);
   }
   else {
     int10inited = 0;
@@ -200,7 +200,7 @@ int CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
 
 
 #if 0
-int CallInt13(int *ax, int *bx, int *cx, int *dx, unsigned char *buf, int len)
+int CallInt13(int *ax, int *bx, int *cx, int *dx, unsigned char *buf, int len, int cpuemu)
 {
   i86biosRegs bRegs;
 
@@ -219,7 +219,7 @@ int CallInt13(int *ax, int *bx, int *cx, int *dx, unsigned char *buf, int len)
   iopl(3);
 
   loadCodeToMem((unsigned char *) BIOS_START, code13);
-  do_x86(BIOS_START, &bRegs);
+  do_x86(BIOS_START, &bRegs, cpuemu);
 
   iopl(0);
 

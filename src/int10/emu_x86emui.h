@@ -60,8 +60,13 @@
 #include <string.h>
 
 #define INC_DECODED_INST_LEN(x)
+#ifdef DEBUG
+#define DECODE_PRINTF(x) fprintf(stderr, x)
+#define DECODE_PRINTF2(x,y) fprintf(stderr, x, y)
+#else
 #define DECODE_PRINTF(x)
 #define DECODE_PRINTF2(x,y)
+#endif
 #define SAVE_IP_CS(x,y)
 #define START_OF_INSTR()
 #define END_OF_INSTR()

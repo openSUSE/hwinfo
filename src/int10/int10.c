@@ -22,10 +22,11 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
   int i;
   unsigned char vbeinfo[0x200];
   int ax, bx, cx;
+  hd_smbios_t *sm;
 
   log_hd_data = hd_data;
 
-  if(InitInt10()) {
+  if(InitInt10(hd_data->pci_config_type)) {
     ADD2LOG("VBE: Could not init Int10\n");
     return;
   }
@@ -35,8 +36,12 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 
   PROGRESS(4, 1, "vbe info");
 
+#ifdef __i386__
+  if(hd_data->flags.cpuemu) ADD2LOG("vm86: using CPU emulation\n");
+#endif
+
   ax = 0x4f00; bx = 0; cx = 0;
-  i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo) & 0xffff;
+  i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo, hd_data->flags.cpuemu) & 0xffff;
 
   if(i != 0x4f) {
     ADD2LOG("VBE: Error (0x4f00): 0x%04x\n", i);
@@ -52,7 +57,7 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 
   memset(vbeinfo, 0, sizeof vbeinfo);
   ax = 0x4f15; bx = 1; cx = 0;
-  i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo) & 0xffff;
+  i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo, hd_data->flags.cpuemu) & 0xffff;
 
   if(i != 0x4f) {
     ADD2LOG("Error (0x4f15): 0x%04x\n", i);
@@ -69,7 +74,7 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 
   if(hd_probe_feature(hd_data, pr_bios_vbe2)) {
     ax = 0x4f03; bx = 0; cx = 0;
-    i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo) & 0xffff;
+    i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo, hd_data->flags.cpuemu) & 0xffff;
 
     if(i != 0x4f) {
       ADD2LOG("Error (0x4f03): 0x%04x\n", i);
@@ -82,7 +87,7 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
   ax = 0x0800; bx = 0x55aa; cx = 0; dx = 0x80;
   vbeinfo[0] = 0x80;
   vbeinfo[1] = 0;
-  i = CallInt13(&ax, &bx, &cx, &dx, vbeinfo, sizeof vbeinfo);
+  i = CallInt13(&ax, &bx, &cx, &dx, vbeinfo, sizeof vbeinfo, hd_data->flags.cpuemu);
 
   fprintf(stderr, "  EDD: ax = 0x%04x, bx = 0x%04x, cx = 0x%04x, dx = 0x%04x\n", ax, bx, cx, dx);
 #endif
@@ -183,7 +188,7 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v)
     mi->number =  modelist[i];
     
     ax = 0x4f01; bx = 0; cx = modelist[i];
-    l = CallInt10(&ax, &bx, &cx, tmp, sizeof tmp) & 0xffff;
+    l = CallInt10(&ax, &bx, &cx, tmp, sizeof tmp, hd_data->flags.cpuemu) & 0xffff;
 
     if(l != 0x4f) {
       ADD2LOG("0x%04x: no mode info\n", modelist[i]);

@@ -120,7 +120,7 @@ static unsigned long pciMinMemReg = ~0;
 
 
 void
-scan_pci(void)
+scan_pci(int pci_cfg_method)
 {
     unsigned short configtype;
     
@@ -133,6 +133,10 @@ scan_pci(void)
     PciStructPtr pci1;
     PciBusPtr pci_b1,pci_b2;
     
+    if(pci_cfg_method) {
+      configtype = pci_cfg_method;
+    }
+    else {
 #if defined(__alpha__) || defined(__powerpc__) || defined(__sparc__) || defined(__ia64__)
     configtype = 1;
 #else
@@ -158,6 +162,7 @@ scan_pci(void)
 		}
     }
 #endif
+    }
     
     if (configtype == 1) {
 		busidx = 0;

@@ -42,6 +42,8 @@
 #ifndef __X86EMU_X86EMU_H
 #define __X86EMU_X86EMU_H
 
+// #define DEBUG	1
+
 #include "emu_types.h"
 #define	X86API
 #define	X86APIP	*
@@ -169,6 +171,9 @@ void 	X86EMU_halt_sys(void);
 #define DEBUG_DECODE_NOPRINT_F  0x008000 
 #define DEBUG_SAVE_IP_CS_F      0x010000
 #define DEBUG_SYS_F             (DEBUG_SVC_F|DEBUG_FS_F|DEBUG_PROC_F)
+
+#define DEBUG_DECODE(x)		1
+#define CHECK_DATA_ACCESS(x)	0
 
 void 	X86EMU_trace_regs(void);
 void 	X86EMU_trace_xregs(void);

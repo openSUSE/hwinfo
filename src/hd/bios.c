@@ -14,6 +14,7 @@
 #include "hd.h"
 #include "hd_int.h"
 #include "bios.h"
+#include "klog.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * bios info
@@ -122,6 +123,7 @@ void hd_scan_bios(hd_data_t *hd_data)
   hd_res_t *res;
 #endif
   struct stat sbuf;
+  str_list_t *sl;
 
   if(!hd_probe_feature(hd_data, pr_bios)) return;
 
@@ -384,6 +386,14 @@ void hd_scan_bios(hd_data_t *hd_data)
 
     vbe = &bt->vbe;
     vbe->ok = 0;
+
+    if(!hd_data->klog) read_klog(hd_data);
+    for(sl = hd_data->klog; sl; sl = sl->next) {
+      if(sscanf(sl->str, "<6>PCI: Using configuration type %u", &u) == 1) {
+        hd_data->pci_config_type = u;
+        ADD2LOG("  klog: pci config type %u\n", hd_data->pci_config_type);
+      }
+    }
 
     get_vbe_info(hd_data, vbe);
 

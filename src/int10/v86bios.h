@@ -148,7 +148,7 @@ extern struct config Config;
 extern int ioperm_list[IOPERM_BITS];
 
 extern void setup_io(void);
-extern void do_x86(unsigned long bios_start,i86biosRegsPtr regs);
+extern void do_x86(unsigned long bios_start,i86biosRegsPtr regs, int cpuemu);
 extern int run_bios_int(int num, struct regs86 *regs);
 extern CARD32 getIntVect(int num);
 CARD32 getIP(void);

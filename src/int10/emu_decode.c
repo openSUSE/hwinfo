@@ -108,6 +108,9 @@ void X86EMU_exec(void)
 				}
 			}
 		}
+#ifdef DEBUG
+		fprintf(stderr, "%04x:%04x  ", M.x86.R_CS, M.x86.R_IP);
+#endif
 		op1 = (*sys_rdb)(((u32)M.x86.R_CS << 4) + (M.x86.R_IP++));
 		(*x86emu_optab[op1])(op1);
     }
