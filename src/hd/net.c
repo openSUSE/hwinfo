@@ -28,7 +28,7 @@ void hd_scan_net(hd_data_t *hd_data)
 {
   int found;
   unsigned u;
-  hd_t *hd;
+  hd_t *hd, *hd0;
   str_list_t *sl;
 
   if(!hd_probe_feature(hd_data, pr_net)) return;
@@ -79,12 +79,49 @@ void hd_scan_net(hd_data_t *hd_data)
         hd->sub_class = sc_nif_fddi;
         hd->slot = u;
       }
+      else if(sscanf(sl->str, "escon%u", &u) == 1) {
+        hd->sub_class = sc_nif_escon;
+        hd->slot = u;
+      }
       /* ##### add more interface names here */
       else {
         hd->sub_class = sc_nif_other;
       }
 
       hd->bus = bus_none;
+
+#if defined(__s390__)
+// temporary hack for s390
+      if(hd->sub_class != sc_nif_loopback) {
+        hd0 = hd;
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+        hd->base_class = bc_network;
+        hd->unix_dev_name = new_str(hd0->unix_dev_name);
+        hd->slot = hd0->slot;
+        hd->vend = MAKE_ID(TAG_SPECIAL, 0x6001);	// IBM
+        switch(hd0->sub_class) {
+          case sc_nif_ethernet:
+            hd->sub_class = 0;
+            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0000);
+            str_printf(&hd->dev_name, 0, "Ethernet card %d", hd->slot);
+            break;
+          case sc_nif_tokenring:
+            hd->sub_class = 1;
+            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0001);
+            str_printf(&hd->dev_name, 0, "Token ring card %d", hd->slot);
+            break;
+          case sc_nif_escon:
+            hd->sub_class = 0x70;
+            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0070);
+            str_printf(&hd->dev_name, 0, "ESCON %d", hd->slot);
+            break;
+          default:
+            hd->sub_class = 0x80;
+            hd->dev = MAKE_ID(TAG_SPECIAL, 0x0080);
+        }
+      }
+#endif
+
     }
   }
 }

@@ -2646,6 +2646,9 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_prom);
         hd_set_probe_feature(hd_data, pr_misc);
 #endif
+#ifdef __s390__
+        hd_set_probe_feature(hd_data, pr_net);
+#endif
         break;
 
       case hw_printer:

@@ -165,7 +165,8 @@ typedef enum sc_std {
 
 /* subclass values of bc_network_interface */
 typedef enum sc_net_if {
-  sc_nif_loopback, sc_nif_ethernet, sc_nif_tokenring, sc_nif_fddi, sc_nif_other = 0x80
+  sc_nif_loopback, sc_nif_ethernet, sc_nif_tokenring, sc_nif_fddi,
+  sc_nif_escon = 0x70, sc_nif_other = 0x80
 } hd_sc_net_if_t;
 
 /* subclass values of bc_multimedia */

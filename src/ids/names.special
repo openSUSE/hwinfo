@@ -212,3 +212,9 @@ s5003	Handy Tech
 	0088	ht80
 	0089	ht40
 
+# special s390 hardware
+s6001	IBM
+	0000	Ethernet card
+	0001	Token ring card
+	0070	ESCON
+	0080	Network card
