@@ -56,7 +56,6 @@
 #include "sys.h"
 #include "manual.h"
 #include "fb.h"
-#include "veth.h"
 #include "pppoe.h"
 #include "pcmcia.h"
 #include "s390.h"
@@ -189,7 +188,6 @@ static struct s_mod_names {
   { mod_sys, "sys" },
   { mod_manual, "manual" },
   { mod_fb, "fb" },
-  { mod_veth, "veth" },
   { mod_pppoe, "pppoe" },
   { mod_pcmcia, "pcmcia" },
   { mod_s390, "s390" },
@@ -277,7 +275,6 @@ static struct s_pr_flags {
   { pr_sys,           0,            8|4|2|1, "sys"           },
   { pr_manual,        0,            8|4|2|1, "manual"        },
   { pr_fb,            0,            8|4|2|1, "fb"            },
-  { pr_veth,          0,            8|4|2|1, "veth"          },
   { pr_pppoe,         0,            8|4|2|1, "pppoe"         },
   /* dummy, used to turn off hwscan */
   { pr_scan,          0,                  0, "scan"          },
@@ -621,7 +618,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_s390);
       hd_set_probe_feature(hd_data, pr_net);
 #endif
-      hd_set_probe_feature(hd_data, pr_veth);
       break;
 
     case hw_printer:
@@ -1752,10 +1748,6 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_sysfs_scsi(hd_data);
   hd_scan_sysfs_usb(hd_data);
   hd_scan_sysfs_edd(hd_data);
-
-#if defined(__PPC__)   
-  hd_scan_veth(hd_data);
-#endif
 
 #if defined(__PPC__)
   hd_scan_adb(hd_data);
@@ -2928,6 +2920,14 @@ int hd_is_sgi_altix(hd_data_t *hd_data)
   struct stat sbuf;
 
   return stat("/proc/sgi_sn", &sbuf) ? 0 : 1;
+}
+
+
+int hd_is_iseries(hd_data_t *hd_data)
+{
+  struct stat sbuf;
+
+  return stat(PROC_ISERIES, &sbuf) ? 0 : 1;
 }
 
 

@@ -1,6 +1,7 @@
 19/4/2004:	v8.40
 	- fixed bug in modules.alias conversion script (#38800)
 	- fixed linmodem data (#38800)
+	- handle veth devices on iSeries (#38696, #37981)
 
 15/4/2004:	v8.39
 	- bcm5700, not tg3 on ppc* (#38647)

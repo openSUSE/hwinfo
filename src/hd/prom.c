@@ -147,11 +147,11 @@ void read_mem(char *path, char *name, unsigned char **mem, unsigned len)
 
 void read_int(char *path, char *name, int *val)
 {
-  int *i = NULL;
+  unsigned char *p = NULL;
 
-  read_mem(path, name, (unsigned char **) &i, sizeof *i);
-  if(i) *val = *i;
-  free_mem(i);
+  read_mem(path, name, &p, sizeof (int));
+  if(p) memcpy(val, p, sizeof (int));
+  free_mem(p);
 }
 
 void read_devtree_entry(hd_data_t *hd_data, devtree_t *parent, char *dirname)
