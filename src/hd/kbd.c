@@ -309,7 +309,7 @@ void hd_scan_kbd(hd_data_t *hd_data)
 #endif	/* __sparc__ */
 
 
-#ifdef __s390__
+#if defined(__s390__) || defined(__s390x__)
 void hd_scan_kbd(hd_data_t *hd_data)
 {
 

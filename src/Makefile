@@ -23,6 +23,10 @@ ifeq "$(ARCH)" "s390"
 SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
 endif
 
+ifeq "$(ARCH)" "s390x"
+SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
+endif
+
 $(LIBHD): $(OBJS)
 	ar r $@ $?
 	@rm -f $(LIBHD_D)

@@ -78,7 +78,11 @@
 #define HD_ARCH "s390"
 #endif
 
-#if defined(__s390__) || defined(__alpha__)
+#ifdef __s390x__
+#define HD_ARCH "s390x"
+#endif
+
+#if defined(__s390__) || defined(__s390x__) ||defined(__alpha__)
 #define WITH_ISDN	0
 #else
 #define WITH_ISDN	1
@@ -1211,7 +1215,7 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_smart(hd_data);
   hd_scan_i2o(hd_data);
   hd_scan_cciss(hd_data);
-#ifdef __s390__
+#if defined(__s390__) || defined(__s390x__)
   hd_scan_dasd(hd_data);
 #endif
   hd_scan_usb(hd_data);
@@ -3074,7 +3078,7 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 #ifdef __sparc__
   return arch_sparc;
 #else
-#ifdef __s390__
+#if defined(__s390__) || defined(__s390x__)
   return arch_s390;
 #else
 #ifdef __ia64__
@@ -3265,7 +3269,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 #ifdef __PPC__
         hd_set_probe_feature(hd_data, pr_prom);
 #endif
-#ifdef __s390__
+#if defined(__s390__) || defined(__s390x__)
         hd_set_probe_feature(hd_data, pr_net);
 #endif
         break;

@@ -107,7 +107,7 @@ void read_cpuinfo(hd_data_t *hd_data)
   unsigned u, bogo, cpus_active;
 #endif
 
-#ifdef __s390__
+#if defined(__s390__) || defined(__s390x__)
   char vendor_id[80];
   unsigned bogo;
   unsigned u0, u1, u2, u3;
@@ -421,7 +421,7 @@ void read_cpuinfo(hd_data_t *hd_data)
 #endif /* __ia64__  */
 
 
-#ifdef __s390__
+#if defined(__s390__) || defined(__s390x__)
   *vendor_id = 0;
   bogo = 0;
 
@@ -452,7 +452,7 @@ void read_cpuinfo(hd_data_t *hd_data)
       cpus++;
     }
   }
-#endif /* __s390__  */
+#endif /* defined(__s390__) || defined(__s390x__) */
 }
 
 /*

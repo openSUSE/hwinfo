@@ -14,7 +14,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#if !defined(__s390__) && !defined(__alpha__)
+#if !defined(__s390__) && !defined(__s390x__) && !defined(__alpha__)
 
 void hd_scan_isdn(hd_data_t *hd_data)
 {
@@ -188,4 +188,4 @@ ihw_card_info *get_isdn_info(hd_t *hd)
   return NULL;
 }
 
-#endif		/* !defined(__s390)__ */
+#endif		/* !defined(__s390__) && !defined(__s390x__) && !defined(__alpha__) */

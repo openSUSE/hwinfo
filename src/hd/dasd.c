@@ -18,7 +18,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#if defined(__s390__)
+#if defined(__s390__) || defined(__s390x__)
 
 void hd_scan_dasd(hd_data_t *hd_data)
 {
@@ -81,5 +81,5 @@ void hd_scan_dasd(hd_data_t *hd_data)
   free_str_list(sl0);
 }
 
-#endif	/* defined(__s390__) */
+#endif	/* defined(__s390__) || defined(__s390x__) */
 

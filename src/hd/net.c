@@ -29,7 +29,7 @@ void hd_scan_net(hd_data_t *hd_data)
   int found;
   unsigned u;
   hd_t *hd;
-#ifdef __s390__
+#if defined(__s390__) || defined(__s390x__)
   hd_t *hd0;
 #endif
   str_list_t *sl;
@@ -93,7 +93,7 @@ void hd_scan_net(hd_data_t *hd_data)
 
       hd->bus = bus_none;
 
-#ifdef __s390__
+#if defined(__s390__) || defined(__s390x__)
 // temporary hack for s390
       if(hd->sub_class != sc_nif_loopback) {
         hd0 = hd;
