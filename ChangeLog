@@ -1,3 +1,8 @@
+6//6/2000:	v0.98
+	- hd_display_list() function
+	- new SaX[2] data
+	- changed mk_ids to provide 3d *and* non-3d x11 entries
+
 31/5/2000:	v0.97
 	- provides info about bios disk ids
 

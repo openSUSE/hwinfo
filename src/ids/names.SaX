@@ -444,8 +444,6 @@ NAME=Toshiba§DEVICE=Toshiba-4010CDT§VID=0x1179§DID=0x0001§SERVER=SVGA
 #----------------------------#
 # 3DFX Interactive Inc Cards           
 #----------------------------#
-NAME=3DFX Interactive Inc§DEVICE=3Dfx Voodoo Chipset§VID=0x121A§DID=0x0001§SERVER=SVGA
-NAME=3DFX Interactive Inc§DEVICE=3Dfx Voodoo2 Chipset§VID=0x121A§DID=0x0002§SERVER=SVGA
 NAME=3DFX INTERACTIVE§DEVICE=Banshee§VID=0x121A§DID=0x0003§SERVER=SVGA
 NAME=3DFX§DEVICE=Voodoo3§VID=0x121a§DID=0x0005§SERVER=SVGA
 

@@ -1144,8 +1144,9 @@ sub merge_x
       for($j = $i + 1; $j < @x; $j++) {
         if(
           defined($x[$i]) && defined($x[$j]) &&
-          ($x[$i][1][0] eq $x[$j][1][0]) &&
-          ($x[$i][1][1] eq $x[$j][1][1])
+          ($x[$i][1][0] eq $x[$j][1][0]) &&	# XF86 version
+          ($x[$i][1][1] eq $x[$j][1][1]) &&	# x11 server
+          ($x[$i][1][2] eq $x[$j][1][2])	# 3d support flag
         ) {
           printf STDERR
             "x11 info conflict/duplicate:\n  %s %s\n$k  removing: %s  # %s(%d)\n",

@@ -71,7 +71,8 @@ ADP 1505
 # 3dfx voodoo banshee & voodoo 3
 121a 0003
 121a 0005
-	x	SVGA|glide_v3|mesa|mesa3dfx|dev3dfx|glidesdk
+	x	4|tdfx|3d|glide_v3,mesa,mesa3dfx,dev3dfx
+	x	3|SVGA|3d|glide_v3,mesa,mesa3dfx,dev3dfx
 
 # ati rage pro
 1002 4742
@@ -79,11 +80,14 @@ ADP 1505
 1002 4749
 1002 4750+2
 1002 4c42
-	x	MACH64|glx|mesa
+	x	3|MACH64|3d|glx,mesa|glx.so
+	x	4|ati
+	x	3|MACH64
 
 1002 4c4d+2
 1002 4c52+2
-	x	SVGA
+	x	4|ati
+	x	3|SVGA
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
