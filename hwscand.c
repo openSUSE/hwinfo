@@ -16,10 +16,9 @@
 
 #include "init_message.h"
 
-#define TIMEOUT 2
-#define LONG_TIMEOUT 10
+#define TIMEOUT 1
+#define LONG_TIMEOUT 0
 #define BUFFERS 1024
-
 
 int main( int argc, char **argv )
 {
@@ -152,6 +151,9 @@ int main( int argc, char **argv )
 					}
 				}
 			}
+#if DEBUG
+				printf("CALL RECEIVED %s\n", p);
+#endif
 		}else{
 			// we do this only in scanning mode ...
 
@@ -209,6 +211,11 @@ int main( int argc, char **argv )
 					printf("RUN %s\n", buf);
 #endif
 					system(buf);
+#if DEBUG				
+					printf("RUN quit %s\n", buf);
+				}else{
+					printf("SKIPPED %s\n", buf);
+#endif
 				}
 			}
 			if ( lines ){
@@ -217,6 +224,9 @@ int main( int argc, char **argv )
 				printf("CALL DIRECT %s\n", commands[i]);
 #endif
 					system(commands[i]);
+#if DEBUG
+				printf("CALL quit %s\n", commands[i]);
+#endif
 					free(commands[i]);
 				}
 				lines=0;
