@@ -1,5 +1,6 @@
 9/9/2003:	v7.20
 	- more ltmodem ids
+	- uli: implementation of S/390 hardware detection
 
 8/9/2003:	v7.19
 	- updated driver info (#25457, #29481, #25531)
