@@ -203,6 +203,9 @@ static void get_ps2_mouse(hd_data_t *hd_data)
 
           if(buf_len >= 1) mouse_id = buf[buf_len - 1];
 
+          /* assume the user just can't keep his hands still... */
+          if(buf_len >= 5) mouse_id = buf[0];
+
           // if we didn't get any response, try this
           if(buf_len == 0 || (hd_data->debug & HD_DEB_MOUSE)) {
             PROGRESS(1, 5, "ps/2");
