@@ -660,6 +660,10 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
   if((s = hd_attr_str(sysfs_get_device_attr(sf_dev, "vendor")))) {
     cs = canon_str(s, strlen(s));
     ADD2LOG("    vendor = %s\n", cs);
+    if(!strcmp(cs, "ATA")) {
+      ADD2LOG("    dummy vendor entry \"%s\" removed\n", cs);
+      *cs = 0;
+    }
     if(*cs) {
       hd->vendor.name = cs;
     }

@@ -1,3 +1,6 @@
+10/9/2004:	v9.10
+	- sata driver seems to generate a dummy scsi vendor name (#44286)
+
 6/9/2004:	v9.9
 	- updated tv-card info
 
