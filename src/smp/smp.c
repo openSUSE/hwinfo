@@ -14,56 +14,6 @@
 #include <string.h>
 #include <errno.h>
 
-#ifdef __alpha__
-int alphaDetectSMP(void)
-{
-    int issmp = 0;
-    FILE *f;
-    
-    f = fopen("/proc/cpuinfo", "r");
-    if (f) {     
-	char buff[1024];
-	
-	while (fgets (buff, 1024, f) != NULL) {
-	    if (!strncmp (buff, "cpus detected\t\t: ", 17)) {
-		if (strtoul (buff + 17, NULL, 0) > 1)
-		    issmp = 1;
-		break;
-	    }
-	}
-	fclose(f);
-    } else
-	return -1;
-    
-    return issmp;
-}
-#endif /* __alpha__ */
-
-#ifdef __sparc__
-int sparcDetectSMP(void)
-{
-    int issmp = 0;
-    FILE *f;
-    
-    f = fopen("/proc/cpuinfo", "r");
-    if (f) {     
-	char buff[1024];
-	
-	while (fgets (buff, 1024, f) != NULL) {
-	    if (!strncmp (buff, "ncpus probed\t: ", 15)) {
-		if (strtoul (buff + 15, NULL, 0) > 1)
-		    issmp = 1;
-		break;
-	    }
-	}
-	fclose(f);
-    } else
-	return -1;
-    
-    return issmp;
-}
-#endif /* __sparc__ */
-
 #ifdef __i386__
 #define SMP_MAGIC_IDENT	(('_'<<24)|('P'<<16)|('M'<<8)|'_')
 
@@ -322,7 +272,6 @@ static int intelDetectSMP(void)
 */
 	return smp_found_config;
 }
-#endif /* __i386__ */
 
 int detectSMP(void)
 {
@@ -331,14 +280,7 @@ int detectSMP(void)
     if (isSMP != -1)
 	return isSMP;
 
-#ifdef __i386__
     return isSMP = intelDetectSMP();
-#elif __sparc__
-    return isSMP = sparcDetectSMP();
-#elif __alpha__
-    return isSMP = alphaDetectSMP();
-#else
-    return isSMP;
-#endif
 }
 	
+#endif /* __i386__ */

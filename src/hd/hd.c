@@ -760,7 +760,7 @@ void hd_scan(hd_data_t *hd_data)
     ADD2LOG("  smp board: %s\n", hd_smp_support(hd_data) ? "yes" : "no");
     switch(hd_cpu_arch(hd_data)) {
       case arch_intel:
-        s = "intel";
+        s = "ia32";
         break;
       case arch_alpha:
         s = "alpha";
@@ -779,6 +779,9 @@ void hd_scan(hd_data_t *hd_data)
         break;
       case arch_s390:
         s = "s390";
+        break;
+      case arch_ia64:
+        s = "ia64";
         break;
       default:
         s = "unknown";
@@ -799,6 +802,12 @@ void hd_scan(hd_data_t *hd_data)
         break;
       case boot_ppc:
         s = "ppc";
+        break;
+      case boot_ia64:
+        s = "ia64";
+        break;
+      case boot_s390:
+        s = "s390";
         break;
       default:
         s = "unknown";
@@ -2191,14 +2200,13 @@ int hd_usb_support(hd_data_t *hd_data)
 
 int hd_smp_support(hd_data_t *hd_data)
 {
-  int i;
+  int is_smp = 0;
   unsigned u;
   hd_t *hd;
+#if 0
   cpu_info_t *ct;
   str_list_t *sl;
-
-  i = detectSMP() > 0 ? 1 : 0;
-  if(i) return i;
+#endif
 
   u = hd_data->flags.internal;
   hd_data->flags.internal = 1;
@@ -2206,14 +2214,26 @@ int hd_smp_support(hd_data_t *hd_data)
   if(!hd) hd = hd_list(hd_data, hw_cpu, 1, NULL);
   hd_data->flags.internal = u;
 
+  if(hd && hd->next) is_smp = 1;
+
+#if 0
+  // ######### this is wrong!!! fix it !!! ########
+
   if(!hd || !hd->detail || hd->detail->type != hd_detail_cpu) return i;
   if(!(ct = hd->detail->cpu.data)) return i;
 
   for(sl = ct->features; sl; sl = sl->next) {
     if(!strcmp(sl->str, "apic")) return 1;
   }
+#endif
 
-  return i;
+  hd = hd_free_hd_list(hd);
+
+#ifdef __i386__
+  if(!is_smp) is_smp = detectSMP() > 0 ? 1 : 0;
+#endif
+
+  return is_smp;
 }
 
 
@@ -2306,7 +2326,11 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 #ifdef __s390__
   return arch_s390;
 #else
+#ifdef __ia64__
+  return arch_ia64;
+#else
   return arch_unknown;
+#endif
 #endif
 #endif
 #endif

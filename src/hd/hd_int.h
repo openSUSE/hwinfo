@@ -100,8 +100,10 @@ int timeout(void(*func)(void *), void *arg, int timeout);
 str_list_t *read_kmods(hd_data_t *hd_data);
 char *get_cmd_param(hd_data_t *hd_data, int field);
 
+#ifdef __i386__
 /* smp/smp.c */
 int detectSMP(void);
+#endif
 
 void update_irq_usage(hd_data_t *hd_data);
 int run_cmd(hd_data_t *hd_data, char *cmd);

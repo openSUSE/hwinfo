@@ -20,13 +20,19 @@ static void dump_cpu_data(hd_data_t *hd_data);
 void hd_scan_cpu(hd_data_t *hd_data)
 {
   hd_t *hd;
-  unsigned int cpus = 0;
+  unsigned cpus = 0;
   cpu_info_t *ct;
   str_list_t *sl;
 
 #ifdef __i386__
   char model_id[80], vendor_id[80], features[0x100];
   unsigned bogo, mhz, cache, family, model, stepping;
+  char *t0, *t;
+#endif
+
+#ifdef __ia64__
+  char model_id[80], vendor_id[80], features[0x100];
+  unsigned mhz, stepping;
   char *t0, *t;
 #endif
 
@@ -43,7 +49,13 @@ void hd_scan_cpu(hd_data_t *hd_data)
 
 #ifdef __sparc__
   char cpu_id[80], fpu_id[80], promlib[80], prom[80], type[80], mmu[80];
-  unsigned int bogo, cpus_active;
+  unsigned u, bogo, cpus_active;
+#endif
+
+#ifdef __s390__
+  char vendor_id[80];
+  unsigned bogo;
+  unsigned u0, u1, u2, u3;
 #endif
 
   if(!hd_probe_feature(hd_data, pr_cpu)) return;
@@ -115,50 +127,48 @@ void hd_scan_cpu(hd_data_t *hd_data)
     }
 
   }
-#endif
+#endif	/* __alpha__ */
+
 
 #ifdef __sparc__
   *cpu_id = *fpu_id = *promlib = *prom = *type = *mmu = 0;
   cpus = cpus_active = bogo = 0;
 
-  for(sl = hd_data->cpu; sl; sl = sl->next)
-    {
-      if(sscanf(sl->str, "cpu             : %79[^\n]", cpu_id) == 1);
-      if(sscanf(sl->str, "fpu             : %79[^\n]", fpu_id) == 1);
-      if(sscanf(sl->str, "promlib         : %79[^\n]", promlib) == 1);
-      if(sscanf(sl->str, "prom            : %79[^\n]", prom) == 1);
-      if(sscanf(sl->str, "type            : %79[^\n]", type) == 1);
-      if(sscanf(sl->str, "ncpus probed    : %u", &cpus) == 1);
-      if(sscanf(sl->str, "ncpus active    : %u", &cpus_active) == 1);
-      if(sscanf(sl->str, "BogoMips        : %u", &bogo) == 1);
-      if(sscanf(sl->str, "MMU Type        : %79[^\n]", mmu) == 1);
-    }
+  for(sl = hd_data->cpu; sl; sl = sl->next) {
+    if(sscanf(sl->str, "cpu             : %79[^\n]", cpu_id) == 1);
+    if(sscanf(sl->str, "fpu             : %79[^\n]", fpu_id) == 1);
+    if(sscanf(sl->str, "promlib         : %79[^\n]", promlib) == 1);
+    if(sscanf(sl->str, "prom            : %79[^\n]", prom) == 1);
+    if(sscanf(sl->str, "type            : %79[^\n]", type) == 1);
+    if(sscanf(sl->str, "ncpus probed    : %u", &cpus) == 1);
+    if(sscanf(sl->str, "ncpus active    : %u", &cpus_active) == 1);
+    if(sscanf(sl->str, "BogoMips        : %u", &bogo) == 1);
+    if(sscanf(sl->str, "MMU Type        : %79[^\n]", mmu) == 1);
+  }
 
-  if (*cpu_id)
-    {
+  if(*cpu_id) {
+    for(u = 0; u < cpus; u++) {
       ct = new_mem(sizeof *ct);
       ct->platform = new_str (type);
-      if (strcmp (type, "sun4u") == 0)
-	ct->architecture = arch_sparc64;
+      if(strcmp (type, "sun4u") == 0)
+        ct->architecture = arch_sparc64;
       else
-	ct->architecture = arch_sparc;
+        ct->architecture = arch_sparc;
 
-      if (cpu_id)
-	ct->model_name = new_str (cpu_id);
+      ct->model_name = new_str(cpu_id);
       hd_data->boot = boot_silo;
 
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class = bc_internal;
       hd->sub_class = sc_int_cpu;
-      hd->slot = cpus;
+      hd->slot = u;
       hd->detail = new_mem(sizeof *hd->detail);
       hd->detail->type = hd_detail_cpu;
       hd->detail->cpu.data = ct;
     }
-#endif
+  }
+#endif	/* sparc */
 
-
-/* Intel code  */
 
 #ifdef __i386__
   *model_id = *vendor_id = *features = 0;
@@ -240,22 +250,26 @@ void hd_scan_cpu(hd_data_t *hd_data)
   }
 #endif /* __i386__  */
 
+
 #ifdef __PPC__
   *model_id = *vendor_id = *motherboard = 0;
   bogo = mhz = cache = family = model = stepping = 0;
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
-    if(sscanf(sl->str, "cpu : %79[^\n]", model_id) == 1);
     if(sscanf(sl->str, "machine : %79[^\n]", vendor_id) == 1);
+  }
+
+  for(sl = hd_data->cpu; sl; sl = sl->next) {
+    if(sscanf(sl->str, "cpu : %79[^\n]", model_id) == 1);
     if(sscanf(sl->str, "motherboard : %79[^\n]", motherboard) == 1);
     if(sscanf(sl->str, "bogomips : %u", &bogo) == 1);
     if(sscanf(sl->str, "clock : %u", &mhz) == 1);
     if(sscanf(sl->str, "L2 cache : %u KB", &cache) == 1);
 
     if(strstr(sl->str, "processor") == sl->str || !sl->next) {		/* EOF */
-      if(*model_id || *vendor_id) {	/* at least one of those */
+      if(*model_id) {	/* at least one of those */
         ct = new_mem(sizeof *ct);
-	ct->architecture = arch_ppc;
+        ct->architecture = arch_ppc;
         if(model_id) ct->model_name = new_str(model_id);
         if(vendor_id) ct->vend_name = new_str(vendor_id);
         if(motherboard) ct->platform = new_str(motherboard);
@@ -263,7 +277,7 @@ void hd_scan_cpu(hd_data_t *hd_data)
         ct->model = model;
         ct->stepping = stepping;
         ct->cache = cache;
-	hd_data->boot = boot_ppc;
+        hd_data->boot = boot_ppc;
         ct->clock = mhz;
 
         hd = add_hd_entry(hd_data, __LINE__, 0);
@@ -278,7 +292,7 @@ void hd_scan_cpu(hd_data_t *hd_data)
           hd_data->color_code = 7;	// black
         }
         
-        *model_id = *vendor_id = 0;
+        *model_id = 0;
         bogo = mhz = cache = family = model= 0;
         cpus++;
       }
@@ -286,6 +300,112 @@ void hd_scan_cpu(hd_data_t *hd_data)
   }
 #endif /* __PPC__  */
 
+
+#ifdef __ia64__
+  *model_id = *vendor_id = *features = 0;
+  mhz = stepping = 0;
+
+  for(sl = hd_data->cpu; sl; sl = sl->next) {
+    if(sscanf(sl->str, "model : %79[^\n]", model_id) == 1);
+    if(sscanf(sl->str, "vendor : %79[^\n]", vendor_id) == 1);
+    if(sscanf(sl->str, "features : %255[^\n]", features) == 1);
+    if(sscanf(sl->str, "cpu MHz : %u", &mhz) == 1);
+    if(sscanf(sl->str, "revision : %u", &stepping) == 1);
+
+    if(strstr(sl->str, "processor") == sl->str || !sl->next) {		/* EOF */
+      if(*model_id || *vendor_id) {	/* at least one of those */
+        ct = new_mem(sizeof *ct);
+	ct->architecture = arch_ia64;
+        if(model_id) ct->model_name = new_str(model_id);
+        if(vendor_id) ct->vend_name = new_str(vendor_id);
+        ct->stepping = stepping;
+	hd_data->boot = boot_ia64;
+
+        /* round clock to typical values */
+        if(mhz >= 38 && mhz <= 42)
+          mhz = 40;
+        else if(mhz >= 88 && mhz <= 92)
+          mhz = 90;
+        else {
+	  unsigned u, v;
+
+          u = (mhz + 2) % 100;
+          v = (mhz + 2) / 100;
+          if(u <= 4)
+            u = 2;
+          else if(u >= 25 && u <= 29)
+            u = 25 + 2;
+          else if(u >= 33 && u <= 37)
+            u = 33 + 2;
+          else if(u >= 50 && u <= 54)
+            u = 50 + 2;
+          else if(u >= 66 && u <= 70)
+            u = 66 + 2;
+          else if(u >= 75 && u <= 79)
+            u = 75 + 2;
+          else if(u >= 80 && u <= 84)	/* there are 180MHz PPros */
+            u = 80 + 2;
+          u -= 2;
+          mhz = v * 100 + u;
+        }
+
+        ct->clock = mhz;
+
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+        hd->base_class = bc_internal;
+        hd->sub_class = sc_int_cpu;
+        hd->slot = cpus;
+        hd->detail = new_mem(sizeof *hd->detail);
+        hd->detail->type = hd_detail_cpu;
+        hd->detail->cpu.data = ct;
+
+        if(*features) {
+          for(t0 = features; (t = strsep(&t0, " ")); ) {
+            add_str_list(&ct->features, t);
+          }
+        }
+
+        *model_id = *vendor_id = 0;
+        mhz = 0;
+        cpus++;
+      }
+    }
+  }
+#endif /* __ia64__  */
+
+
+#ifdef __s390__
+  *vendor_id = 0;
+  bogo = 0;
+
+  for(sl = hd_data->cpu; sl; sl = sl->next) {
+    if(sscanf(sl->str, "vendor_id : %79[^\n]", vendor_id) == 1);
+    if(sscanf(sl->str, "bogomips per cpu : %u", &bogo) == 1);
+  }
+
+  for(sl = hd_data->cpu; sl; sl = sl->next) {
+    if(
+      sscanf(sl->str, "processor %u : version = %u , identification = %u , machine = %u", &u0, &u1, &u2, &u3) == 4
+    ) {
+      ct = new_mem(sizeof *ct);
+      ct->architecture = arch_s390;
+      if(vendor_id) ct->vend_name = new_str(vendor_id);
+      ct->stepping = u1;
+      hd_data->boot = boot_s390;
+
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class = bc_internal;
+      hd->sub_class = sc_int_cpu;
+      hd->slot = cpus;
+      hd->detail = new_mem(sizeof *hd->detail);
+      hd->detail->type = hd_detail_cpu;
+      hd->detail->cpu.data = ct;
+
+      bogo = 0;
+      cpus++;
+    }
+  }
+#endif /* __s390__  */
 }
 
 

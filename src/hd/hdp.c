@@ -595,6 +595,12 @@ void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
       case arch_68k:
 	dump_line0 ("68k\n");
 	break;
+      case arch_ia64:
+	dump_line0 ("IA-64\n");
+	break;
+      case arch_s390:
+	dump_line0 ("S390\n");
+	break;
       default:
 	dump_line0 ("**UNKNWON**\n");
 	break;

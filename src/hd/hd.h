@@ -418,7 +418,7 @@ typedef enum cpu_arch {
 // ###### drop boot_arch at all?
 typedef enum boot_arch {
   boot_unknown = 0,
-  boot_lilo, boot_milo, boot_aboot, boot_silo, boot_ppc, boot_ia64
+  boot_lilo, boot_milo, boot_aboot, boot_silo, boot_ppc, boot_ia64, boot_s390
 } hd_boot_arch_t;
 
 /* special cpu entry */
