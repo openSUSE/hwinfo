@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-07-14 19:08:54
+#hwinfo data from 2000-07-15 18:43:28
 #
 
 
@@ -157,6 +157,16 @@
 # Diamond:Fire GL1
 1014 00b7  
 	x	4|firegl1||xfiregl1||accel,DDCInfo|8
+		Option "NumDMABuffers2D" "4"
+		Option "NumDMABuffers" "24"
+		Option "NumTMBuffers" "4"
+		Option "Capabilities" "0x00000000"
+		#Option "PipelineSpeed" "125"
+
+
+# Diamond:Fire GL1
+1014 00b7  
+	x	4|firegl1|3d|xfiregl1|glx,dri,fgl1|accel,DDCInfo|
 		Option "NumDMABuffers2D" "4"
 		Option "NumDMABuffers" "24"
 		Option "NumTMBuffers" "4"

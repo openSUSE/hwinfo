@@ -1,5 +1,6 @@
 15/7/2000:	v1.21
 	- fixed isapnp isdn probing bug
+	- updated x11 data
 
 14/7/2000:	v1.20
 	- fixed stupid printer probing bug
