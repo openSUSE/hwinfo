@@ -121,6 +121,11 @@
 &device.id		special 0x0000
 +driver.mouse		mousesystems|sun|3|0
 
+# very special
+ vendor.id		special 0x0210
+&device.id		special 0x0000+0x0100
++driver.mouse		explorerps/2|exps2
+
 # A4Tech 4D++ super whatever mouse (#24137)
  vendor.name		A4W
 +vendor.name		A4Tech

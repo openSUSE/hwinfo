@@ -24,9 +24,11 @@
 
 #ifndef LIBHD_TINY
 
+#if 0
 static unsigned read_data(hd_data_t *hd_data, int fd, unsigned char *buf, unsigned buf_size);
 static void get_ps2_mouse(hd_data_t *hd_data);
 static void test_ps2_open(void *arg);
+#endif
 
 static void get_serial_mouse(hd_data_t* hd_data);
 static void add_serial_mouse(hd_data_t* hd_data);
@@ -35,7 +37,9 @@ static void setspeed(int fd, int new, int needtowrite, unsigned short flags);
 static unsigned chk4id(ser_device_t *mi);
 static ser_device_t *add_ser_mouse_entry(ser_device_t **sm, ser_device_t *new_sm);
 static void dump_ser_mouse_data(hd_data_t *hd_data);
+#if 0
 static void get_sunmouse(hd_data_t *hd_data);
+#endif
 
 void hd_scan_mouse(hd_data_t *hd_data)
 {
@@ -49,9 +53,11 @@ void hd_scan_mouse(hd_data_t *hd_data)
   remove_hd_entries(hd_data);
   hd_data->ser_mouse = NULL;
 
+#if 0
   PROGRESS(1, 0, "ps/2");
 
   get_ps2_mouse(hd_data);
+#endif
 
   PROGRESS(2, 0, "serial");
 
@@ -82,12 +88,15 @@ void hd_scan_mouse(hd_data_t *hd_data)
   }
   hd_data->ser_mouse = NULL;
 
+#if 0
   PROGRESS(3, 0, "sunmouse");
 
   get_sunmouse(hd_data);
+#endif
 }
 
 
+#if 0
 unsigned read_data(hd_data_t *hd_data, int fd, unsigned char *buf, unsigned buf_size)
 {
   int k, len = 0;
@@ -318,7 +327,9 @@ void test_ps2_open(void *arg)
 {
   open(DEV_PSAUX, O_RDWR | O_NONBLOCK);
 }
+#endif
 
+#if 0
 static void get_sunmouse(hd_data_t *hd_data)
 {
   hd_t *hd;
@@ -357,7 +368,7 @@ static void get_sunmouse(hd_data_t *hd_data)
 	}
     }
 }
-
+#endif
 
 /*
  * Gather serial mouse data and put it into hd_data->ser_mouse.

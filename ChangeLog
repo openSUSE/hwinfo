@@ -1,3 +1,8 @@
+	- rewrote input device handling
+	- load ide-cd, sd_mod, sr_mod before looking for block devs
+
+30/3/2004:	v8.27
+	- changed bios probing to do less things --> MKINITRD!!!
 	- added duplicate DASD detection code from the late dasd.c
 	  to block.c (bug #37068)
 	- changed bios probing to do less things

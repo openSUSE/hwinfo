@@ -52,19 +52,27 @@ void hd_scan_sysfs_block(hd_data_t *hd_data)
   hd_data->partitions = free_str_list(hd_data->partitions);
   hd_data->cdroms = free_str_list(hd_data->cdroms);
 
-  PROGRESS(1, 0, "sysfs drivers");
+  if(hd_probe_feature(hd_data, pr_block_mods)) {
+    PROGRESS(1, 0, "block modules");
+    load_module(hd_data, "ide_cd");
+    load_module(hd_data, "sr_mod");
+    load_module(hd_data, "sd_mod");
+    load_module(hd_data, "st");
+  }
+
+  PROGRESS(2, 0, "sysfs drivers");
 
   hd_sysfs_driver_list(hd_data);
 
-  PROGRESS(2, 0, "cdrom");
+  PROGRESS(3, 0, "cdrom");
 
   read_cdroms(hd_data);
 
-  PROGRESS(3, 0, "partition");
+  PROGRESS(4, 0, "partition");
 
   read_partitions(hd_data);
 
-  PROGRESS(4, 0, "get sysfs block dev data");
+  PROGRESS(5, 0, "get sysfs block dev data");
 
   get_block_devs(hd_data);
 

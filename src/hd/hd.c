@@ -63,6 +63,7 @@
 #include "pci.h"
 #include "block.h"
 #include "edd.h"
+#include "input.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -195,7 +196,8 @@ static struct s_mod_names {
   { mod_sysfs, "sysfs" },
   { mod_dsl, "dsl" },
   { mod_block, "block" },
-  { mod_edd, "edd" }
+  { mod_edd, "edd" },
+  { mod_input, "input" }
 };
 
 /*
@@ -287,8 +289,10 @@ static struct s_pr_flags {
   { pr_block,         0,            8|4|2|1, "block"         },
   { pr_block_cdrom,   pr_block,     8|4|2|1, "block.cdrom"   },
   { pr_block_part,    pr_block,     8|4|2|1, "block.part"    },
+  { pr_block_mods,    pr_block,     8|4|2|1, "block.mods"    },
   { pr_edd,           0,            8|4|2|1, "edd"           },
-  { pr_edd_mod,       pr_edd,       8|4|2|1, "edd.mod"       }
+  { pr_edd_mod,       pr_edd,       8|4|2|1, "edd.mod"       },
+  { pr_input,         0,            8|4|2|1, "input"         }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -430,7 +434,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_cdrom:
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_usb);
-      hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_block_mods);
       hd_set_probe_feature(hd_data, pr_scsi);
       if(!hd_data->flags.fast) {
         hd_set_probe_feature(hd_data, pr_block_cdrom);
@@ -444,6 +448,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_block_mods);
       hd_set_probe_feature(hd_data, pr_scsi);
       break;
 
@@ -456,6 +461,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_block_mods);
       hd_set_probe_feature(hd_data, pr_edd_mod);
       hd_set_probe_feature(hd_data, pr_scsi);
       break;
@@ -467,6 +473,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_block_mods);
       hd_set_probe_feature(hd_data, pr_edd_mod);
       hd_set_probe_feature(hd_data, pr_scsi);
       if(!hd_data->flags.fast) {
@@ -517,10 +524,12 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_sys);
       hd_set_probe_feature(hd_data, pr_bios);
       hd_set_probe_feature(hd_data, pr_mouse);
+      hd_set_probe_feature(hd_data, pr_input);
       break;
 
     case hw_joystick:
       hd_set_probe_feature(hd_data, pr_usb);
+      hd_set_probe_feature(hd_data, pr_input);
       break;
 
     case hw_chipcard:
@@ -542,6 +551,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_adb);
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_kbd);
+      hd_set_probe_feature(hd_data, pr_input);
 #ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_serial);
 #endif
@@ -682,6 +692,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_isdn);	// need pr_misc, too?
       hd_set_probe_feature(hd_data, pr_dsl);
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_block_mods);
       hd_set_probe_feature(hd_data, pr_scsi);
       hd_data->flags.fast = 1;
       break;
@@ -721,12 +732,14 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_tape:
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_block_mods);
       hd_set_probe_feature(hd_data, pr_scsi);
       break;
 
     case hw_ide:
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_block_mods);
       break;
 
     case hw_pppoe:
@@ -752,6 +765,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     
     case hw_redasd:
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_block_mods);
       break;
 
     case hw_unknown:
@@ -1754,6 +1768,8 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_mouse(hd_data);
 #endif
   hd_scan_sbus(hd_data);
+
+  hd_scan_input(hd_data);
 
   /* must be after hd_scan_monitor() */
   hd_scan_fb(hd_data);

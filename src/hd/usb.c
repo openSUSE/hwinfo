@@ -40,8 +40,13 @@ void hd_scan_sysfs_usb(hd_data_t *hd_data)
 
   get_usb_devs(hd_data);
 
-  PROGRESS(3, 0, "input");
+  PROGRESS(3, 1, "joydev mod");
+  load_module(hd_data, "joydev");
+    
+  PROGRESS(3, 2, "evdev mod");
+  load_module(hd_data, "evdev");
 
+  PROGRESS(3, 3, "input");
   get_input_devs(hd_data);
 
 }

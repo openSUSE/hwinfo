@@ -58,18 +58,14 @@ typedef unsigned int u_int;
 
 void hd_scan_kbd(hd_data_t *hd_data)
 {
-  int i, j, k;
-  unsigned keyb_idx, u, kid;
-  char *s;
-  hd_t *hd;
 #ifdef __PPC__
   hd_t *hd1;
   hd_res_t *res;
   int fd;
   str_list_t *cmd;
-#endif
+  hd_t *hd;
+  unsigned u;
   str_list_t *sl;
-#ifdef __PPC__
   struct serial_struct ser_info;
 #endif
 
@@ -79,28 +75,6 @@ void hd_scan_kbd(hd_data_t *hd_data)
 
   /* some clean-up */
   remove_hd_entries(hd_data);
-
-  PROGRESS(1, 0, "get info");
-
-  k = 0; keyb_idx = 0;
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(
-      hd->base_class.id == bc_input &&
-      hd->sub_class.id == sc_inp_keyb
-    ) {
-      if(!k) keyb_idx = hd->idx;
-      k++;
-    }
-  }
-
-  i = j = 0;
-  for(sl = hd_data->klog; sl; sl = sl->next) {
-    if(strstr(sl->str, "keyboard: Too many NACKs")) i++;
-    if(strstr(sl->str, "keyboard: Timeout - AT keyboard not present")) i++;
-    if(strstr(sl->str, "Keyboard timeout")) i++;
-    if(strstr(sl->str, "Keyboard timed out")) i++;
-    if(strstr(sl->str, "Detected PS/2 Mouse Port")) j = 1;
-  }
 
 #ifdef __PPC__
   PROGRESS(2, 0, "serial console");
@@ -150,28 +124,8 @@ void hd_scan_kbd(hd_data_t *hd_data)
     }
     close(fd);
   }
-
-  if(!j) return;
 #endif
 
-  /* more than 2 timeouts -> assume no keyboard */
-  kid = 0;
-  if(i < 2) {
-    hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class.id = bc_keyboard;
-    hd->sub_class.id = sc_keyboard_kbd;
-    if(j) {
-      hd->bus.id = bus_ps2;
-      kid = 1;
-    }
-    if(k == 1) hd->attached_to = keyb_idx;
-    hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0201);
-    if((s = get_cmd_param(hd_data, 3))) {
-      if(*s && sscanf(s, "%x", &u) == 1) kid = u;
-      free_mem(s);
-    }
-    hd->device.id = MAKE_ID(TAG_SPECIAL, kid);
-  }
 }
 
 #endif	/* __i386__ || __x86_64__ || __PPC__ || __alpha__ || __ia64__ */
