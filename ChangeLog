@@ -1,3 +1,5 @@
+	- load sg module before looking for scanners (#40478)
+
 12/5/2004:	v8.49
 	- use mmap() to access /dev/mem & re-enable bios access
 	  on ia64 (#34550)

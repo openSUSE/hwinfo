@@ -1224,11 +1224,15 @@ void hd_scan_sysfs_scsi(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
 
-  PROGRESS(1, 0, "scsi tape");
+  PROGRESS(1, 0, "scsi modules");
+
+  load_module(hd_data, "sg");
+
+  PROGRESS(2, 0, "scsi tape");
 
   get_scsi_tape(hd_data);
 
-  PROGRESS(2, 0, "scsi generic");
+  PROGRESS(3, 0, "scsi generic");
 
   get_generic_scsi_devs(hd_data);
 }
