@@ -117,6 +117,11 @@
 1077 1280
 	i	qla1280
 
+# scsi/qla2100.c
+1077 2100
+1077 2200
+	i	qla2x00
+
 # scsi/dc395x_trm.c
 1de1 0391
 	i dc395x_trm
