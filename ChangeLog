@@ -1,3 +1,6 @@
+1/12/2004:	v9.31
+	- fixed parsing of scsi serial id (#48757)
+
 30/11/2004:	v9.30
 	- fixed some dvb card entries (#47057)
 	- avoid libsysfs accidentally reading pci config space (#48582)

@@ -804,7 +804,7 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
         ADD2LOG("%s status(0x1a:8) 0x%x\n", hd->unix_dev_name, k);
       }
       else {
-        char *ptr = hdr.dxferp;
+        unsigned char *ptr = hdr.dxferp;
 
         uc = ptr + 4 + ptr[3] + 2;
         scsi->cache = uc[0];
@@ -863,7 +863,9 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
         ADD2LOG("%s status(0x12) 0x%x\n", scsi->dev_name, k);
       }
       else {
-        char *ptr = hdr.dxferp;
+        unsigned char *ptr = hdr.dxferp;
+
+        ADD2LOG("  serial id len: %u\n", ptr[3]);
 
         if((hd->serial = canon_str(ptr + 4, ptr[3]))) {
           if(!*hd->serial) hd->serial = free_mem(hd->serial);
