@@ -1971,21 +1971,6 @@
 +driver.xfree		4|via
 
  vendor.id		pci 0x1106
-&device.id		pci 0x3204
-+device.name		VIA VT 3204
-+driver.xfree		4|via
-
- vendor.id		pci 0x1106
-&device.id		pci 0x3205
-+device.name		VIA VT 3205
-+driver.xfree		4|via
-
- vendor.id		pci 0x1106
-&device.id		pci 0x7204
-+device.name		VIA VT 7204
-+driver.xfree		4|via
-
- vendor.id		pci 0x1106
 &device.id		pci 0x7205
 +device.name		VIA VT 7205
 +driver.xfree		4|via
