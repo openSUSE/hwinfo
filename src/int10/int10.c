@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include "vbios.h"
 
@@ -13,12 +14,16 @@ static unsigned segofs2addr(unsigned char *segofs);
 static unsigned get_data(unsigned char *buf, unsigned buf_size, unsigned addr);
 static void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *vbeinfo);
 
+static hd_data_t *log_hd_data;
+void log_err(char *format, ...) __attribute__ ((format (printf, 1, 2)));
 
 void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 {
   int i;
   unsigned char vbeinfo[0x200];
   int ax, bx, cx;
+
+  log_hd_data = hd_data;
 
   if(InitInt10()) {
     ADD2LOG("VBE: Could not init Int10\n");
@@ -267,4 +272,14 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v)
 
 }
 
+void log_err(char *format, ...)
+{
+  va_list args;
+  char buf[1024];
+
+  va_start(args, format);
+  vsnprintf(buf, sizeof buf, format, args);
+  str_printf(&log_hd_data->log, -2, "%s", buf);
+  va_end(args);
+}
 

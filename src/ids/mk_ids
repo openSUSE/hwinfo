@@ -12,6 +12,7 @@ sub dump_nums;
 sub mk_short_num;
 sub dump_drivers;
 sub merge_x;
+sub drop_some;
 
 %tag = (
   'pci'     => 1,
@@ -359,10 +360,32 @@ if($get_drivers) {
 
   @num = @dnum;
 
-  open F, ">drivers.c";
+  open F, ">drivers.h";
   select F;
   dump_nums;
   close F;
+
+  undef @dnum;
+
+  undef @name_str;
+  undef @name_ofs;
+  undef %name_ofs;
+
+  drop_some;
+
+  open F, ">hd.drivers_s";
+  select F;
+  dump_drivers;
+  close F;
+
+  @num = @dnum;
+
+  open F, ">drivers_s.h";
+  select F;
+  dump_nums;
+  close F;
+
+
 }
 
 select STDOUT;
@@ -777,9 +800,9 @@ sub dump_nums
   local ( $_ );
   my ( $i, $j, $s, $sl );
 
-  if($struct eq "drv") {
-    print "#include <stdio.h>\n#include \"hd.h\"\n\n";
-  }
+#  if($struct eq "drv") {
+#    print "#include <stdio.h>\n#include \"hd.h\"\n\n";
+#  }
 
   printf "unsigned hddb_${struct}_data[%u] = {\n", scalar(@num);
   for($i = 0; $i < @num; $i++) {
@@ -1219,5 +1242,24 @@ sub merge_x
   @xdrv = grep { defined } @xdrv;
 
   @driver = ( @other_drvs, @xdrv );
+}
+
+
+# drop some entries that are not needed in libhd_tiny
+
+sub drop_some
+{
+  local ( $_ );
+  my ( $d );
+
+  for $d (@driver) {
+    if(
+      $d->[1][0][0] =~ /^[adpx]$/ ||
+      ($d->[1][0][0] eq 'm' && $d->[1][0][1][0] eq 'bttv')
+    ) {
+      undef $d;
+    }
+  }
+  @driver = grep { defined } @driver;
 }
 

@@ -333,6 +333,8 @@ void hd_scan_misc2(hd_data_t *hd_data)
   res = NULL;
   gather_resources(hd_data->misc, &res, "ide0", 0);
   gather_resources(hd_data->misc, &res, "ide1", 0);
+  gather_resources(hd_data->misc, &res, "ide2", 0);
+  gather_resources(hd_data->misc, &res, "ide3", 0);
   if(res) {
     for(hd = hd_data->hd; hd; hd = hd->next) {
       if(

@@ -469,6 +469,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_keyboard:
+      hd_set_probe_feature(hd_data, pr_cpu);
       hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_adb);
       hd_set_probe_feature(hd_data, pr_usb);
@@ -2251,6 +2252,7 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
       break;
 
     case arch_ppc:
+    case arch_ppc64:
       ki->XkbRules = new_str("xfree86");
       ki->XkbModel = new_str("macintosh");
       for(hd_tmp = hd_data->hd; hd_tmp; hd_tmp = hd_tmp->next) {

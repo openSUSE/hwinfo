@@ -1,3 +1,7 @@
+22/11/2001:	v3.34
+	- call cpu probe for keyboard query
+	- reduced libhd_tiny size
+
 2/11/2001:.	v3.33
 	- read country code from usb devices
 

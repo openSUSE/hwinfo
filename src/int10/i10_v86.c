@@ -30,6 +30,8 @@
 #include "v86bios.h"
 #include "AsmMacros.h"
 
+void log_err(char *format, ...) __attribute__ ((format (printf, 1, 2)));
+
 struct vm86_struct vm86s;
 
 static int vm86_GP_fault(void);
@@ -38,6 +40,7 @@ static void dump_code(void);
 static void dump_registers(void);
 static void stack_trace(void);
 static int vm86_rep(struct vm86_struct *ptr);
+void log_registers(void);
 
 #define CPU_REG(x) (vm86s.regs.##x)
 #define CPU_REG_LW(reg)      (*((CARD16 *)&CPU_REG(reg)))
@@ -136,7 +139,7 @@ do_vm86(void)
 //    retval = syscall(SYS_vm86old,&vm86s);
 
 	retval = vm86_rep(&vm86s);
-	
+
 	switch (VM86_TYPE(retval)) {
 	case VM86_UNKNOWN:
 	    if (!vm86_GP_fault()) return 0;
@@ -155,7 +158,8 @@ do_vm86(void)
 		/* I'm not sure yet what to do if we can handle ints */
 		break;
 	case VM86_SIGNAL:
-		fprintf(stderr,"received signal\n");
+		log_err("VBE: received a signal!\n");
+		log_registers();
 		return 0;
 	default:
 		fprintf(stderr,"unknown type(0x%x)=0x%x\n",
@@ -537,3 +541,19 @@ getIP(void)
 {
     return (CPU_REG(cs) << 4) + CPU_REG(eip);
 }
+
+void log_registers()
+{
+  log_err(
+    "  eax %08x, ebx %08x, ecx %08x, edx %08x\n"
+    "  esi %08x, edi %08x, ebp %08x, esp %08x\n"
+    "  ds %04x, es %04x, fs %04x, gs %04x, ss %04x\n"
+    "  cs:eip %04x:%08x\n",
+    (unsigned) CPU_REG(eax), (unsigned) CPU_REG(ebx), (unsigned) CPU_REG(ecx), (unsigned) CPU_REG(edx),
+    (unsigned) CPU_REG(esi), (unsigned) CPU_REG(edi), (unsigned) CPU_REG(ebp), (unsigned) CPU_REG(esp),
+    (unsigned) CPU_REG(ds), (unsigned) CPU_REG(es),
+    (unsigned) CPU_REG(fs), (unsigned) CPU_REG(gs), (unsigned) CPU_REG(ss),
+    (unsigned) CPU_REG(cs), (unsigned) CPU_REG(eip)
+  );
+}
+
