@@ -293,6 +293,8 @@ void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
   sl = sm->at_resp;
   if(sl && !strcmp(sl->str, "ATI3")) sl = sl->next;	/* skip AT cmd echo */
 
+  if(!sl) return;
+
   if(*sl->str == 'U' && strstr(sl->str, "Robotics ")) {
     /* looks like an U.S. Robotics... */
 
@@ -325,6 +327,8 @@ void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
   at_cmd(hd_data, "ATI2\r", 0, 1);
   sl = sm->at_resp;
   if(sl && !strcmp(sl->str, "ATI2")) sl = sl->next;	/* skip AT cmd echo */
+
+  if(!sl) return;
 
   if(strstr(sl->str, "ZyXEL ")) {
     /* looks like a ZyXEL... */

@@ -98,6 +98,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
         scsi2->model = scsi->model;
         scsi2->rev = scsi->rev;
         scsi2->type_str = scsi->type_str;
+        scsi2->guessed_dev_name = scsi->guessed_dev_name;
         if(scsi2->type == sc_sdev_other) scsi2->type = scsi->type;
 
         scsi3 = scsi->next;
@@ -121,6 +122,24 @@ void hd_scan_scsi(hd_data_t *hd_data)
       memset(scsi, 0, sizeof *scsi);
       scsi->next = scsi3;
       scsi->deleted = 1;
+    }
+  }
+
+  /*
+   * Fix device names: for removable media, a device open may fail (Zip
+   * drives in particular...) and so we don't have a proper device name
+   * assigned yet (apart from the generic device names). We'll try and do
+   * some guessing here.
+   */
+  for(scsi = hd_data->scsi; scsi; scsi = scsi->next) {
+    if(scsi->fake) continue;
+    if(
+      scsi->type != sc_sdev_other &&
+      scsi->guessed_dev_name &&
+      strstr(scsi->dev_name, "/sg")
+    ) {
+      free_mem(scsi->dev_name);
+      scsi->dev_name = new_str(scsi->guessed_dev_name);
     }
   }
 
@@ -526,11 +545,12 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
 void get_proc_scsi(hd_data_t *hd_data)
 {
   unsigned u0, u1, u2, u3;
-  char *s0, *s1, *s2;
+  char s[3], *s0, *s1, *s2;
   str_list_t *proc_scsi;
   scsi_t *scsi = NULL;
   str_list_t *sl;
   char scsi_type[32];
+  unsigned sd_cnt = 0, sr_cnt = 0, st_cnt = 0;
 
   PROGRESS(1, 1, "proc");
 
@@ -577,6 +597,31 @@ void get_proc_scsi(hd_data_t *hd_data)
       else {
         scsi->type = sc_sdev_other;
       }
+
+      switch(scsi->type) {
+        case sc_sdev_disk:
+          if(sd_cnt < 26) {
+            s[0] = sd_cnt + 'a';
+            s[1] = 0;
+          }
+          else {
+            s[0] = sd_cnt / 26 + 'a' - 1;
+            s[1] = sd_cnt % 26 + 'a';
+            s[2] = 0;
+          }
+          str_printf(&scsi->guessed_dev_name, 0, "/dev/sd%s", s);
+          sd_cnt++;
+          break;
+
+        case sc_sdev_cdrom:
+          str_printf(&scsi->guessed_dev_name, 0, "/dev/sr%u", sr_cnt++);
+          break;
+
+        case sc_sdev_tape:
+          str_printf(&scsi->guessed_dev_name, 0, "/dev/st%u", st_cnt++);
+          break;
+      }
+
       scsi->type_str = canon_str(scsi_type, strlen(scsi_type));
       scsi = NULL;
       continue;
@@ -642,10 +687,12 @@ void dump_scsi_data(hd_data_t *hd_data, scsi_t *scsi, char *text)
       "  host %u, channel %u, id %u, lun %u, type %d\n",
       scsi->host, scsi->channel, scsi->id, scsi->lun, scsi->type
     );
-    if(scsi->dev_name || scsi->generic_dev != -1) {
+    if(scsi->dev_name || scsi->guessed_dev_name || scsi->generic_dev != -1) {
       ADD2LOG(
-        "    %s (sg%d)\n",
-        scsi->dev_name ? scsi->dev_name : "<no device name>", scsi->generic_dev
+        "    %s [%s] (sg%d)\n",
+        scsi->dev_name ? scsi->dev_name : "<no device name>",
+        scsi->guessed_dev_name ? scsi->guessed_dev_name : "?",
+        scsi->generic_dev
       );
     }
     i = 0;

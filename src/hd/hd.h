@@ -308,6 +308,7 @@ typedef struct scsi_s {
   unsigned generic:1;
   unsigned fake:1;
   char *dev_name;
+  char *guessed_dev_name;
   int generic_dev;
   unsigned host, channel, id, lun;
   char *vendor, *model, *rev, *type_str, *serial;
