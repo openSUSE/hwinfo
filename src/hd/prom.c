@@ -565,7 +565,7 @@ int add_prom_veth(hd_data_t *hd_data, devtree_t *dt)
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->bus.id = bus_none;
       hd->base_class.id = bc_network;
-      hd->sub_class.id = 0x80;
+      hd->sub_class.id = 0x00;
       hd->slot = veth_cnt++;
 
       hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);

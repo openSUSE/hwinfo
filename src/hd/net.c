@@ -362,7 +362,7 @@ void add_iseries(hd_data_t *hd_data)
     ) {
       hd_card = add_hd_entry(hd_data, __LINE__, 0);
       hd_card->base_class.id = bc_network;
-      hd_card->sub_class.id = 0x80;
+      hd_card->sub_class.id = 0x00;
       hd_card->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);	// IBM
       hd_card->device.id = MAKE_ID(TAG_SPECIAL, 0x1000);
       hd_card->slot = card_cnt++;
