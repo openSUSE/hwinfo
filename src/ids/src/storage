@@ -80,6 +80,18 @@
 +driver.module.insmod	megaraid
 +driver.module.insmod	megaraid2
 
+# override qla1280 info (#26325)
+ vendor.id		pci 0x1077
+&device.id		pci 0x1216
+&subvendor.id		pci 0x101e
+&subdevice.id		pci 0x8493
+|vendor.id		pci 0x1077
+&device.id		pci 0x1216
+&subvendor.id		pci 0x101e
+&subdevice.id		pci 0x8471
++driver.module.insmod	megaraid
++driver.module.insmod	megaraid2
+
 # scsi/tmscsim.c
 # scsi/AM53C974.c
  vendor.id		pci 0x1022
