@@ -1,12 +1,22 @@
  vendor.id		pci 0x1813
 &device.id		pci 0x4000
-+base_class.id		0x102
-+sub_class.id		0x01
-+required		Intel-v92ham
++baseclass.id		0x102
++subclass.id		0x01
++requires		Intel-v92ham
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1040
-+base_class.id		0x102
-+sub_class.id		0x02
-+required		Intel-536ep
++baseclass.id		0x102
++subclass.id		0x02
++requires		Intel-536ep
+
+ vendor.id		pci 0x11c1
+&device.id		pci 0x0440+0x001d
+|vendor.id		pci 0x115d
+&device.id		pci 0x0000+0x0400
+|vendor.id		pci 0x115d
+&device.id		pci 0x0440+0x001d
++baseclass.id		0x102
++subclass.id		0x03
++requires		ltmodem
 

@@ -1,5 +1,7 @@
 03/3/2003:	v6.04
+	- bcm instead of tg3 (request by ak)
 	- reenable mouse probing, but without serial mice and no dialog (#20309)
+	- support some winmodems
 
 26/2/2003:	v6.03
 	- better ZIP drive handling

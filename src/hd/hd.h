@@ -236,7 +236,7 @@ typedef enum sc_camera {
 
 /* subclass values of bc_modem */
 typedef enum sc_modem {
-  sc_mod_at, sc_mod_win1, sc_mod_win2
+  sc_mod_at, sc_mod_win1, sc_mod_win2, sc_mod_win3
 } hd_sc_modem_t;
 
 /* prog_if's of sc_ser_usb */

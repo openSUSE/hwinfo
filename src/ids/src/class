@@ -693,8 +693,8 @@
 +subclass.name		Modem
 
  baseclass.id		0x102
-&subclass.id		0x01+2
-+subclass.name		WinModem
+&subclass.id		0x01+3
++subclass.name		LinModem
 
  baseclass.id		0x103
 +baseclass.name		ISDN Adapter

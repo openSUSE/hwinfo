@@ -2957,6 +2957,13 @@
 +driver.xfree		3|SVGA
 
  vendor.id		pci 0x5333
+&device.id		pci 0x8c10
+&subvendor.id		pci 0x1179
+&subdevice.id		pci 0x0001
++subdevice.name		S3 Savage GX/MX Toshiba 8100
++driver.xfree		4|fbdev
+
+ vendor.id		pci 0x5333
 &device.id		pci 0x8c11
 +device.name		Savage MX
 +driver.xfree		4|savage
@@ -3019,13 +3026,6 @@
 &subvendor.id		pci 0x1014
 &subdevice.id		pci 0x01fc
 +subdevice.name		IBM SuperSavage/IXC 64 SDR
-+driver.xfree		4|fbdev
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8c2e
-&subvendor.id		pci 0x1179
-&subdevice.id		pci 0x0001
-+subdevice.name		Toshiba America Info SuperSavage/IXC 64 SDR
 +driver.xfree		4|fbdev
 
  vendor.id		pci 0x5333

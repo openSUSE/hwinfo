@@ -725,6 +725,9 @@ void int_modem(hd_data_t *hd_data)
         case sc_mod_win2:
           s = "/dev/536ep";
           break;
+        case sc_mod_win3:
+          s = "/dev/ttyLT0";
+          break;
       }
       if(s) {
         free_mem(hd->unix_dev_name);

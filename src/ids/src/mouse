@@ -116,5 +116,5 @@
  device.id		eisa 0x0005
 &vendor.name		A4Tech
 +device.name		Serial Wheel Mouse
-+driver.mouse		intellimouse|ms3|3|1
++driver.mouse		intellimouse|ms3|3|2
 

@@ -551,6 +551,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_serial);
       hd_set_probe_feature(hd_data, pr_usb);
+      hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_modem);
       hd_set_probe_feature(hd_data, pr_modem_usb);
       break;

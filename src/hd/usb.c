@@ -388,7 +388,7 @@ void get_usb_data(hd_data_t *hd_data)
       if(strcmp(buf, "(none)")) usb->driver = new_str(buf);
     }
 
-    if(usb->i_cls == 3) {	/* hid */
+    if(usb->i_cls == 3 && !hd_data->flags.fast) {	/* hid */
       /*
        * Check only the first interface for country info.
        */
