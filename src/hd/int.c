@@ -739,11 +739,11 @@ void int_mouse(hd_data_t *hd_data)
       hd->vendor.name = free_mem(hd->vendor.name);
       hd->device.name = free_mem(hd->device.name);
       hd->vendor.id = hd->device.id = 0;
-#if 1
+#if 0
       hd->vendor.id = bt->mouse.compat_vend;
       hd->device.id = bt->mouse.compat_dev;
 #else
-      hd->vend_name = new_str(bt->mouse.vendor);
+      hd->vendor.name = new_str(bt->mouse.vendor);
       hd->device.name = new_str(bt->mouse.type);
       hd->compat_vendor.id = bt->mouse.compat_vend;
       hd->compat_device.id = bt->mouse.compat_dev;

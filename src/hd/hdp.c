@@ -1234,7 +1234,7 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
           s = memforms[u < sizeof memforms / sizeof *memforms ? u : 0];
           if(s) fprintf(f, ", %s", s);
           fprintf(f, "\n");
-          if(sm->memdevice.speed) fprintf(f, "    Speed: %u MHz", sm->memdevice.speed);
+          if(sm->memdevice.speed) fprintf(f, "    Speed: %u MHz\n", sm->memdevice.speed);
         }
         else {
           fprintf(f, "    Size: No Memory Installed\n");

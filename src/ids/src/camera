@@ -641,3 +641,9 @@
 +subclass.id		0x00
 +device.name		OV511 based WebCam
 
+ vendor.id		usb 0x06a5
+&device.id		usb 0x0000
++baseclass.id		0x10f
++subclass.id		0x00
++device.name		Typhoon Webcam 100k
+

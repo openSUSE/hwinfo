@@ -60,6 +60,9 @@
 # Optical Logitech Wheel Mouse (#22797)
 |vendor.id		usb 0x046d
 &device.id		usb 0xc030
+# some mouse (#29719)
+|vendor.id		usb 0x0461
+&device.id		usb 0x4d03
 +driver.mouse		imps/2|imps2|3|1
 
 # MouseMan Dual Optical (#18296)
@@ -103,6 +106,10 @@
  vendor.id		special 0x0200
 &device.id		special 0x0006
 +driver.mouse		ps/2|ps2|2|0
+
+ vendor.id		special 0x0200
+&device.id		special 0x0007
++driver.mouse		ps/2|ps2|3|0
 
 # Sun Mouse (/dev/sunmouse)
  vendor.id		special 0x0202

@@ -1002,15 +1002,19 @@ void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt)
       vendor = sm->sysinfo.manuf;
       name = sm->sysinfo.product;
     }
-    if(sm->any.type == sm_mouse) {
+    if(
+      sm->any.type == sm_mouse &&
+      !compat_vend	/* take the first entry */
+    ) {
       compat_vend = compat_dev = bus = 0;
       type = NULL;
       
       switch(sm->mouse.interface) {
-        case 4:
+        case 4:	/* ps/2 */
+        case 7:	/* bus mouse (dell notebooks report this) */
           bus = bus_ps2;
           compat_vend = MAKE_ID(TAG_SPECIAL, 0x0200);
-          compat_dev = MAKE_ID(TAG_SPECIAL, 0x0006);
+          compat_dev = MAKE_ID(TAG_SPECIAL, sm->mouse.buttons == 3 ? 0x0007 : 0x0006);
           break;
       }
       type = mice[sm->mouse.mtype < sizeof mice / sizeof *mice ? sm->mouse.mtype : 0];
