@@ -1,3 +1,7 @@
+24/9/2001:	v3.25
+	- updated X11 data
+	- no longer default to XF3 for installation on ppc (#11260)
+
 24/9/2001:	v3.24
 	- added LSIFC9xx/LSI409xx Fibre Channel (#11251)
 

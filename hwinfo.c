@@ -724,11 +724,6 @@ char *get_xserver(hd_data_t *hd_data, char **version, char **busid, driver_info_
     }
   }
 
-#ifdef __PPC__
-  /* temporary hack due to XF4 problems */
-  if(!c) c = '3';
-#endif
-
   if(c) { xf86_ver[0] = c; xf86_ver[1] = 0; }
 
   hd = hd_get_device_by_idx(hd_data, hd_display_adapter(hd_data));

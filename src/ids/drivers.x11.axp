@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Mon Sep 24 12:06:44 2001
+# generated at: Mon Sep 24 17:12:55 2001
 
 # data source:  CDB
 
@@ -329,7 +329,7 @@
 10c8 0004
 	x	4|neomagic|||||5|||
 
-# Neomagic Corporation:[MagicMedia 256AV]
+# Neomagic Corporation:MagicMedia 256AV
 10c8 0005
 	x	4|neomagic|||||d|||
 
@@ -746,7 +746,7 @@
 
 #
 
-# generated at: Mon Sep 24 12:06:44 2001
+# generated at: Mon Sep 24 17:12:55 2001
 
 # data source:  CDB
 
@@ -1410,7 +1410,7 @@
 10c8 0004
 	x	3|SVGA||||||||
 
-# Neomagic Corporation:[MagicMedia 256AV]
+# Neomagic Corporation:MagicMedia 256AV
 10c8 0005
 	x	3|SVGA||||||||
 
@@ -1418,11 +1418,11 @@
 10c8 0006
 	x	3|SVGA||||||||
 
-# Neomagic Corporation:[MagicGraph 128ZV Plus]
+# Neomagic Corporation:MagicGraph 128ZV Plus
 10c8 0083
 	x	3|SVGA||||||||
 
-# Neomagic Corporation:[MagicMedia 256AV Audio]
+# Neomagic Corporation:MagicMedia 256AV Audio
 10c8 8005
 	x	3|SVGA||||||||
 
