@@ -40,6 +40,30 @@
 +subclass.id		0x01
 +device.name		DC290
 
+ vendor.id		usb 0x041e
++vendor.name		Creative
+
+ vendor.id		usb 0x041e
+&device.id		usb 0x400a
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PC-CAM 300
+
+ vendor.id		usb 0x041e
+&device.id		usb 0x400b
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PC-CAM 600
+
+ vendor.id		usb 0x04a5
++vendor.name		Benq
+
+ vendor.id		usb 0x04a5
+&device.id		usb 0x3003
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		DC1300
+
  vendor.id		usb 0x04a9
 +vendor.name		Canon
 
@@ -151,6 +175,138 @@
 +subclass.id		0x01
 +device.name		PowerShot S30
 
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3058
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot A40
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3059
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot A30
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3060
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		EOS D60
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3061
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot A100
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3062
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot A200
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3065
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		IXUS v2
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3066
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		IXUS 330
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x306a
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot S45
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x306b
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Optura 200 MC
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x306c
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot S45
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x306d
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot S45
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x306e
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot G3
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x306f
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot G3
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3070
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		IXUS v3
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3071
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		IXUS v3
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3073
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot A70
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3074
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot A60
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3075
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		IXUS 400
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3076
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot A300
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3077
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot S50
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3083
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		EOS 10D
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x3085
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		PowerShot G5
+
  vendor.id		usb 0x04b0
 +vendor.name		Nikon
 
@@ -166,8 +322,85 @@
 +subclass.id		0x01
 +device.name		Coolpix 880
 
+ vendor.id		usb 0x04b0
+&device.id		usb 0x0104
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Coolpix 995
+
+ vendor.id		usb 0x04b0
+&device.id		usb 0x0109
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Coolpix 2500
+
+ vendor.id		usb 0x04b0
+&device.id		usb 0x010d
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Coolpix 5700
+
+ vendor.id		usb 0x04b0
+&device.id		usb 0x010f
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Coolpix 4300
+
+ vendor.id		usb 0x04b0
+&device.id		usb 0x0111
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Coolpix 3500
+
+ vendor.id		usb 0x04b0
+&device.id		usb 0x0112
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Coolpix 885
+
+ vendor.id		usb 0x04b0
+&device.id		usb 0x0119
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Coolpix 5400
+
+ vendor.id		usb 0x04b0
+&device.id		usb 0x0202
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Coolpix SQ
+
+ vendor.id		usb 0x04b0
+&device.id		usb 0x0302
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Coolpix 2000
+
+ vendor.id		usb 0x04b0
+&device.id		usb 0x0402
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		DSC D100
+
+
  vendor.id		usb 0x04b8
 +vendor.name		Epson
+
+ vendor.id		usb 0x04fc
++vendor.name		Sunplus
+
+ vendor.id		usb 0x04fc
+&device.id		usb 0x504a
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		SPCA 504a camera
+
+ vendor.id		usb 0x04fc
+&device.id		usb 0x504b
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		SPCA 504b camera
+
 
  vendor.id		usb 0x04b8
 &device.id		usb 0x0403
@@ -184,6 +417,39 @@
 +subclass.id		0x01
 +device.name		STV680 based camera
 
+ vendor.id		usb 0x055f
++vendor.name		Mustek
+
+ vendor.id		usb 0x055f
+&device.id		usb 0xa350
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		gSmart 350
+
+ vendor.id		usb 0x055f
+&device.id		usb 0xc200
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		gSmart 300
+
+ vendor.id		usb 0x055f
+&device.id		usb 0xc220
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		gSmart mini
+
+ vendor.id		usb 0x055f
+&device.id		usb 0xc420
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		gSmart mini 2
+
+ vendor.id		usb 0x055f
+&device.id		usb 0xc520
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		gSmart mini 3
+
  vendor.id		usb 0x06bd
 +vendor.name		Agfa
 
@@ -192,6 +458,46 @@
 +baseclass.id		0x10f
 +subclass.id		0x01
 +device.name		CL18
+
+ vendor.id		usb 0x06bd
+&device.id		usb 0x0404
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		CL20
+
+ vendor.id		usb 0x0797
++vendor.name		Grandtech
+
+ vendor.id		usb 0x0797
+&device.id		usb 0x801a
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		891a
+
+ vendor.id		usb 0x0797
+&device.id		usb 0x801c
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		891c
+
+ vendor.id		usb 0x0797
+&device.id		usb 0x8901
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		SX-35
+
+ vendor.id		usb 0x0797
+&device.id		usb 0x8909
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		SX-35
+
+ vendor.id		usb 0x0797
+&device.id		usb 0x8911
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		SX-35
+
 
  vendor.id		usb 0x0784
 +vendor.name		Polaroid
@@ -225,6 +531,16 @@
 #+baseclass.id		0x10f
 #+subclass.id		0x02
 
+ vendor.id		usb 0x084d
++vendor.name		Minton
+
+ vendor.id		usb 0x084d
+&device.id		usb 0x0003
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		S-Cam F5
+
+
  vendor.id		usb 0x084e
 +vendor.name		KBGear
 
@@ -233,6 +549,69 @@
 +baseclass.id		0x10f
 +subclass.id		0x01
 +device.name		JamCam v3
+
+ vendor.id		usb 0x0919
++vendor.name		Tiger
+
+ vendor.id		usb 0x0919
+&device.id		usb 0x0100
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		Fast Flicks
+
+ vendor.id		usb 0x0d64
++vendor.name		DXG
+
+ vendor.id		usb 0x0d94
+&device.id		usb 0x1021
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		D-Link DSC 350F
+
+ vendor.id		usb 0x0d94
+&device.id		usb 0x1001
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		SiPix Stylecam
+
+ vendor.id		usb 0x0d96
++vendor.name		Traveller
+
+ vendor.id		usb 0x0d96
+&device.id		usb 0x3300
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		SX 330z
+
+ vendor.id		usb 0x0d96
+&device.id		usb 0x4100
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		SX 410z
+
+ vendor.id		usb 0x0d96
+&device.id		usb 0x4102
++baseclass.id		0x10f
++subclass.id		0x01
++vendor.name		Medion
++device.name		MD 9700
+
+ vendor.id		usb 0x0d96
+&device.id		usb 0x0000
++baseclass.id		0x10f
++subclass.id		0x01
++vendor.name		Jenoptik
++device.name		JD350v
+
+ vendor.id		usb 0x2770
++vendor.name		NHJ
+
+ vendor.id		usb 0x2770
+&device.id		usb 0x9120
++baseclass.id		0x10f
++subclass.id		0x01
++device.name		9120 based camera
+
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
