@@ -62,8 +62,9 @@ int main(int argc, char **argv)
 
   if(f) l = ftell(f);
 
-  if((hd = hd_data->hd))
-    while(hd_dump_entry(hd_data, hd, f ? f : stdout), (hd = hd->next));
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    hd_dump_entry(hd_data, hd, f ? f : stdout);
+  }
 
   if(f) {
     fseek(f, l, SEEK_SET);

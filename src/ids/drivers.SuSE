@@ -300,6 +300,8 @@ LGI 800c
 PNP 0f04
 	p	mousesystems|msc
 
+# KYE 0001: protocol info not verified
+KYE 0001
 LGI 8001
 PNP 0f0a
 PNP 0f0c
