@@ -361,19 +361,43 @@
 # block/cpqarray.c
  vendor.id		pci 0x0e11
 &device.id		pci 0xae10
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4030+0x0005
 |vendor.id		pci 0x1000
 &device.id		pci 0x0010
 &subvendor.id		pci 0x0e11
-&subdevice.id		pci 0x0000+0x10000
+&subdevice.id		pci 0x4040
+|vendor.id		pci 0x1000
+&device.id		pci 0x0010
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4048
 |vendor.id		pci 0x1011
 &device.id		pci 0x0046
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4050+0x0002
+|vendor.id		pci 0x1011
+&device.id		pci 0x0046
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4058
 +driver.module.insmod	cpqarray
 
 # block/cciss.c
  vendor.id		pci 0x0e11
+&device.id		pci 0x0046
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x409a+0x0003
+|vendor.id		pci 0x0e11
 &device.id		pci 0xb060
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4070
 |vendor.id		pci 0x0e11
 &device.id		pci 0xb178
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4080
+|vendor.id		pci 0x0e11
+&device.id		pci 0xb178
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4082+0x0002
 +driver.module.insmod	cciss
 
 # block/swim3.c
@@ -438,7 +462,7 @@
 |vendor.id		pci 0x1011
 &device.id		pci 0x0046
 &subvendor.id		pci 0x9005
-&subdevice.id		pci 0x0364
+&subdevice.id		pci 0x1364
 |vendor.id		pci 0x1011
 &device.id		pci 0x0046
 &subvendor.id		pci 0x9005
