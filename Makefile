@@ -48,4 +48,4 @@ install:
 	fi
 	install -m 644 src/hd/hd.h $(DESTDIR)/usr/include
 	install -m 755 hwbootscan $(DESTDIR)/usr/sbin
-	install -m 755 hwbootscan.rc $(DESTDIR)/etc/init.d/hwbootscan
+	install -m 755 hwbootscan.rc $(DESTDIR)/etc/init.d/boot.hwscan

@@ -3,20 +3,16 @@
 #
 # Author: Marcus Meissner <meissner@suse.de>
 #
-# /etc/init.d/hwbootscan
-#
-#   and symbolic its link
-#
-# /sbin/rchwbootscan
+# /etc/init.d/boot.hwscan
 #
 # System startup script for boot hw probing and reconfiguration
 #
 ### BEGIN INIT INFO
-# Provides: hwbootscan
-# Required-Start:
+# Provides: boot.hwscan
+# Required-Start: boot.setup boot.ipconfig
 # Required-Stop:
-# Default-Start: 3 5
-# Default-Stop: 0 1 2 4 6
+# Default-Start: B
+# Default-Stop:
 # Description: Hardware scan and reconfiguration on boot.
 ### END INIT INFO
 
@@ -82,7 +78,7 @@ case "$1" in
         ## signalling, do nothing (!)
 
         # If it supports signalling:
-	$?=0
+	rc_reset
         ;;
     status)
         echo -n "Checking for RPC portmap daemon: "
@@ -95,7 +91,7 @@ case "$1" in
         # 2 - service dead, but /var/lock/ lock file exists
         # 3 - service not running
 
-	$?=0
+	rc_reset
         ;;
     *)
 	echo "Usage: $0 {start|stop|restart|force-reload|reload|status}"
