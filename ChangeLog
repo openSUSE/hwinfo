@@ -1,4 +1,5 @@
 	- s390: fixed several DASD IDs
+	- s390: fixed --disk filtering (bug #41231)
 
 25/5/2004:	v8.54
 	- made --only more effective (#37933)

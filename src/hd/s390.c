@@ -141,7 +141,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     if(cutypes[res->io.base] < -3)
       continue;
 
-    if(disks_only && cutype!=0x3990 &&
+    if(disks_only && cutype!=0x3990 && cutype!=0x2105 && cutype!=0x3880 && cutype!=0x9343 && cutype!=0x6310 &&
        (cutype != 0x1731 || devtype != 0x1732 || cumod != 3))
       continue;
 
