@@ -546,8 +546,7 @@
 &device.id		pci 0x5157
 +device.name		RV200 QW
 +driver.xfree		4|radeon
-+driver.xfree		4|radeon|3d||dri,glx||16||switch2xf86_glx
-+requires		XFree86-GLX
++driver.xfree		4|radeon|3d||dri,glx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5157

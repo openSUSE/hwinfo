@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <sys/stat.h>
+#include <setjmp.h>
 #if defined(__alpha__) || defined (__ia64__)
 #include <sys/io.h>
 //#elif defined(HAVE_SYS_PERM)
@@ -69,6 +70,9 @@ void loadCodeToMem(unsigned char *ptr, CARD8 *code);
 static int vram_mapped = 0;
 static int int10inited = 0;
 
+static sigjmp_buf longjmp_buf;
+
+static void sigsegv_handler(int);
 
 int InitInt10()
 {
@@ -138,9 +142,18 @@ void FreeInt10()
 }
 
 
+void sigsegv_handler(int num)
+{
+  siglongjmp(longjmp_buf, num + 1000);
+}
+
+
 int CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
 {
   i86biosRegs bRegs;
+  void (*old_sigsegv_handler)(int);
+  void (*old_sigill_handler)(int);
+  int jmp;
 
   if(!int10inited) return -1;
   memset(&bRegs, 0, sizeof bRegs);
@@ -152,12 +165,26 @@ int CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
   bRegs.di = 0x0;
   if(buf) memcpy((unsigned char *) 0x7e00, buf, len);
 
+  old_sigsegv_handler = signal(SIGSEGV, sigsegv_handler);
+  old_sigill_handler = signal(SIGILL, sigsegv_handler);
+
   iopl(3);
 
-  loadCodeToMem((unsigned char *) BIOS_START, code);
-  do_x86(BIOS_START, &bRegs);
+  jmp = sigsetjmp(longjmp_buf, 1);
+
+  if(!jmp) {
+    loadCodeToMem((unsigned char *) BIOS_START, code);
+    do_x86(BIOS_START, &bRegs);
+  }
+  else {
+    int10inited = 0;
+    log_err("oops: got signal %d in vm86() code\n", jmp - 1000);
+  }
 
   iopl(0);
+
+  signal(SIGILL, old_sigill_handler);
+  signal(SIGSEGV, old_sigsegv_handler);
 
   if(buf) memcpy(buf, (unsigned char *) 0x7e00, len);
 

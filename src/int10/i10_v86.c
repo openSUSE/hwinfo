@@ -20,12 +20,16 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+#ifndef __i386__
+#define USE_CPU_EMU
+#endif
+
 #include <unistd.h>
 #include <errno.h>
 #include <asm/unistd.h>
 #include <stdio.h>
 #include <string.h>
-#ifdef __i386__
+#ifndef USE_CPU_EMU
 #include <sys/vm86.h>
 #else
 #include "vm86_struct.h"
@@ -44,7 +48,7 @@ struct vm86_struct vm86s;
 
 static int vm86_GP_fault(void);
 static int vm86_do_int(int num);
-#ifdef __i386__
+#ifndef USE_CPU_EMU
 static int vm86_rep(struct vm86_struct *ptr);
 #endif
 void log_registers(void);
@@ -126,7 +130,7 @@ do_vm86(void)
 	dump_registers();
 #endif
 
-#ifdef __i386__
+#ifndef USE_CPU_EMU
 	retval = vm86_rep(&vm86s);
 #else
 	retval = emu_vm86(&vm86s);
@@ -395,7 +399,7 @@ vm86_do_int(int num)
 #undef COPY_R
 }
 
-#ifdef __i386__
+#ifndef USE_CPU_EMU
 
 static int
 vm86_rep(struct vm86_struct *ptr) 

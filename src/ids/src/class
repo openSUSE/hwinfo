@@ -73,6 +73,10 @@
 &subclass.id		0x81
 +subclass.name		Myrinet controller
 
+ baseclass.id		0x002
+&subclass.id		0x82
++subclass.name		WLAN controller
+
  baseclass.id		0x003
 +baseclass.name		Display controller
 
@@ -815,6 +819,10 @@
  baseclass.id		0x107
 &subclass.id		0x09
 +subclass.name		Myrinet
+
+ baseclass.id		0x107
+&subclass.id		0x0a
++subclass.name		WLAN
 
  baseclass.id		0x107
 &subclass.id		0x80

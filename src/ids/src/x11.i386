@@ -250,6 +250,11 @@
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c42
++device.name		Mach64 LB
++driver.xfree		4|ati
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4c42
 &subvendor.id		pci 0x1002
 &subdevice.id		pci 0x0044
 +subdevice.name		3D Rage LT Pro AGP-133

@@ -110,6 +110,10 @@ void hd_scan_net(hd_data_t *hd_data)
         hd->sub_class.id = sc_nif_sit;	/* ipv6 over ipv4 tunnel */
         hd->slot = u;
       }
+      else if(sscanf(sl->str, "wlan%u", &u) == 1) {
+        hd->sub_class.id = sc_nif_wlan;
+        hd->slot = u;
+      }
       /* ##### add more interface names here */
       else {
         hd->sub_class.id = sc_nif_other;

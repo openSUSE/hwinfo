@@ -836,7 +836,12 @@ void int_wlan(hd_data_t *hd_data)
         }
       }
     }
-    hd->is.wlan = found ? 1 : 0;
+    if(found) {
+      hd->is.wlan = 1;
+      hd->base_class.id = bc_network;
+      hd->sub_class.id = 0x82;			/* wlan */
+      hddb_add_info(hd_data, hd);
+    }
   }
 }
 

@@ -1,4 +1,9 @@
+1/9/2003:	v7.16
 	- update ISDN CDB data
+	- catch faults inside vm86() code (#29571)
+	- give wlan cards their own subclass (#29506)
+	- updated X11 data
+
 28/8/2003:	v7.15
 	- iopl() may fail even if we're root (#29494)
 
