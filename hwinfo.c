@@ -13,6 +13,9 @@ static void progress(char *, char *);
 
 // ##### temporary solution, fix it later!
 str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines);
+str_list_t *search_str_list(str_list_t *sl, char *str);
+str_list_t *add_str_list(str_list_t **sl, char *str);
+char *new_str(const char *);
 
 static unsigned deb = 0;
 static char *log_file = "";
@@ -642,15 +645,55 @@ int x11_install_info(hd_data_t *hd_data)
   return 0;
 }
 
+char *xserver3map[] =
+{
+#ifdef __i386__
+  "VGA16", "xvga16",
+  "RUSH", "xrush",
+#endif
+#if defined(__i386__) || defined(__alpha__) || defined(__ia64__)
+  "SVGA", "xsvga",
+  "3DLABS", "xglint",
+#endif
+#if defined(__i386__) || defined(__alpha__)
+  "MACH64", "xmach64",
+  "P9000", "xp9k",
+  "S3", "xs3",
+#endif
+#ifdef __alpha__
+  "TGA", "xtga",
+#endif
+#ifdef __sparc__
+  "SUNMONO", "xsunmono",
+  "SUN", "xsun",
+  "SUN24", "xsun24",
+#endif
+#if 0
+  "VMWARE", "xvmware",
+#endif
+  0, 0
+};
+
+
 int dump_packages(hd_data_t *hd_data)
 {
   str_list_t *sl;
+  int i;
 
   hd_data->progress = NULL;
   hd_scan(hd_data);
-  for(sl = get_hddb_packages(hd_data); sl; sl = sl->next) {
+
+  sl = get_hddb_packages(hd_data);
+
+  for(i = 0; xserver3map[i]; i += 2) {
+    if (!search_str_list(sl, xserver3map[i + 1]))
+      add_str_list(&sl, new_str(xserver3map[i + 1]));
+  }
+
+  for(; sl; sl = sl->next) {
     printf("%s\n", sl->str);
   }
+
   return 0;
 }
 
@@ -663,10 +706,10 @@ int oem_install_info(hd_data_t *hd_data)
 {
   hd_t *hd;
   str_list_t *str;
-  struct x11pack *x11packs = 0, *xp, *xpn;
+  str_list_t *x11packs = 0;
   str_list_t *sl0, *sl;
   FILE *f;
-  int pcmcia;
+  int pcmcia, i;
 
   driver_info_x11_t *di, *drvinfo;
 
@@ -679,19 +722,20 @@ int oem_install_info(hd_data_t *hd_data)
     for (di = drvinfo; di; di = (driver_info_x11_t *)di->next) {
       if (di->type != di_x11)
 	continue;
-      for (str = di->packages; str; str = str->next) {
-	for (xp = x11packs; xp; xp = xp->next)
-	  if (!strcmp(xp->pack, str->str))
-	    break;
-	if (xp == 0) {
-	  xp = calloc(1, sizeof *xp);
-	  if (xp) {
-	    xp->pack = strdup(str->str);
-	    xp->next = x11packs;
-	    x11packs = xp;
-	  }
+      if (di->xf86_ver[0] == '3') {
+        char *server = di->server;
+        if (server) {
+	  for (i = 0; xserver3map[i]; i += 2)
+	    if (!strcmp(xserver3map[i], server))
+	      break;
+	  if (xserver3map[i])
+	    if (!search_str_list(x11packs, xserver3map[i + 1]))
+	      add_str_list(&x11packs, new_str(xserver3map[i + 1]));
 	}
       }
+      for (str = di->packages; str; str = str->next)
+	if (str->str && *str->str && !search_str_list(x11packs, str->str))
+	  add_str_list(&x11packs, new_str(str->str));
     }
     hd_free_driver_info((driver_info_t *)drvinfo);
   }
@@ -717,18 +761,12 @@ int oem_install_info(hd_data_t *hd_data)
   }
   if (x11packs) {
     fprintf(f, "X11Packages: ");
-    for (xp = x11packs; xp; xp = xpn) {
-      xpn = xp->next;
-      if (xp->pack) {
-	if (xp != x11packs)
-	  fputc(',', f);
-        fprintf(f, "%s", xp->pack);
-        free(xp->pack);
-      }
-      free(xp);
+    for (sl = x11packs; sl; sl = sl->next) {
+      if (sl != x11packs)
+        fputc(',', f);
+      fprintf(f, "%s", sl->str);
     }
     fputc('\n', f);
-    x11packs = 0;
   }
   if (pcmcia)
     fprintf(f, "Pcmcia: %d\n", pcmcia);

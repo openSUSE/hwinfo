@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2001-01-21 16:55:31
+#hwinfo data from 2001-01-30 17:08:23
 #
 
 
@@ -17,6 +17,11 @@
 # 3DLabs:Permedia2V 2D+3D
 3D3D 0009
 	x	3|3DLABS|||||5|||
+
+
+# Sun:Sun - Monochrome (bwtwo)
+s4001 0001
+	x	4|sunbw2||||||||
 
 
 # Sun:Sun - Monochrome (bwtwo)
@@ -156,12 +161,22 @@ s4001 0014
 
 # Sun:Sun - Elite3D-M6 Horizontal (afb)
 s4001 0015
-	x	3|SUN24||||||||
+	x	4|sunffb|||||8|||
+
+
+# Sun:Sun - Elite3D-M6 Horizontal (afb)
+s4001 0015
+	x	3|SUN24|||||8|||
 
 
 # Sun:Sun - Elite3D (afb)
 s4001 0016
-	x	3|SUN24||||||||
+	x	4|sunffb|||||8|||
+
+
+# Sun:Sun - Elite3D (afb)
+s4001 0016
+	x	3|SUN24|||||8|||
 
 
 # Sun:Sun - FFB 67MHz Creator (ffb)
