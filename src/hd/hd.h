@@ -2269,7 +2269,7 @@ int hd_change_status(const char *id, hd_status_t status, const char *config_stri
 
 /* (C) 2003 kkeil@suse.de */
 
-#define CDBISDN_VERSION	0x0100
+#define CDBISDN_VERSION	0x0101
 
 #ifndef PCI_ANY_ID
 #define PCI_ANY_ID	0xffff
@@ -2291,10 +2291,10 @@ typedef struct {
 typedef struct	{
 	int	handle;		/* internal identifier idx in database */
 	int	vhandle;	/* internal identifier to vendor database */
-	const char *name;	/* cardname */
-	const char *lname;	/* vendor short name + cardname */
-	const char *Class;	/* CLASS of the card */
-	const char *bus;	/* bus type */
+	char	*name;		/* cardname */
+	char	*lname;		/* vendor short name + cardname */
+	char	*Class;		/* CLASS of the card */
+	char	*bus;		/* bus type */
 	int	revision;	/* revision used with USB */
 	int	vendor;		/* Vendor ID for ISAPNP and PCI cards */
 	int     device;		/* Device ID for ISAPNP and PCI cards */
@@ -2315,22 +2315,22 @@ typedef struct  {
 	int	typ;		/* Type to identify the driver */
 	int	subtyp;		/* Subtype of the driver type */
 	int	smp;		/* SMP supported ? */
-	const char *mod_name;	/* name of the driver module */
-	const char *para_str;	/* optional parameter string */
-	const char *mod_preload;/* optional modules to preload */
-	const char *cfg_prog;	/* optional cfg prog */
-	const char *firmware;	/* optional firmware to load */
-	const char *description;/* optional description */
-	const char *need_pkg;	/* list of packages needed for function */
-	const char *info;	/* optional additional info */
-	const char *protocol;	/* supported D-channel protocols */
-	const char *interface;  /* supported API interfaces */
-	const char *io;		/* possible IO ports with legacy ISA cards */
-	const char *irq;	/* possible interrupts with legacy ISA cards */
-	const char *membase;	/* possible membase with legacy ISA cards */
-	const char *features;	/* optional features*/
-	int card_ref;		/* reference to a card */
-	const char *name;	/* driver name */
+	char 	*mod_name;	/* name of the driver module */
+	char 	*para_str;	/* optional parameter string */
+	char 	*mod_preload;	/* optional modules to preload */
+	char 	*cfg_prog;	/* optional cfg prog */
+	char 	*firmware;	/* optional firmware to load */
+	char 	*description;	/* optional description */
+	char 	*need_pkg;	/* list of packages needed for function */
+	char 	*info;		/* optional additional info */
+	char 	*protocol;	/* supported D-channel protocols */
+	char 	*interface;	/* supported API interfaces */
+	char 	*io;		/* possible IO ports with legacy ISA cards */
+	char 	*irq;		/* possible interrupts with legacy ISA cards */
+	char 	*membase;	/* possible membase with legacy ISA cards */
+	char 	*features;	/* optional features*/
+	int 	card_ref;	/* reference to a card */
+	char 	*name;		/* driver name */
 } cdb_isdn_vario;
 
 

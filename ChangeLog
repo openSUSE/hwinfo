@@ -1,3 +1,5 @@
+	- isdn database optional read from /usr/share/hwinfo/ISDN.CDB.hwdb
+	- mk_isdnhwdb tool to convert CDB data to ISDN.CDB.hwdb
 	- fixed Makefile
 
 16/2/2004:	v8.07
