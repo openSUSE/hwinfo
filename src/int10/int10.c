@@ -54,17 +54,15 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 
   if(i != 0x4f) {
     ADD2LOG("Error (0x4f15): 0x%04x\n", i);
-    FreeInt10();
-    return;
-  }
+  } else {
+    memcpy(vbe->ddc, vbeinfo, sizeof vbe->ddc);
 
-  memcpy(vbe->ddc, vbeinfo, sizeof vbe->ddc);
-
-  ADD2LOG("edid record:\n");
-  for(i = 0; i < sizeof vbe->ddc; i += 0x10) {
-    ADD2LOG("  ");
-    hexdump(&hd_data->log, 1, 0x10, vbe->ddc + i);
-    ADD2LOG("\n");
+    ADD2LOG("edid record:\n");
+    for(i = 0; i < sizeof vbe->ddc; i += 0x10) {
+      ADD2LOG("  ");
+      hexdump(&hd_data->log, 1, 0x10, vbe->ddc + i);
+      ADD2LOG("\n");
+    }
   }
 
   if(hd_probe_feature(hd_data, pr_bios_vbe2)) {
@@ -73,11 +71,9 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 
     if(i != 0x4f) {
       ADD2LOG("Error (0x4f03): 0x%04x\n", i);
-      FreeInt10();
-      return;
+    } else {
+      vbe->current_mode = bx;
     }
-
-    vbe->current_mode = bx;
   }
 
   FreeInt10();
