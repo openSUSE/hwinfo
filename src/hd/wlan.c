@@ -68,7 +68,7 @@ void hd_scan_wlan(hd_data_t *hd_data)
 	/* this failed, maybe device does not support wireless extensions */
 	continue;
       }
-      printf(" device %s is wireless\n", (hd->unix_dev_name) ? hd->unix_dev_name : "unknown" );
+      ADD2LOG(" device %s is wireless\n", (hd->unix_dev_name) ? hd->unix_dev_name : "unknown" );
       ADD2LOG("*** wlan features for %s ***\n", hd->unix_dev_name);
       res = new_mem(sizeof *res);
       res->any.type = res_wlan;

@@ -2818,7 +2818,7 @@ void write_cfile(FILE *f, list_t *hd)
     hddb.strings_len, hddb.strings_len
   );
 
-  fprintf(f, "hddb_list_t hddb_internal_list[%u] = {\n", hddb.list_len);
+  fprintf(f, "static hddb_list_t hddb_internal_list[%u] = {\n", hddb.list_len);
   for(u = 0; u < hddb.list_len; u++) {
     fprintf(f,
     "  { 0x%08x, 0x%08x, 0x%08x, 0x%08x }%s\n",
@@ -2829,7 +2829,7 @@ void write_cfile(FILE *f, list_t *hd)
   }
   fprintf(f, "};\n\n");
 
-  fprintf(f, "unsigned hddb_internal_ids[%u] = {\n", hddb.ids_len);
+  fprintf(f, "static unsigned hddb_internal_ids[%u] = {\n", hddb.ids_len);
   for(u = 0; u < hddb.ids_len; u++) {
     if((u % 6) == 0) fputc(' ', f);
     fprintf(f, " 0x%08x", hddb.ids[u]);
@@ -2840,7 +2840,7 @@ void write_cfile(FILE *f, list_t *hd)
 
   qstr = quote_string(hddb.strings, hddb.strings_len);
   qstr_len = qstr ? strlen(qstr) : 0;
-  fprintf(f, "char hddb_internal_strings[%u] = \"\\\n", hddb.strings_len);
+  fprintf(f, "static char hddb_internal_strings[%u] = \"\\\n", hddb.strings_len);
   for(u = 0; u < qstr_len; ) {
     len = qstr_len - u;
     if(len > 72) len = 72;

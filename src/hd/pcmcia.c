@@ -15,6 +15,8 @@
 #include "pcmcia.h"
 
 static void read_cardinfo(hd_data_t *hd_data);
+static void assign_bridges(hd_data_t *hd_data);
+static void add_sysfs_stuff(hd_data_t *hd_data, hd_t *hd);
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * PCMCIA info via cardctl
@@ -34,6 +36,7 @@ void hd_scan_pcmcia(hd_data_t *hd_data)
 
   read_cardinfo(hd_data);
 
+  assign_bridges(hd_data);
 
 }
 
@@ -170,5 +173,100 @@ void read_cardinfo(hd_data_t *hd_data)
   }
 
   free_str_list(sl0);
+}
+
+
+/*
+ * Identify hotpluggable devices.
+ */
+void assign_bridges(hd_data_t *hd_data)
+{
+  hd_t *hd, *hd1, *bridge_hd;
+  unsigned p_sock[8], p_socks, u = 0;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
+      if(
+        bridge_hd->base_class.id == bc_bridge &&
+        bridge_hd->sub_class.id == sc_bridge_cardbus
+      ) {
+        hd->hotplug = hp_cardbus;
+      }
+     else if(
+        bridge_hd->base_class.id == bc_bridge &&
+        bridge_hd->sub_class.id == sc_bridge_pcmcia
+      ) {
+        hd->hotplug = hp_pcmcia;
+      }
+    }
+  }
+
+  for(p_socks = 0, hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      u < sizeof p_sock / sizeof *p_sock &&
+      is_pcmcia_ctrl(hd_data, hd)
+    ) {
+      p_sock[p_socks++] = hd->idx;
+    }
+  }
+
+  if(p_socks) {
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      if(
+        !hd->tag.remove &&
+        hd->bus.id == bus_pcmcia &&
+        hd->slot < p_socks &&
+        p_sock[hd->slot]
+      ) {
+        for(u = p_sock[hd->slot], hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
+          if(hd1->tag.remove) continue;
+          if(hd1->status.available == status_no) continue;
+          if(hd1->attached_to == u) break;
+        }
+        if(hd1) {
+          hd1->hotplug = hd->hotplug;
+          hd1->hotplug_slot = hd->hotplug_slot;
+          if(!hd1->extra_info) {
+            hd1->extra_info = hd->extra_info;
+            hd->extra_info = NULL;
+          }
+          hd->tag.remove = 1;
+        }
+        else {
+          hd->attached_to = p_sock[hd->slot];
+          add_sysfs_stuff(hd_data, hd);
+        }
+        p_sock[hd->slot] = 0;
+      }
+    }
+
+    remove_tagged_hd_entries(hd_data);
+  }
+}
+
+
+void add_sysfs_stuff(hd_data_t *hd_data, hd_t *hd)
+{
+  hd_t *hd_par;
+  char *s = NULL, *s1;
+  struct sysfs_device *sf_dev;
+
+  hd_par = hd_get_device_by_idx(hd_data, hd->attached_to);
+
+  if(!hd_par || !hd_par->sysfs_id || hd->sysfs_id) return;
+
+  str_printf(&s, 0, "/sys%s/%d.0", hd_par->sysfs_id, hd->slot);
+
+  sf_dev = sysfs_open_device_path(s);
+
+  if(sf_dev) {
+    hd->sysfs_id = new_str(hd_sysfs_id(s));
+    s1 = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+    if(s1) add_str_list(&hd->drivers, s1);
+  }
+
+  sysfs_close_device(sf_dev);
+
+  s = free_mem(s);
 }
 

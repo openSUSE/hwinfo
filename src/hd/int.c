@@ -113,70 +113,13 @@ void hd_scan_int(hd_data_t *hd_data)
  */
 void int_hotplug(hd_data_t *hd_data)
 {
-  hd_t *hd, *hd1, *bridge_hd;
-  unsigned p_sock[8], p_socks, u = 0;
+  hd_t *hd;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->bus.id == bus_usb || hd->usb_guid) {
       hd->hotplug = hp_usb;
     }
-    if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
-      if(
-        bridge_hd->base_class.id == bc_bridge &&
-        bridge_hd->sub_class.id == sc_bridge_cardbus
-      ) {
-        hd->hotplug = hp_cardbus;
-      }
-     else if(
-        bridge_hd->base_class.id == bc_bridge &&
-        bridge_hd->sub_class.id == sc_bridge_pcmcia
-      ) {
-        hd->hotplug = hp_pcmcia;
-      }
-    }
   }
-
-  for(p_socks = 0, hd = hd_data->hd; hd; hd = hd->next) {
-    if(
-      u < sizeof p_sock / sizeof *p_sock &&
-      is_pcmcia_ctrl(hd_data, hd)
-    ) {
-      p_sock[p_socks++] = hd->idx;
-    }
-  }
-
-  if(p_socks) {
-    for(hd = hd_data->hd; hd; hd = hd->next) {
-      if(
-        !hd->tag.remove &&
-        hd->bus.id == bus_pcmcia &&
-        hd->slot < p_socks &&
-        p_sock[hd->slot]
-      ) {
-        for(u = p_sock[hd->slot], hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
-          if(hd1->tag.remove) continue;
-          if(hd1->status.available == status_no) continue;
-          if(hd1->attached_to == u) break;
-        }
-        if(hd1) {
-          hd1->hotplug = hd->hotplug;
-          hd1->hotplug_slot = hd->hotplug_slot;
-          if(!hd1->extra_info) {
-            hd1->extra_info = hd->extra_info;
-            hd->extra_info = NULL;
-          }
-          hd->tag.remove = 1;
-        }
-        else {
-          hd->attached_to = p_sock[hd->slot];
-        }
-        p_sock[hd->slot] = 0;
-      }
-    }
-
-    remove_tagged_hd_entries(hd_data);
-  }
-
 }
 
 /*

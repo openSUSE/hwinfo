@@ -765,6 +765,8 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_pcmcia:
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_pcmcia);
+      hd_set_probe_feature(hd_data, pr_wlan);
+      hd_set_probe_feature(hd_data, pr_net);
       break;
 
     case hw_bluetooth:
