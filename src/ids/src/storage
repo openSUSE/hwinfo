@@ -62,7 +62,10 @@
 +driver.module.insmod	ibmsis
 
 # scsi/megaraid.c
- vendor.id		pci 0x101e
+# scsi/megaraid2.c
+ vendor.id		pci 0x1028
+&device.id		pci 0x000e+2
+|vendor.id		pci 0x101e
 &device.id		pci 0x9010
 |vendor.id		pci 0x101e
 &device.id		pci 0x9060
@@ -70,15 +73,12 @@
 &device.id		pci 0x1960
 |vendor.id		pci 0x8086
 &device.id		pci 0x1960
-|vendor.id		pci 0x1077
-&device.id		pci 0x1216
-&subvendor.id		pci 0x101e
-&subdevice.id		pci 0x8493
-|vendor.id		pci 0x1077
-&device.id		pci 0x1216
-&subvendor.id		pci 0x101e
-&subdevice.id		pci 0x8471
+|vendor.id		pci 0x1000
+&device.id		pci 0x0407
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
 +driver.module.insmod	megaraid
++driver.module.insmod	megaraid2
 
 # scsi/tmscsim.c
 # scsi/AM53C974.c
@@ -455,14 +455,38 @@
 &device.id		pci 0x000a
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x0121
+|vendor.id		pci 0x9005
+&device.id		pci 0x0283
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0283
+|vendor.id		pci 0x9005
+&device.id		pci 0x0284
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0284
+|vendor.id		pci 0x9005
+&device.id		pci 0x0285
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0286
+|vendor.id		pci 0x9005
+&device.id		pci 0x0285
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0285
+|vendor.id		pci 0x9005
+&device.id		pci 0x0285
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0287
+|vendor.id		pci 0x9005
+&device.id		pci 0x0285
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0287
+|vendor.id		pci 0x1011
+&device.id		pci 0x0046
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0364+2
 |vendor.id		pci 0x1011
 &device.id		pci 0x0046
 &subvendor.id		pci 0x9005
 &subdevice.id		pci 0x1364
-|vendor.id		pci 0x1011
-&device.id		pci 0x0046
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x0365
 |vendor.id		pci 0x1011
 &device.id		pci 0x0046
 &subvendor.id		pci 0x103c
