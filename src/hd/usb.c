@@ -9,6 +9,7 @@
 
 #include "hd.h"
 #include "hd_int.h"
+#include "hddb.h"
 #include "usb.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -20,7 +21,7 @@
 
 static int get_next_device(char *dev, int idx);
 static void get_usb_data(hd_data_t *hd_data);
-static void set_class_entries(hd_t *hd, usb_t *usb);
+static void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb);
 static usb_t *find_usb_entry(hd_data_t *hd_data, int *dev_idx);
 static usb_t *add_usb_entry(hd_data_t *hd_data, usb_t *new_usb);
 static void dump_usb_data(hd_data_t *hd_data);
@@ -95,8 +96,6 @@ void hd_scan_usb(hd_data_t *hd_data)
 
       hd->slot = (usb->bus << 8) + usb->dev_nr;
 
-      set_class_entries(hd, usb);
-
       if(usb->vendor) hd->vend = MAKE_ID(TAG_USB, usb->vendor);
       if(usb->device) hd->dev = MAKE_ID(TAG_USB, usb->device);
       if(usb->rev) str_printf(&hd->rev_name, 0, "%x.%02x", usb->rev >> 8, usb->rev & 0xff);
@@ -122,6 +121,8 @@ void hd_scan_usb(hd_data_t *hd_data)
         res->baud.type = res_baud;
         res->baud.speed = usb->speed;
       }
+
+      set_class_entries(hd_data, hd, usb);
 
       if(hd->base_class == bc_mouse) {
 #if 0
@@ -343,9 +344,10 @@ void get_usb_data(hd_data_t *hd_data)
   }
 }
 
-void set_class_entries(hd_t *hd, usb_t *usb)
+void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
 {
   int cls, sub, prot;
+  unsigned u;
 
   if(usb->d_cls) {
     cls = usb->d_cls; sub = usb->d_sub; prot = usb->d_prot;
@@ -408,6 +410,12 @@ void set_class_entries(hd_t *hd, usb_t *usb)
       hd->base_class = bc_hub;
       break;
   }
+
+  if((u = device_class(hd_data, hd->vend, hd->dev))) {
+    hd->base_class = u >> 8;
+    hd->sub_class = u & 0xff;
+  }
+
 }
 
 

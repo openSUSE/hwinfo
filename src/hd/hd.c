@@ -192,7 +192,7 @@ static struct s_pr_flags {
   { pr_misc_par,     pr_misc,       4|2|1, "misc.par"     },
   { pr_misc_floppy,  pr_misc,     8|4|2|1, "misc.floppy"  },
   { pr_bios,         0,           8|4|2|1, "bios"         },
-  { pr_bios_vbe,     pr_bios,       4    , "bios.vbe"     },
+  { pr_bios_vbe,     pr_bios,       4|2|1, "bios.vbe"     },
   { pr_cpu,          0,           8|4|2|1, "cpu"          },
   { pr_monitor,      0,           8|4|2|1, "monitor"      },
   { pr_serial,       0,             4|2|1, "serial"       },
@@ -3286,6 +3286,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         break;
 
       case hw_scanner:
+        hd_set_probe_feature(hd_data, pr_usb); 
         break;
 
       case hw_braille:
@@ -3387,7 +3388,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
       break;
 
     case hw_scanner:
-      base_class = -1;
+      base_class = bc_scanner;
       break;
 
     case hw_braille:

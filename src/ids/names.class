@@ -126,3 +126,4 @@ C 109	Printer
 C 10a	Hub
 	01	USB Hub
 C 10b	Braille Display
+C 10c	Scanner

@@ -1,3 +1,12 @@
+27/6/2001:	v2.22
+	- added usb scanner detection
+	- set gpm protocol to imps2 for wheel mice
+	- bios based monitor detection enabled per default
+	- made usb module loading default
+
+25/6/2001:	v2.21
+	- sndirsch: corrected 3D info for geforce3 cards
+
 21/6/2001:	v2.20
 	- updated driver info for new gdth.o
 

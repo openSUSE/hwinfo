@@ -1895,44 +1895,44 @@
 	x	3|SVGA||||||||
 
 
-# Nvidia:CARD3
+# Nvidia:GeForce 3 (rev 3)
 10de 0203
 	x	4|nv||||||||
 
 
-# Nvidia:CARD3
+# Nvidia:GeForce 3 (rev 3)
 10de 0203
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|||4||switch2nvidia_glx|
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
 
-# Nvidia:CARD3
+# Nvidia:GeForce 3 (rev 2)
 10de 0202
 	x	4|nv||||||||
 
 
-# Nvidia:CARD3
+# Nvidia:GeForce 3 (rev 2)
 10de 0202
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|||4||switch2nvidia_glx|
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
 
-# Nvidia:CARD2
+# Nvidia:GeForce 3 (rev 1)
 10de 0201
 	x	4|nv||||||||
 
 
-# Nvidia:CARD2
+# Nvidia:GeForce 3 (rev 1)
 10de 0201
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|||4||switch2nvidia_glx|
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
 
-# Nvidia:CARD1
+# Nvidia:GeForce 3
 10de 0200
 	x	4|nv||||||||
 
 
-# Nvidia:CARD1
+# Nvidia:GeForce 3
 10de 0200
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|||4||switch2nvidia_glx|
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
 
 # Nvidia:Riva TNT (PCI)

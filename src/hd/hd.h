@@ -106,7 +106,7 @@ typedef enum base_classes {
   // add our own classes here (starting at 0x100 as PCI values are 8 bit)
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,
   bc_storage_device, bc_network_interface, bc_keyboard, bc_printer,
-  bc_hub, bc_braille
+  bc_hub, bc_braille, bc_scanner
 } hd_base_classes_t;
 
 /* subclass values of bc_storage */
