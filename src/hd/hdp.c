@@ -26,6 +26,7 @@ static int ind = 0;		/* output indentation */
 static void dump_normal(hd_data_t *, hd_t *, FILE *);
 static void dump_cpu(hd_data_t *, hd_t *, FILE *);
 static void dump_bios(hd_data_t *, hd_t *, FILE *);
+static void dump_prom(hd_data_t *, hd_t *, FILE *);
 
 static char *make_device_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size);
 static char *make_sub_device_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size);
@@ -78,6 +79,8 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_cpu(hd_data, h, f);
   else if(h->base_class == bc_internal && h->sub_class == sc_int_bios)
     dump_bios(hd_data, h, f);
+  else if(h->base_class == bc_internal && h->sub_class == sc_int_prom)
+    dump_prom(hd_data, h, f);
   else
     dump_normal(hd_data, h, f);
 
@@ -572,6 +575,27 @@ void dump_bios(hd_data_t *hd_data, hd_t *hd, FILE *f)
   if(bt->par_port2) dump_line("Parallel Port 2: 0x%x\n", bt->par_port2);
 
   if(bt->is_pnp_bios) dump_line("PnP BIOS: %s\n", isa_id2str(bt->pnp_id));
+}
+
+
+/*
+ * print PROM entries
+ */
+void dump_prom(hd_data_t *hd_data, hd_t *hd, FILE *f)
+{
+  prom_info_t *pt;
+  char *s;
+
+  if(!hd->detail || hd->detail->type != hd_detail_prom) return;
+  if(!(pt = hd->detail->prom.data)) return;
+
+  if(pt->has_color) {
+    s = hd_device_name(hd_data, MAKE_ID(TAG_SPECIAL, 0x0300), MAKE_ID(TAG_SPECIAL, pt->color));
+    if(s)
+      dump_line("Color: %s (0x%02x)\n", s, pt->color);
+    else
+      dump_line("Color: 0x%02x\n", pt->color);
+  }
 }
 
 

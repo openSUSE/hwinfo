@@ -72,6 +72,7 @@ typedef enum probe_feature {
   pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide,
   pr_scsi, pr_scsi_geo, pr_usb, pr_usb_mods, pr_adb, pr_modem, pr_modem_usb,
   pr_parallel, pr_isa, pr_isa_isdn, pr_dac960, pr_smart, pr_isdn, pr_kbd,
+  pr_prom,
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
@@ -135,7 +136,8 @@ typedef enum sc_serial {
 
 /* internal sub class values */
 typedef enum sc_internal {
-  sc_int_none, sc_int_isapnp_if, sc_int_main_mem, sc_int_cpu, sc_int_fpu, sc_int_bios
+  sc_int_none, sc_int_isapnp_if, sc_int_main_mem, sc_int_cpu, sc_int_fpu, sc_int_bios,
+  sc_int_prom
 } hd_sc_internal_t;
 
 /* subclass values of bc_mouse */
@@ -297,7 +299,7 @@ typedef struct {
 } floppy_info_t;
 
 /*
- * bios data
+ * bios data (ix86)
  */
 typedef struct {
   unsigned apm_supported:1;
@@ -315,6 +317,15 @@ typedef struct {
   unsigned is_pnp_bios:1;
   unsigned pnp_id;
 } bios_info_t;
+
+
+/*
+ * prom data (ppc, sparc)
+ */
+typedef struct {
+  unsigned has_color:1;
+  unsigned color;
+} prom_info_t;
 
 
 typedef enum cpu_arch {
@@ -668,7 +679,7 @@ typedef union driver_info_u {
  */
 typedef enum hd_detail_type {
   hd_detail_pci, hd_detail_usb, hd_detail_isapnp, hd_detail_cdrom,
-  hd_detail_floppy, hd_detail_bios, hd_detail_cpu
+  hd_detail_floppy, hd_detail_bios, hd_detail_cpu, hd_detail_prom
 } hd_detail_type_t;
 
 typedef struct {
@@ -706,6 +717,11 @@ typedef struct {
   cpu_info_t *data;
 } hd_detail_cpu_t;
 
+typedef struct {
+  enum hd_detail_type type;
+  prom_info_t *data;
+} hd_detail_prom_t;
+
 typedef union {
   enum hd_detail_type type;
   hd_detail_pci_t pci;
@@ -715,6 +731,7 @@ typedef union {
   hd_detail_floppy_t floppy;
   hd_detail_bios_t bios;
   hd_detail_cpu_t cpu;
+  hd_detail_prom_t prom;
 } hd_detail_t;
 
 
@@ -830,6 +847,7 @@ int hd_has_pcmcia(hd_data_t *hd_data);
 int hd_apm_enabled(hd_data_t *hd_data);
 int hd_usb_support(hd_data_t *hd_data);
 int hd_smp_support(hd_data_t *hd_data);
+int hd_mac_color(hd_data_t *hd_data);
 unsigned hd_display_adapter(hd_data_t *hd_data);
 unsigned hd_boot_disk(hd_data_t *hd_data, int *matches);
 enum cpu_arch hd_cpu_arch(hd_data_t *hd_data);

@@ -134,7 +134,7 @@ void get_ps2_mouse(hd_data_t *hd_data)
           if(write(fd, &cmd, 1) == 1) {
 
             PROGRESS(1, 5, "ps/2");
-            usleep(10000);        /* ...give it a chance to react... */
+            usleep(50000);        /* ...give it a chance to react... */
 
             /* ...read the response... */
             while(

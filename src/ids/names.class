@@ -90,6 +90,7 @@ C 101	Internally Used Class
 	03	CPU
 	04	FPU
 	05	BIOS
+	06	PROM
 C 102	Modem
 	00	Modem
 	01	Win-Modem

@@ -25,6 +25,14 @@ s0202	Sun Microsystems
 		0202 0002	Type-5 Euro Keyboard
 s0203	Unknown
 	0000	Serial Console
+
+# iMac colors
+s0300
+	0004	Lime
+	0005	Tangerine
+	00ff	Graphite
+# Strawberry, Blueberry, Grape
+
 # printer
 s1001	Minolta Co., Ltd.
 s1001	MINOLTA

@@ -38,6 +38,7 @@
 #include "smart.h"
 #include "isdn.h"
 #include "kbd.h"
+#include "prom.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -106,7 +107,8 @@ static struct s_mod_names {
   { mod_dac960, "dac960" },
   { mod_smart, "smart" },
   { mod_isdn, "isdn" },
-  { mod_kbd, "kbd" }
+  { mod_kbd, "kbd" },
+  { mod_prom, "prom" }
 };
 
 /*
@@ -155,7 +157,8 @@ static struct s_pr_flags {
   { pr_dac960,       0,        8|4|2|1, "dac960"      },
   { pr_smart,        0,        8|4|2|1, "smart"       },
   { pr_isdn,         0,          4|2|1, "isdn"        },
-  { pr_kbd,          0,        8|4|2|1, "kbd"         }
+  { pr_kbd,          0,        8|4|2|1, "kbd"         },
+  { pr_prom,         0,        8|4|2|1, "prom"        }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -534,6 +537,9 @@ void hd_scan(hd_data_t *hd_data)
 
 #if defined(__i386__)
   hd_scan_bios(hd_data);
+#endif
+#if defined(__PPC__)
+  hd_scan_prom(hd_data);
 #endif
 #endif	/* LIBHD_TINY */
 
@@ -1721,6 +1727,28 @@ int hd_usb_support(hd_data_t *hd_data)
 int hd_smp_support(hd_data_t *hd_data)
 {
   return detectSMP() > 0 ? 1 : 0;
+}
+
+
+int hd_mac_color(hd_data_t *hd_data)
+{
+#ifdef __PPC__
+  hd_t *hd;
+  prom_info_t *pt;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class == bc_internal && hd->sub_class == sc_int_prom &&
+      hd->detail && hd->detail->type == hd_detail_prom &&
+      (pt = hd->detail->prom.data) &&
+      pt->has_color
+    ) {
+      return pt->color;
+    }
+  }
+#endif
+
+  return -1;
 }
 
 
