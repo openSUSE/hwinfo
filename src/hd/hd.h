@@ -555,6 +555,7 @@ typedef struct {
   enum resource_types type;
   unsigned width, height;		/* in pixel */
   unsigned vfreq;			/* in Hz */
+  unsigned interlaced:1;		/* 0/1 */
 } res_monitor_t;
 
 typedef union u_hd_res_t {

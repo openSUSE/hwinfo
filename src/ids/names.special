@@ -50,6 +50,25 @@ s0401	Apple Computer, Inc.
 	0030	MESH SCSI Controller
 	0031	53c94 SCSI Controller
 	0040	Super Woz Integrated Machine 3
+	1000	21" Monitor
+	1114	Portrait Monitor
+	1221	12" Monitor
+	1331	21" Monitor
+	1334	21" Monitor (mono)
+	1335	21" Monitor (mono)
+	140a	NTSC Monitor
+	151e	Portrait Monitor
+	1603	16" Monitor
+	160b	19" Monitor
+	1623	21" Monitor
+	162b	14" Monitor
+	1700	PAL Monitor
+	1714	NTSC Monitor
+	1717	VGA Monitor
+	172d	16" Monitor
+	1730	PAL Monitor
+	173a	19" Monitor
+	173f	Unknown Monitor
 
 # printer
 s1001	Minolta Co., Ltd.

@@ -25,6 +25,7 @@ void hd_scan_memory(hd_data_t *hd_data)
   uint64_t kcore, klog, klog_alt, meminfo, msize0, msize1, u;
   hd_res_t *res;
   int i;
+  int exact;
 
   if(!hd_probe_feature(hd_data, pr_memory)) return;
 
@@ -42,12 +43,14 @@ void hd_scan_memory(hd_data_t *hd_data)
   msize0 = klog ? klog : kcore;
   if(!msize0) msize0 = meminfo;
 
-  if(msize0 && kcore > msize0 && ((kcore - msize0) << 2) / msize0 == 0) {
+  exact = 0;
+  if(msize0 && kcore >= msize0 && ((kcore - msize0) << 2) / msize0 == 0) {
     /* trust kcore value if it's approx. msize0 */
     msize0 = kcore;
+    exact = 1;
   }
   msize1 = msize0;
-  if(meminfo > msize1) msize1 = meminfo;
+  if(meminfo > msize1) { msize1 = meminfo; exact = 0; }
   if(klog_alt > msize0) msize0 = klog_alt;
 
   hd = add_hd_entry(hd_data, __LINE__, 0);
@@ -65,10 +68,10 @@ void hd_scan_memory(hd_data_t *hd_data)
     u >>= 1;
   }
   if(i > 10) {	/* We *do* have at least 1k memory, do we? */
-    msize1 >>= i - 5;
+    msize1 >>= i - (exact ? 8 : 5);
     msize1++;
     msize1 >>= 1;
-    msize1 <<= i - 4;
+    msize1 <<= i - (exact ? 7 : 4);
   }
 
   res = add_res_entry(&hd->res, new_mem(sizeof *res));

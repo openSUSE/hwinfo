@@ -129,7 +129,7 @@ void hd_scan_usb(hd_data_t *hd_data)
         if(mse_cnt >= 0) str_printf(&hd->unix_dev_name, 0, "%s%d", mse_dev, mse_cnt++);
 #else
         /* new USB stack - new devices :-/ */
-        hd->unix_dev_name = new_str("/dev/input/mice");
+        hd->unix_dev_name = new_str(DEV_MICE);
 #endif
       }
 

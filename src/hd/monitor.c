@@ -18,9 +18,10 @@
  */
 
 #ifdef __PPC__
+static void add_old_mac_monitor(hd_data_t *hd_data);
 static void add_monitor(hd_data_t *hd_data, devtree_t *dt);
 #endif
-static void add_monitor_res(hd_t *hd, unsigned x, unsigned y, unsigned hz);
+static void add_monitor_res(hd_t *hd, unsigned x, unsigned y, unsigned hz, unsigned il);
 
 #if !defined(__PPC__)
 void hd_scan_monitor(hd_data_t *hd_data)
@@ -75,29 +76,24 @@ void hd_scan_monitor(hd_data_t *hd_data)
   }
 
   i = hex(s, 2); s+= 2;
-  if(i & (1 << 0)) add_monitor_res(hd, 720, 400, 70);
-  if(i & (1 << 1)) add_monitor_res(hd, 720, 400, 88);
-  if(i & (1 << 2)) add_monitor_res(hd, 640, 480, 60);
-  if(i & (1 << 3)) add_monitor_res(hd, 640, 480, 67);
-  if(i & (1 << 4)) add_monitor_res(hd, 640, 480, 72);
-  if(i & (1 << 5)) add_monitor_res(hd, 640, 480, 75);
-  if(i & (1 << 6)) add_monitor_res(hd, 800, 600, 56);
-  if(i & (1 << 7)) add_monitor_res(hd, 800, 600, 60);
+  if(i & (1 << 0)) add_monitor_res(hd, 720, 400, 70, 0);
+  if(i & (1 << 1)) add_monitor_res(hd, 720, 400, 88, 0);
+  if(i & (1 << 2)) add_monitor_res(hd, 640, 480, 60, 0);
+  if(i & (1 << 3)) add_monitor_res(hd, 640, 480, 67, 0);
+  if(i & (1 << 4)) add_monitor_res(hd, 640, 480, 72, 0);
+  if(i & (1 << 5)) add_monitor_res(hd, 640, 480, 75, 0);
+  if(i & (1 << 6)) add_monitor_res(hd, 800, 600, 56, 0);
+  if(i & (1 << 7)) add_monitor_res(hd, 800, 600, 60, 0);
 
   i = hex(s, 2); s+= 2;
-  if(i & (1 << 0)) add_monitor_res(hd,  800,  600, 72);
-  if(i & (1 << 1)) add_monitor_res(hd,  800,  600, 75);
-  if(i & (1 << 2)) add_monitor_res(hd,  832,  624, 75);
-
-/*
-  this would be an interlaced timing; dropping it
-  if(i & (1 << 3)) add_monitor_res(hd, 1024,  768, 87);
-*/
-
-  if(i & (1 << 4)) add_monitor_res(hd, 1024,  768, 60);
-  if(i & (1 << 5)) add_monitor_res(hd, 1024,  768, 70);
-  if(i & (1 << 6)) add_monitor_res(hd, 1024,  768, 75);
-  if(i & (1 << 7)) add_monitor_res(hd, 1280, 1024, 75);
+  if(i & (1 << 0)) add_monitor_res(hd,  800,  600, 72, 0);
+  if(i & (1 << 1)) add_monitor_res(hd,  800,  600, 75, 0);
+  if(i & (1 << 2)) add_monitor_res(hd,  832,  624, 75, 0);
+  if(i & (1 << 3)) add_monitor_res(hd, 1024,  768, 87, 1);
+  if(i & (1 << 4)) add_monitor_res(hd, 1024,  768, 60, 0);
+  if(i & (1 << 5)) add_monitor_res(hd, 1024,  768, 70, 0);
+  if(i & (1 << 6)) add_monitor_res(hd, 1024,  768, 75, 0);
+  if(i & (1 << 7)) add_monitor_res(hd, 1280, 1024, 75, 0);
 
   if(((se - s) & 1) || se - s > 8 * 4 + 2) {
     ADD2LOG("  ddc oops: %d bytes left?\n", (int) (se - s));
@@ -113,7 +109,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
       case 2: k = (i * 4) / 5; break;
       case 3: k = (i * 9) / 16; break;
     }
-    if(k) add_monitor_res(hd, i, k, (j & 0x3f) + 60);
+    if(k) add_monitor_res(hd, i, k, (j & 0x3f) + 60, 0);
   }
 
   u = 0;
@@ -217,6 +213,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
 void hd_scan_monitor(hd_data_t *hd_data)
 {
   devtree_t *dt;
+  int found;
 
   if(!hd_probe_feature(hd_data, pr_monitor)) return;
 
@@ -227,11 +224,70 @@ void hd_scan_monitor(hd_data_t *hd_data)
 
   PROGRESS(1, 0, "prom");
 
+  found = 0;
   for(dt = hd_data->devtree; dt; dt = dt->next) {
     if(dt->edid) {
       add_monitor(hd_data, dt);
+      found = 1;
     }
   }
+
+  if(!found) {
+    add_old_mac_monitor(hd_data);
+  }
+}
+
+void add_old_mac_monitor(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  unsigned u1, u2;
+  str_list_t *sl;
+  static struct {
+    unsigned width, height, vfreq, interlaced;
+  } mode_list[20] = {
+    {  512,  384, 60, 1 },
+    {  512,  384, 60, 0 },
+    {  640,  480, 50, 1 },
+    {  640,  480, 60, 1 },
+    {  640,  480, 60, 0 },
+    {  640,  480, 67, 0 },
+    {  640,  870, 75, 0 },
+    {  768,  576, 50, 1 },
+    {  800,  600, 56, 0 },
+    {  800,  600, 60, 0 },
+    {  800,  600, 72, 0 },
+    {  800,  600, 75, 0 },
+    {  832,  624, 75, 0 },
+    { 1024,  768, 60, 0 },
+    { 1024,  768, 70, 0 },
+    { 1024,  768, 75, 0 },
+    { 1024,  768, 75, 0 },
+    { 1152,  870, 75, 0 },
+    { 1280,  960, 75, 0 },
+    { 1280, 1024, 75, 0 }
+  };
+
+  for(sl = hd_data->klog; sl; sl = sl->next) {
+    if(sscanf(sl->str, "<%*d>Monitor sense value = %i, using video mode %i", &u1, &u2) == 2) {
+      u2--;
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class = bc_monitor;
+
+      hd->vend = MAKE_ID(TAG_SPECIAL, 0x0401);
+      hd->dev = MAKE_ID(TAG_SPECIAL, (u1 & 0xfff) + 0x1000);
+
+      if((u1 = hd_display_adapter(hd_data))) {
+        hd->attached_to = u1;
+      }
+
+      if(u2 < sizeof mode_list / sizeof *mode_list) {
+        add_monitor_res(hd, mode_list[u2].width, mode_list[u2].height, mode_list[u2].vfreq, mode_list[u2].interlaced);
+      }
+
+      break;
+    }
+  }
+
 }
 
 void add_monitor(hd_data_t *hd_data, devtree_t *dt)
@@ -275,29 +331,24 @@ void add_monitor(hd_data_t *hd_data, devtree_t *dt)
   }
 
   u = edid[0x23];
-  if(u & (1 << 0)) add_monitor_res(hd, 720, 400, 70);
-  if(u & (1 << 1)) add_monitor_res(hd, 720, 400, 88);
-  if(u & (1 << 2)) add_monitor_res(hd, 640, 480, 60);
-  if(u & (1 << 3)) add_monitor_res(hd, 640, 480, 67);
-  if(u & (1 << 4)) add_monitor_res(hd, 640, 480, 72);
-  if(u & (1 << 5)) add_monitor_res(hd, 640, 480, 75);
-  if(u & (1 << 6)) add_monitor_res(hd, 800, 600, 56);
-  if(u & (1 << 7)) add_monitor_res(hd, 800, 600, 60);
+  if(u & (1 << 0)) add_monitor_res(hd, 720, 400, 70, 0);
+  if(u & (1 << 1)) add_monitor_res(hd, 720, 400, 88, 0);
+  if(u & (1 << 2)) add_monitor_res(hd, 640, 480, 60, 0);
+  if(u & (1 << 3)) add_monitor_res(hd, 640, 480, 67, 0);
+  if(u & (1 << 4)) add_monitor_res(hd, 640, 480, 72, 0);
+  if(u & (1 << 5)) add_monitor_res(hd, 640, 480, 75, 0);
+  if(u & (1 << 6)) add_monitor_res(hd, 800, 600, 56, 0);
+  if(u & (1 << 7)) add_monitor_res(hd, 800, 600, 60, 0);
 
   u = edid[0x24];
-  if(u & (1 << 0)) add_monitor_res(hd,  800,  600, 72);
-  if(u & (1 << 1)) add_monitor_res(hd,  800,  600, 75);
-  if(u & (1 << 2)) add_monitor_res(hd,  832,  624, 75);
-
-/*
-  this would be an interlaced timing; dropping it
-  if(u & (1 << 3)) add_monitor_res(hd, 1024,  768, 87);
-*/
-
-  if(u & (1 << 4)) add_monitor_res(hd, 1024,  768, 60);
-  if(u & (1 << 5)) add_monitor_res(hd, 1024,  768, 70);
-  if(u & (1 << 6)) add_monitor_res(hd, 1024,  768, 75);
-  if(u & (1 << 7)) add_monitor_res(hd, 1280, 1024, 75);
+  if(u & (1 << 0)) add_monitor_res(hd,  800,  600, 72, 0);
+  if(u & (1 << 1)) add_monitor_res(hd,  800,  600, 75, 0);
+  if(u & (1 << 2)) add_monitor_res(hd,  832,  624, 75, 0);
+  if(u & (1 << 3)) add_monitor_res(hd, 1024,  768, 87, 1);
+  if(u & (1 << 4)) add_monitor_res(hd, 1024,  768, 60, 0);
+  if(u & (1 << 5)) add_monitor_res(hd, 1024,  768, 70, 0);
+  if(u & (1 << 6)) add_monitor_res(hd, 1024,  768, 75, 0);
+  if(u & (1 << 7)) add_monitor_res(hd, 1280, 1024, 75, 0);
 
   for(i = 0; i < 4; i++) {
     u1 = (edid[0x26 + 2 * i] + 31) * 8;
@@ -308,7 +359,7 @@ void add_monitor(hd_data_t *hd_data, devtree_t *dt)
       case 2: u = (u1 * 4) / 5; break;
       case 3: u = (u1 * 9) / 16; break;
     }
-    if(u) add_monitor_res(hd, u1, u, (u2 & 0x3f) + 60);
+    if(u) add_monitor_res(hd, u1, u, (u2 & 0x3f) + 60, 0);
   }
 
   mi = new_mem(sizeof *mi);
@@ -403,7 +454,7 @@ void add_monitor(hd_data_t *hd_data, devtree_t *dt)
 
 #endif	/* defined(__PPC__) */
 
-void add_monitor_res(hd_t *hd, unsigned width, unsigned height, unsigned vfreq)
+void add_monitor_res(hd_t *hd, unsigned width, unsigned height, unsigned vfreq, unsigned il)
 {
   hd_res_t *res;
 
@@ -412,4 +463,5 @@ void add_monitor_res(hd_t *hd, unsigned width, unsigned height, unsigned vfreq)
   res->monitor.width = width;
   res->monitor.height = height;
   res->monitor.vfreq = vfreq;
+  res->monitor.interlaced = il;
 }

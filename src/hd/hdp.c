@@ -286,8 +286,9 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 
       case res_monitor:
         dump_line(
-          "Resolution: %ux%u@%uHz\n",
-          res->monitor.width, res->monitor.height, res->monitor.vfreq
+          "Resolution: %ux%u@%uHz%s\n",
+          res->monitor.width, res->monitor.height, res->monitor.vfreq,
+          res->monitor.interlaced ? " (interlaced)" : ""
         );
         break;
 

@@ -1,3 +1,7 @@
+23/8/2000:	v1.31
+	- slightly changed memory detection
+	- ADB mice: /dev/input/mice
+
 15/8/2000:	v1.30
 	- added monitor detection on ppc
 	- fixed iso9660 info reading 

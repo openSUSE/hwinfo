@@ -49,7 +49,7 @@ void hd_scan_adb(hd_data_t *hd_data)
         hd->bus = bus_adb;
         hd->slot = u;
 //        hd->func = i;
-        hd->unix_dev_name = new_str(DEV_ADBMOUSE);
+        hd->unix_dev_name = new_str(DEV_MICE);
 
         hd->vend = MAKE_ID(TAG_SPECIAL, 0x0100);
         hd->dev = MAKE_ID(TAG_SPECIAL, 0x0300 + i);

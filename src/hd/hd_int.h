@@ -33,6 +33,7 @@
 #define DEV_CONSOLE		"/dev/console"
 #define DEV_OPENPROM		"/dev/openprom"
 #define DEV_SUNMOUSE		"/dev/sunmouse"
+#define DEV_MICE		"/dev/input/mice"
 
 #define KLOG_BOOT		"/var/log/boot.msg"
 #define ISAPNP_CONF		"/etc/isapnp.conf"
