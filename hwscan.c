@@ -77,6 +77,7 @@ struct option options[] = {
   { "block", 0, NULL, 1000 + hw_block },
   { "tape", 0, NULL, 1000 + hw_tape },
   { "vbe", 0, NULL, 1000 + hw_vbe },
+  { "bluetooth", 0, NULL, 1000 + hw_bluetooth },
   { "all", 0, NULL, 1000 + hw_all },
   { }
 };
@@ -272,11 +273,11 @@ void help()
     "  --active=state id change 'active' status\n"
     "  --hw_item         probe for hw_item and update status info\n"
     "  hw_item is one of:\n"
-    "    cdrom, floppy, disk, network, gfxcard, framebuffer, monitor, camera,\n"
-    "    mouse, joystick, keyboard, chipcard, sound, isdn, modem, storage-ctrl,\n"
-    "    netcard, printer, tv, dvb, scanner, braille, sys, bios, cpu, partition,\n"
-    "    usb-ctrl, usb, pci, isapnp, ide, scsi, bridge, hub, memory, smp, pppoe,\n"
-    "    pcmcia, pcmcia-ctrl, wlan, dsl, zip\n"
+    "    all, bios, block, bluetooth, braille, bridge, camera, cdrom, chipcard, cpu,\n"
+    "    disk, dsl, dvb, floppy, framebuffer, gfxcard, hub, ide, isapnp, isdn,\n"
+    "    joystick, keyboard, memory, modem, monitor, mouse, netcard, network,\n"
+    "    partition, pci, pcmcia, pcmcia-ctrl, pppoe, printer, scanner, scsi, smp,\n"
+    "    sound, storage-ctrl, sys, tape, tv, usb, usb-ctrl, vbe, wlan, zip\n"
   );
 }
 

@@ -806,3 +806,18 @@
 +driver.module.modprobe	gm
 +device.name		Myrinet Adapter
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# bluetooth usb devices
+ vendor.id		usb 0x044e
+&device.id		usb 0x3001+0x0002
+|vendor.id		usb 0x04bf
+&device.id		usb 0x030a
+|vendor.id		usb 0x057c
+&device.id		usb 0x3800
+|vendor.id		usb 0x0bdb
+&device.id		usb 0x1002
++driver.module.modprobe	hci_usb
++baseclass.id		0x115
++subclass.id		0x00
+

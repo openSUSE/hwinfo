@@ -421,6 +421,13 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
       hd->base_class.id = bc_hub;
       break;
 
+    case 0xe0:
+      if(sub == 1 && prot == 1) {
+        hd->base_class.id = bc_bluetooth;
+        hd->sub_class.id = 0;
+      }
+      break;
+
     case 0xff:
       /* hp psc 2100, 2200, 2150, officejet 6100 */
       if(
