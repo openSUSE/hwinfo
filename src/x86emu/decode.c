@@ -89,9 +89,15 @@ Main execution loop for the emulator. We return from here when the system
 halts, which is normally caused by a stack fault when we return from the
 original real mode call.
 ****************************************************************************/
-void X86EMU_exec(void)
+#include <time.h>
+void X86EMU_exec(unsigned timeout)
 {
 	u8 op1;
+	unsigned instr_cnt = 0;
+	unsigned debug = timeout & (1 << 31);
+	time_t t0 = time(NULL);
+
+	timeout &= ~(1 << 31);
 
 	M.x86.intr = 0;
 	DB(x86emu_end_instr();)
@@ -120,6 +126,15 @@ DB(             if (M.x86.R_SP != 0) {
 			}
 		}
 		op1 = (*sys_rdb)(((u32)M.x86.R_CS << 4) + (M.x86.R_IP++));
+		if (debug) {
+		    fprintf(stderr, "%6u: %04x:%04x %02x\n", instr_cnt++, M.x86.R_CS, M.x86.R_IP - 1, op1);
+		}
+		if(!(instr_cnt & 0xffff) && timeout && time(NULL) - t0 > timeout) {
+		    if (debug) {
+			fprintf(stderr, "*** %us timeout ***\n", timeout);
+		    }
+		    return;
+		}
 		(*x86emu_optab[op1])(op1);
         if (M.x86.debug & DEBUG_EXIT) {
             M.x86.debug &= ~DEBUG_EXIT;

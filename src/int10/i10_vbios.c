@@ -52,6 +52,7 @@ void log_err(char *format, ...) __attribute__ ((format (printf, 1, 2)));
 static CARD8 code[] = { 0xcd, 0x10, 0xf4 };	/* int 0x10, hlt */
 // static CARD8 code13[] = { 0xcd, 0x13, 0xf4 };	/* int 0x13, hlt */
 
+static int int10_bios_ok(void);
 static int map(void);
 static void unmap(void);
 static int map_vram(void);
@@ -113,6 +114,11 @@ int InitInt10(hd_data_t *hd_data, int pci_cfg_method)
     return -1;
   }
 
+  if(!int10_bios_ok()) {
+    unmap();
+    return -1;
+  }
+
   int10inited = 1;
 
   return 0;
@@ -127,6 +133,36 @@ void FreeInt10()
   unmap();
 
   int10inited = 0;
+}
+
+
+/*
+ * Check whether int 0x10 points to some useful code.
+ */
+int int10_bios_ok()
+{
+  unsigned cs, ip;
+  unsigned char *p;
+
+  ip = ((uint16_t *) 0)[0x10 * 2];
+  cs = ((uint16_t *) 0)[0x10 * 2 + 1];
+
+  p = (unsigned char *) ((cs << 4) + ip);
+
+  log_err(
+    "  vbe: int 10h points to %04x:%04x: %02x %02x %02x %02x %02x %02x %02x %02x\n",
+    cs, ip,
+    p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7]
+  );
+
+  /* It can't possibly start with all zeros. */
+  if(!*(uint32_t *) p) {
+    log_err("  vbe: oops, int 10h points into nirvana!\n");
+
+    return 0;
+  }
+
+  return 1;
 }
 
 

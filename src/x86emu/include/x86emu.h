@@ -154,7 +154,7 @@ void 	X86EMU_prepareForInt(int num);
 
 /* decode.c */
 
-void 	X86EMU_exec(void);
+void 	X86EMU_exec(unsigned timeout);
 void 	X86EMU_halt_sys(void);
 
 #ifdef	DEBUG

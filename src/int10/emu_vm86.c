@@ -114,6 +114,7 @@ int
 emu_vm86(struct vm86_struct *vm, unsigned debug)
 {
   int i;
+  unsigned timeout;
 
   X86EMU_memFuncs memFuncs;
   X86EMU_intrFuncs intFuncs[256];
@@ -171,7 +172,9 @@ if(debug) {
   M.x86.R_GS = vm->regs.gs;
 
   emu_vm86_ret = 0;
-  X86EMU_exec();
+  /* set timeout, 20s normal, 60s for debugging */
+  timeout = debug ? (1 << 31) + 60 : 20;
+  X86EMU_exec(timeout);
 
   vm->regs.eax = M.x86.R_EAX;
   vm->regs.ebx = M.x86.R_EBX;
