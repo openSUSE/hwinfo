@@ -142,8 +142,18 @@ s4001	Sun Microsystems
 
 # braille displays
 s5001	Alva
+	0000	abt320
+	0001	abt340
+	0002	abt34d
+	0003	abt380
+	0004	abt38d
+	000b	del440
+	000d	del480
 
 s5002	Papenmeier
+	0001	2dlite
+	0002	tiny
+	0003	2d
 	0040	el40
 	0041	el66
 	0042	el80

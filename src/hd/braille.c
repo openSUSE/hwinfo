@@ -16,7 +16,7 @@
  */
 
 static unsigned do_alva(hd_data_t *hd_data, char *dev_name, int cnt);
-static unsigned do_fhp(hd_data_t *hd_data, char *dev_name, int cnt);
+static unsigned do_fhp(hd_data_t *hd_data, char *dev_name, unsigned baud, int cnt);
 static unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt);
 
 void hd_scan_braille(hd_data_t *hd_data)
@@ -49,9 +49,13 @@ void hd_scan_braille(hd_data_t *hd_data)
       }
 
       if(!dev && hd_probe_feature(hd_data, pr_braille_fhp)) {
-        PROGRESS(1, cnt, "fhp");
+        PROGRESS(1, cnt, "fhp_old");
         vend = MAKE_ID(TAG_SPECIAL, 0x5002);
-        dev = do_fhp(hd_data, hd->unix_dev_name, cnt);
+        dev = do_fhp(hd_data, hd->unix_dev_name, B19200, cnt);
+        if(!dev) {
+          PROGRESS(1, cnt, "fhp_el");
+          dev = do_fhp(hd_data, hd->unix_dev_name, B38400, cnt);
+        }
       }
 
       if(!dev && hd_probe_feature(hd_data, pr_braille_ht)) {
@@ -74,9 +78,94 @@ void hd_scan_braille(hd_data_t *hd_data)
 }
 
 
+/*
+ * autodetect for Alva Braille-displays
+ * Author: marco Skambraks <marco@suse.de>
+ * Suse GmbH Nuernberg
+ *
+ * This is free software, placed under the terms of the
+ * GNU General Public License, as published by the Free Software
+ * Foundation.  Please see the file COPYING for details.
+*/
+
+/* Communication codes */
+#define BRL_ID	"\033ID="
+
 unsigned do_alva(hd_data_t *hd_data, char *dev_name, int cnt)
 {
-  return 0;
+  int fd, i, timeout = 100;
+  struct termios oldtio, newtio;		/* old & new terminal settings */
+  int model = -1;
+  unsigned char buffer[sizeof BRL_ID];
+  unsigned dev = 0;
+
+  PROGRESS(2, cnt, "alva open");
+
+  /* Open the Braille display device for random access */
+  fd = open(dev_name, O_RDWR | O_NOCTTY);
+  if(fd < 0) return 0;
+
+  tcgetattr(fd, &oldtio);	/* save current settings */
+
+  /* Set flow control and 8n1, enable reading */
+  memset(&newtio, 0, sizeof newtio);
+  newtio.c_cflag = CRTSCTS | CS8 | CLOCAL | CREAD;
+  /* Ignore bytes with parity errors and make terminal raw and dumb */
+  newtio.c_iflag = IGNPAR;
+  newtio.c_oflag = 0;		/* raw output */
+  newtio.c_lflag = 0;		/* don't echo or generate signals */
+  newtio.c_cc[VMIN] = 0;	/* set nonblocking read */
+  newtio.c_cc[VTIME] = 0;
+
+  PROGRESS(3, cnt, "alva init ok");
+
+  PROGRESS(4, cnt, "alva read data");
+
+  i = 0;
+  while(timeout-- && model == -1) {
+    /* autodetecting ABT model */
+    /* to force DTR off */
+    cfsetispeed(&newtio, B0);
+    cfsetospeed(&newtio, B0);
+    tcsetattr(fd, TCSANOW, &newtio);	/* activate new settings */
+    usleep(5000);
+    tcflush(fd, TCIOFLUSH);		/* clean line */
+    usleep(5000);
+    /* DTR back on */
+    cfsetispeed(&newtio, B9600);
+    cfsetospeed(&newtio, B9600);
+    tcsetattr(fd, TCSANOW, &newtio);	/* activate new settings */
+    usleep(1000);			/* give time to send ID string */
+    if((i = read(fd, &buffer, sizeof buffer)) == sizeof buffer) {
+      if(!strncmp(buffer, BRL_ID, sizeof BRL_ID - 1)) {
+        model = buffer[sizeof buffer - 1];
+      }
+    }
+    ADD2LOG("alva.%d@%s[%d]: ", timeout, dev_name, i);
+    if(i > 0) hexdump(&hd_data->log, 1, i, buffer);
+    ADD2LOG("\n");
+  }
+
+  PROGRESS(5, cnt, "alva read done");
+
+  switch(model) {
+    case  0:
+    case  1:
+    case  2:
+    case  3:
+    case  4:
+    case 11:
+    case 13:
+      dev = MAKE_ID(TAG_SPECIAL, model);
+      break;
+  }
+
+  /* reset serial lines */
+  tcflush(fd, TCIOFLUSH);
+  tcsetattr(fd, TCSAFLUSH, &oldtio);
+  close(fd);
+
+  return dev;
 }
 
 
@@ -90,13 +179,12 @@ unsigned do_alva(hd_data_t *hd_data, char *dev_name, int cnt)
  * Foundation.  Please see the file COPYING for details.
  */
 
-unsigned do_fhp(hd_data_t *hd_data, char *dev_name, int cnt)
+unsigned do_fhp(hd_data_t *hd_data, char *dev_name, unsigned baud, int cnt)
 {
   int fd, i;
   char crash[] = { 2, 'S', 0, 0, 0, 0 };
   unsigned char buf[10];
-  struct termios oldtio;	/* old terminal settings */
-  struct termios newtio;	/* new terminal settings */
+  struct termios oldtio, newtio;	/* old & new terminal settings */
   unsigned dev;
 
   PROGRESS(2, cnt, "fhp open");
@@ -108,7 +196,8 @@ unsigned do_fhp(hd_data_t *hd_data, char *dev_name, int cnt)
   tcgetattr(fd, &oldtio);	/* save current settings */
 
   /* Set bps, flow control and 8n1, enable reading */
-  newtio.c_cflag = B38400 | CS8 | CLOCAL | CREAD;
+  memset(&newtio, 0, sizeof newtio);
+  newtio.c_cflag = baud | CS8 | CLOCAL | CREAD;
 
   /* Ignore bytes with parity errors and make terminal raw and dumb */
   newtio.c_iflag = IGNPAR;
@@ -137,7 +226,7 @@ unsigned do_fhp(hd_data_t *hd_data, char *dev_name, int cnt)
   write(fd, "1111111111", 10);
   write(fd, "\03", 1);
 
-  sleep(1);
+  usleep(150000);		/* 100000 should be enough */
 
   PROGRESS(4, cnt, "fhp write ok");
 
@@ -152,6 +241,9 @@ unsigned do_fhp(hd_data_t *hd_data, char *dev_name, int cnt)
   dev = 0;
   if(i >= 2) {
     switch(buf[2]) {
+      case  1:
+      case  2:
+      case  3:
       case 64:
       case 65:
       case 66:
@@ -162,9 +254,9 @@ unsigned do_fhp(hd_data_t *hd_data, char *dev_name, int cnt)
         break;
     }
   }
-  if(!dev) ADD2LOG("no fhp display: 0x%02x\n", buf[2]);
+  if(!dev) ADD2LOG("no fhp display: 0x%02x\n", i >= 2 ? buf[2] : 0);
 
-    /* reset serial lines */
+  /* reset serial lines */
   tcflush(fd, TCIOFLUSH);
   tcsetattr(fd, TCSAFLUSH, &oldtio);
   close(fd);
@@ -173,8 +265,102 @@ unsigned do_fhp(hd_data_t *hd_data, char *dev_name, int cnt)
 }
 
 
+/*
+ * autodetect for Handy Tech  Braille-displays
+ * Author: marco Skambraks <marco@suse.de>
+ * Suse GmbH Nuernberg
+ *
+ * This is free software, placed under the terms of the
+ * GNU General Public License, as published by the Free Software
+ * Foundation.  Please see the file COPYING for details.
+*/
+
 unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt)
 {
-  return 0;
+  int fd, i;
+  unsigned char code = 0xff, buf[2] = { 0, 0 };
+  struct termios oldtio, newtio;
+  unsigned dev = 0;
+
+  PROGRESS(2, cnt, "ht open");
+
+  fd = open(dev_name, O_RDWR | O_NOCTTY);
+  if(fd < 0) return 0;
+
+  tcgetattr(fd, &oldtio);
+
+  newtio = oldtio;
+  newtio.c_cflag = CLOCAL | PARODD | PARENB | CREAD | CS8;
+  newtio.c_iflag = IGNPAR;
+  newtio.c_oflag = 0;
+  newtio.c_lflag = 0;
+  newtio.c_cc[VMIN] = 0;
+  newtio.c_cc[VTIME] = 0;
+
+  i = 0;
+  /*
+   * Force down DTR, flush any pending data and then the port to what we
+   * want it to be
+   */
+  if(
+    !(
+      cfsetispeed(&newtio, B0) ||
+      cfsetospeed(&newtio, B0) ||
+      tcsetattr(fd, TCSANOW, &newtio) ||
+      tcflush(fd, TCIOFLUSH) ||
+      cfsetispeed(&newtio, B19200) ||
+      cfsetospeed(&newtio, B19200) ||
+      tcsetattr(fd, TCSANOW, &newtio)
+    )
+  ) {
+    /* Pause to let them take effect */
+    usleep(500);
+
+    PROGRESS(3, cnt, "ht init ok");
+
+    write(fd, &code, 1);	/* reset brl */
+    usleep(5000);		/* wait for reset */
+
+    PROGRESS(4, cnt, "ht write ok");
+
+    read(fd, buf, 1);
+    i = 1;
+
+    PROGRESS(5, cnt, "ht read done");
+
+    if(buf[0] == 0xfe) {	/* resetok now read id */
+      usleep(5000);
+      read(fd, buf + 1, 1);
+      i = 2;
+
+      PROGRESS(6, cnt, "ht read done");
+
+      switch(buf[1]) {
+  	case 0x09:
+  	case 0x44:
+  	case 0x80:
+  	case 0x84:
+  	case 0x88:
+  	case 0x89:
+          dev = code;
+          dev = MAKE_ID(TAG_SPECIAL, dev);
+          break;
+      }
+    }
+  }
+
+  ADD2LOG("ht@%s[%d]: ", dev_name, i);
+  if(i > 0) hexdump(&hd_data->log, 1, i, buf);
+  ADD2LOG("\n");
+
+  if(!dev) ADD2LOG("no ht display: 0x%02x\n", buf[1]);
+
+  /* reset serial lines */
+  tcflush(fd, TCIOFLUSH);
+  tcsetattr(fd, TCSAFLUSH, &oldtio);
+  close(fd);
+
+  return dev;
 }
+
 
