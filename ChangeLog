@@ -1,5 +1,9 @@
 20/1/2003:	v5.51
-
+	- detection of more Microcom modems
+	- updated the pcmcia controllers fallback list
+	- added a minimal man page
+	- add AVM Fritz!Card DSL USB
+	- updated X11 data
 
 13/1/2003:	v5.50
 	- added Myrinet support (#21130)
