@@ -124,7 +124,7 @@ void hd_scan_net(hd_data_t *hd_data)
 #if defined(__s390__) || defined(__s390x__)
       if(
         hd->sub_class.id != sc_nif_loopback &&
-        hd->sub_class.id != sc_nif_sit && !hd->sub_class.id != sc_nif_ethernet && !hd->sub_class.id != sc_nif_qeth
+        hd->sub_class.id != sc_nif_sit && hd->sub_class.id != sc_nif_ethernet && hd->sub_class.id != sc_nif_qeth
       ) {
         hd0 = hd;
         hd = add_hd_entry(hd_data, __LINE__, 0);
