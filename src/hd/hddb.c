@@ -50,6 +50,7 @@ typedef struct {
   hd_id_t sub_vendor;
   hd_id_t sub_device;
   hd_id_t revision;
+  hd_id_t cu_model;
   char *serial;
   str_list_t *driver;
   char *requires;
@@ -1020,6 +1021,9 @@ int compare_ids(hddb2_data_t *hddb, hddb_search_t *hs, hddb_entry_mask_t mask, u
         case he_rev_id:
           id = hs->revision.id;
           break;
+	case he_detail_ccw_data_cu_model:
+	  id = hs->cu_model.id;
+	  break;
 
         default:
           ok = 0;
@@ -1213,6 +1217,10 @@ void complete_ids(
         case he_rev_id:
           id = &hs->revision.id;
           break;
+	
+	case he_detail_ccw_data_cu_model:
+	  id = &hs->cu_model.id;
+	  break;
 
         default:
           ok = 0;
@@ -1528,6 +1536,11 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     hs.key |= 1 << he_rev_name;
   }
 
+  if(hd->detail && hd->detail->ccw.data) {
+    hs.cu_model.id=hd->detail->ccw.data->cu_model;
+    hs.key |= 1 << he_detail_ccw_data_cu_model;
+  }
+
   hddb_search(hd_data, &hs, 0);
 
   if((hs.value & (1 << he_bus_id))) {
@@ -1605,6 +1618,11 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
   if((hs.value & (1 << he_subdevice_name))) {
     if(!hd->ref) free_mem(hd->sub_device.name);
     hd->sub_device.name = new_str(hs.sub_device.name);
+  }
+
+  if((hs.value & (1 << he_detail_ccw_data_cu_model))) {
+    if(hd->detail && hd->detail->ccw.data)
+      hd->detail->ccw.data->cu_model=hs.cu_model.id;
   }
 
   /* look for sub vendor again */

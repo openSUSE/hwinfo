@@ -211,7 +211,7 @@ typedef enum sc_mouse {
 /* subclass values of bc_storage_device */
 typedef enum sc_std {
   sc_sdev_disk, sc_sdev_tape, sc_sdev_cdrom, sc_sdev_floppy, sc_sdev_scanner,
-  sc_sdev_other = 0x80
+  sc_sdev_dasd, sc_sdev_other = 0x80
 } hd_sc_std_t;
 
 /* subclass values of bc_network_interface */
@@ -766,6 +766,13 @@ typedef struct devtree_s {
   unsigned char *edid;                  /* 128 bytes */
 } devtree_t;
 
+/*
+ * Device/CU model numbers for S/390
+ */
+typedef struct ccw_s {
+  unsigned char cu_model;
+  unsigned char dev_model;
+} ccw_t;
 
 /*
  * special CDROM entry
@@ -1312,7 +1319,8 @@ typedef union driver_info_u {
 typedef enum hd_detail_type {
   hd_detail_pci, hd_detail_usb, hd_detail_isapnp, hd_detail_cdrom,
   hd_detail_floppy, hd_detail_bios, hd_detail_cpu, hd_detail_prom,
-  hd_detail_monitor, hd_detail_sys, hd_detail_scsi, hd_detail_devtree
+  hd_detail_monitor, hd_detail_sys, hd_detail_scsi, hd_detail_devtree,
+  hd_detail_ccw
 } hd_detail_type_t;
 
 typedef struct {
@@ -1375,6 +1383,11 @@ typedef struct {
   devtree_t *data;
 } hd_detail_devtree_t;
 
+typedef struct {
+  enum hd_detail_type type;
+  ccw_t *data;
+} hd_detail_ccw_t;
+
 typedef union {
   enum hd_detail_type type;
   hd_detail_pci_t pci;
@@ -1389,6 +1402,7 @@ typedef union {
   hd_detail_sys_t sys;
   hd_detail_scsi_t scsi;
   hd_detail_devtree_t devtree;
+  hd_detail_ccw_t ccw;
 } hd_detail_t;
 
 

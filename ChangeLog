@@ -1,3 +1,8 @@
+03/11/2003:	v8.01
+	- converted s390 HW detection to sysfs
+	- moved CU/device models to separate data structure
+	- added more s390 devices
+
 28/10/2003:	v8.00
 	- get pci config type from kernel log (#30704)
 	- add new flag 'cpuemu' to use cpu emulation on i386

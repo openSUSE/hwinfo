@@ -227,6 +227,12 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("Attached to: #%u (%s)\n", h->attached_to, s ?: "?");
   }
 
+  if(h->detail && h->detail->ccw.type==hd_detail_ccw)
+  {
+	  dump_line("CU Model: 0x%x\n",h->detail->ccw.data->cu_model);
+	  dump_line("Device Model: 0x%x\n",h->detail->ccw.data->dev_model);
+  }
+
   if(
     h->base_class.id == bc_storage_device &&
     h->sub_class.id == sc_sdev_cdrom &&

@@ -1083,6 +1083,10 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
     case hd_detail_devtree:
       /* is freed with hd_data->dev_tree */
       break;
+
+  case hd_detail_ccw:
+	  free_mem(d->ccw.data);
+	  break;
   }
 
   free_mem(d);
@@ -4070,6 +4074,7 @@ void hd_add_id(hd_data_t *hd_data, hd_t *hd)
   INT_CRC(id1, sub_device.id);
   INT_CRC(id1, sub_vendor.id);
   INT_CRC(id1, revision.id);
+  if(hd->detail && hd->detail->ccw.data) INT_CRC(id1, detail->ccw.data->cu_model);
   INT_CRC(id1, compat_device.id);
   INT_CRC(id1, compat_vendor.id);
   // make sure we get the same id even if, say, the pci name list changes

@@ -12,10 +12,10 @@ OBJS_NO_TINY	= names.o parallel.o modem.o
 .PHONY:	fullstatic static shared tiny doc diet tinydiet uc tinyuc
 
 hwscan: hwscan.o $(LIBHD)
-	$(CC) hwscan.o $(LDFLAGS) -lhd -o $@
+	$(CC) hwscan.o $(LDFLAGS) -lhd -lsysfs -o $@
 
 hwinfo: hwinfo.o $(LIBHD)
-	$(CC) hwinfo.o $(LDFLAGS) -lhd -o $@
+	$(CC) hwinfo.o $(LDFLAGS) -lhd -lsysfs -o $@
 
 # kept for compatibility
 shared:
@@ -40,8 +40,8 @@ static:
 	@make SHARED_FLAGS=
 
 fullstatic: static
-	$(CC) -static hwinfo.o $(LDFLAGS) -lhd -o hwinfo.static
-	$(CC) -static hwscan.o $(LDFLAGS) -lhd -o hwscan.static
+	$(CC) -static hwinfo.o $(LDFLAGS) -lhd -lsysfs -o hwinfo.static
+	$(CC) -static hwscan.o $(LDFLAGS) -lhd -lsysfs -o hwscan.static
 	strip -R .note -R .comment hwinfo.static
 	strip -R .note -R .comment hwscan.static
 
