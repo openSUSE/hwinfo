@@ -1,3 +1,7 @@
+13/8/2002:	v5.09
+	- added info for firewire module
+	- fixed convert_hd to work with perl 5.8
+
 12/8/2002:	v5.08
 	- fixed evil segfault in hwinfo
 	- updated docs

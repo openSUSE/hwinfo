@@ -247,6 +247,14 @@ print STDERR "cmps: $cmp_item_cnt\n" if $cmp_item_cnt;
 
 # $dump->dumpValue( \@hd );
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+sub num
+{
+  return $_[0] =~ /^0/ ? oct $_[0] : return $_[0] + 0;
+}
+
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #
 # read file with name/class info
@@ -617,6 +625,11 @@ sub read_driver_file
 }
 
 
+sub num
+{
+  return $_[0] =~ /^0/ ? oct $_[0] : return $_[0] + 0;
+}
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #
 # read file with id info
@@ -666,7 +679,7 @@ sub read_id_file
 
     if(defined $range) {
       if($range =~ /^(0x[0-9a-zA-Z]+|\d+)$/) {
-        $range += 0;
+        $range = num $range;
       }
       else {
         die "$file_name($line): invalid range\n"
@@ -675,7 +688,7 @@ sub read_id_file
 
     if(defined $mask) {
       if($mask =~ /^(0x[0-9a-zA-Z]+|\d+)$/) {
-        $mask += 0;
+        $mask = num $mask;
       }
       else {
         die "$file_name($line): invalid mask\n"
@@ -683,7 +696,7 @@ sub read_id_file
     }
 
     if($id =~ /^(0x[0-9a-zA-Z]+|\d+)$/) {
-      $id += 0;
+      $id = num $id;
     }
     elsif(($tag == $tag_none || $tag == $tag_eisa) && $id =~ /^[A-Z_@]{3}$/) {
       $id = eisa_id $id;
@@ -1531,7 +1544,7 @@ sub parse_xml_id
           $value = eisa_id $value;
         }
       }
-      $value += 0;
+      $value = num $value;
 
       $id = [ $tag, $value ];
       $id->[2] = $range if defined $range;

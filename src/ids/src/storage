@@ -399,3 +399,8 @@
 &progif.id		0x20
 +driver.module.insmod	usbcore|ehci-hcd
 
+ baseclass.id		0x00c
+&subclass.id		0x00
+&progif.id		0x10
++driver.module.insmod	ieee1394|ohci1394
+
