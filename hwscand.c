@@ -164,7 +164,7 @@ int main( int argc, char **argv )
 					char buf[MESSAGE_BUFFER];
 					dev_counter[i] = 0;
 					fd = open( devices[i], O_RDONLY );
-					strcpy( buf, "/usr/sbin/hwscan --partition --only=");
+					strcpy( buf, "/usr/sbin/hwscan --fast --partition --only=");
 					strcat( buf, devices[i] );
 					if ( fd < 0 ){
 						if ( dev_last_state[i] )
