@@ -17,6 +17,7 @@
 #include <sys/mount.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/mman.h>
 #include <linux/pci.h>
 #include <linux/hdreg.h>
 #include <linux/fs.h>
@@ -5524,4 +5525,51 @@ str_list_t *hd_module_list(hd_data_t *hd_data, unsigned id)
 
   return drivers;
 }
+
+
+/*
+ * Read using mmap().
+ */
+int hd_read_mmap(hd_data_t *hd_data, char *name, unsigned char *buf, off_t start, unsigned size)
+{
+  off_t map_start, xofs;
+  int psize = getpagesize(), fd;
+  unsigned map_size;
+  void *p;
+
+  if(!size || !name) return 0;
+
+  map_start = start & -psize;
+  xofs = start - map_start;
+
+  map_size = (xofs + size + psize - 1) & -psize;
+
+  fd = open(name, O_RDONLY);
+
+  if(fd == -1) return 0;
+
+  p = mmap(NULL, map_size, PROT_READ, MAP_PRIVATE, fd, map_start);
+
+  if(p == MAP_FAILED) {
+    if(hd_data) ADD2LOG(
+      "%s[0x%x, %u]: mmap(, %u,,,, 0x%x) failed: %s\n",
+      name, (unsigned) start, size, map_size, (unsigned) map_start, strerror(errno)
+    );
+    close(fd);
+    return 0;
+  }
+  if(hd_data) ADD2LOG(
+    "%s[0x%x, %u]: mmap(, %u,,,, 0x%x) ok\n",
+    name, (unsigned) start, size, map_size, (unsigned) map_start
+  );
+
+  memcpy(buf, p + xofs, size);
+
+  munmap(p, map_size);
+
+  close(fd);
+
+  return 1;
+}
+
 

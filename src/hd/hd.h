@@ -46,6 +46,7 @@ extern "C" {
 #include <stdio.h>
 #include <inttypes.h>
 #include <termios.h>
+#include <sys/types.h>
 
 /*
  * libhd's directory
@@ -2339,6 +2340,7 @@ int hd_write_config(hd_data_t *hd_data, hd_t *hd);
 char *hd_hw_item_name(hd_hw_item_t item);
 char *hd_status_value_name(hd_status_value_t status);
 int hd_change_status(const char *id, hd_status_t status, const char *config_string);
+int hd_read_mmap(hd_data_t *hd_data, char *name, unsigned char *buf, off_t start, unsigned size);
 
 
 /*

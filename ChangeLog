@@ -1,3 +1,6 @@
+12/5/2004:	v8.49
+	- use mmap() to access /dev/mem (#34550)
+
 11/5/2004:	v8.48
 	- take out ips (#39993)
 	- fixed cdb_x11 script (#40335)
