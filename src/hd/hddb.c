@@ -2481,7 +2481,10 @@ void expand_driver_info(hd_data_t *hd_data, hd_t *hd)
           t = strsep(&t0, " ");
 
           add_str_list(&di->module.names, t);
-          di->module.active &= hd_module_is_active(hd_data, t);
+          di->module.active &= (
+            hd_module_is_active(hd_data, t) |
+            (search_str_list(hd->drivers, t) ? 1 : 0)
+          );
 
           if(t0) {
             add_str_list(&di->module.mod_args, module_cmd(hd, t0));

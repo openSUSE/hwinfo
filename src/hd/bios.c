@@ -23,7 +23,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#if defined(__i386__) || defined (__x86_64__)
+#if defined(__i386__) || defined (__x86_64__) || defined (__ia64__)
 
 #ifndef LIBHD_TINY
 static struct {
@@ -36,6 +36,7 @@ static struct {
   {  800,  600, "Fujitsu Siemens", "LiteLine", "LF6" },
   { 1024,  768, "ASUSTEK", "L2000D", NULL },
   { 1024,  768, "ASUSTeK Computer Inc.", "L8400C series Notebook PC", NULL },
+  { 1024,  768, "ASUSTeK Computer Inc.", "S5N", NULL },
   { 1024,  768, "Acer", "TravelMate 720", NULL },
   { 1024,  768, "COMPAL", "N30T5", NULL },
   { 1024,  768, "Dell Computer Corporation", "Inspiron 5000", NULL },
@@ -51,6 +52,7 @@ static struct {
   { 1024,  768, "Sony Corporation", "PCG-F370(UC)", NULL },
   { 1024,  768, "Sony Corporation", "PCG-N505SN", NULL },
   { 1024,  768, "TOSHIBA", "S2400-103", NULL },
+  { 1400, 1050, "Acer", "TravelMate 660", NULL },
   { 1400, 1050, "Dell Computer Corporation", "Inspiron 8000", NULL },
   { 1600, 1200, "Dell Computer Corporation", "Inspiron 8200", NULL },
   { 1600, 1200, "Dell Computer Corporation", "Latitude C840", NULL }
@@ -63,7 +65,7 @@ typedef struct {
   unsigned eax, ebx, ecx, edx, esi, edi, eip, es, iret, cli;
 } bios32_regs_t;
 
-static void read_memory(memory_range_t *mem);
+static void read_memory(hd_data_t *hd_data, memory_range_t *mem);
 #ifndef LIBHD_TINY
 static void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *label);
 static void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt);
@@ -77,7 +79,7 @@ static void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *
 static int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios32);
 #endif
 
-int detect_smp(hd_data_t *hd_data)
+int detect_smp_bios(hd_data_t *hd_data)
 {
   bios_info_t *bt;
   hd_t *hd;
@@ -120,14 +122,13 @@ void hd_scan_bios(hd_data_t *hd_data)
   vbe_info_t *vbe;
   vbe_mode_info_t *mi;
   hd_res_t *res;
-#endif
-  struct stat sbuf;
   str_list_t *sl;
+#endif
 
   if(!hd_probe_feature(hd_data, pr_bios)) return;
 
   /* we better do nothing on a SGI Altix machine */
-  if(!stat("/proc/sgi_sn", &sbuf)) return;
+  if(hd_is_sgi_altix(hd_data)) return;
 
   hd_data->module = mod_bios;
 
@@ -210,11 +211,11 @@ void hd_scan_bios(hd_data_t *hd_data)
 
   hd_data->bios_ram.start = BIOS_RAM_START;
   hd_data->bios_ram.size = BIOS_RAM_SIZE;
-  read_memory(&hd_data->bios_ram);
+  read_memory(hd_data, &hd_data->bios_ram);
 
   hd_data->bios_rom.start = BIOS_ROM_START;
   hd_data->bios_rom.size = BIOS_ROM_SIZE;
-  read_memory(&hd_data->bios_rom);
+  read_memory(hd_data, &hd_data->bios_rom);
 
 #ifndef LIBHD_TINY
 
@@ -287,14 +288,14 @@ void hd_scan_bios(hd_data_t *hd_data)
     if(u) {
       hd_data->bios_ebda.start = u;
       hd_data->bios_ebda.size = 1;	/* just one byte */
-      read_memory(&hd_data->bios_ebda);
+      read_memory(hd_data, &hd_data->bios_ebda);
       if(hd_data->bios_ebda.data) {
         u1 = hd_data->bios_ebda.data[0];
         if(u1 > 0 && u1 <= 64) {	/* be sensible, typically only 1k */
           u1 <<= 10;
           if(u + u1 <= (1 << 20)) {
             hd_data->bios_ebda.size = u1;
-            read_memory(&hd_data->bios_ebda);
+            read_memory(hd_data, &hd_data->bios_ebda);
           }
         }
       }
@@ -342,7 +343,7 @@ void hd_scan_bios(hd_data_t *hd_data)
     mem.size = 1 << 10;
     mem.start = 639 << 10;
     mem.data = NULL;
-    read_memory(&mem);
+    read_memory(hd_data, &mem);
     if(mem.data) smp_ok = get_smp_info(hd_data, &mem, &bt->smp);
     mem.data = free_mem(mem.data);
   }
@@ -351,7 +352,7 @@ void hd_scan_bios(hd_data_t *hd_data)
     mem.start = bt->smp.mpconfig;
     mem.size = 1 << 16;
     mem.data = NULL;
-    read_memory(&mem);
+    read_memory(hd_data, &mem);
     parse_mpconfig(hd_data, &mem, &bt->smp);
     mem.data = free_mem(mem.data);
   }
@@ -365,7 +366,7 @@ void hd_scan_bios(hd_data_t *hd_data)
       mem.start = bt->smp.mpfp;
       mem.size = 0x10;
       mem.data = NULL;
-      read_memory(&mem);
+      read_memory(hd_data, &mem);
       dump_memory(hd_data, &mem, 0, "MP FP");
       mem.data = free_mem(mem.data);
     }
@@ -374,7 +375,7 @@ void hd_scan_bios(hd_data_t *hd_data)
       mem.start = bt->smp.mpconfig;
       mem.size = bt->smp.mpconfig_size;
       mem.data = NULL;
-      read_memory(&mem);
+      read_memory(hd_data, &mem);
       dump_memory(hd_data, &mem, 0, "MP config table");
       mem.data = free_mem(mem.data);
     }
@@ -495,9 +496,8 @@ void hd_scan_bios(hd_data_t *hd_data)
 }
 
 
-void read_memory(memory_range_t *mem)
+void read_memory(hd_data_t *hd_data, memory_range_t *mem)
 {
-  int fd;
 #ifdef BIOS_TEST
   char *s = getenv("LIBHD_MEM");
 #endif
@@ -510,19 +510,11 @@ void read_memory(memory_range_t *mem)
 
   if(mem->data) free_mem(mem->data);
   mem->data = new_mem(mem->size);
-  fd = -1;
-  if(
 #ifdef BIOS_TEST
-    (fd = open(s ? s : DEV_MEM, O_RDONLY)) >= 0 &&
+  hd_read_mmap(hd_data, s ?: DEV_MEM, mem->data, mem->start, mem->size);
 #else
-    (fd = open(DEV_MEM, O_RDONLY)) >= 0 &&
+  hd_read_mmap(hd_data, DEV_MEM, mem->data, mem->start, mem->size);
 #endif
-    lseek(fd, mem->start, SEEK_SET) >= 0
-  ) {
-    read(fd, mem->data, mem->size);
-  }
-
-  if(fd >= 0) close(fd);
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -624,7 +616,7 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
   memory.start = addr;
   memory.size = len;
   memory.data = NULL;
-  read_memory(&memory);
+  read_memory(hd_data, &memory);
   if(len >= 0x4000) {
     ADD2LOG(
       "  SMBIOS Structure Table at 0x%05x (size 0x%x)\n",
