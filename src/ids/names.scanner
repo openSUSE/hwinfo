@@ -12,6 +12,11 @@ u03f0	HP
 	0601.10c00	6300C
 	0605.10c00	2200C
 
+u0400   National Semiconductor
+	1000.10c00	BearPaw 1200
+	1001.10c00	BearPaw 2400
+
+
 u0458	KYE Systems
 	2001.10c00	Genius ColorPage-Vivid Pro
 	2007.10c00	ColorPage HR6 V2
@@ -28,7 +33,7 @@ u0461	Colorado
 	0302.10c00	G2-300
 	0303.10c00	G2E-300
 	0341.10c00	600U
-	0360.10c00	USB 19200
+	0346.10c00	6136u
 	0361.10c00	1200U
 	0380.10c00	G2-600
 	0381.10c00	ReadyScan 636i
@@ -48,20 +53,33 @@ u04a5	Acer
 	20de.10c00	S2W 3300U
 
 u04a7	Visioneer
-	0221.10c00	OneTouch 5300
-	0231.10c00	6100
+	0221.10c00	OneTouch 5300 USB
+	0211.10c00	OneTouch 7600 USB
+	0231.10c00	6100 USB
+	0311.10c00	6200 EPP/USB
+	0321.10c00	OneTouch 8100 EPP/USB
+	0331.10c00	OneTouch 8600 EPP/USB
 
 u04a9   Canon
 	2202.10c00	FB620U
 	220b.10c00	D646U
 	2207.10c00	1220U
 	
+u04b0	Nikon
+	4000.10c00	Coolscan IV
+
 u04b8	Epson
 	0101.10c00	Perfection 636U
 	0103.10c00	Perfection 610
 	0104.10c00	Perfection 1200U
+	0106.10c00	Stylus Scan 2500
+	0107.10c00	Expression 1600
+	010a.10c00	Perfection 1640SU
+	010b.10c00	Perfection 1240U
 	010c.10c00	Perfection 640
+	010e.10c00	Expression 1680
 	0110.10c00	Perfection 1650
+	0112.10c00	Perfection 2450
 
 u04ce	ScanLogic
 	0300.10c00	Phantom 336CX
@@ -80,6 +98,11 @@ u05da	Microtek
 
 u055f	Mustek
 	0001.10c00	1200 CU
+	0002.10c00	600 CU
+	0003.10c00	1200 USB
+	0873.10c00	600 USB
+	0006.10c00	1200 UB
+	0008.10c00	1200 CU Plus
 
 u0638	iVina
 	0268.10c00	1200U
@@ -93,6 +116,13 @@ u06bd	Agfa
 	2095.10c00	SnapScan e25
 	2097.10c00	SnapScan e26
 	208d.10c00	SnapScan e40
+
+u07b3	Plustek
+	0017.10c00	OpticPro UT12
+	0011.10c00	OpticPro UT24
+
+u0ff5	Mustek?
+	0010.10c00	BearPaw 1200F
 
 u1606	UMAX
 	0002.10c00	Astra 1236U
