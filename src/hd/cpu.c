@@ -501,12 +501,20 @@ inline unsigned units_per_cpu()
   unsigned u;
 
   asm(
+#ifdef __i386__
     "push %%ebx\n\t"
+#else
+    "push %%rbx\n\t"
+#endif
     "mov $1,%%eax\n\t"
     "cpuid\n\t"
     "shr $8,%%ebx\n\t"
     "movzx %%bh,%%eax\n\t"
+#ifdef __i386__
     "pop %%ebx"
+#else
+    "pop %%rbx"
+#endif
     : "=a" (u)
     :: "%ecx", "%edx"
   );

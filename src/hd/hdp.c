@@ -706,8 +706,12 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 	dump_line("HW Address: %s\n", res->hwaddr.addr);
         break;
 
+      case res_link:
+	dump_line("Link detected: %s\n", res->link.state ? "yes" : "no");
+        break;
+
       default:
-        dump_line("Unkown resource type %d\n", res->any.type);
+        dump_line("Unknown resource type %d\n", res->any.type);
     }
   }
 

@@ -13,7 +13,7 @@ extern "C" {
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#define HD_VERSION	8
+#define HD_VERSION	9
 
 /*
  * debug flags
@@ -1318,7 +1318,7 @@ typedef struct {
 typedef enum resource_types {
   res_any, res_phys_mem, res_mem, res_io, res_irq, res_dma, res_monitor,
   res_size, res_disk_geo, res_cache, res_baud, res_init_strings, res_pppd_option,
-  res_framebuffer, res_hwaddr
+  res_framebuffer, res_hwaddr, res_link
 } hd_resource_types_t;
 
 
@@ -1455,6 +1455,12 @@ typedef struct {
   char *addr;
 } res_hwaddr_t;
 
+typedef struct {
+  union u_hd_res_t *next;
+  enum resource_types type;
+  unsigned state:1;			/* network link state: 0 - not connected, 1 - connected */
+} res_link_t;
+
 typedef union u_hd_res_t {
   union u_hd_res_t *next;  
   res_any_t any;
@@ -1472,6 +1478,7 @@ typedef union u_hd_res_t {
   res_pppd_option_t pppd_option;
   res_framebuffer_t framebuffer;
   res_hwaddr_t hwaddr;
+  res_link_t link;
 } hd_res_t;
 
 

@@ -1,3 +1,8 @@
+	- work around x86-64 assembler weirdness
+
+4/8/2004:	v9.1
+	- get netcard link state via ethtool ioctl
+
 6/7/2004:	v9.0
 	- ids/src/s390: changed "OSA Express Ethernet card" to "OSA Express
           Network card" (can be Token Ring, too)

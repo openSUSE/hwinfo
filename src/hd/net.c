@@ -29,6 +29,7 @@
  */
 
 static void get_driverinfo(hd_data_t *hd_data, hd_t *hd);
+static void get_linkstate(hd_data_t *hd_data, hd_t *hd);
 static void add_xpnet(hd_data_t *hdata);
 static void add_iseries(hd_data_t *hdata);
 static void add_uml(hd_data_t *hdata);
@@ -40,12 +41,7 @@ static void add_uml(hd_data_t *hdata);
 void hd_scan_net(hd_data_t *hd_data)
 {
   unsigned u;
-  hd_t *hd, *hd2;
-#if 0
-#if defined(__s390__) || defined(__s390x__)
-  hd_t *hd0;
-#endif
-#endif
+  hd_t *hd, *hd2, *hd_card;
   char *s, *hw_addr;
   hd_res_t *res, *res1;
 
@@ -217,56 +213,33 @@ void hd_scan_net(hd_data_t *hd_data)
   if(hd_is_iseries(hd_data)) add_iseries(hd_data);
   add_uml(hd_data);
 
-#if 0
+  /* add link status info */
+  for(hd = hd_data->hd ; hd; hd = hd->next) {
+    if(
+      hd->module == hd_data->module &&
+      hd->base_class.id == bc_network_interface
+    ) {
+      get_linkstate(hd_data, hd);
 
-#if defined(__s390__) || defined(__s390x__)
-      if(
-        hd->sub_class.id != sc_nif_loopback &&
-        hd->sub_class.id != sc_nif_sit && hd->sub_class.id != sc_nif_ethernet && hd->sub_class.id != sc_nif_qeth &&
-	hd->sub_class.id != sc_nif_ctc
-      ) {
-        hd0 = hd;
-        hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->base_class.id = bc_network;
-        hd->unix_dev_name = new_str(hd0->unix_dev_name);
-        hd->slot = hd0->slot;
-        hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);	// IBM
-        switch(hd0->sub_class.id) {
-          case sc_nif_tokenring:
-            hd->sub_class.id = 1;
-            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
-            str_printf(&hd->device.name, 0, "Token ring card %d", hd->slot);
-            break;
-          case sc_nif_ctc:
-            hd->sub_class.id = 0x04;
-            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0004);
-            str_printf(&hd->device.name, 0, "CTC %d", hd->slot);
-            break;
-          case sc_nif_iucv:
-            hd->sub_class.id = 0x05;
-            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0005);
-            str_printf(&hd->device.name, 0, "IUCV %d", hd->slot);
-            break;
-          case sc_nif_hsi:
-            hd->sub_class.id = 0x06;
-            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0006);
-            str_printf(&hd->device.name, 0, "HSI %d", hd->slot);
-            break;
-          case sc_nif_escon:
-            hd->sub_class.id = 0x08;
-            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0008);
-            str_printf(&hd->device.name, 0, "ESCON %d", hd->slot);
-            break;
-          default:
-            hd->sub_class.id = 0x80;
-            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0080);
+      if(!(hd_card = hd_get_device_by_idx(hd_data, hd->attached_to))) continue;
+
+      for(res = hd->res; res; res = res->next) {
+        if(res->any.type == res_link) break;
+      }
+
+      if(res) {
+        for(res1 = hd_card->res; res1; res1 = res1->next) {
+          if(res1->any.type == res_link) break;
+        }
+        if(res && !res1) {
+          res1 = new_mem(sizeof *res1);
+          res1->link.type = res_link;
+          res1->link.state = res->link.state;
+          add_res_entry(&hd_card->res, res1);
         }
       }
-#endif
-
-#endif
-
-
+    }
+  }
 }
 
 
@@ -296,7 +269,42 @@ void get_driverinfo(hd_data_t *hd_data, hd_t *hd)
     add_str_list(&hd->drivers, drvinfo.driver);
   }
   else {
-    ADD2LOG("    ethtool error: %s\n", strerror(errno));
+    ADD2LOG("    GDRVINFO ethtool error: %s\n", strerror(errno));
+  }
+
+  close(fd);
+}
+
+
+/*
+ * Check network link status.
+ */
+void get_linkstate(hd_data_t *hd_data, hd_t *hd)
+{
+  int fd;
+  struct ethtool_value linkstatus = { cmd:ETHTOOL_GLINK };
+  struct ifreq ifr;
+  hd_res_t *res;
+
+  if(!hd->unix_dev_name) return;
+
+  if(strlen(hd->unix_dev_name) > sizeof ifr.ifr_name - 1) return;
+
+  if((fd = socket(PF_INET, SOCK_DGRAM, 0)) == -1) return;
+
+  /* get driver info */
+  memset(&ifr, 0, sizeof ifr);
+  strcpy(ifr.ifr_name, hd->unix_dev_name);
+  ifr.ifr_data = (caddr_t) &linkstatus;
+  if(ioctl(fd, SIOCETHTOOL, &ifr) == 0) {
+    ADD2LOG("  %s: ethtool link state: %d\n", hd->unix_dev_name, linkstatus.data);
+    res = new_mem(sizeof *res);
+    res->link.type = res_link;
+    res->link.state = linkstatus.data ? 1 : 0;
+    add_res_entry(&hd->res, res);
+  }
+  else {
+    ADD2LOG("  %s: GLINK ethtool error: %s\n", hd->unix_dev_name, strerror(errno));
   }
 
   close(fd);
