@@ -17,6 +17,15 @@
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
+&device.id		pci 0x3e50
+&subvendor.id		pci 0x174b
+&subdevice.id		pci 0x0450
++subdevice.name		Sapphire Radeon X600 Pro
++driver.xfree		4|radeon
++driver.xfree		4|fglrx|3d|
++requires		fglrx
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x3e54
 +device.name		FireGL V3200 (RV380) 3E54 (PCIE)
 +driver.xfree		4|radeon
@@ -993,6 +1002,15 @@
 &device.id		pci 0x5b60
 +device.name		Radeon X300 (RV370) 5B60 (PCIE)
 +driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5b60
+&subvendor.id		pci 0x174b
+&subdevice.id		pci 0x0440
++subdevice.name		Sapphire Radeon X300 SE
++driver.xfree		4|radeon
++driver.xfree		4|fglrx|3d|
++requires		fglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5b62
@@ -2770,6 +2788,13 @@
 
  vendor.id		pci 0x1106
 &device.id		pci 0x7205
+&subvendor.id		pci 0x1025
+&subdevice.id		pci 0x0033
++subdevice.name		Acer Incorporated VIA VT 7205
++driver.xfree		4|fbdev
+
+ vendor.id		pci 0x1106
+&device.id		pci 0x7205
 &subvendor.id		pci 0x1584
 &subdevice.id		pci 0x800a
 +subdevice.name		Uniwill VIA VT 7205
@@ -3145,7 +3170,6 @@
 &device.id		pci 0x2592
 +device.name		915 GM
 +driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3577

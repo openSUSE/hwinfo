@@ -648,6 +648,9 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
           "Geometry (%s): CHS %u/%u/%u\n", s,
           res->disk_geo.cyls, res->disk_geo.heads, res->disk_geo.sectors
         );
+        if(res->disk_geo.size) {
+          dump_line("Size (%s): %"PRIu64" sectors\n", s, res->disk_geo.size);
+        }
         break;
 
       case res_cache:

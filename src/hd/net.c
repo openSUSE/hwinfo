@@ -136,6 +136,10 @@ void hd_scan_net(hd_data_t *hd_data)
       hd2 = hd_find_sysfs_id(hd_data, hd_sysfs_id(sf_dev->path));
       if(hd2) {
         hd->attached_to = hd2->idx;
+
+        /* for cards with strange pci classes */
+        hd_set_hw_class(hd2, hw_network_ctrl);
+
         /* add hw addr to network card */
         if(res1) {
           u = 0;

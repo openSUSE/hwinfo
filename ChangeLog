@@ -1,6 +1,8 @@
 15/2/2005:	v10.0
 	- libhd interface changes: geometry values
 	- prepare for wlan feature detection
+	- x11 db update
+	- better disk geometry handling
 
 8/2/2005:	v9.36
 	- added '--kernel-version' option

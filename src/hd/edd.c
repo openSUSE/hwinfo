@@ -48,6 +48,7 @@ void get_edd_info(hd_data_t *hd_data)
   uint64_t ul0;
   str_list_t *sl;
   bios_info_t *bt;
+  edd_info_t *ei;
 
   struct sysfs_directory *sf_dir;
   struct sysfs_directory *sf_dir_2;
@@ -75,8 +76,38 @@ void get_edd_info(hd_data_t *hd_data)
 
             u -= 0x80;
 
+            ei = hd_data->edd + u;
+
             if(hd_attr_uint(sysfs_get_directory_attribute(sf_dir_2, "sectors"), &ul0, 0)) {
-              hd_data->edd[u].sectors = ul0;
+              ei->sectors = ul0;
+            }
+
+            if(hd_attr_uint(sysfs_get_directory_attribute(sf_dir_2, "default_cylinders"), &ul0, 0)) {
+              ei->edd.cyls = ul0;
+            }
+
+            if(hd_attr_uint(sysfs_get_directory_attribute(sf_dir_2, "default_heads"), &ul0, 0)) {
+              ei->edd.heads = ul0;
+            }
+
+            if(hd_attr_uint(sysfs_get_directory_attribute(sf_dir_2, "default_sectors_per_track"), &ul0, 0)) {
+              ei->edd.sectors = ul0;
+            }
+
+            if(hd_attr_uint(sysfs_get_directory_attribute(sf_dir_2, "legacy_max_cylinder"), &ul0, 0)) {
+              ei->legacy.cyls = ul0 + 1;
+            }
+
+            if(hd_attr_uint(sysfs_get_directory_attribute(sf_dir_2, "legacy_max_head"), &ul0, 0)) {
+              ei->legacy.heads = ul0 + 1;
+            }
+
+            if(hd_attr_uint(sysfs_get_directory_attribute(sf_dir_2, "legacy_sectors_per_track"), &ul0, 0)) {
+              ei->legacy.sectors = ul0;
+            }
+
+            if(ei->sectors && ei->edd.heads && ei->edd.sectors) {
+              ei->edd.cyls = ei->sectors / (ei->edd.heads * ei->edd.sectors);
             }
 
             sf_link = sysfs_get_directory_link(sf_dir_2, "pci_dev");
@@ -94,15 +125,21 @@ void get_edd_info(hd_data_t *hd_data)
             if(search_str_list(sl, "64-bit extensions")) hd_data->edd[u].ext_64bit = 1;
 
             ADD2LOG(
-              "edd: 0x%02x %12"PRIu64" %s%s%s%s#%3u %s\n",
+              "edd: 0x%02x\n  size: %"PRIu64"\n  chs default: %u/%u/%u\n  chs legacy: %u/%u/%u\n  caps: %s%s%s%s\n  attached: #%u %s\n",
               u + 0x80,
-              hd_data->edd[u].sectors,
-              hd_data->edd[u].ext_fixed_disk ? "fixed " : "",
-              hd_data->edd[u].ext_lock_eject ? "lock " : "",
-              hd_data->edd[u].ext_edd ? "edd " : "",
-              hd_data->edd[u].ext_64bit ? "64bit " : "",
-              hd_data->edd[u].hd_idx,
-              hd_data->edd[u].sysfs_id
+              ei->sectors,
+              ei->edd.cyls,
+              ei->edd.heads,
+              ei->edd.sectors,
+              ei->legacy.cyls,
+              ei->legacy.heads,
+              ei->legacy.sectors,
+              ei->ext_fixed_disk ? "fixed " : "",
+              ei->ext_lock_eject ? "lock " : "",
+              ei->ext_edd ? "edd " : "",
+              ei->ext_64bit ? "64bit " : "",
+              ei->hd_idx,
+              ei->sysfs_id ?: ""
             );
           }
         }

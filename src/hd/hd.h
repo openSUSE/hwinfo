@@ -1277,6 +1277,12 @@ typedef struct {
  */
 typedef struct {
   uint64_t sectors;
+  struct {
+    unsigned cyls, heads, sectors;
+  } edd;
+  struct {
+    unsigned cyls, heads, sectors;
+  } legacy;
   unsigned ext_fixed_disk:1;
   unsigned ext_lock_eject:1;
   unsigned ext_edd:1;
@@ -1438,6 +1444,7 @@ typedef struct {
   union u_hd_res_t *next;
   enum resource_types type;
   unsigned cyls, heads, sectors;
+  uint64_t size;
   enum geo_types geotype;		/* 0-3: physical/logical/bios edd/bios legacy */
 } res_disk_geo_t;
 

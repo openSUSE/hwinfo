@@ -39,6 +39,7 @@ static void int_softraid(hd_data_t *hd_data);
 #endif
 #if defined(__i386__) || defined (__x86_64__)
 static void int_system(hd_data_t *hd_data);
+static void int_legacy_geo(hd_data_t *hd_data);
 #endif
 
 void hd_scan_int(hd_data_t *hd_data)
@@ -100,6 +101,9 @@ void hd_scan_int(hd_data_t *hd_data)
 #if defined(__i386__) || defined (__x86_64__)
   PROGRESS(14, 0, "soft raid");
   int_softraid(hd_data);
+
+  PROGRESS(15, 0, "geo");
+  int_legacy_geo(hd_data);
 #endif
 
 }
@@ -1122,6 +1126,54 @@ void int_system(hd_data_t *hd_data)
     hd_sys->compat_device.id = MAKE_ID(TAG_SPECIAL, is.vendor);
   }
 }
+
+
+void int_legacy_geo(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  hd_res_t *res;
+  int id;
+  char *s;
+  edd_info_t *ei;
+
+  if(!hd_data->edd) return;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_disk &&
+      hd->rom_id
+    ) {
+      id = strtol(hd->rom_id, &s, 0) - 0x80;
+      if(*s || id < 0 || id >= sizeof hd_data->edd / sizeof *hd_data->edd) continue;
+
+      ei = hd_data->edd + id;
+
+      if(ei->edd.cyls) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->disk_geo.type = res_disk_geo;
+        res->disk_geo.cyls = ei->edd.cyls;
+        res->disk_geo.heads = ei->edd.heads;
+        res->disk_geo.sectors = ei->edd.sectors;
+        res->disk_geo.size = ei->sectors;
+        res->disk_geo.geotype = geo_bios_edd;
+      }
+
+      if(ei->legacy.cyls) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->disk_geo.type = res_disk_geo;
+        res->disk_geo.cyls = ei->legacy.cyls;
+        res->disk_geo.heads = ei->legacy.heads;
+        res->disk_geo.sectors = ei->legacy.sectors;
+        res->disk_geo.geotype = geo_bios_legacy;
+      }
+
+    }
+  }
+
+
+}
+
 #endif
 
 
