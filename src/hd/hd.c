@@ -214,7 +214,7 @@ static struct s_pr_flags {
   { pr_memory,        0,            8|4|2|1, "memory"        },
   { pr_pci,           0,            8|4|2|1, "pci"           },
   { pr_s390,          0,            8|4|2|1, "s390"          },
-  { pr_s390disks,     0,            8|4|2|1, "s390disks"     },
+  { pr_s390disks,     0,                  0, "s390disks"     },
   { pr_isapnp,        0,              4|2|1, "isapnp"        },
   { pr_isapnp_old,    pr_isapnp,          0, "isapnp.old"    },
   { pr_isapnp_new,    pr_isapnp,          0, "isapnp.new"    },
@@ -1705,8 +1705,8 @@ void hd_scan(hd_data_t *hd_data)
 #endif
 
 #if defined(__s390__) || defined(__s390x__)
-  hd_scan_s390(hd_data);
   hd_scan_s390disks(hd_data);
+  hd_scan_s390(hd_data);
 #endif
 
   /* after hd_scan_prom() and hd_scan_bios() */

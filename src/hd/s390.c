@@ -102,7 +102,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
         readonly=atoi(curattr->value);
       }
     }
-
+    
     res->io.type=res_io;
     res->io.access=readonly?acc_ro:acc_rw;
     res->io.base=strtol(rindex(curdev->bus_id,'.')+1,NULL,16);
@@ -131,6 +131,9 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     hd->vendor.id=MAKE_ID(TAG_SPECIAL,0x6001); /* IBM */
     hd->device.id=MAKE_ID(TAG_SPECIAL,cutype);
     hd->sub_device.id=MAKE_ID(TAG_SPECIAL,devtype);
+    hd->bus.id=bus_ccw;
+    hd->sysfs_device_link = new_str(hd_sysfs_id(curdev->path));
+    hd->sysfs_bus_id = new_str(strrchr(curdev->path,'/')+1);
     
     if(cutypes[res->io.base]==-2)	/* virtual reader */
     {
