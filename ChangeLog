@@ -1,3 +1,5 @@
+	- s390: fixed several DASD IDs
+
 25/5/2004:	v8.54
 	- made --only more effective (#37933)
 
