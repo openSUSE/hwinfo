@@ -4038,7 +4038,8 @@ void hd_add_id(hd_data_t *hd_data, hd_t *hd)
   INT_CRC(id0, bus.id);
 
   if(
-    hd->bus.id == bus_usb &&
+    (hd->bus.id == bus_usb ||
+    hd->bus.id == bus_ccw) &&
     hd->sysfs_bus_id
   ) {
     STR_CRC(id0, sysfs_bus_id);
