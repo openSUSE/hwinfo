@@ -139,3 +139,22 @@ s4001	Sun Microsystems
 	3002	Sun Lance Ethernet
 	3003	Sun Quad Ethernet
 	3004	MyriCOM MyriNET Gigabit Ethernet
+
+# braille displays
+s5001	Alva
+
+s5002	Papenmeier
+	0040	el40
+	0041	el66
+	0042	el80
+	0043	el2d
+	0044	el40p
+
+s5003	Handy Tech
+	0009	brlwave
+	0044	vario40
+	0080	ht20
+	0084	vario80
+	0088	ht80
+	0089	ht40
+

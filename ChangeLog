@@ -1,3 +1,8 @@
+20/6/2000:	v1.03
+	- fixed mk_ids (used to drop all non-x11 ids)
+	- improved 'hwprobe=' functionality
+	- fhp braille detection implemented
+
 20/6/2000:	v1.02
 	- updated pciutils & sax/sax2 data
 	- added fire gl1

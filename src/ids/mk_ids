@@ -1070,7 +1070,7 @@ sub cmp_drv_ent_info
 sub merge_x
 {
   local ( $_ );
-  my ( $d, @xdrv, $id, $id1, $idlist, $idlist1, $x, @x, $y, $i, $j, $k, $dl, @x3, @x4 );
+  my ( $d, @xdrv, $id, $id1, $idlist, $idlist1, $x, @x, $y, $i, $j, $k, $dl, @x3, @x4, @other_drvs );
 
   # step 1: make separate entries
   for $d (@driver) {
@@ -1092,6 +1092,7 @@ sub merge_x
       undef $d;
     }
   }
+  @other_drvs = grep { defined } @driver;
 
   # step 2: sort them by id
   @xdrv = sort cmp_drv_ent @xdrv;
@@ -1194,7 +1195,7 @@ sub merge_x
   }
   @xdrv = grep { defined } @xdrv;
 
-  push @driver, @xdrv;
+  @driver = ( @other_drvs, @xdrv );
 
 }
 

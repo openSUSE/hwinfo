@@ -93,8 +93,16 @@ void get_serial_modem(hd_data_t *hd_data)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
       (
-        (hd->base_class == bc_comm && hd->sub_class == sc_com_ser) ||
-        (chk_usb && hd->bus == bus_usb && hd->base_class == bc_modem)
+        (
+          hd->base_class == bc_comm &&
+          hd->sub_class == sc_com_ser &&
+          !has_something_attached(hd_data, hd)
+        ) ||
+        (
+          chk_usb &&
+          hd->bus == bus_usb &&
+          hd->base_class == bc_modem
+        )
       ) && hd->unix_dev_name
     ) {
       if(dev_name_duplicate(hd_data, hd->unix_dev_name)) continue;

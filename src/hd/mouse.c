@@ -285,7 +285,12 @@ void get_serial_mouse(hd_data_t *hd_data)
   FD_ZERO(&set);
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_comm && hd->sub_class == sc_com_ser && hd->unix_dev_name) {
+    if(
+      hd->base_class == bc_comm &&
+      hd->sub_class == sc_com_ser &&
+      hd->unix_dev_name &&
+      !has_something_attached(hd_data, hd)
+    ) {
 #if 0
       if(timeout(test_serial_open, hd->unix_dev_name, 3) > 0) {
         ADD2LOG("serial: open(%s) timed out\n", hd->unix_dev_name);

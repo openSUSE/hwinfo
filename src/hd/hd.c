@@ -658,10 +658,10 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_adb(hd_data);
 #endif
   hd_scan_kbd(hd_data);
+  hd_scan_braille(hd_data);
 #ifndef LIBHD_TINY
   hd_scan_modem(hd_data);	/* do it before hd_scan_mouse() */
 #endif
-  hd_scan_braille(hd_data);
   hd_scan_mouse(hd_data);
   hd_scan_sbus(hd_data);
 
@@ -1590,6 +1590,9 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 
   if(!di0 && (hd->vend || hd->dev)) {
     di0 = device_driver(hd_data, hd->vend, hd->dev);
+
+//    fprintf(stderr, "\n\n******* %p 0x%x 0x%x\n\n", di0, hd->vend, hd->dev);
+
   }
 
   if(!di0 && (hd->compat_vend || hd->compat_dev)) {
@@ -2960,7 +2963,8 @@ int cmp_hd(hd_t *hd1, hd_t *hd2)
 void get_probe_env(hd_data_t *hd_data)
 {
   char *s, *t, *env;
-  int i, j, k;
+  int j, k;
+  char buf[10];
 
   env = getenv("hwprobe");
   if(!env) env = get_cmdline(hd_data, "hwprobe");
@@ -2977,7 +2981,7 @@ void get_probe_env(hd_data_t *hd_data)
       k = 0;
     }
     else {
-      ADD2LOG("hwprobe: what is \"%s\"?\n", t);
+      ADD2LOG("hwprobe: +/- missing before \"%s\"\n", t);
       return;
     }
 
@@ -2986,8 +2990,8 @@ void get_probe_env(hd_data_t *hd_data)
     if((j = hd_probe_feature_by_name(t))) {
       set_probe_feature(hd_data, j, k ? 1 : 0);
     }
-    else if(k && sscanf(t, "%i:%i:%i", &i, &i, &i) == 3) {
-      add_str_list(&hd_data->xtra_hd, t);
+    else if(sscanf(t, "%8[^:]:%8[^:]:%8[^:]", buf, buf, buf) == 3) {
+      add_str_list(&hd_data->xtra_hd, t - 1);
     }
     else {
       ADD2LOG("hwprobe: what is \"%s\"?\n", t);
@@ -3002,21 +3006,85 @@ void hd_scan_xtra(hd_data_t *hd_data)
 {
   str_list_t *sl;
   hd_t *hd;
-  int i0, i1, i2;
+  unsigned u0, u1, u2, tag;
+  int i, err;
+  char buf0[10], buf1[10], buf2[10], buf3[64], *s, k;
 
   hd_data->module = mod_xtra;
 
   remove_hd_entries(hd_data);
 
   for(sl = hd_data->xtra_hd; sl; sl = sl->next) {
-    if(sscanf(sl->str, "%i:%i:%i", &i0, &i1, &i2) == 3) {
-      hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class = i0 >> 8;
-      hd->sub_class = i0 & 0xff;
-      hd->vend = i1;
-      hd->dev = i2;
+    if((i = sscanf(sl->str, "%c%8[^:]:%8[^:]:%8[^:]:%60s", &k, buf0, buf1, buf2, buf3)) >= 4) {
+      err = 0;
+      switch(k) {
+        case '+': k = 1; break;
+        case '-': k = 0; break;
+        default: err = 1;
+      }
+      u0 = strtoul(buf0, &s, 16);
+      if(*s) err = 1;
+      if(strlen(buf1) == 3) {
+        u1 = name2eisa_id(buf1);
+      }
+      else {
+        tag = TAG_PCI;
+        s = buf1;
+        switch(*s) {
+          case 'p': tag = TAG_PCI; s++; break;
+          case 'r': tag = 0; s++; break;
+          case 's': tag = TAG_SPECIAL; s++; break;
+          case 'u': tag = TAG_USB; s++; break;
+        }
+        u1 = strtoul(s, &s, 16);
+        if(*s) err = 1;
+        u1 = MAKE_ID(tag, u1);
+      }
+      u2 = strtoul(buf2, &s, 16);
+      if(*s) err = 1;
+      u2 = MAKE_ID(ID_TAG(u1), ID_VALUE(u2));
+      if(!err) {
+        if(k) {
+          hd = add_hd_entry(hd_data, __LINE__, 0);
+          hd->base_class = u0 >> 8;
+          hd->sub_class = u0 & 0xff;
+          hd->vend = u1;
+          hd->dev = u2;
+          if(i == 5) hd->unix_dev_name = new_str(buf3);
+        }
+        else {
+          for(hd = hd_data->hd; hd; hd = hd->next) {
+            if(
+              (
+                hd->base_class == (u0 >> 8) &&
+                hd->sub_class == (u0 & 0xff) &&
+                hd->vend == u1 &&
+                hd->dev == u2
+              ) ||
+              (
+                i == 5 &&
+                hd->unix_dev_name &&
+                !strcmp(hd->unix_dev_name, buf3)
+              )
+            ) {
+              hd->tag.remove = 1;
+            }
+          }
+          remove_tagged_hd_entries(hd_data);
+        }
+      }
     }
   }
 }
 
+unsigned has_something_attached(hd_data_t *hd_data, hd_t *hd)
+{
+  hd_t *hd1;
+
+  for(hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
+    if(hd1->attached_to == hd->idx) return hd1->idx;
+  }
+
+  return 0;
+}
 
