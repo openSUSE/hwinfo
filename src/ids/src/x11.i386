@@ -1640,6 +1640,18 @@
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
+&device.id		pci 0x0045
++device.name		GeForce 6800 GT
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0049
++device.name		0x0049
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x004e
 +device.name		0x004E
 +driver.xfree		4|nv
@@ -1650,6 +1662,48 @@
 +device.name		Aladdin TNT2
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||||16
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x00c0
++device.name		0x00c0
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x00c1
++device.name		0x00c1
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x00c2
++device.name		0x00c2
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x00c8
++device.name		0x00c8
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x00c9
++device.name		0x00c9
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x00cc
++device.name		0x00cc
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x00ce
++device.name		0x00ce
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0100
@@ -1696,6 +1750,96 @@
 +driver.xfree		4|nvidia|3d||||16
 
  vendor.id		pci 0x10de
+&device.id		pci 0x0140
++device.name		GeForce 6600 GT
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0141
++device.name		GeForce 6600
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0142
++device.name		0x0142
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0143
++device.name		0x0143
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0144
++device.name		0x0144
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0145
++device.name		GeForce 6610 XL
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0146
++device.name		0x0146
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0147
++device.name		0x0147
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0148
++device.name		0x0148
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0149
++device.name		0x0149
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x014b
++device.name		0x014b
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x014c
++device.name		0x014c
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x014d
++device.name		0x014d
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x014e
++device.name		Quadro FX 540
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x014f
++device.name		0x014f
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x0150
 +device.name		GeForce2 GTS
 +driver.xfree		4|nv
@@ -1718,6 +1862,18 @@
 +device.name		Quadro2 Pro
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||||16
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0160
++device.name		0x0160
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0166
++device.name		0x0166
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0170
@@ -2747,15 +2903,13 @@
 &device.id		pci 0x2562
 +device.name		i845
 +driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri||16
-+driver.xfree.config	VideoRam 16384
++driver.xfree		4|i810|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2572
 +device.name		865 G
 +driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri||16
-+driver.xfree.config	VideoRam 16384
++driver.xfree		4|i810|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2582
@@ -2766,15 +2920,13 @@
 &device.id		pci 0x3577
 +device.name		i830
 +driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri||16
-+driver.xfree.config	VideoRam 16384
++driver.xfree		4|i810|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3582
 +device.name		855 GM
 +driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri||16
-+driver.xfree.config	VideoRam 16384
++driver.xfree		4|i810|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x7121

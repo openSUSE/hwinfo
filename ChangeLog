@@ -1,5 +1,7 @@
+30/8/2004:	v9.6
 	- changed hwbootscan to use bash (#44199)
 	- fixed hd.ids parser bug
+	- updated X11 data
 
 23/8/2004:	v9.5
 	- updated X11 data
