@@ -1,3 +1,7 @@
+26/8/2003:	v7.12
+	- add ISDN database for ia64
+	- fix minor warnings
+
 25/8/2003:	v7.11
 	- don't try BIOS things on SGI Altix (#28663)
 
