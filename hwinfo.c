@@ -1437,7 +1437,7 @@ char *get_xserver(hd_data_t *hd_data, char **version, char **busid, driver_info_
   if(hd && hd->bus == bus_pci)
     sprintf(id, "%d:%d:%d", hd->slot >> 8, hd->slot & 0xff, hd->func);
 
-  if(*display) return display;
+  if(!hd || *display) return display;
 
   for(di = hd->driver_info; di; di = di->next) {
     if(di->any.type == di_x11 && di->x11.server && di->x11.xf86_ver && !di->x11.x3d) {
