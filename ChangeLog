@@ -1,5 +1,6 @@
-12/9/2001:	v3.20
+18/9/2001:	v3.20
 	- rewrote floppy detection to make it work on non-i386 archs
+	- new x11 data
 
 11/9/2001:	v3.19
 	- updated X11 data

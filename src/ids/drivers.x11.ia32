@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Tue Sep 11 20:02:43 2001
+# generated at: Tue Sep 18 16:56:17 2001
 
 # data source:  CDB
 
@@ -431,11 +431,11 @@
 
 # nVidia Corporation:NV11
 10de 0110
-	x	4|nv||||||||
+	x	4|nv||||sw_cursor||||
 
 # nVidia Corporation:NV11
 10de 0110
-	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx|sw_cursor|4||switch2nvidia_glx|
 
 # nVidia Corporation:NV11 DDR
 10de 0111
@@ -774,11 +774,11 @@
 
 # Matrox Graphics, Inc.:MGA G200
 102b 0520
-	x	4|mga||||NoHal|d|||
+	x	4|mga|||||d|||
 
 # Matrox Graphics, Inc.:MGA G400 AGP
 102b 0525
-	x	4|mga|||||f|||
+	x	4|mga|||||d|||
 
 # Matrox Graphics, Inc.:MGA G400 AGP
 102b 0525
@@ -1020,7 +1020,7 @@ edd8 a099
 
 # Matrox Graphics, Inc.:G450
 102b 0525 102b 0541
-	x	4|mga||||||||
+	x	4|mga|||||d|||
 
 # Matrox Graphics, Inc.:G450
 102b 0525 102b 0541
@@ -1028,7 +1028,7 @@ edd8 a099
 
 # Matrox Graphics, Inc.:G450
 102b 0525 102b 0641
-	x	4|mga||||||||
+	x	4|mga|||||d|||
 
 # Matrox Graphics, Inc.:G450
 102b 0525 102b 0641
@@ -1036,7 +1036,7 @@ edd8 a099
 
 # Matrox Graphics, Inc.:G450 LE
 102b 0525 102b 07C0
-	x	4|mga||||||||
+	x	4|mga|||||d|||
 
 # Matrox Graphics, Inc.:G450 LE
 102b 0525 102b 07C0
@@ -1044,7 +1044,7 @@ edd8 a099
 
 # Matrox Graphics, Inc.:G450 LE
 102b 0525 102b 07C1
-	x	4|mga||||||||
+	x	4|mga|||||d|||
 
 # Matrox Graphics, Inc.:G450 LE
 102b 0525 102b 07C1
@@ -1052,7 +1052,7 @@ edd8 a099
 
 # Matrox Graphics, Inc.:G450 PCI
 102b 0525 102b 0d41
-	x	4|mga||||||||
+	x	4|mga|||||d|||
 
 # Matrox Graphics, Inc.:G450 PCI
 102b 0525 102b 0d41
@@ -1062,13 +1062,21 @@ edd8 a099
 10de 0113 110a 0082
 	x	4|fbdev||||||||
 
+# Matrox Graphics, Inc.:G550
+102b 2527
+	x	4|mga|||||d|||
+
+# Matrox Graphics, Inc.:G550
+102b 2527
+	x	4|mga|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
+
 #
 
 # x11.hwinfo-file for architecture i386
 
 #
 
-# generated at: Tue Sep 11 20:02:43 2001
+# generated at: Tue Sep 18 16:56:17 2001
 
 # data source:  CDB
 
@@ -1239,10 +1247,6 @@ edd8 a099
 # ATI Technologies Inc:210888ET [Mach64 ET]
 1002 4554
 	x	3|MACH64||||||||
-
-# ATI Technologies Inc:3D Rage Pro AGP 1X/2X
-1002 4742
-	x	3|MACH64|3d|glx|glx.so|no_pixmap_cache,no_font_cache|4||switch2glx|
 
 # ATI Technologies Inc:3D Rage Pro AGP 1X
 1002 4744
