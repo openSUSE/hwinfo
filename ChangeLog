@@ -1,3 +1,6 @@
+25/8/2003:	v7.11
+	- don't try BIOS things on SGI Altix (#28663)
+
 25/8/2003:	v7.10
 	- added lots of new camera ids.
 	- new isdn data taken from cdb
