@@ -2262,6 +2262,7 @@ char *hd_version(void);
 /* implemented in hddb.c */
 
 str_list_t *get_hddb_packages(hd_data_t *hd_data);
+void hddb_add_info(hd_data_t *hd_data, hd_t *hd);
 
 void hddb_dump_raw(hddb2_data_t *hddb, FILE *f);
 void hddb_dump(hddb2_data_t *hddb, FILE *f);

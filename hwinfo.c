@@ -4,13 +4,15 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <getopt.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
 #include "hd.h"
+#include "hd_int.h"
 
 static int get_probe_flags(int, char **, hd_data_t *);
-static void progress(char *, char *);
+static void progress2(char *, char *);
 
 // ##### temporary solution, fix it later!
 str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines);
@@ -43,11 +45,14 @@ void do_test(hd_data_t *hd_data);
 void help(void);
 void dump_db_raw(hd_data_t *hd_data);
 void dump_db(hd_data_t *hd_data);
+void do_chroot(hd_data_t *hd_data, char *dir);
+void ask_db(hd_data_t *hd_data, char *query);
 
 
 struct {
   unsigned db_idx;
   unsigned separate:1;
+  char *root;
 } opt;
 
 struct option options[] = {
@@ -66,6 +71,8 @@ struct option options[] = {
   { "dump-db", 1, NULL, 306 },
   { "dump-db-raw", 1, NULL, 307 },
   { "separate", 0, NULL, 308 },
+  { "root", 1, NULL, 309 },
+  { "db", 1, NULL, 310 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -142,7 +149,7 @@ int main(int argc, char **argv)
   unsigned first_probe = 1;
 
   hd_data = calloc(1, sizeof *hd_data);
-  hd_data->progress = isatty(1) ? progress : NULL;
+  hd_data->progress = isatty(1) ? progress2 : NULL;
   hd_data->debug=~(HD_DEB_DRIVER_INFO | HD_DEB_HDDB);
 
   for(i = 0; i < argc; i++) {
@@ -223,6 +230,14 @@ int main(int argc, char **argv)
           opt.separate = 1;
           break;
 
+        case 309:
+          opt.root = optarg;
+          break;
+
+        case 310:
+          ask_db(hd_data, optarg);
+          break;
+
         case 400:
           printf("%s\n", hd_version());
 	  break;
@@ -250,6 +265,10 @@ int main(int argc, char **argv)
 
     if(hw_items >= 0 || showconfig || saveconfig) {
       if(*log_file) f = fopen(log_file, "w+");
+
+      if(opt.root) {
+        do_chroot(hd_data, opt.root);
+      }
 
       if(opt.separate || hw_items <= 1) {
         for(i = 0; i < hw_items; i++) {
@@ -1333,7 +1352,7 @@ int get_probe_flags(int argc, char **argv, hd_data_t *hd_data)
 /*
  * A simple progress function.
  */
-void progress(char *pos, char *msg)
+void progress2(char *pos, char *msg)
 {
   if(!test) printf("\r%64s\r", "");
   printf("> %s: %s", pos, msg);
@@ -1446,7 +1465,7 @@ char *get_x11i()
   char buf[256], *s, *t;
   static char x11i[64] = { };
 
-  if(!*x11i) return x11i;
+  if(*x11i) return x11i;
 
   if((f = fopen("/proc/cmdline", "r"))) {
     if(fgets(buf, sizeof buf, f)) {
@@ -1520,7 +1539,6 @@ char *get_xserver(hd_data_t *hd_data, char **version, char **busid, driver_info_
     }
   }
 
-
   if(*display) return display;
 
   if(c == 0) c = '4';	/* default to XF 4, if nothing else is known  */
@@ -1566,7 +1584,7 @@ int x11_install_info(hd_data_t *hd_data)
     }
     /* don't free di */
   }
-  
+
   xserver = get_xserver(hd_data, &version, &busid, &x11_driver);
 
   switch(hd_mac_color(hd_data)) {
@@ -1798,5 +1816,99 @@ void dump_db(hd_data_t *hd_data)
   if(opt.db_idx >= sizeof hd_data->hddb2 / sizeof *hd_data->hddb2) return;
 
   hddb_dump(hd_data->hddb2[opt.db_idx], stdout);
+}
+
+
+void do_chroot(hd_data_t *hd_data, char *dir)
+{
+  int i;
+
+  i = chroot(dir);
+  ADD2LOG("chroot %s: %s\n", dir, i ? strerror(errno) : "ok");
+
+  if(!i) chdir("/");
+}
+
+
+void ask_db(hd_data_t *hd_data, char *query)
+{
+  hd_t *hd;
+  driver_info_t *di;
+  str_list_t *sl, *query_sl;
+  unsigned tag = 0, u, cnt;
+  char buf[256];
+
+  setenv("hwprobe", "-all", 1);
+  hd_scan(hd_data);
+
+  hd = add_hd_entry(hd_data, __LINE__, 0);
+
+  query_sl = hd_split(' ', query);
+
+  for(sl = query_sl; sl; sl = sl->next) {
+    if(!strcmp(sl->str, "pci")) { tag = TAG_PCI; continue; }
+    if(!strcmp(sl->str, "usb")) { tag = TAG_USB; continue; }
+    if(!strcmp(sl->str, "pnp")) { tag = TAG_EISA; continue; }
+    if(!strcmp(sl->str, "isapnp")) { tag = TAG_EISA; continue; }
+    if(!strcmp(sl->str, "special")) { tag = TAG_SPECIAL; continue; }
+    if(!strcmp(sl->str, "pcmcia")) { tag = TAG_PCMCIA; continue; }
+
+    if(sscanf(sl->str, "vendor=%i%n", &u, &cnt) >= 1 && !sl->str[cnt]) {
+      hd->vendor.id = MAKE_ID(tag, u);
+      continue;
+    }
+
+    if(sscanf(sl->str, "vendor=%3s%n", buf, &cnt) >= 1 && !sl->str[cnt]) {
+      u = name2eisa_id(buf);
+      if(u) hd->vendor.id = u;
+      tag = TAG_EISA;
+      continue;
+    }
+
+    if(sscanf(sl->str, "device=%i%n", &u, &cnt) >= 1 && !sl->str[cnt]) {
+      hd->device.id = MAKE_ID(tag, u);
+      continue;
+    }
+
+    if(sscanf(sl->str, "subvendor=%i%n", &u, &cnt) >= 1 && !sl->str[cnt]) {
+      hd->sub_vendor.id = MAKE_ID(tag, u);
+      continue;
+    }
+
+    if(sscanf(sl->str, "subvendor=%3s%n", buf, &cnt) >= 1 && !sl->str[cnt]) {
+      u = name2eisa_id(buf);
+      if(u) hd->sub_vendor.id = u;
+      tag = TAG_EISA;
+      continue;
+    }
+
+    if(sscanf(sl->str, "subdevice=%i%n", &u, &cnt) >= 1 && !sl->str[cnt]) {
+      hd->sub_device.id = MAKE_ID(tag, u);
+      continue;
+    }
+
+    if(sscanf(sl->str, "revision=%i%n", &u, &cnt) >= 1 && !sl->str[cnt]) {
+      hd->revision.id = u;
+      continue;
+    }
+
+    if(sscanf(sl->str, "serial=%255s%n", buf, &cnt) >= 1 && !sl->str[cnt]) {
+      hd->serial = new_str(buf);
+      continue;
+    }
+
+  }
+
+  free_str_list(query_sl);
+
+  hddb_add_info(hd_data, hd);
+
+  for(di = hd->driver_info; di; di = di->next) {
+    if(di->any.type == di_module && di->module.modprobe) {
+      for(sl = di->module.names; sl; sl = sl->next) {
+        printf("%s%c", sl->str, sl->next ? ' ' : '\n');
+      }
+    }
+  }
 }
 

@@ -212,8 +212,6 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
 str_list_t *hd_split(char del, char *str);
 char *hd_join(char *del, str_list_t *str);
 
-void hddb_add_info(hd_data_t *hd_data, hd_t *hd);
-
 int is_pnpinfo(ser_device_t *mi, int ofs);
 
 int is_pcmcia_ctrl(hd_data_t *hd_data, hd_t *hd);

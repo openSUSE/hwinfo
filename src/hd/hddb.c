@@ -1536,6 +1536,11 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     hs.key |= 1 << he_rev_name;
   }
 
+  if(hd->serial) {
+    hs.serial = hd->serial;
+    hs.key |= 1 << he_serial;
+  }
+
   if(hd->detail && hd->detail->ccw.data) {
     hs.cu_model.id=hd->detail->ccw.data->cu_model;
     hs.key |= 1 << he_detail_ccw_data_cu_model;
