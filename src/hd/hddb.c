@@ -36,6 +36,8 @@ typedef struct {
 
 static unsigned find_entry2(hddb_data_t *x, unsigned flag, unsigned level, unsigned *ids);
 static unsigned find_entry(hddb_data_t **x, unsigned flag, unsigned level, unsigned *ids);
+static unsigned find_entry2_by_name(hddb_data_t *x, unsigned tag, unsigned level, unsigned base_class, unsigned *ids, char **names);
+static unsigned find_entry_by_name(hddb_data_t **xx, unsigned tag, unsigned level, unsigned base_class, unsigned *ids, char **names);
 static char *name_ind(hddb_data_t *x, unsigned ind);
 static unsigned device_class_ind(hddb_data_t *x, unsigned ind);
 static driver_info_t *device_driver_ind(hddb_data_t *x, unsigned ind);
@@ -119,6 +121,71 @@ unsigned find_entry(hddb_data_t **xx, unsigned flag, unsigned level, unsigned *i
 
   *xx = flag ? &HDDB_DRV : &HDDB_DEV;
   return find_entry2(*xx, flag, level, ids);
+}
+
+
+/*
+ * Returns 0 if no entry was found.
+ */
+unsigned find_entry2_by_name(hddb_data_t *x, unsigned tag, unsigned level, unsigned base_class, unsigned *ids, char **names)
+{
+  unsigned u, u0, u1, v;
+  unsigned cur_ids[4], matched, final, cur_level, cur_class, cur_tag;
+  char *s;
+
+  if(level > 3) return 0;
+  memset(cur_ids, 0, sizeof cur_ids);
+  cur_level = matched = final = cur_class = cur_tag = 0;
+
+  /* bitmask */
+  final = (1 << (level + 1)) - 1;
+
+  for(u = 0; u < x->data_len; u++) {
+    u0 = DATA_FLAG(x->data[u]);
+    u1 = DATA_VALUE(x->data[u]);
+    if(u0 < 4) {
+      cur_class = 0;
+      cur_tag = ID_TAG(u1);
+      for(v = u0 + 1; v <= level; v++) {
+        cur_ids[v] = 0;
+        matched &= ~(1 << v);
+      }
+      cur_ids[cur_level = u0] = u1;
+      if(u + 1 < x->data_len && DATA_FLAG(x->data[u + 1]) == FL_RANGE) continue;
+    }
+    else if(u0 == FL_VAL1) {
+      cur_class = u1 >> 8;	/* only base class */
+    }
+    else if(u0 == FL_VAL0 && cur_level <= level && cur_tag == tag) {
+      s = x->names + u1;
+//      fprintf(stderr, ">>%d/%d: class 0x%x: \"%s\" <-> \"%s\"\n", cur_level, level, cur_class, s, names[cur_level]);
+      if(!strcmp(s, names[cur_level])) matched |= 1 << cur_level;
+
+//      fprintf(stderr, ">>> %x/%x\n", matched, final);
+
+      if(matched == final && level == cur_level && cur_class == base_class) {
+//        fprintf(stderr, "FOUND!!!, 0x%04x/0x%04x\n", cur_ids[0], cur_ids[1]);
+        for(v = 0; v <= level; v++) {
+          ids[v] = cur_ids[v];
+        }
+        return u;
+      }
+    }
+  }
+
+  return 0;
+}
+
+/*
+ * Check loaded entries first, then check to the static ones.
+ */
+unsigned find_entry_by_name(hddb_data_t **xx, unsigned tag, unsigned level, unsigned base_class, unsigned *ids, char **names)
+{
+  unsigned u;
+
+  if((u = find_entry2_by_name(*xx, tag, level, base_class, ids, names))) return u;
+
+  return find_entry2_by_name(&HDDB_DEV, tag, level, base_class, ids, names);
 }
 
 
@@ -727,6 +794,27 @@ void add_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, u
     store_data(x, MAKE_DATA(FL_VAL0, u));
   }
 }
+
+int hd_find_device_by_name(hd_data_t *hd_data, unsigned base_class, char *vendor, char *device, unsigned *vendor_id, unsigned *device_id)
+{
+  hddb_data_t *x = hd_data->hddb_dev;
+  unsigned u;
+  unsigned ids[4];
+  char *names[4];
+
+  names[0] = vendor;
+  names[1] = device;
+
+  u = find_entry_by_name(&x, TAG_SPECIAL, 1, base_class, ids, names);
+
+  if(u) {
+    *vendor_id = ids[0];
+    *device_id = ids[1];
+  }
+
+  return u;
+}
+
 
 #ifdef DEBUG_HDDB
 void dump_hddb_data(hd_data_t *hd_data, hddb_data_t *x, char *name)

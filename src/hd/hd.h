@@ -36,6 +36,7 @@ extern "C" {
 #define HD_DEB_USB		(1 << 17)
 #define HD_DEB_ADB		(1 << 18)
 #define HD_DEB_MODEM		(1 << 19)
+#define HD_DEB_PARALLEL		(1 << 20)
 
 #include <inttypes.h>
 #include <termios.h>
@@ -50,7 +51,7 @@ typedef enum probe_feature {
   pr_default = 1, pr_memory, pr_pci, pr_pci_range, pr_pci_ext, pr_isapnp,
   pr_cdrom, pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial,
   pr_misc_par, pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor,
-  pr_mouse, pr_ide, pr_scsi, pr_usb, pr_adb, pr_modem,
+  pr_mouse, pr_ide, pr_scsi, pr_usb, pr_adb, pr_modem, pr_parallel,
   pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
@@ -69,7 +70,7 @@ typedef enum base_classes {
 
   // add our own classes here (starting at 0x100 as PCI values are 8 bit)
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,
-  bc_storage_device, bc_network_interface, bc_keyboard
+  bc_storage_device, bc_network_interface, bc_keyboard, bc_printer
 } hd_base_classes_t;
 
 /* subclass values of bc_storage */
@@ -580,6 +581,7 @@ typedef struct {
   str_list_t *usb;		/* usb info */
   hddb_data_t *hddb_dev;	/* device name database */
   hddb_data_t *hddb_drv;	/* driver info database */
+  str_list_t *kmods;		/* list of active kernel modules */
 } hd_data_t;
 
 
@@ -700,6 +702,8 @@ char *hd_class_name(hd_data_t *hd_data, int level, unsigned base_class, unsigned
 char *hd_vendor_name(hd_data_t *hd_data, unsigned vendor);
 char *hd_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device);
 char *hd_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned subvendor, unsigned subdevice);
+
+int hd_find_device_by_name(hd_data_t *hd_data, unsigned base_class, char *vendor, char *device, unsigned *vendor_id, unsigned *device_id);
 
 /* implemented in hdp.c */
 

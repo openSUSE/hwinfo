@@ -39,8 +39,9 @@ void hd_scan_misc(hd_data_t *hd_data)
 {
   hd_t *hd;
   hd_res_t *res;
-  int fd;
+  int fd, i;
   char *s;
+  char par[] = "parport0";
   floppy_info_t *fi;
   int fd_ser0, fd_ser1;
 
@@ -200,14 +201,17 @@ void hd_scan_misc(hd_data_t *hd_data)
     hd->res = res;
   }
 
-  /* parallel port */
-  res = NULL;
-  gather_resources(hd_data->misc, &res, "parport0", 0);
-  if(res) {
-    hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_comm;
-    hd->sub_class = sc_com_par;
-    hd->res = res;
+  /* parallel ports */
+  for(i = 0; i < 1; i++, par[sizeof par - 2]++) {
+    res = NULL;
+    gather_resources(hd_data->misc, &res, par, 0);
+    if(res) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class = bc_comm;
+      hd->sub_class = sc_com_par;
+      str_printf(&hd->unix_dev_name, 0, "/dev/lp%d", i);
+      hd->res = res;
+    }
   }
 
   /* floppy controller */

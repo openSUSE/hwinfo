@@ -31,6 +31,7 @@
 #include "usb.h"
 #include "adb.h"
 #include "modem.h"
+#include "parallel.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -61,7 +62,7 @@
 static hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd);
 static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
 static char *module_cmd(hd_t *, char *);
-static int module_is_active(char *mod);
+static int module_is_active(hd_data_t *hd_data, char *mod);
 static void timeout_alarm_handler(int signal);
 
 /*
@@ -90,7 +91,8 @@ static struct s_mod_names {
   { mod_scsi, "scsi"},
   { mod_usb, "usb"},
   { mod_adb, "adb"},
-  { mod_modem, "modem"}
+  { mod_modem, "modem"},
+  { mod_parallel, "parallel" }
 };
 
 /*
@@ -126,7 +128,8 @@ static struct s_pr_flags {
   { pr_scsi, "scsi" },
   { pr_usb, "usb" },
   { pr_adb, "adb" },
-  { pr_modem, "modem" }
+  { pr_modem, "modem" },
+  { pr_parallel, "parallel" }
 };
 
 #define PR_OFS			2		/* skip 0, default */
@@ -473,6 +476,7 @@ void hd_scan(hd_data_t *hd_data)
   /* merge basic system info & the easy stuff */
   hd_scan_misc2(hd_data);
 
+  hd_scan_parallel(hd_data);	/* after hd_scan_misc*() */
   hd_scan_modem(hd_data);	/* do it before hd_scan_mouse() */
   hd_scan_mouse(hd_data);
   hd_scan_ide(hd_data);
@@ -1036,7 +1040,7 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
         for(i = 0, sl = di->module.hddb0; sl; sl = sl->next, i++) {
           if(i == 0) {
             di->module.name = new_str(sl->str);
-            di->module.active = module_is_active(di->module.name);
+            di->module.active = module_is_active(hd_data, di->module.name);
           }
           else if(i == 1) {
             di->module.mod_args = new_str(module_cmd(hd, sl->str));
@@ -1089,23 +1093,13 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 }
 
 
-int module_is_active(char *mod)
+int module_is_active(hd_data_t *hd_data, char *mod)
 {
-  FILE *f;
-  char buf[256], *s;
+  str_list_t *sl = read_kmods(hd_data);
 
-  if(!(f = fopen(PROC_MODULES, "r"))) return 0;
-
-  while(fgets(buf, sizeof buf, f)) {
-    s = buf;
-    strsep(&s, " \t");
-    if(!strcmp(mod, buf)) {
-      fclose(f);
-      return 1;
-    }
+  for(; sl; sl = sl->next) {
+    if(!strcmp(sl->str, mod)) return 1;
   }
-
-  fclose(f);
 
   return 0;
 }
@@ -1447,5 +1441,21 @@ int timeout(void(*func)(void *), void *arg, int timeout)
 void timeout_alarm_handler(int signal)
 {
   exit(63);
+}
+
+
+str_list_t *read_kmods(hd_data_t *hd_data)
+{
+  str_list_t *sl, *sl0, *sl1 = NULL;
+
+  hd_data->kmods = free_str_list(hd_data->kmods);
+
+  if(!(sl0 = read_file(PROC_MODULES, 0, 0))) return NULL;
+
+  for(sl = sl0; sl; sl = sl->next) {
+    add_str_list(&sl1, strsep(&sl->str, " \t"));
+  }
+
+  return sl1;
 }
 

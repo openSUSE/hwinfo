@@ -89,7 +89,7 @@ void get_serial_modem(hd_data_t *hd_data)
   read_modem(hd_data, &set, fd_max);
 
   for(sm = hd_data->ser_modem; sm; sm = sm->next) {
-    if(!strstr(sm->buf, "OK")) {
+    if(!strstr(sm->buf, "OK") && !strstr(sm->buf, "0")) {
       sm->is_modem = 0;
       FD_CLR(sm->fd, &set);
     }

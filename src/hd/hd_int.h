@@ -49,7 +49,7 @@
 enum mod_idx {
   mod_none, mod_memory, mod_pci, mod_isapnp, mod_pnpdump, mod_cdrom,
   mod_net, mod_floppy, mod_misc, mod_bios, mod_cpu, mod_monitor, mod_mouse,
-  mod_ide, mod_scsi, mod_serial, mod_usb, mod_adb, mod_modem
+  mod_ide, mod_scsi, mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel
 };
 
 void *new_mem(size_t size);
@@ -89,6 +89,8 @@ char *float2str(int i, int n);
 char *mod_name_by_idx(unsigned idx);
 
 int timeout(void(*func)(void *), void *arg, int timeout);
+
+str_list_t *read_kmods(hd_data_t *hd_data);
 
 
 #ifdef __cplusplus

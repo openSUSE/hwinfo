@@ -566,6 +566,7 @@ char *vend_id2str(unsigned vend)
   }
   else {
     if(ID_TAG(vend) == TAG_USB) *s++ = 'u', *s = 0;
+    if(ID_TAG(vend) == TAG_SPECIAL) *s++ = 's', *s = 0;
     sprintf(s, "%04x", ID_VALUE(vend));
   }
 
