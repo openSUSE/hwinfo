@@ -44,7 +44,7 @@ check_hd: check_hd.c
 hd_ids.c: hd_ids.h hd_ids_tiny.h
 
 hd0.ids: $(IDFILES)
-	./convert_hd $(IDFILES) 2>hd0.log
+	./convert_hd $(IDFILES)
 	mv hd.ids hd0.ids
 
 hd_ids.h hd.ids: check_hd hd0.ids
