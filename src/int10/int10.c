@@ -29,6 +29,7 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
     ADD2LOG("VBE: Could not init Int10\n");
     return;
   }
+
   memset(vbeinfo, 0, sizeof vbeinfo);
   strcpy(vbeinfo, "VBE2");
 
@@ -77,6 +78,15 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
       vbe->current_mode = bx;
     }
   }
+
+#if 0
+  ax = 0x0800; bx = 0x55aa; cx = 0; dx = 0x80;
+  vbeinfo[0] = 0x80;
+  vbeinfo[1] = 0;
+  i = CallInt13(&ax, &bx, &cx, &dx, vbeinfo, sizeof vbeinfo);
+
+  fprintf(stderr, "  EDD: ax = 0x%04x, bx = 0x%04x, cx = 0x%04x, dx = 0x%04x\n", ax, bx, cx, dx);
+#endif
 
   FreeInt10();
 }

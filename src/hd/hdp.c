@@ -925,6 +925,10 @@ void dump_bios(hd_data_t *hd_data, hd_t *hd, FILE *f)
     dump_line("  %u CPUs (%u disabled)\n",  bt->smp.cpus, bt->smp.cpus - bt->smp.cpus_en);
   }
 
+  if(bt->bios32.ok) {
+    dump_line("BIOS32 Service Directory Entry: 0x%05x\n", bt->bios32.entry);
+  }
+
   if(bt->smbios_ver) {
     dump_line("SMBIOS Version: %u.%u\n", bt->smbios_ver >> 8, bt->smbios_ver & 0xff);
   }

@@ -3,8 +3,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <byteswap.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/io.h>
+#include <sys/pci.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -20,6 +23,10 @@
 
 #define BIOS_TEST
 
+typedef struct {
+  unsigned eax, ebx, ecx, edx, esi, edi, eip, es, iret, cli;
+} bios32_regs_t;
+
 static void read_memory(memory_range_t *mem);
 #ifndef LIBHD_TINY
 static void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *label);
@@ -33,6 +40,9 @@ static void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt);
 static unsigned char crc(unsigned char *mem, unsigned len);
 static int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
 static void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
+static int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios32);
+static void get_compaq_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios32);
+static void bios32_call(bios32_regs_t *regs);
 #endif
 
 int detect_smp(hd_data_t *hd_data)
@@ -407,8 +417,44 @@ void hd_scan_bios(hd_data_t *hd_data)
 #endif
 
     }
-
   }
+
+#if 0
+  if(hd_probe_feature(hd_data, pr_bios_32)) {
+  }
+#endif
+
+  PROGRESS(5, 0, "32");
+
+  mem = hd_data->bios_rom;
+  if(mem.data) {
+    mem.size -= 0xe0000 - mem.start;
+    mem.data += 0xe0000 - mem.start;
+    mem.start = 0xe0000;
+    if(mem.size < (1 << 20)) get_bios32_info(hd_data, &mem, &bt->bios32);
+  }
+
+  if(bt->bios32.ok) {
+    mem = hd_data->bios_rom;
+
+    if(
+      mem.start <= 0xfffea &&
+      mem.start + mem.size >= 0xfffea + 6 &&
+      !memcmp(mem.data + 0xfffea - mem.start, "COMPAQ", 6)
+    ) {
+      bt->bios32.compaq = 1;
+      ADD2LOG("  bios32: compaq machine\n");
+    }
+
+    if(bt->bios32.compaq) {
+      /* work on a copy, just in case */
+      mem.data = new_mem(mem.size);
+      memcpy(mem.data, hd_data->bios_rom.data, mem.size);
+
+      get_compaq_info(hd_data, &mem, &bt->bios32);
+    }
+  }
+
 
 #endif		/* !defined(LIBHD_TINY) */
 
@@ -1072,9 +1118,160 @@ void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
       ADD2LOG("\n");
     }
   }
-
-
 }
+
+
+int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios32)
+{
+  unsigned u, ok;
+  unsigned addr = 0, len;
+
+  if(mem->size < 0x10) return 0;
+
+  for(u = ok = 0; u <= mem->size - 0x10; u++) {
+    if(*(unsigned *) (mem->data + u) == 0x5f32335f) {	/* "_32_" */
+      addr = *(unsigned *) (mem->data + u + 4);
+      len = mem->data[u + 9];
+      ok = len == 1 && crc(mem->data + u, 0x10) == 0 && addr < (1 << 20) ? 1 : 0;
+      ADD2LOG(
+        "  bios32: %svalid SD header at 0x%05x (size 0x%x, rev %u), SD at 0x%05x\n",
+        ok ? "" : "in", u + mem->start, len << 4, mem->data[u + 8], addr
+      );
+      if(ok) break;
+    }
+  }
+
+  if(ok) {
+    bios32->ok = 1;
+    bios32->entry = addr;
+  }
+
+  return ok;
+}
+
+
+/*
+ * call some 32 bit code in BIOS
+ *
+ *   regs->eip:  start address
+ *   regs->cli:  disable interrupts
+ *   regs->iret: code ends with 'iret', not 'retf'
+ */
+void bios32_call(bios32_regs_t *regs)
+{
+  asm(
+    "pusha\n"
+    "\tpush %%es\n"
+    "\tpushf\n"
+
+    "\tmovl %0,%%ebp\n"
+    "\tmovl   (%%ebp),%%eax\n"
+    "\tmovl  4(%%ebp),%%ebx\n"
+    "\tmovl  8(%%ebp),%%ecx\n"
+    "\tmovl 12(%%ebp),%%edx\n"
+    "\tmovl 16(%%ebp),%%esi\n"
+    "\tmovl 20(%%ebp),%%edi\n"
+
+    "\tpush %%ebp\n"
+
+    "\tcmpl $0,32(%%ebp)\n"
+    "\tjz 1f\n"
+    "\tpushf\n"
+    "1:\n"
+
+    "\tcmpl $0,36(%%ebp)\n"
+    "\tjz 1f\n"
+    "\tcli\n"
+    "1:\n"
+
+    "\tpush %%cs\n"
+    "\tcall *24(%%ebp)\n"
+
+    "\tpop %%ebp\n"
+
+    "\tmovl %%eax,  (%%ebp)\n"
+    "\tmovl %%ebx, 4(%%ebp)\n"
+    "\tmovl %%ecx, 8(%%ebp)\n"
+    "\tmovl %%edx,12(%%ebp)\n"
+    "\tmovl %%esi,16(%%ebp)\n"
+    "\tmovl %%edi,20(%%ebp)\n"
+    "\tmovl  %%es,28(%%ebp)\n"
+
+    "\tpopf\n"
+    "\tpop %%es\n"
+    "\tpopa\n"
+    : : "r" (regs)
+  );
+}
+
+
+void get_compaq_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios32)
+{
+  bios32_regs_t r = {};
+  cpq_ctlorder_t cpq_ctrl[sizeof bios32->cpq_ctrl / sizeof *bios32->cpq_ctrl] = {};
+  int i;
+
+  if(iopl(3)) {
+    ADD2LOG("  bios32: iopl failed\n");
+    return;
+  }
+
+#if 0
+  /* bios32 service "$EVS" seems not to be implemented */
+
+  memcpy(&r.eax, "$EVS", 4);
+  r.eip = (unsigned) (mem->data - mem->start + bios32->entry);
+
+  bios32_call(&r);
+
+  fprintf(stderr, "eax = 0x%x\n", r.eax);
+  fprintf(stderr, "ebx = 0x%x\n", r.ebx);
+  fprintf(stderr, "ecx = 0x%x\n", r.ecx);
+  fprintf(stderr, "edx = 0x%x\n", r.edx);
+#endif
+
+  r.eax = 0xd8a4;		/* GET_EV */
+  r.esi = (unsigned) "CQHORD";
+  r.edi = (unsigned) cpq_ctrl;
+  r.ecx = sizeof cpq_ctrl;
+
+  r.eip = (unsigned) (mem->data - mem->start + 0xff859 /* offset to int 0x15 */);
+  r.iret = 1;
+  r.cli = 1;
+
+  bios32_call(&r);
+
+  ADD2LOG("  bios32: int 0x15 -> ax = 0x%04x\n", (r.eax & 0xffff));
+
+#if 0
+  fprintf(stderr, "eax = 0x%x\n", r.eax);
+  fprintf(stderr, "ebx = 0x%x\n", r.ebx);
+  fprintf(stderr, "ecx = 0x%x\n", r.ecx);
+  fprintf(stderr, "edx = 0x%x\n", r.edx);
+#endif
+
+  iopl(0);
+
+  if((r.eax & 0xff00) == 0) {
+    for(i = 0; i < sizeof cpq_ctrl / sizeof *cpq_ctrl; i++) {
+      cpq_ctrl[i].id = bswap_32(cpq_ctrl[i].id);
+      bios32->cpq_ctrl[i] = cpq_ctrl[i];
+      if(cpq_ctrl[i].id) {
+        ADD2LOG("  id = 0x%x, slot = 0x%x, bus = 0x%x, devfn = 0x%x (0x%x.0x%x), misc = 0x%x\n",
+          cpq_ctrl[i].id,
+          cpq_ctrl[i].slot,
+          cpq_ctrl[i].bus,
+          cpq_ctrl[i].devfn,
+          PCI_SLOT(cpq_ctrl[i].devfn),
+          PCI_FUNC(cpq_ctrl[i].devfn),
+          cpq_ctrl[i].misc
+        );
+      }
+    }
+  }
+}
+
+
 #endif		/* !defined(LIBHD_TINY) */
 
 

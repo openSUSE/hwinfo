@@ -99,6 +99,7 @@ typedef enum probe_feature {
   pr_braille_ht, pr_ignx11, pr_sys, pr_dasd, pr_i2o, pr_cciss, pr_bios_vbe,
   pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
   pr_fb, pr_bios_vbe2, pr_veth, pr_partition, pr_disk, pr_ataraid,
+  /* pr_bios_32, */
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
@@ -414,6 +415,26 @@ typedef struct {
 
 
 /*
+ * Compaq Controller Order EV (CQHORD) definition
+ */
+typedef struct {
+    unsigned id;
+    unsigned char slot;
+    unsigned char bus;
+    unsigned char devfn;
+    unsigned char misc;
+} cpq_ctlorder_t; 
+
+
+typedef struct {
+  unsigned ok:1;		/* data are valid */
+  unsigned entry;		/* entry point */
+  unsigned compaq:1;		/* is compaq system */
+  cpq_ctlorder_t cpq_ctrl[32];	/* 32 == MAX_CONTROLLERS */
+} bios32_info_t;
+
+
+/*
  * smbios entries
  */
 typedef enum {
@@ -705,6 +726,10 @@ typedef struct scsi_s {
   unsigned cache;
   str_list_t *host_info;
   char *usb_guid;
+  unsigned pci_info;
+  unsigned pci_bus;
+  unsigned pci_slot;
+  unsigned pci_func;
 } scsi_t;
 
 
@@ -809,6 +834,8 @@ typedef struct {
     unsigned num_lock:1;
     unsigned caps_lock:1;
   } led;
+
+  bios32_info_t bios32;
 
 } bios_info_t;
 

@@ -20,6 +20,10 @@
 #define SCSI_IOCTL_SEND_COMMAND		1
 #endif
 
+#ifndef SCSI_IOCTL_GET_PCI
+#define SCSI_IOCTL_GET_PCI		0x5387
+#endif
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * scsi info
  *
@@ -59,10 +63,7 @@ static char *exlist[][2] = {
 
 void hd_scan_scsi(hd_data_t *hd_data)
 {
-  hd_t *hd;
-#ifdef __PPC__
-  hd_t *hd2;
-#endif
+  hd_t *hd, *hd2;
   hd_res_t *res;
   scsi_t *ioctl_scsi, *scsi, *scsi2, *scsi3, *next;
   str_list_t *sl;
@@ -247,6 +248,19 @@ void hd_scan_scsi(hd_data_t *hd_data)
       hd->attached_to = scsi_ctrl[scsi->host].hd_idx;
       hd->driver = new_str(scsi_ctrl[scsi->host].driver);
     }
+    if(scsi->pci_info) {
+      for(hd2 = hd_data->hd; hd2; hd2 = hd2->next) {
+        if(
+          hd2->bus.id == bus_pci &&
+          hd2->slot == (scsi->pci_bus << 8) + scsi->pci_slot &&
+          hd2->func == scsi->pci_func
+        ) {
+          hd->attached_to = hd2->idx;
+          // ###### add driver
+        }
+      }
+    }
+
 #ifdef __PPC__
     /* ###### move this to int.c ? */
     if(
@@ -304,7 +318,7 @@ scsi_t *do_basic_ioctl(hd_data_t *hd_data, scsi_t **ioctl_scsi, int fd)
   scsi_t *scsi = NULL;
   unsigned char buf[0x400];
   unsigned scsi_host;
-  unsigned u;
+  unsigned u, u1, u2;
 
   memset(buf, 0, sizeof buf);
   if(!ioctl(fd, SCSI_IOCTL_GET_BUS_NUMBER, buf)) {
@@ -332,6 +346,24 @@ scsi_t *do_basic_ioctl(hd_data_t *hd_data, scsi_t **ioctl_scsi, int fd)
 
       if(ioctl(fd, SCSI_IOCTL_PROBE_HOST, buf) == 1) {
         scsi->info = new_str(buf);
+      }
+
+      memset(buf, 0, sizeof buf);
+      if(!ioctl(fd, SCSI_IOCTL_GET_PCI, buf)) {
+        ADD2LOG("  scsi pci ioctl: ");
+        hexdump(&hd_data->log, 1, 9, buf);
+        ADD2LOG("\n");
+        buf[9] = 0;
+        if(sscanf(buf, "%x:%x.%x", &u, &u1, &u2) == 3) {
+          scsi->pci_info = 1;
+          scsi->pci_bus = u;
+          scsi->pci_slot = u1;
+          scsi->pci_func = u2;
+          ADD2LOG(
+            "  pci info: bus = 0x%x, slot = 0x%x, func = 0x%x\n",
+            scsi->pci_bus, scsi->pci_slot, scsi->pci_func
+          );
+        }
       }
     }
   }

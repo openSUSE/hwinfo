@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/pci.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -16,7 +17,8 @@
 static void int_hotplug(hd_data_t *hd_data);
 static void int_cdrom(hd_data_t *hd_data);
 #if defined(__i386__) || defined (__x86_64__)
-static int set_bios_id(hd_data_t *hd_data, char *dev_name, int bios_id);
+static int set_bios_id(hd_data_t *hd_data, hd_t *hd_ref, int bios_id);
+static int bios_ctrl_order(hd_data_t *hd_data, unsigned *sctrl, int sctrl_len);
 static void int_bios(hd_data_t *hd_data);
 #endif
 static void int_media_check(hd_data_t *hd_data);
@@ -122,17 +124,19 @@ void int_cdrom(hd_data_t *hd_data)
 
 #if defined(__i386__) || defined (__x86_64__)
 
-int set_bios_id(hd_data_t *hd_data, char *dev_name, int bios_id)
+int set_bios_id(hd_data_t *hd_data, hd_t *hd_ref, int bios_id)
 {
   int found = 0;
   hd_t *hd;
+
+  if(!hd_ref || !hd_ref->unix_dev_name) return 0;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
       hd->base_class.id == bc_storage_device &&
       hd->sub_class.id == sc_sdev_disk &&
       hd->unix_dev_name &&
-      !strcmp(hd->unix_dev_name, dev_name)
+      !strcmp(hd->unix_dev_name, hd_ref->unix_dev_name)
     ) {
       str_printf(&hd->rom_id, 0, "0x%02x", bios_id);
       found = 1;
@@ -142,6 +146,195 @@ int set_bios_id(hd_data_t *hd_data, char *dev_name, int bios_id)
   return found;
 }
 
+
+int bios_ctrl_order(hd_data_t *hd_data, unsigned *sctrl, int sctrl_len)
+{
+  hd_t *hd;
+  bios_info_t *bt;
+  int i, j, k, sctrl2_len = 0;
+  unsigned pci_slot, pci_func;
+  unsigned *sctrl2 = NULL, *sctrl3 = NULL;
+  int order_info = 0;
+
+  for(bt = NULL, hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class.id == bc_internal &&
+      hd->sub_class.id == sc_int_bios &&
+      hd->detail &&
+      hd->detail->type == hd_detail_bios &&
+      (bt = hd->detail->bios.data)
+    ) {
+      break;
+    }
+  }
+
+  if(!bt || !bt->bios32.ok || !bt->bios32.compaq) return 0;
+
+  sctrl2 = new_mem((sizeof bt->bios32.cpq_ctrl / sizeof *bt->bios32.cpq_ctrl) * sizeof *sctrl2);
+
+  for(i = 0; i < sizeof bt->bios32.cpq_ctrl / sizeof *bt->bios32.cpq_ctrl; i++) {
+    if(
+      bt->bios32.cpq_ctrl[i].id &&
+      !(bt->bios32.cpq_ctrl[i].misc & 0x40)	/* bios support ??????? */
+    ) {
+      pci_slot = PCI_SLOT(bt->bios32.cpq_ctrl[i].devfn) + (bt->bios32.cpq_ctrl[i].bus << 8);
+      pci_func = PCI_FUNC(bt->bios32.cpq_ctrl[i].devfn);
+      for(hd = hd_data->hd; hd; hd = hd->next) {
+        if(hd->bus.id == bus_pci && hd->slot == pci_slot && hd->func == pci_func) {
+          sctrl2[sctrl2_len++] = hd->idx;
+          break;
+        }
+      }
+    }
+  }
+
+  if(sctrl2_len) order_info = 1;
+
+  for(i = 0; i < sctrl2_len; i++) {
+    ADD2LOG("  bios ord %d: %d\n", i, sctrl2[i]);
+  }
+
+  /* sort list */
+
+  sctrl3 = new_mem(sctrl_len * sizeof *sctrl3);
+
+  k = 0 ;
+  for(i = 0; i < sctrl2_len; i++) {
+    for(j = 0; j < sctrl_len; j++) {
+      if(sctrl[j] == sctrl2[i]) {
+        sctrl3[k++] = sctrl[j];
+        sctrl[j] = 0;
+        break;
+      }
+    }
+  }
+
+  for(i = 0; i < sctrl_len; i++) {
+    if(sctrl[i] && k < sctrl_len) sctrl3[k++] = sctrl[i];
+  }
+
+  memcpy(sctrl, sctrl3, sctrl_len * sizeof *sctrl);
+
+  free_mem(sctrl2);
+  free_mem(sctrl3);
+
+  return order_info;
+}
+
+
+void int_bios(hd_data_t *hd_data)
+{
+  hd_t *hd, *hd_boot;
+  unsigned *sctrl, *sctrl2;
+  int sctrl_len, i, j;
+  int bios_id, list_sorted;
+
+  for(i = 0, hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_disk
+    ) {
+      i++;
+    }
+  }
+
+  if(!i) return;
+
+  sctrl = new_mem(i * sizeof *sctrl);
+
+  /* sctrl: list of storage controllers with disks */
+
+  for(sctrl_len = 0, hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_disk
+    ) {
+      for(i = 0; i < sctrl_len; i++) {
+        if(sctrl[i] == hd->attached_to) break;
+      }
+      if(i == sctrl_len) sctrl[sctrl_len++] = hd->attached_to;
+    }
+  }
+
+  /* sort list, if possible */
+
+  list_sorted = bios_ctrl_order(hd_data, sctrl, sctrl_len);
+
+  hd_boot = hd_get_device_by_idx(hd_data, hd_boot_disk(hd_data, &i));
+
+  /* if we know the boot device, make this controller the first */
+
+  if(hd_boot && hd_boot->attached_to && i == 1) {
+    for(i = 0; i < sctrl_len; i++) {
+      if(sctrl[i] == hd_boot->attached_to) break;
+    }
+    if(i < sctrl_len) {
+      sctrl2 = new_mem(sctrl_len * sizeof *sctrl2);
+      *sctrl2 = hd_boot->attached_to;
+      for(i = 0, j = 1; i < sctrl_len; i++) {
+        if(sctrl[i] != hd_boot->attached_to) sctrl2[j++] = sctrl[i];
+      }
+      free_mem(sctrl);
+      sctrl = sctrl2;
+    }
+  }
+  else {
+    hd_boot = NULL;
+  }
+
+  if(hd_boot) ADD2LOG("  bios boot dev: %d\n", hd_boot->idx);
+  for(i = 0; i < sctrl_len; i++) {
+    ADD2LOG("  bios ctrl %d: %d\n", i, sctrl[i]);
+  }
+
+  /* remove existing entries */
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class.id == bc_storage_device &&
+      hd->sub_class.id == sc_sdev_disk
+    ) {
+      hd->rom_id = free_mem(hd->rom_id);
+    }
+  }
+
+  if(!list_sorted && !hd_boot && sctrl_len > 1) {
+    /* we have no info at all */
+    sctrl_len = 0;
+  }
+  else if(!list_sorted && hd_boot && sctrl_len > 2) {
+    /* we know which controller has the boot device */
+    sctrl_len = 1;
+  }
+
+  bios_id = 0x80;
+
+  /* rely on it */
+
+  if(hd_boot) {
+    bios_id += set_bios_id(hd_data, hd_boot, bios_id);
+  }
+
+  /* assign all the others */
+
+  for(i = 0; i < sctrl_len; i++) {
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      if(
+        hd->base_class.id == bc_storage_device &&
+        hd->sub_class.id == sc_sdev_disk &&
+        hd->attached_to == sctrl[i] &&
+        !hd->rom_id
+      ) {
+        bios_id += set_bios_id(hd_data, hd, bios_id);
+      }
+    }
+  }
+
+  free_mem(sctrl);
+}
+
+
+#if 0
 void int_bios(hd_data_t *hd_data)
 {
   hd_t *hd, *hd_boot;
@@ -201,8 +394,8 @@ void int_bios(hd_data_t *hd_data)
     s[strlen(s) - 1] = 'a' + i;
     bios += set_bios_id(hd_data, s, bios);
   }
-
 }
+#endif	/* 0 */
 #endif	/* defined(__i386__) || defined (__x86_64__) */
 
 /*

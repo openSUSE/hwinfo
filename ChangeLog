@@ -1,3 +1,10 @@
+25/11/2002:	v5.46
+	- rewrote assignment of BIOS driver numbers
+	- slight cleanup of int10 code
+
+19/11/2002:	v5.45
+	- use eepro100 instead of e100 on ia64 (#21055)
+
 18/11/2002:	v5.44
 	- fixed qla* module info (#21567)
 

@@ -47,20 +47,15 @@ void log_err(char *format, ...) __attribute__ ((format (printf, 1, 2)));
 #define V_BIOS_SIZE 0x1FFFF
 #define BIOS_START 0x7C00            /* default BIOS entry */
 
-static CARD8 code[] = {  0xcd, 0x10 ,0xf4 };	/* int 0x10, hlt */
-#if 0
-static CARD8 code[] =
-{
-  0xb8, 0xff, 0xff, 0x8e, 0xd8, 0xbe, 0x00, 0xff,
-  0x8a, 0x04, 0xf4, 0x00, 0x00, 0x00, 0x00, 0x00
-};
-#endif
+static CARD8 code[] = { 0xcd, 0x10, 0xf4 };	/* int 0x10, hlt */
+// static CARD8 code13[] = { 0xcd, 0x13, 0xf4 };	/* int 0x13, hlt */
 
 static int map(void);
 static void unmap(void);
 static int map_vram(void);
 static void unmap_vram(void);
 static int copy_vbios(void);
+// static int copy_sbios(void);
 #if MAP_SYS_BIOS
 static int copy_sys_bios(void);
 #endif
@@ -74,78 +69,77 @@ void loadCodeToMem(unsigned char *ptr, CARD8 *code);
 static int vram_mapped = 0;
 static int int10inited = 0;
 
-int
-InitInt10()
+
+int InitInt10()
 {
-  if (geteuid())
-    return -1;
-  if (!map())
-    return -1;
+  if(geteuid()) return -1;
+
+  if(!map()) return -1;
 	
-  if (!setup_system_bios())
-    {
-      unmap();
-      return -1;
-    }
+  if(!setup_system_bios()) {
+    unmap();
+    return -1;
+  }
+
   setup_io();
-#if 1
+
   iopl(3);
+
   scan_pci();
-  for (; CurrentPci; CurrentPci = CurrentPci->next)
-    if (CurrentPci->active)
-      {
-#if 0
-        if (!mapPciRom(NULL) || !chksum((CARD8*)V_BIOS))
-	  {
-	    iopl(0);
-	    unmap();
-	    return -1;
-	  }
-#endif
-	break;
-      }
+
+  for(; CurrentPci; CurrentPci = CurrentPci->next) {
+    if(CurrentPci->active) break;
+  }
+
   iopl(0);
-#endif
+
   setup_int_vect();
+
+  if(!copy_vbios()) {
+    unmap();
+    return -1;
+  }
+
 #if 0
-  if (!CurrentPci && !copy_vbios())
-    {
-      unmap();
-      return -1;
-    }
-#else
-  if (!copy_vbios())
-    {
-      unmap();
-      return -1;
-    }
+  if(!copy_sbios()) {
+    unmap();
+    return -1;
+  }
 #endif
-  if (!map_vram() || !copy_bios_ram())
-    {
-      unmap();
-      return -1;
-    }
+
+  if(!map_vram() || !copy_bios_ram()) {
+    unmap();
+    return -1;
+  }
+
   int10inited = 1;
+
+#if 0
+  /* int 13 default location (fdd) */
+  ((CARD16*)0)[(0x13<<1)+1] = 0xf000;
+  ((CARD16*)0)[0x13<<1] = 0xec59;
+#endif
+
   return 0;
 }
 
-void
-FreeInt10()
+
+void FreeInt10()
 {
-  if (!int10inited)
-    return;
+  if(!int10inited) return;
+
   unmap_vram();
   unmap();
+
   int10inited = 0;
 }
 
-int
-CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
+
+int CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
 {
   i86biosRegs bRegs;
 
-  if (!int10inited)
-    return -1;
+  if(!int10inited) return -1;
   memset(&bRegs, 0, sizeof bRegs);
   bRegs.ax = *ax;
   bRegs.bx = *bx;
@@ -153,13 +147,16 @@ CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
   bRegs.dx = 0;
   bRegs.es = 0x7e0;
   bRegs.di = 0x0;
-  if (buf)
-    memcpy((unsigned char *)0x7e00, buf, len);
+  if(buf) memcpy((unsigned char *) 0x7e00, buf, len);
+
   iopl(3);
-  do_x86(BIOS_START,&bRegs);
+
+  loadCodeToMem((unsigned char *) BIOS_START, code);
+  do_x86(BIOS_START, &bRegs);
+
   iopl(0);
-  if (buf)
-    memcpy(buf, (unsigned char *)0x7e00, len);
+
+  if(buf) memcpy(buf, (unsigned char *) 0x7e00, len);
 
   *ax = bRegs.ax;
   *bx = bRegs.bx;
@@ -168,30 +165,67 @@ CallInt10(int *ax, int *bx, int *cx, unsigned char *buf, int len)
   return bRegs.ax;
 }
 
-int  
-map(void)
+
+#if 0
+int CallInt13(int *ax, int *bx, int *cx, int *dx, unsigned char *buf, int len)
 {
-	void* mem;
+  i86biosRegs bRegs;
 
-	mem = mmap(0, (size_t)SIZE,
-			   PROT_EXEC | PROT_READ | PROT_WRITE,
-			   MAP_FIXED | MAP_PRIVATE | MAP_ANON,
-			   -1, 0 ); 
-	if (mem != 0) {
-		perror("anonymous map");
-		return (0);
-	}
-	memset(mem,0,SIZE);
+  if(!int10inited) return -1;
+  memset(&bRegs, 0, sizeof bRegs);
+  bRegs.ax = *ax;
+  bRegs.bx = *bx;
+  bRegs.cx = *cx;
+  bRegs.dx = *dx;
+  bRegs.es = 0x7e0;
+  bRegs.ds = 0x7e0;
+  bRegs.di = 0x0;
+  bRegs.si = 0x0;
+  if(buf) memcpy((unsigned char *) 0x7e00, buf, len);
 
-	loadCodeToMem((unsigned char *) BIOS_START, code);
-	return (1);
+  iopl(3);
+
+  loadCodeToMem((unsigned char *) BIOS_START, code13);
+  do_x86(BIOS_START, &bRegs);
+
+  iopl(0);
+
+  if(buf) memcpy(buf, (unsigned char *) 0x7e00, len);
+
+  *ax = bRegs.ax;
+  *bx = bRegs.bx;
+  *cx = bRegs.cx;
+  *dx = bRegs.dx;
+
+  return bRegs.ax;
+}
+#endif
+
+
+int map()
+{
+  void* mem;
+
+  mem = mmap(0, (size_t) SIZE, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, -1, 0);
+
+  if(mem) {
+    perror("anonymous map");
+    return 0;
+  }
+
+  memset(mem, 0, SIZE);
+
+  loadCodeToMem((unsigned char *) BIOS_START, code);
+
+  return 1;
 }
 
-static void
-unmap(void)
+
+void unmap()
 {
-	munmap(0,SIZE);
+  munmap(0, SIZE);
 }
+
 
 static int
 map_vram(void)
@@ -231,17 +265,18 @@ map_vram(void)
 	return (1);
 }
 
-static void
-unmap_vram(void)
+
+void unmap_vram()
 {
-	if (!vram_mapped) return;
-	
-	munmap((void*)VRAM_START,VRAM_SIZE);
-	vram_mapped = 0;
+  if(!vram_mapped) return;
+
+  munmap((void*) VRAM_START, VRAM_SIZE);
+
+  vram_mapped = 0;
 }
 
-static int
-copy_vbios(void)
+
+int copy_vbios()
 {
 	int mem_fd;
 	unsigned char *tmp;
@@ -286,6 +321,30 @@ Error:
 	close(mem_fd);
 	return (0);
 }
+
+
+#if 0
+#define SYS_BIOS	0xe0000
+#define SYS_BIOS_SIZE	0x20000
+int copy_sbios()
+{
+  int fd;
+
+  if((fd = open(MEM_FILE, O_RDONLY)) < 0) {
+    perror("opening memory");
+    return 0;
+  }
+
+  if(lseek(fd,(off_t) SYS_BIOS, SEEK_SET) == (off_t) SYS_BIOS) {
+    read(fd, (void *) SYS_BIOS, SYS_BIOS_SIZE);
+  }
+
+  close(fd);
+
+  return 1;
+}
+#endif
+
 
 #if MAP_SYS_BIOS
 static int
@@ -340,20 +399,15 @@ Error:
 	return (0);
 }
 
-void
-loadCodeToMem(unsigned char *ptr, CARD8 code[])
+
+void loadCodeToMem(unsigned char *ptr, CARD8 *code)
 {
-	int i;
-	CARD8 val;
-	
-	for ( i=0;;i++) {
-		val = code[i];
-		*ptr++ = val;
-		if (val == 0xf4) break;
-	}
-	return;
+  while((*ptr++ = *code++) != 0xf4 /* hlt */);
+
+  return;
 }
 		
+
 /*
  * here we are really paranoid about faking a "real"
  * BIOS. Most of this information was pulled from
