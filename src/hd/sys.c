@@ -20,16 +20,19 @@
  */
 
 #if defined(__i386__)
-int is_txt(char c);
 static void sigsegv_handler(int signum);
 static void chk_vmware(hd_data_t *hd_data, sys_info_t *st);
-#ifdef UCLIBC
-void *memmem(const void *haystack, size_t haystacklen, const void *needle, size_t needlelen);
-#endif
 #endif
 
 #if defined(__i386__) || defined(__x86_64__)
+static int is_txt(char c);
+static int is_decimal(char c);
+static int txt_len(char *s);
+static int decimal_len(char *s);
 static int chk_vaio(hd_data_t *hd_data, sys_info_t *st);
+#ifdef UCLIBC
+void *memmem(const void *haystack, size_t haystacklen, const void *needle, size_t needlelen);
+#endif
 #endif
 
 void hd_scan_sys(hd_data_t *hd_data)
@@ -117,42 +120,6 @@ void hd_scan_sys(hd_data_t *hd_data)
 }
 
 #if defined(__i386__)
-int is_txt(char c)
-{
-  if(c < ' ' || c == 0x7f) return 0;
-
-  return 1;
-}
-
-int is_decimal(char c)
-{
-  if(c < '0' || c > '9') return 0;
-
-  return 1;
-}
-
-int txt_len(char *s)
-{
-  int i;
-
-  for(i = 0; i < 0x100; i++) {
-    if(!is_txt(s[i])) break;
-  }
-
-  return i;
-}
-
-int decimal_len(char *s)
-{
-  int i;
-
-  for(i = 0; i < 0x100; i++) {
-    if(!is_decimal(s[i])) break;
-  }
-
-  return i;
-}
-
 void sigsegv_handler(int signum) { exit(77); }
 
 void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
@@ -207,6 +174,42 @@ void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
 
 
 #if defined(__i386__) || defined(__x86_64__)
+int is_txt(char c)
+{
+  if(c < ' ' || c == 0x7f) return 0;
+
+  return 1;
+}
+
+int is_decimal(char c)
+{
+  if(c < '0' || c > '9') return 0;
+
+  return 1;
+}
+
+int txt_len(char *s)
+{
+  int i;
+
+  for(i = 0; i < 0x100; i++) {
+    if(!is_txt(s[i])) break;
+  }
+
+  return i;
+}
+
+int decimal_len(char *s)
+{
+  int i;
+
+  for(i = 0; i < 0x100; i++) {
+    if(!is_decimal(s[i])) break;
+  }
+
+  return i;
+}
+
 int chk_vaio(hd_data_t *hd_data, sys_info_t *st)
 {
   int i;
@@ -253,5 +256,5 @@ int chk_vaio(hd_data_t *hd_data, sys_info_t *st)
 
   return st->model ? 1 : 0;
 }
-#endif
+#endif	/* __i386__ || __x86_64__ */
 
