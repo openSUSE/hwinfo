@@ -70,3 +70,8 @@
  bus.id			0x8b
 +bus.name		Virtual IO
 
+ bus.id			0x8c
++bus.name		CCW
+
+ bus.id			0x8d
++bus.name		IUCV
