@@ -2439,6 +2439,7 @@ int hd_module_is_active(hd_data_t *hd_data, char *mod)
 {
   str_list_t *sl, *sl0 = read_kmods(hd_data);
   int active = 0;
+  char *s;
 #ifdef __PPC__
   char *s1, *s2;
 #endif
@@ -2450,6 +2451,11 @@ int hd_module_is_active(hd_data_t *hd_data, char *mod)
   }
 #endif
 
+  mod = new_str(mod);
+
+  /* convert '-' to '_' */
+  for(s = mod; *s; s++) if(*s == '-') *s = '_';
+
   for(sl = sl0; sl; sl = sl->next) {
     if(!strcmp(sl->str, mod)) break;
   }
@@ -2457,7 +2463,11 @@ int hd_module_is_active(hd_data_t *hd_data, char *mod)
   free_str_list(sl0);
   active = sl ? 1 : 0;
 
-  if(active) return active;
+  if(active) {
+    free_mem(mod);
+
+    return active;
+  }
 
 #ifdef __PPC__
   /* temporary hack for ppc */
@@ -2498,6 +2508,8 @@ int hd_module_is_active(hd_data_t *hd_data, char *mod)
     }
   }
 #endif
+
+  free_mem(mod);
 
   return active;
 }
@@ -3340,6 +3352,9 @@ void timeout_alarm_handler(int signal)
 }
 
 
+/*
+ * Return list of loaded modules. Converts '-' to '_'.
+ */
 str_list_t *read_kmods(hd_data_t *hd_data)
 {
   str_list_t *sl, *sl0, *sl1 = NULL;
@@ -3354,6 +3369,10 @@ str_list_t *read_kmods(hd_data_t *hd_data)
   for(sl = sl0; sl; sl = sl->next) {
     s = sl->str;
     add_str_list(&sl1, strsep(&s, " \t"));
+  }
+
+  for(sl = sl1; sl; sl = sl->next) {
+    for(s = sl->str; *s; s++) if(*s == '-') *s = '_';
   }
 
   return sl1;
