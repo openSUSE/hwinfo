@@ -1,5 +1,6 @@
 15/4/2004:	v8.40
 	- make SGI IOC4 known as storage controller (#38628)
+	- support SGI XPNET (#35867)
 
 14/4/2004:	v8.39
 	- bcm5700, not tg3 on ppc* (#38647)

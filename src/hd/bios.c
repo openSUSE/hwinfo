@@ -123,13 +123,12 @@ void hd_scan_bios(hd_data_t *hd_data)
   vbe_mode_info_t *mi;
   hd_res_t *res;
 #endif
-  struct stat sbuf;
   str_list_t *sl;
 
   if(!hd_probe_feature(hd_data, pr_bios)) return;
 
   /* we better do nothing on a SGI Altix machine */
-  if(!stat("/proc/sgi_sn", &sbuf)) return;
+  if(hd_is_sgi_altix(hd_data)) return;
 
   hd_data->module = mod_bios;
 

@@ -226,6 +226,8 @@ char *hd_sysfs_find_driver(hd_data_t *hd_data, char *sysfs_id, int exact);
 int hd_report_this(hd_data_t *hd_data, hd_t *hd);
 str_list_t *hd_module_list(hd_data_t *hd_data, unsigned id);
 
+int hd_is_sgi_altix(hd_data_t *hd_data);
+
 
 #ifdef __cplusplus
 }

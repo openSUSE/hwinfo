@@ -16,6 +16,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+static void add_xpnet(hd_data_t *hdata);
 
 /*
  * This is independent of the other scans.
@@ -89,7 +90,7 @@ void hd_scan_net(hd_data_t *hd_data)
     hd->base_class.id = bc_network_interface;
 
     res1 = NULL;
-    if(hw_addr && sf_dev) {
+    if(hw_addr && strspn(hw_addr, "0:") != strlen(hw_addr)) {
       res1 = new_mem(sizeof *res1);
       res1->hwaddr.type = res_hwaddr;
       res1->hwaddr.addr = new_str(hw_addr);
@@ -178,6 +179,10 @@ void hd_scan_net(hd_data_t *hd_data)
       hd->sub_class.id = sc_nif_wlan;
       hd->slot = u;
     }
+    else if(sscanf(hd->unix_dev_name, "xp%u", &u) == 1) {
+      hd->sub_class.id = sc_nif_xp;
+      hd->slot = u;
+    }
     /* ##### add more interface names here */
     else {
       hd->sub_class.id = sc_nif_other;
@@ -188,6 +193,7 @@ void hd_scan_net(hd_data_t *hd_data)
 
   sysfs_close_class(sf_class);
 
+  if(hd_is_sgi_altix(hd_data)) add_xpnet(hd_data);
 
 #if 0
 
@@ -240,4 +246,46 @@ void hd_scan_net(hd_data_t *hd_data)
 
 
 }
+
+
+void add_xpnet(hd_data_t *hd_data)
+{
+  hd_t *hd, *hd_card;
+  hd_res_t *res, *res2;
+
+  hd_card = add_hd_entry(hd_data, __LINE__, 0);
+  hd_card->base_class.id = bc_network;
+  hd_card->sub_class.id = 0x80;
+
+  hd_card->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4002);
+  hd_card->device.id = MAKE_ID(TAG_SPECIAL, 1);
+
+  if(hd_module_is_active(hd_data, "xpnet")) {
+    add_str_list(&hd_card->drivers, "xpnet");
+  }
+
+  for(hd = hd_data->hd ; hd; hd = hd->next) {
+    if(
+      hd->module == hd_data->module &&
+      hd->base_class.id == bc_network_interface &&
+      hd->sub_class.id == sc_nif_xp
+    ) {
+      hd->attached_to = hd_card->idx;
+
+      for(res = hd->res; res; res = res->next) {
+        if(res->any.type == res_hwaddr) break;
+      }
+
+      if(res) {
+        res2 = new_mem(sizeof *res2);
+        res2->hwaddr.type = res_hwaddr;
+        res2->hwaddr.addr = new_str(res->hwaddr.addr);
+        add_res_entry(&hd_card->res, res2);
+      }
+
+      break;
+    }
+  }
+}
+
 
