@@ -181,6 +181,10 @@ void get_serial_modem(hd_data_t *hd_data)
   for(sm = hd_data->ser_modem; sm; sm = sm->next) {
     modem_info = TIOCM_DTR | TIOCM_RTS;
     ioctl(sm->fd, TIOCMBIS, &modem_info);
+    ioctl(sm->fd, TIOCMGET, &modem_info);
+    if(!(modem_info & (TIOCM_DSR | TIOCM_CD))) {
+      sm->do_io = 0;
+    }
   }
 
   /* just a quick test if we get a response to an AT command */
@@ -669,7 +673,7 @@ void read_modem(hd_data_t *hd_data)
   if(!i) return;	/* nothing selected */
 
   for(;;) {
-    to.tv_sec = 0; to.tv_usec = 300000;
+    to.tv_sec = 0; to.tv_usec = 1000000;
     set = set0;
     if((sel = select(fd_max + 1, &set, NULL, NULL, &to)) > 0) {
 //      fprintf(stderr, "sel: %d\n", sel);
