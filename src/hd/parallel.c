@@ -108,7 +108,7 @@ void do_lp(hd_data_t *hd_data)
     free_str_list(sl0);
 
     /* default to printer */
-    if(!base_class) base_class = new_str("printer");
+    if(!base_class && vendor && device) base_class = new_str("printer");
 
     s = free_mem(s);
 

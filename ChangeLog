@@ -1,3 +1,7 @@
+17/9/2003:	v7.27
+	- don't make every parport into a printer (#31161)
+	- some driver data updated
+
 16/9/2003:	v7.26
 	- default to 'printer' if a class tag is missing in parport
 	  autoprobe data (#30982)

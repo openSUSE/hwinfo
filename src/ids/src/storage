@@ -52,14 +52,19 @@
 |vendor.id		pci 0x1000
 &device.id		pci 0x0628
 +driver.module.modprobe	mptscsih
-+driver.module.insmod	mptbase|mptscsih
 
-# scsi/ips.c
+# pcimap
+ vendor.id		pci 0x9005
+&device.id		pci 0x0250
++driver.module.modprobe	ips
+
+# pcimap
  vendor.id		pci 0x1014
 &device.id		pci 0x002e
 |vendor.id		pci 0x1014
 &device.id		pci 0x01bd
 +driver.module.modprobe	ips
++driver.module.modprobe	ips_old
 
  vendor.id		pci 0x1014
 &device.id		pci 0x0096
@@ -522,6 +527,22 @@
 &subvendor.id		pci 0x103c
 &subdevice.id		pci 0x10c2
 +driver.module.modprobe	aacraid
+
+#pcimap
+ vendor.id		pci 0x1106
+&device.id		pci 0x3149
++driver.module.modprobe	ata_via
+
+# pcimap
+ vendor.id		pci 0x105a
+&device.id		pci 0x3318
+|vendor.id		pci 0x105a
+&device.id		pci 0x3373
+|vendor.id		pci 0x105a
+&device.id		pci 0x3375
+|vendor.id		pci 0x105a
+&device.id		pci 0x6626
++driver.module.modprobe	pdc-ultra
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
