@@ -175,6 +175,11 @@
 +driver.xfree		3|Mach64|||||8,16,24,32
 
  vendor.id		pci 0x1002
+&device.id		pci 0x4966
++device.name		RV250 If
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x4c42
 +device.name		3D Rage LT Pro AGP-133
 +driver.xfree		4|ati
@@ -1831,7 +1836,7 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0178
-+device.name		Quadro4 500XGL
++device.name		Quadro4 500/550 XGL
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
@@ -1873,8 +1878,57 @@
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
  vendor.id		pci 0x10de
+&device.id		pci 0x0180
++device.name		0x0180
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0181
++device.name		0x0181
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0182
++device.name		0x0182
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0188
++device.name		0x0188
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x018a
++device.name		0x018a
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x018b
++device.name		0x018b
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x01a0
 +device.name		GeForce2 Integrated GPU
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x01f0
++device.name		0x01f0
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
@@ -1945,6 +1999,34 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x025b
 +device.name		Quadro4 700XGL
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0280
++device.name		0x0280
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0281
++device.name		0x0281
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0288
++device.name		0x0288
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0289
++device.name		0x0289
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
