@@ -125,7 +125,7 @@ struct option options[] = {
   { "hotplug_ctrl", 0, NULL, 1000 + hw_hotplug_ctrl },
   { "zip", 0, NULL, 1000 + hw_zip },
   { "pppoe", 0, NULL, 1000 + hw_pppoe },
-  { "dsl", 0, NULL, 1000 + hw_pppoe },
+  { "dsl", 0, NULL, 1000 + hw_dsl },
   { "wlan", 0, NULL, 1000 + hw_wlan },
   { "redasd", 0, NULL, 1000 + hw_redasd },
   { "all", 0, NULL, 2000 },
@@ -383,6 +383,7 @@ int main(int argc, char **argv)
     if(!strcmp(list, "keyboard")) i = hw_keyboard;
     if(!strcmp(list, "sound")) i = hw_sound;
     if(!strcmp(list, "isdn")) i = hw_isdn;
+    if(!strcmp(list, "dsl")) i = hw_dsl;
     if(!strcmp(list, "modem")) i = hw_modem;
     if(!strcmp(list, "storage_ctrl")) i = hw_storage_ctrl;
     if(!strcmp(list, "network_ctrl")) i = hw_network_ctrl;
@@ -1282,7 +1283,7 @@ void help()
     "    mouse, joystick, keyboard, chipcard, sound, isdn, modem, storage-ctrl,\n"
     "    netcard, printer, tv, dvb, scanner, braille, sys, bios, cpu, partition,\n"
     "    usb-ctrl, usb, pci, isapnp, ide, scsi, bridge, hub, memory, smp, pppoe,\n"
-    "    pcmcia, pcmcia-ctrl, wlan, zip, all, reallyall\n\n"
+    "    pcmcia, pcmcia-ctrl, wlan, zip, dsl, all, reallyall\n\n"
     "  Note: debug info is shown only in the log file. (If you specify a\n"
     "  log file the debug level is implicitly set to a reasonable value.)\n"
   );

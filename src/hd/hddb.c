@@ -85,6 +85,7 @@ static driver_info_t *monitor_driver(hd_data_t *hd_data, hd_t *hd);
 /* static int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len); */
 /* static isdn_parm_t *new_isdn_parm(isdn_parm_t **ip); */
 static driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, cdb_isdn_card *cic);
+static driver_info_t *dsl_driver(hd_data_t *hd_data, hd_t *hd, cdb_isdn_card *cic);
 #endif
 
 static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
@@ -1697,6 +1698,13 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     }
     free_mem(cic);
   }
+  if (!new_driver_info && ((cic = get_dsl_info(hd)))) {
+    new_driver_info = dsl_driver(hd_data, hd, cic);
+    if(!hd->model && cic->lname && *cic->lname) {
+      hd->model = new_str(cic->lname);
+    }
+    free_mem(cic);
+  }
 #endif
 
   if(!new_driver_info) {
@@ -2290,6 +2298,68 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, cdb_isdn_card *cic)
       }
     }
 #endif
+  }
+  if(!di) di0 = free_mem(di0);
+
+  return di0;
+}
+
+driver_info_t *dsl_driver(hd_data_t *hd_data, hd_t *hd, cdb_isdn_card *cic)
+{
+  driver_info_t *di0, *di;
+  cdb_isdn_vario *civ;
+  int drv;
+  str_list_t *sl, *sl0;
+
+  if(!cic) return NULL;
+
+  di0 = new_mem(sizeof *di0);
+
+  drv = cic->vario;
+  di = NULL;
+
+  while((civ = hd_cdbisdn_get_vario(drv))) {
+    drv = civ->next_vario;
+    if (di) {
+      di->next = new_mem(sizeof *di);
+      di = di->next;
+    } else {
+      di = di0;
+    }
+    di->dsl.type = di_dsl;
+    if(civ->interface && *civ->interface) {
+      if (!strcmp(civ->interface, "CAPI20")) {
+        di->dsl.mode = new_str("capiadsl");
+        if(civ->mod_name && *civ->mod_name)
+          di->dsl.name = new_str(civ->mod_name);
+        else
+          di->dsl.name = new_str("unknown");
+      } else if (!strcmp(civ->interface, "pppoe")) {
+        di->dsl.mode = new_str("pppoe");
+        if(civ->mod_name && *civ->mod_name)
+          di->dsl.name = new_str(civ->mod_name);
+        else
+          di->dsl.name = new_str("none");
+      } else {
+        di->dsl.mode = new_str("unknown");
+        di->dsl.name = new_str("unknown");
+      }
+    } else {
+      di->dsl.mode = new_str("unknown");
+      di->dsl.name = new_str("unknown");
+    }
+
+    if(civ->need_pkg && *civ->need_pkg) {
+      sl0 = hd_split(',', (char *) civ->need_pkg);
+      for(sl = sl0; sl; sl = sl->next) {
+        if(!search_str_list(hd->requires, sl->str)) {
+          add_str_list(&hd->requires, sl->str);
+        }
+      }
+      free_str_list(sl0);
+    }
+
+    if(hd->bus.id == bus_pci) continue;
   }
   if(!di) di0 = free_mem(di0);
 

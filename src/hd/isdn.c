@@ -186,7 +186,96 @@ cdb_isdn_card *get_isdn_info(hd_t *hd)
       				0xffff, 0xffff);
     }
 
-    if(cic) {
+    if (cic && cic->Class && strcmp(cic->Class, "DSL")) {
+      cic0 = new_mem(sizeof *cic0);
+      memcpy(cic0, cic, sizeof *cic0);
+      return cic0;
+    }
+  }
+  return NULL;
+}
+
+void hd_scan_dsl(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  cdb_isdn_card *cic;
+
+  if(!hd_probe_feature(hd_data, pr_isdn)) return;
+
+  hd_data->module = mod_dsl;
+
+  /* some clean-up */
+  remove_hd_entries(hd_data);
+
+  PROGRESS(1, 0, "list");
+
+#ifdef DSL_TEST
+  {
+    hd_res_t *res;
+
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->bus.id = bus_pci;
+    hd->base_class.id = bc_dsl;
+    hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x1244);
+    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x2700);	// type, subtype
+
+  }
+#endif
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if((cic = get_dsl_info(hd))) {
+      free_mem(cic);
+    }
+  }
+
+
+}
+
+cdb_isdn_card *get_dsl_info(hd_t *hd)
+{
+  cdb_isdn_card *cic0, *cic;
+  cdb_isdn_vario *civ;
+  unsigned u0, u1;
+
+  if(hd->bus.id == bus_pci ||
+    hd->bus.id == bus_usb) {
+
+    cic = NULL;
+
+    if(hd->bus.id == bus_pci) {
+      cic = hd_cdbisdn_get_card_from_id(ID_VALUE(hd->vendor.id), ID_VALUE(hd->device.id),
+                                 ID_VALUE(hd->sub_vendor.id), ID_VALUE(hd->sub_device.id));
+    }
+
+    if(hd->bus.id == bus_usb &&
+    	ID_TAG(hd->vendor.id) == TAG_USB &&
+    	ID_TAG(hd->device.id) == TAG_USB) {
+      
+      if (hd->revision.id == 0 && hd->revision.name) {
+        /* the revision is usually saved as string (1.00) */
+      	sscanf(hd->revision.name, "%x.%x", &u1, &u0);
+      	u0 = u0 | u1 << 8;
+      } else
+      	u0 = ID_VALUE(hd->revision.id);
+
+      cic = hd_cdbisdn_get_card_from_id(ID_VALUE(hd->vendor.id), ID_VALUE(hd->device.id),
+                                 u0, 0xffff);
+      if (!cic) /* to get cards without revision info in database */
+      	cic = hd_cdbisdn_get_card_from_id(ID_VALUE(hd->vendor.id), ID_VALUE(hd->device.id),
+      				0xffff, 0xffff);
+    }
+
+    if (cic && cic->Class && !strcmp(cic->Class, "DSL")) {
+      hd->base_class.id = bc_dsl;
+      hd->sub_class.id = sc_dsl_unknown;
+      civ = hd_cdbisdn_get_vario(cic->vario);
+      if (civ && civ->interface) {
+        if (!strcmp(civ->interface, "CAPI20")) {
+          hd->sub_class.id = sc_dsl_capi;
+        } else if (!strcmp(civ->interface, "pppoe")) {
+          hd->sub_class.id = sc_dsl_pppoe;
+        }
+      }
       cic0 = new_mem(sizeof *cic0);
       memcpy(cic0, cic, sizeof *cic0);
       return cic0;

@@ -106,7 +106,7 @@ typedef enum probe_feature {
   pr_fb, pr_bios_vbe2, pr_veth, pr_partition, pr_disk, pr_ataraid, pr_pppoe,
   pr_scan, pr_partition_add, pr_pcmcia, pr_fork, pr_parallel_imm, pr_s390,
   /* pr_bios_32, */ pr_cpuemu, pr_sysfs, pr_s390disks,
-  pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
+  pr_max, pr_lxrc, pr_dsl, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
 /*
@@ -124,7 +124,7 @@ typedef enum hw_item {
   hw_manual, hw_usb_ctrl, hw_usb, hw_bios, hw_pci, hw_isapnp, hw_bridge,
   hw_hub, hw_scsi, hw_ide, hw_memory, hw_dvb, hw_pcmcia, hw_pcmcia_ctrl,
   hw_ieee1394, hw_ieee1394_ctrl, hw_hotplug, hw_hotplug_ctrl, hw_zip, hw_pppoe,
-  hw_wlan, hw_redasd,	/* append new entries here */
+  hw_wlan, hw_redasd, hw_dsl,	/* append new entries here */
   hw_unknown, hw_all					/* hw_all must be last */
 } hd_hw_item_t;
 
@@ -144,7 +144,7 @@ typedef enum base_classes {
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,
   bc_storage_device, bc_network_interface, bc_keyboard, bc_printer,
   bc_hub, bc_braille, bc_scanner, bc_joystick, bc_chipcard, bc_camera,
-  bc_framebuffer, bc_dvb, bc_tv, bc_partition
+  bc_framebuffer, bc_dvb, bc_tv, bc_partition, bc_dsl
 } hd_base_classes_t;
 
 /* subclass values of bc_monitor */
@@ -245,6 +245,11 @@ typedef enum sc_camera {
 typedef enum sc_modem {
   sc_mod_at, sc_mod_win1, sc_mod_win2, sc_mod_win3
 } hd_sc_modem_t;
+
+/* subclass values of bc_dsl */
+typedef enum sc_dsl {
+  sc_dsl_unknown, sc_dsl_pppoe, sc_dsl_capi, sc_dsl_capiisdn
+} hd_sc_dsl_t;
 
 /* prog_if's of sc_ser_usb */
 typedef enum pif_usb_e {
@@ -1538,7 +1543,7 @@ typedef struct isdn_parm_s {
 
 /* device driver info types */
 typedef enum driver_info_type {
-  di_any, di_display, di_module, di_mouse, di_x11, di_isdn, di_kbd
+  di_any, di_display, di_module, di_mouse, di_x11, di_isdn, di_kbd, di_dsl
 } hd_driver_info_t;
 
 /* unspecific info */
@@ -1611,6 +1616,15 @@ typedef struct {
   isdn_parm_t *params;			/* isdn parameters */
 } driver_info_isdn_t;
 
+/* dsl info */
+typedef struct {
+  union driver_info_u *next;
+  enum driver_info_type type;		/* driver info type */
+  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
+  char *mode;				/* DSL driver types */
+  char *name;				/* DSL driver name */
+} driver_info_dsl_t;
+
 /* keyboard info */
 typedef struct {
   union driver_info_u *next;
@@ -1633,6 +1647,7 @@ typedef union driver_info_u {
   driver_info_x11_t x11;
   driver_info_display_t display;
   driver_info_isdn_t isdn;
+  driver_info_dsl_t dsl;
   driver_info_kbd_t kbd;
 } driver_info_t;
 

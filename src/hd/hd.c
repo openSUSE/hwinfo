@@ -211,7 +211,8 @@ static struct s_mod_names {
   { mod_pppoe, "pppoe" },
   { mod_pcmcia, "pcmcia" },
   { mod_s390, "s390" },
-  { mod_sysfs, "sysfs" }
+  { mod_sysfs, "sysfs" },
+  { mod_dsl, "dsl" }
 };
 
 /*
@@ -312,7 +313,8 @@ static struct s_pr_flags {
   { pr_pcmcia,        0,            8|4|2|1, "pcmcia"        },
   { pr_fork,          0,                  0, "fork"          },
   { pr_cpuemu,        0,                  0, "cpuemu"        },
-  { pr_sysfs,         0,                  0, "sysfs"         }
+  { pr_sysfs,         0,                  0, "sysfs"         },
+  { pr_dsl,           0,              4|2|1, "dsl"           }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -620,6 +622,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_isapnp_mod);
       hd_set_probe_feature(hd_data, pr_sbus);
       hd_set_probe_feature(hd_data, pr_isdn);
+      hd_set_probe_feature(hd_data, pr_dsl);
 #ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
 #endif
@@ -693,6 +696,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_usb:
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_isdn);	// need pr_misc, too?
+      hd_set_probe_feature(hd_data, pr_dsl);
       hd_set_probe_feature(hd_data, pr_scsi);
       hd_set_probe_feature(hd_data, pr_partition);
       hd_data->flags.fast = 1;
@@ -703,6 +707,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_net);
       hd_set_probe_feature(hd_data, pr_isdn);
+      hd_set_probe_feature(hd_data, pr_dsl);
 #ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
 #endif
@@ -746,6 +751,13 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_pppoe:
       hd_set_probe_feature(hd_data, pr_net);
       hd_set_probe_feature(hd_data, pr_pppoe);
+      break;
+
+    case hw_dsl:
+      hd_set_probe_feature(hd_data, pr_net);
+      hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_pppoe);
+      hd_set_probe_feature(hd_data, pr_usb);
       break;
 
     case hw_pcmcia:
@@ -893,6 +905,11 @@ driver_info_t *free_driver_info(driver_info_t *di)
             free_mem(p);
           }
         }
+        break;
+
+      case di_dsl:
+        free_mem(di->dsl.name);
+        free_mem(di->dsl.mode);
         break;
 
       case di_kbd:
@@ -1777,6 +1794,7 @@ void hd_scan(hd_data_t *hd_data)
   /* some final fixup's */
 #if WITH_ISDN
   hd_scan_isdn(hd_data);
+  hd_scan_dsl(hd_data);
 #endif
   hd_scan_int(hd_data);
 
@@ -4331,6 +4349,10 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 
         case hw_isdn:
           base_class = bc_isdn;
+          break;
+
+        case hw_dsl:
+          base_class = bc_dsl;
           break;
 
         case hw_modem:

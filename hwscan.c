@@ -70,7 +70,7 @@ struct option options[] = {
   { "hotplug_ctrl", 0, NULL, 1000 + hw_hotplug_ctrl },
   { "zip", 0, NULL, 1000 + hw_zip },
   { "pppoe", 0, NULL, 1000 + hw_pppoe },
-  { "dsl", 0, NULL, 1000 + hw_pppoe },
+  { "dsl", 0, NULL, 1000 + hw_dsl },
   { "wlan", 0, NULL, 1000 + hw_wlan },
   { "all", 0, NULL, 1000 + hw_all },
   { }
@@ -266,7 +266,7 @@ void help()
     "    mouse, joystick, keyboard, chipcard, sound, isdn, modem, storage-ctrl,\n"
     "    netcard, printer, tv, dvb, scanner, braille, sys, bios, cpu, partition,\n"
     "    usb-ctrl, usb, pci, isapnp, ide, scsi, bridge, hub, memory, smp, pppoe,\n"
-    "    pcmcia, pcmcia-ctrl, wlan, zip\n"
+    "    pcmcia, pcmcia-ctrl, wlan, dsl, zip\n"
   );
 }
 

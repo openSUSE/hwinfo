@@ -871,6 +871,17 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
         }
         break;
 
+      case di_dsl:
+        dump_line(
+          "DSL Mode: %s\n",
+          di->dsl.mode
+        );
+        dump_line(
+          "Driver: %s\n",
+          di->dsl.name
+        );
+        break;
+
       case di_kbd:
         if(di->kbd.XkbRules) dump_line("XkbRules: %s\n", di->kbd.XkbRules);
         if(di->kbd.XkbModel) dump_line("XkbModel: %s\n", di->kbd.XkbModel);

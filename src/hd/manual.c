@@ -82,6 +82,7 @@ static hash_t hw_items[] = {
   { hw_zip,           "zip"                 },
   { hw_pppoe,         "pppoe"               },
   { hw_wlan,          "wlan card"           },
+  { hw_dsl,           "DSL adapter"         },
   { hw_unknown,       "unknown"             },
   { 0,                NULL                  }
 };
