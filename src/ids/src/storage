@@ -247,10 +247,10 @@
 &device.id		pci 0x1000+0x0002
 +driver.module.modprobe	3w-xxxx
 
-# scsi/dc395x_trm.c
+# modules.alias
  vendor.id		pci 0x1de1
 &device.id		pci 0x0391
-+driver.module.modprobe	dc395x_trm
++driver.module.modprobe	dc395x
 
 # scsi/aic7xxx.c
  vendor.id		pci 0x9004

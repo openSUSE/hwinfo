@@ -393,7 +393,11 @@
  vendor.id		pci 0x1131
 &device.id		pci 0x7130
 |vendor.id		pci 0x1131
+&device.id		pci 0x7133
+|vendor.id		pci 0x1131
 &device.id		pci 0x7134
+|vendor.id		pci 0x1131
+&device.id		pci 0x7135
 +baseclass.id		0x112
 +subclass.id		0x00
 +driver.module.modprobe	saa7134

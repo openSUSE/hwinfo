@@ -35,6 +35,10 @@
 &device.id		pci 0x0102
 &subvendor.id		pci 0x11c1
 &subdevice.id		pci 0x045b
+|baseclass.id		0x007
+&subclass.id		0x00
+&vendor.id		pci 0x11c1
+&device.id		pci 0x045c
 +baseclass.id		0x102
 +subclass.id		0x03
 +requires		ltmodem
