@@ -1,6 +1,6 @@
 TOPDIR		= ../..
 TARGETS		= $(LIBHD_D)
-CLEANFILES	= *.log
+CLEANFILES	= *.log src/*~
 DISTCLEANFILES	= *.h *.xml *.ids check_hd
 
 include $(TOPDIR)/Makefile.common
