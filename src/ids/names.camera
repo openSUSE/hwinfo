@@ -42,6 +42,9 @@ u07b4 Olympus
 u0784 Polaroid
 	0784.10f01 DC700
 
+u07cf
+	1001.10f02
+
 # webcams
 u05a9 OmniVision
 	0511.10f00 OV511 WebCam
