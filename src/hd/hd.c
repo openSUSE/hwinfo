@@ -1949,7 +1949,7 @@ unsigned name2eisa_id(char *s)
  */
 char *canon_str(char *s, int len)
 {
-  char *m2, *m1, *m0 = new_mem(len + 1);
+  char *m2, *m1, *m0;
   int i;
 
 #ifdef LIBHD_MEMCHECK
@@ -1957,6 +1957,10 @@ char *canon_str(char *s, int len)
     if(libhd_log) fprintf(libhd_log, ">%p\n", CALLED_FROM(canon_str, s));
   }
 #endif
+
+  if(len < 0) len = 0;		/* just to be safe */
+
+  m0 = new_mem(len + 1);
 
   for(m1 = m0, i = 0; i < len; i++) {
     if(m1 == m0 && s[i] <= ' ') continue;
