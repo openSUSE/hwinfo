@@ -326,7 +326,7 @@ if($get_names) {
   dump_names;
   close F;
 
-  open F, ">names.c";
+  open F, ">names.h";
   select F;
   dump_nums;
   close F;
@@ -334,7 +334,7 @@ if($get_names) {
   mk_short_num;
   $short = "_s";
 
-  open F, ">names${short}.c";
+  open F, ">names${short}.h";
   select F;
   dump_nums;
   close F;
@@ -777,9 +777,11 @@ sub dump_nums
   local ( $_ );
   my ( $i, $j, $s, $sl );
 
-  print "#include <stdio.h>\n#include \"hd.h\"\n\n";
+  if($struct eq "drv") {
+    print "#include <stdio.h>\n#include \"hd.h\"\n\n";
+  }
 
-  printf "unsigned hddb_${struct}_data${short}[%u] = {\n", scalar(@num);
+  printf "unsigned hddb_${struct}_data[%u] = {\n", scalar(@num);
   for($i = 0; $i < @num; $i++) {
     if(($i % 6) == 0) { print "  " }
     printf "0x%08x", $num[$i];
@@ -810,15 +812,15 @@ sub dump_nums
 
     $sl = length $s;
 
-    printf "char hddb_${struct}_names${short}[%u] = \"\\\n", $j;
+    printf "char hddb_${struct}_names[%u] = \"\\\n", $j;
     for($i = 0; $i < $sl; $i += 72) {
       printf "%s\\\n", substr($s, $i, 72)
     }
     print "\";\n\n";
   }
 
-  print "hddb_data_t hddb_$struct$short = {\n";
-  printf "  %u, %u, hddb_${struct}_data$short,\n", scalar(@num), scalar(@num);
+  print "hddb_data_t hddb_$struct = {\n";
+  printf "  %u, %u, hddb_${struct}_data,\n", scalar(@num), scalar(@num);
   printf "  %u, %u, %s\n", $j, $j, $short ? "NULL" : "hddb_${struct}_names";
   print "};\n\n";
 

@@ -1,6 +1,6 @@
 TOPDIR		= ../..
 TARGETS		= $(LIBHD_D)
-CLEANFILES	= *.c *.err hd.names hd.drivers
+CLEANFILES	= *.h *.err hd.names hd.drivers
 
 include $(TOPDIR)/Makefile.common
 
@@ -39,11 +39,13 @@ IDFILES += names.pciutils\
 	   drivers.network drivers.scsi drivers.block drivers.monitor\
 	   drivers.audio drivers.mouse drivers.video drivers.braille
 
-OBJS	+= names.o names_s.o drivers.o
+OBJS	+= names.o drivers.o
 
 $(LIBHD_D): $(OBJS)
 	ar r $(LIBHD) $?
 
-names.c names_s.c drivers.c: $(IDFILES)
+names.c: names.h names_s.h
+
+names.h names_s.h drivers.h: $(IDFILES)
 	./mk_ids $(IDFILES) 2>mk_ids.err
 

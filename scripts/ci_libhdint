@@ -22,7 +22,7 @@ if mkdir /work/src/done/STABLE/hwinfo-internal ; then
   cd /work/src/done/STABLE/hwinfo-internal
   cp $hwinfo_internal.tar.bz2 /work/SRC/all/hwinfo-internal/hwinfo-internal.{changes,spec} .
   perl -pi -e 's/^(Version:\s+)\S+/${1}'$ver'/' /work/src/done/STABLE/hwinfo-internal/hwinfo-internal.spec
-  perl -pi -e 's/^(Source.+?-)\S+?(\.tar\.bz2)/${1}'$ver'${2}/' /work/src/done/STABLE/hwinfo-internal/hwinfo-internal.spec
+  perl -pi -e 's/^(Source.+-)\S+?(\.tar\.bz2)/${1}'$ver'${2}/' /work/src/done/STABLE/hwinfo-internal/hwinfo-internal.spec
   . /work/src/bin/.profile
   vc hwinfo-internal
   rm /work/src/done/STABLE/hwinfo-internal/*~

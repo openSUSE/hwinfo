@@ -1,3 +1,9 @@
+12/12/2000:	v1.0.58
+	- new version number scheme (due to shared lib)
+	- create shared libhd
+	- report BIOS lba extension support
+	- rearranged building libhd_tiny a bit
+
 12/12/2000:	v1.57
 	- fixed isapnp segfault bug
 	- updated x11 data

@@ -53,7 +53,7 @@
  */
 
 #ifdef __i386__
-#define HD_ARCH "ix86"
+#define HD_ARCH "ia32"
 #endif
 
 #ifdef __ia64__

@@ -402,6 +402,7 @@ typedef struct {
   /* The id is still in big endian format! */
   unsigned is_pnp_bios:1;
   unsigned pnp_id;
+  unsigned lba_support:1;
 } bios_info_t;
 
 

@@ -11,7 +11,12 @@ ifeq "$(ARCH)" "i686"
 ARCH	:= i386
 endif
 
+LIBHD_VERSION		:= $(shell cat $(TOPDIR)/VERSION)
+LIBHD_MINOR_VERSION	:= $(shell cut -d . -f 1-2 $(TOPDIR)/VERSION)
+LIBHD_MAJOR_VERSION	:= $(shell cut -d . -f 1 $(TOPDIR)/VERSION)
+
 CC	= gcc
+LD	= ld
 ifeq "$(ARCH)" "alpha"
 CFLAGS	= -Wall -O1 -fomit-frame-pointer $(EXTRA_FLAGS) -I$(TOPDIR)/src/hd
 else
@@ -19,12 +24,12 @@ CFLAGS	= -Wall -O2 -fomit-frame-pointer $(EXTRA_FLAGS) -I$(TOPDIR)/src/hd
 endif
 
 # CFLAGS	= -Wall -g -O -I$(TOPDIR)/src/hd
-LDFLAGS	= -Lsrc -lhd
+LDFLAGS	= -Lsrc
 
 CFILES	= $(wildcard *.c)
 OBJS	= $(CFILES:.c=.o)
 LIBHD	= $(TOPDIR)/src/libhd.a
-LIBHD_T	= $(TOPDIR)/src/libhd_tiny.a
+LIBHD_SO	= $(TOPDIR)/src/libhd.so.$(LIBHD_VERSION)
 LIBHD_D	= $(TOPDIR)/src/.lib
 
 export CC TOPDIR CFLAGS LIBHD ARCH

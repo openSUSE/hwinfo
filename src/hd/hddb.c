@@ -9,12 +9,7 @@
 /* activate special data base debug code */
 #undef DEBUG_HDDB
 
-#ifdef LIBHD_TINY
-#define HDDB_DEV	hddb_dev_s
-#else
 #define HDDB_DEV	hddb_dev
-#endif
-
 #define HDDB_DRV	hddb_drv
 
 extern hddb_data_t HDDB_DEV;
