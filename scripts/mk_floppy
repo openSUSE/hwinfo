@@ -1,0 +1,190 @@
+#! /bin/sh
+
+#
+# Script to create a bootable floppy
+#
+# on errors:
+#  - exit code > 0
+#  - 1-line message to *stdout*
+#
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# general parameters
+
+# name of the boot floppy image we create
+boot=/tmp/floppy
+
+# the kernel image to use
+kernel=/boot/vmlinuz
+
+# if we need an kernel append line (*not* for the frame buffer vga=xxxx argument)
+append=
+
+# for frame buffers; the number *must* be in hex, without any leading 0x
+# e.g. vga=0301
+vga=
+
+# show boot prompt and wait for $prompt/10 seconds (empty -> no prompt)
+prompt=15
+
+# devices we need on the floppy
+devs="tty1 console null zero ram0 ttyS[0-3] nvram fd[0-1]  hd[a-d]* sd[a-d]* sr[0-3]*"
+
+# required programs (*without* the shell, see below)
+# (they are *all* copied to /bin)
+bins="/bin/cat /bin/mount /bin/umount /sbin/update /sbin/insmod hw"
+
+# the shell to use
+our_shell=/bin/ash
+
+# required libraries
+libs="/lib/ld-2.1.2.so /lib/libc.so.6"
+
+# we need syslinux to make the floppy bootable; you *must* have it somewhere
+syslinux=/usr/sbin/syslinux
+
+# size of the root file system (the one on the floppy, that is ;-) )
+image_blocks=2000
+image_inodes=500
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# should be nothing to change below...
+
+tmp_root=/tmp/root$$
+tmp_boot=/tmp/boot$$
+tmp_msg=/tmp/msg$$
+mnt=/tmp/mnt$$
+mtools_rc=/tmp/mtools$$
+kernel_name=`basename $kernel`
+is_mounted=
+
+write_init () {
+  cat <<-blubber >$mnt/sbin/init
+	#! /bin/sh
+
+	export PATH=/bin:/sbin
+	export HOME=/
+
+	echo "mounting filesystems..."
+	mount -n -t proc none /proc
+	cat /proc/mounts >/etc/mtab
+
+	echo "starting update..."
+	update
+
+	echo "installing some modules..."
+	insmod /lib/nvram.o
+	insmod /lib/serial.o
+
+	echo "running hardware probing..."
+	hw debug=-1 log=hw.log +all
+
+	echo "copying the log onto the floppy..."
+	mount -tvfat /dev/fd0 /mnt
+	cat hw.log >/mnt/hw.log
+	umount /mnt
+
+	echo "ok, that's it"
+	sh
+
+	blubber
+}
+
+clean_up () {
+  [ "$is_mounted" ] && umount $mnt
+  rm -f $tmp_root $tmp_root.gz $tmp_boot $tmp_msg $mtools_rc
+  rmdir $mnt
+}
+
+error () {
+  echo "$2"
+  clean_up
+  exit $1
+}
+
+cp_and_strip () {
+  strip -s -R .note -R .comment $1 -o $2 || error 10 "no space left on image"
+  chmod +x $2
+}
+
+
+#
+# First, the root image.
+#
+
+dd if=/dev/zero of=$tmp_root bs=1k count=$image_blocks 2>/dev/null
+mkfs.minix -i $image_inodes $tmp_root >/dev/null 2>&1
+
+mkdir $mnt
+mount -oloop $tmp_root $mnt 2>/dev/null || { 
+  error 1 "failed to mount image"
+}
+is_mounted=1
+
+mkdir $mnt/{bin,dev,etc,lib,mnt,proc,sbin}
+
+for i in $devs ; do cp -a /dev/$i $mnt/dev ; done
+
+for i in $bins ; do
+  xxx=`basename $i`
+  cp_and_strip $i $mnt/bin/$xxx
+done
+
+for i in $libs ; do
+  xxx=`basename $i`
+  cp_and_strip $i $mnt/lib/$xxx
+done
+
+cp_and_strip $our_shell $mnt/bin/sh
+cp /lib/modules/2.2.13/misc/{nvram,serial}.o $mnt/lib || error 15 "no space left"
+
+write_init
+chmod 755 $mnt/sbin/init
+
+ldconfig -r $mnt
+
+umount $mnt
+is_mounted=
+
+gzip -9 $tmp_root
+
+
+#
+# Make a boot floppy.
+#
+[ -x $syslinux ] || error 6 "no syslinux installed"
+
+export MTOOLSRC=$mtools_rc
+echo "drive r: file=\"$tmp_boot\" mformat_only cylinders=80 heads=2 sectors=18" >$mtools_rc
+
+dd if=/dev/zero of=$tmp_boot bs=36b count=80 2>/dev/null
+mformat r: || error 7 "failed to create boot disk"
+
+$syslinux $tmp_boot
+
+mcopy $kernel r:linux || error 18 "no space left on the boot floppy"
+mcopy $tmp_root.gz r:root || error 19 "no space left on the boot floppy"
+
+echo -n >$tmp_msg
+mcopy $tmp_msg r:message
+
+xxx=
+[ "$vga" ] && xxx=" vga=$vga"
+
+cat <<-blubber >$tmp_msg
+default linux
+append initrd=root root=/dev/ram0 load_ramdisk=1 rw$xxx $append
+display message
+blubber
+
+if [ "$prompt" ] ; then
+  echo "prompt 1" >>$tmp_msg
+  echo "timeout $prompt" >>$tmp_msg
+fi
+
+mcopy $tmp_msg r:syslinux.cfg || error 20 "no space left on the boot floppy"
+
+cp $tmp_boot $boot || error 8 "failed to install boot floppy"
+
+clean_up
+
