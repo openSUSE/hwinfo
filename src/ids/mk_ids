@@ -1,15 +1,17 @@
 #! /usr/bin/perl
 
+sub eisa_id;
+sub eisa_str;
+sub cmp_id;
+sub cmp_ent;
+sub find_name;
+sub join_name;
 sub add_name;
-sub add_drv;
-
-# entry: <initial letter>, <hexdigits>, <hexdigits for subentry>, <subsubentry, part1>, <..., part2>
-%spec = (
-  'bus'   => [ 'B', 2, 0, 0, 0 ],
-  'class' => [ 'C', 3, 2, 0, 0 ],
-  'eisa'  => [ '',  0, 4, 0, 4 ],
-  'pci'   => [ '',  4, 4, 4, 4 ],
-);
+sub dump_names;
+sub dump_nums;
+sub mk_short_num;
+sub dump_drivers;
+sub merge_sax;
 
 %tag = (
   'pci'     => 0,
@@ -20,126 +22,361 @@ sub add_drv;
   'class'   => 5
 );
 
+@tag_sort = ( 2, 3, 4, 5, 0, 1 );
+
+$fast = 1;		# use hash to speed up id checking
+
+$get_names = $get_drivers = 1;
+
+# driver info only
+if($ARGV[0] eq "-d") { $get_names = undef; shift }
+
+# name info only
+if($ARGV[0] eq "-n") { $get_drivers = undef; shift }
+
 
 for $f (@ARGV) {
   if(open F, $f) {
-    while(<F>) {
-      chomp;
-      s/\s*$//;
-      next if /^\s*[#;]/;
-      next if /^$/;
+    @f = (<F>);
 
-      # SaX Identity file
-      if(/^NAME=(.+?)§DEVICE=(.+?)§VID=0x([0-9a-fA-F]+?)§DID=0x([0-9a-fA-F]+?)§SERVER=([^§]+)$/) {
-
-        $id1 = [ $tag{'pci'}, hex($3) ];
-        $id2 = [ $tag{'pci'}, hex($4) ];
-        $val1 = [ $1 ];
-        $val2 = [ $2 ];
-        $drv = [ 'x11', [ $5 ] ];
-
-        add_name $val1, $id1;
-        add_name $val2, $id1, $id2;
-        add_drv $drv, $id1, $id2;
-
-        next;
+    # file format check
+    $format = 'names';
+    for (@f) {
+      if(/^\t[a-z]\s/) {
+        $format = 'drivers';
+        last;
       }
-
-=head1
-      if(/^B\s+([0-9a-fA-F]+)\s*(.*?)$/) {
-        $type = 'bus';
-        $subkey = undef;
-        $$type = add_entry $type, $1, $2, $f, $.;
-      }
-
-      elsif(/^C\s+([0-9a-fA-F]+)\s*(.*?)$/) {
-        $type = 'class';
-        $subkey = undef;
-        $$type = add_entry $type, $1, $2, $f, $.;
-      }
-
-      elsif(/^([0-9a-fA-F]{4})\s*(.*?)$/) {
-        $type = 'pci';
-        $subkey = undef;
-        $$type = add_entry $type, $1, $2, $f, $.;
-      }
-
-      elsif(/^([a-zA-Z_@]{3})\s*(.*?)$/) {
-        $type = 'eisa';
-        $subkey = undef;
-        $$type = add_entry $type, $1, $2, $f, $.;
-      }
-
-      elsif($type eq 'class' && /^\t\t/) {
-         # not yet
-#        if(/\t\t([0-9a-fA-F]+)(\.([0-9a-fA-F]+))?\s*(\[(.*?)\])?\s*(.*?)$/) {
-#          add_subsubentry $type, $$type, $subkey, $1, $2, $7, $4, $6, $f, $.;
-#        }
-#        else {
-#          print STDERR "invalid line at $f($.)\n";
-#          exit 2;
-#        }
-      }
-
-      elsif($type eq 'pci' && /^\t\t/) {
-        # note: the order is <dev_id:vend_id> here; contrary to eisa
-        if(/\t\t([0-9a-fA-F]{4})([0-9a-fA-F]{4})(\.([0-9a-fA-F]+))?\s*(\[(.*?)\])?\s*(.*?)$/) {
-          add_subsubentry $type, $$type, $subkey, $1, $2, $7, $4, $6, $f, $.;
-        }
-        elsif(/\t\t([0-9a-fA-F]{4})\s+([0-9a-fA-F]{4})(\.([0-9a-fA-F]+))?\s*(\[(.*?)\])?\s*(.*?)$/) {
-          add_subsubentry $type, $$type, $subkey, $2, $1, $7, $4, $6, $f, $.;
-        }
-        else {
-          print STDERR "invalid line at $f($.)\n";
-          exit 2;
-        }
-      }
-
-      elsif($type eq 'eisa' && /^\t\t/) {
-        if(/\t\t([a-zA-Z_@]{3})([0-9a-fA-F]{4})(\.([0-9a-fA-F]+))?\s*(\[(.*?)\])?\s*(.*?)$/) {
-          add_subsubentry $type, $$type, $subkey, $1, $2, $7, $4, $6, $f, $.;
-        }
-        else {
-          print STDERR "invalid line at $f($.)\n";
-          exit 3;
-        }
-      }
-
-      elsif(/^\t/) {
-        if(/\t([0-9a-fA-F]+)(\.([0-9a-fA-F]+))?\s*(\[(.*?)\])?\s*(.*?)$/) {
-          $subkey = add_subentry $type, $$type, $1, $6, $3, $5, $f, $.;
-        }
-        else {
-          print STDERR "invalid line at $f($.)\n";
-          exit 4;
-        }
-      }
-
-      else {
-        print STDERR "invalid line at $f($.)\n";
-        exit 1;
-      }
-=cut
-
     }
-    close F
+
+    $l = 0;
+    if($format eq 'names') {
+      print STDERR "***\n*** \"$f\" has name info\n***\n";
+
+      for (@f) {
+        $l++;
+        chomp;
+        s/\s*$//;
+        next if /^\s*[#;]/;
+        next if /^$/;
+
+        # SaX Identity file
+        if(/^NAME=(.+?)§DEVICE=(.+?)§VID=0x([0-9a-fA-F]+?)§DID=0x([0-9a-fA-F]+?)§SERVER=([^§]+)$/) {
+
+          $tag = $tag{'pci'};
+          $id0 = [ $tag, hex($3) ];
+          $id1 = [ $tag, hex($4) ];
+          $val1 = [ $1, undef, "$f($l)" ];
+          $val2 = [ $2, undef, "$f($l)" ];
+
+          add_name $val1, $id0;
+          add_name $val2, $id0, $id1;
+
+          $sax{sprintf "%04x %04x", $id0->[1], $id1->[1]} = $5;
+        }
+
+        elsif(/^B\s+([0-9a-fA-F]+)\s+(.*?)\s*$/) {
+
+          $tag = $tag{'bus'};
+          $id1 = undef;
+          $id0 = [ $tag, hex($1) ];
+          $val = [ $2, undef, "$f($l)" ];
+
+          add_name $val, $id0;
+        }
+
+        elsif(/^C\s+([0-9a-fA-F]+)\s+(.*?)\s*$/) {
+
+          $tag = $tag{'class'};
+          $id1 = undef;
+          $id0 = [ $tag, hex($1) ];
+          $val = [ $2, undef, "$f($l)" ];
+
+          add_name $val, $id0;
+        }
+
+        elsif(/^([0-9a-fA-F]{4})(\s+(.*?))?\s*$/) {
+
+          $tag = $tag{'pci'};
+          $id1 = undef;
+          $id0 = [ $tag, hex($1) ];
+          $val = [ $3, undef, "$f($l)" ];
+
+          add_name $val, $id0;
+        }
+
+        elsif(/^u([0-9a-fA-F]{4})(\s+(.*?))?\s*$/) {
+
+          $tag = $tag{'usb'};
+          $id1 = undef;
+          $id0 = [ $tag, hex($1) ];
+          $val = [ $3, undef, "$f($l)" ];
+
+          add_name $val, $id0;
+        }
+
+        elsif(/^s([0-9a-fA-F]{4})(\s+(.*?))?\s*$/) {
+
+          $tag = $tag{'special'};
+          $id1 = undef;
+          $id0 = [ $tag, hex($1) ];
+          $val = [ $3, undef, "$f($l)" ];
+
+          add_name $val, $id0;
+        }
+
+        elsif(/^([a-zA-Z_@]{3})(\s+(.*?))?\s*$/) {
+
+          $tag = $tag{'eisa'};
+          $id1 = undef;
+          $id0 = [ $tag, eisa_id($1) ];
+          $val = [ $3, undef, "$f($l)" ];
+
+          add_name $val, $id0;
+        }
+
+        elsif(/^\t([0-9a-fA-F]{1,4})(\+([0-9a-fA-F]+))?(\.([0-9a-fA-F]+))?(\s+(.*?))?\s*$/) {
+
+          $range = $3 ? hex($3) : undef;
+          $class = $5 ? sprintf("%05x", hex($5)) : undef;
+          $id1 = [ $tag, hex($1), $range ];
+          $val = [ $7, $class, "$f($l)" ];
+
+          $id1->[2] = 0x10000 - $id1->[1] if $id1->[1] + $id1->[2] > 0x10000;
+
+          die "invalid line: $f($l)\n" unless defined($val->[0]) || defined($val->[1]);
+
+          add_name $val, $id0, $id1;
+        }
+
+        elsif($tag == $tag{'class'} && /^\t\t([0-9a-fA-F]+)\s+(.*?)\s*$/) {
+
+          $id2 = [ $tag, hex($1) ];
+          $id3 = undef;
+          $val = [ $2, undef, "$f($l)" ];
+
+          add_name $val, $id0, $id1, $id2;
+        }
+
+        elsif(/^\t\t([0-9a-fA-F]{4})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?(\.([0-9a-fA-F]+))?(\s+(.*?))?\s*$/) {
+
+          $range = $4 ? hex($4) : undef;
+          $class = $6 ? sprintf("%05x", hex($6)) : undef;
+          $id2 = [ $tag, hex($1) ];
+          $id3 = [ $tag, hex($2), $range ];
+          $val = [ $8, $class, "$f($l)" ];
+
+          die "invalid line: $f($l)\n" unless defined($val->[0]) || defined($val->[1]);
+
+          add_name $val, $id0, $id1, $id2, $id3;
+        }
+
+        elsif(/^\t\t([a-zA-Z_@]{3})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?(\.([0-9a-fA-F]+))?(\s+(.*?))?\s*$/) {
+
+          $range = $4 ? hex($4) : undef;
+          $class = $6 ? sprintf("%05x", hex($6)) : undef;
+          $id2 = [ $tag, eisa_id($1) ];
+          $id3 = [ $tag, hex($2), $range ];
+          $val = [ $8, $class, "$f($l)" ];
+
+          die "invalid line: $f($l)\n" unless defined($val->[0]) || defined($val->[1]);
+
+          add_name $val, $id0, $id1, $id2, $id3;
+        }
+
+        elsif(/^\t\t([0-9a-fA-F]{4})([0-9a-fA-F]{4})\s+(.*?)\s*$/) {
+
+          # NOTE: subvendor & subdevice ids are reversed!
+          $id2 = [ $tag, hex($2) ];
+          $id3 = [ $tag, hex($1) ];
+          $val = [ $3, undef, "$f($l)" ];
+
+          add_name $val, $id0, $id1, $id2, $id3;
+        }
+
+        else {
+          die "invalid line: $f($l)\n";
+        }
+      }
+    }
+
+    if($format eq 'drivers') {
+      print STDERR "***\n*** \"$f\" has driver info\n***\n";
+
+      for (@f) {
+        $l++;
+        chomp;
+        s/\s*$//;
+        next if /^[#;]/;
+        next if /^$/;
+
+        if(/^([us]?)([0-9a-fA-F]{4})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?\s*$/) {
+
+          if($new_drv_idx) { $drv_idx++; undef $new_drv_idx }
+
+          $range = $5 ? hex($5) : undef;
+          $tag = $tag{'pci'};
+          $tag = $tag{'usb'} if $1 eq 'u';
+          $tag = $tag{'special'} if $1 eq 's';
+          $id0 = [ $tag, hex($2) ];
+          $id1 = [ $tag, hex($3), $range ];
+
+          push @{$driver[$drv_idx][0]}, [ $id0, $id1 ];
+        }
+
+        elsif(/^([a-zA-Z_@]{3})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?\s*$/) {
+
+          if($new_drv_idx) { $drv_idx++; undef $new_drv_idx }
+
+          $range = $4 ? hex($4) : undef;
+          $id0 = [ $tag{'eisa'}, eisa_id($1) ];
+          $id1 = [ $tag{'eisa'}, hex($2), $range ];
+
+          push @{$driver[$drv_idx][0]}, [ $id0, $id1 ];
+        }
+
+        elsif(/^([us]?)([0-9a-fA-F]{4})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?\s+([us]?)([0-9a-fA-F]{4})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?\s*$/) {
+
+          if($new_drv_idx) { $drv_idx++; undef $new_drv_idx }
+
+          $range = $5 ? hex($5) : undef;
+          $tag = $tag{'pci'};
+          $tag = $tag{'usb'} if $1 eq 'u';
+          $tag = $tag{'special'} if $1 eq 's';
+          $id0 = [ $tag, hex($2) ];
+          $id1 = [ $tag, hex($3), $range ];
+
+          $range = $10 ? hex($10) : undef;
+          $id2 = [ $tag, hex($7) ];
+          $id3 = [ $tag, hex($8), $range ];
+
+          push @{$driver[$drv_idx][0]}, [ $id0, $id1, $id2, $id3 ];
+        }
+
+        elsif(/^([a-zA-Z_@]{3})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?\s+([a-zA-Z_@]{3})\s+([0-9a-fA-F]{4})(\+([0-9a-fA-F]+))?\s*$/) {
+
+          if($new_drv_idx) { $drv_idx++; undef $new_drv_idx }
+
+          $range = $4 ? hex($4) : undef;
+          $id0 = [ $tag{'eisa'}, eisa_id($1) ];
+          $id1 = [ $tag{'eisa'}, hex($2), $range ];
+
+          $range = $8 ? hex($8) : undef;
+          $id2 = [ $tag{'eisa'}, eisa_id($5) ];
+          $id3 = [ $tag{'eisa'}, hex($6), $range ];
+
+          push @{$driver[$drv_idx][0]}, [ $id0, $id1, $id2, $id3 ];
+        }
+
+        elsif(/^\t([a-z])\s+(.*?)\s*$/) {
+
+          push @{$driver[$drv_idx][1]}, [ $1, [ (split /\|/, $2) ] ];
+          $new_drv_idx = 1;
+        }
+
+        elsif($new_drv_idx && /^\t\t(.*)$/) {
+          push @{$driver[$drv_idx][1][-1][2]}, $1;
+        }
+
+        else {
+          die "invalid line: $f($l)\n";
+        }
+      }
+    }
+
   }
   else {
-    print STDERR "failed to open $f\n"
+    die "failed to open $f\n"
   }
 }
 
+if($get_names) {
+  $struct = "dev";
 
+  @name = sort cmp_ent @name;
 
-exit;
+  open F, ">hd.names";
+  select F;
+  dump_names;
+  close F;
 
-=head1
-for (sort keys %spec) {
-  dump_entries $_;
+  open F, ">names.c";
+  select F;
+  dump_nums;
+  close F;
+
+  mk_short_num;
+  $short = "_s";
+
+  open F, ">names${short}.c";
+  select F;
+  dump_nums;
+  close F;
 }
-=cut
+
+select STDOUT;
+
+undef $short;
+undef @name_str;
+undef @name_ofs;
+undef %name_ofs;
+
+if($get_drivers) {
+  $struct = "drv";
+
+  merge_sax;
+
+  open F, ">hd.drivers";
+  select F;
+  dump_drivers;
+  close F;
+
+  @num = @dnum;
+
+  open F, ">drivers.c";
+  select F;
+  dump_nums;
+  close F;
+}
+
+select STDOUT;
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+sub eisa_id
+{
+  my ( $str, $id, $i, $j );
+
+  $str = shift;
+  $id = 0;
+
+  die "internal oops" unless length($str) == 3;
+  for($i = 0; $i < 3; $i++) {
+    $id <<= 5;
+    $j = ord substr $str, $i, 1;
+    $j -= ord('A') - 1;
+    die "internal oops" unless $j >= 0 && $j <= 0x1f;
+    $id += $j;
+  }
+  
+  return $id;
+}
+
+sub eisa_str
+{
+  my ( $id, $str );
+
+  $id = shift;
+
+  die "internal oops" unless $id >= 0 && $id <= 0x7fff;
+
+  $str  = chr((($id >> 10) & 0x1f) + ord('A') - 1);
+  $str .= chr((($id >>  5) & 0x1f) + ord('A') - 1);
+  $str .= chr(( $id        & 0x1f) + ord('A') - 1);
+
+  return $str;
+}
+
 #
 # returns 1 if id1 > id2, 0 if id1 == id2, -1 if id1 < id2
 #
@@ -155,7 +392,7 @@ sub cmp_id
 
   return 1 if !defined($id2);
 
-  $res = $id1->[0] <=> $id2->[0];
+  $res = $tag_sort[$id1->[0]] <=> $tag_sort[$id2->[0]];
   return $res if $res;
   
   $res = ($id1->[1] + $id1->[2]) <=> ($id2->[1] + $id2->[2]);
@@ -173,11 +410,49 @@ sub cmp_id
   return $id1->[2] <=> $id2->[2];
 }
 
+#
+# suitable for sort
+#
+sub cmp_ent
+{
+  my ($i);
+
+  $i = cmp_id $a->[0], $b->[0];
+  return $i if $i;
+  
+  $i = cmp_id $a->[1], $b->[1];
+  return $i if $i;
+  
+  $i = cmp_id $a->[2], $b->[2];
+  return $i if $i;
+  
+  $i = cmp_id $a->[3], $b->[3];
+  
+  return $i;
+}
+
+sub mk_hash
+{
+  my ( $ent, $id0, $id1, $id2, $id3 );
+
+  $ent = shift;
+
+  $id0 = "$ent->[0][0].$ent->[0][1].$ent->[0][2]" if defined $ent->[0];
+  $id1 = "$ent->[1][0].$ent->[1][1].$ent->[1][2]" if defined $ent->[1];
+  $id2 = "$ent->[2][0].$ent->[2][1].$ent->[2][2]" if defined $ent->[2];
+  $id3 = "$ent->[3][0].$ent->[3][1].$ent->[3][2]" if defined $ent->[3];
+
+  return "$id0:$id1:$id2:$id3";
+}
+
+
 sub find_name
 {
   my ( $ent, $ind, $id1, $id2 );
 
   $ent = shift;
+
+  if($fast) { return undef unless exists $name_f{mk_hash $ent} }
 
   for($ind = 0; $ind < @name; $ind++) {
     next if cmp_id $name[$ind]->[0], $ent->[0];
@@ -189,6 +464,52 @@ sub find_name
 
   return undef;
 }
+
+sub join_name
+{
+  my ( $ent, $new_ent, $val, $new_val );
+
+  ( $ent, $new_ent ) = @_;
+
+  $val = $ent->[4];
+  $new_val = $new_ent->[4];
+
+  if(defined $val->[0]) {
+    if(defined $new_val->[0]) {
+      if($val->[0] ne $new_val->[0]) {
+        print STDERR "name conflict: $new_val->[2] vs. $val->[2]: \"$new_val->[0]\" != \"$val->[0]\"\n";
+# take the longer entry???
+#        if(length($new_val->[0]) > length($val->[0])) {
+#          $val->[0] = $new_val->[0];
+#          $val->[2] = $new_val->[2];
+#        }
+      }
+#      else {
+#        print STDERR "ok0: $new_val->[2] vs. $val->[2]: \"$new_val->[0]\" == \"$val->[0]\"\n";
+#      }
+    }
+  }
+  else {
+    $val->[0] = $new_val->[0];
+    $val->[2] = $new_val->[2];
+  }
+
+  if(defined $val->[1]) {
+    if(defined $new_val->[1]) {
+      if($val->[1] ne $new_val->[1]) {
+        print STDERR "class_id conflict: $new_val->[2] vs. $val->[2]: \"$new_val->[1]\" != \"$val->[1]\"\n";
+      }
+#      else {
+#        print STDERR "ok1: $new_val->[2] vs. $val->[2]: \"$new_val->[1]\" == \"$val->[1]\"\n";
+#      }
+    }
+  }
+  else {
+    $val->[1] = $new_val->[1];
+    $val->[2] = $new_val->[2] if defined $val->[1];
+  }
+}
+
 
 #
 # args: val, id1, id2, id3, id4
@@ -206,245 +527,509 @@ sub add_name
 
   if(!defined($ind)) {
     push @name, $ent;
+    if($fast) { $name_f{mk_hash $ent} = 1 }
   }
   else {
-    print STDERR "join $ind\n";
+    join_name $name[$ind], $ent;
   }
 }
 
-#
-# args: drv, id1, id2, id3, id4
-#
-# drv: ( type, [ standard info ], [ extended info ] ) 
-#
-sub add_drv
+sub name_ofs
 {
+  my ( $str );
+
+  $str = "$_[0]";
+
+  if(!exists($name_ofs{$str})) {
+    if(@name_ofs > 0) {
+      push @name_ofs, length($name_str[-1]) + $name_ofs[-1] + 1;
+      push @name_str, $str;
+    }
+    else {
+      @name_ofs = ( 0 );
+      push @name_str, $str;
+    }
+    $name_ofs{$str} = $name_ofs[-1];
+  }
+
+  return $name_ofs{$str};
 }
 
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-sub dump_entries
+sub id2str
 {
-  my ($et, @a, @b, @c, $s, $t, $i, $j, $k, $z);
-  local $_;
+  my ( $i, $j, $k, $level, $id, $val );
 
-  $et = shift;
+  ( $level, $id, $val ) = @_;
 
-  for (sort keys %$et) {
-    @a = @{$$et{$_}};
-    $i = ${$spec{$et}}[0];
-    $i .= " " if $i;
-    $k = $a[1];
-    $k = substr($k, 0, 1) if $reduced && !${$spec{$et}}[0];
-    if(!$i && !$k) { $k = $_ }
-    @z = keys %{$a[0]};
-    if(!$mini || @z || $a[3] || ${$spec{$et}}[0]) {
-      print "$i$_\t$k\n";
+  if($level == 0) {
+    if($id->[0] == $tag{'pci'}) {
+      $i = sprintf "%04x", $id->[1];
     }
-    for $s (sort keys %{$a[0]}) {
-      @b = @{$a[0]{$s}};
-      $i = $b[2];
-      $i = ".$i" if $i;
-      $j = $b[3];
-      $j = "[$j] " if $j;
-      $k = $b[1];
-      $k = substr($k, 0, 1) if $reduced;
-      @z = keys %{$b[0]};
-      if(!$mini || @z || $b[3]) {
-        print "\t$s$i\t$j$k\n";
-        for $t (sort keys %{$b[0]}) {
-          @c = @{$b[0]{$t}};
-          $i = $c[2];
-          $i = ".$i" if $i;
-          $j = $c[3];
-          $j = "[$j] " if $j;
-          $k = $c[1];
-          $k = substr($k, 0, 1) if $reduced;
-          print "\t\t$t$i\t$j$k\n"
-        }
+    elsif($id->[0] == $tag{'eisa'}) {
+      $i = sprintf "%s", eisa_str($id->[1]);
+    }
+    elsif($id->[0] == $tag{'usb'}) {
+      $i = sprintf "u%04x", $id->[1];
+    }
+    elsif($id->[0] == $tag{'special'}) {
+      $i = sprintf "s%04x", $id->[1];
+    }
+    elsif($id->[0] == $tag{'bus'}) {
+      $i = sprintf "B %02x", $id->[1];
+    }
+    elsif($id->[0] == $tag{'class'}) {
+      $i = sprintf "C %03x", $id->[1];
+    }
+    else {
+      die "unknown id format at $val->[2]: $id->[0]\n";
+    }
+  }
+  elsif($level == 2 && $id->[0] == $tag{'eisa'}) {
+    $i = sprintf "%s", eisa_str($id->[1]);
+  }
+  elsif($id->[0] == $tag{'class'}) {
+    $i = sprintf "%02x", $id->[1];
+  }
+  else {
+    $i = sprintf "%04x", $id->[1];
+  }
+
+  if(defined $id->[2]) {
+    $j = sprintf "+%x", $id->[2];
+  }
+
+  if(($level == 1 || $level == 3) && defined($val->[1])) {	# class spec
+    $k = sprintf ".%s", $val->[1];
+  }
+
+  return "$i$j$k";
+}
+
+sub id2num
+{
+  my ( @r, $level, $id, $val );
+
+  ( $level, $id, $val ) = @_;
+
+  $r[0] = ($id->[0] << 16) + $id->[1] + ($level << 29);
+
+  if(defined $id->[2]) {
+    push @r, $id->[2] + (4 << 29);
+  }
+
+  if(($level == 1 || $level == 3) && defined($val->[1])) {	# class spec
+    push @r, hex($val->[1]) + (6 << 29);
+  }
+
+  return @r;
+}
+
+sub issue_name0
+{
+  my ( @r, $r, $id, $val, $v );
+
+  ( $id, $val ) = @_;
+
+  $v = id2str 0, $id, $val;
+  print "$v\t$val->[0]\n";
+
+  @r = id2num 0, $id, $val;
+  for $r (@r) { push @num, $r } 
+  $r = name_ofs $val->[0];
+  push @num, $r + (5 << 29);
+}
+
+sub issue_name1
+{
+  my ( $id, $val, $v );
+
+  ( $id, $val ) = @_;
+
+  $v = id2str 1, $id, $val;
+  
+  if(defined $val->[0]) {
+    print "\t$v\t$val->[0]\n";
+  }
+  else {
+    print "\t$v\n";
+  }
+
+  @r = id2num 1, $id, $val;
+  for $r (@r) { push @num, $r } 
+  $r = name_ofs $val->[0];
+  push @num, $r + (5 << 29);
+}
+
+sub issue_name2
+{
+  my ( $id, $val, $v );
+
+  ( $id, $val ) = @_;
+
+  $v = id2str 2, $id, $val;
+  
+  print "\t\t$v\t$val->[0]\n";
+
+  @r = id2num 2, $id, $val;
+  for $r (@r) { push @num, $r } 
+  $r = name_ofs $val->[0];
+  push @num, $r + (5 << 29);
+}
+
+sub issue_name23
+{
+  my ( $id2, $id3, $val, $v2, $v3 );
+
+  ( $id2, $id3, $val ) = @_;
+
+  $v2 = id2str 2, $id2, $val;
+  $v3 = id2str 3, $id3, $val;
+  
+  if(defined $val->[0]) {
+    print "\t\t$v2 $v3\t$val->[0]\n";
+  }
+  else {
+    print "\t\t$v2 $v3\n";
+  }
+
+  @r = id2num 2, $id2, $val;
+  for $r (@r) { push @num, $r } 
+  @r = id2num 3, $id3, $val;
+  for $r (@r) { push @num, $r } 
+  $r = name_ofs $val->[0];
+  push @num, $r + (5 << 29);
+}
+
+sub dump_names
+{
+  my ( $id0, $id1, $id2, $id3, $i, $j );
+
+  name_ofs "";
+
+  for $n (@name) {
+    $i = cmp_id $id0, $n->[0];
+    if($i) {
+      $id0 = $n->[0];
+      $id1 = $id2 = $id3 = undef;
+      issue_name0 $id0, $n->[4];
+      if(defined($n->[1]) || defined($n->[2]) || defined($n->[3])) {
+        die "format oops at $n->[4][2]";
+      }
+      next;
+    }
+
+    $i = cmp_id $id1, $n->[1];
+    if($i) {
+      $id1 = $n->[1];
+      $id2 = $id3 = undef;
+      issue_name1 $id1, $n->[4];
+      if(defined($n->[2]) || defined($n->[3])) {
+        die "format oops at $n->[4][2]";
+      }
+      next;
+    }
+
+    $i = cmp_id $id2, $n->[2];
+    $j = cmp_id $id3, $n->[3];
+    if($i || $j) {
+      $id2 = $n->[2];
+      $id3 = $n->[3];
+      if($id0->[0] == $tag{'class'}) {
+        issue_name2 $id2, $n->[4];
+      }
+      else {
+        issue_name23 $id2, $id3, $n->[4];
+      }
+      next;
+    }
+  }
+}
+
+sub dump_nums
+{
+  local ( $_ );
+  my ( $i, $j, $s, $sl );
+
+  print "#include <stdio.h>\n#include \"hd.h\"\n\n";
+
+  printf "unsigned hddb_${struct}_data${short}[%u] = {\n", scalar(@num);
+  for($i = 0; $i < @num; $i++) {
+    if(($i % 6) == 0) { print "  " }
+    printf "0x%08x", $num[$i];
+    if($i == @num - 1) {
+      print "\n"
+    }
+    else {
+      if(($i % 6) == 5) {
+        print ",\n"
+      }
+      else {
+        print ", "
       }
     }
   }
-}
-# [ { }, $val, $class, $drv, $file, $line ];
+  print "};\n\n";
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-sub add_entry
-{
-  my ($type, $key, $val, $file, $line);
-  my ($h, @a);
+  if(!$short) {
+    $j = length($name_str[-1]) + $name_ofs[-1] + 1;
+    for (@name_str) { $s .= "$_\x00" }
 
-  ($type, $key, $val, $file, $line) = @_;
+    die "internal oops" if length($s) != $j;
 
-  return undef unless exists $spec{$type};
+    $s =~ s/(["\\])/\\$1/g;
+    $s =~ s/\t/\\t/g;
+    $s =~ s/\n/\\n/g;
+    $s =~ s/([\x00-\x1f])/sprintf("\\%03o", ord($1))/eg;
 
-#  print "$type, $key, $val, $file, $line\n";
+    $sl = length $s;
 
-  if(${$spec{$type}}[1]) {
-    $key = hex $key;
-    $h = sprintf("%x", $key);
-    if(length($h) > ${$spec{$type}}[1]) {
-      print STDERR "invalid $type entry: $file($line): $h \"$val\"\n";
-      return undef
+    printf "char hddb_${struct}_names${short}[%u] = \"\\\n", $j;
+    for($i = 0; $i < $sl; $i += 72) {
+      printf "%s\\\n", substr($s, $i, 72)
     }
-    $key = sprintf "%0${$spec{$type}}[1]x", $key
-  }
-  else {
-    $key = "\U$key"
+    print "\";\n\n";
   }
 
-  if(exists $$type{$key}) {
-    @a = @{$$type{$key}};
-    if($val && $a[1] && $val ne $a[1]) {
-      print STDERR "$type($key) entry: $file,$line: \"$val\" contradicts $a[4],$a[5]: \"$a[1]\"\n";
-      return $key
-    }
-    if($val) { ${$$type{$key}}[1] = $val; }
-  }
-  else {
-    $$type{$key} = [ { }, $val, undef, undef, $file, $line ];
-  }
+  print "hddb_data_t hddb_$struct$short = {\n";
+  printf "  %u, %u, hddb_${struct}_data$short,\n", scalar(@num), scalar(@num);
+  printf "  %u, %u, %s\n", $j, $j, $short ? "NULL" : "hddb_${struct}_names";
+  print "};\n\n";
 
-  return $key;
 }
 
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-sub add_subentry
+sub mk_short_num
 {
-  my ($type, $entry, $key, $val, $class, $drv, $file, $line);
-  my ($a, @a, $h, $i);
+  local ( $_ );
+  my (@n1, @n2, $v, $t, $i, @id, @r, $l, $w, $j );
 
-  ($type, $entry, $key, $val, $class, $drv, $file, $line) = @_;
+  # remove name entries
+  for (@num) { push @n1, $_ unless (($_ >> 29) & 7) == 5 }
 
-  return undef unless exists $spec{$type};
+  #remove bus & class entries
+  for (@n1) {
+    $v = $_ & ((1 << 29) - 1);
+    $f = ($_ >> 29) & 7;
+    $t = $v >> 16;
+    push @n2, $_ unless $f < 4 && ($t == $tag{'bus'} || $t == $tag{'class'})
+  }
+  undef @n1;
 
-#  print "$type, $entry, $key, $val, $class, $drv, $file, $line\n";
+  # remove everything that gives no class spec
 
-  if(${$spec{$type}}[2]) {
-    $key = hex $key;
-    $h = sprintf("%x", $key);
-    if(length($h) > ${$spec{$type}}[2]) {
-      print STDERR "invalid sub$type entry: $file($line): $h \"$val\"\n";
-      return undef
+  # the code is rather messy but apparently works; it might still be wrong
+  # somehow; but at least it will not leave out data, it's just possible
+  # that some entries are added that are superfluous
+
+  $l = $w = 0;
+  for (@n2) {
+    $v = $_ & ((1 << 29) - 1);
+    $f = ($_ >> 29) & 7;
+
+    $l = $f if $f < 4;
+    $w = $l if $l < $w;
+#    printf "%08x, w = %d, l = %d, j = %d, f = %d\n", $_, $w, $l, $j, $f;
+    if($f == 0) {
+      $id[0] = $_;
+      $id[1] = $id[2] = $id[3] = undef;
+      $r[0] = $r[1] = $r[2] = $r[3] = undef;
     }
-    $key = sprintf "%0${$spec{$type}}[2]x", $key
-  }
-
-  if($class) {
-    $class = hex $class;
-    $h = sprintf("%x", $class);
-    $i = ${$spec{'class'}}[1] + ${$spec{'class'}}[2];
-    if(length($h) > $i) {
-      print STDERR "invalid class spec: $file($line): \"$h\"\n";
-      return undef
+    elsif($f == 1) {
+      $id[1] = $_;
+      $id[2] = $id[3] = undef;
+      $r[1] = $r[2] = $r[3] = undef;
     }
-    $class = sprintf "%0${i}x", $class
+    elsif($f == 2) {
+      $id[2] = $_;
+      $id[3] = undef;
+      $r[2] = $r[3] = undef;
+    }
+    elsif($f == 3) {
+      $id[3] = $_;
+      $r[3] = undef;
+    }
+    elsif($f == 4) {
+      $r[$l] = $_;
+    }
+    elsif($f == 6) {
+      for($j = $w; $j <= $l; $j++) {
+#        printf "%08x, w = %d, l = %d, j = %d\n", $id[$j], $w, $l, $j;
+        push @n1, $id[$j];
+        push @n1, $r[$j] if defined $r[$j];
+      }
+      $w = $l + 1;
+      push @n1, $_;
+    }
+    else {
+      die "internal oops"
+    }
   }
 
-  $a = ${$$type{$entry}}[0];
+  @num = @n1;
+}
 
-  if(exists ${$a}{$key}) {
-    @a = @{${$a}{$key}};
+sub issue_drv
+{
+  my ( $level, $id, @r );
 
-    if(
-      ($val && $a[1] && $val ne $a[1]) ||
-      ($class && $a[2] && $class ne $a[2]) ||
-      ($drv && $a[3] && $drv ne $a[3])
-    ) {
-      print STDERR "sub$type($key) entry: $file,$line: \"$val\" contradicts $a[4],$a[5]: \"$a[1]\"\n";
+  ( $level, $id ) = @_;
+
+#  printf "> %u %u:%04x\n", $level, $id->[0], $id->[1];
+
+  @r = id2num $level, $id;
+  for $r (@r) { push @dnum, $r }
+}
+
+#
+# driver info structure:
+# @{$driver[$drv_idx]->[0]}: array of refs to [ $id0, $id1, $id2, $id3 ]
+# @{$driver[$drv_idx]->[1]}: array of refs to [ info_type , [ info0, ... ], [ xtra_info0, ... ] ]
+#
+sub dump_drivers
+{
+  local ( $_ );
+  my ( $d, $i, @i, $id0, $id1, $id2, $id3, $v0, $v1, $v2, $v3 );
+
+  return unless @driver;
+
+  name_ofs "";
+
+  for $d (@driver) {
+
+    # first the device ids
+
+    @i = @{$d->[0]};
+    die "format oops: no ids?" if @i == 0;
+
+    $id0 = $id1 = $id2 = $id3 = undef;
+
+    for $i (@i) {
+      if(cmp_id $id0, $i->[0]) {
+        $id0 = $i->[0];
+        $id1 = $id2 = $id3 = undef;
+        issue_drv 0, $id0;
+      }
+
+      if(cmp_id $id1, $i->[1]) {
+        $id1 = $i->[1];
+        $id2 = $id3 = undef;
+        issue_drv 1, $id1;
+      }
+
+      if(cmp_id $id2, $i->[2]) {
+        $id2 = $i->[2];
+        $id3 = undef;
+        issue_drv 2, $id2;
+      }
+
+      if(cmp_id $id3, $i->[3]) {
+        $id3 = $i->[3];
+        issue_drv 3, $id3;
+      }
+
+      die "format oops" unless defined($id0) && defined($id1);
+      die "format oops" if defined($id2) && !defined($id3);
+
+      $v0 = id2str 0, $id0;
+      $v1 = id2str 1, $id1;
+      if(defined($id2)) {
+        $v2 = id2str 2, $id2;
+        $v3 = id2str 3, $id3;
+      }
+      else {
+        $v2 = $v3 = undef;
+      }
+      print "$v0 $v1";
+      print " $v2 $v3" if defined $v2;
+      print "\n";
     }
 
-    if($val && !$a[1]) { ${${$a}{$key}}[1] = $val; }
+    # now the driver info
 
-    if($class && !$a[2]) { ${${$a}{$key}}[2] = $class; }
+    @i = @{$d->[1]};
 
-    if($drv && !$a[3]) { ${${$a}{$key}}[3] = $drv; }
+    for $i (@i) {
+      $v0 = $i->[0];
+      $v1 = join '|', @{$i->[1]};
+      die "format oops" if $v1 eq "";
 
+      push @dnum, (ord($v0) & 0xff) + (6 << 29);
+
+      for ($v1, @{$i->[2]}) {
+        push @dnum, name_ofs($_) + (5 << 29);
+      }
+
+      print "\t$v0\t$v1\n";
+      for (@{$i->[2]}) { print "\t\t$_\n" }
+    }
   }
-  else {
-    ${$a}{$key} = [ { }, $val, $class, $drv, $file, $line ];
-  }
-
-  return $key;
 }
 
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-sub add_subsubentry
+=head1
+# sax info: $sax{"$id0 $id1"} = $5;
+# driver info structure:
+# @{$driver[$drv_idx]->[0]}: array of refs to [ $id0, $id1, $id2, $id3 ]
+# @{$driver[$drv_idx]->[1]}: array of refs to [ info_type , [ info0, ... ], [ xtra_info0, ... ] ]
+#
+=cut
+
+sub merge_sax
 {
-  my ($type, $entry, $subentry, $key, $key2, $val, $class, $drv, $file, $line);
-  my ($a, @a, $h, $i);
+  local ( $_ );
+  my ( $d, $i, $v, $s, $t, %d );
 
-  ($type, $entry, $subentry, $key, $key2, $val, $class, $drv, $file, $line) = @_;
+  for $d (@driver) {
+    for $i (@{$d->[0]}) {
+      die "format oops" unless defined($i->[0]) && defined($i->[1]);
+      if(
+        $i->[0][0] == $tag{'pci'} &&
+        !defined($i->[2]) &&
+        !defined($i->[0][2]) &&
+        !defined($i->[1][2])
+      ) {
+        $v = sprintf "%04x %04x", $i->[0][1], $i->[1][1];
+        $s = exists($sax{$v}) ? $sax{$v} : undef;
+        $t = $s && $d->[1][0][0] eq 'x' ? $d->[1][0][1][0] : undef;
+        if($s) {
+          if($s ne $t) {
+            printf STDERR "SaX driver info conflict: pci id %04x %04x: \"%s\"(SaX) != \"%s\"\n", $i->[0][1], $i->[1][1], $s, $t
+          }
+          else {
+            delete $sax{$s};
+          }
+        }
+      }
 
-  return undef unless exists $spec{$type};
-
-#  print "$type, $entry, $subentry, $key, $key2, $val, $class, $drv, $file, $line\n";
-
-  if(${$spec{$type}}[3]) {
-    $key = hex $key;
-    $h = sprintf("%x", $key);
-    if(length($h) > ${$spec{$type}}[3]) {
-      print STDERR "invalid subsub$type entry1: $file($line): $h \"$val\"\n";
-      return undef
     }
-    $key = sprintf "%0${$spec{$type}}[3]x", $key
-  }
-  else {
-    $key = "\U$key"
   }
 
-  if(${$spec{$type}}[4]) {
-    $key2 = hex $key2;
-    $h = sprintf("%x", $key2);
-    if(length($h) > ${$spec{$type}}[4]) {
-      print STDERR "invalid subsub$type entry2: $file($line): $h \"$val\"\n";
-      return undef
+  for (sort keys %sax) {
+    ( $v, $d ) = split;
+    $v = hex $v; $d = hex $d;
+    if(exists($d{$sax{$_}})) {
+      # see if we can simply extend the range of the previous id
+      if($d{$sax{$_}}[0][-1][0][1] == $v) {
+        if($d{$sax{$_}}[0][-1][1][2]) {
+          if($d{$sax{$_}}[0][-1][1][1] + $d{$sax{$_}}[0][-1][1][2] == $d) {
+            $d{$sax{$_}}[0][-1][1][2]++;
+            next;
+          }
+        }
+        else {
+          if($d{$sax{$_}}[0][-1][1][1] + 1 == $d) {
+            $d{$sax{$_}}[0][-1][1][2] = 2;
+            next;
+          }
+        }
+      }
     }
-    $key2 = sprintf "%0${$spec{$type}}[4]x", $key2
-  }
-  else {
-    $key2 = "\U$key2"
+    push @{$d{$sax{$_}}[0]}, [ [ $tag{'pci'}, $v ], [ $tag{'pci'}, $d ] ];
   }
 
-  $key .= $key2;
-
-  if($class) {
-    $class = hex $class;
-    $h = sprintf("%x", $class);
-    $i = ${$spec{'class'}}[1] + ${$spec{'class'}}[2];
-    if(length($h) > $i) {
-      print STDERR "invalid class spec: $file($line): \"$h\"\n";
-      return undef
-    }
-    $class = sprintf "%0${i}x", $class
+  for (sort keys %d) {
+    $d{$_}[1][0] = [ 'x', [ $_ ] ];
+    push @driver, $d{$_}
   }
-
-  $a = ${${$$type{$entry}}[0]}{$subentry}[0];
-
-  if(exists ${$a}{$key}) {
-    @a = @{${$a}{$key}};
-
-    if(
-      ($val && $a[1] && $val ne $a[1]) ||
-      ($class && $a[2] && $class ne $a[2]) ||
-      ($drv && $a[3] && $drv ne $a[3])
-    ) {
-      print STDERR "subsub$type($key) entry: $file,$line: \"$val\" contradicts $a[4],$a[5]: \"$a[1]\"\n";
-    }
-
-    if($val && !$a[1]) { ${${$a}{$key}}[1] = $val; }
-
-    if($class && !$a[2]) { ${${$a}{$key}}[2] = $class; }
-
-    if($drv && !$a[3]) { ${${$a}{$key}}[3] = $drv; }
-
-  }
-  else {
-    ${$a}{$key} = [ { }, $val, $class, $drv, $file, $line ];
-  }
-
-  return $key;
 }
 

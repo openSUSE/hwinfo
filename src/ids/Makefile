@@ -1,22 +1,18 @@
 TOPDIR		= ../..
 TARGETS		= $(LIBHD_D)
-CLEANFILES	= *.c *.err id_list id_list_r
+CLEANFILES	= *.c *.err hd.names hd.drivers
 
 include $(TOPDIR)/Makefile.common
 
-IDFILES = id_list.bus id_list.class id_list.monitor id_list.eisa \
-	  pci.ids id_list.pci id_list.compat \
-	  pci.driver Identity
+IDFILES = names.SuSE names.bus names.class names.eisa names.monitor\
+	  names.pciutils names.SaX\
+	  drivers.SuSE
 
-OBJS	+= id_list.o id_list_r.o
+OBJS	+= names.o names_s.o drivers.o
 
 $(LIBHD_D): $(OBJS)
 	ar r $(LIBHD) $?
 
-id_list.c: $(IDFILES)
-	./mk_ids $(IDFILES) 2>$*.err >$*
-	./mk_include $* >$@
+names.c names_s.c drivers.c: $(IDFILES)
+	./mk_ids $(IDFILES) 2>mk_ids.err
 
-id_list_r.c: $(IDFILES)
-	@./mk_ids -r $(IDFILES) 2>$*.err >$*
-	@./mk_include $* >$@

@@ -4,7 +4,7 @@
 #	Maintained by Martin Mares <pci-ids@ucw.cz>
 #	If you have any new entries, send them to the maintainer.
 #
-#	$Id: pci.ids,v 1.1 1999/12/10 13:48:23 snwint Exp $
+#	$Id: names.pciutils,v 1.1 2000/01/17 10:06:30 snwint Exp $
 #
 
 # Vendors, devices and subsystems. Please keep sorted.
@@ -14,6 +14,7 @@
 #	device  device_name				<-- single tab
 #		subvendor subdevice  subsystem_name	<-- two tabs
 
+0000  Gammagraphx, Inc.
 001a  Ascend Communications, Inc.
 0033  Paradyne corp.
 003d  Lockheed Martin-Marietta Corp

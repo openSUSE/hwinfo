@@ -1,0 +1,29 @@
+1000	
+	000a	53C1510D
+1011	
+	1065	DAC960
+1039	
+	7016	SiS 7016 (RealTek RTL8139) Fast Ethernet
+1050	
+	5a5a	Winbond
+10b7	
+	5055	3c555 Laptop Hurricane
+	6560	3CCFE656 Cyclone CardBus
+	7646	3cSOHO100-TX Hurricane
+10ec	
+	8138	RTL8139B
+1101	
+	0002	INI-A100U2W
+	1060	INI-A100U2W
+11ad	
+	c115	Lite-On LC82C115 PNIC-II
+12c3	
+	0058	HT80232
+	5598	HT80229
+12eb	Aureal Semiconductor
+	0001	AU8820 Vortex Digital Audio Processor
+		5053 3355	TBS Montego A3D
+134a	
+	0002	INI-920
+ADP	Adaptec
+	1505.00100	Adaptec AVA-1505AE

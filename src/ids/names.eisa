@@ -1,0 +1,29 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# EISA vendor/device ids (ISA Plug & Play)
+#
+# ids with vendor 'PNP' are compatible device ids (e.g. for non-PnP stuff)
+# see devids.txt for a full list
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+CTL	Creative Technology Ltd.
+	009e.00401	Creative SB AWE64 Gold
+		CTL 0044	AWE64 Gold 16-bit Audio (SB16 compatible)
+		CTL 7002	Programmable Game Port
+ELS	ELSA International
+	0133.10300	ELSA QuickStep 1000
+LGI	Logitech
+	8001	Logitech First/Pilot Maus
+	800c	Logitech MouseMan
+PNP	PnP
+	0500	Standard PC COM port
+	0501	16550A-compatible COM port
+	0f04	Mouse Systems Mouse
+	0f0a	Microsoft Mouse
+	0f0c	MS-Compatible Serial Mouse
+	0f0e	Generic PS/2 Mouse
+	0f90	Bus Mouse
+	80d6.00200	NE2000 Compatible
+	b02f	Joystick/Game port
+

@@ -1,6 +1,5 @@
 CC	= gcc
 CFLAGS	= -Wall -O2 -fomit-frame-pointer -I$(TOPDIR)/src/hd
-# CFLAGS	= -Wall -g -O -I$(TOPDIR)/src/hd
 LDFLAGS	= -Lsrc -lhd
 
 CFILES	= $(wildcard *.c)

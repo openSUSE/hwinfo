@@ -1,3 +1,5 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
 # List of monitor ids; sources:
 #
 #   - Feedback from Beta Testers
@@ -7,10 +9,11 @@
 # Note: you don't need to give monitors the monitor class; this is done
 # implicitly by the hardware scan program. But you *can* mark them as LCD or
 # CRT monitors, for example.
-
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 AOC	AOC International (USA) Ltd.
-	A566	[d|1280x1024|30-64|50-100|85] AOC SPECTRUM 5Nlr
+	A566	AOC SPECTRUM 5Nlr
 	A782	AOC SPECTRUM 7Nlr
 	D350	AOC SPECTRUM 4V, 4VA, 4Vlr, 4VlrA
 	D566	AOC SPECTRUM 5Vlr, 5VlrA
@@ -393,7 +396,7 @@ ICL	Fujitsu ICL
 	2400	FUJITSU ErgoPro x174
 
 IVM	Idek Iiyama North America, Inc.
-	1901	[d|1600x1200|50-160|25-115|230] Iiyama A901HT, VisionMaster Pro 450
+	1901	Iiyama A901HT, VisionMaster Pro 450
 	1700	Iiyama Vision Master MF-8617
 
 LKM	AZALEA
