@@ -59,7 +59,7 @@ void hd_scan_net(hd_data_t *hd_data)
   sf_cdev_list = sysfs_get_class_devices(sf_class);
   if(sf_cdev_list) dlist_for_each_data(sf_cdev_list, sf_cdev, struct sysfs_class_device) {
     ADD2LOG(
-      "name = %s, classname = %s, path = %s\n",
+      "  net interface: name = %s, classname = %s, path = %s\n",
       sf_cdev->name,
       sf_cdev->classname,
       sf_cdev->path
@@ -68,18 +68,18 @@ void hd_scan_net(hd_data_t *hd_data)
     hw_addr = NULL;
     if((s = hd_attr_str(sysfs_get_classdev_attr(sf_cdev, "address")))) {
       hw_addr = canon_str(s, strlen(s));
-      ADD2LOG("  hw_addr = %s\n", hw_addr);
+      ADD2LOG("    hw_addr = %s\n", hw_addr);
     }
 
     sf_dev = sysfs_get_classdev_device(sf_cdev);
     if(sf_dev) {
-      ADD2LOG("  net device: path = %s\n", sf_dev->path);
+      ADD2LOG("    net device: path = %s\n", sf_dev->path);
     }
 
     sf_drv = sysfs_get_classdev_driver(sf_cdev);
     if(sf_drv) {
       ADD2LOG(
-        "  net driver: name = %s, path = %s\n",
+        "    net driver: name = %s, path = %s\n",
         sf_drv->name,
         sf_drv->path
       );
