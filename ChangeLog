@@ -1,3 +1,5 @@
+	- remove Eicon cards from 64 bit archs, the driver do not support
+	  64 bit yet (#55722)
 16/3/2005:	v10.10
 	- updated notebook display data
 	- fix udev db reading
