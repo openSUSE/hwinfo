@@ -8,6 +8,9 @@
 #include <sys/ioctl.h>
 #include <linux/hdreg.h>
 
+#include <sysfs/dlist.h>
+#include <sysfs/libsysfs.h>
+
 #include "hd.h"
 #include "hd_int.h"
 #include "dasd.h"
@@ -23,19 +26,18 @@
 void hd_scan_dasd(hd_data_t *hd_data)
 {
   hd_t *hd;
-  char c1,c2,c3;
-  unsigned ub0, ub1, u0, u2, u3;
-  str_list_t *sl, *sl0;
+  unsigned int channel, size;
   hd_res_t *res;
   struct hd_geometry geo;
   int i, fd;
   char	string1[512];
-  char  meldung[512];
-  char  ro[32];
   char  dasdname[32];
-  char  *s1;
-  int	count1, count2;
   int old_entry_found=0;
+
+  struct sysfs_class* block_dev_class;
+  struct dlist* block_devs;
+  struct sysfs_class_device* bd;
+  struct sysfs_attribute* attr;
 
   if(!hd_probe_feature(hd_data, pr_dasd)) return;
 
@@ -46,65 +48,56 @@ void hd_scan_dasd(hd_data_t *hd_data)
 
   PROGRESS(1, 0, "read info");
 
-  sl0 = read_file(PROC_DASD "/devices", 0, 0);
+  block_dev_class=sysfs_open_class("block");
+  if(!block_dev_class)
+  {
+    ADD2LOG("failed to get sysfs class block");
+    return;
+  }
+
+  block_devs=sysfs_get_class_devices(block_dev_class);
+  if(!block_devs)
+  {
+    ADD2LOG("failed to get devices of class block");
+    return;
+  }
+
 
   i = 1;
-  for(sl = sl0; sl; sl = sl->next) {
-    /*
-     *	The format of /proc/dasd/devices is changing.
-     *  Old format:
-     *   0150(ECKD) at ( 94:  0) is dasda:active at blocksize: 4096, 600840 blocks, 2347 MB
-     *   01ab(ECKD) at ( 94:  4) is dasdb:active at blocksize: 4096, 600840 blocks, 2347 MB(ro)
-     *   01ab(none) at ( 94:  8) is dasdc:unknown
-     *   01ac(none) at ( 94: 12) is dasdd:n/f
-     *   ...
-     *   11aa(ECKD) at (<a>:<a>) is dasdba: active at blocksize: 4096, 600840 blocks, 2347 MB
-     *   11ab(ECKD) at (<a>:<a>) is dasdbb: active at blocksize: 4096, 600840 blocks, 2347 MB(ro)
-     *  New format:
-     *   0150(ECKD) at ( 94:  0) is dasda      : active at blocksize: 4096, 600840 blocks, 2347 MB
-     *   01ab(ECKD) at ( 94:  4) is dasdb  (ro): active at blocksize: 4096, 600840 blocks, 2347 MB
-     *   01ab(none) at ( 94:  8) is dasdc  (ro): unknown
-     *   01ac(none) at ( 94: 12) is dasdd      : n/f
-     *   11aa(ECKD) at (<a>:<a>) is dasdba     : active at blocksize: 4096, 600840 blocks, 2347 MB
-     *   11ab(ECKD) at (<a>:<a>) is dasdbb (ro): active at blocksize: 4096, 600840 blocks, 2347 MB
-     *
-     *	The problem is to recognise the (ro)-flag in the middle of the string. Strategy is to
-     *	split the string at the second : and to parse it with two sscanfs.
-     *	TODO - evaluate the result in ro
-     */
-    count1 = count2 = 0;
-    strcpy(string1,sl->str);
-    s1 = strchr(string1, ':');
-    if (s1 == NULL) continue;
-    s1++;
-    s1 = strchr(s1, ':');
-    if (s1 == NULL) continue;
-    *s1 = '\0';
-    s1++;
-    if (*s1 == ' ') s1++; /* skip leading blank of new format */
-    dasdname[1] = dasdname[2] = dasdname[3] = ro[0] = c1 = c2 = c3 = '\0';
-    count1 = sscanf(string1, "%x.%x.%x%*s at (%*u:%*u) is dasd%c%c%c%s", &ub0, &ub1, &u0, &c1, &c2, &c3, ro);
-    if (count1 < 2 && 5 < count1) continue;
-    count2 = sscanf(s1, "active at blocksize: %u, %u blocks, %*s %s", &u2, &u3, ro);
-    if (count2 != 3) continue;
-    dasdname[0] = c1;
-    if ( 'a' <= c2 && c2 <= 'z') dasdname[1] = c2;
-    if ( 'a' <= c3 && c3 <= 'z') dasdname[2] = c3;
-    sprintf(meldung, "dasd device %s, count1 %d, count2 %d\n",sl->str,count1,count2);
-    ADD2LOG(meldung);
+  dlist_for_each_data(block_devs,bd,struct sysfs_class_device)
+  {
+    /* check if there is a physical device behind this */
+    strcpy(string1,bd->path);
+    strcat(string1,"/device");
+    if(readlink(string1,string1,512)==-1)
+      continue;
+
+    /* we are only interested in DASDs */
+    if(!strstr(bd->name,"dasd"))
+       continue;
+
+    strcpy(dasdname,bd->name);
+    channel=strtol(rindex(string1,'.')+1,NULL,16);
+    //fprintf(stderr,"s1 %s channel %d\n",string1,channel);
+
+    attr=sysfs_get_classdev_attr(bd,"size");
+    if(attr)
+      size=strtol(attr->value,NULL,10);
+    else
+      size=0;
 
     /* check if s390.c has already found the device */
 
     old_entry_found=0;
     for(hd=hd_data->hd;hd;hd=hd->next)
     {
-	fprintf(stderr,"bcid %d\n",hd->base_class.id);
+	//fprintf(stderr,"bcid %d\n",hd->base_class.id);
     	if(hd->base_class.id == bc_storage_device)
     	{
     		res=hd->res;
     		for(res=hd->res;res;res=res->next)
     		{
-    			if(res->io.type==res_io && res->io.base==u0)
+    			if(res->io.type==res_io && res->io.base==channel)
     			{
     				old_entry_found=1;
     				goto out;
@@ -126,7 +119,7 @@ out:
     {
 	    res = add_res_entry(&hd->res, new_mem(sizeof *res));
 	    res->io.type=res_io;
-	    res->io.base=u0;
+	    res->io.base=channel;
 	    res->io.range=1;
 	    res->io.enabled=1;
 	    res->io.access=acc_rw;
@@ -135,13 +128,13 @@ out:
     hd->sub_class.id = sc_sdev_disk;
 
     hd->device.name = new_str("S390 Disk");
-    str_printf(&hd->unix_dev_name, 0, "/dev/dasd%s", dasdname);
+    str_printf(&hd->unix_dev_name, 0, "/dev/%s", dasdname);
 
     res = add_res_entry(&hd->res, new_mem(sizeof *res));
     res->size.type = res_size;
     res->size.unit = size_unit_sectors;
-    res->size.val1 = u3;
-    res->size.val2 = u2;
+    res->size.val1 = size;	// blocks
+    res->size.val2 = 512;	// block size, not sure if this is always correct for sysfs
 
     fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK);
     if(fd >= 0) {
@@ -158,7 +151,8 @@ out:
       close(fd);
     }
   }
-  free_str_list(sl0);
+
+  sysfs_close_class(block_dev_class);
 
   if(i > 1) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
