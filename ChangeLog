@@ -1,3 +1,6 @@
+25/2/2003:	v5.51
+	- changed amd-1111 to amd1111e (#24357)
+
 23/1/2003:	v5.50
 	- ia64: updated x11 data (#21054, again)
 
