@@ -1,3 +1,7 @@
+7/1/2003:	v5.48
+	- fixed some network card names (#22795)
+	- added wheel mouse data (#22797)
+
 6/12/2002:	v5.47
 	- ia64: updated x11 data (#21054)
 
