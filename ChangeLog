@@ -1,3 +1,6 @@
+4/11/2002:	v5.41
+	- do some consistency checks on legacy data from BIOS area (#21462)
+
 17/10/2002:	v5.40
 	- updated megaraid info (#21043)
 
