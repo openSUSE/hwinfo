@@ -210,6 +210,10 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 #endif
   }
 
+  if(h->tag.ser_skip) {
+    dump_line_str("Tags: ser_skip\n");
+  }
+
   for(res = h->res; res; res = res->next) {
     switch(res->any.type) {
       case res_phys_mem:

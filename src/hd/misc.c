@@ -524,7 +524,19 @@ void read_irqs(misc_t *m)
       j += i;
     }
     /* device driver name string */
+#if defined(__PPC__)
+    if(
+      sscanf(sl->str + j, " %*s Edge %99[^\n]", buf) == 1 ||
+      sscanf(sl->str + j, " %*s Level %99[^\n]", buf) == 1 ||
+      sscanf(sl->str + j, " %*s %99[^\n]", buf) == 1
+    ) {
+#else
+#if defined(__alpha__) || defined(__sparc__)
+    if(sscanf(sl->str + j, " %99[^\n]", buf) == 1) {
+#else	/* __i386__ || __ia64__ */
     if(sscanf(sl->str + j, " %*s %99[^\n]", buf) == 1) {
+#endif
+#endif
       m->irq = add_mem(m->irq, sizeof *m->irq, m->irq_len);
       ir = m->irq + m->irq_len++;
       ir->irq = u;

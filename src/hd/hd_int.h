@@ -110,6 +110,8 @@ int unload_module(hd_data_t *hd_data, char *module);
 int cmp_hd(hd_t *hd1, hd_t *hd2);
 unsigned has_something_attached(hd_data_t *hd_data, hd_t *hd);
 
+char *get_cmdline(hd_data_t *hd_data, char *key);
+
 #ifdef __cplusplus
 }
 #endif

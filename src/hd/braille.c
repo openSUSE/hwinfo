@@ -37,6 +37,7 @@ void hd_scan_braille(hd_data_t *hd_data)
       hd->base_class == bc_comm &&
       hd->sub_class == sc_com_ser &&
       hd->unix_dev_name &&
+      !hd->tag.ser_skip &&
       !has_something_attached(hd_data, hd)
     ) {
       cnt++;

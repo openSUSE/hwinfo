@@ -104,7 +104,6 @@ static isdn_parm_t *new_isdn_parm(isdn_parm_t **ip);
 static driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici);
 #endif
 static char *module_cmd(hd_t *, char *);
-static char *get_cmdline(hd_data_t *hd_data, char *key);
 static void timeout_alarm_handler(int signal);
 static void get_probe_env(hd_data_t *hd_data);
 static void hd_scan_xtra(hd_data_t *hd_data);
@@ -211,12 +210,15 @@ static struct s_pr_flags {
   { pr_int,          0,           8|4|2|1, "int"          },
 #ifdef __i386__
   { pr_braille,      0,           8|4|2|1, "braille"      },
-#else
-  { pr_braille,      0,             4|2  , "braille"      },
-#endif
   { pr_braille_alva, pr_braille,        0, "braille.alva" },
   { pr_braille_fhp,  pr_braille,    4|2|1, "braille.fhp"  },
   { pr_braille_ht,   pr_braille,    4|2|1, "braille.ht"   },
+#else
+  { pr_braille,      0,             4|2  , "braille"      },
+  { pr_braille_alva, pr_braille,        0, "braille.alva" },
+  { pr_braille_fhp,  pr_braille,    4|2  , "braille.fhp"  },
+  { pr_braille_ht,   pr_braille,    4|2  , "braille.ht"   },
+#endif
   { pr_ignx11,       0,                 0, "ignx11"       },
   { pr_sys,          0,           8|4|2|1, "sys"          },
   { pr_dasd,         0,           8|4|2|1, "dasd"         },
@@ -2601,6 +2603,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_adb);
         hd_set_probe_feature(hd_data, pr_usb);
         hd_set_probe_feature(hd_data, pr_kbd);
+        hd_set_probe_feature(hd_data, pr_sys);
         hd_set_probe_feature(hd_data, pr_mouse);
         break;
 

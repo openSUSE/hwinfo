@@ -177,6 +177,7 @@ void read_devtree_entry(hd_data_t *hd_data, devtree_t *parent, char *dirname)
       }
       s = free_mem(s);
     }
+    closedir(dir);
   }
 
   read_str(path, "name", &devtree->name);

@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-09-08 18:24:50
+#hwinfo data from 2000-09-18 17:19:41
 #
 
 
@@ -279,7 +279,7 @@
 	x	3|SVGA|||||
 
 
-# ATI:Rage 128 VR AGP 2x
+# ATI:Rage 128 RL
 1002 524C  
 	x	3|SVGA|||||
 
@@ -1462,11 +1462,6 @@
 # Nvidia:NV1
 10DE 0008  
 	x	3|SVGA|||||
-
-
-# Nvidia:Riva TNT (PCI)
-10de 0020 1092 4820
-	x	4|nv||||sw_cursor|f
 
 
 # Nvidia:Riva TNT (PCI)

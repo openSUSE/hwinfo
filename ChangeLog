@@ -1,3 +1,16 @@
+20/9/2000:	v1.44
+	- added missing closedir()
+
+18/9/2000:	v1.43
+	- improved /proc/interrupt parsing
+	- ppc: always return a ps/2 mouse for PreP & CHRP
+	- skip serial device detection for console & yast2ser /proc/cmdline
+	  entries
+	- ids updated
+
+18/9/2000:	v1.42
+	- now *really* disabled braille except on ia32
+
 15/9/2000:	v1.41
 	- ppc: changed some ids
 

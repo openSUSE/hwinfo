@@ -96,6 +96,7 @@ void get_serial_modem(hd_data_t *hd_data)
         (
           hd->base_class == bc_comm &&
           hd->sub_class == sc_com_ser &&
+          !hd->tag.ser_skip &&
           !has_something_attached(hd_data, hd)
         ) ||
         (

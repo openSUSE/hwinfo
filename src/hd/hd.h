@@ -879,6 +879,7 @@ typedef struct s_hd_t {
 
   struct {			/* this struct is for internal purposes only */
     unsigned remove:1;		/* schedule for removal */
+    unsigned ser_skip:1;	/* if serial line, don't scan for devices */
   } tag;
 
 } hd_t;

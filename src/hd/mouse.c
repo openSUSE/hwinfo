@@ -94,6 +94,9 @@ static void get_ps2_mouse(hd_data_t *hd_data)
   unsigned char cmd = 0xe9;	/* read mouse info */
   unsigned char buf[100], *bp;
   int buf_len = 0;
+#ifdef __PPC__
+  int always_ps2_mouse = 0;
+#endif
 
   for(hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
     /* look for a PS/2 controller entry... */
@@ -103,8 +106,38 @@ static void get_ps2_mouse(hd_data_t *hd_data)
         if(res->irq.type == res_irq && res->irq.triggered) break;
       }
 
+#ifdef __PPC__
+      /*
+       * On PReP & CHRP, assume a PS/2 mouse to be attached.
+       * There seems to be no way to actually *detect* it.
+       */
+      if(!res) {
+        hd_t *hd;
+        sys_info_t *st;
+
+        if((hd = hd_list(hd_data, hw_sys, 0, NULL))) {
+          if(
+            hd->detail &&
+            hd->detail->type == hd_detail_sys &&
+            (st = hd->detail->sys.data) &&
+            (
+              !strcmp(st->system_type, "PReP") ||
+              !strcmp(st->system_type, "CHRP")
+            )
+          ) {
+            always_ps2_mouse = 1;
+          }
+        }
+      }
+#endif
+
       /* ...then assume a PS/2 mouse is attached */
-      if(res) {
+      if(
+        res
+#ifdef __PPC__
+        || always_ps2_mouse
+#endif
+      ) {
         PROGRESS(1, 1, "ps/2");
 
         hd = add_hd_entry(hd_data, __LINE__, 0);
@@ -289,6 +322,7 @@ void get_serial_mouse(hd_data_t *hd_data)
       hd->base_class == bc_comm &&
       hd->sub_class == sc_com_ser &&
       hd->unix_dev_name &&
+      !hd->tag.ser_skip &&
       !has_something_attached(hd_data, hd)
     ) {
 #if 0
