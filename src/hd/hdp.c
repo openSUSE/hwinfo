@@ -678,6 +678,15 @@ void dump_sys(hd_data_t *hd_data, hd_t *hd, FILE *f)
   if(st->system_type) {
     dump_line("SystemType: \"%s\"\n", st->system_type);
   }
+  if(st->vendor) {
+    dump_line("Vendor: \"%s\"\n", st->vendor);
+  }
+  if(st->serial) {
+    dump_line("Serial ID: \"%s\"\n", st->serial);
+  }
+  if(st->lang) {
+    dump_line("Language: \"%s\"\n", st->lang);
+  }
 }
 
 

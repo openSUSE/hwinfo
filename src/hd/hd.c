@@ -677,12 +677,12 @@ void hd_scan(hd_data_t *hd_data)
   /* keep these at the end of the list */
   hd_scan_cdrom(hd_data);
   hd_scan_net(hd_data);
-  hd_scan_isdn(hd_data);
 
   /* add test entries */
   hd_scan_xtra(hd_data);
 
   /* some final fixup's */
+  hd_scan_isdn(hd_data);
   hd_scan_int(hd_data);
 
   /* we are done... */
@@ -2407,6 +2407,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
       case hw_network_ctrl:
         hd_set_probe_feature(hd_data, pr_pci);
         hd_set_probe_feature(hd_data, pr_sbus);
+        hd_set_probe_feature(hd_data, pr_isdn);
         break;
 
       case hw_printer:
@@ -3181,6 +3182,8 @@ void hd_scan_xtra(hd_data_t *hd_data)
           hd->sub_class = u0 & 0xff;
           hd->vend = u1;
           hd->dev = u2;
+          if(ID_TAG(hd->vend) == TAG_PCI) hd->bus = bus_pci;
+          if(ID_TAG(hd->vend) == TAG_USB) hd->bus = bus_usb;
           if(*buf3) hd->unix_dev_name = new_str(buf3);
         }
         else {

@@ -100,7 +100,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
   if(i & (1 << 7)) add_monitor_res(hd, 1280, 1024, 75);
 
   if(((se - s) & 1) || se - s > 8 * 4 + 2) {
-    ADD2LOG("  ddc oops: %d bytes left?\n", se - s);
+    ADD2LOG("  ddc oops: %d bytes left?\n", (int) (se - s));
     free_mem(s0);
     return;
   }

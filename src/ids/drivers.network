@@ -60,7 +60,8 @@
 # net/lance.c
 1022 2000
 	i	pcnet32
-	i	lance
+# cf. mail von kkaempf, 11 Jul 2000
+#	i	lance
 
 1022 2001
 	i	pcnet32
