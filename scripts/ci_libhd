@@ -12,13 +12,13 @@ mkdir $libhd
 tar -cf - * | tar -C $libhd -xf -
 cd $libhd
 find . -depth -name CVS -exec rm -r {} \;
-make
 cd src/ids
-mv Makefile.dist Makefile
+make
 mkdir .x
+mv Makefile.dist .x/Makefile
 mv *.c .x
-rm Identity [a-z]*
-mv .x/*.c .
+rm *
+mv .x/* .
 rm -r .x
 cd ../..
 make clean
@@ -26,8 +26,6 @@ rm MAINTAINER scripts/ci_libhd
 cd /tmp
 
 tar -zcf $libhd.tar.gz libhd-$ver
-
-exit
 
 if mkdir /work/src/done/STABLE/libhd ; then
   cd /work/src/done/STABLE/libhd
