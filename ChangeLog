@@ -2,6 +2,7 @@
 	- s390: set status.available to yes for IUCV devs (bug #41525)
 	- s390: give bus_iucv a name (bug #41525)
 	- s390: give the IUCV "controller" subclass ID and name (bug #41525)
+	- ia64: fixed unaligned accesses (#41589)
 
 1/6/2004:	v8.57
 	- check file size so we don't read outside mmap()-ed region
