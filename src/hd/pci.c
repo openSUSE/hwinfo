@@ -35,7 +35,6 @@
  */
 
 static void get_pci_data(hd_data_t *hd_data);
-static str_list_t *hd_attr_list(struct sysfs_attribute *attr);
 static void add_pci_data(hd_data_t *hd_data);
 static void add_driver_info(hd_data_t *hd_data);
 static pci_t *add_pci_entry(hd_data_t *hd_data, pci_t *new_pci);

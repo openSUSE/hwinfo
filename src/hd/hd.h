@@ -1271,6 +1271,20 @@ typedef struct {
 
 
 /*
+ * enhanced disk data (cf. edd.c)
+ */
+typedef struct {
+  uint64_t sectors;
+  unsigned ext_fixed_disk:1;
+  unsigned ext_lock_eject:1;
+  unsigned ext_edd:1;
+  unsigned ext_64bit:1;
+  char *sysfs_id;
+  unsigned hd_idx;
+} edd_info_t;
+
+
+/*
  * database info
  */
 typedef struct {
@@ -2262,6 +2276,7 @@ typedef struct {
   hd_sysfsdrv_t *sysfsdrv;	/**< (Internal) sysfs driver info */
   uint64_t sysfsdrv_id;		/**< (Internal) sysfs driver info id */
   str_list_t *scanner_db;	/**< (Internal) list of scanner modules */
+  edd_info_t edd[0x80];		/**< (Internal) enhanced disk drive data */
 } hd_data_t;
 
 
@@ -2302,7 +2317,6 @@ hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t sta
 hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan);
 hd_t *hd_list_with_status2(hd_data_t *hd_data, hd_hw_item_t *items, hd_status_t status);
 
-int hd_has_special_eide(hd_data_t *hd_data);
 int hd_has_pcmcia(hd_data_t *hd_data);
 int hd_apm_enabled(hd_data_t *hd_data);
 int hd_usb_support(hd_data_t *hd_data);

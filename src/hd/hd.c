@@ -665,6 +665,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_bios:
       hd_set_probe_feature(hd_data, pr_bios);
+      hd_set_probe_feature(hd_data, pr_edd_mod);
       break;
 
     case hw_vbe:
@@ -780,6 +781,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
 {
   hddb_pci_t *p;
+  unsigned u;
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -839,6 +841,10 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
 
   hd_data->only = free_str_list(hd_data->only);
   hd_data->scanner_db = free_str_list(hd_data->scanner_db);
+
+  for(u = 0; u < sizeof hd_data->edd / sizeof *hd_data->edd; u++) {
+    free(hd_data->edd[u].sysfs_id);
+  }
 
   hd_data->last_idx = 0;
 
@@ -2563,12 +2569,6 @@ int hd_module_is_active(hd_data_t *hd_data, char *mod)
   free_mem(mod);
 
   return active;
-}
-
-
-int hd_has_special_eide(hd_data_t *hd_data)
-{
-  return 0;
 }
 
 

@@ -701,7 +701,7 @@ void do_short(hd_data_t *hd_data, hd_t *hd, FILE *f)
 }
 
 
-#if 1
+#if 0
 typedef struct {
   char *vendor, *model, *driver;
 } scanner_t;
@@ -2020,17 +2020,15 @@ void get_mapping(hd_data_t *hd_data)
   } map[256] = { };
   unsigned maps = 0, u;
   int broken, first;
+  hd_hw_item_t hw_items[] = { hw_disk, hw_cdrom, 0 };
 
   hd_data->progress = NULL;
 
-  hd_manual = hd_list(hd_data, hw_manual, 1, NULL);
+  hd_data->flags.list_all = 1;
+
+  hd_manual = hd_list2(hd_data, hw_items, 1);
   for(hd = hd_manual; hd && maps < sizeof map / sizeof *map; hd = hd->next) {
     if(!hd->unix_dev_name) continue;
-
-    if(
-      !hd_is_hw_class(hd, hw_disk) &&
-      !hd_is_hw_class(hd, hw_cdrom)
-    ) continue;
 
     if(hd->status.available == status_yes) {
       /* check if we already have an active device with the same name */

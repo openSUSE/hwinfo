@@ -1,3 +1,8 @@
+6/9/2004:	v9.8
+	- removed ancient function hd_has_special_eide()
+	- use edd module to get extended BIOS features (#44649)
+	- 'hwinfo --map' includes a hardware scan
+
 3/9/2004:	v9.7
 	- win modem dev name change (#44253)
 	- added nongpl module info
