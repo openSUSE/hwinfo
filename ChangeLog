@@ -1,3 +1,4 @@
+	- s390: identify new CU types 2107, 1750 as DASD
 	- fixed some dvb entries (#47057)
 	- s390: added new prog_if ID pif_dasd_fba to identify FBA DASDs
 	  (reqd. by fehr)
