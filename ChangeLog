@@ -1,3 +1,7 @@
+18/7/2000:	v1.22
+	- dropped alva probing
+	- updated x11 data
+
 15/7/2000:	v1.21
 	- fixed isapnp isdn probing bug
 	- updated x11 data
