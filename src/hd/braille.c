@@ -239,7 +239,7 @@ unsigned do_fhp(hd_data_t *hd_data, char *dev_name, unsigned baud, int cnt)
   ADD2LOG("\n");
 
   dev = 0;
-  if(i >= 2) {
+  if(i == 10 && buf[0] == 0x02 && buf[1] == 0x49) {
     switch(buf[2]) {
       case  1:
       case  2:
@@ -342,7 +342,7 @@ unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt)
   	case 0x84:
   	case 0x88:
   	case 0x89:
-          dev = code;
+          dev = buf[1];
           dev = MAKE_ID(TAG_SPECIAL, dev);
           break;
       }

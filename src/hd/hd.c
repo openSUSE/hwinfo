@@ -169,7 +169,7 @@ static struct s_pr_flags {
   { pr_monitor,      0,          8|4|2|1, "monitor"      },
 #if defined(__i386__)
   /* needed to check for braille displays in linuxrc */
-  { pr_serial,       0,          8|4|2|1, "serial"       },
+  { pr_serial,       0,            4|2|1, "serial"       },
 #else
   { pr_serial,       0,            4|2|1, "serial"       },
 #endif
@@ -198,9 +198,9 @@ static struct s_pr_flags {
   { pr_sbus,         0,          8|4|2|1, "sbus"         },
   { pr_int,          0,          8|4|2|1, "int"          },
   { pr_braille,      0,          8|4|2|1, "braille"      },
-  { pr_braille_alva, pr_braille, 8|4|2|1, "braille.alva" },
-  { pr_braille_fhp,  pr_braille, 8|4|2|1, "braille.fhp"  },
-  { pr_braille_ht,   pr_braille, 8|4|2|1, "braille.ht"   },
+  { pr_braille_alva, pr_braille,   4|2|1, "braille.alva" },
+  { pr_braille_fhp,  pr_braille,   4|2|1, "braille.fhp"  },
+  { pr_braille_ht,   pr_braille,   4|2|1, "braille.ht"   },
   { pr_ignx11,       0,                0, "ignx11"       }
 };
 
@@ -2419,7 +2419,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         break;
 
       case hw_braille:
-        hd_set_probe_feature(hd_data, pr_misc);
+        hd_set_probe_feature(hd_data, pr_misc_serial);
         hd_set_probe_feature(hd_data, pr_serial);
         hd_set_probe_feature(hd_data, pr_braille_alva);
         hd_set_probe_feature(hd_data, pr_braille_fhp);

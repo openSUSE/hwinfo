@@ -1,3 +1,6 @@
+27/6/2000:	v1.10
+	- fixed bug in braille detection
+
 26/6/2000:	v1.09
 	- updated README
 	- fixed bug in 'hwprobe' handling
