@@ -1085,6 +1085,8 @@ typedef struct s_hd_t {
 
   unsigned char *block0;	/* for block devices: first 512 data bytes */
 
+  char *driver;			/* currently active driver */
+
   char *parent_id;		/* unique_id of our parent, please do not use it for now */
 
   /*

@@ -116,7 +116,6 @@ static char *module_cmd(hd_t *, char *);
 static void timeout_alarm_handler(int signal);
 static void get_probe_env(hd_data_t *hd_data);
 static void hd_scan_xtra(hd_data_t *hd_data);
-static void hd_add_id(hd_t *hd);
 
 static void test_read_block0_open(void *arg);
 static void get_kernel_version(hd_data_t *hd_data);
@@ -905,6 +904,7 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->rom_id);
   free_mem(hd->unique_id);
   free_mem(hd->block0);
+  free_mem(hd->driver);
   free_mem(hd->parent_id);
 
   free_res_list(hd->res);
@@ -3109,7 +3109,13 @@ int hd_apm_enabled(hd_data_t *hd_data)
 #endif
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_internal && hd->sub_class == sc_int_bios) {
+    if(
+      hd->base_class == bc_internal &&
+      hd->sub_class == sc_int_bios &&
+      hd->detail &&
+      hd->detail->type == hd_detail_bios &&
+      hd->detail->bios.data
+    ) {
       return hd->detail->bios.data->apm_enabled;
     }
   }

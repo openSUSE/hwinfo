@@ -297,13 +297,13 @@ void get_usb_data(hd_data_t *hd_data)
 
     for(sl = usb->s; sl; sl = sl->next) {
       if(sscanf(sl->str, "Manufacturer=%255[^\n]", buf) == 1) {
-        usb->manufact = new_str(buf);
+        usb->manufact = canon_str(buf, strlen(buf));
       }
       if(sscanf(sl->str, "Product=%255[^\n]", buf) == 1) {
-        usb->product = new_str(buf);
+        usb->product = canon_str(buf, strlen(buf));
       }
       if(sscanf(sl->str, "SerialNumber=%255[^\n]", buf) == 1) {
-        usb->serial = new_str(buf);
+        usb->serial = canon_str(buf, strlen(buf));
       }
     }
 

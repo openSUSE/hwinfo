@@ -19,7 +19,7 @@ void hd_scan_ide(hd_data_t *hd_data)
 {
 
   hd_t *hd;
-  char *fname = NULL, buf[256];
+  char *fname = NULL, buf[256], *s;
   FILE *f;
   unsigned u0, u1, u2;
   int i, j;
@@ -62,6 +62,13 @@ void hd_scan_ide(hd_data_t *hd_data)
       str_printf(&fname, 0, PROC_IDE "/hd%c/model", i + 'a');
       if((sl = read_file(fname, 0, 1))) {
         hd->dev_name = canon_str(sl->str, strlen(sl->str));
+        free_str_list(sl);
+      }
+
+      str_printf(&fname, 0, PROC_IDE "/hd%c/driver", i + 'a');
+      if((sl = read_file(fname, 0, 1))) {
+        if((s = index(sl->str, ' '))) *s = 0;
+        hd->driver = canon_str(sl->str, strlen(sl->str));
         free_str_list(sl);
       }
 

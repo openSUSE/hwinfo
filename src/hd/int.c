@@ -21,6 +21,7 @@ static void int_bios(hd_data_t *hd_data);
 #endif
 static void int_media_check(hd_data_t *hd_data);
 static void int_floppy(hd_data_t *hd_data);
+static void int_fix_ide_scsi(hd_data_t *hd_data);
 
 void hd_scan_int(hd_data_t *hd_data)
 {
@@ -31,21 +32,24 @@ void hd_scan_int(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
 
-  PROGRESS(1, 0, "pcmcia");
+  PROGRESS(1, 0, "idescsi");
+  int_fix_ide_scsi(hd_data);
+
+  PROGRESS(2, 0, "pcmcia");
   int_pcmcia(hd_data);
 
-  PROGRESS(2, 0, "cdrom");
+  PROGRESS(3, 0, "cdrom");
   int_cdrom(hd_data);
 
-  PROGRESS(3, 0, "media");
+  PROGRESS(4, 0, "media");
   int_media_check(hd_data);
 
 #if defined(__i386__)
-  PROGRESS(4, 0, "bios");
+  PROGRESS(5, 0, "bios");
   int_bios(hd_data);
 #endif
 
-  PROGRESS(5, 0, "floppy");
+  PROGRESS(6, 0, "floppy");
   int_floppy(hd_data);
 }
 
@@ -232,3 +236,45 @@ void int_floppy(hd_data_t *hd_data)
 }
 
 
+#define COPY_ENTRY(a) if(hd_ide->a) { free_mem(hd_scsi->a); hd_scsi->a = new_str(hd_ide->a); }
+/*
+ * Remove ide entries that are handled by ide-scsi.
+ */
+void int_fix_ide_scsi(hd_data_t *hd_data)
+{
+  hd_t *hd_scsi, *hd_ide;
+
+  for(hd_scsi = hd_ide = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
+    if(
+      hd_scsi->bus == bus_scsi &&
+      !strcmp(hd_scsi->driver, "ide-scsi")
+    ) {
+      for(; hd_ide ; hd_ide = hd_ide->next) {
+        if(
+          hd_ide->bus == bus_ide &&
+          !strcmp(hd_ide->driver, "ide-scsi")
+        ) {
+          hd_ide->tag.remove = 1;
+
+          /* ide info is more accurate, take it instead */
+          hd_scsi->base_class = hd_ide->base_class;
+          hd_scsi->sub_class = hd_ide->sub_class;
+          hd_scsi->prog_if = hd_ide->prog_if;
+          
+          COPY_ENTRY(dev_name);
+          COPY_ENTRY(vend_name);
+          COPY_ENTRY(sub_dev_name);
+          COPY_ENTRY(sub_vend_name);
+          COPY_ENTRY(rev_name);
+          COPY_ENTRY(serial);
+
+          hd_scsi->unique_id = free_mem(hd_scsi->unique_id);
+          hd_add_id(hd_scsi);
+        }
+      }
+    }
+  }
+
+  remove_tagged_hd_entries(hd_data);
+}
+#undef COPY_ENTRY

@@ -33,14 +33,14 @@ fullstatic: static
 	strip -R .note -R .comment hwscan.static
 
 install:
-	install -d -m 755 /usr/sbin /usr/lib /usr/include
-	install -m 755 -s hwinfo /usr/sbin
-	install -m 755 -s hwscan /usr/sbin
+	install -d -m 755 $(DESTDIR)/usr/sbin $(DESTDIR)/usr/lib $(DESTDIR)/usr/include
+	install -m 755 -s hwinfo $(DESTDIR)/usr/sbin
+	install -m 755 -s hwscan $(DESTDIR)/usr/sbin
 	if [ -f $(LIBHD_SO) ] ; then \
-		install $(LIBHD_SO) /usr/lib ; \
-		ln -snf libhd.so.$(LIBHD_VERSION) /usr/lib/libhd.so.$(LIBHD_MAJOR_VERSION) ; \
-		ln -snf libhd.so.$(LIBHD_MAJOR_VERSION) /usr/lib/libhd.so ; \
+		install $(LIBHD_SO) $(DESTDIR)/usr/lib ; \
+		ln -snf libhd.so.$(LIBHD_VERSION) $(DESTDIR)/usr/lib/libhd.so.$(LIBHD_MAJOR_VERSION) ; \
+		ln -snf libhd.so.$(LIBHD_MAJOR_VERSION) $(DESTDIR)/usr/lib/libhd.so ; \
 	else \
-		install -m 644 $(LIBHD) /usr/lib ; \
+		install -m 644 $(LIBHD) $(DESTDIR)/usr/lib ; \
 	fi
-	install -m 644 src/hd/hd.h /usr/include
+	install -m 644 src/hd/hd.h $(DESTDIR)/usr/include

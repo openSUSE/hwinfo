@@ -288,6 +288,10 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     );
   }
 
+  if(h->driver) {
+    dump_line("Driver: \"%s\"\n", h->driver);
+  }
+
   if(
     h->bus == bus_usb &&
     h->detail &&

@@ -113,7 +113,12 @@ void hd_scan_cdrom(hd_data_t *hd_data)
     ) {
       ci = hd->detail->cdrom.data;
 
-      if(ci->name && ci->name[5] == 's') {	/* "/dev/sr..." */
+      if(
+        ci->name &&
+        ci->name[5] == 's' &&
+        ci->name[6] == 'r' &&
+        (!hd->driver || strcmp(hd->driver, "ide-scsi"))		/* could be ide, though */
+      ) {	/* "/dev/sr..." */
         /* scsi devs lie */
         if(ci->dvd && (ci->cdrw || ci->dvdr || ci->dvdram)) {
           ci->dvd = ci->dvdr = ci->dvdram = 0;

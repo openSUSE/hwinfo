@@ -118,6 +118,7 @@ misc_t *free_misc(misc_t *m);
 scsi_t *free_scsi(scsi_t *scsi, int free_all);
 hd_detail_t *free_hd_detail(hd_detail_t *d);
 devtree_t *free_devtree(hd_data_t *hd_data);
+void hd_add_id(hd_t *hd);
 
 char *isa_id2str(unsigned);
 char *eisa_vendor_str(unsigned);

@@ -1,3 +1,8 @@
+17/8/2001:	v3.10
+	- install in $DESTDIR
+	- handle ide-scsi drives
+	- fix segfault bug in apm detection
+
 9/8/2001:	v3.09
 	- fixed some drivers.audio entries
 

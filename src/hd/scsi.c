@@ -240,6 +240,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
     hd->serial = new_str(scsi->serial);
     if(scsi->host < sizeof scsi_ctrl / sizeof *scsi_ctrl) {
       hd->attached_to = scsi_ctrl[scsi->host].hd_idx;
+      hd->driver = new_str(scsi_ctrl[scsi->host].driver);
     }
 #ifdef __PPC__
     /* ###### move this to int.c ? */
@@ -284,6 +285,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
     hd->detail = new_mem(sizeof *hd->detail);
     hd->detail->type = hd_detail_scsi;
     hd->detail->scsi.data = scsi;
+
     scsi->next = NULL;
   }
   hd_data->scsi = NULL;
