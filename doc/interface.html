@@ -8,7 +8,7 @@
 
 Author: Steffen Winterfeldt <a href="wfeldt@suse.de">wfeldt@suse.de</a><p>
 
-Current version (3 Feb 2000): 0.57<p>
+Current version (8 Feb 2000): 0.60<p>
 
 <h2>Simple Expample</h2>
 
@@ -143,6 +143,25 @@ Return the processor architecture.<p>
 <code><strong><a href="#enum@boot_arch">enum boot_arch</a> hd_boot_arch(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
 
 Return the boot method to use.<p>
+
+<a name=hd_boot></a>
+<code><strong>unsigned hd_boot_disk(<a href="#hd_data_t">hd_data_t</a> *hd_data, int *matches)</strong></code><p>
+
+Returns the boot hardware index of the boot disk. Use
+<a href="#hd_idx"><code>hd_get_device_by_idx()</code></a> to obtain the actual hardware
+data structure.<br>
+Returns 0 if the boot disk could not be determined.<br>
+If matches is not <code>NULL</code>, it contains the number of disks that could possibly
+be the boot disk. This is normally either 0 or 1 but could in some cases be &gt;1. In that
+case, <a href="#hd_boot"><code>hd_boot_disk()</code></a> returns the first hardware entry that might be the boot device.
+<p>
+
+<a name=hd_idx></a>
+<code><strong><a href="#hd_t">hd_t</a> *hd_get_device_by_idx(<a href="#hd_data_t">hd_data_t</a> *hd_data, int idx)</strong></code><p>
+
+Returns the hardware data structure with the index <code>idx</code> or <code>NULL</code>
+if no such entry exists. Two hardware entries are identical if they have the same
+index.<p>
 
 <code><strong><a href="#driver_info_t">driver_info_t</a> *hd_driver_info(<a href="#hd_data_t">hd_data_t</a> *hd_data, <a href="#hd_t">hd_t</a> *hd)</strong></code><p>
 
