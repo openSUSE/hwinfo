@@ -467,7 +467,7 @@ vm86_rep(struct vm86_struct *ptr)
 	int __res;
 
 	/* stay away from %ebx */
-	__asm__ __volatile__("push %%ebx\n\tmov %%ecx,%%ebx\n\tint $0x80\n\tpop %%ebx\n"
+	__asm__ __volatile__("push %%ebx\n\tmov %%ecx,%%ebx\n\tpush %%gs\n\tint $0x80\n\tpop %%gs\n\tpop %%ebx\n"
 						 :"=a" (__res):"a" ((int)113),
 						 "c" ((struct vm86_struct *)ptr));
 
