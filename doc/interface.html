@@ -8,7 +8,7 @@
 
 Author: Steffen Winterfeldt <a href="wfeldt@suse.de">wfeldt@suse.de</a><p>
 
-Current version (17 Jan 2000): 0.42<p>
+Current version (18 Jan 2000): 0.45<p>
 
 <h2>Simple Expample</h2>
 
@@ -107,16 +107,24 @@ Return a list of entries which have the given class/subclass ids.<p>
 
 <code><strong>int hd_has_special_eide(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
 
-Return 1 or 0 depending on whether we need a kernel with special eide
-chipset support or not.<p>
+Return 1 if the kernel should have special eide chipset support, 0 if
+not.<p>
 
 <code><strong>int hd_has_pcmcia(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
 
-Return 1 or 0 depending on wheter we have PCMCIA support or not.<p>
+Return 1 if PCMCIA is supported, 0 if not.<p>
+
+<code><strong>int hd_apm_enabled(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
+
+Return 1 if APM support is enabled, 0 if it is disabled.<p>
+
+<code><strong><a href="#enum@cpu_arch">enum cpu_arch</a> hd_cpu_arch(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
+
+Return the processor architecture.<p>
 
 <code><strong><a href="#enum@boot_arch">enum boot_arch</a> hd_boot_arch(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
 
-Return info about the boot method to use.<p>
+Return the boot method to use.<p>
 
 <code><strong><a href="#driver_info_t">driver_info_t</a> *hd_driver_info(<a href="#hd_data_t">hd_data_t</a> *hd_data, <a href="#hd_t">hd_t</a> *hd)</strong></code><p>
 
@@ -218,6 +226,14 @@ enum probe_feature {
   pr_all                /* pr_all must be the last */
 </pre>
 
+<a name=enum@cpu_arch></a>
+<pre>
+enum cpu_arch {
+  arch_unknown = 0,
+  arch_intel, arch_alpha, arch_sparc, arch_sparc64, arch_ppc, arch_68k
+}
+</pre>
+
 <a name=enum@boot_arch></a>
 <pre>
 enum boot_arch {
@@ -257,9 +273,9 @@ typedef struct {
   str_list_t *hddb0, *hddb1;            /* the actual driver database entries */
   unsigned active:1;                    /* if module is currently active */
   unsigned modprobe:1;                  /* modprobe or insmod  */
-  char *name;                           /* the actual module name */
-  char *load_cmd;                       /* the command line to run ("insmod xyz") */
-  char *conf;                           /* the conf.modules entry, if any (e.g. for sb.o) */
+  char *name;                           /* module name */
+  char *mod_args;                       /* additional module args */
+  char *conf;                           /* conf.modules entry, if any (e.g. for sb.o) */
 } driver_info_module_t;
 
 /* mouse protocol info */

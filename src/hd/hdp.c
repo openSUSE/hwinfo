@@ -342,8 +342,13 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
           di->module.name, di->module.active ? "" : "not "
         );
 
-        if(di->module.load_cmd)
-          dump_line("Driver Activation Cmd: \"%s\"\n", di->module.load_cmd);
+        dump_line(
+          "Driver Activation Cmd: \"%s %s%s%s\"\n",
+          di->module.modprobe ? "modprobe" : "insmod",
+          di->module.name,
+          di->module.mod_args ? " " : "",
+          di->module.mod_args ? di->module.mod_args : ""
+        );
 
         if(di->module.conf)
           dump_line("Driver \"modules.conf\" Entry: \"%s\"\n", di->module.conf);

@@ -41,13 +41,13 @@ extern "C" {
  * Note: only 32 features are supported at this time; if you want more,
  * change the definition of hd_data_t.probe
  */
-enum probe_feature {
+typedef enum probe_feature {
   pr_default = 1, pr_memory, pr_pci, pr_pci_range, pr_pci_ext, pr_isapnp,
   pr_cdrom, pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial,
   pr_misc_par, pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor,
   pr_mouse, pr_ide, pr_scsi, pr_usb, pr_adb,
   pr_all		/* pr_all must be the last */
-};
+} hd_probe_feature_t;
 
 
 /*
@@ -56,7 +56,7 @@ enum probe_feature {
  */
 
 /* base class values (superset of PCI classes) */
-enum base_classes {
+typedef enum base_classes {
   /* these *must* match standard PCI class numbers */
   bc_none, bc_storage, bc_network, bc_display, bc_multimedia,
   bc_memory, bc_bridge, bc_comm, bc_system, bc_input, bc_docking,
@@ -65,64 +65,64 @@ enum base_classes {
   // add our own classes here (starting at 0x100 as PCI values are 8 bit)
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,
   bc_storage_device, bc_network_interface, bc_keyboard
-};
+} hd_base_classes_t;
 
 /* subclass values of bc_storage */
-enum sc_storage {
+typedef enum sc_storage {
   sc_sto_scsi, sc_sto_ide, sc_sto_floppy, sc_sto_ipi, sc_sto_raid,
   sc_sto_other = 0x80
-};
+} hd_sc_storage_t;
 
 /* subclass values of bc_display */
-enum sc_display {
+typedef enum sc_display {
   sc_dis_vga, sc_dis_xga, sc_dis_other = 0x80
-};
+} hd_sc_display_t;
 
 /* subclass values of bc_comm */
-enum sc_comm {
+typedef enum sc_comm { 
   sc_com_ser, sc_com_par, sc_com_other = 0x80
-};
+} hd_sc_comm_t;
 
 /* subclass values of bc_system */
-enum sc_system {
+typedef enum sc_system {
   sc_sys_pic, sc_sys_dma, sc_sys_timer, sc_sys_rtc, sc_sys_other = 0x80
-};
+} hd_sc_system_t;
 
 /* subclass values of bc_input */
-enum sc_input {
+typedef enum sc_input {
   sc_inp_keyb, sc_inp_digit, sc_inp_mouse, sc_inp_other = 0x80
-};
+} hd_sc_input_t;
 
 /* internal sub class values */
-enum sc_internal {
+typedef enum sc_internal {
   sc_int_none, sc_int_isapnp_if, sc_int_main_mem, sc_int_cpu, sc_int_fpu, sc_int_bios
-};
+} hd_sc_internal_t;
 
 /* subclass values of bc_mouse */
-enum sc_mouse {
+typedef enum sc_mouse {
   sc_mou_ps2, sc_mou_ser, sc_mou_bus, sc_mou_usb
-};
+} hd_sc_mouse_t;
 
 /* subclass values of bc_storage_device */
-enum sc_std {
+typedef enum sc_std {
   sc_sdev_disk, sc_sdev_tape, sc_sdev_cdrom, sc_sdev_floppy,
   sc_sdev_other = 0x80
-};
+} hd_sc_std_t;
 
 /* subclass values of bc_network_interface */
-enum sc_net_if {
+typedef enum sc_net_if {
   sc_nif_loopback, sc_nif_ethernet, sc_nif_tokenring, sc_nif_fddi, sc_nif_other = 0x80
-};
+} hd_sc_net_if_t;
 
 /* bus type values similar to PCI bridge subclasses */
-enum bus_types {
+typedef enum bus_types {
   bus_none, bus_isa, bus_eisa, bus_mc, bus_pci, bus_pcmcia, bus_nubus,
   bus_cardbus, bus_other,
 
   /* outside the range of the PCI values */
   bus_ps2 = 0x80, bus_serial, bus_parallel, bus_floppy, bus_scsi, bus_ide, bus_usb,
   bus_adb
-};
+} hd_bus_types_t;
 
 /*
  * Used whenever we create a list of strings (e.g. file read).
@@ -157,9 +157,9 @@ typedef struct s_pci_t {
 /*
  * pci related flags cf. (pci_t).flags
  */
-enum pci_flags {
+typedef enum pci_flags {
   pci_flag_ok, pci_flag_pm, pci_flag_agp
-};
+} hd_pci_flags_t;
 
 
 /*
@@ -197,9 +197,9 @@ typedef struct {
 /*
  * ISA-PnP related flags; cf. (isapnp_dev_t).flags
  */
-enum isapnp_flags {
+typedef enum isapnp_flags {
   isapnp_flag_act
-};
+} hd_isapnp_flags_t;
 
 
 /*
@@ -235,15 +235,15 @@ typedef struct {
 } bios_info_t;
 
 
-enum cpu_arch {
+typedef enum cpu_arch {
   arch_unknown = 0,
   arch_intel, arch_alpha, arch_sparc, arch_sparc64, arch_ppc, arch_68k
-};
+} hd_cpu_arch_t;
 
-enum boot_arch {
+typedef enum boot_arch {
   boot_unknown = 0,
   boot_lilo, boot_milo, boot_aboot, boot_silo, boot_ppc
-};
+} hd_boot_arch_t;
 
 /* special cpu entry */
 typedef struct {
@@ -272,31 +272,30 @@ typedef struct {
 /*
  * resource types
  */
-enum resource_types {
-  res_any, res_phys_mem, res_mem, res_io,
-  res_irq, res_dma, res_monitor, res_size,
-  res_disk_geo, res_cache, res_clock, res_baud
-};
+typedef enum resource_types {
+  res_any, res_phys_mem, res_mem, res_io, res_irq, res_dma, res_monitor,
+  res_size, res_disk_geo, res_cache, res_baud
+} hd_resource_types_t;
 
 
 /*
  * size units (cf. (res_size_t).unit)
  */
-enum size_units {
+typedef enum size_units {
   size_unit_cm, size_unit_cinch, size_unit_byte, size_unit_sectors,
   size_unit_kbyte, size_unit_mbyte, size_unit_gbyte
-};
+} hd_size_units_t;
 
 /*
  * access types for I/O and memory resources
  */
-enum access_flags {
+typedef enum access_flags {
   acc_unknown, acc_ro, acc_wo, acc_rw		/* unknown, read only, write only, read/write */
-};
+} hd_access_flags_t;
 
-enum yes_no_flag {
+typedef enum yes_no_flag {
   flag_unknown, flag_no, flag_yes		/* unknown, no, yes */
-};
+} hd_yes_no_flag_t;
 
 
 /*
@@ -452,10 +451,10 @@ typedef struct s_ser_mouse_t {
  * gathered during the scan process but that no-one really cares about. Such
  * stuff is stored in hd_detail_t.
  */
-enum hd_detail_type {
+typedef enum hd_detail_type {
   hd_detail_pci, hd_detail_isapnp, hd_detail_cdrom, hd_detail_floppy,
   hd_detail_bios, hd_detail_cpu
-};
+} hd_detail_type_t;
 
 typedef struct {
   enum hd_detail_type type;
@@ -562,9 +561,9 @@ typedef struct {
 
 
 /* device driver info types */
-enum driver_info_type {
+typedef enum driver_info_type {
   di_any, di_display, di_module, di_mouse, di_x11
-};
+} hd_driver_info_t;
 
 /* unspecific info */
 typedef struct {
@@ -591,9 +590,9 @@ typedef struct {
   str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
   unsigned active:1;			/* if module is currently active */
   unsigned modprobe:1;			/* modprobe or insmod  */
-  char *name;				/* the actual module name */
-  char *load_cmd;			/* the command line to run ("insmod xyz") */
-  char *conf;				/* the conf.modules entry, if any (e.g. for sb.o) */
+  char *name;				/* module name */
+  char *mod_args;			/* additional module args */
+  char *conf;				/* conf.modules entry, if any (e.g. for sb.o) */
 } driver_info_module_t;
 
 /* mouse protocol info */
@@ -665,6 +664,8 @@ hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_cl
 
 int hd_has_special_eide(hd_data_t *hd_data);
 int hd_has_pcmcia(hd_data_t *hd_data);
+int hd_apm_enabled(hd_data_t *hd_data);
+enum cpu_arch hd_cpu_arch(hd_data_t *hd_data);
 enum boot_arch hd_boot_arch(hd_data_t *hd_data);
 
 hd_t *hd_get_device_by_idx(hd_data_t *hd_data, int idx);

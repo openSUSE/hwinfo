@@ -488,28 +488,50 @@ void hd_scan(hd_data_t *hd_data)
   if(hd_data->debug) {
     ADD2LOG("  pcmcia support: %d\n", hd_has_pcmcia(hd_data));
     ADD2LOG("  special eide chipset: %d\n", hd_has_special_eide(hd_data));
-    if(hd_data->cpu) {
-      switch(hd_boot_arch(hd_data)) {
-        case boot_lilo:
-          s = "lilo";
-          break;
-        case boot_milo:
-          s = "milo";
-          break;
-        case boot_aboot:
-          s = "aboot";
-          break;
-        case boot_silo:
-          s = "silo";
-          break;
-        case boot_ppc:
-          s = "ppc";
-          break;
-        default:
-          s = "unknown";
-      }
-      ADD2LOG("  boot concept: %s\n", s);
+    ADD2LOG("  apm status: %sabled\n", hd_apm_enabled(hd_data) ? "en" : "dis");
+    switch(hd_cpu_arch(hd_data)) {
+      case arch_intel:
+        s = "intel";
+        break;
+      case arch_alpha:
+        s = "alpha";
+        break;
+      case arch_sparc:
+        s = "sparc";
+        break;
+      case arch_sparc64:
+        s = "sparc64";
+        break;
+      case arch_ppc:
+        s = "ppc";
+        break;
+      case arch_68k:
+        s = "68k";
+        break;
+      default:
+        s = "unknown";
     }
+    ADD2LOG("  architecture: %s\n", s);
+    switch(hd_boot_arch(hd_data)) {
+      case boot_lilo:
+        s = "lilo";
+        break;
+      case boot_milo:
+        s = "milo";
+        break;
+      case boot_aboot:
+        s = "aboot";
+        break;
+      case boot_silo:
+        s = "silo";
+        break;
+      case boot_ppc:
+        s = "ppc";
+        break;
+      default:
+        s = "unknown";
+    }
+    ADD2LOG("  boot concept: %s\n", s);
   }
 }
 
@@ -1011,13 +1033,9 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
           if(i == 0) {
             di->module.name = new_str(sl->str);
             di->module.active = module_is_active(di->module.name);
-            str_printf(
-              &di->module.load_cmd, 0, "%s %s",
-              di->module.modprobe ? "modprobe" : "insmod", di->module.name
-            );
           }
           else if(i == 1) {
-            str_printf(&di->module.load_cmd, -1, " %s", module_cmd(hd, sl->str));
+            di->module.mod_args = new_str(module_cmd(hd, sl->str));
           }
           else {
             str_printf(&di->module.conf, -1, "%s\n", module_cmd(hd, sl->str));
@@ -1231,6 +1249,33 @@ int hd_has_pcmcia(hd_data_t *hd_data)
   }
 
   return 0;
+}
+
+
+int hd_apm_enabled(hd_data_t *hd_data)
+{
+  hd_t *hd;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_internal && hd->sub_class == sc_int_bios) {
+      return hd->detail->bios.data->apm_enabled;
+    }
+  }
+
+  return 0;
+}
+
+enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
+{
+  hd_t *hd;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_internal && hd->sub_class == sc_int_cpu) {
+      return hd->detail->cpu.data->architecture;
+    }
+  }
+
+  return arch_unknown;
 }
 
 
