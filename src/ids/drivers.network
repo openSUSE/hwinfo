@@ -80,7 +80,8 @@
 12c3 5598
 4a14 5000
 8e2e 3000
-	i	ne2k-pci
+	m	ne2k-pci
+	i	8390|ne2k-pci
 
 # net/8139too.c
 10ec 8129

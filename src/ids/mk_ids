@@ -341,7 +341,7 @@ if($get_names) {
   close F;
 }
 
-~select STDOUT;
+select STDOUT;
 
 undef $short;
 undef @name_str;
