@@ -42,7 +42,7 @@ install: all
 
 ifneq "$(SUBDIRS)" ""
 subdirs:
-	@for i in $(SUBDIRS) ; do make -C $$i $(MAKECMDGOALS) ; done
+	@for i in $(SUBDIRS) ; do make -C $$i $(MAKECMDGOALS) || exit ; done
 endif
 
 clean: subdirs
