@@ -38,6 +38,8 @@ struct option options[] = {
 
 int verbose = 0;
 hd_hw_item_t scan_item = 0;
+int found_items = 0;
+
 int opt_show = 0;
 int opt_scan = 0;
 int opt_list = 0;
@@ -64,6 +66,7 @@ int main(int argc, char **argv)
   char *config_need = NULL;
   int i;
   int ok = 0;
+  FILE *f;
 
   opterr = 0;
 
@@ -115,6 +118,9 @@ int main(int argc, char **argv)
   if(opt_scan && !opt_list) {
     if(argv[optind] || !scan_item) return help(), 1;
     rc = do_scan(scan_item);
+    if(found_items) {
+      if((f = fopen("/var/lib/hardware/.update", "a"))) fclose(f);
+    }
     ok = 1;
   }
 
@@ -171,6 +177,8 @@ int do_scan(hd_hw_item_t item)
   hd_data = calloc(1, sizeof *hd_data);
 
   hd = hd_list(hd_data, item, 1, NULL);
+
+  if(hd) found_items = 1;
 
   for(hd1 = hd; hd1; hd1 = hd1->next) {
     err = hd_write_config(hd_data, hd1);

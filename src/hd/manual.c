@@ -151,7 +151,8 @@ void hd_scan_manual(hd_data_t *hd_data)
   if((dir = opendir(MANUAL_DIR))) {
     i = 0;
     while((de = readdir(dir))) {
-      if(!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..")) continue;
+//      if(!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..")) continue;
+      if(*de->d_name == '.') continue;
       PROGRESS(1, ++i, "read");
       if((entry = hd_manual_read_entry(hd_data, de->d_name))) {
         ADD2LOG("  got %s\n", entry->unique_id);

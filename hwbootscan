@@ -1,0 +1,12 @@
+#!/bin/sh
+
+neededchanged=`/usr/sbin/hwscan --gfxcard`
+neededchanged="$neededchanged`/usr/sbin/hwscan --mouse`"
+
+if [ -n "$neededchanged" ] ; then
+	/sbin/yast2 x11
+	for i in $neededchanged ; do
+		/bin/rm /var/lib/hardware/$i
+	done
+fi
+exit 0

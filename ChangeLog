@@ -1,3 +1,7 @@
+28/1/2002:	v4.01
+	- hwscan: touch /var/lib/hardware/.update if things have changed
+	- meissner: added boot scripts
+
 21/1/2001:	v4.00
 	- increased major version number, as we're incompatible to v3 meanwhile
 	- added function to set hardware config status data directly
