@@ -112,10 +112,12 @@ void hd_scan_isapnp(hd_data_t *hd_data)
       dev->card = new_mem(sizeof *dev->card);
       *dev->card = *c;
       dev->dev = j;
+      dev->ref = j ? 1 : 0;
 
       if(c->broken) hd->broken = 1;
 
       hd->bus = bus_isa;
+      hd->is.isapnp = 1;
       hd->slot = c->csn;
       hd->func = j;
 

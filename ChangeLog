@@ -1,3 +1,7 @@
+12/12/2000:	v1.57
+	- fixed isapnp segfault bug
+	- updated x11 data
+
 8/12/200:	v1.56
 	- new alva detection code
 	- added cd-r/dvd detection

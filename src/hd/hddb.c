@@ -298,6 +298,13 @@ char *hd_bus_name(hd_data_t *hd_data, unsigned bus)
   unsigned u;
   unsigned ids[4] = { MAKE_ID(TAG_BUS, ID_VALUE(bus)), };
 
+#ifdef LIBHD_MEMCHECK
+  {
+    if(libhd_log)
+      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_bus_name, hd_data), hd_data);
+  }
+#endif
+
   u = find_entry(&x, 0, 0, ids);
   return name_ind(x, u);
 }
@@ -312,6 +319,13 @@ char *hd_class_name(hd_data_t *hd_data, int level, unsigned base_class, unsigned
   unsigned u;
   unsigned ids[4] = { MAKE_ID(TAG_CLASS, ID_VALUE(base_class)), 0, 0, 0 };
   char *s = NULL, *t;
+
+#ifdef LIBHD_MEMCHECK
+  {
+    if(libhd_log)
+      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_class_name, hd_data), hd_data);
+  }
+#endif
 
   if(name) name = free_mem(name);
 
@@ -345,6 +359,13 @@ char *hd_vendor_name(hd_data_t *hd_data, unsigned vendor)
   unsigned u;
   unsigned ids[4] = { vendor, };
 
+#ifdef LIBHD_MEMCHECK
+  {
+    if(libhd_log)
+      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_vendor_name, hd_data), hd_data);
+  }
+#endif
+
   u = find_entry(&x, 0, 0, ids);
   return name_ind(x, u);
 }
@@ -355,6 +376,13 @@ char *hd_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device)
   unsigned u;
   unsigned ids[4] = { vendor, device, };
 
+#ifdef LIBHD_MEMCHECK
+  {
+    if(libhd_log)
+      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_device_name, hd_data), hd_data);
+  }
+#endif
+
   u = find_entry(&x, 0, 1, ids);
   return name_ind(x, u);
 }
@@ -364,6 +392,13 @@ char *hd_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, u
   hddb_data_t *x = hd_data->hddb_dev;
   unsigned u;
   unsigned ids[4] = { vendor, device, sub_vendor, sub_device };
+
+#ifdef LIBHD_MEMCHECK
+  {
+    if(libhd_log)
+      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_sub_device_name, hd_data), hd_data);
+  }
+#endif
 
   u = find_entry(&x, 0, 3, ids);
   return name_ind(x, u);
@@ -829,6 +864,13 @@ int hd_find_device_by_name(hd_data_t *hd_data, unsigned base_class, char *vendor
   unsigned u;
   unsigned ids[4];
   char *names[4];
+
+#ifdef LIBHD_MEMCHECK
+  {
+    if(libhd_log)
+      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_find_device_by_name, hd_data), hd_data);
+  }
+#endif
 
   names[0] = vendor;
   names[1] = device;

@@ -2,18 +2,29 @@
 
 sub addr2line;
 
+$list = shift;
 $bin = shift;
+$ofs = shift;
 
-die "usage: mci binary data_file\n" unless -f($bin) && @ARGV == 1;
+die "usage: mci data_file binary\n" unless -f($list);
 
-while(<>) {
+open F, $list; 
+
+while(<F>) {
+  if(/^;\s*(.+?)\s*$/) {
+    @i = split ' ', $1;
+    $i[0] = sprintf "%-24s", $i[0];
+    $i[1] = addr2line $i[1];
+    print "; ", join("\t", @i), "\n";
+    next
+  }
   @i = split;
 
   die "oops, format error" if @i > 3;
 
   if(@i == 1) {
     if($i[0] =~ /^>(\S+)/) {
-      unshift @funcs, $1
+      unshift @funcs, $1;
     }
     elsif($i[0] =~ /<(\S+)/) {
      if($funcs[0] eq $1) {
@@ -40,12 +51,21 @@ while(<>) {
         print "malloc oops (line $.): mem $addr; old: $y, size ${$mem{$addr}}[0]; new: $x, size $size\n";
       }
       $mem{$addr} = [ $size, $func, @funcs ];
+      delete $lfree{$addr};
     }
     else {
       if(!exists $mem{$addr}) {
-        print "free oops (line $.): $addr\n";
+        $xx = "";
+        $first = 1;
+        for $f ($func, @funcs) {
+          $xx .= "<-" unless $first;
+          $first = 0; 
+          $xx .=  addr2line $f;
+        }
+        print "free oops (line $.): $addr ($xx) [last free: line $lfree{$addr}]\n";
       }
       delete $mem{$addr};
+      $lfree{$addr} .= " $.";
     }
   }
 }
@@ -53,9 +73,11 @@ while(<>) {
 for (sort keys %mem) {
   $total += ${$mem{$_}}[0];
   $cnt++;
-  $x = `addr2line -s -e $bin ${$mem{$_}}[1]`;
-  chomp $x;
-  $x = $x =~ /\?{2}/ ? undef : "$x ";
+
+#  $x = `addr2line -s -e $bin ${$mem{$_}}[1]`;
+#  chomp $x;
+#  $x = $x =~ /\?{2}/ ? undef : "$x ";
+  $x = addr2line ${$mem{$_}}[1];
 
   print "$_\t${$mem{$_}}[0]\t";
   $first = 1;
@@ -74,7 +96,11 @@ sub addr2line
 {
   my ($x);
 
-  $x = `addr2line -s -e $bin $_[0]`;
+  return $_[0] unless $bin;
+
+  $x = sprintf "0x%x", $_[0] + $ofs;
+
+  $x = `addr2line -s -e $bin $x`;
   chomp $x;
   $x = $x =~ /\?{2}/ ? $_[0] : $x;
 

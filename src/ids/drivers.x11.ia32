@@ -1,17 +1,17 @@
 #x11DB
-#hwinfo data from 2000-12-08 17:49:41
+#hwinfo data from 2000-12-12 10:24:05
 #
 
 
 
 # Matrox:MGA G200 AGP
 102b 0521  
-	x	4|mga||||sw_cursor|||
+	x	4|mga|||||||
 
 
 # Matrox:MGA G200 AGP
 102b 0521  
-	x	4||3d||||||
+	x	4|mga|3d|xf86_glx|dri,glx||||switch2xf86_glx
 
 
 # Matrox:MGA G200 AGP
@@ -196,7 +196,22 @@
 
 # Matrox:MGA G200 SD PCI
 102B 0520  
+	x	4|mga|||||||
+
+
+# Matrox:MGA G200 SD PCI
+102B 0520  
+	x	4|mga|3d|xf86_glx|dri,glx||||switch2xf86_glx
+
+
+# Matrox:MGA G200 SD PCI
+102B 0520  
 	x	3|SVGA|||||||
+
+
+# Matrox:MGA G200 SD PCI
+102B 0520  
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Matrox:Millennium II (AGP)
@@ -326,12 +341,12 @@
 
 # Matrox:Matrox G400
 102b 0525 102b 0378
-	x	4|mga||||sw_cursor|||
+	x	4|mga|||||||
 
 
 # Matrox:Matrox G400
 102b 0525 102b 0378
-	x	4||3d|||sw_cursor|||
+	x	4|mga|3d|xf86_glx|dri,glx||||switch2xf86_glx
 
 
 # Matrox:Matrox G400
@@ -341,7 +356,7 @@
 
 # Matrox:Matrox G400
 102b 0525 102b 0378
-	x	3|SVGA|3d|glx|glx.so||16||
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Miro:Video I/O & motion JPEG compressor
@@ -352,6 +367,16 @@
 # Miro:Video I/O & motion JPEG compressor
 1031 5607  
 	x	3|SVGA|3d||||||
+
+
+# Miro:Media 3D
+1031 5631  
+	x	4||||||||
+
+
+# Miro:Media 3D
+1031 5631  
+	x	4||3d||||||
 
 
 # Miro:Media 3D
@@ -402,6 +427,11 @@
 # Diamond:Viper 550
 1092 0550  
 	x	3|SVGA|3d|glx|glx.so||16||
+
+
+# Diamond:Fire GL2
+1014 0170  
+	x	4|firegl23|3d|xfiregl1|dri,glx,fgl23||||switch2xfiregl1
 
 
 # Elsa:Gloria Synergy
@@ -611,6 +641,11 @@
 
 # ATI:Rage 128 RL
 1002 524C  
+	x	4|r128|3d|xf86_glx|dri,glx||||switch2xf86_glx
+
+
+# ATI:Rage 128 RL
+1002 524C  
 	x	3|SVGA|||||||
 
 
@@ -621,12 +656,12 @@
 
 # ATI:Rage 128 VR PCI
 1002 524B  
-	x	3|SVGA|||||||
+	x	4|r128|3d|xf86_glx|dri,glx||||switch2xf86_glx
 
 
 # ATI:Rage 128 VR PCI
 1002 524B  
-	x	3|SVGA|3d||||||
+	x	3|SVGA|||||||
 
 
 # ATI:Rage 128 GL AGP 2x
@@ -636,7 +671,7 @@
 
 # ATI:Rage 128 GL AGP 2x
 1002 5246  
-	x	4||3d||||||
+	x	4|r128|3d|xf86_glx|dri,glx||||switch2xf86_glx
 
 
 # ATI:Rage 128 GL AGP 2x
@@ -647,6 +682,11 @@
 # ATI:Rage 128 GL PCI
 1002 5245  
 	x	4|r128|||||||
+
+
+# ATI:Rage 128 GL PCI
+1002 5245  
+	x	4|r128|3d|xf86_glx|dri,glx||||switch2xf86_glx
 
 
 # ATI:Rage 128 GL PCI
@@ -874,6 +914,11 @@
 	x	3|MACH64|||||||
 
 
+# ATI:Rage P/M Mobility AGP 2x
+1002 4C4D  
+	x	3|MACH64|3d|glx|glx.so|no_pixmap_cache,no_font_cache|||switch2glx
+
+
 # ATI:Mach64 LI
 1002 4C49  
 	x	4|ati|||||||
@@ -926,12 +971,17 @@
 
 # ATI:Rage 3D LT Pro AGP
 1002 4C42  
+	x	4||3d||||||
+
+
+# ATI:Rage 3D LT Pro AGP
+1002 4C42  
 	x	3|MACH64|||||||
 
 
 # ATI:Rage 3D LT Pro AGP
 1002 4C42  
-	x	3|MACH64|3d|glx|glx.so||16||
+	x	3|MACH64|3d|glx|glx.so|no_pixmap_cache,no_font_cache|16||switch2glx
 
 
 # ATI:Rage 3D IIC AGP
@@ -1056,12 +1106,17 @@
 
 # ATI:Rage 3D Pro PCI
 1002 4751  
+	x	4||3d||||||
+
+
+# ATI:Rage 3D Pro PCI
+1002 4751  
 	x	3|MACH64|||||||
 
 
 # ATI:Rage 3D Pro PCI
 1002 4751  
-	x	3|MACH64|3d|glx|glx.so||16||
+	x	3|MACH64|3d|glx|glx.so|no_pixmap_cache,no_font_cache|16||switch2glx
 
 
 # ATI:Rage 3D Pro PCI
@@ -1071,12 +1126,17 @@
 
 # ATI:Rage 3D Pro PCI
 1002 4750  
+	x	4||3d||||||
+
+
+# ATI:Rage 3D Pro PCI
+1002 4750  
 	x	3|MACH64|||||||
 
 
 # ATI:Rage 3D Pro PCI
 1002 4750  
-	x	3|MACH64|3d|glx|glx.so||16||
+	x	3|MACH64|3d|glx|glx.so|no_pixmap_cache,no_font_cache|16||switch2glx
 
 
 # ATI:Rage XL PCI-66
@@ -1146,12 +1206,17 @@
 
 # ATI:Rage 3D Pro PCI
 1002 4749  
+	x	4||3d||||||
+
+
+# ATI:Rage 3D Pro PCI
+1002 4749  
 	x	3|MACH64|||||||
 
 
 # ATI:Rage 3D Pro PCI
 1002 4749  
-	x	3|MACH64|3d|glx|glx.so||16||
+	x	3|MACH64|3d|glx|glx.so|no_pixmap_cache,no_font_cache|16||switch2glx
 
 
 # ATI:Rage 3D Pro
@@ -1176,12 +1241,17 @@
 
 # ATI:Rage3D III
 1002 4744  
+	x	4||3d||||||
+
+
+# ATI:Rage3D III
+1002 4744  
 	x	3|MACH64|||||||
 
 
 # ATI:Rage3D III
 1002 4744  
-	x	3|MACH64|3d|glx|glx.so||16||
+	x	3|MACH64|3d|glx|glx.so|no_pixmap_cache,no_font_cache|16||switch2glx
 
 
 # ATI:Rage 3D Pro AGP
@@ -1201,7 +1271,7 @@
 
 # ATI:Rage 3D Pro AGP
 1002 4742  
-	x	3|MACH64|3d|glx|glx.so||16||
+	x	3|MACH64|3d|glx|glx.so|no_pixmap_cache,no_font_cache|16||switch2glx
 
 
 # ATI:Mach64 VT
@@ -1294,6 +1364,16 @@
 	x	4|ati|||||||
 
 
+# ATI:Rage P/M Mobility AGP 2x (HP Omnibook)
+1002 4C4D 103c 000a
+	x	4||3d||||||
+
+
+# ATI:Rage P/M Mobility AGP 2x (HP Omnibook)
+1002 4C4D 103c 000a
+	x	3|SVGA|3d|glx|glx.so|no_pixmap_cache,no_font_cache|||switch2glx
+
+
 # ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
 1002 4C4D 14c0 000a
 	x	4|ati|||||||
@@ -1301,7 +1381,17 @@
 
 # ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
 1002 4C4D 14c0 000a
+	x	4||3d||||||
+
+
+# ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
+1002 4C4D 14c0 000a
 	x	3|SVGA|||||||
+
+
+# ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
+1002 4C4D 14c0 000a
+	x	3|SVGA|3d|glx|glx.so|no_pixmap_cache,no_font_cache|||switch2glx
 
 
 # ATI:Rage Mobility M3 AGP 2x
@@ -1311,12 +1401,72 @@
 
 # ATI:Rage Mobility M3 AGP 2x
 1002 4c46  
-	x	3||||||||
+	x	4|r128|3d|xf86_glx|dri,glx||||switch2xf86_glx
 
 
 # ATI:Rage Mobility M3 AGP 2x
 1002 4c46  
-	x	3||3d||||||
+	x	3|SVGA|||||||
+
+
+# ATI:Rage 128 Mobility LE
+1002 4c45  
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 Mobility LE
+1002 4c45  
+	x	4|r128|3d|xf86_glx|dri,glx||||switch2xf86_glx
+
+
+# ATI:Rage 128 Mobility LE
+1002 4c45  
+	x	3|SVGA|||||||
+
+
+# ATI:Rage 128 Mobility MF
+1002 4d46  
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 Mobility MF
+1002 4d46  
+	x	4|r128|3d|xf86_glx|dri,glx||||switch2xf86_glx
+
+
+# ATI:Rage 128 Mobility MF
+1002 4d46  
+	x	3|SVGA|||||||
+
+
+# ATI:Rage 128 Mobility ML
+1002 4d4c  
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 Mobility ML
+1002 4d4c  
+	x	4|r128|3d|xf86_glx|dri,glx||||switch2xf86_glx
+
+
+# ATI:Rage 128 Mobility ML
+1002 4d4c  
+	x	3|SVGA|||||||
+
+
+# ATI:Rage 128 RG
+1002 5247  
+	x	4|r128|||||||
+
+
+# ATI:Rage 128 RG
+1002 5247  
+	x	4|r128|3d|xf86_glx|dri,glx||||switch2xf86_glx
+
+
+# ATI:Rage 128 RG
+1002 5247  
+	x	3|SVGA|||||||
 
 
 # Number 9:Imagine 128
@@ -1854,6 +2004,11 @@
 	x	3|RUSH|||||||
 
 
+# 3Dfx:3Dfx Voodoo Rush
+1142 643d  
+	x	3|RUSH|3d|mesa3dfx,dev3dfx,glide_vr,rushlibs,xrush|||16||switch2mesa3dfx
+
+
 # 3Dfx:Voodoo3
 121a 0005  
 	x	4|tdfx|||||||
@@ -1861,7 +2016,7 @@
 
 # 3Dfx:Voodoo3
 121a 0005  
-	x	4||3d|glide_v3,dev3dfx,mesa3dfx|dri||||
+	x	4|tdfx|3d|xf86_glx,glidedri|dri||||switch2xf86_glx
 
 
 # 3Dfx:Voodoo3
@@ -1871,12 +2026,12 @@
 
 # 3Dfx:Banshee
 121A 0003  
-	x	4|tdfx|||dri||||
+	x	4|tdfx|||||||
 
 
 # 3Dfx:Banshee
 121A 0003  
-	x	4||3d||dri||||
+	x	4|tdfx|3d|xf86_glx,glidedri|dri,glx||||switch2xf86_glx
 
 
 # 3Dfx:Banshee
@@ -1886,22 +2041,12 @@
 
 # 3Dfx:3Dfx Voodoo2
 121A 0002  
-	x	4|glide|||||||
-
-
-# 3Dfx:3Dfx Voodoo2
-121A 0002  
-	x	4||3d|dev3dfx,mesa3dfx,glide_v2|||||
-
-
-# 3Dfx:3Dfx Voodoo2
-121A 0002  
-	x	3||3d|glide_v2,mesa3dfx,dev3dfx|||16||
+	x	3||3d|glide_v2,mesa3dfx,dev3dfx|||||switch2mesa3dfx
 
 
 # 3Dfx:3Dfx Voodoo
 121A 0001  
-	x	3||3d|mesa3dfx,dev3dfx,glide_vg|||16||
+	x	3||3d|mesa3dfx,dev3dfx,glide_vg|||||switch2mesa3dfx
 
 
 # 3Dfx:Voodoo5 5500
@@ -1911,7 +2056,7 @@
 
 # 3Dfx:Voodoo5 5500
 121A 0009  
-	x	4|tdfx|3d||||||switch2xf86_glx
+	x	4|tdfx|3d|xf86_glx,gldri_v5|||||switch2xf86_glx
 
 
 # Intel:I810_E
@@ -1921,17 +2066,22 @@
 
 # Intel:I810_E
 8086 7125  
+	x	4|i810|3d|xf86_glx|dri,glx||||switch2xf86_glx
+
+
+# Intel:I810_E
+8086 7125  
 	x	3|SVGA|||||||
 
 
 # Intel:I810_E
 8086 7125  
-	x	3|SVGA|3d|glx|glx.so||16||
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Intel:I810_DC100
 8086 7123  
-	x	4||3d||||||
+	x	4|i810|3d|xf86_glx|dri,glx||||switch2xf86_glx
 
 
 # Intel:I810_DC100
@@ -1941,7 +2091,17 @@
 
 # Intel:i810
 8086 7121  
+	x	4|i810|3d|xf86_glx|dri,glx||||switch2xf86_glx
+
+
+# Intel:i810
+8086 7121  
 	x	3|SVGA|||||||
+
+
+# Intel:i810
+8086 7121  
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Intel:i740 (AGP)
@@ -1991,6 +2151,21 @@
 
 # Intel:I815
 8086 1132  
+	x	4|i810|3d|xf86_glx|dri,glx||||switch2xf86_glx
+
+
+# Intel:I815
+8086 1132  
+	x	3|SVGA|||||||
+
+
+# Intel:I815
+8086 1132  
+	x	3|SVGA|3d|glx|glx.so||||switch2glx
+
+
+# S3:ViRGE
+5333 5631  
 	x	4||3d||||||
 
 
@@ -1999,14 +2174,39 @@
 	x	3|SVGA|||||||
 
 
+# S3:ViRGE
+5333 5631  
+	x	3|SVGA|3d|glx|glx.so||15||switch2glx
+
+
+# S3:SVGA based
+5333 8c03  
+	x	4|s3virge|||||||
+
+
+# S3:SVGA based
+5333 8c03  
+	x	4||3d||||||
+
+
 # S3:SVGA based
 5333 8c03  
 	x	3|SVGA|||||||
 
 
+# S3:SVGA based
+5333 8c03  
+	x	3|SVGA|3d|glx|glx.so||15||switch2glx
+
+
 # S3:VIRGE_MX
 5333 8c01  
 	x	4|s3virge|||||||
+
+
+# S3:VIRGE_MX
+5333 8c01  
+	x	4||3d||||||
 
 
 # S3:VIRGE_MX
@@ -2016,7 +2216,7 @@
 
 # S3:VIRGE_MX
 5333 8c01  
-	x	3|SVGA|3d||||||
+	x	3|SVGA|3d|glx|glx.so||15||switch2glx
 
 
 # S3:Savage3D+MacroVision
@@ -2034,6 +2234,11 @@
 	x	3|SVGA|||||||
 
 
+# S3:Savage3D+MacroVision
+5333 8A21  
+	x	3|SVGA|3d|glx|glx.so|no_pixmap_cache|||switch2glx
+
+
 # S3:Savage3D (86E391)
 5333 8A20  
 	x	4|savage|||||||
@@ -2049,9 +2254,19 @@
 	x	3|SVGA|||||||
 
 
+# S3:Savage3D (86E391)
+5333 8A20  
+	x	3|SVGA|3d|glx|glx.so|no_pixmap_cache|||switch2glx
+
+
 # S3:ViRGE/GX2
 5333 8a10  
 	x	4|s3virge|||||||
+
+
+# S3:ViRGE/GX2
+5333 8a10  
+	x	4||3d||||||
 
 
 # S3:ViRGE/GX2
@@ -2061,12 +2276,22 @@
 
 # S3:ViRGE/GX2
 5333 8a10  
-	x	3|SVGA|3d||||||
+	x	3|SVGA|3d|glx|glx.so||15||switch2glx
+
+
+# S3:ViRGE/DX or /GX
+5333 8a01  
+	x	4||3d||||||
 
 
 # S3:ViRGE/DX or /GX
 5333 8a01  
 	x	3|SVGA|||||||
+
+
+# S3:ViRGE/DX or /GX
+5333 8a01  
+	x	3|SVGA|3d|glx|glx.so||15||switch2glx
 
 
 # S3:PLATO/PX
@@ -2131,7 +2356,22 @@
 
 # S3:86C988 ViRGE/VX GUI Accelerator
 5333 883D  
+	x	4|s3virge|||||||
+
+
+# S3:86C988 ViRGE/VX GUI Accelerator
+5333 883D  
+	x	4||3d||||||
+
+
+# S3:86C988 ViRGE/VX GUI Accelerator
+5333 883D  
 	x	3|SVGA|||||||
+
+
+# S3:86C988 ViRGE/VX GUI Accelerator
+5333 883D  
+	x	3|SVGA|3d|glx|glx.so||15||switch2glx
 
 
 # S3:Fire GL
@@ -2404,6 +2644,76 @@
 	x	4||3d||||||
 
 
+# S3:Savage IX8
+5333 8c12  
+	x	3|SVGA|||||||
+
+
+# S3:Savage IX8
+5333 8c12  
+	x	3|SVGA|3d|glx|glx.so|no_pixmap_cache|||switch2glx
+
+
+# S3:Savage  MX (Macrovision)
+5333 8c10  
+	x	4|savage|||||||
+
+
+# S3:Savage  MX (Macrovision)
+5333 8c10  
+	x	4||3d||||||
+
+
+# S3:Savage  MX (Macrovision)
+5333 8c10  
+	x	3|SVGA|||||||
+
+
+# S3:Savage  MX (Macrovision)
+5333 8c10  
+	x	3|SVGA|3d|glx|glx.so|no_pixmap_cache|||switch2glx
+
+
+# S3:Savage MX
+5333 8c11  
+	x	4|savage|||||||
+
+
+# S3:Savage MX
+5333 8c11  
+	x	4||3d||||||
+
+
+# S3:Savage MX
+5333 8c11  
+	x	3|SVGA|||||||
+
+
+# S3:Savage MX
+5333 8c11  
+	x	3|SVGA|3d|glx|glx.so|no_pixmap_cache|||switch2glx
+
+
+# S3:Savage IX
+5333 8c13  
+	x	4|savage|||||||
+
+
+# S3:Savage IX
+5333 8c13  
+	x	4||3d||||||
+
+
+# S3:Savage IX
+5333 8c13  
+	x	3|SVGA|||||||
+
+
+# S3:Savage IX
+5333 8c13  
+	x	3|SVGA|3d|glx|glx.so|no_pixmap_cache|||switch2glx
+
+
 # 3DLabs:Permedia2V 2D+3D
 3D3D 0009  
 	x	4|glint|||||||
@@ -2531,22 +2841,22 @@
 
 # Nvidia:GeForce-2
 10de 0150  
-	x	4|nv||nv_glx|||||
+	x	4|nv|||||||
 
 
 # Nvidia:GeForce-2
 10de 0150  
-	x	4|nvidia|3d|nv_glx|glx||||
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
 
 
 # Nvidia:Quadro
 10de 0103  
-	x	4|nv||||sw_cursor|||
+	x	4|nv|||||||
 
 
 # Nvidia:Quadro
 10de 0103  
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
 
 
 # Nvidia:Quadro
@@ -2554,14 +2864,19 @@
 	x	3|SVGA|||||||
 
 
-# Nvidia:GEFORCEDDR
-10de 0101  
-	x	4|nv||||sw_cursor|||
+# Nvidia:Quadro
+10de 0103  
+	x	3|SVGA|3d|glx|glx.so||||switch2glx
 
 
 # Nvidia:GEFORCEDDR
 10de 0101  
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||
+	x	4|nv|||||||
+
+
+# Nvidia:GEFORCEDDR
+10de 0101  
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
 
 
 # Nvidia:GEFORCEDDR
@@ -2571,17 +2886,17 @@
 
 # Nvidia:GEFORCEDDR
 10de 0101  
-	x	3|SVGA|3d||||||
+	x	3|SVGA|3d|glx|glx.so||||switch2glx
 
 
 # Nvidia:GEFORCE256
 10de 0100  
-	x	4|nv||||sw_cursor|||
+	x	4|nv|||||||
 
 
 # Nvidia:GEFORCE256
 10de 0100  
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||switch2nv_glx
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
 
 
 # Nvidia:GEFORCE256
@@ -2591,7 +2906,7 @@
 
 # Nvidia:GEFORCE256
 10de 0100  
-	x	3|SVGA|3d|glx|glx.so||16||
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Nvidia:RIVA 128 2D/3D
@@ -2609,6 +2924,11 @@
 	x	3|SVGA|||||8,16,24||
 
 
+# Nvidia:RIVA 128 2D/3D
+12D2 0018  
+	x	3|SVGA|3d|glx|glx.so||||switch2glx
+
+
 # Nvidia:RIVA 128ZX 2D/3D
 12D2 0019  
 	x	4|nv|||||||
@@ -2631,7 +2951,7 @@
 
 # Nvidia:Riva Integrated
 10DE 00A0  
-	x	4|nvidia|3d|nv_glx|glx||||
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
 
 
 # Nvidia:Riva Integrated
@@ -2641,7 +2961,7 @@
 
 # Nvidia:Riva Integrated
 10DE 00A0  
-	x	3|SVGA|3d||||16||
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Nvidia:RIVA TNT2 Model 64
@@ -2651,7 +2971,7 @@
 
 # Nvidia:RIVA TNT2 Model 64
 10DE 002D  
-	x	4|nvidia|3d|nv_glx|glx||||
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
 
 
 # Nvidia:RIVA TNT2 Model 64
@@ -2661,7 +2981,7 @@
 
 # Nvidia:RIVA TNT2 Model 64
 10DE 002D  
-	x	3|SVGA|3d|glx|glx.so||16||
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Nvidia:Riva Vanta TNT2
@@ -2671,7 +2991,7 @@
 
 # Nvidia:Riva Vanta TNT2
 10DE 002C  
-	x	4|nvidia|3d|nv_glx|glx||||
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
 
 
 # Nvidia:Riva Vanta TNT2
@@ -2681,7 +3001,7 @@
 
 # Nvidia:Riva Vanta TNT2
 10DE 002C  
-	x	3|SVGA|3d|glx|glx.so||16||
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Nvidia:Riva TNT2 Ultra
@@ -2691,7 +3011,7 @@
 
 # Nvidia:Riva TNT2 Ultra
 10DE 0029  
-	x	4|nvidia|3d|nv_glx|glx||||
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
 
 
 # Nvidia:Riva TNT2 Ultra
@@ -2701,17 +3021,17 @@
 
 # Nvidia:Riva TNT2 Ultra
 10DE 0029  
-	x	3|SVGA|3d||||||
+	x	3|SVGA|3d||||||switch2glx
 
 
 # Nvidia:Riva TNT2
 10DE 0028  
-	x	4|nv||||sw_cursor|||
+	x	4|nv|||||||
 
 
 # Nvidia:Riva TNT2
 10DE 0028  
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||switch2nv_glx
 
 
 # Nvidia:Riva TNT2
@@ -2719,19 +3039,29 @@
 	x	3|SVGA|||||15,8,16,24||
 
 
-# Nvidia:Riva TNT
-10DE 0020  
-	x	4|nv||||sw_cursor|||
+# Nvidia:Riva TNT2
+10DE 0028  
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Nvidia:Riva TNT
 10DE 0020  
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||
+	x	4|nv|||||||
+
+
+# Nvidia:Riva TNT
+10DE 0020  
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
 
 
 # Nvidia:Riva TNT
 10DE 0020  
 	x	3|SVGA|||||24,16,15,8||
+
+
+# Nvidia:Riva TNT
+10DE 0020  
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Nvidia:DAC64
@@ -2761,12 +3091,12 @@
 
 # Nvidia:Riva TNT (PCI)
 10de 0020 1092 4820
-	x	4|nv||||sw_cursor|||
+	x	4|nv|||||||
 
 
 # Nvidia:Riva TNT (PCI)
 10de 0020 1092 4820
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||switch2nv_glx
 
 
 # Nvidia:Riva TNT (PCI)
@@ -2776,17 +3106,17 @@
 
 # Nvidia:Riva TNT (PCI)
 10de 0020 1092 4820
-	x	3|SVGA|3d|glx|glx.so||16||
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Nvidia:Elsa Erazor 2 (TNT)
 10de 0020 1048 0c1c
-	x	4|nv||||sw_cursor|||
+	x	4|nv|||||||
 
 
 # Nvidia:Elsa Erazor 2 (TNT)
 10de 0020 1048 0c1c
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||switch2nv_glx
 
 
 # Nvidia:Elsa Erazor 2 (TNT)
@@ -2796,7 +3126,7 @@
 
 # Nvidia:Elsa Erazor 2 (TNT)
 10de 0020 1048 0c1c
-	x	3|SVGA|3d|glx|glx.so||16||
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Nvidia:Elsa Erazor LT
@@ -2806,7 +3136,7 @@
 
 # Nvidia:Elsa Erazor LT
 10de 002d 1048 0c3a
-	x	4|nvidia|3d|nv_glx|glx||||
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
 
 
 # Nvidia:Elsa Erazor LT
@@ -2816,7 +3146,7 @@
 
 # Nvidia:Elsa Erazor LT
 10de 002d 1048 0c3a
-	x	3|SVGA|3d|glx|glx.so||16||
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Nvidia:GeForce 2 MX
@@ -2826,7 +3156,57 @@
 
 # Nvidia:GeForce 2 MX
 10de 0110 1462 8816
-	x	4|nvidia|3d|nv_glx|glx||||
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
+
+
+# Nvidia:GeForce2 MX DDR
+10de 0111  
+	x	4|nv|||||||
+
+
+# Nvidia:GeForce2 MX DDR
+10de 0111  
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
+
+
+# Nvidia:GeForce 2 MXR
+10de 0113  
+	x	4|nv|||||||
+
+
+# Nvidia:GeForce 2 MXR
+10de 0113  
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
+
+
+# Nvidia:GeForce 2 GTS (rev 1)
+10de 0151  
+	x	4|nv|||||||
+
+
+# Nvidia:GeForce 2 GTS (rev 1)
+10de 0151  
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
+
+
+# Nvidia:GeForce 2 Ultra
+10de 0152  
+	x	4|nv|||||||
+
+
+# Nvidia:GeForce 2 Ultra
+10de 0152  
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
+
+
+# Nvidia:Quadro2 Pro
+10de 0153  
+	x	4|nv|||||||
+
+
+# Nvidia:Quadro2 Pro
+10de 0153  
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
 
 
 # Neomagic:MagicMedia 256AV
@@ -2957,6 +3337,26 @@
 # Neomagic:NM2200
 10c8 0005 1014 00dd
 	x	3|SVGA|3d||||||
+
+
+# Neomagic:256XL(2380)
+10c8 0016  
+	x	4|neomagic|||||||
+
+
+# Neomagic:256XL(2380)
+10c8 0016  
+	x	4||3d||||||
+
+
+# Neomagic:256XL(2380)
+10c8 0016  
+	x	3||||||||
+
+
+# Neomagic:256XL(2380)
+10c8 0016  
+	x	3||3d||||||
 
 
 # Texas Instruments:Permedia 2D+3D

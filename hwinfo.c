@@ -45,6 +45,38 @@ int main(int argc, char **argv)
     return find_braille(hd_data);
   }
 
+  if(argc == 1 && !strcmp(*argv, "--test")) {
+    hd_t *hd;
+
+    hd_data = calloc(1, sizeof *hd_data);
+    hd_data->debug = -1;
+    hd_set_probe_feature(hd_data, pr_pci);
+    hd_set_probe_feature(hd_data, pr_isapnp);
+    hd_set_probe_feature(hd_data, pr_misc);
+    hd_scan(hd_data);
+
+    hd_cpu_arch(hd_data);
+    hd_free_hd_data(hd_data);
+
+    fprintf(stderr, "1\n");
+
+    hd_data->debug = -1;
+    hd_cpu_arch(hd_data);
+    hd_free_hd_data(hd_data);
+        
+    fprintf(stderr, "2\n");
+
+    hd_data->debug = -1;
+    hd = hd_list(hd_data, hw_network_ctrl, 1, NULL);
+    hd_free_hd_list(hd);
+    hd_free_hd_data(hd_data);
+    hd_free_hd_data(hd_data);
+
+    fprintf(stderr, "3\n");
+
+    return 0;
+  }
+
   do {
     if(first_probe)				/* only for the 1st probing */
       hd_set_probe_feature(hd_data, pr_default);

@@ -12,6 +12,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+#ifndef LIBHD_TINY
+
 static void do_lp(hd_data_t *hd_data);
 static void do_zip(hd_data_t *hd_data);
 static void dump_parallel_data(hd_data_t *hd_data, str_list_t *sl);
@@ -254,4 +256,6 @@ void dump_parallel_data(hd_data_t *hd_data, str_list_t *sl)
   }
   ADD2LOG("----- parallel info end -----\n");
 }
+
+#endif	/* ifndef LIBHD_TINY */
 

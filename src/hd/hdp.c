@@ -46,16 +46,17 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
   char buf1[32], buf2[32];
   hd_t *hd_tmp;
 
+#ifdef LIBHD_MEMCHECK
+  {
+    if(libhd_log)
+      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_dump_entry, hd_data), hd_data);
+  }
+#endif
+
   s = "";
-  if(
-    h->detail &&
-    h->detail->type == hd_detail_pci &&
-    (h->detail->pci.data->flags & (1 << pci_flag_agp))
-  ) s = "(AGP)";
-
+  if(h->is.agp) s = "(AGP)";
   //  pci_flag_pm: dump_line0(", supports PM");
-
-  if(h->detail && h->detail->type == hd_detail_isapnp) s = "(PnP)";
+  if(h->is.isapnp) s = "(PnP)";
 
   a0 = hd_bus_name(hd_data, h->bus);
   a1 = hd_class_name(hd_data, 3, h->base_class, h->sub_class, h->prog_if);

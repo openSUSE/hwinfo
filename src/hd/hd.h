@@ -295,6 +295,7 @@ typedef struct {
   isapnp_card_t *card;
   int dev;
   unsigned flags;				/* cf. enum isapnp_flags */
+  unsigned ref:1;				/* internally used flag */
 } isapnp_dev_t;
 
 /*
@@ -909,6 +910,11 @@ typedef struct s_hd_t {
   unsigned module, line, count;	/* place where the entry was created */
   hd_res_t *res;
   hd_detail_t *detail;
+
+  struct {
+    unsigned agp:1;		/* AGP device */
+    unsigned isapnp:1;		/* ISA-PnP device */
+  } is;
 
   struct {			/* this struct is for internal purposes only */
     unsigned remove:1;		/* schedule for removal */

@@ -143,6 +143,7 @@ void hd_scan_pci(hd_data_t *hd_data)
     hd->detail = new_mem(sizeof *hd->detail);
     hd->detail->type = hd_detail_pci;
     hd->detail->pci.data = p;
+    if(p->flags & (1 << pci_flag_agp)) hd->is.agp = 1;
     p->next = NULL;
   }
   hd_data->pci = NULL;

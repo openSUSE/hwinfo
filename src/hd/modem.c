@@ -24,6 +24,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+#ifndef LIBHD_TINY
+
 static struct speeds_s {
   unsigned baud;
   speed_t mask;
@@ -812,3 +814,4 @@ void dump_ser_modem_data(hd_data_t *hd_data)
   ADD2LOG("----- serial modems end -----\n");
 }
 
+#endif	/* ifndef LIBHD_TINY */

@@ -47,6 +47,32 @@
 #define PROGRESS(a, b, c) progress(hd_data, a, b, c)
 #define ADD2LOG(a...) str_printf(&hd_data->log, -2, a)
 
+#undef LIBHD_MEMCHECK
+
+#if defined(__i386__) || defined(__PPC__)
+/*
+ * f: function we are in
+ * a: first argument
+ */
+
+#ifdef __i386__
+#define CALLED_FROM(f, a) ((void *) ((unsigned *) &a)[-1] - 5)
+#endif
+
+#ifdef __PPC__
+/* (1-arg funcs only) #define CALLED_FROM(f, a) ((void *) *((unsigned *) ((void *) &a - ((short *) f)[1] - 4)) - 4) */
+static inline void *getr1() { void *p; asm("mr %0,1" : "=r" (p) :); return p; }
+#define CALLED_FROM(f, a) ((void *) ((unsigned *) (getr1() - ((short *) f)[1]))[1] - 4)
+#endif
+#else
+#undef LIBHD_MEMCHECK
+#endif
+
+#ifdef LIBHD_MEMCHECK
+FILE *libhd_log;
+#endif
+
+
 /*
  * define to make (hd_t).unique_id a hex string, otherwise it is a
  * base64-like string
