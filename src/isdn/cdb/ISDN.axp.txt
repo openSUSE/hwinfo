@@ -1,6 +1,6 @@
 #
 # CDB data export for subclass: ISDN Single Basic Rate
-# Generated at                : Sat Aug 30 16:30:23 2003
+# Generated at                : Sat Aug 30 17:22:29 2003
 #
 # Exported combinations:
 #	arch=axp  dist=Stable  lang=de_DE  vario=HiSax driver
@@ -149,3 +149,4 @@
 |vendor=AVM Computersysteme Vertriebs GmbH|device=T1 PCI|device_class=ISDN Primary Rate|bus_type=PCI|vendor_id=0x1244|device_id=0x1200|vario=CAPI 2.0 driver|SMP=Yes|drv_id=0x21f45|drv_subtyp=2|drv_typ=8005|firmware=t1-{PROF}.t4|interface=CAPI20|interface=CAPI20 Fax|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|module=t1pci|need_packages=capi4linux|need_packages=i4l-base|need_packages=i4l-isdnlog|need_packages=i4lfirm|special=B version|supported=full|
 |vendor=Eicon Networks|device=Diehl ISDN-S2M|device_class=ISDN Primary Rate|bus_type=ISA|vario=I4L driver|IRQ=10|IRQ=11|IRQ=12|IRQ=3|IRQ=4|IRQ=5|IRQ=7|IRQ=9|MEMBASE=0xd0000|SMP=Yes|drv_id=0x41f4a|drv_subtyp=4|drv_typ=8010|feature=Fax|firmware=%{PROTO}|interface=FCLASS2|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|line_protocol=LEASED|line_protocol=NI1|module=eicon|need_packages=i4l-base|supported=full|
 |vendor=Eicon Networks|device=Diva Server PRI/PCI|device_class=ISDN Primary Rate|bus_type=PCI|vendor_id=0x1133|device_id=0xe014|subvendor_id=0xffff|subdevice_id=0xffff|vario=I4L driver|SMP=Yes|drv_id=0x81f4a|drv_subtyp=8|drv_typ=8010|feature=Fax|firmware=%{PROTO}|interface=FCLASS2|interface=I4L|line_cnt=1|line_protocol=1TR6|line_protocol=DSS1|line_protocol=LEASED|line_protocol=NI1|module=eicon|need_packages=i4l-base|supported=full|
+|vendor=AVM Computersysteme Vertriebs GmbH|device=BlueFRITZ!USB|device_class=Others|bus_type=USB|vendor_id=0x057c|device_id=0x2200|vario=CAPI 2.0 driver|Interface=CAPI20|SMP=Yes|drv_id=0x11f46|drv_subtyp=1|drv_typ=8006|feature=BLUETOOTH|feature=Basic Rate|firmware=bfubase.frm|line_cnt=1|line_protocol=DSS1|module=bfusb|need_packages=bluez-bluefw|need_packages=bluez-libs|need_packages=bluez-pan|need_packages=bluez-sdp|need_packages=bluez-utils|need_packages=capi4linux|need_packages=i4l-base|need_packages=i4l-isdnlog|supported=full|
