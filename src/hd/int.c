@@ -28,6 +28,8 @@ static void new_id(hd_data_t *hd_data, hd_t *hd);
 
 void hd_scan_int(hd_data_t *hd_data)
 {
+  hd_t *hd;
+
   if(!hd_probe_feature(hd_data, pr_int)) return;
 
   hd_data->module = mod_int;
@@ -61,6 +63,10 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(9, 0, "usbscsi");
   int_fix_usb_scsi(hd_data);
 
+  PROGRESS(10, 0, "hdb");
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    hdb_add_info(hd_data, hd);
+  }
 }
 
 /*

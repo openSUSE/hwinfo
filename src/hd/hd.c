@@ -2874,6 +2874,178 @@ driver_info_t *reorder_x11(driver_info_t *di0, char *info)
 }
 
 
+void expand_driver_info(hd_data_t *hd_data, hd_t *hd)
+{
+  int i;
+  unsigned u1, u2;
+  char *s, *t, *t0;
+  driver_info_t *di;
+  str_list_t *sl, *sl1, *sl2;
+
+  if(!hd || !hd->driver_info) return;
+
+  for(di = hd->driver_info; di; di = di->next) {
+    switch(di->any.type) {
+      case di_display:
+        for(i = 0, sl = di->display.hddb0; sl; sl = sl->next, i++) {
+          if(i == 0 && sscanf(sl->str, "%ux%u", &u1, &u2) == 2) {
+            di->display.width = u1;
+            di->display.height = u2;
+          }
+          else if(i == 1 && sscanf(sl->str, "%u-%u", &u1, &u2) == 2) {
+            di->display.min_vsync = u1;
+            di->display.max_vsync = u2;
+          }
+          else if(i == 2 && sscanf(sl->str, "%u-%u", &u1, &u2) == 2) {
+            di->display.min_hsync = u1;
+            di->display.max_hsync = u2;
+          }
+          else if(i == 3 && sscanf(sl->str, "%u", &u1) == 1) {
+            di->display.bandwidth = u1;
+          }
+        }
+        break;
+
+      case di_module:
+        for(di->module.active = 1, sl = di->module.hddb0; sl; sl = sl->next) {
+          t0 = s = new_str(sl->str);
+
+          t = strsep(&t0, " ");
+
+          add_str_list(&di->module.names, t);
+          di->module.active &= hd_module_is_active(hd_data, t);
+
+          if(t0) {
+            add_str_list(&di->module.mod_args, module_cmd(hd, t0));
+          }
+          else {
+            add_str_list(&di->module.mod_args, NULL);
+          }
+
+          free_mem(s);
+        }
+        for(sl = di->module.hddb1; sl; sl = sl->next) {
+          s = module_cmd(hd, sl->str);
+          if(s) str_printf(&di->module.conf, -1, "%s\n", s);
+        }
+        break;
+
+      case di_mouse:
+        di->mouse.buttons = di->mouse.wheels = -1;
+        for(i = 0, sl = di->mouse.hddb0; sl; sl = sl->next, i++) {
+          if(i == 0) {
+            di->mouse.xf86 = new_str(sl->str);
+          }
+          else if(i == 1) {
+            di->mouse.gpm = new_str(sl->str);
+          }
+          else if(i == 2 && *sl->str) {
+            di->mouse.buttons = strtol(sl->str, NULL, 10);
+          }
+          else if(i == 3 && *sl->str) {
+            di->mouse.wheels = strtol(sl->str, NULL, 10);
+          }
+        }
+        break;
+
+      case di_x11:
+        for(i = 0, sl = di->x11.hddb0; sl; sl = sl->next, i++) {
+          if(i == 0) {
+            di->x11.xf86_ver = new_str(sl->str);
+          }
+          else if(i == 1) {
+            di->x11.server = new_str(sl->str);
+          }
+          else if(i == 2) {
+            if(!strcmp(sl->str, "3d")) di->x11.x3d = 1;
+          }
+#if 0
+          else if(i == 3) {
+            s = new_str(sl->str);
+            for(t0 = s; (t = strsep(&t0, ",")); ) {
+              add_str_list(&di->x11.packages, t);
+            }
+            free_mem(s);
+          }
+#endif
+          else if(i == 4) {
+            s = new_str(sl->str);
+            for(t0 = s; (t = strsep(&t0, ",")); ) {
+              add_str_list(&di->x11.extensions, t);
+            }
+            free_mem(s);
+          }
+          else if(i == 5) {
+            s = new_str(sl->str);
+            for(t0 = s; (t = strsep(&t0, ",")); ) {
+              add_str_list(&di->x11.options, t);
+            }
+            free_mem(s);
+          }
+          else if(i == 6) {
+            for(sl2 = sl1 = hd_split(',', sl->str); sl2; sl2 = sl2->next) {
+              u1 = strtoul(sl2->str, NULL, 0);
+              switch(u1) {
+                case 8:
+                  di->x11.colors.c8 = 1;
+                  di->x11.colors.all |= (1 << 0);
+                  break;
+
+                case 15:
+                  di->x11.colors.c15 = 1;
+                  di->x11.colors.all |= (1 << 1);
+                  break;
+
+                case 16:
+                  di->x11.colors.c16 = 1;
+                  di->x11.colors.all |= (1 << 2);
+                  break;
+
+                case 24:
+                  di->x11.colors.c24 = 1;
+                  di->x11.colors.all |= (1 << 3);
+                  break;
+
+                case 32:
+                  di->x11.colors.c32 = 1;
+                  di->x11.colors.all |= (1 << 4);
+                  break;
+              }
+            }
+            free_str_list(sl1);
+          }
+          else if(i == 7) {
+            di->x11.dacspeed = strtol(sl->str, NULL, 10);
+          }
+          else if(i == 8) {
+            di->x11.script = new_str(sl->str);
+          }
+        }
+        for(i = 0, sl = di->x11.hddb1; sl; sl = sl->next, i++) {
+          add_str_list(&di->x11.raw, sl->str);
+        }
+        // ######## for compatibility
+        for(sl = hd->requires; sl; sl = sl->next) {
+          add_str_list(&di->x11.packages, sl->str);
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  di = hd->driver_info;
+  if(di && di->any.type == di_x11 && !hd_probe_feature(hd_data, pr_ignx11)) {
+    s = get_cmdline(hd_data, "x11");
+    if(s && *s) {
+      di = reorder_x11(di, s);
+    }
+    free_mem(s);
+  }
+}
+
+
 /*
  * Reads the driver info.
  *
@@ -2913,24 +3085,7 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
   }
 #endif
 
-  if(hd->sub_vend || hd->sub_dev) {
-    di0 = sub_device_driver(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev);
-  }
-
-  if(!di0 && (hd->vend || hd->dev)) {
-    di0 = device_driver(hd_data, hd->vend, hd->dev);
-
-//    fprintf(stderr, "\n\n******* %p 0x%x 0x%x\n\n", di0, hd->vend, hd->dev);
-
-  }
-
-  if(!di0 && (hd->compat_vend || hd->compat_dev)) {
-    di0 = device_driver(hd_data, hd->compat_vend, hd->compat_dev);
-  }
-
-  if(!di0 && (hd->drv_vend || hd->drv_dev)) {
-    di0 = device_driver(hd_data, hd->drv_vend, hd->drv_dev);
-  }
+  di0 = device_driver(hd_data, hd);
 
 #if WITH_ISDN
   if((ici = get_isdn_info(hd))) {
@@ -3029,6 +3184,7 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
           else if(i == 2) {
             if(!strcmp(sl->str, "3d")) di->x11.x3d = 1;
           }
+#if 0
           else if(i == 3) {
             s = new_str(sl->str);
             for(t0 = s; (t = strsep(&t0, ",")); ) {
@@ -3036,6 +3192,7 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
             }
             free_mem(s);
           }
+#endif
           else if(i == 4) {
             s = new_str(sl->str);
             for(t0 = s; (t = strsep(&t0, ",")); ) {
@@ -3091,6 +3248,10 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
         }
         for(i = 0, sl = di->x11.hddb1; sl; sl = sl->next, i++) {
           add_str_list(&di->x11.raw, sl->str);
+        }
+        // ######## for compatibility
+        for(sl = hd->requires; sl; sl = sl->next) {
+          add_str_list(&di->x11.packages, sl->str);
         }
         break;
 

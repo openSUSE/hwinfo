@@ -1580,38 +1580,77 @@ unsigned sub_device_class(hd_data_t *hd_data, unsigned vendor, unsigned device, 
 }
 
 
-driver_info_t *device_driver(hd_data_t *hd_data, unsigned vendor, unsigned device)
+driver_info_t *device_driver(hd_data_t *hd_data, hd_t *hd)
 {
   hddb_search_t hs = {};
 
-  hs.vendor.id = vendor;
-  hs.device.id = device;
-  hs.key |= (1 << he_vendor_id) + (1 << he_device_id);
+  if(hd->vend) {
+    hs.vendor.id = hd->vend;
+    hs.key |= 1 << he_vendor_id;
+  }
+
+  if(hd->dev) {
+    hs.device.id = hd->dev;
+    hs.key |= 1 << he_device_id;
+  }
+
+  if(hd->sub_vend) {
+    hs.sub_vendor.id = hd->sub_vend;
+    hs.key |= 1 << he_subvendor_id;
+  }
+
+  if(hd->sub_dev) {
+    hs.sub_device.id = hd->sub_dev;
+    hs.key |= 1 << he_subdevice_id;
+  }
 
   hddb_search(hd_data, &hs);
+
+  if((hs.value & (1 << he_requires))) {
+    hd->requires = free_str_list(hd->requires);
+    hd->requires = hd_split('|', hs.requires);
+  }
 
   if((hs.value & (1 << he_driver))) {
     return hddb_to_device_driver(hd_data, &hs);
   }
 
-  return NULL;
-}
+  if(hd->compat_vend || hd->compat_dev) {
+    memset(&hs, 0, sizeof hs);
 
+    if(hd->compat_vend) {
+      hs.vendor.id = hd->compat_vend;
+      hs.key |= 1 << he_vendor_id;
+    }
+    if(hd->compat_dev) {
+      hs.device.id = hd->compat_dev;
+      hs.key |= 1 << he_device_id;
+    }
 
-driver_info_t *sub_device_driver(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned sub_vendor, unsigned sub_device)
-{
-  hddb_search_t hs = {};
+    hddb_search(hd_data, &hs);
 
-  hs.vendor.id = vendor;
-  hs.device.id = device;
-  hs.sub_vendor.id = sub_vendor;
-  hs.sub_device.id = sub_device;
-  hs.key |= (1 << he_vendor_id) + (1 << he_device_id) + (1 << he_subvendor_id) + (1 << he_subdevice_id);
+    if((hs.value & (1 << he_driver))) {
+      return hddb_to_device_driver(hd_data, &hs);
+    }
+  }
 
-  hddb_search(hd_data, &hs);
+  if(hd->drv_vend || hd->drv_dev) {
+    memset(&hs, 0, sizeof hs);
 
-  if((hs.value & (1 << he_driver))) {
-    return hddb_to_device_driver(hd_data, &hs);
+    if(hd->drv_vend) {
+      hs.vendor.id = hd->drv_vend;
+      hs.key |= 1 << he_vendor_id;
+    }
+    if(hd->drv_dev) {
+      hs.device.id = hd->drv_dev;
+      hs.key |= 1 << he_device_id;
+    }
+
+    hddb_search(hd_data, &hs);
+
+    if((hs.value & (1 << he_driver))) {
+      return hddb_to_device_driver(hd_data, &hs);
+    }
   }
 
   return NULL;
@@ -1668,6 +1707,88 @@ driver_info_t *hddb_to_device_driver(hd_data_t *hd_data, hddb_search_t *hs)
   }
 
   return di0;
+}
+
+
+void hdb_add_info(hd_data_t *hd_data, hd_t *hd)
+{
+  hddb_search_t hs = {};
+  int new_driver_info = 0;
+
+  if(hd->vend) {
+    hs.vendor.id = hd->vend;
+    hs.key |= 1 << he_vendor_id;
+  }
+
+  if(hd->dev) {
+    hs.device.id = hd->dev;
+    hs.key |= 1 << he_device_id;
+  }
+
+  if(hd->sub_vend) {
+    hs.sub_vendor.id = hd->sub_vend;
+    hs.key |= 1 << he_subvendor_id;
+  }
+
+  if(hd->sub_dev) {
+    hs.sub_device.id = hd->sub_dev;
+    hs.key |= 1 << he_subdevice_id;
+  }
+
+  hddb_search(hd_data, &hs);
+
+  if((hs.value & (1 << he_requires))) {
+    hd->requires = free_str_list(hd->requires);
+    hd->requires = hd_split('|', hs.requires);
+  }
+
+  if((hs.value & (1 << he_driver))) {
+    hd->driver_info = hd_free_driver_info(hd->driver_info);
+    hd->driver_info = hddb_to_device_driver(hd_data, &hs);
+    new_driver_info = 1;
+  }
+
+  if(!hd->driver_info && (hd->compat_vend || hd->compat_dev)) {
+    memset(&hs, 0, sizeof hs);
+
+    if(hd->compat_vend) {
+      hs.vendor.id = hd->compat_vend;
+      hs.key |= 1 << he_vendor_id;
+    }
+    if(hd->compat_dev) {
+      hs.device.id = hd->compat_dev;
+      hs.key |= 1 << he_device_id;
+    }
+
+    hddb_search(hd_data, &hs);
+
+    if((hs.value & (1 << he_driver))) {
+      hd->driver_info =  hddb_to_device_driver(hd_data, &hs);
+      new_driver_info = 1;
+    }
+  }
+
+  if(!hd->driver_info && (hd->drv_vend || hd->drv_dev)) {
+    memset(&hs, 0, sizeof hs);
+
+    if(hd->drv_vend) {
+      hs.vendor.id = hd->drv_vend;
+      hs.key |= 1 << he_vendor_id;
+    }
+    if(hd->drv_dev) {
+      hs.device.id = hd->drv_dev;
+      hs.key |= 1 << he_device_id;
+    }
+
+    hddb_search(hd_data, &hs);
+
+    if((hs.value & (1 << he_driver))) {
+      hd->driver_info = hddb_to_device_driver(hd_data, &hs);
+      new_driver_info = 1;
+    }
+  }
+
+  if(new_driver_info) expand_driver_info(hd_data, hd);
 }
 
 

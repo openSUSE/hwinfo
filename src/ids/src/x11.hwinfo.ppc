@@ -1,0 +1,235 @@
+#
+# x11.hwinfo-file for architecture ppc
+#
+# generated at: Mon Aug  5 15:45:06 2002
+# data source:  CDB
+# distribution: Stable
+#
+
+
+
+# Cirrus Logic:GD 5446
+1013 00b8
+	x	4|fbdev||||dpms,usefbdev||||
+
+# Sun Microsystems:Sun|Monochrome (bwtwo)
+s4001 0001
+	x	3|||||||||
+
+# Sun Microsystems:Sun|Color3 (cgthree)
+s4001 0002
+	x	3|||||||||
+
+# Sun Microsystems:Sun|CG8/RasterOps (cgeight)
+s4001 0003
+	x	3|||||||||
+
+# Sun Microsystems:Sun|GS (cgtwelve)
+s4001 0004
+	x	3|XFB_Dev||||||||
+
+# Sun Microsystems:Sun|Graphics Tower (gt)
+s4001 0005
+	x	3|||||||||
+
+# ATI Technologies Inc:3D Rage Pro
+1002 4749
+	x	3|XF86_FBDev||||||||
+
+# ATI Technologies Inc:3D Rage Pro
+1002 4749
+	x	4|ati||||dpms|24,15|||
+
+# ATI Technologies Inc:3D Rage Pro 215GP
+1002 4750
+	x	3|XF86_FBDev||||||||
+
+# ATI Technologies Inc:3D Rage Pro 215GP
+1002 4750
+	x	4|ati||||dpms|15|||
+
+# ATI Technologies Inc:3D Rage I/II 215GT [Mach64 GT]
+1002 4754
+	x	3|XF86_FBDev|||||15|||
+
+# ATI Technologies Inc:3D Rage I/II 215GT [Mach64 GT]
+1002 4754
+	x	4|ati||||dpms|24,15|||
+
+# ATI Technologies Inc:3D Rage IIC 215IIC [Mach64 GT IIC]
+1002 4756
+	x	3|XF86_FBDev||||||||
+
+# ATI Technologies Inc:3D Rage IIC 215IIC [Mach64 GT IIC]
+1002 4756
+	x	4|ati||||dpms|24,16,15|||
+
+# ATI Technologies Inc:210888GX [Mach64 GX]
+1002 4758
+	x	4|fbdev||||dpms|15|||
+
+# ATI Technologies Inc:Mobility M3 AGP 2x
+1002 4c46
+	x	3|XF86_FBDev|||||15,8|||
+
+# ATI Technologies Inc:Mobility M3 AGP 2x
+1002 4c46
+	x	4|r128||||usefbdev,dpms|15,8|||
+
+# ATI Technologies Inc:Mobility M3 AGP 2x
+1002 4c46
+	x	4|r128|3d|xf86_glx|glx,dri|usefbdev,dpms|16||switch2xf86_glx|
+
+# ATI Technologies Inc:3D Rage L Mobility AGP 2x
+1002 4c4e
+	x	3|XF86_FBDev||||||||
+
+# ATI Technologies Inc:3D Rage L Mobility AGP 2x
+1002 4c4e
+	x	4|ati||||dpms|15,24|||
+
+# ATI Technologies Inc:3D Rage LT Pro
+1002 4c50
+	x	3|XF86_FBDev|||||15|||
+
+# ATI Technologies Inc:3D Rage LT Pro
+1002 4c50
+	x	4|ati||||dpms|15,24|||
+		Option "reference_clock" "29.498928 Mhz"
+
+# ATI Technologies Inc:Rage 128 PF
+1002 5046
+	x	3|XF86_FBDev||||||||
+
+# ATI Technologies Inc:Rage 128 PF
+1002 5046
+	x	4|r128||||usefbdev,dpms|24,15|||
+
+# ATI Technologies Inc:Rage 128 PF
+1002 5046
+	x	4|r128|3d|xf86_glx|glx,dri|dpms,usefbdev|24,16||switch2xf86_glx|
+
+# ATI Technologies Inc:Rage 128 PR
+1002 5052
+	x	3|XF86_FBDev||||||||
+
+# ATI Technologies Inc:Rage 128 PR
+1002 5052
+	x	4|r128||||usefbdev,dpms|15|||
+		ati_r128_rl
+
+# ATI Technologies Inc:Rage 128 PR
+1002 5052
+	x	4|r128|3d|xf86_glx|glx,dri|usefbdev,dpms|16||switch2xf86_glx|
+		ati_r128_rl
+
+# ATI Technologies Inc:Rage 128 RE
+1002 5245
+	x	3|XF86_FBDev||||||||
+
+# ATI Technologies Inc:Rage 128 RE
+1002 5245
+	x	4|r128||||usefbdev,dpms|24,15|||
+
+# ATI Technologies Inc:Rage 128 RE
+1002 5245
+	x	4|r128|3d|xf86_glx|glx,dri|usefbdev,dpms|24,16||switch2xf86_glx|
+
+# ATI Technologies Inc:Rage 128 RF
+1002 5246
+	x	3|XF86_FBDev||||||||
+
+# ATI Technologies Inc:Rage 128 RF
+1002 5246
+	x	4|r128||||usefbdev,dpms|24,15|||
+
+# ATI Technologies Inc:Rage 128 RL
+1002 524c
+	x	3|XF86_FBDev||||||||
+
+# ATI Technologies Inc:Rage 128 RL
+1002 524c
+	x	4|r128||||usefbdev,dpms|15|||
+
+# ATI Technologies Inc:Rage 128 Pro TR (AGP)
+1002 5452
+	x	3|XF86_FBDev|||||15,8|||
+
+# ATI Technologies Inc:Rage 128 Pro TR (AGP)
+1002 5452
+	x	4|r128||||usefbdev,dpms|15,8|||
+
+# ATI Technologies Inc:Radeon QE
+1002 5145
+	x	4|radeon|||||16|||
+
+# ATI Technologies Inc:Radeon QD
+1002 5144
+	x	4|radeon|||||16|||
+
+# ATI Technologies Inc:Radeon QF
+1002 5146
+	x	4|radeon|||||16|||
+
+# ATI Technologies Inc:Radeon QG
+1002 5147
+	x	4|radeon||||||||
+
+# 3Dfx Interactive, Inc.:Voodoo Banshee
+121a 0003
+	x	4|fbdev|||||24|||
+
+# Matrox Graphics, Inc.:MGA G200
+102b 0520
+	x	3|XF86_FBDev|||||8|||
+
+# Matrox Graphics, Inc.:MGA G200
+102b 0520
+	x	4|fbdev||||dpms,hw_cursor|24,16|||
+		DacSpeed     200
+
+# Matrox Graphics, Inc.:MGA 2064W [Millennium]
+102b 0519
+	x	3||||||15,8|||
+
+# Matrox Graphics, Inc.:MGA 2064W [Millennium]
+102b 0519
+	x	4|mga||||hw_cursor,dpms,DDCInfo|8,32,24,16,15|||
+
+# Matrox Graphics, Inc.:MGA 1064SG [Mystique]
+102b 051a
+	x	3|XF86_FBDev|||||8,15,16|||
+
+# Matrox Graphics, Inc.:MGA 1064SG [Mystique]
+102b 051a
+	x	4|fbdev||||dpms,hw_cursor|24,16|||
+		DacSpeed     200
+
+# ATI Technologies Inc:264VT4 [Mach64 VT4]
+1002 5656
+	x	4|ati||||dpms,usefbdev|15|||
+
+# ATI Technologies Inc:3D Rage LT-G 215LG
+1002 4c47
+	x	3|XF86_FBDev||||||||
+
+# ATI Technologies Inc:3D Rage LT-G 215LG
+1002 4c47
+	x	4|fbdev||||dpms|24,15|||
+
+# ATI Technologies Inc:Radeon LY
+1002 4c59
+	x	4|radeon||||||||
+
+# ATI Technologies Inc:Mach64 LI
+1002 4c49
+	x	3|XF86_FBDev||||||||
+
+# ATI Technologies Inc:Mach64 LI
+1002 4c49
+	x	4|ati||||dpms||||
+		Option "reference_clock" "29.498928 Mhz"
+
+# ATI Technologies Inc:Mach64 VT
+1002 5654
+	x	4|fbdev||||dpms|15|||

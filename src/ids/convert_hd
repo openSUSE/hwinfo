@@ -1035,6 +1035,8 @@ sub fix_driver_info
         $i =~ s/\|+$//;
         next unless $i =~ /^x\t/;
         @info = split /\|/, $i;
+        # remove leasding 'XF86_' from server name
+        $info[1] =~ s/^XF86_// if $info[1];
         # sort package, extension and option lists
         push @req, split /,/, $info[3] if $info[3];
         # $info[3] = join ',', sort split /,/, $info[3] if $info[3];

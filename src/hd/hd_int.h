@@ -197,6 +197,9 @@ str_list_t *hd_split(char del, char *str);
 
 driver_info_t *hd_pcidb(hd_data_t *hd_data, hd_t *hd);
 
+void hdb_add_info(hd_data_t *hd_data, hd_t *hd);
+void expand_driver_info(hd_data_t *hd_data, hd_t *hd);
+
 #ifdef __cplusplus
 }
 #endif
