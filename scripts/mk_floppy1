@@ -1,0 +1,267 @@
+#! /bin/sh
+
+#
+# Script to create a bootable floppy
+#
+# usage: mk_floppy
+#
+# on errors:
+#  - exit code > 0
+#  - 1-line message to *stdout*
+#
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# general parameters
+
+# name of the boot floppy image we create
+
+boot=/tmp/floppy
+
+# the kernel image to use
+kernel=/boot/vmlinuz.floppy
+
+# if we need an kernel append line (*not* for the frame buffer vga=xxxx argument)
+append=
+
+# for frame buffers; the number *must* be in hex, without any leading 0x
+# e.g. vga=0301
+vga=
+
+# show boot prompt and wait for $prompt/10 seconds (empty -> no prompt)
+prompt=15
+
+# devices we need on the floppy
+devs="tty1 console null zero ram0 ttyS[0-3] lp[0-2] nvram psaux mem\
+      fd[0-1] hd[a-p]* sd[a-h]* sr[0-7]* usbmouse[0-3]\
+      ttyACM[0-3] usblp[0-3]"
+
+# required programs (*without* the shell, see below)
+# (they are *all* copied to /bin)
+bins="/sbin/insmod /usr/bin/compress hwinfo"
+
+# the shell to use
+our_shell=/bin/ash
+
+# required libraries
+libs="/lib/ld-2.1.2.so /lib/libc.so.6"
+
+# modules we need
+mods=/lib/modules/2.2.14/misc/{\
+nvram,serial,lp,parport,parport_pc,parport_probe,\
+usbcore,usb-uhci,usb-ohci-hcd,input,hid,mousedev,keybdev,printer,acm\
+}.o
+mods=`eval "echo $mods"`
+
+# we need syslinux to make the floppy bootable; you *must* have it somewhere
+syslinux=/usr/sbin/syslinux
+
+# size of the root file system (the one on the floppy, that is ;-) )
+image_blocks=2200
+image_inodes=500
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# should be nothing to change below...
+
+tmp_root=/tmp/root$$
+tmp_boot=/tmp/boot$$
+tmp_msg=/tmp/msg$$
+mtools_rc=/tmp/mtools$$
+mnt=/tmp/mnt$$
+kernel_name=`basename $kernel`
+is_mounted=
+
+dos_image_144 () {
+  [ "$1" ] || return
+  (
+    echo -ne "\037\213\010\010\226j\2758\002\003tigz\000\223\357\346\340\230"
+    echo -ne "\226\265\327\202\211\271\044\223\341\355\215\215\274M\001\042"
+    echo -ne "\254\027\276o\274xC@}\203Q\324#\226\200\027L\036\211\047\335\326"
+    echo -ne "\044\274\3162\363QHr,\140\022>k\371\364\354\356\263\272\367\037"
+    echo -ne "\337\274\352[{\253O\311[3H\356\351\256\370\243j\233f\310\226]"
+    echo -ne "_5\343\235\333\363WA2\367E\353\242\212\337\267\037\344a\000\202"
+    echo -ne "\3727\217Wn\237s\371\350\332\273\267\331\030F\301(\030\005\243"
+    echo -ne "\140\024\014\006\260\357)\353\252\204\007\377\031\032\304\030"
+    echo -ne "\000\036\332-\245\015\006\000\000"
+  ) | gunzip -c | gunzip -c >$1
+}
+
+write_init () {
+  cat <<-blubber >$mnt/sbin/init
+	#! /bin/sh
+
+	export PATH=/bin:/sbin
+	export HOME=/
+
+	echo "mounting filesystems..."
+	mount -tproc none /proc
+	echo "1 4 1 7" >/proc/sys/kernel/printk
+
+	export MODPATH=/lib
+	echo "installing some modules..."
+
+	cd /lib
+	insmod nvram.o
+
+	insmod serial.o
+
+	insmod parport.o
+	insmod parport_pc.o
+	insmod lp.o
+
+	if insmod usbcore.o ; then
+	  insmod usb-uhci.o 2>/dev/null
+	  insmod usb-ohci-hcd.o 2>/dev/null
+	  insmod input.o
+	  insmod hid.o
+	  insmod mousedev.o
+	  insmod keybdev.o
+	  insmod printer.o
+	  insmod acm.o
+	fi
+	cd /
+
+	sleep 1
+	echo "starting hardware probing..."
+	hwinfo -all +usb log=/dev/null
+	hwinfo log=hw_log
+	echo "log was written to /hw_log"
+
+	echo "writing the compressed log to the floppy..."
+	mount -tmsdos /dev/fd0 /mnt
+	if compress -c hw_log >/mnt/hw_log.Z ; then
+	  umount /mnt
+	  echo "ok, that's it"
+	else
+	  echo "Oops, not enough free space on floppy?"
+	  umount /mnt
+	  echo "Please insert a new one. Then press <Enter> to continue..."
+	  read blubber
+	  mount -tmsdos /dev/fd0 /mnt
+	  if compress -c hw_log >/mnt/hw_log.Z ; then
+	    echo "... ok, seems to have worked this time :-)"
+	  else
+	    echo "... nope, didn't work this time either :-("
+	  fi
+	  umount /mnt
+	fi
+	sh
+
+	blubber
+}
+
+clean_up () {
+  [ "$is_mounted" ] && umount $mnt
+  rm -f $tmp_root $tmp_root.gz $tmp_boot $tmp_msg $mtools_rc
+  rmdir $mnt
+}
+
+error () {
+  echo "$2"
+  clean_up
+  exit $1
+}
+
+cp_and_strip () {
+  strip -s -R .note -R .comment $1 -o $2 || error 10 "no space left on image"
+  chmod +x $2
+}
+
+cp_and_strip_mod () {
+  strip -g -R .note -R .comment $1 -o $2 || error 10 "no space left on image"
+}
+
+
+#
+# First, the root image.
+#
+
+dd if=/dev/zero of=$tmp_root bs=1k count=$image_blocks 2>/dev/null
+mkfs.minix -i $image_inodes $tmp_root >/dev/null 2>&1
+
+mkdir $mnt
+mount -oloop $tmp_root $mnt 2>/dev/null || { 
+  error 1 "failed to mount image"
+}
+is_mounted=1
+
+mkdir $mnt/{bin,dev,etc,lib,mnt,proc,sbin,tmp}
+
+for i in $devs ; do cp -a /dev/$i $mnt/dev ; done
+
+for i in $bins ; do
+  xxx=`basename $i`
+  cp_and_strip $i $mnt/bin/$xxx
+done
+
+for i in $libs ; do
+  xxx=`basename $i`
+  cp_and_strip $i $mnt/lib/$xxx
+done
+
+cp_and_strip $our_shell $mnt/bin/sh
+cp_and_strip scripts/cmu $mnt/bin/cat
+ln $mnt/bin/cat $mnt/bin/mount
+ln $mnt/bin/cat $mnt/bin/sleep
+ln $mnt/bin/cat $mnt/bin/umount
+
+for i in $mods ; do
+  xxx=`basename $i`
+  cp_and_strip_mod $i $mnt/lib/$xxx
+done
+
+mods=/lib/modules/2.2.14/misc/{\
+nvram,serial,lp,parport,parport_pc,parport_probe,\
+usbcore,usb-uhci,input,hid,mousedev,keybdev,printer,acm\
+}.o
+
+write_init
+chmod 755 $mnt/sbin/init
+
+ldconfig -r $mnt
+
+umount $mnt
+is_mounted=
+
+gzip -9 $tmp_root
+
+
+#
+# Make a boot floppy.
+#
+[ -x $syslinux ] || error 6 "no syslinux installed"
+
+dos_image_144 $tmp_boot
+$syslinux $tmp_boot
+
+export MTOOLSRC=$mtools_rc
+echo "drive r: file=\"$tmp_boot\" mformat_only cylinders=80 heads=2 sectors=18" >$mtools_rc
+
+mcopy $kernel r:linux || error 18 "no space left on the boot floppy"
+mcopy $tmp_root.gz r:root || error 19 "no space left on the boot floppy"
+
+echo -n >$tmp_msg
+mcopy $tmp_msg r:message
+
+xxx=
+[ "$vga" ] && xxx=" vga=$vga"
+
+cat <<-blubber >$tmp_msg
+default linux
+append initrd=root root=/dev/ram0 load_ramdisk=1 rw$xxx $append
+display message
+blubber
+
+if [ "$prompt" ] ; then
+  echo "prompt 1" >>$tmp_msg
+  echo "timeout $prompt" >>$tmp_msg
+fi
+
+echo "readinfo 2" >>$tmp_msg
+echo "framebuffer 1" >>$tmp_msg
+
+mcopy $tmp_msg r:syslinux.cfg || error 20 "no space left on the boot floppy"
+
+cp $tmp_boot $boot || error 8 "failed to install boot floppy"
+
+clean_up
+
