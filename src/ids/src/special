@@ -626,3 +626,16 @@
 +driver.module.modprobe	usbscanner
 +driver.module.modprobe	microtek
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# altix things
+
+ vendor.id		special 0x4002
++vendor.name		SGI
+
+# look at net.c if module name changes
+ vendor.id		special 0x4002
+&device.id		special 0x0001
++device.name		Cross Partition Network adapter
++driver.module.modprobe	xpnet
+

@@ -2923,6 +2923,13 @@ int hd_is_uml(hd_data_t *hd_data)
 }
 
 
+int hd_is_sgi_altix(hd_data_t *hd_data)
+{
+  struct stat sbuf;
+
+  return stat("/proc/sgi_sn", &sbuf) ? 0 : 1;
+}
+
 
 /*
  * makes a (shallow) copy; does some magic fixes
