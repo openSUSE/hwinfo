@@ -805,6 +805,12 @@
 +driver.xfree		4|radeon|3d||dri||16
 
  vendor.id		pci 0x1002
+&device.id		pci 0x515e
++device.name		ES1000 (1002:515E)
++driver.xfree		4|radeon
++driver.xfree.config	ChipID 0x5969
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x5245
 +device.name		Rage 128 RE
 +driver.xfree		4|r128|||||8,15,16,24
@@ -1036,7 +1042,6 @@
 &device.id		pci 0x5969
 +device.name		ES1000 (PCI)
 +driver.xfree		4|radeon
-+driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5b60
