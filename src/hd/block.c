@@ -9,15 +9,12 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <linux/iso_fs.h>
+#include <scsi/sg.h>
 
 #include "hd.h"
 #include "hd_int.h"
 #include "hddb.h"
 #include "block.h"
-
-#ifndef SCSI_IOCTL_SEND_COMMAND
-#define SCSI_IOCTL_SEND_COMMAND 1
-#endif
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * block device stuff
@@ -640,6 +637,7 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
   unsigned u0, u1, u2, u3;
   int fd, k;
   unsigned char scsi_cmd_buf[0x300];
+  struct sg_io_hdr hdr;
   unsigned char *uc;
   scsi_t *scsi;
   hd_res_t *geo, *size;
@@ -788,19 +786,27 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
       PROGRESS(5, 1, pr_str);
 
       memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
-      // ###### FIXME: smaller!
-      *((unsigned *) (scsi_cmd_buf + 4)) = sizeof scsi_cmd_buf - 0x100;
-      scsi_cmd_buf[8 + 0] = 0x1a;
-      scsi_cmd_buf[8 + 2] = 0x08;
-      scsi_cmd_buf[8 + 4] = 0xff;
+      memset(&hdr, 0, sizeof(hdr));
 
-      k = ioctl(fd, SCSI_IOCTL_SEND_COMMAND, scsi_cmd_buf);
+      hdr.interface_id = 'S';
+      hdr.cmd_len = 6;
+      hdr.dxfer_direction = SG_DXFER_FROM_DEV;
+      hdr.dxferp = scsi_cmd_buf + 8 + 6;
+      hdr.dxfer_len = 0xff;
+      hdr.cmdp = scsi_cmd_buf + 8;
+      hdr.cmdp[0] = 0x1a;
+      hdr.cmdp[2] = 0x08;
+      hdr.cmdp[4] = 0xff;
+
+      k = ioctl(fd, SG_IO, &hdr);
 
       if(k) {
         ADD2LOG("%s status(0x1a:8) 0x%x\n", hd->unix_dev_name, k);
       }
       else {
-        uc = scsi_cmd_buf + 8 + 4 + scsi_cmd_buf[8 + 3] + 2;
+        char *ptr = hdr.dxferp;
+
+        uc = ptr + 4 + ptr[3] + 2;
         scsi->cache = uc[0];
         ADD2LOG("  scsi cache: 0x%02x\n", uc[0]);
     
@@ -838,19 +844,28 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
       PROGRESS(5, 2, pr_str);
 
       memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
-      *((unsigned *) (scsi_cmd_buf + 4)) = 0x24;
-      scsi_cmd_buf[8 + 0] = 0x12;
-      scsi_cmd_buf[8 + 1] = 0x01;
-      scsi_cmd_buf[8 + 2] = 0x80;
-      scsi_cmd_buf[8 + 4] = 0x24;
+      memset(&hdr, 0, sizeof(hdr));
 
-      k = ioctl(fd, SCSI_IOCTL_SEND_COMMAND, scsi_cmd_buf);
+      hdr.interface_id = 'S';
+      hdr.cmd_len = 6;
+      hdr.dxfer_direction = SG_DXFER_FROM_DEV;
+      hdr.dxferp = scsi_cmd_buf + 8 + 6;
+      hdr.dxfer_len = 0x24;
+      hdr.cmdp = scsi_cmd_buf + 8;
+      hdr.cmdp[0] = 0x12;
+      hdr.cmdp[1] = 0x01;
+      hdr.cmdp[2] = 0x80;
+      hdr.cmdp[4] = 0x24;
+ 
+      k = ioctl(fd, SG_IO, &hdr);
 
       if(k) {
         ADD2LOG("%s status(0x12) 0x%x\n", scsi->dev_name, k);
       }
       else {
-        if((hd->serial = canon_str(scsi_cmd_buf + 8 + 4, scsi_cmd_buf[8 + 3]))) {
+        char *ptr = hdr.dxferp;
+
+        if((hd->serial = canon_str(ptr + 4, ptr[3]))) {
           if(!*hd->serial) hd->serial = free_mem(hd->serial);
         }
       }

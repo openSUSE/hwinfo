@@ -1,3 +1,6 @@
+29/9/2004:	v9.23
+	- use SG_IO for SCSI device accesses (#46058)
+
 28/9/2004:	v9.22
 	- added gen-hwcfg-disk.sh (#46311)
 
