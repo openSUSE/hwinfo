@@ -1,3 +1,10 @@
+13/12/2000:	v1.0.60
+	- hwinfo can now update braille info in install.inf
+	- activate alva braille detection
+
+13/12/2000:	v1.0.59
+	- updated x11 data
+
 12/12/2000:	v1.0.58
 	- new version number scheme (due to shared lib)
 	- create shared libhd

@@ -5,12 +5,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-// #include <mcheck.h>
-
 #include "hd.h"
 
 static int get_probe_flags(int, char **, hd_data_t *);
 static void progress(char *, char *);
+
+// ##### temporary solution, fix it later!
+str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines);
 
 static unsigned deb = 0;
 static char *log_file = "";
@@ -32,8 +33,6 @@ int main(int argc, char **argv)
   long l = 0;
   int i;
   unsigned first_probe = 1;
-
-  // mtrace();
 
   argc--; argv++;
 
@@ -232,11 +231,16 @@ void progress(char *pos, char *msg)
 }
 
 
+#define INSTALL_INF	"/etc/install.inf"
+
 int find_braille(hd_data_t *hd_data)
 {
   hd_t *hd;
-  int ok = 1;
-  char *s;
+  int ok = 0;
+  char *braille = NULL;
+  char *braille_dev = NULL;
+  str_list_t *sl0, *sl;
+  FILE *f;
 
   printf("Looking for a braille display...\n");
 
@@ -251,15 +255,39 @@ int find_braille(hd_data_t *hd_data)
     if(
       hd->base_class == bc_braille &&		/* is a braille display */
       hd->unix_dev_name &&			/* and has a device name */
-      (s = hd_device_name(hd_data, hd->vend, hd->dev))
+      (braille = hd_device_name(hd_data, hd->vend, hd->dev))
     ) {
-      fprintf(stderr, "Braille: %s\n", s);
-      fprintf(stderr, "Brailledevice: %s\n", hd->unix_dev_name);
-      ok = 0;
+      braille_dev = hd->unix_dev_name;
+      ok = 1;
       break;
     }
   }
 
-  return ok;
+  if(!ok) return 1;
+
+  printf("found a %s at %s\n", braille, braille_dev);
+
+  sl0 = read_file(INSTALL_INF, 0, 0);
+  f = fopen(INSTALL_INF, "w");
+  if(!f) {
+    perror(INSTALL_INF);
+    return 1;
+  }
+  
+  for(sl = sl0; sl; sl = sl->next) {
+    if(
+      strstr(sl->str, "Braille:") != sl->str &&
+      strstr(sl->str, "Brailledevice:") != sl->str
+    ) {
+      fprintf(f, "%s", sl->str);
+    }
+  }
+
+  fprintf(f, "Braille: %s\n", braille);
+  fprintf(f, "Brailledevice: %s\n", braille_dev);
+  
+  fclose(f);
+
+  return 0;
 }
 

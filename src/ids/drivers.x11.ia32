@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-12-12 10:24:05
+#hwinfo data from 2000-12-13 11:55:55
 #
 
 
@@ -431,7 +431,24 @@
 
 # Diamond:Fire GL2
 1014 0170  
-	x	4|firegl23|3d|xfiregl1|dri,glx,fgl23||||switch2xfiregl1
+	x	4|firegl23|3d|xfiregl1|dri,glx,fgl23|||
+		Option "no_accel" "no"
+		Option "PnP Monitor" "off"
+		Option "NumDMABuffers" "24"
+		Option "NumTMBuffers" "4"
+		Option "Capabilities" "0x00000000"
+		Option "Capabilities2" "0x00000000"
+		Option "TFT Display" "off"|switch2xfiregl1
+
+
+# Diamond:Fire GL3
+1014 0170 1092 1073
+	x	4|firegl23||xfiregl1|dri|DDCInfo|||switch2xfiregl1
+
+
+# Diamond:Fire GL3
+1014 0170 1092 1073
+	x	4|firegl23|3d|xfiregl1|dri,glx,fgl23|DDCInfo|||switch2xfiregl1
 
 
 # Elsa:Gloria Synergy
@@ -547,6 +564,11 @@
 # ATI:Rage 128 4x AGP 2x
 1002 534C  
 	x	4|r128|||||||
+
+
+# ATI:Rage 128 4x AGP 2x
+1002 534C  
+	x	4||3d||||||
 
 
 # ATI:Rage 128 4x AGP 2x
@@ -787,6 +809,11 @@
 # ATI:Rage 128 Pro AGP 4x (TMDS)
 1002 5046  
 	x	4|r128|||||||
+
+
+# ATI:Rage 128 Pro AGP 4x (TMDS)
+1002 5046  
+	x	4||3d||||||
 
 
 # ATI:Rage 128 Pro AGP 2x (TMDS)
@@ -2111,6 +2138,11 @@
 
 # Intel:i740 (AGP)
 8086 7800  
+	x	4||3d||||||
+
+
+# Intel:i740 (AGP)
+8086 7800  
 	x	3|SVGA|||||||
 
 
@@ -2491,6 +2523,11 @@
 
 # S3:Trio64V2/DX or /GX
 5333 8901  
+	x	4||||||||
+
+
+# S3:Trio64V2/DX or /GX
+5333 8901  
 	x	3|SVGA|||||||
 
 
@@ -2756,7 +2793,7 @@
 
 # Rendition:Verite 2x00
 1163 2000  
-	x	4|rendition|||||||
+	x	4||3d||||||
 
 
 # Rendition:Verite 2x00
@@ -2772,6 +2809,11 @@
 # Rendition:Verite 1000
 1163 0001  
 	x	4|rendition|||||||
+
+
+# Rendition:Verite 1000
+1163 0001  
+	x	4||3d||||||
 
 
 # Rendition:Verite 1000
@@ -3341,22 +3383,14 @@
 
 # Neomagic:256XL(2380)
 10c8 0016  
-	x	4|neomagic|||||||
+	x	4|neomagic||||intern_disp,extern_disp,lcd_center||
+		VideoRam 4096
+		Chipset "neo2380"|
 
 
 # Neomagic:256XL(2380)
 10c8 0016  
 	x	4||3d||||||
-
-
-# Neomagic:256XL(2380)
-10c8 0016  
-	x	3||||||||
-
-
-# Neomagic:256XL(2380)
-10c8 0016  
-	x	3||3d||||||
 
 
 # Texas Instruments:Permedia 2D+3D
@@ -3761,7 +3795,7 @@
 
 # Tseng Lab:ET4000W32P Rev C
 100C 3206  
-	x	4|tseng|||||||
+	x	4||3d||||||
 
 
 # Tseng Lab:ET4000W32P Rev C
@@ -4002,6 +4036,11 @@
 # Cirrus Logic:GD 5480
 1013 00bc  
 	x	4|cirrus|||||||
+
+
+# Cirrus Logic:GD 5480
+1013 00bc  
+	x	4||3d||||||
 
 
 # Cirrus Logic:GD 5480

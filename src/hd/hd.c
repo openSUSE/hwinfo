@@ -3157,7 +3157,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
       case hw_braille:
         hd_set_probe_feature(hd_data, pr_misc_serial);
         hd_set_probe_feature(hd_data, pr_serial);
-//        hd_set_probe_feature(hd_data, pr_braille_alva);
+        hd_set_probe_feature(hd_data, pr_braille_alva);
         hd_set_probe_feature(hd_data, pr_braille_fhp);
         hd_set_probe_feature(hd_data, pr_braille_ht);
         break;
