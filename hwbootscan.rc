@@ -3,15 +3,15 @@
 #
 # Author: Marcus Meissner <meissner@suse.de>
 #
-# /etc/init.d/boot.hwscan
+# /etc/init.d/hwscan
 #
 # System startup script for boot hw probing and reconfiguration
 #
 ### BEGIN INIT INFO
-# Provides: boot.hwscan
-# Required-Start: boot.setup boot.ipconfig
+# Provides: hwscan
+# Required-Start: hotplug
 # Required-Stop:
-# Default-Start: B
+# Default-Start: 2 3 5
 # Default-Stop:
 # Description: Hardware scan and reconfiguration on boot.
 ### END INIT INFO
@@ -83,7 +83,6 @@ case "$1" in
 	rc_reset
         ;;
     status)
-        echo -n "Checking for RPC portmap daemon: "
         ## Check status with checkproc(8), if process is running
         ## checkproc will return with exit status 0.
 

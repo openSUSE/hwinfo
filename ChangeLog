@@ -1,3 +1,4 @@
+	- made hwbootscan an init script again, started after hotplug.
 	- do not delete the reconfig.needed files, but set configured=no
 	  and needed=no to avoid problems with unsupported graphic cards.
 
