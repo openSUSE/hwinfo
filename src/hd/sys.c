@@ -23,6 +23,10 @@ int is_txt(char c);
 static int chk_vaio(hd_data_t *hd_data, sys_info_t *st);
 static void sigsegv_handler(int signum);
 static void chk_vmware(hd_data_t *hd_data, sys_info_t *st);
+#ifdef UCLIBC
+void *memmem(const void *haystack, size_t haystacklen, const void *needle, size_t needlelen);
+#endif
+
 #endif
 
 void hd_scan_sys(hd_data_t *hd_data)
@@ -32,7 +36,6 @@ void hd_scan_sys(hd_data_t *hd_data)
 #if defined(__PPC__) || defined(__sparc__)
   char buf0[80];
   str_list_t *sl;
-//  int is_64 = 0;
 #endif
 
   if(!hd_probe_feature(hd_data, pr_sys)) return;
@@ -244,7 +247,6 @@ void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
 
   hd_data->in_vmware = is_vmware;
 }
-
 
 #endif	/* __i386__ */
 

@@ -151,6 +151,9 @@ typedef struct {
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+#ifdef UCLIBC
+void *memmem(const void *haystack, size_t haystacklen, const void *needle, size_t needlelen);       
+#endif
 void *new_mem(size_t size);
 void *free_mem(void *ptr);
 char *new_str(char *str);

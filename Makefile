@@ -9,7 +9,7 @@ include Makefile.common
 SHARED_FLAGS	=
 OBJS_NO_TINY	= names.o parallel.o modem.o
 
-.PHONY:	fullstatic static shared tiny doc
+.PHONY:	fullstatic static shared tiny doc diet tinydiet uc tinyuc
 
 hwscan: hwscan.o $(LIBHD)
 	$(CC) hwscan.o $(LDFLAGS) -lhd -o $@
@@ -24,8 +24,17 @@ shared:
 tiny:
 	@make EXTRA_FLAGS=-DLIBHD_TINY SHARED_FLAGS=
 
+diet:
+	@make CC="diet gcc" EXTRA_FLAGS="-fno-pic -DDIET" SHARED_FLAGS=
+
 tinydiet:
 	@make CC="diet gcc" EXTRA_FLAGS="-fno-pic -DLIBHD_TINY -DDIET" SHARED_FLAGS=
+
+uc:
+	@make CC="/opt/i386-linux-uclibc/usr/bin/gcc" EXTRA_FLAGS="-fno-pic -DUCLIBC" SHARED_FLAGS=
+
+tinyuc:
+	@make CC="/opt/i386-linux-uclibc/usr/bin/gcc" EXTRA_FLAGS="-fno-pic -DLIBHD_TINY -DUCLIBC" SHARED_FLAGS=
 
 static:
 	@make SHARED_FLAGS=

@@ -9,6 +9,7 @@
 +baseclass.id		0x10e
 +subclass.id		0x00
 +device.name		Smartcard reader
++requires		pcsc-towitoko
 
  vendor.id		usb 0x0c4b
 &device.id		usb 0x0100

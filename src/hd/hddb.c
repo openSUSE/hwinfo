@@ -112,7 +112,7 @@ static void add_value(tmp_entry_t *te, hddb_entry_t idx, unsigned val);
 static hddb_entry_mask_t add_entry(hddb2_data_t *hddb2, tmp_entry_t *te, hddb_entry_t idx, char *str);
 static int compare_ids(hddb2_data_t *hddb, hddb_search_t *hs, hddb_entry_mask_t mask, unsigned key);
 static void complete_ids(hddb2_data_t *hddb, hddb_search_t *hs, hddb_entry_mask_t key_mask, hddb_entry_mask_t mask, unsigned val_idx);
-static int hddb_search(hd_data_t *hd_data, hddb_search_t *hs);
+static int hddb_search(hd_data_t *hd_data, hddb_search_t *hs, int max_recursions);
 #ifdef HDDB_TEST
 static void test_db(hd_data_t *hd_data);
 #endif
@@ -1391,7 +1391,7 @@ void complete_ids(
   }
 }
 
-int hddb_search(hd_data_t *hd_data, hddb_search_t *hs)
+int hddb_search(hd_data_t *hd_data, hddb_search_t *hs, int max_recursions)
 {
   unsigned u;
   int i;
@@ -1400,23 +1400,33 @@ int hddb_search(hd_data_t *hd_data, hddb_search_t *hs)
 
   if(!hs) return 0;
 
-  for(db_idx = 0; db_idx < sizeof hd_data->hddb2 / sizeof *hd_data->hddb2; db_idx++) {
-    if(!(hddb = hd_data->hddb2[db_idx])) continue;
+  if(!max_recursions) max_recursions = 2;
 
-    for(u = 0; u < hddb->list_len; u++) {
-      if(
-        (hs->key & hddb->list[u].key_mask) == hddb->list[u].key_mask
-        /* && (hs->value & hddb->list[u].value_mask) != hddb->list[u].value_mask */
-      ) {
-        i = compare_ids(hddb, hs, hddb->list[u].key_mask, hddb->list[u].key);
-        if(!i) {
-          complete_ids(hddb, hs,
-            hddb->list[u].key_mask,
-            hddb->list[u].value_mask, hddb->list[u].value
-          );
+  while(max_recursions--) {
+    for(db_idx = 0; db_idx < sizeof hd_data->hddb2 / sizeof *hd_data->hddb2; db_idx++) {
+      if(!(hddb = hd_data->hddb2[db_idx])) continue;
+
+      for(u = 0; u < hddb->list_len; u++) {
+        if(
+          (hs->key & hddb->list[u].key_mask) == hddb->list[u].key_mask
+          /* && (hs->value & hddb->list[u].value_mask) != hddb->list[u].value_mask */
+        ) {
+          i = compare_ids(hddb, hs, hddb->list[u].key_mask, hddb->list[u].key);
+          if(!i) {
+            complete_ids(hddb, hs,
+              hddb->list[u].key_mask,
+              hddb->list[u].value_mask, hddb->list[u].value
+            );
+          }
         }
       }
     }
+
+    if(!max_recursions) break;
+
+    hs->key |= hs->value;
+    hs->value = 0;
+    memset(hs->value_mask, 0, sizeof hs->value_mask);
   }
 
   return 1;
@@ -1434,7 +1444,7 @@ void test_db(hd_data_t *hd_data)
 
   hs.serial = "ser 0123";
 
-  i = hddb_search(hd_data, &hs);
+  i = hddb_search(hd_data, &hs, 0);
 
   printf("%d, >%s<\n", i, hs.bus.name);
 }
@@ -1455,7 +1465,7 @@ unsigned device_class(hd_data_t *hd_data, unsigned vendor, unsigned device)
   hs.device.id = device;
   hs.key |= (1 << he_vendor_id) + (1 << he_device_id);
 
-  hddb_search(hd_data, &hs);
+  hddb_search(hd_data, &hs, 1);
 
   if(
     (hs.value & ((1 << he_baseclass_id) + (1 << he_subclass_id))) ==
@@ -1478,7 +1488,7 @@ unsigned sub_device_class(hd_data_t *hd_data, unsigned vendor, unsigned device, 
   hs.sub_device.id = sub_device;
   hs.key |= (1 << he_vendor_id) + (1 << he_device_id) + (1 << he_subvendor_id) + (1 << he_subdevice_id);
 
-  hddb_search(hd_data, &hs);
+  hddb_search(hd_data, &hs, 1);
 
   if(
     (hs.value & ((1 << he_baseclass_id) + (1 << he_subclass_id))) ==
@@ -1542,7 +1552,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     hs.key |= 1 << he_rev_name;
   }
 
-  hddb_search(hd_data, &hs);
+  hddb_search(hd_data, &hs, 0);
 
   if((hs.value & (1 << he_bus_id))) {
     hd->bus.id = hs.bus.id;
@@ -1629,7 +1639,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     hs2.vendor.id = hd->sub_vendor.id;
     hs2.key |= 1 << he_vendor_id;
 
-    hddb_search(hd_data, &hs2);
+    hddb_search(hd_data, &hs2, 1);
 
     if((hs2.value & (1 << he_vendor_name))) {
       hd->sub_vendor.name = new_str(hs2.vendor.name);
@@ -1651,7 +1661,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     hs2.device.id = hd->compat_device.id;
     hs2.key |= 1 << he_device_id;
 
-    hddb_search(hd_data, &hs2);
+    hddb_search(hd_data, &hs2, 1);
 
     if((hs2.value & (1 << he_vendor_name))) {
       hd->compat_vendor.name = new_str(hs2.vendor.name);
@@ -1690,7 +1700,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
       hs.key |= 1 << he_device_id;
     }
 
-    hddb_search(hd_data, &hs);
+    hddb_search(hd_data, &hs, 1);
 
     if((hs.value & (1 << he_driver))) {
       new_driver_info =  hddb_to_device_driver(hd_data, &hs);
