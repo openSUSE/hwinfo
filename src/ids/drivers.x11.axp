@@ -1,287 +1,267 @@
 
+#
 
+# x11.hwinfo-file for architecture axp
 
+#
 
+# generated at: Wed Aug 29 09:08:39 2001
 
+# data source:  CDB
 
+# distribution: Stable
 
+#
 
-
-
-
-
-
+# nVidia Coorporation:Riva TNT2
 10de 00a0
 	x	4|nv||||||||
 
+# nVidia Coorporation:Riva TNT2
 10de 00a0
 	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
 
-
-
+# nVidia Coorporation:GeForce256
 10de 0103
 	x	4|nv|||||f|||
 
+# nVidia Coorporation:GeForce256
 10de 0103
 	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
 
-
-
-
-
+# Matrox Graphics, Inc.:MGA 1064SG [Mystique] AGP
 102b 051e
 	x	4|mga|||||d|||
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# ATI Technologies Inc:210888CX [Mach64 CX]
 1002 4358
 	x	4|ati|||||d|||
 
-
+# ATI Technologies Inc:210888ET [Mach64 ET]
 1002 4554
 	x	4|ati|||||d|||
 
-
-
-
-
-
+# ATI Technologies Inc:Rage XL AGP
 1002 474d
 	x	4|ati|||||d|||
 
-
+# ATI Technologies Inc:Rage XC AGP
 1002 474e
 	x	4|ati|||||d|||
 
-
-
-
-
+# ATI Technologies Inc:Rage XL
 1002 4752
 	x	4|ati|||||d|||
 
-
-
+# ATI Technologies Inc:3D Rage I/II 215GT [Mach64 GT]
 1002 4754
 	x	4|ati|||||1d|||
 
-
+# ATI Technologies Inc:3D Rage IIC 215IIC [Mach64 GT IIC]
 1002 4756
 	x	4|ati|||||d|||
 
-
+# ATI Technologies Inc:3D Rage IIC AGP
 1002 4757
 	x	4|ati|||||1d|||
 
-
-
+# ATI Technologies Inc:3D Rage IIC AGP
 1002 475a
 	x	4|ati|||||f|||
 
-
+# ATI Technologies Inc:3D Rage LT Pro AGP-133
 1002 4c42
 	x	4|ati||||||||
 
-
+# ATI Technologies Inc:3D Rage LT Pro AGP-66
 1002 4c44
 	x	4|ati|||||9|||
 
+# ATI Technologies Inc:Mobility M3 AGP 2x
 1002 4c46
 	x	4|r128||||||||
 
-
+# ATI Technologies Inc:3D Rage P/M Mobility AGP 2x
 1002 4c4d
 	x	4|ati||||||||
 
-
-
+# ATI Technologies Inc:3D Rage LT Pro
 1002 4c50
 	x	4|ati|||||d|||
 
-
-
+# ATI Technologies Inc:3D Rage P/M Mobility
 1002 4c52
 	x	4|ati||||||||
 
-
+# ATI Technologies Inc:Rage 128 PA
 1002 5041
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PB
 1002 5042
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PC
 1002 5043
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PD
 1002 5044
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PE
 1002 5045
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PF
 1002 5046
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PG
 1002 5047
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PH
 1002 5048
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PI
 1002 5049
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PJ
 1002 504a
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PK
 1002 504b
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PL
 1002 504c
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PM
 1002 504d
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PN
 1002 504e
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PO
 1002 504f
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PP
 1002 5050
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PQ
 1002 5051
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PR
 1002 5052
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PS
 1002 5053
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PT
 1002 5054
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PU
 1002 5055
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PV
 1002 5056
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PW
 1002 5057
 	x	4|r128|||||d|||
 
+# ATI Technologies Inc:Rage 128 PX
 1002 5058
 	x	4|r128|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 RE
 1002 5245
 	x	4|r128|||||f|||
 
-
+# ATI Technologies Inc:Rage 128 RF
 1002 5246
 	x	4|r128|||||f|||
 
+# ATI Technologies Inc:Rage 128 RF
 1002 5246
-	x	4|none,r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+	x	4|r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
-
+# ATI Technologies Inc:Rage 128 RK
 1002 524b
 	x	4|r128|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 RL
 1002 524c
 	x	4|r128|||||f|||
 
+# ATI Technologies Inc:Rage 128 RL
 1002 524c
-	x	4|r128,none|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+	x	4|r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
-
+# ATI Technologies Inc:Rage 128 SE
 1002 5345
 	x	4|r128|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 SF
 1002 5346
 	x	4|r128|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 SG
 1002 5347
 	x	4|r128|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 4x
 1002 5348
 	x	4|r128|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 SK
 1002 534b
 	x	4|r128|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 SL
 1002 534c
 	x	4|r128|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 SM
 1002 534d
 	x	4|r128|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 4x
 1002 534e
 	x	4|r128|||||d|||
 
-
+# ATI Technologies Inc:Mach 64 VT
 1002 5354
 	x	4|ati|||||d|||
 
-
+# ATI Technologies Inc:Mach 64 reference
 1002 5354 1002 5654
 	x	4|ati|||||d|||
 
-
-
-
+# Tseng Labs Inc:ET4000/W32p rev C
 100c 3206
 	x	4|tseng||||||||
 
-
-
-
+# Digital Equipment Corporation:DECchip 21030 [TGA]
 1011 0004
 	x	4|tga|||||1|||
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# IBM:256-bit Graphics Rasterizer [Fire GL1]
 1014 00b7
 	x	4|firegl1|||||8|||
 		Option "no_accel" "no"
@@ -291,6 +271,7 @@
 		Option "Capabilities" "0x00000000"
 		Option "Capabilities2" "0x00000000"
 
+# IBM:256-bit Graphics Rasterizer [Fire GL1]
 1014 00b7
 	x	4|firegl1|3d|xfiregl1,xf86_glx|fgl1,dri,glx|DDCInfo,accel|8||switch2xf86_glx|
 		Option "no_accel" "no"
@@ -300,439 +281,356 @@
 		Option "Capabilities" "0x00000000"
 		Option "Capabilities2" "0x00000000"
 
-
-
-
-
+# Trident Microsystems:CyberBlade/i7
 1023 8400
 	x	4|trident||||||||
 
-
-
-
-
-
-
-
-
-
-
-
-
+# Trident Microsystems:Cyber 9540
 1023 9540
 	x	4|trident||||||||
 
-
-
-
-
+# Trident Microsystems:3DIm`age 975
 1023 9750
 	x	4|trident|||||f|||
 
-
-
-
-
-
-
+# Matrox Graphics, Inc.:MGA-II [Athena]
 102b 0518
 	x	4|mga|||||d|||
 
-
+# Matrox Graphics, Inc.:MGA 2164W [Millennium II]
 102b 051b
 	x	4|mga|||||d|||
 
-
+# Matrox Graphics, Inc.:MGA Mistral
 102b 2007
 	x	4|mga|||||1|||
 
-
-
+# Chips and Technologies:F65555 HiQVPro
 102c 00e5
 	x	4|chips||||||||
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Texas Instruments:TVP4020 [Permedia 2]
 104c 3d07
 	x	4|glint|||||f|||
 
-
-
-
-
-
-
+# Number 9 Computer Company:Imagine 128
 105d 2309
-	x	4|none||||||||
+	x	4|||||||||
 
-
-
-
-
-
-
-
-
-
+# Neomagic Corporation:NM2160 [MagicGraph 128XD]
 10c8 0004
 	x	4|neomagic|||||5|||
 
-
+# Neomagic Corporation:[MagicMedia 256AV]
 10c8 0005
 	x	4|neomagic|||||d|||
 
-
+# Neomagic Corporation:NM2360 [MagicMedia 256ZX]
 10c8 0006
 	x	4|neomagic|||||4|||
 
-
-
-
+# IBM:MagicMedia 256AV Audio Device on BlackTip Thinkpad
 10c8 8005 1014 00dd
 	x	4|neomagic|||||5|||
 
-
-
-
+# Diamond Multimedia Systems:Viper V550 with TV out
 1092 4820
 	x	4|nv|||||f|||
 
+# Diamond Multimedia Systems:Viper V550 with TV out
 1092 4820
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-
+# nVidia Coorporation:Riva TnT2 Ultra [NV5]
 10de 0029
 	x	4|nv||||||||
 
+# nVidia Coorporation:Riva TnT2 Ultra [NV5]
 10de 0029
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-
+# nVidia Coorporation:Vanta [NV6]
 10de 002c
 	x	4|nv|||||d|||
 
+# nVidia Coorporation:Vanta [NV6]
 10de 002c
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-
+# nVidia Coorporation:Vanta [NV6]
 10de 002d
 	x	4|nv||||||||
 
+# nVidia Coorporation:Vanta [NV6]
 10de 002d
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
+# nVidia Coorporation:Vanta [NV6]
 10de 002e
 	x	4|nv||||||||
 
+# nVidia Coorporation:Vanta [NV6]
 10de 002e
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|||4||switch2nvidia_glx|
 
+# nVidia Coorporation:Vanta [NV6]
 10de 002f
 	x	4|nv||||||||
 
+# nVidia Coorporation:Vanta [NV6]
 10de 002f
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|||4||switch2nvidia_glx|
 
-
+# nVidia Coorporation:GeForce 256 DDR
 10de 0101
 	x	4|nv||||||||
 
+# nVidia Coorporation:GeForce 256 DDR
 10de 0101
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
+# nVidia Coorporation:NV11
 10de 0110
 	x	4|nv||||||||
 
+# nVidia Coorporation:NV11
 10de 0110
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
+# nVidia Coorporation:NV11 DDR
 10de 0111
 	x	4|nv||||||||
 
+# nVidia Coorporation:NV11 DDR
 10de 0111
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
+# nVidia Coorporation:NV11 GL
 10de 0113
 	x	4|nv||||||||
 
+# nVidia Coorporation:NV11 GL
 10de 0113
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
+# nVidia Coorporation:NV15 (Geforce2 GTS)
 10de 0150
 	x	4|nv||||||||
 
+# nVidia Coorporation:NV15 (Geforce2 GTS)
 10de 0150
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
+# nVidia Coorporation:NV15 DDR (Geforce2 GTS)
 10de 0151
 	x	4|nv||||||||
 
+# nVidia Coorporation:NV15 DDR (Geforce2 GTS)
 10de 0151
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
+# nVidia Coorporation:NV15 Bladerunner (Geforce2 GTS)
 10de 0152
 	x	4|nv||||||||
 
+# nVidia Coorporation:NV15 Bladerunner (Geforce2 GTS)
 10de 0152
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
+# nVidia Coorporation:NV15 GL (Quadro2)
 10de 0153
 	x	4|nv||||||||
 
+# nVidia Coorporation:NV15 GL (Quadro2)
 10de 0153
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
 
-
-
-
-
-
+# 3Dfx Interactive, Inc.:Voodoo
 121a 0001
 	x	4|glide||glide_vg|||4|||
 
+# 3Dfx Interactive, Inc.:Voodoo
 121a 0001
-	x	4|none|3d|glide_vg,dev3dfx,mesa3dfx|||4||switch2mesa3dfx|
+	x	4||3d|glide_vg,dev3dfx,mesa3dfx|||4||switch2mesa3dfx|
 
-
-
-
-
-
-
-
+# Silicon Motion, Inc.:SM710 LynxEM
 126f 0710
 	x	4|siliconmotion|||||f|||
 
-
-
-
-
+# 3DLabs:3D Extreme
 3d3d 0007
 	x	4|glint|||||f|||
 
+# 3DLabs:GLINT R3
 3d3d 000a
 	x	4|glint|||||11|||
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Intel Corporation:82810 CGC [Chipset Graphics Controller]
 8086 7121
 	x	4|i810|||||d|||
 
+# Intel Corporation:82810 CGC [Chipset Graphics Controller]
 8086 7121
 	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 		VideoRam 16384
 
+# Intel Corporation:82810-DC100 CGC [Chipset Graphics Controller]
 8086 7123
 	x	4|i810|||||d|||
 
+# Intel Corporation:82810-DC100 CGC [Chipset Graphics Controller]
 8086 7123
 	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 		VideoRam 16384
 
+# Intel Corporation:82810E CGC [Chipset Graphics Controller]
 8086 7125
 	x	4|i810|||||d|||
 
+# Intel Corporation:82810E CGC [Chipset Graphics Controller]
 8086 7125
 	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 		VideoRam 16384
 
-
+# ATI:Rage 128 Pro TR (AGP)
 1002 5452
 	x	4||||||d|||
 
+# Trident:CyberBlade/DSTN/Ai1
 1023 8620
 	x	4|trident||||||||
 
+# NeoMagic:256XL(2380)
 10C8 0016
 	x	4|neomagic|||||d|||
 		VideoRam 4096
 
-
-
-
+# ATI:Rage 128 RG
 1002 5247
 	x	4|r128|||||d|||
 
-
+# ATI:Rage 128 Mobility ML
 1002 4d4c
 	x	4|r128|||||d|||
 
-
+# ATI:Rage 128 Mobility MF
 1002 4d46
 	x	4|r128|||||d|||
 
-
+# ATI:Rage 128 Mobility LE
 1002 4c45
 	x	4|r128|||||d|||
 
+# Intel:I815
 8086 1132
 	x	4|i810|||||d|||
 
+# Intel:I815
 8086 1132
 	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 		VideoRam 16384
 
+# 3Dfx:Voodoo5 5500
 121A 0009
 	x	4|tdfx|||||d|||
 
+# 3Dfx:Voodoo5 5500
 121A 0009
 	x	4|tdfx|3d|xf86_glx,gldri_v5|dri,glx||4||switch2xf86_glx|
 
+# ATI:Radeon QE
 1002 5145
 	x	4|radeon||||||||
 
-
+# Matrox:Millennium II
 102b 0100
 	x	4|mga|||||d|||
 
-
+# ATI:Radeon QD
 1002 5144
 	x	4|radeon||||||||
 
-
+# ATI:RageIIC
 1002 0084
 	x	4|ati||||||||
 
-
-
-
-
-
+# ATI:Radeon QF
 1002 5146
 	x	4|radeon||||||||
 
+# ATI:Radeon QG
 1002 5147
 	x	4|radeon||||||||
 
-
+# S3 Inc.:ViRGE/DX or /GX
 5333 8a01
 	x	4|s3virge|||||f|||
 
-
+# 3DLabs:Permedia II 2D+3D
 3d3d 0009
 	x	4|glint|||||f|||
 
-
+# nVidia Coorporation:Riva TnT 128 [NV04]
 10de 0020
 	x	4|nv|||||f|||
 
+# nVidia Coorporation:Riva TnT 128 [NV04]
 10de 0020
 	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
 
-
+# nVidia Coorporation:Riva TnT2 [NV5]
 10de 0028
 	x	4|nv|||||f|||
 
+# nVidia Coorporation:Riva TnT2 [NV5]
 10de 0028
 	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
 
-
+# nVidia Coorporation:GeForce 256
 10de 0100
 	x	4|nv|||||f|||
 
+# nVidia Coorporation:GeForce 256
 10de 0100
 	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx||4||switch2nvidia_glx|
 
-
+# ATI:Mach64
 1002 0088
 	x	4|ati|||||d|||
 
-
+# ATI Technologies Inc:Mach64 VT
 1002 4654
 	x	4|ati|||||9|||
 
-
+# ATI Technologies Inc:264LT [Mach64 LT]
 1002 4c54
 	x	4|ati|||||d|||
 
-
+# ATI Technologies Inc:215CT [Mach64 CT]
 1002 4354
 	x	4|ati|||||1d|||
 
-
+# ATI Technologies Inc:264VT3 [Mach64 VT3]
 1002 5655
 	x	4|ati|||||d|||
 
-
+# 3Dfx Interactive, Inc.:Voodoo Banshee
 121a 0003
 	x	4|tdfx|||||d|||
 
+# 3Dfx Interactive, Inc.:Voodoo Banshee
 121a 0003
 	x	4|tdfx|3d|glidedri,xf86_glx|glx,dri||4||switch2xf86_glx|
 
-
-
-
+# Intel Corporation:i740
 8086 7800
 	x	4|i740||||||||
 
-
+# Rendition:Verite V2000/V2100/V2200
 1163 2000
 	x	4|rendition||||||||
 
-
-
-
+# Diamond:Fire GL2
 1014 0170
 	x	4|firegl23||xfiregl1|||8|||
 		Option "no_accel" "no"
@@ -742,6 +640,7 @@
 		Option "Capabilities" "0x00000000"
 		Option "Capabilities2" "0x00000000"
 
+# Diamond:Fire GL2
 1014 0170
 	x	4|firegl23|3d|xf86_glx,xfiregl1|fgl23,glx,dri||8||switch2xf86_glx|
 		Option "no_accel" "no"
@@ -751,1197 +650,1330 @@
 		Option "Capabilities" "0x00000000"
 		Option "Capabilities2" "0x00000000"
 
-
+# Matrox Graphics, Inc.:MGA Ultima/Impression
 102b 0d10
 	x	4|mga|||||d|||
 
-
+# Matrox Graphics, Inc.:MGA G200
 102b 0520
 	x	4|mga||||NoHal|d|||
 
+# Matrox Graphics, Inc.:MGA G200
 102b 0520
-	x	4|none,mga|3d|xf86_glx|glx,dri|NoHal|4||switch2xf86_glx|
+	x	4|mga|3d|xf86_glx|glx,dri|NoHal|4||switch2xf86_glx|
 
-
+# Matrox Graphics, Inc.:MGA G400 AGP
 102b 0525
 	x	4|mga||||NoHal|f|||
 
+# Matrox Graphics, Inc.:MGA G400 AGP
 102b 0525
-	x	4|none,mga|3d|xf86_glx|glx,dri|NoHal|4||switch2xf86_glx|
+	x	4|mga|3d|xf86_glx|glx,dri|NoHal|4||switch2xf86_glx|
 
-
+# Matrox:MGA 2064W [Millennium]
 102b 0519
 	x	4|mga|||||d|||
 
-
+# Matrox Graphics, Inc.:Millennium G200 SD
 102b ff03
 	x	4|mga||||sw_cursor|d|||
 
-
+# Matrox Graphics, Inc.:MGA G200 AGP
 102b 0521
 	x	4|mga||||NoHal|d|||
 		VideoRam 8192
 
+# Matrox Graphics, Inc.:MGA G200 AGP
 102b 0521
-	x	4|none,mga|3d|xf86_glx|glx,dri|NoHal|4||switch2xf86_glx|
+	x	4|mga|3d|xf86_glx|glx,dri|NoHal|4||switch2xf86_glx|
 		VideoRam 8192
 
-
+# Matrox Graphics, Inc.:MGA 2164W [Millennium II] AGP
 102b 051f
 	x	4|mga|||||d|||
 
-
+# Matrox Graphics, Inc.:MGA-1084SG Mystique
 102b 051a 102b 1100
 	x	4|mga|||||d|||
 
-
+# Matrox Graphics, Inc.:MGA 1064SG [Mystique]
 102b 051a
 	x	4|mga|||||d|||
 
-
+# Matrox Graphics, Inc.:MGA G100 [Productiva]
 102b 1000
 	x	4|mga|||||d|||
 
-
-
-
-
-
+# NVidia / SGS Thomson (Joint Venture):Riva128
 12d2 0018
 	x	4|nv|||||f|||
 
-
+# Trident Microsystems:Cyber 9525
 1023 9525
 	x	4|trident||||||||
 
-
+# 3Dfx Interactive, Inc.:Voodoo 3
 121a 0005
 	x	4|tdfx|||||5|||
 
+# 3Dfx Interactive, Inc.:Voodoo 3
 121a 0005
 	x	4|tdfx|3d|glidedri,xf86_glx|glx,dri||4||switch2xf86_glx|
 
-
-
-
-
-
-
-
-
+# ATI Technologies Inc:264VT4 [Mach64 VT4]
 1002 5656
 	x	4|ati|||||d|||
 
-
-
-
-
-
-
-
-
-
+# Trident Microsystems:Cyber 9385 [Reference design]
 1023 9385
 	x	4|trident||||||||
 
+#
 
+# x11.hwinfo-file for architecture axp
 
+#
 
+# generated at: Wed Aug 29 09:08:39 2001
 
+# data source:  CDB
 
+# distribution: Stable
 
+#
 
+# S3 Inc.:86cM65 [Aurora64V+]
 5333 8812
 	x	3|S3||||||||
 
+# S3 Inc.:86c988 [ViRGE/VX]
 5333 883d
 	x	3|SVGA||||||||
 
+# S3 Inc.:86c968 [Vision 968 VRAM] rev 0
 5333 88f0
 	x	3|S3||||||||
 
+# S3 Inc.:86c964 [Vision 964]
 5333 8801
 	x	3|S3||||||||
 
+# S3 Inc.:86c928 [Vision 928 VRAM] vers 0
 5333 88b0
 	x	3|S3||||||||
 
+# S3 Inc.:86c868 [Vision 868 VRAM] vers 0
 5333 8880
 	x	3|S3||||||||
 
+# S3 Inc.:86c864 [Vision 864 DRAM] vers 0
 5333 88c0
 	x	3|S3||||||||
 
+# S3 Inc.:86c767 [Trio 64UV+]
 5333 8814
 	x	3|S3||||||||
 
+# S3 Inc.:86c764/765 [Trio32/64/64V+]
 5333 8811
 	x	3|S3||||||||
 
+# S3 Inc.:Trio 64 3D
+5333 8904
+	x	3|SVGA||||||||
+
+# S3 Inc.:86c325 [ViRGE]
 5333 5631
 	x	3|SVGA|||||1d|||
 
+# Oak Technology, Inc:OTI-64111 [Spitfire]
 104e 0111
 	x	3|SVGA||||||||
 
+# nVidia Coorporation:Riva TNT2
 10de 00a0
 	x	3|SVGA||||||||
 
-
-
+# NVidia / SGS Thomson (Joint Venture):Riva128ZX
 12d2 0019
 	x	3|SVGA||||||||
 
+# nVidia Coorporation:GeForce256
 10de 0103
 	x	3|SVGA|||||15|||
 
-
-
+# Neomagic Corporation:NM2093 [MagicGraph 128ZV]
 10c8 0003
 	x	3|SVGA||||||||
 
+# Neomagic Corporation:NM2090 [MagicGraph 128V]
 10c8 0002
 	x	3|SVGA||||||||
 
+# Neomagic Corporation:NM2070 [MagicGraph NM2070]
 10c8 0001
 	x	3|SVGA||||||||
 
+# Matrox Graphics, Inc.:MGA 1064SG [Mystique] AGP
 102b 051e
 	x	3|SVGA|||||d|||
 
-
+# Cirrus Logic:GD 7548
 1013 0038
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 7543 [Viking]
 1013 1202
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 7542 [Nordic]
 1013 1200
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 5465 [Laguna]
 1013 00d6
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 5462
 1013 00d0
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 5446
 1013 00b8
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 5440
 1013 00b0
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 5436 [Alpine]
 1013 00ac
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 5434-4 [Alpine]
 1013 00a4
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 5430/40 [Alpine]
 1013 00a0
 	x	3|SVGA||||||||
 
+# Chips and Technologies:F69000 HiQVideo
 102c 00c0
 	x	3|SVGA||||||||
 
+# Chips and Technologies:F68554
 102c 00f0
 	x	3|SVGA||||||||
 
+# Chips and Technologies:F65554
 102c 00e4
 	x	3|SVGA||||||||
 
+# Chips and Technologies:F65548
 102c 00dc
 	x	3|SVGA||||||||
 
+# Chips and Technologies:F65545
 102c 00d0
 	x	3|SVGA||||||||
 
+# Chips and Technologies:64310
 102c 00b8
 	x	3|SVGA||||||||
 
+# ATI Technologies Inc:68800AX [Mach32]
 1002 4158
 	x	3|MACH64||||||||
 
+# ATI Technologies Inc:210888CX [Mach64 CX]
 1002 4358
 	x	3|MACH64|||||d|||
 
-
+# ATI Technologies Inc:210888ET [Mach64 ET]
 1002 4554
 	x	3|MACH64|||||d|||
 
-
+# ATI Technologies Inc:3D Rage Pro AGP 1X
 1002 4744
 	x	3|MACH64||||||||
 
+# ATI Technologies Inc:3D Rage Pro
 1002 4747
 	x	3|MACH64||||||||
 
+# ATI Technologies Inc:3D Rage Pro
 1002 4749
 	x	3|MACH64||||||||
 
+# ATI Technologies Inc:Rage XC
 1002 474c
 	x	3|MACH64||||||||
 
+# ATI Technologies Inc:Rage XL AGP
 1002 474d
 	x	3|MACH64|||||d|||
 
-
+# ATI Technologies Inc:Rage XC AGP
 1002 474e
 	x	3|MACH64|||||d|||
 
-
+# ATI Technologies Inc:Rage XL
 1002 474f
 	x	3|MACH64||||||||
 
+# ATI Technologies Inc:3D Rage Pro 215GP
 1002 4750
 	x	3|MACH64||||||||
 
+# ATI Technologies Inc:3D Rage Pro 215GQ
 1002 4751
 	x	3|MACH64||||||||
 
+# ATI Technologies Inc:Rage XL
 1002 4752
 	x	3|MACH64|||||d|||
 
-
+# ATI Technologies Inc:Rage XC
 1002 4753
 	x	3|MACH64||||||||
 
+# ATI Technologies Inc:3D Rage I/II 215GT [Mach64 GT]
 1002 4754
 	x	3|MACH64|||||1d|||
 
-
+# ATI Technologies Inc:3D Rage IIC 215IIC [Mach64 GT IIC]
 1002 4756
 	x	3|MACH64|||||d|||
 
-
+# ATI Technologies Inc:3D Rage IIC AGP
 1002 4757
 	x	3|MACH64|||||1d|||
 
-
+# ATI Technologies Inc:210888GX [Mach64 GX]
 1002 4758
 	x	3|MACH64|||||d|||
 
+# ATI Technologies Inc:3D Rage IIC AGP
 1002 475a
 	x	3|MACH64|||||1d|||
 
-
+# ATI Technologies Inc:3D Rage LT Pro AGP-133
 1002 4c42
 	x	3|MACH64||||||||
 
-
+# ATI Technologies Inc:3D Rage LT Pro AGP-66
 1002 4c44
 	x	3|MACH64|||||d|||
 
-
-
+# ATI Technologies Inc:3D Rage P/M Mobility AGP 2x
 1002 4c4d
 	x	3|MACH64||||||||
 
-
+# ATI Technologies Inc:3D Rage L Mobility AGP 2x
 1002 4c4e
 	x	3|SVGA||||||||
 
+# ATI Technologies Inc:3D Rage LT Pro
 1002 4c50
 	x	3|MACH64|||||d|||
 
-
+# ATI Technologies Inc:3D Rage LT Pro
 1002 4c51
 	x	3|MACH64||||||||
 
+# ATI Technologies Inc:3D Rage P/M Mobility
 1002 4c52
 	x	3|SVGA||||||||
 
-
+# ATI Technologies Inc:3D Rage L Mobility
 1002 4c53
 	x	3|SVGA||||||||
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# ATI Technologies Inc:Rage 128 RE
 1002 5245
 	x	3|SVGA|||||1d|||
 
-
+# ATI Technologies Inc:Rage 128 RF
 1002 5246
 	x	3|SVGA|||||1d|||
 
-
-
+# ATI Technologies Inc:Rage 128 RK
 1002 524b
 	x	3|SVGA|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 RL
 1002 524c
 	x	3|SVGA|||||1d|||
 
-
-
+# ATI Technologies Inc:Rage 128 SE
 1002 5345
 	x	3|SVGA|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 SF
 1002 5346
 	x	3|SVGA|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 SG
 1002 5347
 	x	3|SVGA|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 4x
 1002 5348
 	x	3|SVGA|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 SK
 1002 534b
 	x	3|SVGA|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 SL
 1002 534c
 	x	3|SVGA|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 SM
 1002 534d
 	x	3|SVGA|||||d|||
 
-
+# ATI Technologies Inc:Rage 128 4x
 1002 534e
-	x	3|MACH64,XF86_SVGA|||||d|||
+	x	3|MACH64|||||d|||
 
-
+# ATI Technologies Inc:Mach 64 VT
 1002 5354
 	x	3|MACH64|||||d|||
 
-
+# ATI Technologies Inc:Mach 64 reference
 1002 5354 1002 5654
 	x	3|MACH64|||||d|||
 
-
+# National Semiconductor Corporation:87410
 100b d001
 	x	3|MACH64||||||||
 
+# Tseng Labs Inc:ET4000/W32p rev B
 100c 3205
 	x	3|SVGA||||||||
 
+# Tseng Labs Inc:ET4000/W32p rev C
 100c 3206
 	x	3|SVGA||||||||
 
-
+# Tseng Labs Inc:ET4000/W32p rev D
 100c 3207
 	x	3|SVGA||||||||
 
+# Weitek:P9000
 100e 9001
 	x	3|P9000||||||||
 
+# Digital Equipment Corporation:DECchip 21030 [TGA]
 1011 0004
-	x	3|tga,TGA|||||1|||
+	x	3|tga|||||1|||
 
-
+# Digital Equipment Corporation:PBXGB [TGA2]
 1011 000d
 	x	3|TGA||||||||
 
+# Cirrus Logic:GD 7555 Flat Panel GUI Accelerator
 1013 0040
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 7556 Video/Graphics LCD/CRT Ctrlr
 1013 004c
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 5432 [Alpine]
 1013 00a2
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 5434-8 [Alpine]
 1013 00a8
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 5462 [Laguna I]
 1013 00d2
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 5464 [Laguna]
 1013 00d4
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 5436U
 1013 00e8
 	x	3|SVGA||||||||
 
+# Cirrus Logic:PD 6832
 1013 1110
 	x	3|SVGA||||||||
 
+# Cirrus Logic:PD 6834 PCMCIA/CardBus Ctrlr
 1013 1112
 	x	3|SVGA||||||||
 
+# Cirrus Logic:PD 6833 PCMCIA/CardBus Ctrlr
 1013 1113
 	x	3|SVGA||||||||
 
+# Cirrus Logic:GD 7541 [Nordic Light]
 1013 1204
 	x	3|SVGA||||||||
 
+# Cirrus Logic:CD 4400
 1013 4400
 	x	3|SVGA||||||||
 
+# IBM:Fire Coral
 1014 000a
 	x	3|SVGA||||||||
 
+# IBM:82G2675
 1014 001d
 	x	3|SVGA||||||||
 
+# IBM:IBM27-82351
 1014 0022
 	x	3|SVGA||||||||
 
-
-
+# SPEA Software AG:SPEA 3D Accelerator
 1017 5343
 	x	3|SVGA||||||||
 
+# Trident Microsystems:82C194
 1023 0194
 	x	3|SVGA||||||||
 
+# Trident Microsystems:4DWave DX
 1023 2000
 	x	3|SVGA||||||||
 
+# Trident Microsystems:CyberBlade/i7
 1023 8400
 	x	3|SVGA||||||||
 
-
+# Trident Microsystems:CyberBlade/i7d
 1023 8420
 	x	3|SVGA||||||||
 
+# Trident Microsystems:CyberBlade/i1
 1023 8500
 	x	3|SVGA||||||||
 
+# Trident Microsystems:GUI Accelerator
 1023 9350
 	x	3|SVGA||||||||
 
+# Trident Microsystems:Flat panel GUI Accelerator
 1023 9360
 	x	3|SVGA||||||||
 
+# Trident Microsystems:Cyber 9383 [Reference design]
 1023 9383
 	x	3|SVGA||||||||
 
+# Trident Microsystems:Cyber 9386
 1023 9386
 	x	3|SVGA||||||||
 
+# Trident Microsystems:Cyber 9397DVD
 1023 939a
 	x	3|SVGA||||||||
 
+# Trident Microsystems:TGUI 9430
 1023 9430
 	x	3|SVGA||||||||
 
+# Trident Microsystems:TGUI 9440
 1023 9440
 	x	3|SVGA||||||||
 
+# Trident Microsystems:TGUI 9460
 1023 9460
 	x	3|SVGA||||||||
 
+# Trident Microsystems:TGUI 9470
 1023 9470
 	x	3|SVGA||||||||
 
+# Trident Microsystems:Cyber 9520
 1023 9520
 	x	3|SVGA||||||||
 
-
+# Trident Microsystems:TGUI 9660/968x/968x
 1023 9660
 	x	3|SVGA||||||||
 
+# Trident Microsystems:TGUI 9682
 1023 9682
 	x	3|SVGA||||||||
 
+# Trident Microsystems:TGUI 9683
 1023 9683
 	x	3|SVGA||||||||
 
+# Trident Microsystems:ProVIDIA 9685
 1023 9685
 	x	3|SVGA||||||||
 
-
+# Trident Microsystems:TGUI 9753
 1023 9753
 	x	3|SVGA||||||||
 
+# Trident Microsystems:TGUI 9754
 1023 9754
 	x	3|SVGA||||||||
 
+# Trident Microsystems:TGUI 975
 1023 9759
 	x	3|SVGA||||||||
 
+# Trident Microsystems:TGUI 9783
 1023 9783
 	x	3|SVGA||||||||
 
+# Trident Microsystems:TGUI 9785
 1023 9785
 	x	3|SVGA||||||||
 
+# Matrox Graphics, Inc.:MGA-II [Athena]
 102b 0518
 	x	3|SVGA|||||d|||
 
-
+# Matrox Graphics, Inc.:MGA 2164W [Millennium II]
 102b 051b
 	x	3|SVGA|||||d|||
 
-
+# Matrox Graphics, Inc.:MGA Mistral
 102b 2007
 	x	3|SVGA|||||1|||
 
-
+# Chips and Technologies:F65545
 102c 00d8
 	x	3|SVGA||||||||
 
+# Chips and Technologies:F65555 HiQVPro
 102c 00e5
 	x	3|SVGA||||||||
 
-
+# Chips and Technologies:F68554 HiQVision
 102c 00f4
 	x	3|SVGA||||||||
 
+# Chips and Technologies:F68555
 102c 00f5
 	x	3|SVGA||||||||
 
+# miro Computer Products AG:DC20 ASIC
 1031 5601
 	x	3|SVGA||||||||
 
+# miro Computer Products AG:Video I/O & motion JPEG compressor
 1031 5607
 	x	3|SVGA||||||||
 
+# miro Computer Products AG:Media 3D
 1031 5631
 	x	3|SVGA||||||||
 
+# miro Computer Products AG:MiroVideo DC10/DC30+
 1031 6057
 	x	3|SVGA||||||||
 
+# NEC Corporation:GUI Accelerator for W98
 1033 0009
 	x	3|SVGA||||||||
 
+# Silicon Integrated Systems [SiS]:5591/5592 AGP
 1039 0001
 	x	3|SVGA||||||||
 
+# Silicon Integrated Systems [SiS]:5597/5598 VGA
 1039 0200
 	x	3|SVGA||||||||
 
+# Silicon Integrated Systems [SiS]:SiS540 PCI Display Adapter
 1039 5300
 	x	3|SVGA||||||||
 
+# Silicon Integrated Systems [SiS]:SiS630 GUI Accelerator+3D
 1039 6300
 	x	3|SVGA||||||||
 
+# Hewlett-Packard Company:J2585A
 103c 1030
 	x	3|SVGA||||||||
 
+# Hewlett-Packard Company:J2585B
 103c 1031
 	x	3|SVGA||||||||
 
+# Micron:FDC 37C665
 1042 1000
 	x	3|SVGA||||||||
 
+# Micron:37C922
 1042 1001
 	x	3|SVGA||||||||
 
+# SGS Thomson Microelectronics:STG 2000X
 104a 0008
 	x	3|SVGA||||||||
 
+# Texas Instruments:TVP4010 [Permedia]
 104c 3d04
 	x	3|3DLABS|||||1d|||
 
+# Texas Instruments:TVP4020 [Permedia 2]
 104c 3d07
 	x	3|3DLABS|||||1d|||
 
-
+# Oak Technology, Inc:OTI-64017
 104e 0017
 	x	3|SVGA||||||||
 
+# Oak Technology, Inc:OTI-107 [Spitfire]
 104e 0107
 	x	3|SVGA||||||||
 
+# Oak Technology, Inc:Video Adapter
 104e 0109
 	x	3|SVGA||||||||
 
+# Oak Technology, Inc:OTI-64217
 104e 0217
 	x	3|SVGA||||||||
 
+# Oak Technology, Inc:OTI-64317
 104e 0317
 	x	3|SVGA||||||||
 
+# Number 9 Computer Company:Imagine 128
 105d 2309
 	x	3|SVGA|||||15|||
 
-
+# Number 9 Computer Company:Imagine 128 T2R [Ticket to Ride]
 105d 493d
 	x	3|SVGA|||||15|||
 
+# NexGen Microsystems:82c500/1
 1074 4e78
 	x	3|SVGA||||||||
 
+# Cyrix Corporation:PCI Master
 1078 0001
 	x	3|SVGA||||||||
 
+# Cyrix Corporation:5520 [Cognac]
 1078 0002
 	x	3|SVGA||||||||
 
+# Cyrix Corporation:5530 Video [Kahlua]
 1078 0104
 	x	3|SVGA||||||||
 
+# Quantum Designs (H.K.) Ltd:QD-8500
 1098 0001
 	x	3|SVGA||||||||
 
+# Quantum Designs (H.K.) Ltd:QD-8580
 1098 0002
 	x	3|SVGA||||||||
 
+# Sierra Semiconductor:STB Horizon 64
 10a8 0000
 	x	3|SVGA||||||||
 
+# Neomagic Corporation:NM2160 [MagicGraph 128XD]
 10c8 0004
 	x	3|SVGA||||||||
 
-
+# Neomagic Corporation:[MagicMedia 256AV]
 10c8 0005
 	x	3|SVGA||||||||
 
-
+# Neomagic Corporation:NM2360 [MagicMedia 256ZX]
 10c8 0006
 	x	3|SVGA||||||||
 
-
+# Neomagic Corporation:[MagicGraph 128ZV Plus]
 10c8 0083
 	x	3|SVGA||||||||
 
+# Neomagic Corporation:[MagicMedia 256AV Audio]
 10c8 8005
 	x	3|SVGA||||||||
 
+# IBM:MagicMedia 256AV Audio Device on BlackTip Thinkpad
 10c8 8005 1014 00dd
 	x	3|SVGA||||||||
 
-
+# nVidia Coorporation:EDGE 3D [NV1]
 10de 0008
 	x	3|SVGA||||||||
 
+# nVidia Coorporation:EDGE 3D [NV1]
 10de 0009
 	x	3|SVGA||||||||
 
+# Diamond Multimedia Systems:Viper V550 with TV out
 1092 4820
 	x	3|SVGA|||||15|||
 
-
-
+# nVidia Coorporation:Riva TnT2 Ultra [NV5]
 10de 0029
 	x	3|SVGA||||||||
 
-
-
+# nVidia Coorporation:Vanta [NV6]
 10de 002c
 	x	3|SVGA||||||||
 
-
-
+# nVidia Coorporation:Vanta [NV6]
 10de 002d
 	x	3|SVGA||||||||
 
-
-
-
-
-
-
+# nVidia Coorporation:GeForce 256 DDR
 10de 0101
 	x	3|SVGA||||||||
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Tundra Semiconductor Corp.:CA91C042 [Universe]
 10e3 0000
 	x	3|SVGA||||||||
 
+# Intergraphics Systems:IGA-1680
 10ea 1680
 	x	3|SVGA||||||||
 
+# Intergraphics Systems:IGA-1682
 10ea 1682
 	x	3|SVGA||||||||
 
+# Alliance Semiconductor Corporation:ProVideo 6424
 1142 6424
 	x	3|SVGA||||||||
 
+# Rendition:Verite 1000
 1163 0001
 	x	3|SVGA||||||||
 
-
-
+# Sigma Designs Corporation:REALmagic 64/GX (SD 6425)
 1236 6401
 	x	3|SVGA||||||||
 
+# Optibase Ltd:MPEG Forge
 1255 1110
 	x	3|SVGA||||||||
 
+# Optibase Ltd:MPEG Fusion
 1255 1210
 	x	3|SVGA||||||||
 
+# Optibase Ltd:VideoPlex
 1255 2110
 	x	3|SVGA||||||||
 
+# Optibase Ltd:VideoPlex CC
 1255 2120
 	x	3|SVGA||||||||
 
+# Optibase Ltd:VideoQuest
 1255 2130
 	x	3|SVGA||||||||
 
+# Silicon Motion, Inc.:SM710 LynxEM
 126f 0710
 	x	3|SVGA||||||||
 
-
+# Silicon Motion, Inc.:SM712 LynxEM+
 126f 0712
 	x	3|SVGA||||||||
 
+# Silicon Motion, Inc.:SM720 Lynx3DM
 126f 0720
 	x	3|SVGA||||||||
 
+# Silicon Motion, Inc.:SM910
 126f 0910
 	x	3|SVGA||||||||
 
+# 3DLabs:3D Extreme
 3d3d 0007
 	x	3|3DLABS|||||1d|||
 
-
-
+# Avance Logic Inc.:ALG-2064i
 4005 2064
 	x	3|SVGA||||||||
 
+# S3 Inc.:Plato/PX (system)
 5333 0551
 	x	3|SVGA||||||||
 
+# S3 Inc.:86c764_0 [Trio 32 vers 0]
 5333 8810
 	x	3|S3||||||||
 
+# S3 Inc.:86c764_3 [Trio 32/64 vers 3]
 5333 8813
 	x	3|S3||||||||
 
+# S3 Inc.:86cM65 [Aurora 128]
 5333 8815
 	x	3|S3||||||||
 
+# S3 Inc.:FireGL
 5333 8870
 	x	3|S3||||||||
 
+# S3 Inc.:86c868 [Vision 868 VRAM] vers 1
 5333 8881
 	x	3|S3||||||||
 
+# S3 Inc.:86c868 [Vision 868 VRAM] vers 2
 5333 8882
 	x	3|S3||||||||
 
+# S3 Inc.:86c868 [Vision 868 VRAM] vers 3
 5333 8883
 	x	3|S3||||||||
 
+# S3 Inc.:86c928 [Vision 928 VRAM] vers 1
 5333 88b1
 	x	3|S3||||||||
 
+# S3 Inc.:86c928 [Vision 928 VRAM] vers 2
 5333 88b2
 	x	3|S3||||||||
 
+# S3 Inc.:86c928 [Vision 928 VRAM] vers 3
 5333 88b3
 	x	3|S3||||||||
 
+# S3 Inc.:86c864 [Vision 864 DRAM] vers 1
 5333 88c1
 	x	3|S3||||||||
 
+# S3 Inc.:86c864 [Vision 864-P DRAM] vers 2
 5333 88c2
 	x	3|S3||||||||
 
+# S3 Inc.:86c864 [Vision 864-P DRAM] vers 3
 5333 88c3
 	x	3|S3||||||||
 
+# S3 Inc.:86c964 [Vision 964 VRAM] vers 0
 5333 88d0
 	x	3|S3||||||||
 
+# S3 Inc.:86c964 [Vision 964 VRAM] vers 1
 5333 88d1
 	x	3|S3||||||||
 
+# S3 Inc.:86c964 [Vision 964-P VRAM] vers 2
 5333 88d2
 	x	3|S3||||||||
 
+# S3 Inc.:86c964 [Vision 964-P VRAM] vers 3
 5333 88d3
 	x	3|S3||||||||
 
+# S3 Inc.:86c968 [Vision 968 VRAM] rev 1
 5333 88f1
 	x	3|S3||||||||
 
+# S3 Inc.:86c968 [Vision 968 VRAM] rev 2
 5333 88f2
 	x	3|S3||||||||
 
+# S3 Inc.:86c968 [Vision 968 VRAM] rev 3
 5333 88f3
 	x	3|S3||||||||
 
+# S3 Inc.:Trio 64V2/DX or /GX
 5333 8901
 	x	3|SVGA||||||||
 
+# S3 Inc.:Plato/PX
 5333 8902
 	x	3|S3||||||||
 
+# S3 Inc.:Trio 3D business multimedia
 5333 8903
 	x	3|S3||||||||
 
+# S3 Inc.:Trio 64V+ family
 5333 8905
 	x	3|S3||||||||
 
+# S3 Inc.:Trio 64V+ family
 5333 8906
 	x	3|S3||||||||
 
+# S3 Inc.:Trio 64V+ family
 5333 8907
 	x	3|S3||||||||
 
+# S3 Inc.:Trio 64V+ family
 5333 8908
 	x	3|S3||||||||
 
+# S3 Inc.:Trio 64V+ family
 5333 8909
 	x	3|S3||||||||
 
+# S3 Inc.:Trio 64V+ family
 5333 890a
 	x	3|S3||||||||
 
+# S3 Inc.:Trio 64V+ family
 5333 890b
 	x	3|S3||||||||
 
+# S3 Inc.:Trio 64V+ family
 5333 890c
 	x	3|S3||||||||
 
+# S3 Inc.:Trio 64V+ family
 5333 890d
 	x	3|S3||||||||
 
+# S3 Inc.:Trio 64V+ family
 5333 890e
 	x	3|S3||||||||
 
+# S3 Inc.:Trio 64V+ family
 5333 890f
 	x	3|S3||||||||
 
+# S3 Inc.:86c368 [Trio 3D/2X]
 5333 8a13
 	x	3|SVGA||||||||
 
+# S3 Inc.:86c794 [Savage 3D]
 5333 8a20
 	x	3|SVGA||||||||
 
+# S3 Inc.:ViRGE/M3
 5333 8c00
 	x	3|SVGA||||||||
 
+# S3 Inc.:ViRGE/MX
 5333 8c01
 	x	3|SVGA||||||||
 
+# S3 Inc.:ViRGE/MX+
 5333 8c02
 	x	3|SVGA||||||||
 
+# S3 Inc.:ViRGE/MX+MV
 5333 8c03
 	x	3|SVGA||||||||
 
+# S3 Inc.:86C270-294 Savage/MX-/IX
 5333 8c10
 	x	3|SVGA||||||||
 
+# S3 Inc.:86C270-294 Savage/MX-/IX
 5333 8c12
 	x	3|SVGA||||||||
 
+# S3 Inc.:86C410 Savage 2000
 5333 9102
 	x	3|SVGA||||||||
 
+# S3 Inc.:SonicVibes
 5333 ca00
 	x	3|S3||||||||
 
-
-
-
-
-
-
+# ATI:Rage 128 Pro TR (AGP)
 1002 5452
 	x	3||||||d|||
 
-
-
-
+# S3:Savage IX
 5333 8c13
 	x	3|SVGA||||||||
 
+# S3:Savage MX
 5333 8c11
 	x	3|SVGA||||||||
 
+# ATI:Rage 128 RG
 1002 5247
 	x	3|SVGA|||||d|||
 
-
+# ATI:Rage 128 Mobility ML
 1002 4d4c
 	x	3|SVGA|||||d|||
 
-
+# ATI:Rage 128 Mobility MF
 1002 4d46
 	x	3|SVGA|||||d|||
 
-
+# ATI:Rage 128 Mobility LE
 1002 4c45
 	x	3|SVGA|||||d|||
 
-
-
-
-
-
-
+# Matrox:Millennium II
 102b 0100
 	x	3|SVGA|||||d|||
 
-
+# Cirrus Logic:GD5464BD
 1013 00D5
 	x	3|SVGA||||||||
 
-
+# ATI:RageIIC
 1002 0084
 	x	3|MACH64||||||||
 
-
+# SiS:SG86C215
 1039 0215
 	x	3|SVGA||||||||
 
+# SiS:SG86C225
 1039 0225
 	x	3|SVGA||||||||
 
+# SiS:SIS_not_exist
 1039 1039
 	x	3|SVGA||||||||
 
+# SiS:SIS300
 1039 0300
 	x	3|SVGA||||||||
 
+# NeoMagic:Graphics Controller
 10C8 0000
 	x	3|SVGA||||||||
 
-
-
+# S3 Inc.:ViRGE/DX or /GX
 5333 8a01
 	x	3|SVGA|||||1d|||
 
-
+# 3DLabs:Permedia II 2D+3D
 3d3d 0009
 	x	3|3DLABS|||||1d|||
 
-
+# nVidia Coorporation:Riva TnT 128 [NV04]
 10de 0020
 	x	3|SVGA|||||15|||
 
-
-
+# nVidia Coorporation:Riva TnT2 [NV5]
 10de 0028
 	x	3|SVGA|||||15|||
 
-
-
+# nVidia Coorporation:GeForce 256
 10de 0100
 	x	3|SVGA||||||||
 
-
-
+# ATI:Mach64
 1002 0088
 	x	3|MACH64|||||d|||
 
-
+# ATI Technologies Inc:Mach64 VT
 1002 4654
 	x	3|MACH64|||||d|||
 
-
+# ATI Technologies Inc:264LT [Mach64 LT]
 1002 4c54
 	x	3|MACH64|||||d|||
 
-
+# ATI Technologies Inc:215CT [Mach64 CT]
 1002 4354
 	x	3|MACH64|||||1d|||
 
-
+# ATI Technologies Inc:264VT3 [Mach64 VT3]
 1002 5655
 	x	3|MACH64|||||d|||
 
-
+# 3Dfx Interactive, Inc.:Voodoo Banshee
 121a 0003
 	x	3|SVGA|||||1d|||
 
-
-
+# Silicon Integrated Systems [SiS]:86C326
 1039 6326
 	x	3|SVGA|||||5|||
 
+# S3 Inc.:ViRGE/GX2
 5333 8a10
 	x	3|SVGA||||||||
 
+# Intel Corporation:i740
 8086 7800
 	x	3|SVGA||||||||
 
-
+# Rendition:Verite V2000/V2100/V2200
 1163 2000
 	x	3|SVGA||||||||
 
-
+# S3 Inc.:Savage 4
 5333 8a22
 	x	3|SVGA||||||||
 
+# Diamond Multimedia Systems:Viper V330
 1092 1092
 	x	3|SVGA|||||1d|||
 
+# Diamond Multimedia Systems:Viper V550
 1092 0550
 	x	3|SVGA|||||f|||
 
-
-
+# Matrox Graphics, Inc.:MGA Ultima/Impression
 102b 0d10
 	x	3|SVGA|||||d|||
 
-
+# Matrox Graphics, Inc.:MGA G200
 102b 0520
 	x	3|SVGA|||||1d|||
 
-
-
+# Matrox Graphics, Inc.:MGA G400 AGP
 102b 0525
 	x	3|SVGA|||||1d|||
 
-
-
+# Matrox:MGA 2064W [Millennium]
 102b 0519
 	x	3|SVGA|||||d|||
 
-
+# Matrox Graphics, Inc.:Millennium G200 SD
 102b ff03
 	x	3|SVGA|||||d|||
 
-
+# Matrox Graphics, Inc.:MGA G200 AGP
 102b 0521
 	x	3|SVGA|||||1d|||
 
-
-
+# Matrox Graphics, Inc.:MGA 2164W [Millennium II] AGP
 102b 051f
 	x	3|SVGA|||||1d|||
 
-
+# Matrox Graphics, Inc.:MGA-1084SG Mystique
 102b 051a 102b 1100
 	x	3|SVGA|||||d|||
 
-
+# Matrox Graphics, Inc.:MGA 1064SG [Mystique]
 102b 051a
 	x	3|SVGA|||||d|||
 
-
+# Matrox Graphics, Inc.:MGA G100 [Productiva]
 102b 1000
 	x	3|SVGA|||||d|||
 
-
+# Trident Microsystems:3DImage 9850
 1023 9850
 	x	3|SVGA||||||||
 
+# Number 9 Computer Company:Imagine 128-II
 105d 2339
 	x	3|SVGA|||||15|||
 
+# Number 9 Computer Company:Revolution 4
 105d 5348
 	x	3|SVGA|||||15|||
 
+# Silicon Motion, Inc.:SM810 LynxE
 126f 0810
 	x	3|SVGA||||||||
 
+# NVidia / SGS Thomson (Joint Venture):Riva128
 12d2 0018
 	x	3|SVGA|||||15|||
 
-
+# Trident Microsystems:Cyber 9525
 1023 9525
 	x	3|SVGA||||||||
 
-
+# 3Dfx Interactive, Inc.:Voodoo 3
 121a 0005
 	x	3|SVGA|||||1d|||
 
-
-
+# 3DLabs:GLINT 500TX
 3d3d 0002
 	x	3|3DLABS|||||11|||
 
+# 3DLabs:GLINT MX
 3d3d 0006
 	x	3|3DLABS|||||11|||
 
+# 3DLabs:Permedia
 3d3d 0004
 	x	3|3DLABS|||||15|||
 
+# Alliance Semiconductor Corporation:ProVideo 6422
 1142 6422
 	x	3|SVGA||||||||
 
+# ARK Logic Inc:1000PV [Stingray]
 edd8 a091
 	x	3|SVGA||||||||
 
+# ARK Logic Inc:2000MT
 edd8 a0a1
 	x	3|SVGA||||||||
 
+# ARK Logic Inc:2000PV [Stingray]
 edd8 a099
 	x	3|SVGA||||||||
 
+# ATI Technologies Inc:264VT4 [Mach64 VT4]
 1002 5656
 	x	3|MACH64|||||d|||
 
-
+# ATI Technologies Inc:3D Rage LT-G 215LG
 1002 4c47
 	x	3|MACH64||||||||
 
+# ATI Technologies Inc:3D Rage II+ 215GTB [Mach64 GTB]
 1002 4755
 	x	3|MACH64||||||||
 
+# ATI Technologies Inc:3D Rage IIC
 1002 4759
 	x	3|MACH64||||||||
 
+# Silicon Integrated Systems [SiS]:SG86C202
 1039 0002
 	x	3|SVGA||||||||
 
+# Silicon Integrated Systems [SiS]:SG86C205
 1039 0205
 	x	3|SVGA||||||||
 
+# Trident Microsystems:TGUI 9420
 1023 9420
 	x	3|SVGA||||||||
 
+# Trident Microsystems:TGUI 9680
 1023 9680
 	x	3|SVGA||||||||
 
+# Trident Microsystems:Cyber 9382 [Reference design]
 1023 9382
 	x	3|SVGA||||||||
 
+# Trident Microsystems:Cyber 9385 [Reference design]
 1023 9385
 	x	3|SVGA||||||||
 
-
+# Trident Microsystems:Cyber 9388
 1023 9388
 	x	3|SVGA||||||||
 
+# Trident Microsystems:Cyber 9397
 1023 9397
 	x	3|SVGA||||||||
 
+# Tseng Labs Inc:ET4000/W32p rev A
 100c 3202
 	x	3|SVGA||||||||
 
+# Tseng Labs Inc:ET6000
 100c 3208
 	x	3|SVGA||||||||
 
+# Tseng Labs Inc:ET6300
 100c 4702
 	x	3|SVGA||||||||
 
+# Weitek:P9000
 100e 9000
 	x	3|P9000||||||||
 
+# Weitek:P9100
 100e 9100
 	x	3|SVGA||||||||

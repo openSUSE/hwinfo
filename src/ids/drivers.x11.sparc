@@ -1,412 +1,440 @@
 
+#
 
+# x11.hwinfo-file for architecture sparc
+
+#
+
+# generated at: Wed Aug 29 09:08:39 2001
+
+# data source:  CDB
+
+# distribution: Stable
+
+#
+
+# Sun Microsystems:Sun|Monochrome (bwtwo)
 s4001 0001
 	x	4|sunbw2||||||||
 
-
+# Sun Microsystems:Sun|Color3 (cgthree)
 s4001 0002
 	x	4|suncg3|||||1|||
 
-
-
-
+# Sun Microsystems:Sun|Double width GX (cgsix)
 s4001 0008
 	x	4|suncg6|||||1|||
 
-
+# Sun Microsystems:Sun|Single width GX (cgsix)
 s4001 0009
 	x	4|suncg6|||||1|||
 
-
+# Sun Microsystems:Sun|Turbo GX with 1M VSIMM (cgsix)
 s4001 000a
 	x	4|suncg6|||||1|||
 
-
+# Sun Microsystems:Sun|Turbo GX Plus (cgsix)
 s4001 000b
 	x	4|suncg6|||||1|||
 
-
+# Sun Microsystems:Sun|Turbo GX (cgsix)
 s4001 000c
 	x	4|suncg6||||||||
 
-
+# Sun Microsystems:Sun|Unknown GX (cgsix)
 s4001 000d
 	x	4|suncg6|||||1|||
 
-
+# Sun Microsystems:Sun|SX with 4M VSIMM (cgfourteen)
 s4001 000e
 	x	4|suncg14|||||10|||
 
-
+# Sun Microsystems:Sun|SX with 8M VSIMM (cgfourteen)
 s4001 000f
 	x	4|suncg14|||||10|||
 
-
+# Sun Microsystems:Sun|SX (cgfourteen)
 s4001 0010
 	x	4|suncg14|||||10|||
 
-
+# Sun Microsystems:Sun|ZX or Turbo ZX (leo)
 s4001 0011
 	x	4|sunleo|||||10|||
 
+# Sun Microsystems:Sun|Turbo ZX (leo)
 s4001 0012
 	x	4|sunleo|||||10|||
 
-
+# Sun Microsystems:Sun|TCX (8bit)
 s4001 0013
 	x	4|suntcx|||||1|||
 
-
+# Sun Microsystems:Sun|TCX (S24)
 s4001 0014
 	x	4|suntcx||||||||
 
-
+# Sun Microsystems:Sun|Elite3D-M6 Horizontal (afb)
 s4001 0015
 	x	4|sunffb|||||8|||
 
-
+# Sun Microsystems:Sun|Elite3D (afb)
 s4001 0016
 	x	4|sunffb|||||8|||
 
-
+# Sun Microsystems:Sun|FFB 67MHz Creator (ffb)
 s4001 0017
 	x	4|sunffb|||||9|||
 
+# Sun Microsystems:Sun|FFB 67MHz Creator (ffb)
 s4001 0017
 	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
-
+# Sun Microsystems:Sun|FFB 67MHz Creator 3D (ffb)
 s4001 0018
 	x	4|sunffb|||||9|||
 
+# Sun Microsystems:Sun|FFB 67MHz Creator 3D (ffb)
 s4001 0018
 	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
-
+# Sun Microsystems:Sun|FFB 75MHz Creator 3D (ffb)
 s4001 0019
 	x	4|sunffb|||||9|||
 
+# Sun Microsystems:Sun|FFB 75MHz Creator 3D (ffb)
 s4001 0019
-	x	4|sunffb|3d||dri,glx||9||switch2xf86_glx|
+	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
-
+# Sun Microsystems:Sun|FFB2 Vertical Creator (ffb)
 s4001 001a
 	x	4|sunffb|||||9|||
 
+# Sun Microsystems:Sun|FFB2 Vertical Creator (ffb)
 s4001 001a
 	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
-
+# Sun Microsystems:Sun|FFB2 Vertical Creator 3D (ffb)
 s4001 001b
 	x	4|sunffb|||||9|||
 
+# Sun Microsystems:Sun|FFB2 Vertical Creator 3D (ffb)
 s4001 001b
 	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
-
+# Sun Microsystems:Sun|FFB2+ Vertical Creator (ffb)
 s4001 001c
 	x	4|sunffb|||||9|||
 
+# Sun Microsystems:Sun|FFB2+ Vertical Creator (ffb)
 s4001 001c
 	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
-
+# Sun Microsystems:Sun|FFB2+ Vertical Creator 3D (ffb)
 s4001 001d
 	x	4|sunffb|||||9|||
 
+# Sun Microsystems:Sun|FFB2+ Vertical Creator 3D (ffb)
 s4001 001d
 	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
-
+# Sun Microsystems:Sun|FFB2 Horizontal Creator (ffb)
 s4001 001e
 	x	4|sunffb|||||9|||
 
+# Sun Microsystems:Sun|FFB2 Horizontal Creator (ffb)
 s4001 001e
 	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
-
+# Sun Microsystems:Sun|FFB2 Horizontal Creator 3D (ffb)
 s4001 001f
 	x	4|sunffb|||||9|||
 
+# Sun Microsystems:Sun|FFB2 Horizontal Creator 3D (ffb)
 s4001 001f
 	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
-
+# Sun Microsystems:Sun|FFB [unknown type] (ffb)
 s4001 0020
 	x	4|sunffb|||||9|||
 
+# Sun Microsystems:Sun|FFB [unknown type] (ffb)
 s4001 0020
 	x	4|sunffb|3d|xf86_glx|dri,glx||9||switch2xf86_glx|
 
+# ATI Technologies Inc:68800AX [Mach32]
 1002 4158
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:210888CX [Mach64 CX]
 1002 4358
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:210888ET [Mach64 ET]
 1002 4554
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:3D Rage Pro
 1002 4747
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:3D Rage Pro
 1002 4749
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:Rage XC
 1002 474c
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:Rage XL
 1002 474f
 	x	4|ati|||||f|||
 
-
+# ATI Technologies Inc:3D Rage Pro 215GP
 1002 4750
-	x	4|none|||||d|||
+	x	4|ati|||||d|||
 
+# ATI Technologies Inc:3D Rage Pro 215GQ
 1002 4751
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:Rage XL
 1002 4752
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:Rage XC
 1002 4753
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:3D Rage I/II 215GT [Mach64 GT]
 1002 4754
-	x	4||||||f|||
+	x	4|ati|||||f|||
 
+# ATI Technologies Inc:3D Rage IIC 215IIC [Mach64 GT IIC]
 1002 4756
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:210888GX [Mach64 GX]
 1002 4758
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:3D Rage LT Pro
 1002 4c50
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:3D Rage LT Pro
 1002 4c51
-	x	4||||||f|||
+	x	4|ati|||||f|||
 
+# ATI Technologies Inc:3D Rage P/M Mobility
 1002 4c52
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:3D Rage L Mobility
 1002 4c53
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:Mach 64 VT
 1002 5354
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:Mach 64 reference
 1002 5354 1002 5654
 	x	4|ati|||||f|||
 
+# Texas Instruments:TVP4010 [Permedia]
 104c 3d04
 	x	4|glint|||||f|||
 
+# Texas Instruments:TVP4020 [Permedia 2]
 104c 3d07
 	x	4|glint|||||f|||
 
+# 3DLabs:3D Extreme
 3d3d 0007
 	x	4|glint|||||f|||
 
+# ATI:RageIIC
 1002 0084
 	x	4|ati|||||f|||
 
-
+# 3DLabs:Permedia II 2D+3D
 3d3d 0009
 	x	4|glint|||||f|||
 
+# ATI:Mach64
 1002 0088
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:Mach64 VT
 1002 4654
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:264LT [Mach64 LT]
 1002 4c54
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:215CT [Mach64 CT]
 1002 4354
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:264VT3 [Mach64 VT3]
 1002 5655
 	x	4|ati|||||f|||
 
+# 3DLabs:Permedia
 3d3d 0004
 	x	4|glint|||||f|||
 
+# ATI Technologies Inc:264VT4 [Mach64 VT4]
 1002 5656
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:3D Rage LT-G 215LG
 1002 4c47
 	x	4|ati|||||f|||
 
-
+# ATI Technologies Inc:3D Rage II+ 215GTB [Mach64 GTB]
 1002 4755
 	x	4|ati|||||d|||
 
+# ATI Technologies Inc:3D Rage IIC
 1002 4759
 	x	4|ati|||||f|||
 
+#
+
+# x11.hwinfo-file for architecture sparc
+
+#
+
+# generated at: Wed Aug 29 09:08:39 2001
+
+# data source:  CDB
+
+# distribution: Stable
+
+#
+
+# Sun Microsystems:Sun|Monochrome (bwtwo)
 s4001 0001
-	x	3|SUNMONO,SUN||||||||
+	x	3|SUNMONO||||||||
 
-
+# Sun Microsystems:Sun|Color3 (cgthree)
 s4001 0002
-	x	3|SUN,SUN24||||||||
+	x	3|SUN||||||||
 
-
+# Sun Microsystems:Quantum 3D MGXplus with 4M VRAM (mgx)
 s4001 0006
 	x	3|SUN24||||||||
 
+# Sun Microsystems:Quantum 3D MGXplus (mgx)
 s4001 0007
 	x	3|SUN24||||||||
 
+# Sun Microsystems:Sun|Double width GX (cgsix)
 s4001 0008
 	x	3|SUN|||||1|||
 
-
+# Sun Microsystems:Sun|Single width GX (cgsix)
 s4001 0009
 	x	3|SUN|||||1|||
 
-
+# Sun Microsystems:Sun|Turbo GX with 1M VSIMM (cgsix)
 s4001 000a
 	x	3|SUN|||||1|||
 
-
+# Sun Microsystems:Sun|Turbo GX Plus (cgsix)
 s4001 000b
 	x	3|SUN||||||||
 
-
+# Sun Microsystems:Sun|Turbo GX (cgsix)
 s4001 000c
 	x	3|SUN||||||||
 
-
+# Sun Microsystems:Sun|Unknown GX (cgsix)
 s4001 000d
 	x	3|SUN|||||1|||
 
-
+# Sun Microsystems:Sun|SX with 4M VSIMM (cgfourteen)
 s4001 000e
 	x	3|SUN24||||||||
 
-
+# Sun Microsystems:Sun|SX with 8M VSIMM (cgfourteen)
 s4001 000f
 	x	3|SUN24||||||||
 
-
+# Sun Microsystems:Sun|SX (cgfourteen)
 s4001 0010
 	x	3|SUN24|||||8|||
 
-
+# Sun Microsystems:Sun|ZX or Turbo ZX (leo)
 s4001 0011
 	x	3|SUN24|||||10|||
 
-
-
+# Sun Microsystems:Sun|TCX (8bit)
 s4001 0013
 	x	3|SUN|||||1|||
 
-
+# Sun Microsystems:Sun|TCX (S24)
 s4001 0014
 	x	3|SUN24||||||||
 
-
+# Sun Microsystems:Sun|Elite3D-M6 Horizontal (afb)
 s4001 0015
 	x	3|SUN24|||||8|||
 
-
+# Sun Microsystems:Sun|Elite3D (afb)
 s4001 0016
 	x	3|SUN24|||||8|||
 
-
+# Sun Microsystems:Sun|FFB 67MHz Creator (ffb)
 s4001 0017
 	x	3|SUN24||||||||
 
-
-
+# Sun Microsystems:Sun|FFB 67MHz Creator 3D (ffb)
 s4001 0018
 	x	3|SUN24|||||8|||
 
-
-
+# Sun Microsystems:Sun|FFB 75MHz Creator 3D (ffb)
 s4001 0019
 	x	3|SUN24|||||8|||
 
-
-
+# Sun Microsystems:Sun|FFB2 Vertical Creator (ffb)
 s4001 001a
 	x	3|SUN24|||||8|||
 
-
-
+# Sun Microsystems:Sun|FFB2 Vertical Creator 3D (ffb)
 s4001 001b
 	x	3|SUN24|||||1|||
 
-
-
+# Sun Microsystems:Sun|FFB2+ Vertical Creator (ffb)
 s4001 001c
 	x	3|SUN24|||||8|||
 
-
-
+# Sun Microsystems:Sun|FFB2+ Vertical Creator 3D (ffb)
 s4001 001d
 	x	3|SUN24|||||8|||
 
-
-
+# Sun Microsystems:Sun|FFB2 Horizontal Creator (ffb)
 s4001 001e
 	x	3|SUN24|||||8|||
 
-
-
+# Sun Microsystems:Sun|FFB2 Horizontal Creator 3D (ffb)
 s4001 001f
 	x	3|SUN24|||||8|||
 
-
-
+# Sun Microsystems:Sun|FFB [unknown type] (ffb)
 s4001 0020
 	x	3|SUN24|||||8|||
 
-
-
-
-
-
-
-
-
-
+# ATI Technologies Inc:3D Rage Pro 215GP
 1002 4750
 	x	3|MACH64|||||1|||
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# 3DLabs:Permedia II 2D+3D
 3d3d 0009
 	x	3|3DLABS|||||5|||
 
-
-
-
-
-
-
-
-
-
+# ATI Technologies Inc:3D Rage II+ 215GTB [Mach64 GTB]
 1002 4755
 	x	3|MACH64|||||5|||
-
-
