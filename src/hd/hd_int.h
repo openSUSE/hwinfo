@@ -119,7 +119,7 @@ enum mod_idx {
   mod_isa, mod_dac960, mod_smart, mod_isdn, mod_kbd, mod_prom, mod_sbus,
   mod_int, mod_braille, mod_xtra, mod_sys, mod_dasd, mod_i2o, mod_cciss,
   mod_manual, mod_fb, mod_veth, mod_partition, mod_disk, mod_ataraid, mod_pppoe,
-  mod_pcmcia, mod_s390, mod_sysfs, mod_dsl
+  mod_pcmcia, mod_s390, mod_sysfs, mod_dsl, mod_block
 };
 
 void *new_mem(size_t size);
@@ -228,8 +228,13 @@ void hd_move_to_shm(hd_data_t *hd_data);
 void read_udevinfo(hd_data_t *hd_data);
 
 hd_t *hd_find_sysfs_id(hd_data_t *hd_data, char *id);
+int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u);
 char *hd_attr_str(struct sysfs_attribute *attr);
 char *hd_sysfs_id(char *path);
+char *hd_sysfs_name2_dev(char *str);
+void hd_sysfs_driver_list(hd_data_t *hd_data);
+char *hd_sysfs_find_driver(hd_data_t *hd_data, char *sysfs_id, int exact);
+
 
 #ifdef __cplusplus
 }

@@ -12,7 +12,6 @@
 #include "hd.h"
 #include "hd_int.h"
 #include "hddb.h"
-#include "pci.h"
 
 
 /*
@@ -36,8 +35,6 @@
  */
 
 static void get_pci_data(hd_data_t *hd_data);
-static void get_pci_drivers(hd_data_t *hd_data);
-static int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u);
 static str_list_t *hd_attr_list(struct sysfs_attribute *attr);
 static void add_pci_data(hd_data_t *hd_data);
 static void add_driver_info(hd_data_t *hd_data);
@@ -55,14 +52,16 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
   remove_hd_entries(hd_data);
   hd_data->pci = NULL;
 
-  PROGRESS(1, 0, "get sysfs pci data");
+  PROGRESS(1, 0, "sysfs drivers");
+
+  hd_sysfs_driver_list(hd_data);
+
+  PROGRESS(2, 0, "get sysfs pci data");
 
   get_pci_data(hd_data);
   if(hd_data->debug) dump_pci_data(hd_data);
 
   add_pci_data(hd_data);
-
-  get_pci_drivers(hd_data);
 }
 
 
@@ -100,7 +99,7 @@ void get_pci_data(hd_data_t *hd_data)
       sf_dev->name,
       sf_dev->bus_id,
       sf_dev->bus,
-      sf_dev->path
+      hd_sysfs_id(sf_dev->path)
     );
 
     if(sscanf(sf_dev->bus_id, "%x:%x:%x.%x", &u0, &u1, &u2, &u3) != 4) continue;
@@ -230,44 +229,6 @@ void get_pci_data(hd_data_t *hd_data)
 }
 
 
-void get_pci_drivers(hd_data_t *hd_data)
-{
-  hd_t *hd;
-
-  struct sysfs_bus *sf_bus;
-  struct sysfs_device *sf_dev;
-  struct sysfs_driver *sf_drv;
-  struct dlist *sf_drv_list;
-  struct dlist *sf_dev_list;
-
-  sf_bus = sysfs_open_bus("pci");
-
-  if(!sf_bus) {
-    ADD2LOG("sysfs: no such bus: pci\n");
-    return;
-  }
-
-  sf_drv_list = sysfs_get_bus_drivers(sf_bus);
-  if(sf_drv_list) dlist_for_each_data(sf_drv_list, sf_drv, struct sysfs_driver) {
-    sf_dev_list = sysfs_get_driver_devices(sf_drv);
-    if(sf_dev_list) dlist_for_each_data(sf_dev_list, sf_dev, struct sysfs_device) {
-      ADD2LOG(
-        "  pci driver: name = %s, path = %s\n",
-        sf_dev->driver_name, sf_dev->path
-      );
-
-      hd = hd_find_sysfs_id(hd_data, hd_sysfs_id(sf_dev->path));
-      if(hd) {
-        free_mem(hd->driver);
-        hd->driver = new_str(sf_dev->driver_name);
-      }
-    }
-  }
-
-  sysfs_close_bus(sf_bus);
-}
-
-
 void add_pci_data(hd_data_t *hd_data)
 {
   hd_t *hd, *hd2;
@@ -283,6 +244,7 @@ void add_pci_data(hd_data_t *hd_data)
     hd = add_hd_entry(hd_data, __LINE__, 0);
 
     hd->sysfs_id = new_str(hd_sysfs_id(pci->sysfs_id));
+    hd->driver = new_str(hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1));
 
     if(pci->sysfs_bus_id && *pci->sysfs_bus_id) {
       hd->sysfs_bus_id = new_str(pci->sysfs_bus_id);
@@ -560,4 +522,26 @@ char *hd_sysfs_id(char *path)
 
   return strchr(path + 1, '/');
 }
+
+
+/*
+ * Convert '!' to '/'.
+ */
+char *hd_sysfs_name2_dev(char *str)
+{
+  static char *s = NULL;
+
+  if(!str) return NULL;
+
+  free_mem(s);
+  s = str = new_str(str);
+
+  while(*str) {
+    if(*str == '!') *str = '/';
+    str++;
+  }
+
+  return s;
+}
+
 

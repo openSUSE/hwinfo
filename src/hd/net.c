@@ -62,7 +62,7 @@ void hd_scan_net(hd_data_t *hd_data)
       "  net interface: name = %s, classname = %s, path = %s\n",
       sf_cdev->name,
       sf_cdev->classname,
-      sf_cdev->path
+      hd_sysfs_id(sf_cdev->path)
     );
 
     hw_addr = NULL;
@@ -73,7 +73,7 @@ void hd_scan_net(hd_data_t *hd_data)
 
     sf_dev = sysfs_get_classdev_device(sf_cdev);
     if(sf_dev) {
-      ADD2LOG("    net device: path = %s\n", sf_dev->path);
+      ADD2LOG("    net device: path = %s\n", hd_sysfs_id(sf_dev->path));
     }
 
     sf_drv = sysfs_get_classdev_driver(sf_cdev);
@@ -81,7 +81,7 @@ void hd_scan_net(hd_data_t *hd_data)
       ADD2LOG(
         "    net driver: name = %s, path = %s\n",
         sf_drv->name,
-        sf_drv->path
+        hd_sysfs_id(sf_drv->path)
       );
     }
 

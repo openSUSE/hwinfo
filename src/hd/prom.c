@@ -13,7 +13,7 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * prom info
  *
- * Note: make sure that hd_scan_pci() has been run!
+ * Note: make sure that hd_scan_sysfs_pci() has been run!
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
