@@ -24,7 +24,7 @@ void hd_scan_dasd(hd_data_t *hd_data)
 {
   hd_t *hd;
   char c1,c2,c3;
-  unsigned u0, u2, u3;
+  unsigned ub0, ub1, u0, u2, u3;
   str_list_t *sl, *sl0;
   hd_res_t *res;
   struct hd_geometry geo;
@@ -83,7 +83,7 @@ void hd_scan_dasd(hd_data_t *hd_data)
     s1++;
     if (*s1 == ' ') s1++; /* skip leading blank of new format */
     dasdname[1] = dasdname[2] = dasdname[3] = ro[0] = c1 = c2 = c3 = '\0';
-    count1 = sscanf(string1, "%x%*s at (%*u:%*u) is dasd%c%c%c%s", &u0, &c1, &c2, &c3, ro);
+    count1 = sscanf(string1, "%x.%x.%x%*s at (%*u:%*u) is dasd%c%c%c%s", &ub0, &ub1, &u0, &c1, &c2, &c3, ro);
     if (count1 < 2 && 5 < count1) continue;
     count2 = sscanf(s1, "active at blocksize: %u, %u blocks, %*s %s", &u2, &u3, ro);
     if (count2 != 3) continue;

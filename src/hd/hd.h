@@ -211,7 +211,7 @@ typedef enum sc_mouse {
 /* subclass values of bc_storage_device */
 typedef enum sc_std {
   sc_sdev_disk, sc_sdev_tape, sc_sdev_cdrom, sc_sdev_floppy, sc_sdev_scanner,
-  sc_sdev_dasd, sc_sdev_other = 0x80
+  sc_sdev_other = 0x80
 } hd_sc_std_t;
 
 /* subclass values of bc_network_interface */
@@ -256,6 +256,11 @@ typedef enum pif_usb_e {
 typedef enum pif_cdrom {
   pif_cdrom, pif_cdr, pif_cdrw, pif_dvd, pif_dvdr, pif_dvdram
 } hd_pif_cdrom_t ;
+
+/* S/390 disk prog_if values */
+typedef enum pif_s390disk {
+  pif_scsi, pif_dasd
+} hd_pif_s390disk_t;
 
 /* bus type values similar to PCI bridge subclasses */
 typedef enum bus_types {

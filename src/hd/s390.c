@@ -18,11 +18,11 @@ void hd_scan_s390(hd_data_t *hd_data)
 {
   hd_t* hd;
   hd_res_t* res;
-  struct sysfs_bus *bus;
+  struct sysfs_bus *bus, *bus_dup;
   struct sysfs_device *curdev = NULL;
+  struct sysfs_device *curdev_dup = NULL;
   struct dlist *attributes = NULL;
   struct sysfs_attribute *curattr = NULL;
-  int skip_count=0;
 
   unsigned int devtype=0,devmod=0,cutype=0,cumod=0;
 
@@ -34,23 +34,17 @@ void hd_scan_s390(hd_data_t *hd_data)
 
   //sl0=sl=read_file(PROCSUBCHANNELS, 2, 0);
   bus=sysfs_open_bus(BUSNAME);
+  bus_dup=sysfs_open_bus(BUSNAME);
 
-  if (!bus)
+  if (!bus || !bus_dup)
   {
-    ADD2LOG("unable to open" BUSNAME);
+    ADD2LOG("unable to open" BUSNAME "bus");
     return;
   }
 
 
   dlist_for_each_data(bus->devices, curdev, struct sysfs_device)
   {
-    /* Skip additional channels for multi-channel devices */
-    /* This assumes that devices are being enumerated sorted by channel number, ascending. */
-    if (skip_count)
-    {
-      skip_count--;
-      continue;
-    }
 
     res=new_mem(sizeof *res);
 
@@ -74,17 +68,33 @@ void hd_scan_s390(hd_data_t *hd_data)
     res->io.access=acc_rw;  /* fix-up RO/WO devices in IDs file */
     res->io.base=strtol(rindex(curdev->bus_id,'.')+1,NULL,16);
 
+    /* Skip additional channels for multi-channel devices */
+    /* This assumes that there are no gaps between the channels of a single device. */
+    if(cutype == 0x1731 || cutype == 0x3088)
+    {
+      int skip=0;
+      dlist_for_each_data(bus_dup->devices,curdev_dup, struct sysfs_device)
+      {
+	int tmp=strtol(rindex(curdev_dup->bus_id,'.')+1,NULL,16);
+	fprintf(stderr,"tmp is %d\n",tmp);
+	if(tmp == res->io.base - 1)
+	  skip=1;
+	if(cutype == 0x1731 && tmp == res->io.base - 2)
+	  skip=1;
+      }
+      if(skip) continue;
+    }
+
     res->io.range=1;
     switch (cutype)
     {
       /* three channels */
       case 0x1731:    /* QDIO (QETH, HSI, zFCP) */
 	res->io.range++;
-	/* two channels */
+      /* two channels */
       case 0x3088:    /* CU3088 (CTC, LCS) */
 	res->io.range++;
     }
-    skip_count=res->io.range-1;
 
     hd=add_hd_entry(hd_data,__LINE__,0);
     add_res_entry(&hd->res,res);

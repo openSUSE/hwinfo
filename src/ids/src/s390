@@ -82,7 +82,8 @@
 |subdevice.id		special 0x9345
 +device.name		DASD
 +baseclass.id		0x106
-+subclass.id		5
++subclass.id		0
++progif.id		1
 
  vendor.id		special 0x6001
 &device.id		special 0x3705

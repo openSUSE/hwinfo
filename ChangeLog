@@ -1,3 +1,10 @@
+12/02/2003:	v8.02
+	- build with "-pipe"
+	- accommodated to changes in format of /proc/dasd/devices
+	- ditched storage subclass dasd, introduced s390disk prog_if instead
+	- ditched fake CTC controller generation
+	- deal with unsorted bus trees in multichannel device detection
+
 18/11/2003:	v8.01
 	- converted s390 HW detection to sysfs
 	- moved CU/device models to separate data structure
