@@ -1,6 +1,8 @@
-5/4/2004:	v6.34
+5/4/2004:	v8.34
 	- make --only accept device names, too (#38265)
 	- check return value from hd_sysfs_id() (#38266)
+	- make it more resistant against strange libsysfs data (#38259)
+	- tg3 vs bcm5700 again (#38268)
 
 2/4/2004:	v8.33
 	- another wlan card (#38119)

@@ -331,7 +331,7 @@ void get_usb_devs(hd_data_t *hd_data)
           /* same usb device */
           if(!strcmp(s, s1)) {
             hd1->tag.remove = 1;
-            fprintf(stderr, "removed: %s\n", hd1->sysfs_id);
+            ADD2LOG("removed: %s\n", hd1->sysfs_id);
           }
 
           s1 = free_mem(s1);
@@ -504,6 +504,7 @@ void get_input_devs(hd_data_t *hd_data)
         if(
           hd->module == hd_data->module &&
           hd->sysfs_id &&
+          s &&
           !strcmp(s, hd->sysfs_id)
         ) {
           t = NULL;
@@ -552,6 +553,8 @@ void get_printer_devs(hd_data_t *hd_data)
 
   sf_cdev_list = sysfs_get_class_devices(sf_class);
   if(sf_cdev_list) dlist_for_each_data(sf_cdev_list, sf_cdev, struct sysfs_class_device) {
+    if(strncmp(sf_cdev->name, "lp", 2)) continue;
+
     ADD2LOG(
       "  usb: name = %s, path = %s\n",
       sf_cdev->name,
@@ -584,6 +587,7 @@ void get_printer_devs(hd_data_t *hd_data)
         if(
           hd->module == hd_data->module &&
           hd->sysfs_id &&
+          s &&
           !strcmp(s, hd->sysfs_id)
         ) {
           t = NULL;

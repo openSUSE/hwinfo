@@ -220,8 +220,7 @@ void get_block_devs(hd_data_t *hd_data)
         hd->sysfs_bus_id = new_str(sf_dev->bus_id);
       }
 
-      if(sf_dev && sf_dev->path) {
-        s = hd_sysfs_id(sf_dev->path);
+      if(sf_dev && (s = hd_sysfs_id(sf_dev->path))) {
 
         /* parent has longest matching sysfs id */
         u2 = strlen(s);
@@ -722,10 +721,12 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
 
     /* it's a bit of a hack, actually */
     t = new_str(hd_sysfs_id(sf_dev->path));
-    if((s = strrchr(t, '/'))) *s = 0;
-    if((s = strrchr(t, '/'))) *s = 0;
-    if((s = strrchr(t, '/'))) {
-      scsi->controller_id = new_str(s + 1);
+    if(t) {
+      if((s = strrchr(t, '/'))) *s = 0;
+      if((s = strrchr(t, '/'))) *s = 0;
+      if((s = strrchr(t, '/'))) {
+        scsi->controller_id = new_str(s + 1);
+      }
     }
     t = free_mem(t);
   }
@@ -1289,6 +1290,7 @@ void get_scsi_tape(hd_data_t *hd_data)
           hd->sysfs_device_link &&
           hd->base_class.id == bc_storage_device &&
           hd->sub_class.id == sc_sdev_tape &&
+          s &&
           !strcmp(hd->sysfs_device_link, s)
         ) break;
       }
@@ -1414,6 +1416,7 @@ void get_generic_scsi_devs(hd_data_t *hd_data)
       if(
         hd->sysfs_device_link &&
         hd->bus.id == bus_scsi &&
+        s &&
         !strcmp(hd->sysfs_device_link, s)
       ) break;
     }
@@ -1446,8 +1449,7 @@ void get_generic_scsi_devs(hd_data_t *hd_data)
 
       if(sf_dev) hd->sysfs_bus_id = new_str(sf_dev->bus_id);
 
-      if(sf_dev && sf_dev->path) {
-        s = hd_sysfs_id(sf_dev->path);
+      if(sf_dev && (s = hd_sysfs_id(sf_dev->path))) {
 
         /* parent has longest matching sysfs id */
         u2 = strlen(s);

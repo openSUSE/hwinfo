@@ -1980,6 +1980,9 @@ typedef struct s_hd_t {
    */
   char *unique_id;
 
+  /* List of ids. */
+  str_list_t *unique_ids;
+
   /**
    * (Internal) Probing module that created this entry.
    */
