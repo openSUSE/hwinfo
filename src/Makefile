@@ -11,20 +11,11 @@ include $(TOPDIR)/Makefile.common
 #SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
 #endif
 
-ifeq "$(ARCH)" "ppc"
-SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
-endif
-
-ifeq "$(ARCH)" "sparc"
-SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
-endif
-
-ifeq "$(ARCH)" "sparc64"
+ifeq "$(findstring $(ARCH), i386 alpha)" ""
 SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
 endif
 
 ifeq "$(ARCH)" "s390"
-SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
 SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
 endif
 
