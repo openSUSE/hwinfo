@@ -109,11 +109,11 @@ typedef struct PacketCriteriaStruct {
 #define NOT_UNICAST(e) ((e[0] & 0x01) != 0)
 
 
-int
+static int
 check_room (PPPoEConnection* conn, unsigned char* cursor, unsigned char* start,
 	    uint16_t len)
 {
-    if (((cursor)-(start))+(len) > MAX_PPPOE_PAYLOAD) {
+    if (cursor - start + len > MAX_PPPOE_PAYLOAD) {
 	ADD2LOG ("%s: Would create too-long packet\n", conn->ifname);
 	return 0;
     }
@@ -121,7 +121,7 @@ check_room (PPPoEConnection* conn, unsigned char* cursor, unsigned char* start,
 }
 
 
-int
+static int
 parse_packet (PPPoEConnection* conn, PPPoEPacket* packet, parse_func* func,
 	      void* extra)
 {
@@ -168,7 +168,7 @@ parse_packet (PPPoEConnection* conn, PPPoEPacket* packet, parse_func* func,
 }
 
 
-int
+static int
 open_interfaces (int n, PPPoEConnection* conns)
 {
     int ret = 0, i;
@@ -254,7 +254,7 @@ error:
 }
 
 
-void
+static void
 close_intefaces (int n, PPPoEConnection* conns)
 {
     int i;
@@ -271,7 +271,7 @@ close_intefaces (int n, PPPoEConnection* conns)
 }
 
 
-int
+static int
 send_packet (int fd, PPPoEPacket* pkt, size_t size)
 {
     if (send (fd, pkt, size, 0) < 0) {
@@ -283,7 +283,7 @@ send_packet (int fd, PPPoEPacket* pkt, size_t size)
 }
 
 
-int
+static int
 receive_packet (int fd, PPPoEPacket* pkt, size_t* size)
 {
     int r = recv (fd, pkt, sizeof (PPPoEPacket), 0);
@@ -297,7 +297,7 @@ receive_packet (int fd, PPPoEPacket* pkt, size_t* size)
 }
 
 
-void
+static void
 parse_hostuniq (uint16_t type, uint16_t len, unsigned char* data, void* extra)
 {
     if (type == TAG_HOST_UNIQ && len == sizeof (pid_t)) {
@@ -311,7 +311,7 @@ parse_hostuniq (uint16_t type, uint16_t len, unsigned char* data, void* extra)
 }
 
 
-int
+static int
 packet_for_me (PPPoEConnection* conn, PPPoEPacket* packet)
 {
     /* If packet is not directed to our MAC address, forget it. */
@@ -325,7 +325,7 @@ packet_for_me (PPPoEConnection* conn, PPPoEPacket* packet)
 }
 
 
-void
+static void
 parse_pado_tags (uint16_t type, uint16_t len, unsigned char* data, void* extra)
 {
     PacketCriteria* pc = (PacketCriteria*) extra;
@@ -357,7 +357,7 @@ parse_pado_tags (uint16_t type, uint16_t len, unsigned char* data, void* extra)
 }
 
 
-int
+static int
 send_padi (int n, PPPoEConnection* conns)
 {
     int ret = 0, i;
@@ -420,11 +420,12 @@ send_padi (int n, PPPoEConnection* conns)
 }
 
 
-int
+static int
 wait_for_pado (int n, PPPoEConnection* conns)
 {
     int r, i, all;
     size_t len;
+    fd_set readable;
     PPPoEPacket packet;
     PacketCriteria pc;
 
@@ -434,9 +435,7 @@ wait_for_pado (int n, PPPoEConnection* conns)
 
     while (1)
     {
-	fd_set readable;
 	FD_ZERO (&readable);
-
 	for (i = 0; i < n; i++)
 	    if (conns[i].fd != -1)
 		FD_SET (conns[i].fd, &readable);
@@ -525,7 +524,7 @@ wait_for_pado (int n, PPPoEConnection* conns)
 }
 
 
-void
+static void
 discovery (int n, PPPoEConnection* conns)
 {
     int a;
