@@ -1,5 +1,5 @@
 23/1/2001:	v1.84
-	mls: added '--packages' option to hwinfo
+	- mls: added '--packages' option to hwinfo
 
 21/1/2001:	v1.83
 	- new x11 data (sparc)
