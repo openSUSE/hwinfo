@@ -1,5 +1,7 @@
+28/2/2000:	v0.77
 	- modem fix: give default name if none could be determined
 	- added 3Com Robotics recognition
+	- added physical SCSI geometry
 
 28/2/2000:	v0.76
 	- automatic usb module loading

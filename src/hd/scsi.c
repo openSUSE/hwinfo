@@ -123,12 +123,13 @@ void hd_scan_scsi(hd_data_t *hd_data)
         PROGRESS(3, ++prog_cnt, "get geo");  
 
         fd = -1;
+        secs = 0;
         if(
           hd->sub_class == sc_sdev_disk &&
           hd->unix_dev_name &&
           (fd = open(hd->unix_dev_name, O_RDONLY)) >= 0
         ) {
-          secs = 0; u0 = 0;
+          u0 = 0;
 
           if(!ioctl(fd, BLKGETSIZE, &secs)) {
             ADD2LOG("scsi ioctl(secs) ok\n");
@@ -146,10 +147,11 @@ void hd_scan_scsi(hd_data_t *hd_data)
           }
 
           if(secs || u0) {
+            if(!secs) secs = geo.cylinders * geo.heads * geo.sectors;
             res = add_res_entry(&hd->res, new_mem(sizeof *res));
             res->size.type = res_size;
             res->size.unit = size_unit_sectors;
-            res->size.val1 = secs ? secs : geo.cylinders * geo.heads * geo.sectors;
+            res->size.val1 = secs;
             res->size.val2 = 512;
           }
         }
@@ -175,11 +177,44 @@ void hd_scan_scsi(hd_data_t *hd_data)
           i = ioctl(fd, 1 /* SCSI_IOCTL_SEND_COMMAND */, scsi_cmd_buf);
 
           if(i) {
-            ADD2LOG("%s: scsi status %d\n", hd->unix_dev_name, i);
+            ADD2LOG("%s: scsi status(0x12) %d\n", hd->unix_dev_name, i);
           }
           else {
             hd->serial = canon_str(scsi_cmd_buf + 8 + 4, scsi_cmd_buf[8 + 3]);
           }
+
+
+          if(secs) {
+            memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
+            *((unsigned *) (scsi_cmd_buf + 4)) = sizeof scsi_cmd_buf - 0x100;
+            scsi_cmd_buf[8 + 0] = 0x1a;
+            scsi_cmd_buf[8 + 2] = 0x04;
+            scsi_cmd_buf[8 + 4] = 0xff;
+
+            i = ioctl(fd, 1 /* SCSI_IOCTL_SEND_COMMAND */, scsi_cmd_buf);
+
+            if(i) {
+              ADD2LOG("%s: scsi status(0x1a) %d\n", hd->unix_dev_name, i);
+            }
+            else {
+              unsigned char *uc;
+              unsigned cyls, heads;
+              
+              uc = scsi_cmd_buf + 8 + 4 + scsi_cmd_buf[8 + 3] + 2;
+              cyls = (uc[0] << 16) + (uc[1] << 8) + uc[2];
+              heads = uc[3];
+              if(cyls && heads) {
+                res = add_res_entry(&hd->res, new_mem(sizeof *res));
+                res->disk_geo.type = res_disk_geo;
+                res->disk_geo.cyls = cyls;
+                res->disk_geo.heads = heads;
+                res->disk_geo.sectors = secs / (cyls * heads);
+                res->disk_geo.logical = 0;
+              }
+            }
+          }
+
+
         }
 
         if(fd >= 0) close(fd);
