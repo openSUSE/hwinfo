@@ -2289,7 +2289,7 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
   ihw_card_info *ici;
 #endif
   str_list_t *sl;
-  hd_t *bridge_hd;
+//  hd_t *bridge_hd;
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -2300,6 +2300,7 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 
   if(!hd) return NULL;
 
+#if 0
   /* ignore card bus cards */
   if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
     if(
@@ -2307,6 +2308,7 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
       bridge_hd->sub_class == sc_bridge_cardbus
     ) return NULL;
   }
+#endif
 
   if(hd->sub_vend || hd->sub_dev) {
     di0 = sub_device_driver(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev);

@@ -1,3 +1,8 @@
+7/4/2001:	v2.01
+	- new output format for support tool
+	- more options for hwinfo
+	- include pcmcia/cardbus cards in device lists
+
 5/4/2001:	v2.00
 	- new major version due to incompatible interface changes
 	- integrated experimental changes (split was after v1.90)

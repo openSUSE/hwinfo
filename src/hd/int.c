@@ -13,6 +13,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+static void int_pcmcia(hd_data_t *hd_data);
 static void int_cdrom(hd_data_t *hd_data);
 #if defined(__i386__)
 static int set_bios_id(hd_data_t *hd_data, char *dev_name, int bios_id);
@@ -28,12 +29,32 @@ void hd_scan_int(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
 
+  int_pcmcia(hd_data);
+
 #if defined(__i386__)
   PROGRESS(1, 0, "bios");
   int_bios(hd_data);
 #endif
 
   int_cdrom(hd_data);
+}
+
+/*
+ * Identify cardbus cards.
+ */
+void int_pcmcia(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  hd_t *bridge_hd;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
+      if(
+        bridge_hd->base_class == bc_bridge &&
+        bridge_hd->sub_class == sc_bridge_cardbus
+      ) hd->is.cardbus = 1;
+    }
+  }
 }
 
 /*

@@ -101,6 +101,7 @@ static void get_ps2_mouse(hd_data_t *hd_data)
   int fd, k;
   fd_set set;
   struct timeval tv;
+//  unsigned char cmd = 0xe9;	/* read mouse info */
   unsigned char cmd = 0xe9;	/* read mouse info */
   unsigned char buf[100], *bp;
   int buf_len = 0;
@@ -143,7 +144,7 @@ static void get_ps2_mouse(hd_data_t *hd_data)
 
       /* ...then assume a PS/2 mouse is attached */
       if(
-        res
+        0 /* res */
 #ifdef __PPC__
         || always_ps2_mouse
 #endif

@@ -961,6 +961,8 @@ typedef struct s_hd_t {
   struct {
     unsigned agp:1;		/* AGP device */
     unsigned isapnp:1;		/* ISA-PnP device */
+    unsigned cardbus:1;		/* cardbus card */
+    unsigned pcmcia:1;		/* pcmcia card */
   } is;
 
   struct {			/* this struct is for internal purposes only */
@@ -997,6 +999,7 @@ typedef struct {
   unsigned module;		/* the current probing module we are in */
   struct {
     unsigned internal:1;	/* hd_scan was called internally */
+    unsigned dformat:2;		/* alternative output format */
   } flags;			/* special flags */
   enum boot_arch boot;		/* boot method */
   hd_t *old_hd;			/* old (outdated) entries (if you scan more than once) */

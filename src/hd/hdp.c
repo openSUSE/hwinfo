@@ -78,6 +78,13 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("[Created at %s.%u%s]\n", s, h->line, buf2);
   }
 
+  if(hd_data->flags.dformat == 1) {
+    dump_line("ClassName: \"%s\"\n", a1);
+    dump_line("Bus: %d\n", h->slot >> 8);
+    dump_line("Slot: %d\n", h->slot & 0xff);
+    dump_line("Function: %d\n", h->func);
+  }
+
   if((hd_data->debug & HD_DEB_CREATION) && h->unique_id) {
     dump_line("Unique ID: %s\n", h->unique_id);
   }

@@ -41,6 +41,7 @@ struct option options[] = {
   { "log", 1, NULL, 'l' },
   { "packages", 0, NULL, 'p' },
   { "test", 0, NULL, 300 },
+  { "format", 1, NULL, 301 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -60,7 +61,14 @@ struct option options[] = {
   { "braille", 0, NULL, 1000 + hw_braille },
   { "sys", 0, NULL, 1000 + hw_sys },
   { "cpu", 0, NULL, 1000 + hw_cpu },
-  { "smp", 0, NULL, 3000 }
+  { "all", 0, NULL, 2000 },
+  { "reallyall", 0, NULL, 2001 },
+  { "smp", 0, NULL, 3000 },
+  { "usb", 0, NULL, 3001 },
+  { "pci", 0, NULL, 3002 },
+  { "isapnp", 0, NULL, 3003 },
+  { "ide", 0, NULL, 3004 },
+  { "scsi", 0, NULL, 3005 }
 };
 
 
@@ -124,12 +132,23 @@ int main(int argc, char **argv)
           do_test(hd_data);
           break;
 
+        case 301:
+          hd_data->flags.dformat = strtol(optarg, NULL, 0);
+          break;
+
         case 1000 ... 1100:
           do_hw(hd_data, f, i - 1000);
           break;
 
+        case 2000:
+        case 2001:
         case 3000:
-          do_hw(hd_data, f, 3000);
+        case 3001:
+        case 3002:
+        case 3003:
+        case 3004:
+        case 3005:
+          do_hw(hd_data, f, i);
           break;
 
         default:
@@ -242,14 +261,48 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
 {
   hd_t *hd, *hd0;
   int smp = -1;
+  int i, j;
 
-  if(hw_item == 3000) {
-    smp = hd_smp_support(hd_data);
-    hd0 = NULL;
+  hd0 = NULL;
+
+  switch(hw_item) {
+    case 3000:
+      smp = hd_smp_support(hd_data);
+      break;
+
+    case 2000:
+    case 2001:
+    case 3001:
+    case 3002:
+    case 3003:
+    case 3004:
+    case 3005:
+      i = j = -1;
+      switch((int) hw_item) {
+        case 2000: i = pr_default; break;
+        case 2001: i = pr_all; break;
+        case 3001: i = pr_usb; j = bus_usb; break;
+        case 3002: i = pr_pci; j = bus_pci; break;
+        case 3003: i = pr_isapnp; j = bus_isa; break;
+        case 3004: i = pr_ide; j = bus_ide; break;
+        case 3005: i = pr_scsi; j = bus_scsi; break;
+      }
+      if(i != -1) {
+        hd_clear_probe_feature(hd_data, pr_all);
+        hd_set_probe_feature(hd_data, i);
+        hd_scan(hd_data);
+        if(j != -1) {
+          hd0 = hd_bus_list(hd_data, j);
+        } else {
+          hd0 = hd_data->hd;
+        }
+      }
+      break;
+
+    default:
+      hd0 = hd_list(hd_data, hw_item, 1, NULL);
   }
-  else {
-    hd0 = hd_list(hd_data, hw_item, 1, NULL);
-  }
+
   printf("\r%64s\r", "");
   fflush(stdout);
 
@@ -282,14 +335,18 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
     fprintf(f ? f : stdout, "\n");
   }
   else {
-    for(hd = hd0; hd; hd = hd->next) hd_dump_entry(hd_data, hd, f ? f : stdout);
+    for(hd = hd0; hd; hd = hd->next) {
+      if(hw_item != 3003 || hd->is.isapnp) {
+        hd_dump_entry(hd_data, hd, f ? f : stdout);
+      }
+    }
   }
 
   if(hw_item == hw_display && hd0) {
     fprintf(f ? f : stdout, "\nPrimary display adapter: #%u\n", hd_display_adapter(hd_data));
   }
 
-  hd_free_hd_list(hd0);
+  if(hd0 != hd_data->hd) hd_free_hd_list(hd0);
 }
 
 void do_test(hd_data_t *hd_data)
@@ -313,7 +370,8 @@ void help()
     "  <hardware_item> is one of:\n"
     "    cdrom, floppy, disk, network, display, monitor, mouse, keyboard,\n"
     "    sound, isdn, modem, storage_ctrl, network_ctrl, printer, tv,\n"
-    "    scanner, braille, sys, cpu\n\n"
+    "    scanner, braille, sys, cpu, smp, usb, pci, isapnp, ide, scsi,\n"
+    "    all, reallyall\n\n"
     "  Note: debug info is shown only in the log file. (If you specify a\n"
     "  log file the debug level is implicitly set to a reasonable value.)\n"
   );
