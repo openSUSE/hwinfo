@@ -890,9 +890,7 @@ void dump_bios(hd_data_t *hd_data, hd_t *hd, FILE *f)
 void dump_smbios(hd_data_t *hd_data, FILE *f)
 {
   hd_smbios_t *sm;
-  int data_len;
   str_list_t *sl;
-  unsigned char *sm_data;
   char c, *s, *t;
   unsigned u;
   int i;
@@ -952,8 +950,6 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
   if(!hd_data->smbios) return;
 
   for(sm = hd_data->smbios; sm; sm = sm->next) {
-    sm_data = sm->any.data;
-    data_len = sm->any.data_len;
     switch(sm->any.type) {
       case sm_biosinfo:
         fprintf(f, "  BIOS Info:\n");

@@ -30,6 +30,9 @@ s0200 0004
 s0200 0005
 	p	imps/2|imps2|5|1
 
+s0200 0006
+	p	ps/2|ps2|2|0
+
 # Sun Mouse (/dev/sunmouse)
 s0202 0000
 	p	mousesystems|sun|3|0

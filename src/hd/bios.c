@@ -27,6 +27,8 @@ static void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t
 static char *get_string(str_list_t *sl, int index);
 static void parse_smbios(hd_data_t *hd_data, bios_info_t *bt);
 static void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt);
+static void add_panel_info(hd_data_t *hd_data, bios_info_t *bt);
+static void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt);
 static unsigned char crc(unsigned char *mem, unsigned len);
 static int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
 static void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
@@ -211,6 +213,8 @@ void hd_scan_bios(hd_data_t *hd_data)
     get_pnp_support_status(&hd_data->bios_rom, bt);
     get_smbios_info(hd_data, &hd_data->bios_rom, bt);
     get_fsc_info(hd_data, &hd_data->bios_rom, bt);
+    add_panel_info(hd_data, bt);
+    add_mouse_info(hd_data, bt);
   }
 
   PROGRESS(3, 0, "smp");
@@ -728,7 +732,8 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
 
 void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
 {
-  unsigned u, mtype;
+  unsigned u, mtype, fsc_id;
+  unsigned x, y;
 
   if(!mem->data || mem->size < 0x20) return;
 
@@ -739,12 +744,150 @@ void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
     ) {
       mtype = *(unsigned *) (mem->data + u + 0x14);
       if(!crc(mem->data + u, 0x20) && !(mtype & 0xf0000000)) {
-        bt->fsc_lcd = (mtype >> 12) & 0xf;
-        ADD2LOG("  found FSC LCD: %d\n", bt->fsc_lcd);
+        fsc_id = (mtype >> 12) & 0xf;
+
+        switch(fsc_id) {
+          case 1:
+            x = 640; y = 480;
+            break;
+
+          case 2:
+            x = 800; y = 600;
+            break;
+
+          case 3:
+            x = 1024; y = 768;
+            break;
+
+          case 4:
+            x = 1280; y = 1024;
+            break;
+
+          case 5:
+            x = 1400; y = 1050;
+            break;
+
+          case 6:
+            x = 1024; y = 512;
+            break;
+
+          case 7:
+            x = 1280; y = 600;
+            break;
+
+          case 8:
+            x = 1600; y = 1200;
+            break;
+
+          default:
+            x = 0; y = 0;
+        }
+
+        if(x) {
+          bt->lcd.vendor = new_str("Fujitsu Siemens");
+          bt->lcd.name = new_str("Notebook LCD");
+          bt->lcd.width = x;
+          bt->lcd.height = y;
+        }
+
+        ADD2LOG("  found FSC LCD: %d (%ux%u)\n", fsc_id, x, y);
         break;
       }
     }
   }
+}
+
+
+void add_panel_info(hd_data_t *hd_data, bios_info_t *bt)
+{
+  unsigned width, height;
+  char *vendor, *name;
+  hd_smbios_t *sm;
+
+  if(bt->lcd.width || !hd_data->smbios) return;
+
+  vendor = name = NULL;
+  width = height = 0;
+
+  for(sm = hd_data->smbios; sm; sm = sm->next) {
+    if(sm->any.type == sm_sysinfo) {
+      vendor = sm->sysinfo.manuf;
+      name = sm->sysinfo.product;
+    }
+  }
+
+  if(!vendor || !name) return;
+
+  if(
+    (!strcmp(vendor, "Sony Corporation") && strstr(name, "PCG-N505SN") == name) ||
+    (!strcmp(vendor, "KDST") && !strcmp(name, "KDS6KSUMO"))
+  ) {
+    width = 1024;
+    height = 768;
+  }
+
+  if(!width) return;
+
+  bt->lcd.vendor = new_str(vendor);
+  bt->lcd.name = new_str("Notebook LCD");
+  bt->lcd.width = width;
+  bt->lcd.height = height;
+}
+
+
+void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt)
+{
+  unsigned compat_vend, compat_dev, bus;
+  char *vendor, *name, *type;
+  hd_smbios_t *sm;
+  static char *mice[] = {
+    NULL, NULL, NULL, "Mouse",
+    "Track Ball", "Track Point", "Glide Point", "Touch Pad"
+  };
+
+  if(bt->mouse.compat_vend || !hd_data->smbios) return;
+
+  vendor = name = type = NULL;
+  compat_vend = compat_dev = bus = 0;
+
+  for(sm = hd_data->smbios; sm; sm = sm->next) {
+    if(sm->any.type == sm_sysinfo) {
+      vendor = sm->sysinfo.manuf;
+      name = sm->sysinfo.product;
+    }
+    if(sm->any.type == sm_mouse) {
+      compat_vend = compat_dev = bus = 0;
+      type = NULL;
+      
+      switch(sm->mouse.interface) {
+        case 4:
+          bus = bus_ps2;
+          compat_vend = MAKE_ID(TAG_SPECIAL, 0x0200);
+          compat_dev = MAKE_ID(TAG_SPECIAL, 0x0006);
+          break;
+      }
+      type = mice[sm->mouse.mtype < sizeof mice / sizeof *mice ? sm->mouse.mtype : 0];
+    }
+  }
+
+  if(!vendor || !name) return;
+
+  if(!type) {
+    if(!strcmp(vendor, "Sony Corporation") && strstr(name, "PCG-") == name) {
+      bus = bus_ps2;
+      type = mice[7];
+      compat_vend = MAKE_ID(TAG_SPECIAL, 0x0200);
+      compat_dev = MAKE_ID(TAG_SPECIAL, 0x0006);
+    }
+  }
+
+  if(!type) return;
+
+  bt->mouse.vendor = new_str(vendor);
+  bt->mouse.type = new_str(type);
+  bt->mouse.bus = bus;
+  bt->mouse.compat_vend = compat_vend;
+  bt->mouse.compat_dev = compat_dev;
 }
 
 

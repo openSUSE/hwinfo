@@ -23,6 +23,7 @@ static void int_media_check(hd_data_t *hd_data);
 static void int_floppy(hd_data_t *hd_data);
 static void int_fix_ide_scsi(hd_data_t *hd_data);
 static void int_fix_usb_scsi(hd_data_t *hd_data);
+static void int_mouse(hd_data_t *hd_data);
 
 void hd_scan_int(hd_data_t *hd_data)
 {
@@ -55,6 +56,9 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(7, 0, "bios");
   int_bios(hd_data);
 #endif
+
+  PROGRESS(8, 0, "mouse");
+  int_mouse(hd_data);
 }
 
 /*
@@ -211,7 +215,7 @@ void int_media_check(hd_data_t *hd_data)
 
 
 /*
- * Turn some Zip drives into flppies.
+ * Turn some Zip drives into floppies.
  */
 void int_floppy(hd_data_t *hd_data)
 {
@@ -337,5 +341,47 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
   remove_tagged_hd_entries(hd_data);
 }
 #undef COPY_ENTRY
+
+
+/*
+ * Improve mouse info.
+ */
+void int_mouse(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  bios_info_t *bt = NULL;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->detail &&
+      hd->detail->type == hd_detail_bios &&
+      (bt = hd->detail->bios.data) &&
+      bt->mouse.type
+    ) break;
+  }
+
+  if(!bt) return;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class == bc_mouse &&
+      hd->sub_class == sc_mou_ps2 &&
+      hd->bus == bt->mouse.bus
+    ) {
+      free_mem(hd->vend_name);
+      free_mem(hd->dev_name);
+      hd->vend = hd->dev = 0;
+      hd->vend_name = new_str(bt->mouse.vendor);
+      hd->dev_name = new_str(bt->mouse.type);
+      hd->compat_vend = bt->mouse.compat_vend;
+      hd->compat_dev = bt->mouse.compat_dev;
+
+      hd->unique_id = free_mem(hd->unique_id);
+      hd->unique_id1 = free_mem(hd->unique_id1);
+      hd->old_unique_id = free_mem(hd->old_unique_id);
+      hd_add_id(hd_data, hd);
+    }
+  }
+}
 
 

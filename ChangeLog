@@ -1,5 +1,6 @@
 	- udated mptbase driver info (#14732)
 	- better handling of usb-storage devices
+	- add mouse info we got from smbios
 
 9/3/2002:	v4.16
 	- made hwbootscan an init script again, started after hotplug.

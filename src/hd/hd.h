@@ -692,8 +692,22 @@ typedef struct {
   smp_info_t smp;
   vbe_info_t vbe;
 
-  unsigned fsc_lcd;
   unsigned smbios_ver;
+
+  struct {
+    unsigned width;
+    unsigned height;
+    char *vendor;
+    char *name;
+  } lcd;
+
+  struct {
+    char *vendor;
+    char *type;
+    unsigned bus;
+    unsigned compat_vend;
+    unsigned compat_dev;
+  } mouse;
 
 } bios_info_t;
 

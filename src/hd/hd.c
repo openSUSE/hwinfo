@@ -493,6 +493,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_kbd);
       hd_set_probe_feature(hd_data, pr_sys);
+      hd_set_probe_feature(hd_data, pr_bios);
       hd_set_probe_feature(hd_data, pr_mouse);
       break;
 
@@ -936,6 +937,10 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
         free_mem(b->vbe.product_name);
         free_mem(b->vbe.product_revision);
         free_mem(b->vbe.mode);
+        free_mem(b->lcd.vendor);
+        free_mem(b->lcd.name);
+        free_mem(b->mouse.vendor);
+        free_mem(b->mouse.type);
 
         free_mem(b);
       }

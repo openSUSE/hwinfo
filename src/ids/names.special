@@ -11,6 +11,7 @@ s0200	Unknown
 	0003	MS-Compatible Serial Mouse
 	0004	Intelli/Wheel Mouse
 	0005	Intelli/Wheel Mouse
+	0006	Touch Pad
 
 # pc keyboards
 # ids > 1 are keyboard ids as read via keyboard id command
