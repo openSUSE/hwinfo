@@ -1,3 +1,6 @@
+21/6/2002:	v4.27
+	- save %gs register around vm86() syscall (%gs may be used in glibc)
+
 24/4/2002:	v4.26
 	- add x86-64 support
 
