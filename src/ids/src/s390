@@ -26,7 +26,7 @@
 &detail.ccw.data.cu_model 5
 +device.name		Hipersocket
 +baseclass.id		2
-+subclass.id		7
++subclass.id		0x87
 +driver.module.modprobe qeth
 
  vendor.id		special 0x6001
@@ -180,7 +180,7 @@
 &detail.ccw.data.cu_model 8
 +device.name		parallel CTC Adapter
 +baseclass.id		2
-+subclass.id		8
++subclass.id		0x88
 +driver.module.modprobe ctc
 
  vendor.id		special 0x6001
@@ -188,7 +188,7 @@
 &detail.ccw.data.cu_model 0x1f
 +device.name		ESCON Adapter
 +baseclass.id		2
-+subclass.id		0x1f
++subclass.id		0x8f
 +driver.module.modprobe ctc
 
  vendor.id		special 0x6001
@@ -196,21 +196,21 @@
 &detail.ccw.data.cu_model 0x1e
 +device.name		FICON Adapter
 +baseclass.id		2
-+subclass.id		0x1e
++subclass.id		0x8e
 
  vendor.id		special 0x6001
 &device.id		special 0x3088
 &detail.ccw.data.cu_model 1
 +device.name		P/390
 +baseclass.id		2
-+subclass.id		0x60
++subclass.id		0x89
 
  vendor.id		special 0x6001
 &device.id		special 0x3088
 &detail.ccw.data.cu_model 0x60
 +device.name		OSA2 Adapter
 +baseclass.id		2
-+subclass.id		0x60
++subclass.id		0x89
 +driver.module.modprobe lcs
 
  vendor.id		special 0x6001
