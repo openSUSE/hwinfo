@@ -1624,12 +1624,17 @@ typedef struct s_hd_t {
   struct is_s {
     unsigned agp:1;		/* AGP device */
     unsigned isapnp:1;		/* ISA-PnP device */
-    unsigned cardbus:1;		/* cardbus card */
-    unsigned pcmcia:1;		/* pcmcia card */
+    unsigned cardbus:1;		/* cardbus card *obsolete*! */
+    unsigned pcmcia:1;		/* pcmcia card *obsolete*! */
     unsigned notready:1;	/* block devices: no medium, other: device not configured */
     unsigned manual:1;		/* undetectable, manually configured hardware */
     unsigned softraiddisk:1;	/* disk belongs to some soft raid array */
     unsigned zip:1;		/* zip floppy */
+    unsigned cdr:1;		/* CD-R */
+    unsigned cdrw:1;		/* CD-RW */
+    unsigned dvd:1;		/* DVD */
+    unsigned dvdr:1;		/* DVD-R */
+    unsigned dvdram:1;		/* DVD-RAM */
   } is;
 
   struct tag_s {		/* this struct is for internal purposes only */

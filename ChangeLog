@@ -1,3 +1,6 @@
+13/12/2002:	v5.48
+	- cdrom feature list (dvd, cdr, etc)
+
 27/11/2002:	v5.47
 	- changed tg3/bcm* on ia64 (#21984)
 	- one ncr53c8xx vs. sym53c8xx issue (#21984)

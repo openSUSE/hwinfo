@@ -129,11 +129,26 @@ void hd_scan_cdrom(hd_data_t *hd_data)
       }
 
       /* trust ide info */
-      if(ci->dvd) hd->prog_if.id = pif_dvd;
-      if(ci->cdr) hd->prog_if.id = pif_cdr;
-      if(ci->cdrw) hd->prog_if.id = pif_cdrw;
-      if(ci->dvdr) hd->prog_if.id = pif_dvdr;
-      if(ci->dvdram) hd->prog_if.id = pif_dvdram;
+      if(ci->dvd) {
+        hd->is.dvd = 1;
+        hd->prog_if.id = pif_dvd;
+      }
+      if(ci->cdr) {
+        hd->is.cdr = 1;
+        hd->prog_if.id = pif_cdr;
+      }
+      if(ci->cdrw) {
+        hd->is.cdrw = 1;
+        hd->prog_if.id = pif_cdrw;
+      }
+      if(ci->dvdr) {
+        hd->is.dvdr = 1;
+        hd->prog_if.id = pif_dvdr;
+      }
+      if(ci->dvdram) {
+        hd->is.dvdram = 1;
+        hd->prog_if.id = pif_dvdram;
+      }
     }
   }
 }
