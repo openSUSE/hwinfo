@@ -135,8 +135,6 @@ ihw_card_info *get_isdn_info(hd_t *hd)
   ihw_card_info *ici0, *ici;
   unsigned u0, u1;
 
-  fprintf(stderr, "III vend/sub %x/%x\n", hd->vend, hd->dev);
-
   if(hd->bus == bus_pci ||
     hd->bus == bus_isa ||
     hd->bus == bus_usb) {
