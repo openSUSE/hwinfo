@@ -1,0 +1,23 @@
+TOPDIR		= ..
+SUBDIRS		= hd ids pnpdump
+TARGETS		= touch $(LIBHD)
+CLEANFILES	= $(LIBHD) $(LIBHD_D)
+
+.PHONY: touch
+
+include $(TOPDIR)/Makefile.common
+
+# remove the isa-pnp stuff for ppc's
+ifeq "$(ARCH)" "ppc"
+SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
+endif
+
+
+$(LIBHD): $(OBJS)
+	ar r $@ $?
+	@rm -f $(LIBHD_D)
+
+subdirs: touch
+
+touch:
+	@touch -r $(LIBHD) $(LIBHD_D) 2>/dev/null || true

@@ -1,0 +1,355 @@
+#! /usr/bin/perl
+
+sub dump_entries;
+sub add_entry;
+sub add_subentry;
+sub add_subsubentry;
+
+# entry: <initial letter>, <hexdigits>, <hexdigits for subentry>, <subsubentry, part1>, <..., part2>
+%spec = (
+  'bus'   => [ 'B', 2, 0, 0, 0 ],
+  'class' => [ 'C', 3, 2, 0, 0 ],
+  'eisa'  => [ '',  0, 4, 0, 4 ],
+  'pci'   => [ '',  4, 4, 4, 4 ],
+);
+
+
+if($ARGV[0] eq '-r') {
+  $reduced = 1;
+  $mini = 1;
+  shift
+}
+
+
+for $f (@ARGV) {
+  if(open F, $f) {
+    while(<F>) {
+      chomp;
+      s/\s*$//;
+      next if /^\s*#/;
+      next if /^$/;
+
+
+      # SaX Identity file
+      if(/^NAME=(.+?)§DEVICE=(.+?)§VID=0x([0-9a-fA-F]+?)§DID=0x([0-9a-fA-F]+?)§SERVER=([^§]+)$/) {
+        @i = ($1, $2, $3, $4, $5);
+        $type = 'pci';
+        $subkey = undef;
+        $$type = add_entry $type, $i[2], $i[0], $f, $.;
+        $subkey = add_subentry $type, $$type, $i[3], $i[1], undef, "x|$i[4]", $f, $.;
+        next;
+      }
+
+
+      if(/^B\s+([0-9a-fA-F]+)\s*(.*?)$/) {
+        $type = 'bus';
+        $subkey = undef;
+        $$type = add_entry $type, $1, $2, $f, $.;
+      }
+
+      elsif(/^C\s+([0-9a-fA-F]+)\s*(.*?)$/) {
+        $type = 'class';
+        $subkey = undef;
+        $$type = add_entry $type, $1, $2, $f, $.;
+      }
+
+      elsif(/^([0-9a-fA-F]{4})\s*(.*?)$/) {
+        $type = 'pci';
+        $subkey = undef;
+        $$type = add_entry $type, $1, $2, $f, $.;
+      }
+
+      elsif(/^([a-zA-Z_@]{3})\s*(.*?)$/) {
+        $type = 'eisa';
+        $subkey = undef;
+        $$type = add_entry $type, $1, $2, $f, $.;
+      }
+
+      elsif($type eq 'class' && /^\t\t/) {
+         # not yet
+#        if(/\t\t([0-9a-fA-F]+)(\.([0-9a-fA-F]+))?\s*(\[(.*?)\])?\s*(.*?)$/) {
+#          add_subsubentry $type, $$type, $subkey, $1, $2, $7, $4, $6, $f, $.;
+#        }
+#        else {
+#          print STDERR "invalid line at $f($.)\n";
+#          exit 2;
+#        }
+      }
+
+      elsif($type eq 'pci' && /^\t\t/) {
+        # note: the order is <dev_id:vend_id> here; contrary to eisa
+        if(/\t\t([0-9a-fA-F]{4})([0-9a-fA-F]{4})(\.([0-9a-fA-F]+))?\s*(\[(.*?)\])?\s*(.*?)$/) {
+          add_subsubentry $type, $$type, $subkey, $1, $2, $7, $4, $6, $f, $.;
+        }
+        elsif(/\t\t([0-9a-fA-F]{4})\s+([0-9a-fA-F]{4})(\.([0-9a-fA-F]+))?\s*(\[(.*?)\])?\s*(.*?)$/) {
+          add_subsubentry $type, $$type, $subkey, $2, $1, $7, $4, $6, $f, $.;
+        }
+        else {
+          print STDERR "invalid line at $f($.)\n";
+          exit 2;
+        }
+      }
+
+      elsif($type eq 'eisa' && /^\t\t/) {
+        if(/\t\t([a-zA-Z_@]{3})([0-9a-fA-F]{4})(\.([0-9a-fA-F]+))?\s*(\[(.*?)\])?\s*(.*?)$/) {
+          add_subsubentry $type, $$type, $subkey, $1, $2, $7, $4, $6, $f, $.;
+        }
+        else {
+          print STDERR "invalid line at $f($.)\n";
+          exit 3;
+        }
+      }
+
+      elsif(/^\t/) {
+        if(/\t([0-9a-fA-F]+)(\.([0-9a-fA-F]+))?\s*(\[(.*?)\])?\s*(.*?)$/) {
+          $subkey = add_subentry $type, $$type, $1, $6, $3, $5, $f, $.;
+        }
+        else {
+          print STDERR "invalid line at $f($.)\n";
+          exit 4;
+        }
+      }
+
+      else {
+        print STDERR "invalid line at $f($.)\n";
+        exit 1;
+      }
+    }
+    close F
+  }
+  else {
+    print STDERR "failed to open $f\n"
+  }
+}
+
+
+for (sort keys %spec) {
+  dump_entries $_;
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+sub dump_entries
+{
+  my ($et, @a, @b, @c, $s, $t, $i, $j, $k, $z);
+  local $_;
+
+  $et = shift;
+
+  for (sort keys %$et) {
+    @a = @{$$et{$_}};
+    $i = ${$spec{$et}}[0];
+    $i .= " " if $i;
+    $k = $a[1];
+    $k = substr($k, 0, 1) if $reduced && !${$spec{$et}}[0];
+    if(!$i && !$k) { $k = $_ }
+    @z = keys %{$a[0]};
+    if(!$mini || @z || $a[3] || ${$spec{$et}}[0]) {
+      print "$i$_\t$k\n";
+    }
+    for $s (sort keys %{$a[0]}) {
+      @b = @{$a[0]{$s}};
+      $i = $b[2];
+      $i = ".$i" if $i;
+      $j = $b[3];
+      $j = "[$j] " if $j;
+      $k = $b[1];
+      $k = substr($k, 0, 1) if $reduced;
+      @z = keys %{$b[0]};
+      if(!$mini || @z || $b[3]) {
+        print "\t$s$i\t$j$k\n";
+        for $t (sort keys %{$b[0]}) {
+          @c = @{$b[0]{$t}};
+          $i = $c[2];
+          $i = ".$i" if $i;
+          $j = $c[3];
+          $j = "[$j] " if $j;
+          $k = $c[1];
+          $k = substr($k, 0, 1) if $reduced;
+          print "\t\t$t$i\t$j$k\n"
+        }
+      }
+    }
+  }
+}
+# [ { }, $val, $class, $drv, $file, $line ];
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+sub add_entry
+{
+  my ($type, $key, $val, $file, $line);
+  my ($h, @a);
+
+  ($type, $key, $val, $file, $line) = @_;
+
+  return undef unless exists $spec{$type};
+
+#  print "$type, $key, $val, $file, $line\n";
+
+  if(${$spec{$type}}[1]) {
+    $key = hex $key;
+    $h = sprintf("%x", $key);
+    if(length($h) > ${$spec{$type}}[1]) {
+      print STDERR "invalid $type entry: $file($line): $h \"$val\"\n";
+      return undef
+    }
+    $key = sprintf "%0${$spec{$type}}[1]x", $key
+  }
+  else {
+    $key = "\U$key"
+  }
+
+  if(exists $$type{$key}) {
+    @a = @{$$type{$key}};
+    if($val && $a[1] && $val ne $a[1]) {
+      print STDERR "$type($key) entry: $file,$line: \"$val\" contradicts $a[4],$a[5]: \"$a[1]\"\n";
+      return $key
+    }
+    if($val) { ${$$type{$key}}[1] = $val; }
+  }
+  else {
+    $$type{$key} = [ { }, $val, undef, undef, $file, $line ];
+  }
+
+  return $key;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+sub add_subentry
+{
+  my ($type, $entry, $key, $val, $class, $drv, $file, $line);
+  my ($a, @a, $h, $i);
+
+  ($type, $entry, $key, $val, $class, $drv, $file, $line) = @_;
+
+  return undef unless exists $spec{$type};
+
+#  print "$type, $entry, $key, $val, $class, $drv, $file, $line\n";
+
+  if(${$spec{$type}}[2]) {
+    $key = hex $key;
+    $h = sprintf("%x", $key);
+    if(length($h) > ${$spec{$type}}[2]) {
+      print STDERR "invalid sub$type entry: $file($line): $h \"$val\"\n";
+      return undef
+    }
+    $key = sprintf "%0${$spec{$type}}[2]x", $key
+  }
+
+  if($class) {
+    $class = hex $class;
+    $h = sprintf("%x", $class);
+    $i = ${$spec{'class'}}[1] + ${$spec{'class'}}[2];
+    if(length($h) > $i) {
+      print STDERR "invalid class spec: $file($line): \"$h\"\n";
+      return undef
+    }
+    $class = sprintf "%0${i}x", $class
+  }
+
+  $a = ${$$type{$entry}}[0];
+
+  if(exists ${$a}{$key}) {
+    @a = @{${$a}{$key}};
+
+    if(
+      ($val && $a[1] && $val ne $a[1]) ||
+      ($class && $a[2] && $class ne $a[2]) ||
+      ($drv && $a[3] && $drv ne $a[3])
+    ) {
+      print STDERR "sub$type($key) entry: $file,$line: \"$val\" contradicts $a[4],$a[5]: \"$a[1]\"\n";
+    }
+
+    if($val && !$a[1]) { ${${$a}{$key}}[1] = $val; }
+
+    if($class && !$a[2]) { ${${$a}{$key}}[2] = $class; }
+
+    if($drv && !$a[3]) { ${${$a}{$key}}[3] = $drv; }
+
+  }
+  else {
+    ${$a}{$key} = [ { }, $val, $class, $drv, $file, $line ];
+  }
+
+  return $key;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+sub add_subsubentry
+{
+  my ($type, $entry, $subentry, $key, $key2, $val, $class, $drv, $file, $line);
+  my ($a, @a, $h, $i);
+
+  ($type, $entry, $subentry, $key, $key2, $val, $class, $drv, $file, $line) = @_;
+
+  return undef unless exists $spec{$type};
+
+#  print "$type, $entry, $subentry, $key, $key2, $val, $class, $drv, $file, $line\n";
+
+  if(${$spec{$type}}[3]) {
+    $key = hex $key;
+    $h = sprintf("%x", $key);
+    if(length($h) > ${$spec{$type}}[3]) {
+      print STDERR "invalid subsub$type entry1: $file($line): $h \"$val\"\n";
+      return undef
+    }
+    $key = sprintf "%0${$spec{$type}}[3]x", $key
+  }
+  else {
+    $key = "\U$key"
+  }
+
+  if(${$spec{$type}}[4]) {
+    $key2 = hex $key2;
+    $h = sprintf("%x", $key2);
+    if(length($h) > ${$spec{$type}}[4]) {
+      print STDERR "invalid subsub$type entry2: $file($line): $h \"$val\"\n";
+      return undef
+    }
+    $key2 = sprintf "%0${$spec{$type}}[4]x", $key2
+  }
+  else {
+    $key2 = "\U$key2"
+  }
+
+  $key .= $key2;
+
+  if($class) {
+    $class = hex $class;
+    $h = sprintf("%x", $class);
+    $i = ${$spec{'class'}}[1] + ${$spec{'class'}}[2];
+    if(length($h) > $i) {
+      print STDERR "invalid class spec: $file($line): \"$h\"\n";
+      return undef
+    }
+    $class = sprintf "%0${i}x", $class
+  }
+
+  $a = ${${$$type{$entry}}[0]}{$subentry}[0];
+
+  if(exists ${$a}{$key}) {
+    @a = @{${$a}{$key}};
+
+    if(
+      ($val && $a[1] && $val ne $a[1]) ||
+      ($class && $a[2] && $class ne $a[2]) ||
+      ($drv && $a[3] && $drv ne $a[3])
+    ) {
+      print STDERR "subsub$type($key) entry: $file,$line: \"$val\" contradicts $a[4],$a[5]: \"$a[1]\"\n";
+    }
+
+    if($val && !$a[1]) { ${${$a}{$key}}[1] = $val; }
+
+    if($class && !$a[2]) { ${${$a}{$key}}[2] = $class; }
+
+    if($drv && !$a[3]) { ${${$a}{$key}}[3] = $drv; }
+
+  }
+  else {
+    ${$a}{$key} = [ { }, $val, $class, $drv, $file, $line ];
+  }
+
+  return $key;
+}
+

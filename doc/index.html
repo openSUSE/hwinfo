@@ -1,0 +1,632 @@
+<html>
+<head>
+<title>Automatic Hardware Probing</title>
+</head>
+
+<body>
+<h1>Automatic Hardware Probing</h1>
+
+Author: Steffen Winterfeldt <a href="snwint@suse.de">snwint@suse.de</a><p>
+
+Current version (9 Aug 1999): 0.7.1<p>
+
+Everything related to this project can be found in <code>~snwint/hd</code>
+
+<h2>Contents</h2>
+
+<ul>
+  <a href="#intro">Introduction</a><br>
+  <a href="#general">General Considerations</a><br>
+  <a href="#tech">Technical Specification</a><br>
+  <ul>
+    <a href="#intend">Intended Functionality</a><br>
+    <a href="#pstruc">Program Structure</a><br>
+    <a href="#works">Working Parts</a><br>
+    <a href="#nexts">Next Steps</a><br>
+  </ul>
+  <a href="#detail">Technical Details &amp; Documentation</a><br>
+  <ul>
+    <a href="#idr">Internal Data Representation</a><br>
+    <a href="#dspecs">Database Specification</a><br>
+    <ul>
+      <a href="#pciids">PCI ID/vendor Entries</a><br>
+      <a href="#eisaids">EISA ID/vendor Entries</a><br>
+      <a href="#busids">Bus Entries</a><br>
+      <a href="#classids">Class/Subclass Entries</a><br>
+      <a href="#compatids">ISA-PnP Compatible Device Entries</a><br>
+      <a href="#csids">Assigning a Class/Subclass to a Device</a><br>
+      <a href="#modids">Assigning a Device Driver to a Device</a><br>
+    </ul>
+    <a href="#hwcats">Hardware Categories</a><br>
+    <ul>
+      <a href="#mmem">Main Memory</a><br>
+      <a href="#monitor">Monitor</a><br>
+      <a href="#pnpcards">ISA-PnP Cards</a><br>
+      <a href="#pcicards">PCI Cards</a><br>
+    </ul>
+  </ul>
+  <a href="#ref">References &amp; Sources</a><br>
+</ul>
+
+<h2><a name=intro>Introduction</a></h2>
+
+Autoprobing should be able to identify (nearly) all installed hardware. This
+poses more or less difficulties depending on the kind of hardware being
+probed. The main problems are caused by non-PnP ISA cards and devices
+attached to serial and parallel interfaces. Not to mention vendor specific
+interfaces.
+
+<h2><a name=general>General Considerations</a></h2>
+
+<ul>
+  PCI cards<br><ul>
+    Information about PCI cards can be easily read from /proc/bus/pci.
+    /proc/bus/pci/devices has a list of all the PCI devices and
+    /proc/bus/pci/xy/ab.c has detailed info about individual devices.
+    (These files contain the PCI configuration space header.)<p>
+
+    Data in the config space include device/vendor ids, device class ids
+    and resources used by that device. Note: there are no <em>strings</em>
+    of any kind (e.g. device <em>names</em>).<p>
+
+    Note that only the first 64 bytes of config space (256 bytes total) are
+    available to non-root users.
+  </ul><br>
+
+  Plug and Play ISA cards<br><ul>
+    PnP cards have an onboard configuration space that contains information
+    about the needed (and configured) resources as well as some data
+    characterizing the device. Unlike PCI there is no data assigning
+    the device to a device class. So you cannot automatically recognize a
+    card as, e.g., a SCSI controller.<p>
+
+    It is, however, possible that the config data contains a 'compatible
+    device' tag. This tag is a vendor/device id pair. In cards I have seen
+    so far this feature was used to point to 'PNPxxxx' devices. The
+    special 'PNP' vendor was actually reserved by Microsoft to allow
+    standard drivers to be used (and to classify old ISA cards). For
+    example, 'PNP80d6' is a NE2000 compatible network adapter. The complete
+    list is available at Microsofts web site. (Note that this very list
+    is referenced to as 'compatible device id list' in the Plug and Play
+    ISA Specification, Version 1.0a.)
+  </ul><br>
+
+  non-PnP ('legacy') ISA cards<br><ul>
+    Detecting old ISA cards can basically be done in two ways: either
+    probing the interface directly (which basically comes down to
+    trying to load a bunch of modules). The other way is to check the BIOS ROM
+    for installed hardware. As most cards come with their own BIOS routines,
+    this <em>might</em> work in a lot of cases. The advantage would be to
+    avoid lockups by the more or less erratic module loading procedure.
+  </ul><br>
+
+  ISA/VLB Graphics Cards<br><ul>
+    Aside from the above mentioned BIOS ROM scanning, there is the SuperProbe
+    tool. Another source of information would be the VESA interface that all
+    but the <em>very</em> old boards support. Via VESA calls we can get an id
+    string, the graphics card memory size and, in case of VESA >=2.0 the address
+    of a frame buffer (if supported).<p>
+
+    To avoid problems, calling the VESA interface should be added to
+    <code>syslinux</code>, too (see Monitor, below).
+  </ul><br>
+
+  Monitors<br><ul>
+    Most modern monitors can provide configuration data via the DDC
+    (Display Data Channel). As XFree86 does currently not support reading
+    this info, the only practicable way is to use an existing VESA call
+    to access this data.<p>
+
+    This is best done, <em>before</em> Linux has started, so it comes down
+    to modify the boot manager. In this case <code>syslinux</code>.
+    The config data can be transfered via the kernel command line.
+  </ul><br>
+
+  Mice/Modems (Serial Devices)<br><ul>
+    There exists a Plug and Play COM Device Specification that allows
+    those devices to return some config data. The ids used have the same
+    format as the ISA-PnP ids (that is, are actually EISA ids).<p>
+
+    For Modems not conforming to this spec, we would have to issue some
+    AT commands. The Lothar Project does exactly this.<p>
+
+    For Mice, there is apparently a <em>very</em> rudimentary identification
+    process that allows more or less to <em>detect</em> the presence of a
+    mouse. To distinguish between the various mouse protocols it might be
+    necessary to <em>move</em> the mouse (to see which data interpretation
+    makes sense).
+  </ul><br>
+
+  Printer (Parallel Devices)<br><ul>
+    As you might guess, there is a Plug and Play Parallel Port Devices Spec
+    as well.<p>
+
+    Namely printer are reported to conform to it. The kernel already has
+    support for it. The info is available in /proc/parport.
+  </ul><br>
+
+  PS/2 Mice<br><ul>
+    I suppose they will all work with the standard PS/2 driver. This might
+    not be the case with support for all the special features they might
+    have (wheels, extra buttons, whatever).
+  </ul><br>
+
+  Other System Components<br><ul>
+    Floppy: check /proc/devices? Scan output of dmesg?
+  </ul><br>
+
+  Storage Devices<br><ul>
+    As long as they are attached to SCSI or IDE there should be no problem
+    identifying these. Information can be found in /proc/scsi, /proc/ide.<p>
+
+    A list of CD-ROM devices can be found in /proc/sys/dev/cdrom/info.<p>
+
+    Partition info is in /proc/partitions.
+  </ul>
+</ul>
+
+<h2><a name=tech>Technical Specification</a></h2>
+
+Current (preliminary) project name: <code>hd</code>.<p>
+
+It consists of a hardware detect library (<code>libhd.a</code>) and a
+simple test application (<code>hw</code>) that dumps all hardware info
+to <code>stdout</code>.<p>
+
+<h3><a name=intend>Intended Functionality</a></h3>
+
+All functionality will be packed into one library (<code>libhd.a</code>)
+that must be linked to the application. As for now I do not plan to make a
+shared version.<p>
+
+Probing may be done on different 'levels' (or 'depths'). That is you can do
+a 'save' probe looking for hardware that can be probed for without risking
+to lock up the system and a 'thorough' probe that will try to find as many
+devices as possible.<p>
+
+The results are passed as a linear list of hardware components. Sufficient
+data to assign e.g. hard discs to their interfaces will be provided,
+however.<p>
+
+The hardware data will contain information about errors that occurred during
+the probing and data indicating the source of information (e.g. ports read
+from /proc/ioports etc.).<p>
+
+To work around lock-ups it will be possible to specify which hardware
+component should not be probed. For this the library will provide a string
+identifying the following probing step. (And write it to stderr.)<p>
+
+<h3><a name=pstruc>Program Structure</a></h3>
+
+The probing code consists of several independent modules. The results are
+reported back and collected as a linear list of hardware components. Each
+module is <em>completely</em> responsible for the probing process i.e. there
+is no 'meta' interface telling them how to do it. Although the probing
+process man be restricted (according to the probing levels mentioned
+above).<p>
+
+The modules should be designed as not to interfere with the probing of
+others.<p>
+
+The library uses an external data file containing configuration information.
+It does, however, not <em>rely</em> on it being present. Reported results
+might be less accurate, however.<p>
+
+This data file can be used to associate a hardware component with
+a device driver.<p>
+
+<h3><a name=works>Working Parts</a></h3>
+
+<ul>
+  Main Memory<br><ul>
+    Reports the actual amount of physical memory (e.g 128MB).
+  </ul><br>
+
+  Monitor<br><ul>
+    Reads the EDID (Extended Display ID) record via DDC (Display Data
+    Channel).<p>
+
+    Unfortunately is reading via DDC graphics card specific (XFree86 4.0
+    intends to implement an interface) but there is a VBE 2.0 (VESA BIOS
+    Extension) call that does exactly that.<p>
+    
+    So I modified <code>syslinux</code> to do the VBE call and report
+    the result on kernel command line, e.g.:<br>
+    monitor=IVM1901241B3FEFA940A94AA94FA959<p>
+
+    This implies of course that this works only during installation.
+  </ul><br>
+
+  ISA-PnP Cards<br><ul>
+    This code is based on <code>pnpdump</code> from the
+    <a href="http://www.roestock.demon.co.uk/isapnptools/">
+    ISA Plug and Play Tools</a>.<p>
+
+    Reads the configuration of all installed ISA-PnP cards. Some cards might
+    not have been configured already. Those will have no valid resources (i/o ports,
+    irqs etc.) assigned. But the required resources are reported.<p>
+    
+    It would be not particularly tricky to implement the resource assignment
+    and activation of those cards (thus bypassing <code>isapnp</code>). But
+    I think that this exceeds the scope of this project.<p>
+    
+    ISA-PnP is a rather strange 'standard'. See the 'Technical Details &amp;
+    Documentation' section below.
+  </ul><br>
+
+  PCI Cards<br><ul>
+    This code is <em>not</em> based on <code>pciutils</code>. The code
+    basically reads /proc/bus/pci. The format of the data structures found there
+    is defined in /usr/include/linux/pci.h.
+  </ul>
+</ul>
+
+<h3><a name=nexts>Next Steps</a></h3>
+
+<ul>
+  document everything implemented so far<br>
+  mouse (particular serial mouse) detection<br>
+  ISA/VLB graphics cards<br>
+  PCMCIA<br>
+  other ISA cards<br>
+  obscure stuff (scanning the BIOS ROM for info)<br>
+</ul>
+
+I have started to collect info on mouse detection (There exists actually a
+PnP-COM devices spec). ISA graphics cards detection will probably be based
+on <code>SuperProbe</code>.<p>
+
+Detection of other ISA cards (e.g. SCSI, network) must probably be done by
+trial and error module loading or BIOS ROM analyzing.
+
+<h2><a name=detail>Technical Details &amp; Documentation</a></h2>
+
+<h3><a name=idr>Internal Data Representation</a></h3>
+
+As already mentioned, PCI uses a rather general approach describing devices.
+Hence I use internally an extension of the PCI data structures. To minimize
+work, the codes are compatible to PCI codes but some extensions are added.
+This should not lead to future incompatibilities, as the extension is done
+by choosing codes <em>outside</em> the range of PCI values (e.g. PCI classes
+are 8-bit unsigned values and the class extensions start at 0x100).<p>
+
+The data structure holding the device info looks currently like this:
+
+<pre>
+typedef struct struct_hw_t {
+  int idx;		// used to number the entries
+  unsigned bus, slot, func;
+  unsigned base_class, sub_class, prog_if;
+  unsigned dev, vend, sub_dev, sub_vend, rev;
+  unsigned compat_dev, compat_vend;
+
+  res_t res;		// device resources
+  unsigned ext_flags;	// device class specific info
+  void* ext;		// dto
+
+  // ... (heavily varying stuff)
+} hw_t;
+</pre>
+
+Note that there is no field to hold the name of a device driver (module).
+Instead, it exists a lookup function that can retrieve the module info
+from the external database. An example for an entry with device driver
+info is the <a href="metcalf_samp.html#elsa">ELSA QuickStep 1000</a> entry.<p>
+
+The only non-intuitive change to PCI is that the <code>bus</code> member
+does specify the <em>type</em> of the bus (PCI knows several <em>PCI</em>
+busses, that are numbered (and connected via bridges)).<p>
+
+Here is a sample hardware entry to illustrate this:
+
+<pre>
+10: PCI 04.2: 0c03 USB Controller
+  Vendor: 8086 "Intel"
+  Device: 7112 "82371AB/EB PIIX4 USB Controller"
+  Revision: 0x01
+  I/O Ports: 0xd400-??? (rw)
+</pre>
+
+The format of the first line is
+<pre>
+idx: bus slot.func: ((base_class*0x100) + sub_class) class_name
+</pre>
+
+Each vendor and device entry is preceded by the id and followed by
+the name string. The name strings come mainly from the external data base
+although ISA-PnP cards may provide some of their own.<p>
+
+NOTE: subdevice ids are <em>not</em> required to be unique across different
+devices. That is, different devices <em>may</em> use the same subdevice ids<p>
+
+<a href="metcalf_samp.html">This is a complete hardware listing</a>.<p>
+
+<a href="krieger_samp.html">And here is another</a>.
+
+<h3><a name=dspecs>Database Specification</a></h3>
+
+<code>libhd.a</code> uses an external database to read config info
+and text strings (for fancy outputs) from. This database is actually
+a textfile with a format derived from the PCI id list used by
+<code>pciutils</code>.<p>
+
+<a href="file:/home/alex/snwint/hd/hd/id_list">Here</a> is the full database
+currently in use. <p>
+
+<h4><a name=pciids>PCI id/vendor entries</a></h4>
+
+Here an example:
+<pre>
+10DE    Nvidia Corp
+        0008    NV1 EDGE 3D Accelerator
+        0009    NV1 EDGE 3D Multimedia
+        0020    Riva 128 TNT GUI+3D Accelerator
+                02001043        V3400 TNT
+                05501092        Viper V550
+</pre>
+
+The format is:
+<pre>
+vendor_id  vendor_name
+\tdevice_id  device_name
+\t\t((subdevice_id << 16) + vendor_id) subdevice_name
+</pre>
+
+Tabs <em>must not</em> be replaced by spaces. The number of other spaces
+(e.g. <em>after</em> the id values) is arbitrary.
+
+<h4><a name=eisaids>EISA id/vendor entries</a></h4>
+
+First an example:
+
+<pre>
+CTL     Creative Technology Ltd.
+        009e    Creative SB AWE64 Gold
+                CTL0044 AWE64 Gold 16-bit Audio (SB16 compatible)
+                CTL7002 Programmable Game Port
+</pre>
+
+<pre>
+vendor_id  vendor_name
+\tdevice_id  device_name
+\t\tvendor_idsubdevice_id subdevice_name
+</pre>
+
+The format is exactly the same as a PCI entry, except that an EISA vendor
+id consists of 3 uppercase letters.<p>
+
+Again, none of the tabs may be replaced by spaces.
+
+<h4><a name=subids>PCI/EISA Subdevice Entries</a></h4>
+
+Instead of specifying a subdevice as an entry belonging to a device you
+can specify a 'dedicated' subdevice entry as follows:
+
+<pre>
+S CTL   Creative Technology Ltd.
+        0023    AWE64 Gold Wavetable MIDI (AWE32 compatible)
+</pre>
+
+The format:
+<pre>
+S vendor_id  vendor_name
+\tsubdevice_id  device_name
+</pre>
+
+The same format can be used for PCI devices.<p>
+
+The main purpose for having 'dedicated' subdevice entries is that they are
+not associated (unlike the 'normal' subdevices) with device ids. For
+example, the 'Viper V550' entry in the example is only valid as a subdevice
+of a Riva TNT device. The 'Viper 550' subdevice/vendor pair 05501092 will
+<em>not</em> be recognized if it appears as a subdevice of a different
+device.<p>
+
+Although this behavior is pretty sensible, there are cases where this
+might not be what you actually want. As an example look at the wavetable
+subdevice above. It <em>may</em> be useful to recognize a wavetable device
+even if its not on a AWE64 card (but on another SB compatible card).<p>
+
+Anyway, the usefulness of this kind of entries <em>is</em> questionable.<p>
+
+<h4><a name=busids>Bus Entries</a></h4>
+
+Example:
+<pre>
+B 04  PCI
+</pre>
+
+The format:
+<pre>
+B bus_id  bus_name
+</pre>
+
+<h4><a name=classids>Class/Subclass Entries</a></h4>
+
+Example:
+<pre>
+C 02  Network controller
+        0000  Ethernet controller
+        0001  Token ring network controller
+</pre>
+
+The format:
+<pre>
+C class_id  class_name
+\tsubclass_id subclass_name
+</pre>
+
+Again, watch out for tabs.
+
+<h4><a name=compatids>ISA-PnP Compatible Device Entries</a></h4>
+
+The format follows (is identical to) the EISA entry format. What makes
+these to compatible device entries is the special vendor 'PNP'.
+
+Example:
+<pre>
+PNP     PnP
+        80d6.0200       NE2000 Compatible
+        b02f    Joystick/Game port
+</pre>
+
+The <code>.0200</code> is explained below.
+
+<h4><a name=csids>Assigning a Class/Subclass to a Device</a></h4>
+
+As mentioned in the ISA-PnP sections, ISA-PnP does not provide information
+about the device class or subclass (to use the PCI terminology). Therefore
+you can add this information in the database by adding a <code>.class</code>
+to the device ids, as seen in the NE2000 example above 
+(with <code>class = base_class*0x100 + sub_class</code>).<p>
+
+This works currently only for EISA ids.
+
+Note that this info is used to assign an unknown ISA-PnP device it's proper
+device class <em>if</em> the card has a 'compatible to' entry <em>and</em> there has been a
+device class associated with this compatible device. For example, the
+AXE2201 card from the <a href="metcalf_samp.html#ether">listing</a> is recognized
+as an Ethernet controller, because it has a 'compatible to PNP80d6' entry
+<em>and</em> PNP80d6 is tagged as a (Ethernet-)network card as demonstrated
+in the above example.
+
+<h4><a name=modids>Assigning a Device Driver to a Device</a></h4>
+
+You can associate a device driver to a device or subdevice in the following
+way:
+
+<pre>
+ELS     ELSA International
+        0133.10300      [isdn] ELSA QuickStep 1000
+</pre>
+
+If a (sub)device name starts with <code>[driver_name]</code>, the text
+between the brackets is assumed to be some driver info. The text is stored
+internally and can be retrieved if needed.<p>
+
+Note: this text is not analyzed or processed in any way.<p>
+
+<a href="metcalf_samp.html#elsa">Here is an example</a>.
+
+<h3><a name=hwcats>Hardware Categories</a></h3>
+
+<h4><a name=mmem>Main Memory</a></h4>
+
+I do a <code>stat</code> on <code>/proc/kcore</code> which is one
+page more than the actual memory. The memory seems to be reduced by SCSI
+device drivers. (And possibly others that need DMA?) The actual value
+reported will be caculated on the assumption that the memory configuration
+is done at least in 256k steps (e.g. 255.75MB are reported as 256MB).<p>
+
+<a href="memory_samp.html">This is a sample main memory entry</a>.
+
+<h4><a name=monitor>Monitor</a></h4>
+
+The VBE call used is function 0x4f15 of int 0x10. The returned EDID record has a size of
+128 bytes and only the relevant parts are reported on the kernel command
+line. <a href="edid.html">This is a sample EDID record</a>. (Note the byte
+order which is big endian!)<p>
+
+Although the record <em>might</em> provide the monitor name explicitly it
+seems not to be done in practice. So identification is done using the 4 byte
+manufacturer ID code (which is actually an EISA ID code that is used
+as the ISA-PnP ID code as well). The encoding of this ID is rather strange
+and decoding results in something like <code>IVM1901</code> where
+<code>IVM</code> identifies the manufacturer and <code>1901</code>
+is an product ID.<p>
+
+This manufacturer ID is given in the first 7 bytes of the
+<code>monitor=</code> parameter (see above for an example).<p>
+
+I found only one source of manufacturer ID codes besides the W9x *.inf files
+and that is
+<a href="http://www.cs.cmu.edu/afs/cs.cmu.edu/user/ralf/pub/WWW/files.html">
+Ralf Brown's Interrupt List</a>. But I haven't looked for a more
+comprehensive source so far.
+
+Finally, note that it is not necessary to rely completely on the monitor ID
+as the EDID record itself contains timing and geometry information.<p>
+
+<a href="monitor_samp.html">This is a sample monitor entry</a>.
+
+<h4><a name=pnpcards>ISA-PnP Cards</a></h4>
+
+One of the tricky parts of ISA-PnP is that the communication port (well,
+<em>one</em> of them) has no fixed location but may be within the range of
+0x203-0x3ff. That is because (according to the specs) they could not
+name a single(!) unused fixed port address!?<p>
+
+The application using <code>libhd.a</code> should therefore provide some
+means of <em>storing</em> this value somewhere. <code>pnpdump</code>
+puts it into <code>/etc/isapnp.conf</code> where <code>isapnp</code>
+can read it from. <code>libhd.a</code> uses
+<code>/etc/isapnp.conf</code> as well (if it exists) to find out the
+value. If this file is missing, the standard method for finding an appropriate
+port is carried out.<p>
+
+And this is the very reason why the ISA-PnP interface itself gets listed as a
+hardware device (see the examples below): it occupies 3 i/o ports: two fixed
+write only ports and one relocatable read only port.<p>
+
+An ISA-PnP card may have more than one logical device. The practical reason
+for that may be seen in the last example below (an AWE64 sound card). Links
+are provided to relate these logical devices to the ISA-PnP card (marked as
+'belongs to device:').<p>
+
+ISA-PnP provides also a 'compatibility' tag (see the examples). If you are wondering
+what <code>PNP80D6</code> or <code>PNPB02F</code> are, look at
+<a href="file:/home/alex/snwint/hd/PnP/devids.txt">devids.txt</a>.<p>
+
+Note: not all card resources <em>must</em> be listed in the ISA-PnP data
+(AWE64 being an (infamous) example). This is only required for all cards
+that have to be configured by the BIOS because they participate in the BOOT
+process.<p>
+
+The BIOS may or may not choose to configure individual cards. So it is possible
+for a card to have no valid resources assigned. Such cards will of course
+not work until they have been properly initialized.<p>
+
+A fairly complete documentation of Plug and Play is available from
+<a href="http://www.microsoft.com/hwdev/respec/pnpspecs.htm">Microsoft</a>.
+Or, locally and in Postscript form, from
+<a href="file:/home/alex/snwint/hd/PnP/">here</a>.<p>
+
+<a href="isapnp_samp.html">Here are some sample ISA-PnP entries</a>.<br>
+
+<h4><a name=pcicards>PCI Cards</a></h4>
+
+I just read all information out of <code>/proc/bus/pci</code>.<p>
+
+It is apparently somewhat tricky to get the <em>range</em> of i/o and
+memory ranges (reading the base addresses is trivial).<p>
+
+PCI configuration data reflect a pretty general approach to describing
+devices. A card occupies a <code>slot</code> on a <code>bus</code>.
+On every card there may be several subdevices (PCI-ish
+<code>functions</code>).<p>
+
+Every <code>function</code> has its own configuration space. It gets
+assigned a <code>class</code>, a <code>subclass</code> and an
+<code>interface type</code> (e.g.: Storage Device -> IDE Controller ->
+Generic IDE).<p>
+
+To identify the devices, each <code>function</code> has a <code>vendor
+id</code>, a <code>device id</code>, a <code>subvendor id</code>,
+<code>a subdevice id</code> and a <code>revision number</code>. (See
+see example below.))<p>
+
+To associate these numbers to human-readable texts a extern database is
+necessary. A large collection of PCI ids is available
+<a href="http://home.hyperlink.net.au/~chart/download/vendors.txt"> here </a>.
+The database format <code>libhd.a</code> uses, is closely modeled after
+this one.<p>
+
+<a href="pci_samp.html">Here are some sample PCI entries</a>.<br>
+
+<h2><a name=ref>References &amp; Sources</a></h2>
+
+This section is missing. For the curious, a text file with some links is
+<a href="file:/home/alex/snwint/hd/info">here</a>.
+</body>
+</html>
+

@@ -1,0 +1,129 @@
+<html>
+<head>
+<title>Sample Hardware Listing</title>
+</head>
+<body>
+<h3>Sample Hardware Listing</h3>
+<pre>
+01: None 00.0: 10102 Main Memory
+  Memory Range: 0x00000000-0x07feffff
+  Memory Size: 128M
+
+02: None 00.0: 10001 CRT Monitor
+  Vendor: IVM "Idek Iiyama North America, Inc."
+  Device: 1901 "Iiyama A901HT, VisionMaster Pro 450"
+  Monitor Size: 36x27cm
+  Resolution: 720x400@70Hz
+  Resolution: 720x400@88Hz
+  Resolution: 640x480@60Hz
+  Resolution: 640x480@67Hz
+  Resolution: 640x480@72Hz
+  Resolution: 640x480@75Hz
+  Resolution: 800x600@72Hz
+  Resolution: 800x600@75Hz
+  Resolution: 832x624@75Hz
+  Resolution: 1024x768@70Hz
+  Resolution: 1024x768@75Hz
+  Resolution: 1280x1024@75Hz
+  Resolution: 1600x1200@60Hz
+  Resolution: 1600x1200@70Hz
+  Resolution: 1600x1200@75Hz
+  Resolution: 1600x1200@85Hz
+
+03: ISA 00.0: 10101 ISA PnP Interface
+  I/O Port: 0x279 (wo)
+  I/O Port: 0xa79 (wo)
+  I/O Port: 0x203 (ro)
+
+<a name=ether>04: ISA(PnP) 01.0: 0200 Ethernet controller</a>
+  Vendor: AXE "?"
+  Device: 2201 "Ethernet PnP ISA Card /S"
+  Comaptible to: PNP80d6 "NE2000 Compatible"
+  Card/Device is: Active
+  I/O Ports: 0x240-0x25f (rw)
+  IRQ: 11
+
+<a name=elsa>05: ISA(PnP) 02.0: 10300 ISDN Adapter</a>
+  Vendor: ELS "ELSA International"
+  Device: 0133 "ELSA QuickStep 1000"
+  Device Driver: isdn
+  Card/Device is: Active
+  I/O Ports: 0x160-0x167 (rw)
+  IRQ: 7
+  DMA: 0
+
+06: PCI(AGP) 00.0: 0600 Host bridge
+  Vendor: 8086 "Intel"
+  Device: 7190 "82443BX/ZX 440BX/ZX PCI-Host Bridge (AGP Enabled)"
+  Revision: 0x03
+  Memory Range: 0xe4000000-???
+
+07: PCI 01.0: 0604 PCI bridge
+  Vendor: 8086 "Intel"
+  Device: 7191 "82443BX/ZX 440BX/ZX AGP Bridge"
+  Revision: 0x03
+
+08: PCI 04.0: 0601 ISA bridge
+  Vendor: 8086 "Intel"
+  Device: 7110 "82371AB/EB PIIX4 ISA Bridge"
+  Revision: 0x02
+
+09: PCI 04.1: 0101 IDE interface
+  Vendor: 8086 "Intel"
+  Device: 7111 "82371AB/EB PIIX4 EIDE Controller"
+  Revision: 0x01
+  I/O Ports: 0xd800-??? (rw)
+
+10: PCI 04.2: 0c03 USB Controller
+  Vendor: 8086 "Intel"
+  Device: 7112 "82371AB/EB PIIX4 USB Controller"
+  Revision: 0x01
+  I/O Ports: 0xd400-??? (rw)
+
+11: PCI 04.3: 0680 Bridge
+  Vendor: 8086 "Intel"
+  Device: 7113 "82371AB/EB PIIX4 Power Management Controller"
+  Revision: 0x02
+
+12: PCI 06.0: 0100 SCSI storage controller
+  Vendor: 9005 "Adaptec"
+  Device: 001f "AHA-2940U2/AHA-2940U2W SCSI Controller (AIC-7890/1)"
+  SubVendor: 9005 "Adaptec"
+  SubDevice: 000f "2940U2W SCSI Controller"
+  IRQ: 9
+  I/O Ports: 0xd000-??? (rw)
+  Memory Range: 0xe0800000-???
+
+13: PCI 09.0: 0200 Ethernet controller
+  Vendor: 1011 "Digital Equipment Corp (DEC)"
+  Device: 0009 "DecChip 21140 Fast Ethernet Adapter"
+  SubVendor: 1186 "D-Link Inc"
+  SubDevice: 1100 "DFE-500TX Fast Ethernet"
+  Revision: 0x22
+  IRQ: 9
+  I/O Ports: 0xb800-??? (rw)
+  Memory Range: 0xe0000000-???
+
+14: PCI 0b.0: 0401 Multimedia audio controller
+  Vendor: 12eb "Aureal Semiconductor"
+  Device: 0001 "AU8820 Vortex Digital Audio Processor"
+  SubVendor: 5053 "TBS / Voyetra Technologies"
+  SubDevice: 3355 "TBS Montego A3D"
+  Revision: 0x02
+  IRQ: 5
+  Memory Range: 0xdf800000-???
+  I/O Ports: 0xb400-??? (rw)
+  I/O Ports: 0xb000-??? (rw)
+
+15: PCI(AGP) 00.0: 0300 VGA compatible controller
+  Vendor: 10de "Nvidia Corp"
+  Device: 0020 "Riva 128 TNT GUI+3D Accelerator"
+  SubVendor: 1092 "Diamond Multimedia Systems"
+  SubDevice: 0550 "Viper V550"
+  Revision: 0x04
+  IRQ: 15
+  Memory Range: 0xe1000000-???
+  Memory Range: 0xe3000000-???
+</pre>
+</body>
+</html>

@@ -1,0 +1,36 @@
+CC	= gcc
+CFLAGS	= -Wall -O2 -fomit-frame-pointer -I$(TOPDIR)/libhd/hd
+LDFLAGS	= -Llibhd -lhd
+
+CFILES	= $(wildcard *.c)
+OBJS	= $(CFILES:.c=.o)
+LIBHD	= $(TOPDIR)/libhd/libhd.a
+LIBHD_D	= $(TOPDIR)/libhd/.lib
+
+ARCH	= $(shell uname -m)
+
+export CC TOPDIR CFLAGS LIBHD ARCH
+
+.PHONY: all clean subdirs
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) $<
+
+all: subdirs $(TARGETS)
+
+ifneq "$(SUBDIRS)" ""
+subdirs:
+	@for i in $(SUBDIRS) ; do make -C $$i $(MAKECMDGOALS) ; done
+endif
+
+clean: subdirs
+	@rm -f $(OBJS) .depend $(CLEANFILES) *~
+
+ifneq "$(CFILES)" ""
+ifneq "$(MAKECMDGOALS)" "clean"
+.depend: $(CFILES)
+	@$(CC) -MM $(CFLAGS) $(CFILES) >$@
+
+-include .depend
+endif
+endif

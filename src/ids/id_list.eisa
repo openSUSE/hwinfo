@@ -1,0 +1,21 @@
+# list of EISA vendor/device ids (for ISA-PnP & monitors)
+#
+# as with the PnP-compatibility list you *can* add a device class/subclass value
+
+CTL	Creative Technology Ltd.
+	009e.0401	Creative SB AWE64 Gold
+		CTL0044	AWE64 Gold 16-bit Audio (SB16 compatible)
+		CTL7002	Programmable Game Port
+
+ELS	ELSA International
+	0133.10300	ELSA QuickStep 1000
+
+LGI	Logitech
+	8001	[p|microsoft|ms] Logitech First/Pilot Maus
+	800c	[p|mouseman|mman] Logitech MouseMan
+
+## list of ISA-PnP & vendors and subdevices
+#
+#S CTL	Creative Technology Ltd.
+#	0023	AWE64 Gold Wavetable MIDI (AWE32 compatible)
+

@@ -1,0 +1,39 @@
+#! /bin/sh
+
+#
+# This is a test script intended to check the hardware auto detection routine.
+#
+# It runs the hardware detection program, copies some data out of the /proc
+# tree and reads the BIOS data from /dev/mem.
+#
+# All this is put into a .tar.gz file.
+#
+
+TMP_DIR=/tmp/gethwinfo$$
+
+mkdir $TMP_DIR
+
+# if the following line crashes your computer, please try without 'pci'
+./hw pci debug=3 >$TMP_DIR/hw 2>&1
+
+cd /proc
+for i in \
+  cpuinfo ioports modules interrupts misc dma scsi/scsi sys/dev/cdrom/info \
+  ide/ide*/{model,mate,channel} ide/drivers partitions nvram net/dev \
+  parport/*/{autoprobe,devices,hardware}
+do
+  if [ -e "/proc/$i" ] ; then
+    mkdir -p $TMP_DIR/`dirname $i`
+    cat /proc/$i >$TMP_DIR/$i
+  fi
+done
+
+if [ -r /dev/mem -a `uname -m` != alpha ] ; then
+  dd if=/dev/mem of=$TMP_DIR/bios.ram bs=2k count=1 2>/dev/null
+  dd if=/dev/mem of=$TMP_DIR/bios.rom bs=64k count=4 skip=12 2>/dev/null
+fi
+
+tar -C $TMP_DIR -zcf /tmp/hwdata.tar.gz .
+rm -rf $TMP_DIR
+
+echo "Hardware info written to /tmp/hwdata.tar.gz."
