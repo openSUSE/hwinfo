@@ -20,7 +20,7 @@ static int set_bios_id(hd_data_t *hd_data, char *dev_name, int bios_id);
 static void int_bios(hd_data_t *hd_data);
 #endif
 static void int_media_check(hd_data_t *hd_data);
-static void int_zip(hd_data_t *hd_data);
+static void int_floppy(hd_data_t *hd_data);
 
 void hd_scan_int(hd_data_t *hd_data)
 {
@@ -45,8 +45,8 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(4, 0, "media");
   int_media_check(hd_data);
 
-  PROGRESS(5, 0, "zip");
-  int_zip(hd_data);
+  PROGRESS(5, 0, "floppy");
+  int_floppy(hd_data);
 }
 
 /*
@@ -202,26 +202,37 @@ void int_media_check(hd_data_t *hd_data)
 
 
 /*
- * Turn SCSI/USB zip drives into flppies.
+ * Turn some SCSI/USB drives into flppies.
+ * This is really a mess but until the usb-storage modul works better, we have 
+ * to do it this way.
  */
-void int_zip(hd_data_t *hd_data)
+void int_floppy(hd_data_t *hd_data)
 {
   hd_t *hd;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
       hd->base_class == bc_storage_device &&
-      hd->sub_class == sc_sdev_disk &&
-      (
-        (hd->vend_name && !strcasecmp(hd->vend_name, "iomega")) ||
-        (hd->sub_vend_name && !strcasecmp(hd->vend_name, "iomega"))
-      ) &&
-      (
-        (hd->dev_name && strstr(hd->dev_name, "ZIP")) ||
-        (hd->sub_dev_name && strstr(hd->dev_name, "Zip"))
-      )
+      hd->sub_class == sc_sdev_disk
     ) {
-      hd->sub_class = sc_sdev_floppy;
+      if(
+        (
+          (
+            (hd->vend_name && !strcasecmp(hd->vend_name, "iomega")) ||
+            (hd->sub_vend_name && !strcasecmp(hd->sub_vend_name, "iomega"))
+          ) &&
+          (
+            (hd->dev_name && strstr(hd->dev_name, "ZIP")) ||
+            (hd->sub_dev_name && strstr(hd->sub_dev_name, "Zip"))
+          )
+        ) ||
+        (
+          (hd->vend_name && !strcasecmp(hd->vend_name, "teac")) &&
+          (hd->dev_name && strstr(hd->dev_name, "FD") == hd->dev_name)
+        )
+      ) {
+        hd->sub_class = sc_sdev_floppy;
+      }
     }
   }
 }

@@ -384,7 +384,24 @@ void set_class_entries(hd_t *hd, usb_t *usb)
 
     case 8:
       hd->base_class = bc_storage_device;
-      hd->sub_class = sc_sdev_other;
+      switch(sub) {
+        case 1:		/* flash devices & removable media */
+        case 5:
+        case 6:
+          hd->sub_class = sc_sdev_disk;
+          break;
+        case 2:
+          hd->sub_class = sc_sdev_cdrom;
+          break;
+        case 3:
+          hd->sub_class = sc_sdev_tape;
+          break;
+        case 4:
+          hd->sub_class = sc_sdev_floppy;
+          break;
+        default:
+          hd->sub_class = sc_sdev_other;
+      }
       break;
 
     case 9:

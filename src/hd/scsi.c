@@ -586,6 +586,12 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
           break;
         }
       }
+      if(!scsi->driver) {
+        /* usb-storage is somewhat special... */
+        if(strstr(scsi->proc_dir, "usb-storage") == scsi->proc_dir) {
+          scsi->driver = new_str("usb-storage");
+        }
+      }
       if(!scsi->driver) scsi->driver = new_str(scsi->proc_dir);
     }
   }
