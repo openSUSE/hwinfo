@@ -80,7 +80,7 @@ static driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd);
 static driver_info_t *monitor_driver(hd_data_t *hd_data, hd_t *hd);
 
 #if WITH_ISDN
-static int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len);
+/* static int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len); */
 /* static isdn_parm_t *new_isdn_parm(isdn_parm_t **ip); */
 static driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, cdb_isdn_card *cic);
 #endif
@@ -2037,6 +2037,7 @@ driver_info_t *monitor_driver(hd_data_t *hd_data, hd_t *hd)
 
 #if WITH_ISDN
 
+#if 0
 int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len)
 {
   unsigned u;
@@ -2056,7 +2057,6 @@ int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len)
   return c == 0xff ? 1 : 0;
 }
 
-#if 0
 isdn_parm_t *new_isdn_parm(isdn_parm_t **ip)
 {
   while(*ip) ip = &(*ip)->next;
