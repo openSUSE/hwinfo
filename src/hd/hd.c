@@ -829,8 +829,8 @@ int exists_hd_entry(hd_data_t *hd_data, hd_t *old_hd, hd_t *hd_ex)
 }
 
 
-/*
- * Free a hd_t list. *Not* the data referred to by the hd_t structs.
+/*!
+ * \note This may not free it.
  */
 hd_t *hd_free_hd_list(hd_t *hd)
 {

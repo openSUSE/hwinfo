@@ -47,26 +47,43 @@ extern "C" {
 #include <inttypes.h>
 #include <termios.h>
 
-/*
- * macros to handle device & vendor ids
+/**
+ * \defgroup idmacros Id macros
+ * Macros to handle device and vendor ids.
  *
- * example: to check if an id is a pci id and get its value,
+ * Example: to check if an id is a pci id and get its value,
  * do something like this:
- *
+ * \code
  * if(ID_TAG(hd->dev) == TAG_PCI) {
  *   pci_id = ID_VALUE(hd->dev)
  * }
+ * \endcode
+ *@{
  */
-#define TAG_PCI		1	/* pci ids */
-#define TAG_EISA	2	/* eisa ids (incl. monitors) */
-#define TAG_USB		3	/* usb ids */
-#define TAG_SPECIAL	4	/* internally used ids */
-#define TAG_BUS		5	/* purely internal, you should never see this tag */
-#define TAG_CLASS	6	/* dto */
 
+#define TAG_PCI		1	/**< PCI ids. */
+#define TAG_EISA	2	/**< EISA ids (monitors, ISA-PnP, modems, mice etc). */
+#define TAG_USB		3	/**< USB ids. */
+#define TAG_SPECIAL	4	/**< Internally used ids. */
+#define TAG_BUS		5	/**< (obsolete) purely internal, you should never see this tag. */
+#define TAG_CLASS	6	/**< (obsolete) dto. */
+
+/**
+ * Get the real id value.
+ */
 #define ID_VALUE(id)		((id) & 0xffff)
+
+/**
+ * Get the tag value.
+ */
 #define ID_TAG(id)		(((id) >> 16) & 0xf)
+
+/**
+ * Combine tag and id value.
+ */
 #define MAKE_ID(tag, id_val)	((tag << 16) | (id_val))
+
+/*@}*/
 
 /*
  * flags to control the probing.
@@ -1295,34 +1312,223 @@ typedef struct hd_manual_s {
 } hd_manual_t;
 
 
-/*
- * Every hardware component gets an hd_t entry. The root of the chained
- * hardware list is in hd_data_t.
+/**
+ * Individual hardware item.
+ * Every hardware component gets an \ref hd_t entry. A list of all hardware
+ * items is in \ref hd_data_t::hd.
  */
 typedef struct s_hd_t {
-  struct s_hd_t *next;		/* pointer to next hd_t entry */
-  unsigned idx;			/* unique index, starting at 1 */
-  unsigned broken:1;		/* hardware appears to be broken in some way */
-  unsigned bus, slot, func;
-  unsigned base_class, sub_class, prog_if;
-  unsigned dev, vend, sub_dev, sub_vend, rev;
-  unsigned compat_dev, compat_vend;
+  struct s_hd_t *next;		/**< Link to next hardware item. */
+  /**
+   * Unique index, starting at 1.
+   * Use \ref hd_get_device_by_idx() to look up an hardware entry by index. And don't
+   * free the result!
+   */
+  unsigned idx;
 
-  char *dev_name, *vend_name, *sub_dev_name, *sub_vend_name,
-       *rev_name, *serial;
+  /**
+   * Hardware appears to be broken in some way.
+   * This was used to indicate broken framebuffer support of some graphics cards.
+   * Currently unused.
+   */
+  unsigned broken:1;
 
-  hd_hw_item_t hw_class;	/* not to confuse with base_class */
-  hd_hw_item_t hw_class2;	/* it may belong to more than one class (e.g., mouse vs. usb  */
-  hd_hw_item_t hw_class3;	/* dto  */
-  char *model;			/* combined vendor & device names */
+  /**
+   * Bus type.
+   */ 
+  unsigned bus;
 
-  unsigned attached_to;		/* idx field of 'parent' entry */
-  char *unix_dev_name;		/* name of special device file, if any */
-  char *rom_id;			/* BIOS/PROM device name (if any), chpid on s390 */
+  /**
+   * Slot and bus number.
+   * Bits 0-7: slot number, 8-31 bus number.
+   */
+  unsigned slot;
+
+  /**
+   * (PCI) function.
+   */
+  unsigned func;
+
+  /**
+   * Base class.
+   */
+  unsigned base_class;
+
+  /**
+   * Sub class.
+   */
+  unsigned sub_class;
+
+  /**
+   * (PCI) programming interface.
+   */
+  unsigned prog_if;
+
+  /**
+   * Vendor id.
+   * Id is actually a combination of some tag to differentiate the
+   * various id types and the real id. Use the \ref ID_VALUE macro to
+   * get e.g. the real PCI id value for a PCI device.
+   */
+  unsigned vend;
+
+  /**
+   * Vendor name (corresponds to \ref vend).
+   */
+  char *vend_name;
+
+  /**
+   * Device id.
+   * Id is actually a combination of some tag to differentiate the
+   * various id types and the real id. Use the \ref ID_VALUE macro to
+   * get e.g. the real PCI id value for a PCI device.
+   */
+  unsigned dev;
+
+  /**
+   * Device name (corresponds to \ref dev).
+   * \note If you're looking or something printable, you might want to use \ref model
+   * instead.
+   */
+  char *dev_name;
+
+  /**
+   * Subvendor id.
+   * Id is actually a combination of some tag to differentiate the
+   * various id types and the real id. Use the \ref ID_VALUE macro to
+   * get e.g. the real PCI id value for a PCI device.
+   */
+  unsigned sub_vend;
+
+  /**
+   * Subvendor name (corresponds to \ref sub_vend).
+   */
+  char *sub_vend_name;
+
+  /**
+   * Subdevice id.
+   * Id is actually a combination of some tag to differentiate the
+   * various id types and the real id. Use the \ref ID_VALUE macro to
+   * get e.g. the real PCI id value for a PCI device.
+   */
+  unsigned sub_dev;
+
+  /**
+   * Subdevice name (corresponds to \ref sub_dev).
+   */
+  char *sub_dev_name;
+
+  /**
+   * Revision id.
+   * Used if revision is numerical (e.g. PCI). Otherwise \ref rev_name is used.
+   */
+  unsigned rev;
+
+  /**
+   * Revision string.
+   * Used if revision is some char data (e.g. disk drives). Otherwise \ref rev is used.
+   */
+  char *rev_name;
+
+  /**
+   * Serial id.
+   */
+  char *serial;
+
+  /**
+   * Vendor id of some compatible hardware.
+   * Used mainly for ISA-PnP devices.
+   */
+  unsigned compat_vend;
+
+  /**
+   * Device id of some compatible hardware.
+   * Used mainly for ISA-PnP devices.
+   */
+  unsigned compat_dev;
+
+  /**
+   * Hardware class.
+   * Not to confuse with \ref base_class!
+   */
+  hd_hw_item_t hw_class;
+
+  /**
+   * Alternative hardware class.
+   * A hardware item my belong to more than one class (e.g. mouse vs. usb).
+   * Still not to confuse with \ref base_class!
+   */
+  hd_hw_item_t hw_class2;
+
+  /**
+   * Second alternative hardware class.
+   * A hardware item my belong to more than one class (e.g. mouse vs. usb).
+   * Still not to confuse with \ref base_class!
+   */
+  hd_hw_item_t hw_class3;
+
+  /**
+   * Model name.
+   * This is a combination of vendor and %device names. Some heuristics is used
+   * to make it more presentable. Use this instead of \ref vend_name and \ref dev_name.
+   */
+  char *model;
+
+  /**
+   * Device this hardware is attached to.
+   * Link to some 'parent' %device. Use \ref hd_get_device_by_idx() to get
+   * the corresponding hardware entry.
+   */
+  unsigned attached_to;
+
+  /**
+   * Special device file.
+   * Device file name to acces this hardware. Normally something below /dev.
+   * For network interfaces this is the interface name.
+   */
+  char *unix_dev_name;
+
+  /**
+   * BIOS/PROM id.
+   * Where appropriate, this is a special BIOS/PROM id (e.g. "0x80" for
+   * the first harddisk on Intel-PCs).
+   * CHPID for s390.
+   */
+  char *rom_id;
+
+  /**
+   * Unique id for this hardware.
+   * A unique string identifying this hardware. The string consists
+   * of two parts separated by a dot ("."). The part before the dot
+   * describes the location (where the hardware is attached in the system).
+   * The part after the dot identifies the hardware itself. Apart from this
+   * there are no restrictions on the form of this string.
+   */
   char *unique_id;		/* some id identifying this entry */
 
-  unsigned module, line, count;	/* place where the entry was created */
+  /**
+   * (Internal) Probing module that created this entry.
+   */
+  unsigned module;
+
+  /**
+   * (Internal) Source code line where this entry was created.
+   */
+  unsigned line;
+
+  /**
+   * (Internal) Counter, used in combination with \ref module and \ref line.
+   */
+  unsigned count;
+
+  /**
+   * Device resources.
+   */
   hd_res_t *res;
+
+  /**
+   * Special info associated with this hardware.
+   */
   hd_detail_t *detail;
 
   str_list_t *extra_info;	/* unspecific text info */
@@ -1369,71 +1575,103 @@ typedef struct s_hd_t {
    * These are used internally for memory management.
    * Do not even _think_ of modifying these!
    */
-  unsigned ref_cnt;
-  struct s_hd_t *ref;
-
+  unsigned ref_cnt;		/**< (Internal) memory reference count. */
+  struct s_hd_t *ref;		/**< (Internal) if set, this is only a reference. */
 } hd_t;
 
-typedef struct {
-  hd_t *hd;			/* the hardware list */
 
-  /* a callback to indicate that we are still doing something... */
+/**
+ * Holds all data accumulated during hardware probing.
+ */
+typedef struct {
+  /**
+   * Current hardware list.
+   * The list of all currently probed hardware. This is not identical with
+   * the result of \ref hd_list(). (But a superset of it.)
+   */
+  hd_t *hd;
+
+  /**
+   * A progress indicator.
+   * If this callback function is not NULL, it is called at various points and can
+   * be used to give some user feedback what we are actually doing.
+   * If the debug flag HD_DEB_PROGRESS is set, progress messages are logged.
+   * \param pos Indicates where we are.
+   * \param msg Indicates what we are going to do.
+   */
   void (*progress)(char *pos, char *msg);
   
-  char *log;			/* log messages */
-  unsigned debug;		/* debug flags */
+  /** Log messages.
+   * All messages logged during hardware probing accumulate here.
+   */
+  char *log;
+
+  /** Debug flags.
+   * Although there exist some debug flag defines this scheme is currently
+   * not followed consistently. It is guaranteed however that -1 will give
+   * the most log messages and 0 the least.
+   */
+  unsigned debug;
+
+  /**
+   * Special flags.
+   * Influence hardware probing in some strange ways with these. You normally
+   * will not want to use them.
+   */
+  struct flag_struct {
+    unsigned internal:1;	/**< \ref hd_scan() has been called internally. */
+    unsigned dformat:2;		/**< Alternative output format. */
+    unsigned no_parport:1;	/**< Don't do parport probing: parport modules (used to) crash pmacs. */
+    unsigned iseries:1;		/**< Set if we are on an iSeries machine. */
+    unsigned list_all:1;	/**< Return even devices with status 'not available'. */
+    unsigned fast:1;		/**< Don't check tricky hardware. */
+  } flags;
+
 
   /*
-   * The following entries should *not* be accessed outside of libhd!!!
+   * The following entries should *not* be accessed outside of libhd!
    */
-  unsigned char probe[(pr_all + 7) / 8];	/* bitmask of probing features */
-  unsigned char probe_set[(pr_all + 7) / 8];	/* bitmask of probing features taht will always be set */
-  unsigned char probe_clr[(pr_all + 7) / 8];	/* bitmask of probing features that will always be reset */
-  unsigned last_idx;		/* index of the last hd entry generated */
-  unsigned module;		/* the current probing module we are in */
-  struct {
-    unsigned internal:1;	/* hd_scan was called internally */
-    unsigned dformat:2;		/* alternative output format */
-    unsigned no_parport:1;	/* don't do parport probing: parport modules crash pmacs */
-    unsigned iseries:1;		/* set if we are on an iSeries machine */
-    unsigned list_all:1;	/* return even devices with status 'not available' */
-    unsigned fast:1;		/* don't check tricky hardware */
-  } flags;			/* special flags */
-  enum boot_arch boot;		/* boot method */
-  hd_t *old_hd;			/* old (outdated) entries (if you scan more than once) */
-  pci_t *pci;			/* raw PCI data */
-  isapnp_t *isapnp;		/* raw ISA-PnP data */
-  cdrom_info_t *cdrom;		/* CDROM devs from PROC_CDROM_INFO */
-  str_list_t *net;		/* list of network interfaces */
-  str_list_t *floppy;		/* contents of PROC_NVRAM, used by the floppy module */
-  misc_t *misc;			/* data gathered in the misc module */
-  serial_t *serial;		/* /proc's serial info */
-  scsi_t *scsi;			/* raw SCSI data */
-  ser_mouse_t *ser_mouse;	/* info about serial mice */
-  ser_modem_t *ser_modem;	/* info about serial modems */
-  str_list_t *cpu;		/* /proc/cpuinfo */
-  str_list_t *klog;		/* kernel log */
-  str_list_t *proc_usb;		/* proc usb info */
-  usb_t *usb;			/* usb info */
-  hddb_pci_t *hddb_pci;		/* pci module info */
-  hddb2_data_t *hddb2[2];	/* hardware database */
-  str_list_t *kmods;		/* list of active kernel modules */
-  uint64_t used_irqs;		/* irq usage */
-  uint64_t assigned_irqs;	/* irqs automatically assigned by libhd (for driver info) */
-  memory_range_t bios_rom;	/* BIOS 0xc0000 - 0xfffff */
-  memory_range_t bios_ram;	/* BIOS 0x00400 - 0x004ff */
-  memory_range_t bios_ebda;	/* EBDA */
-  unsigned display;		/* hd_idx of the active (vga) display */
-  unsigned color_code;		/* color, if any */
-  char *cmd_line;		/* kernel command line */
-  str_list_t *xtra_hd;		/* fake hd entries (for testing) */
-  devtree_t *devtree;		/* prom device tree on ppc */
-  unsigned kernel_version;	/* kernel version */
-  int in_vmware;		/* running in vmware */
-  hd_manual_t *manual;		/* hardware config info */
-  str_list_t *disks;		/* disks according to /proc/partitions */
-  str_list_t *partitions;	/* dto, partitions */
-  hd_smbios_t *smbios;		/* smbios data */
+
+  unsigned char probe[(pr_all + 7) / 8];	/**< (Internal) bitmask of probing features. */
+  unsigned char probe_set[(pr_all + 7) / 8];	/**< (Iternal) bitmask of probing features that will always be set. */
+  unsigned char probe_clr[(pr_all + 7) / 8];	/**< (Internal) bitmask of probing features that will always be reset. */
+  unsigned last_idx;		/**< (Internal) index of the last hd entry generated */
+  unsigned module;		/**< (Internal) the current probing module we are in */
+  enum boot_arch boot;		/**< (Internal) boot method */
+  hd_t *old_hd;			/**< (Internal) old (outdated) entries (if you scan more than once) */
+  pci_t *pci;			/**< (Internal) raw PCI data */
+  isapnp_t *isapnp;		/**< (Internal) raw ISA-PnP data */
+  cdrom_info_t *cdrom;		/**< (Internal) CDROM devs from PROC_CDROM_INFO */
+  str_list_t *net;		/**< (Internal) list of network interfaces */
+  str_list_t *floppy;		/**< (Internal) contents of PROC_NVRAM, used by the floppy module */
+  misc_t *misc;			/**< (Internal) data gathered in the misc module */
+  serial_t *serial;		/**< (Internal) /proc's serial info */
+  scsi_t *scsi;			/**< (Internal) raw SCSI data */
+  ser_mouse_t *ser_mouse;	/**< (Internal) info about serial mice */
+  ser_modem_t *ser_modem;	/**< (Internal) info about serial modems */
+  str_list_t *cpu;		/**< (Internal) /proc/cpuinfo */
+  str_list_t *klog;		/**< (Internal) kernel log */
+  str_list_t *proc_usb;		/**< (Internal) /proc/bus/usb info */
+  usb_t *usb;			/**< (Internal) usb info */
+  hddb_pci_t *hddb_pci;		/**< (Internal) pci module info */
+  hddb2_data_t *hddb2[2];	/**< (Internal) hardware database */
+  str_list_t *kmods;		/**< (Internal) list of active kernel modules */
+  uint64_t used_irqs;		/**< (Internal) irq usage */
+  uint64_t assigned_irqs;	/**< (Internal) irqs automatically assigned by libhd (for driver info) */
+  memory_range_t bios_rom;	/**< (Internal) BIOS 0xc0000 - 0xfffff */
+  memory_range_t bios_ram;	/**< (Internal) BIOS 0x00400 - 0x004ff */
+  memory_range_t bios_ebda;	/**< (Internal) EBDA */
+  unsigned display;		/**< (Internal) hd_idx of the active (vga) display */
+  unsigned color_code;		/**< (Internal) color, if any */
+  char *cmd_line;		/**< (Internal) kernel command line */
+  str_list_t *xtra_hd;		/**< (Internal) fake hd entries (for testing) */
+  devtree_t *devtree;		/**< (Internal) prom device tree on ppc */
+  unsigned kernel_version;	/**< (Internal) kernel version */
+  int in_vmware;		/**< (Internal) running in vmware */
+  hd_manual_t *manual;		/**< (Internal) hardware config info */
+  str_list_t *disks;		/**< (Internal) disks according to /proc/partitions */
+  str_list_t *partitions;	/**< (Internal) dto, partitions */
+  hd_smbios_t *smbios;		/**< (Internal) smbios data */
 } hd_data_t;
 
 
@@ -1449,7 +1687,10 @@ typedef struct {
 /* the actual hardware scan */
 void hd_scan(hd_data_t *hd_data);
 
+//! Free all data.
 hd_data_t *hd_free_hd_data(hd_data_t *hd_data);
+
+//! Free hardware items returned by e.g. \ref hd_list().
 hd_t *hd_free_hd_list(hd_t *hd);
 
 void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature);

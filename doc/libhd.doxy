@@ -171,7 +171,7 @@ SHOW_INCLUDE_FILES     = YES
 # comments  will behave just like the Qt-style comments (thus requiring an 
 # explict @brief command for a brief description.
 
-JAVADOC_AUTOBRIEF      = NO
+JAVADOC_AUTOBRIEF      = YES
 
 # If the INHERIT_DOCS tag is set to YES (the default) then an undocumented 
 # member inherits the documentation from any documented member that it 
