@@ -847,6 +847,10 @@
  baseclass.id		0x10c
 +baseclass.name		Scanner
 
+ baseclass.id		0x10c
+&subclass.id		0x01
++subclass.name		HP OfficeJet Scanner
+
  baseclass.id		0x10d
 +baseclass.name		Joystick
 

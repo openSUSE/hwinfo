@@ -600,6 +600,7 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
         )
       ) {
         hd->base_class.id = bc_scanner;
+        hd->sub_class.id = 1;
       }
       break;
   }

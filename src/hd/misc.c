@@ -14,10 +14,6 @@
 #include "misc.h"
 #include "klog.h"
 
-#if 0
-static void test_floppy_open(void *arg);
-static void test_floppy_read(void *arg);
-#endif
 static void read_ioports(misc_t *m);
 static void read_dmas(misc_t *m);
 static void read_irqs(misc_t *m);
@@ -512,20 +508,6 @@ void hd_scan_misc2(hd_data_t *hd_data)
 
   if((hd_data->debug & HD_DEB_MISC)) dump_misc_data(hd_data);
 }
-
-#if 0
-void test_floppy_open(void *arg)
-{
-  open((char *) arg, O_RDWR | O_NONBLOCK);
-}
-
-void test_floppy_read(void *arg)
-{
-  unsigned char buf[1];
-
-  read(*(int *) arg, buf, sizeof buf);
-}
-#endif
 
 
 /*
