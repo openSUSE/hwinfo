@@ -1167,6 +1167,11 @@
 +driver.xfree		3|SVGA
 
  vendor.id		pci 0x1023
+&device.id		pci 0x2100
++device.name		CyberBlade/xp4
++driver.xfree		4|trident
+
+ vendor.id		pci 0x1023
 &device.id		pci 0x8400
 +device.name		CyberBlade/i7
 +driver.xfree		4|trident

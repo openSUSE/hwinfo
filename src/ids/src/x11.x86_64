@@ -751,6 +751,11 @@
 +device.name		264VT4 [Mach64 VT4]
 +driver.xfree		4|ati
 
+ vendor.id		pci 0x1002
+&device.id		pci 0x5969
++device.name		RV280 5969
++driver.xfree		4|radeon|3d||dri,glx||16
+
  vendor.id		pci 0x100b
 +vendor.name		National Semiconductor Corporation
 

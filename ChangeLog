@@ -1,3 +1,7 @@
+11/9/2003:	v7.22
+	- updated X11 data
+	- don't read from cd drives that don't exist (#23248)
+
 10/9/2003:	v7.21
 	- fixed monitor data interpretation bug (#29718)
 
