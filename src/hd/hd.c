@@ -561,9 +561,11 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
         hd_set_probe_feature(hd_data, pr_misc_par);
         hd_set_probe_feature(hd_data, pr_parallel_zip);
       }
+      hd_set_probe_feature(hd_data, pr_dasd);		/* dasd on s390 */
 #ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
       hd_set_probe_feature(hd_data, pr_misc);
+      hd_set_probe_feature(hd_data, pr_ide);		/* dasd on iseries */
 #endif
       break;
 

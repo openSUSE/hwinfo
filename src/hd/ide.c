@@ -258,6 +258,14 @@ void scan_ide2(hd_data_t *hd_data)
     if(!strncmp(sl->str, "DISK", sizeof "DISK" - 1)) max_disks++;
   }
 
+  if(max_disks) {
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->base_class = bc_storage;
+    hd->sub_class = sc_sto_other;
+    hd->vend_name = new_str("IBM");
+    hd->dev_name = new_str("VIO DASD");
+  }
+
   for(i = 0; i < max_disks; i++) {
     str_printf(&s, 0, "/dev/hd%c", i + 'a');
     fd = open(s, O_RDONLY | O_NONBLOCK);

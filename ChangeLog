@@ -1,6 +1,9 @@
+22/7/2002:	v5.02
 	- run hwbootscan rc script after "kbd" script
 	- don't _change_ config status in hwbootscan
 	- save %gs register around vm86() syscall (%gs may be used in glibc)
+	- isdn changes
+	- better handling of dasd devs
 
 13/6/2002:	v5.01
 	- made ia64 cpu model entry more useful

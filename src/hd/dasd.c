@@ -79,6 +79,14 @@ void hd_scan_dasd(hd_data_t *hd_data)
     }
   }
   free_str_list(sl0);
+
+  if(i > 1) {
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->base_class = bc_storage;
+    hd->sub_class = sc_sto_other;
+    hd->vend_name = new_str("IBM");
+    hd->dev_name = new_str("VIO DASD");
+  }
 }
 
 #endif	/* defined(__s390__) || defined(__s390x__) */
