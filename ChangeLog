@@ -1,3 +1,8 @@
+26/2/2000:	v0.75
+	- pcmcia detection now looks at class ids
+	- fixed pcmcia detection bug
+	- added usb detection function
+
 26/2/2000:	v0.74
 	- added alsa isapnp sound cards
 

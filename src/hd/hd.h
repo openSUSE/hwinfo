@@ -105,6 +105,13 @@ typedef enum sc_display {
   sc_dis_vga, sc_dis_xga, sc_dis_other = 0x80
 } hd_sc_display_t;
 
+/* subclass values of bc_bridge */
+typedef enum sc_bridge { 
+  sc_bridge_host, sc_bridge_isa, sc_bridge_eisa, sc_bridge_mc,
+  sc_bridge_pci, sc_bridge_pcmcia, sc_bridge_nubus, sc_bridge_cardbus,
+  sc_bridge_other = 0x80
+} hd_sc_bridge_t;
+
 /* subclass values of bc_comm */
 typedef enum sc_comm { 
   sc_com_ser, sc_com_par, sc_com_other = 0x80
@@ -156,6 +163,11 @@ typedef enum sc_multimedia {
 typedef enum sc_hub {
   sc_hub_other, sc_hub_usb
 } hd_sc_hub_t;
+
+/* prog_if's of sc_ser_usb */
+typedef enum pif_usb_e {
+  pif_usb_uhci = 0, pif_usb_ohci = 0x10, pif_usb_other = 0x80, pif_usb_device = 0xfe
+} hd_pif_usb_t;
 
 /* bus type values similar to PCI bridge subclasses */
 typedef enum bus_types {
@@ -797,6 +809,7 @@ hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus);
 int hd_has_special_eide(hd_data_t *hd_data);
 int hd_has_pcmcia(hd_data_t *hd_data);
 int hd_apm_enabled(hd_data_t *hd_data);
+int hd_usb_support(hd_data_t *hd_data);
 int hd_smp_support(hd_data_t *hd_data);
 unsigned hd_boot_disk(hd_data_t *hd_data, int *matches);
 enum cpu_arch hd_cpu_arch(hd_data_t *hd_data);

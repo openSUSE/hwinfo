@@ -588,6 +588,8 @@ void hd_scan(hd_data_t *hd_data)
   }
 
   if(hd_data->debug) {
+    i = hd_usb_support(hd_data);
+    ADD2LOG("  usb support: %s\n", i == 2 ? "ohci" : i == 1 ? "uhci" : "none");
     ADD2LOG("  pcmcia support: %d\n", hd_has_pcmcia(hd_data));
     ADD2LOG("  special eide chipset: %d\n", hd_has_special_eide(hd_data));
     ADD2LOG("  apm status: %sabled\n", hd_apm_enabled(hd_data) ? "en" : "dis");
@@ -1452,7 +1454,7 @@ int hd_has_special_eide(hd_data_t *hd_data)
 }
 
 /*
- * cf. pcmcia-cs-3.1.1:cardmgr/probe.c
+ * cf. pcmcia-cs-*:cardmgr/probe.c
  */
 int hd_has_pcmcia(hd_data_t *hd_data)
 {
@@ -1484,17 +1486,28 @@ int hd_has_pcmcia(hd_data_t *hd_data)
     { 0x1217, 0x673a },
     { 0x1217, 0x6832 },
     { 0x1217, 0x6836 },
+    { 0x1217, 0x6872 },
     { 0x1179, 0x0603 },
     { 0x1179, 0x060a },
     { 0x1179, 0x060f },
+    { 0x1179, 0x0617 },
     { 0x119b, 0x1221 },
     { 0x8086, 0x1221 }
   };
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+       hd->base_class == bc_bridge &&
+      (hd->sub_class == sc_bridge_pcmcia || hd->sub_class == sc_bridge_cardbus)
+    ) return 1;
+
+    /* just in case... */
     if(hd->bus == bus_pci) {
       for(i = 0; i < sizeof ids / sizeof *ids; i++) {
-        if(hd->vend == ids[i][0] && hd->dev == ids[i][1]) return 1;
+        if(
+          ID_VALUE(hd->vend) == ids[i][0] &&
+          ID_VALUE(hd->dev) == ids[i][1]
+        ) return 1;
       }
     }
   }
@@ -1510,6 +1523,20 @@ int hd_apm_enabled(hd_data_t *hd_data)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class == bc_internal && hd->sub_class == sc_int_bios) {
       return hd->detail->bios.data->apm_enabled;
+    }
+  }
+
+  return 0;
+}
+
+
+int hd_usb_support(hd_data_t *hd_data)
+{
+  hd_t *hd;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_serial && hd->sub_class == sc_ser_usb) {
+      return hd->prog_if == pif_usb_ohci ? 2 : 1;	/* 2: ohci, 1: uhci */
     }
   }
 
