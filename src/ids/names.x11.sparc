@@ -1,4 +1,4 @@
-#hwinfo names data from 2001-01-11 12:03:21
+#hwinfo names data from 2001-01-12 17:11:13
 #
 
 
@@ -378,6 +378,9 @@
 	5348	Number 9 Imagine 128 T2R4
 
 1023
+	9540	Trident Cyber 9540
+
+1023
 	9880	Trident Blade3D
 
 1023
@@ -745,6 +748,9 @@
 	0150	Nvidia GeForce-2
 
 10de
+	0112	Nvidia GeForce2 Go
+
+10de
 	0103	Nvidia Quadro
 
 10de
@@ -782,6 +788,18 @@
 
 10DE
 	0008	Nvidia NV1
+
+10de
+	0203	Nvidia CARD3
+
+10de
+	0202	Nvidia CARD3
+
+10de
+	0201	Nvidia CARD2
+
+10de
+	0200	Nvidia CARD1
 
 10de
 	0020

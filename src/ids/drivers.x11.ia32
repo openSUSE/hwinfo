@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2001-01-10 18:06:08
+#hwinfo data from 2001-01-12 17:08:35
 #
 
 
@@ -420,12 +420,17 @@
 
 # ATI:Rage 128 RL
 1002 524C
-	x	4|r128|||||c|||
+	x	4|r128|||||f|||
 
 
 # ATI:Rage 128 RL
 1002 524C
-	x	3|SVGA||||||||
+	x	4|r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
+
+# ATI:Rage 128 RL
+1002 524C
+	x	3|SVGA|||||1d|||
 
 
 # ATI:Rage 128 VR PCI
@@ -440,22 +445,27 @@
 
 # ATI:Rage 128 GL AGP 2x
 1002 5246
-	x	4|r128||||||||
+	x	4|r128|||||f|||
 
 
 # ATI:Rage 128 GL AGP 2x
 1002 5246
-	x	3|SVGA||||||||
+	x	4|r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
+
+# ATI:Rage 128 GL AGP 2x
+1002 5246
+	x	3|SVGA|||||1d|||
 
 
 # ATI:Rage 128 GL PCI
 1002 5245
-	x	4|r128||||||||
+	x	4|r128|||||f|||
 
 
 # ATI:Rage 128 GL PCI
 1002 5245
-	x	3|SVGA||||||||
+	x	3|SVGA|||||1d|||
 
 
 # ATI:Rage 128 Pro AGP 4x (TMDS)
@@ -863,6 +873,11 @@
 	x	3|SVGA||||||||
 
 
+# Trident:Cyber 9540
+1023 9540
+	x	4|trident||||||||
+
+
 # Trident:Blade3D
 1023 9880
 	x	3|SVGA||||||||
@@ -926,6 +941,11 @@
 # Trident:TGUI 96xx
 1023 9660
 	x	3|SVGA||||||||
+
+
+# Trident:Cyber 9525 DVD
+1023 9525
+	x	4|trident||||||||
 
 
 # Trident:Cyber 9525 DVD
@@ -1025,6 +1045,11 @@
 
 # Trident:CyberBlade/i7
 1023 8400
+	x	4|trident||||||||
+
+
+# Trident:CyberBlade/i7
+1023 8400
 	x	3|SVGA||||||||
 
 
@@ -1116,6 +1141,7 @@
 # Intel:I810_E
 8086 7125
 	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+		VideoRam 16384
 
 
 # Intel:I810_DC100
@@ -1126,6 +1152,7 @@
 # Intel:I810_DC100
 8086 7123
 	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+		VideoRam 16384
 
 
 # Intel:i810
@@ -1136,6 +1163,7 @@
 # Intel:i810
 8086 7121
 	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+		VideoRam 16384
 
 
 # Intel:i740 (AGP)
@@ -1156,6 +1184,7 @@
 # Intel:I815
 8086 1132
 	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+		VideoRam 16384
 
 
 # S3:ViRGE
@@ -1583,6 +1612,16 @@
 	x	4|nvidia|3d|nv_glx|glx||4||switch2nv_glx|
 
 
+# Nvidia:GeForce2 Go
+10de 0112
+	x	4|nvidia||||||||
+
+
+# Nvidia:GeForce2 Go
+10de 0112
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx|
+
+
 # Nvidia:Quadro
 10de 0103
 	x	4|nv|||||f|||
@@ -1751,6 +1790,46 @@
 # Nvidia:NV1
 10DE 0008
 	x	3|SVGA||||||||
+
+
+# Nvidia:CARD3
+10de 0203
+	x	4|nvidia||||||||
+
+
+# Nvidia:CARD3
+10de 0203
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx|
+
+
+# Nvidia:CARD3
+10de 0202
+	x	4|nvidia||||||||
+
+
+# Nvidia:CARD3
+10de 0202
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx|
+
+
+# Nvidia:CARD2
+10de 0201
+	x	4|nvidia||||||||
+
+
+# Nvidia:CARD2
+10de 0201
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx|
+
+
+# Nvidia:CARD1
+10de 0200
+	x	4|nvidia||||||||
+
+
+# Nvidia:CARD1
+10de 0200
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx|
 
 
 # Nvidia:Riva TNT (PCI)
@@ -2192,6 +2271,11 @@
 # Cirrus Logic:GD5462
 1013 00D0
 	x	3|SVGA||||||||
+
+
+# Cirrus Logic:GD 5480
+1013 00bc
+	x	4|cirrus||||||||
 
 
 # Cirrus Logic:GD 5480

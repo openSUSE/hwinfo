@@ -1,3 +1,12 @@
+14/1/2001:	v1.0.74
+	- updated pci name list
+	- updated scsi/network driver info
+
+12/1/2001:	v1.0.73
+	- new x11 data
+	- sym*.o instead of ncr*.o for 53C875
+	- quick fix for Wacom tablets
+
 12/1/2001:	v1.0.72
 	- fix minor bug in printer detection
 	- fix bios disk number detection

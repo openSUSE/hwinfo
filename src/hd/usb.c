@@ -366,10 +366,14 @@ void set_class_entries(hd_t *hd, usb_t *usb)
         break;
       }
       if(sub == 1 && prot == 2) {
-        hd->base_class = bc_mouse;
-        hd->sub_class = sc_mou_usb;
-        hd->compat_vend = MAKE_ID(TAG_SPECIAL, 0x0200);
-        hd->compat_dev = MAKE_ID(TAG_SPECIAL, 0x001);
+        if(!(
+          usb->vendor == 0x056a && usb->device == 0x0022	/* Wacom Tablet */
+        )) {
+          hd->base_class = bc_mouse;
+          hd->sub_class = sc_mou_usb;
+          hd->compat_vend = MAKE_ID(TAG_SPECIAL, 0x0200);
+          hd->compat_dev = MAKE_ID(TAG_SPECIAL, 0x001);
+        }
         break;
       }
       break;

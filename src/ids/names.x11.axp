@@ -1,4 +1,4 @@
-#hwinfo names data from 2001-01-08 17:05:29
+#hwinfo names data from 2001-01-12 17:12:04
 #
 
 
@@ -98,6 +98,12 @@
 104c
 	3d07
 		1048 0a31	Elsa Winner 2000 Office
+
+1002
+	5147	ATI Radeon QG
+
+1002
+	5146	ATI Radeon QF
 
 1002
 	5656	ATI Mach64 VT4 PCI
@@ -331,6 +337,12 @@
 	0084	ATI RageIIC
 
 1002
+	5144	ATI Radeon QD
+
+1002
+	5145	ATI Radeon QE
+
+1002
 	4C4D
 		103c 000a	ATI Rage P/M Mobility AGP 2x (HP Omnibook)
 
@@ -364,6 +376,9 @@
 
 105D
 	5348	Number 9 Imagine 128 T2R4
+
+1023
+	9540	Trident Cyber 9540
 
 1023
 	9880	Trident Blade3D
@@ -748,6 +763,9 @@
 	0150	Nvidia GeForce-2
 
 10de
+	0112	Nvidia GeForce2 Go
+
+10de
 	0103	Nvidia Quadro
 
 10de
@@ -785,6 +803,18 @@
 
 10DE
 	0008	Nvidia NV1
+
+10de
+	0203	Nvidia CARD3
+
+10de
+	0202	Nvidia CARD3
+
+10de
+	0201	Nvidia CARD2
+
+10de
+	0200	Nvidia CARD1
 
 10de
 	0020
@@ -1257,7 +1287,7 @@ edd8
 	001c	Sun Sun - FFB2+ Vertical Creator (ffb)
 
 4001
-	001d	Sun Sun - FFB2+ Vertical Creator 3D (ff)
+	001d	Sun Sun - FFB2+ Vertical Creator 3D (ffb)
 
 4001
 	001e	Sun Sun - FFB2 Horizontal Creator (ffb)
