@@ -801,8 +801,12 @@
 +subclass.name		HSI
 
  baseclass.id		0x107
-&subclass.id		0x06
+&subclass.id		0x07
 +subclass.name		QETH
+
+ baseclass.id		0x107
+&subclass.id		0x08
++subclass.name		ESCON
 
  baseclass.id		0x107
 &subclass.id		0x03

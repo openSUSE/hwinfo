@@ -137,27 +137,27 @@ void hd_scan_net(hd_data_t *hd_data)
             break;
           case sc_nif_ctc:
             hd->sub_class.id = 0x04;
-            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0070);
+            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0004);
             str_printf(&hd->device.name, 0, "CTC %d", hd->slot);
             break;
           case sc_nif_iucv:
             hd->sub_class.id = 0x05;
-            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0070);
+            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0005);
             str_printf(&hd->device.name, 0, "IUCV %d", hd->slot);
             break;
           case sc_nif_hsi:
             hd->sub_class.id = 0x06;
-            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0070);
+            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0006);
             str_printf(&hd->device.name, 0, "HSI %d", hd->slot);
             break;
           case sc_nif_qeth:
             hd->sub_class.id = 0x07;
-            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0070);
+            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0007);
             str_printf(&hd->device.name, 0, "QETH %d", hd->slot);
             break;
           case sc_nif_escon:
-            hd->sub_class.id = 0x70;
-            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0070);
+            hd->sub_class.id = 0x08;
+            hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0008);
             str_printf(&hd->device.name, 0, "ESCON %d", hd->slot);
             break;
           default:

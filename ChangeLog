@@ -1,3 +1,6 @@
+4/9/2002:	v5.26
+	- switched escon adapter from 0x70 to 0x8
+	- corrected number for CTC, IUCV, HSI and QETH
 4/9/2002:	v5.25
 	- fix usb isdn adapter detection (#18829)
 

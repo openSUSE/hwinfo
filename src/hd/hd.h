@@ -210,7 +210,7 @@ typedef enum sc_std {
 typedef enum sc_net_if {
   sc_nif_loopback, sc_nif_ethernet, sc_nif_tokenring, sc_nif_fddi,
   sc_nif_ctc, sc_nif_iucv, sc_nif_hsi, sc_nif_qeth,
-  sc_nif_escon = 0x70, sc_nif_other = 0x80, sc_nif_sit
+  sc_nif_escon, sc_nif_other = 0x80, sc_nif_sit
 } hd_sc_net_if_t;
 
 /* subclass values of bc_multimedia */

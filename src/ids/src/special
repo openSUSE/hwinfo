@@ -642,7 +642,7 @@
 +device.name		QETH
 
  vendor.id		special 0x6001
-&device.id		special 0x0070
+&device.id		special 0x0008
 +device.name		ESCON
 
  vendor.id		special 0x6001
