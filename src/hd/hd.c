@@ -500,6 +500,7 @@ void hd_scan(hd_data_t *hd_data)
     ADD2LOG("  pcmcia support: %d\n", hd_has_pcmcia(hd_data));
     ADD2LOG("  special eide chipset: %d\n", hd_has_special_eide(hd_data));
     ADD2LOG("  apm status: %sabled\n", hd_apm_enabled(hd_data) ? "en" : "dis");
+    ADD2LOG("  smp board: %s\n", hd_smp_support(hd_data) ? "yes" : "no");
     switch(hd_cpu_arch(hd_data)) {
       case arch_intel:
         s = "intel";
@@ -1279,6 +1280,13 @@ int hd_apm_enabled(hd_data_t *hd_data)
 
   return 0;
 }
+
+
+int hd_smp_support(hd_data_t *hd_data)
+{
+  return detectSMP() > 0 ? 1 : 0;
+}
+
 
 enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 {

@@ -8,7 +8,7 @@
 
 Author: Steffen Winterfeldt <a href="wfeldt@suse.de">wfeldt@suse.de</a><p>
 
-Current version (27 Jan 2000): 0.54<p>
+Current version (2 Feb 2000): 0.56<p>
 
 <h2>Simple Expample</h2>
 
@@ -130,6 +130,11 @@ Return 1 if PCMCIA is supported, 0 if not.<p>
 <code><strong>int hd_apm_enabled(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
 
 Return 1 if APM support is enabled, 0 if it is disabled.<p>
+
+<code><strong>int hd_smp_support(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
+
+Return 1 if SMP is supported, 0 if not. (Note: has nothing to do with the number of
+processors <em>actually</em> installed.)<p>
 
 <code><strong><a href="#enum@cpu_arch">enum cpu_arch</a> hd_cpu_arch(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
 

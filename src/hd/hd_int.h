@@ -93,6 +93,9 @@ int timeout(void(*func)(void *), void *arg, int timeout);
 
 str_list_t *read_kmods(hd_data_t *hd_data);
 
+/* smp/smp.c */
+int detectSMP(void);
+
 
 #ifdef __cplusplus
 }

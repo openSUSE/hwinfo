@@ -1,5 +1,5 @@
 TOPDIR		= ..
-SUBDIRS		= hd ids pnpdump
+SUBDIRS		= hd ids pnpdump smp
 TARGETS		= touch $(LIBHD)
 CLEANFILES	= $(LIBHD) $(LIBHD_D) $(LIBHD_T)
 
