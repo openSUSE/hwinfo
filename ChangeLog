@@ -1,3 +1,5 @@
+	- removed special ia64 hardware data: new kernel, new game
+
 9/2/2004:	v8.05
 	- nvnet -> forcedeth (#25531)
 	- sata module data updated
