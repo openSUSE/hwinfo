@@ -1775,7 +1775,7 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
   return arch_alpha;
 #else
 #ifdef __PPC__
-  return arch_ppc
+  return arch_ppc;
 #else
 #ifdef __sparc__
   return arch_sparc;
