@@ -319,7 +319,7 @@ void get_pci_data(hd_data_t *hd_data)
 
             for(j = 0; j < 6; j++) {
               t = p->data + PCI_BASE_ADDRESS_0 + 4 * j;
-              u = t[0] + (t[1] << 8) + (t[2] << 16) + (t[3] << 24);
+              u = t[0] + (t[1] << 8) + (t[2] << 16) + ((unsigned long) t[3] << 24);
               /* just checking; actually it's paranoid... */
               if(u == p->base_addr[j]) {
                 if(u && o_fl == O_RDWR)
@@ -335,7 +335,7 @@ void get_pci_data(hd_data_t *hd_data)
                 (u & PCI_BASE_ADDRESS_MEM_TYPE_MASK) == PCI_BASE_ADDRESS_MEM_TYPE_64 &&
                 j < 5
               ) {
-                u64 = t[4] + (t[5] << 8) + (t[6] << 16) + (t[7] << 24);
+                u64 = t[4] + (t[5] << 8) + (t[6] << 16) + ((uint64_t) t[7] << 24);
                 p->base_addr[j] += u64 << 32;
                 // get the range!
                 // ##### the get_pci_addr_range() stuff is awkward
