@@ -1,3 +1,4 @@
+	- fix Fritz!Box Fon entry in database
 17/3/2005:	v10.11
 	- another notebook (#67412)
 	- do wlan detection for --netcard (#73077)
