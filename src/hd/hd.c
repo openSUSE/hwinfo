@@ -38,8 +38,6 @@
 #include "misc.h"
 #include "mouse.h"
 #include "floppy.h"
-#include "scsi.h"
-#include "cdrom.h"
 #include "bios.h"
 #include "serial.h"
 #include "net.h"
@@ -59,13 +57,9 @@
 #include "braille.h"
 #include "sys.h"
 #include "dasd.h"
-#include "i2o.h"
 #include "manual.h"
 #include "fb.h"
 #include "veth.h"
-#include "partition.h"
-#include "disk.h"
-#include "ataraid.h"
 #include "pppoe.h"
 #include "pcmcia.h"
 #include "s390.h"
@@ -172,7 +166,6 @@ static struct s_mod_names {
   { mod_pci, "pci"},
   { mod_isapnp, "isapnp"},
   { mod_pnpdump, "pnpdump"},
-  { mod_cdrom, "cdrom"},
   { mod_net, "net"},
   { mod_floppy, "floppy"},
   { mod_misc, "misc" },
@@ -198,13 +191,9 @@ static struct s_mod_names {
   { mod_xtra, "hd" },
   { mod_sys, "sys" },
   { mod_dasd, "dasd" },
-  { mod_i2o, "i2o" },
   { mod_manual, "manual" },
   { mod_fb, "fb" },
   { mod_veth, "veth" },
-  { mod_partition, "partition" },
-  { mod_disk, "disk" },
-  { mod_ataraid, "ataraid" },
   { mod_pppoe, "pppoe" },
   { mod_pcmcia, "pcmcia" },
   { mod_s390, "s390" },
@@ -235,8 +224,6 @@ static struct s_pr_flags {
   { pr_isapnp_new,    pr_isapnp,          0, "isapnp.new"    },
   { pr_isapnp_mod,    0,              4    , "isapnp.mod"    },
   { pr_isapnp,        0,                  0, "pnpdump"       },	/* alias for isapnp */
-  { pr_cdrom,         0,            8|4|2|1, "cdrom"         },
-  { pr_cdrom_info,    pr_cdrom,     8|4|2|1, "cdrom.info"    },
   { pr_net,           0,            8|4|2|1, "net"           },
   { pr_floppy,        0,            8|4|2|1, "floppy"        },
   { pr_misc,          pr_bios,      8|4|2|1, "misc"          },	// ugly hack!
@@ -257,8 +244,6 @@ static struct s_pr_flags {
   { pr_mouse,         0,              4|2|1, "mouse"         },
 #endif
   { pr_scsi,          0,            8|4|2|1, "scsi"          },
-  { pr_scsi_geo,      pr_scsi,        4|2  , "scsi.geo"      },
-  { pr_scsi_cache,    pr_scsi,        4|2|1, "scsi.cache"    },
   { pr_usb,           0,            8|4|2|1, "usb"           },
   { pr_usb_mods,      0,              4    , "usb.mods"      },
   { pr_adb,           0,            8|4|2|1, "adb"           },
@@ -293,14 +278,9 @@ static struct s_pr_flags {
   { pr_ignx11,        0,                  0, "ignx11"        },
   { pr_sys,           0,            8|4|2|1, "sys"           },
   { pr_dasd,          0,            8|4|2|1, "dasd"          },
-  { pr_i2o,           0,            8|4|2|1, "i2o"           },
   { pr_manual,        0,            8|4|2|1, "manual"        },
   { pr_fb,            0,            8|4|2|1, "fb"            },
   { pr_veth,          0,            8|4|2|1, "veth"          },
-  { pr_partition,     0,            8|4|2|1, "partition"     },
-  { pr_partition_add, pr_partition, 8|4|2|1, "partition.add" },
-  { pr_disk,          0,            8|4|2|1, "disk"          },
-  { pr_ataraid,       0,            8|4|2|1, "ataraid"       },
   { pr_pppoe,         0,            8|4|2|1, "pppoe"         },
   /* dummy, used to turn off hwscan */
   { pr_scan,          0,                  0, "scan"          },
@@ -453,7 +433,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
   switch(item) {
     case hw_cdrom:
       hd_set_probe_feature(hd_data, pr_pci);
-      hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_block);
       if(!hd_data->flags.fast) {
         hd_set_probe_feature(hd_data, pr_block_cdrom);
@@ -481,10 +460,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_dac960);
       hd_set_probe_feature(hd_data, pr_smart);
       hd_set_probe_feature(hd_data, pr_dasd);
-      hd_set_probe_feature(hd_data, pr_partition);
-      hd_set_probe_feature(hd_data, pr_disk);
       hd_set_probe_feature(hd_data, pr_block);
-//      hd_set_probe_feature(hd_data, pr_ataraid);
       break;
 
     case hw_network:
@@ -640,9 +616,9 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_scanner:
-      hd_set_probe_feature(hd_data, pr_usb); 
-      hd_set_probe_feature(hd_data, pr_scsi); 
-      hd_set_probe_feature(hd_data, pr_partition);
+      hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_usb);
+      hd_set_probe_feature(hd_data, pr_scsi);
       break;
 
     case hw_braille:
@@ -725,6 +701,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_scsi:
       hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_scsi);
       hd_set_probe_feature(hd_data, pr_block);
       break;
 
@@ -755,8 +732,8 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
     
     case hw_redasd:
+      hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_dasd);
-      hd_set_probe_feature(hd_data, pr_partition);
       hd_set_probe_feature(hd_data, pr_block);
       break;
 
@@ -1743,17 +1720,12 @@ void hd_scan(hd_data_t *hd_data)
 
 #if 0
 // ###### FIXME: remove
-    /* do it rather early */
-    hd_scan_partition(hd_data);
-
-    hd_scan_ide(hd_data);
-    hd_scan_scsi(hd_data);
     hd_scan_dac960(hd_data);
     hd_scan_smart(hd_data);
-    hd_scan_i2o(hd_data);
 #endif
 
   hd_scan_sysfs_block(hd_data);
+  hd_scan_sysfs_scsi(hd_data);
 
 #if defined(__s390__) || defined(__s390x__)
   hd_scan_dasd(hd_data);
@@ -1785,16 +1757,6 @@ void hd_scan(hd_data_t *hd_data)
   }
 #endif
   hd_scan_net(hd_data);
-
-#if 0
-  if(hd_data->flags.nosysfs) {
-    hd_scan_disk(hd_data);
-    hd_scan_ataraid(hd_data);
-
-    /* after ataraid */
-    hd_scan_partition2(hd_data);
-  }
-#endif
 
   hd_scan_pppoe(hd_data);
 
@@ -2593,127 +2555,8 @@ int hd_module_is_active(hd_data_t *hd_data, char *mod)
 }
 
 
-/*
- * cf. /usr/src/linux/drivers/block/ide-pci.c
- */
-#ifndef PCI_DEVICE_ID_ARTOP_ATP860
-#define PCI_DEVICE_ID_ARTOP_ATP860	0x0006
-#endif
-
-#ifndef PCI_DEVICE_ID_ARTOP_ATP860R
-#define PCI_DEVICE_ID_ARTOP_ATP860R	0x0007
-#endif
-
-#ifndef PCI_DEVICE_ID_CMD_649
-#define PCI_DEVICE_ID_CMD_649		0x0649
-#endif
-
-#ifndef PCI_DEVICE_ID_PROMISE_20267
-#define PCI_DEVICE_ID_PROMISE_20267	0x4d30
-#endif
-
-#ifndef PCI_DEVICE_ID_INTEL_82443MX_1
-#define PCI_DEVICE_ID_INTEL_82443MX_1	0x7199
-#endif
-
-#ifndef PCI_DEVICE_ID_INTEL_82372FB_1
-#define PCI_DEVICE_ID_INTEL_82372FB_1	0x7601
-#endif
-
-#ifndef PCI_DEVICE_ID_INTEL_82820FW_5
-#define PCI_DEVICE_ID_INTEL_82820FW_5	0x244b
-#endif
-
-#ifndef PCI_DEVICE_ID_AMD_VIPER_7409
-#define PCI_DEVICE_ID_AMD_VIPER_7409	0x7409
-#endif
-
-#ifndef PCI_DEVICE_ID_CMD_648
-#define PCI_DEVICE_ID_CMD_648		0x0648
-#endif
-
-#ifndef PCI_DEVICE_ID_TTI_HPT366
-#define PCI_DEVICE_ID_TTI_HPT366	0x0004
-#endif
-
-#ifndef PCI_DEVICE_ID_PROMISE_20262
-#define PCI_DEVICE_ID_PROMISE_20262	0x4d38
-#endif
-
 int hd_has_special_eide(hd_data_t *hd_data)
 {
-  int i;
-  hd_t *hd;
-  static unsigned ids[][2] = {
-/* CONFIG_BLK_DEV_AEC62XX */
-    { PCI_VENDOR_ID_ARTOP, PCI_DEVICE_ID_ARTOP_ATP850UF },
-    { PCI_VENDOR_ID_ARTOP, PCI_DEVICE_ID_ARTOP_ATP860 },
-    { PCI_VENDOR_ID_ARTOP, PCI_DEVICE_ID_ARTOP_ATP860R },
-/* CONFIG_BLK_DEV_ALI15X3 */
-    { PCI_VENDOR_ID_AL, PCI_DEVICE_ID_AL_M5229 },
-/* CONFIG_BLK_DEV_AMD7409 */
-    { PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_VIPER_7409 },
-/* CONFIG_BLK_DEV_CMD64X */
-    { PCI_VENDOR_ID_CMD, PCI_DEVICE_ID_CMD_643 },
-    { PCI_VENDOR_ID_CMD, PCI_DEVICE_ID_CMD_646 },
-    { PCI_VENDOR_ID_CMD, PCI_DEVICE_ID_CMD_648 },
-    { PCI_VENDOR_ID_CMD, PCI_DEVICE_ID_CMD_649 },
-/* CONFIG_BLK_DEV_CY82C693 */
-    { PCI_VENDOR_ID_CONTAQ, PCI_DEVICE_ID_CONTAQ_82C693 },
-/* CONFIG_BLK_DEV_CS5530 */
-    { PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5530_IDE },
-/* CONFIG_BLK_DEV_HPT34X */
-    { PCI_VENDOR_ID_TTI, PCI_DEVICE_ID_TTI_HPT343 },
-/* CONFIG_BLK_DEV_HPT366 */
-    { PCI_VENDOR_ID_TTI, PCI_DEVICE_ID_TTI_HPT366 },
-/* CONFIG_BLK_DEV_NS87415 */
-    { PCI_VENDOR_ID_NS, PCI_DEVICE_ID_NS_87410 },
-    { PCI_VENDOR_ID_NS, PCI_DEVICE_ID_NS_87415 },
-/* CONFIG_BLK_DEV_OPTI621 */
-    { PCI_VENDOR_ID_OPTI, PCI_DEVICE_ID_OPTI_82C621 },
-    { PCI_VENDOR_ID_OPTI, PCI_DEVICE_ID_OPTI_82C558 },
-    { PCI_VENDOR_ID_OPTI, PCI_DEVICE_ID_OPTI_82C825 },
-#if 0
-/* CONFIG_BLK_DEV_PIIX */
-    { PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82371FB_0 },
-    { PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82371FB_1 },
-    { PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82371SB_1 },
-    { PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82371AB },
-    { PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801AB_1 },
-    { PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82443MX_1 },
-    { PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801AA_1 },
-    { PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82372FB_1 },
-    { PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82451NX },
-    { PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82820FW_5 },
-#endif
-/* CONFIG_BLK_DEV_PDC202XX */
-    { PCI_VENDOR_ID_PROMISE, PCI_DEVICE_ID_PROMISE_20246 },
-    { PCI_VENDOR_ID_PROMISE, PCI_DEVICE_ID_PROMISE_20262 },
-    { PCI_VENDOR_ID_PROMISE, PCI_DEVICE_ID_PROMISE_20267 },
-/* CONFIG_BLK_DEV_SIS5513 */
-    { PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_5513 },
-/* CONFIG_BLK_DEV_TRM290 */
-    { PCI_VENDOR_ID_TEKRAM, PCI_DEVICE_ID_TEKRAM_DC290 },
-/* CONFIG_BLK_DEV_VIA82CXXX */
-    { PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_82C561 },
-    { PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_82C586_1 }
-  };
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_has_special_eide, hd_data), hd_data);
-  }
-#endif
-
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->bus.id == bus_pci) {
-      for(i = 0; (unsigned) i < sizeof ids / sizeof *ids; i++) {
-        if(hd->vendor.id == ids[i][0] && hd->device.id == ids[i][1]) return 1;
-      }
-    }
-  }
-
   return 0;
 }
 

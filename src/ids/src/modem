@@ -1,9 +1,3 @@
- vendor.id		pci 0x1813
-&device.id		pci 0x4000
-+baseclass.id		0x102
-+subclass.id		0x01
-+requires		Intel-v92ham
-
  vendor.id		pci 0x8086
 &device.id		pci 0x1040
 +baseclass.id		0x102

@@ -12,7 +12,6 @@
 #define PROC_NVRAM_24		"/proc/nvram"
 #define PROC_IDE		"/proc/ide"
 #define PROC_SCSI		"/proc/scsi"
-#define PROC_SCSI_SCSI		"/proc/scsi/scsi"
 #define PROC_CDROM_INFO		"/proc/sys/dev/cdrom/info"
 #define PROC_NET_IF_INFO	"/proc/net/dev"
 #define PROC_MODULES		"/proc/modules"
@@ -48,7 +47,6 @@
 #define DEV_OPENPROM		"/dev/openprom"
 #define DEV_SUNMOUSE		"/dev/sunmouse"
 #define DEV_MICE		"/dev/input/mice"
-#define DEV_I2O			"/dev/i2o"
 #define DEV_FB			"/dev/fb"
 
 #define PROG_INSMOD		"/sbin/insmod"
@@ -112,13 +110,12 @@ FILE *libhd_log;
  * Internal probing module numbers. Use mod_name_by_idx() outside of libhd.
  */
 enum mod_idx {
-  mod_none, mod_memory, mod_pci, mod_isapnp, mod_pnpdump, mod_cdrom,
-  mod_net, mod_floppy, mod_misc, mod_bios, mod_cpu, mod_monitor, mod_mouse,
-  mod_scsi, mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel,
-  mod_isa, mod_dac960, mod_smart, mod_isdn, mod_kbd, mod_prom, mod_sbus,
-  mod_int, mod_braille, mod_xtra, mod_sys, mod_dasd, mod_i2o,
-  mod_manual, mod_fb, mod_veth, mod_partition, mod_disk, mod_ataraid, mod_pppoe,
-  mod_pcmcia, mod_s390, mod_sysfs, mod_dsl, mod_block
+  mod_none, mod_memory, mod_pci, mod_isapnp, mod_pnpdump, mod_net,
+  mod_floppy, mod_misc, mod_bios, mod_cpu, mod_monitor, mod_mouse, mod_scsi,
+  mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel, mod_isa,
+  mod_dac960, mod_smart, mod_isdn, mod_kbd, mod_prom, mod_sbus, mod_int,
+  mod_braille, mod_xtra, mod_sys, mod_dasd, mod_manual, mod_fb, mod_veth,
+  mod_pppoe, mod_pcmcia, mod_s390, mod_sysfs, mod_dsl, mod_block
 };
 
 void *new_mem(size_t size);

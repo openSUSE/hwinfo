@@ -585,62 +585,6 @@ void int_floppy(hd_data_t *hd_data)
 }
 
 
-#if 0
-#define COPY_ENTRY(a) if(hd_ide->a) { free_mem(hd_scsi->a); hd_scsi->a = new_str(hd_ide->a); }
-/*
- * Remove ide entries that are handled by ide-scsi.
- */
-void int_fix_ide_scsi(hd_data_t *hd_data)
-{
-  hd_t *hd_scsi, *hd_ide;
-
-  for(hd_scsi = hd_ide = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
-    if(
-      hd_scsi->bus.id == bus_scsi &&
-      search_str_list(hd_scsi->drivers, "ide-scsi")
-    ) {
-      for(; hd_ide ; hd_ide = hd_ide->next) {
-        if(
-          hd_ide->bus.id == bus_ide &&
-          search_str_list(hd_ide->drivers, "ide-scsi")
-        ) {
-          // FIXME: we need a proper solution for this!
-          if(hd_ide->status.configured != status_no) {
-            hd_ide->tag.remove = 1;
-          }
-          hd_ide->status.available = status_no;
-
-          COPY_ENTRY(vendor.name);
-          COPY_ENTRY(device.name);
-          COPY_ENTRY(sub_device.name);
-          COPY_ENTRY(sub_vendor.name);
-          COPY_ENTRY(revision.name);
-          COPY_ENTRY(serial);
-
-          hd_scsi->is.notready &= hd_ide->is.notready;
-          hd_scsi->is.manual |= hd_ide->is.manual;
-          hd_scsi->is.softraiddisk |= hd_ide->is.softraiddisk;
-          hd_scsi->is.zip |= hd_ide->is.zip;
-          hd_scsi->is.cdr |= hd_ide->is.cdr;
-
-          free_mem(hd_scsi->unix_dev_name2);
-          hd_scsi->unix_dev_name2 = new_str(hd_ide->unix_dev_name);
-
-          new_id(hd_data, hd_scsi);
-
-          hd_ide = hd_ide->next;
-          break;
-        }
-      }
-    }
-  }
-
-  remove_tagged_hd_entries(hd_data);
-}
-#undef COPY_ENTRY
-#endif
-
-
 #define COPY_ENTRY(a) if(hd_scsi->a) { free_mem(hd_usb->a); hd_usb->a = new_str(hd_scsi->a); }
 /*
  * Remove usb entries that are handled by usb-storage.

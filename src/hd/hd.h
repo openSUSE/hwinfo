@@ -94,20 +94,17 @@ extern "C" {
  * flags to control the probing.
  */
 typedef enum probe_feature {
-  pr_memory = 1, pr_pci, pr_isapnp, pr_cdrom, pr_cdrom_info, pr_net,
-  pr_floppy, pr_misc, pr_misc_serial, pr_misc_par, pr_misc_floppy,
-  pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_scsi,
-  pr_scsi_geo, pr_scsi_cache, pr_usb, pr_usb_mods, pr_adb, pr_modem,
+  pr_memory = 1, pr_pci, pr_isapnp, pr_net, pr_floppy, pr_misc,
+  pr_misc_serial, pr_misc_par, pr_misc_floppy, pr_serial, pr_cpu, pr_bios,
+  pr_monitor, pr_mouse, pr_scsi, pr_usb, pr_usb_mods, pr_adb, pr_modem,
   pr_modem_usb, pr_parallel, pr_parallel_lp, pr_parallel_zip, pr_isa,
   pr_isa_isdn, pr_dac960, pr_smart, pr_isdn, pr_kbd, pr_prom, pr_sbus,
   pr_int, pr_braille, pr_braille_alva, pr_braille_fhp, pr_braille_ht,
-  pr_ignx11, pr_sys, pr_dasd, pr_i2o, pr_bios_vbe, pr_isapnp_old,
-  pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual, pr_fb,
-  pr_bios_vbe2, pr_veth, pr_partition, pr_disk, pr_ataraid, pr_pppoe,
-  pr_scan, pr_partition_add, pr_pcmcia, pr_fork, pr_parallel_imm, pr_s390,
+  pr_ignx11, pr_sys, pr_dasd, pr_bios_vbe, pr_isapnp_old, pr_isapnp_new,
+  pr_isapnp_mod, pr_braille_baum, pr_manual, pr_fb, pr_bios_vbe2, pr_veth,
+  pr_pppoe, pr_scan, pr_pcmcia, pr_fork, pr_parallel_imm, pr_s390,
   /* pr_bios_32, */ pr_cpuemu, pr_sysfs, pr_s390disks, pr_udev, pr_block,
   pr_block_cdrom, pr_block_part,
-
   pr_max, pr_lxrc, pr_dsl, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 

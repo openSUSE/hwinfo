@@ -25,6 +25,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+static void get_generic_scsi_devs(hd_data_t *hd_data);
 static void get_block_devs(hd_data_t *hd_data);
 static void add_partitions(hd_data_t *hd_data, hd_t *hd, char *path);
 static void add_cdrom_info(hd_data_t *hd_data, hd_t *hd);
@@ -72,10 +73,150 @@ void hd_scan_sysfs_block(hd_data_t *hd_data)
 }
 
 
+/*
+ * Add generic scsi devs.
+ */
+void hd_scan_sysfs_scsi(hd_data_t *hd_data)
+{
+  if(!hd_probe_feature(hd_data, pr_scsi)) return;
+
+  hd_data->module = mod_scsi;
+
+  /* some clean-up */
+  remove_hd_entries(hd_data);
+
+  PROGRESS(1, 0, "sysfs scsi");
+
+  get_generic_scsi_devs(hd_data);
+}
+
+
+void get_generic_scsi_devs(hd_data_t *hd_data)
+{
+  char *s, *t;
+  unsigned u1, u2, u3;
+  uint64_t ul0;
+  hd_t *hd, *hd1;
+  hd_dev_num_t dev_num;
+
+  struct sysfs_class *sf_class;
+  struct sysfs_class_device *sf_cdev;
+  struct sysfs_device *sf_dev;
+  struct dlist *sf_cdev_list;
+
+  sf_class = sysfs_open_class("scsi_generic");
+
+  if(!sf_class) {
+    ADD2LOG("sysfs: no such class: scsi_generic\n");
+    return;
+  }
+
+  sf_cdev_list = sysfs_get_class_devices(sf_class);
+  if(sf_cdev_list) dlist_for_each_data(sf_cdev_list, sf_cdev, struct sysfs_class_device) {
+    ADD2LOG(
+      "  scsi: name = %s, path = %s\n",
+      sf_cdev->name,
+      hd_sysfs_id(sf_cdev->path)
+    );
+
+    memset(&dev_num, 0, sizeof dev_num);
+
+    if((s = hd_attr_str(sysfs_get_classdev_attr(sf_cdev, "dev")))) {
+      if(sscanf(s, "%u:%u", &u1, &u2) == 2) {
+        dev_num.type = 'c';
+        dev_num.major = u1;
+        dev_num.minor = u2;
+        dev_num.range = 1;
+      }
+      ADD2LOG("    dev = %u:%u\n", u1, u2);
+    }
+
+    if(hd_attr_uint(sysfs_get_classdev_attr(sf_cdev, "range"), &ul0)) {
+      dev_num.range = ul0;
+      ADD2LOG("    range = %u\n", dev_num.range);
+    }
+
+    sf_dev = sysfs_get_classdev_device(sf_cdev);
+    if(sf_dev) {
+      ADD2LOG(
+        "    scsi device: bus = %s, bus_id = %s driver = %s\n      path = %s\n",
+        sf_dev->bus,
+        sf_dev->bus_id,
+        sf_dev->driver_name,
+        hd_sysfs_id(sf_dev->path)
+      );
+    }
+
+    hd = NULL;
+
+    if(
+      sf_dev &&
+      sf_dev->driver_name &&
+      !strcmp(sf_dev->driver_name, "unknown")
+    ) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class.id = bc_storage_device;
+      hd->sub_class.id = sc_sdev_other;
+
+      str_printf(&hd->unix_dev_name, 0, "/dev/%s", hd_sysfs_name2_dev(sf_cdev->name));
+
+      hd->bus.id = bus_scsi;
+
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_cdev->path));
+
+      hd->unix_dev_num = dev_num;
+
+      hd->bus.id = bus_none;
+
+      if(sf_dev) {
+        if(sf_dev->bus) {
+          if(!strcmp(sf_dev->bus, "ide")) hd->bus.id = bus_ide;
+          else if(!strcmp(sf_dev->bus, "scsi")) hd->bus.id = bus_scsi;
+        }
+        hd->sysfs_bus_id = new_str(sf_dev->bus_id);
+      }
+
+      if(sf_dev && sf_dev->path) {
+        s = hd_sysfs_id(sf_dev->path);
+
+        /* parent has longest matching sysfs id */
+        u2 = strlen(s);
+        for(u3 = 0, hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
+          if(hd1->sysfs_id) {
+            u1 = strlen(hd1->sysfs_id);
+            if(u1 > u3 && u1 <= u2 && !strncmp(s, hd1->sysfs_id, u1)) {
+              u3 = u1;
+              hd->attached_to = hd1->idx;
+            }
+          }
+        }
+
+        /* find longest matching sysfs id we have a driver for */
+        s = new_str(s);
+        t = strrchr(s, '/');
+        if(t) *t = 0;
+        t = hd_sysfs_find_driver(hd_data, s, 0);
+        if(t) {
+          add_str_list(&hd->drivers, t);
+        }
+        s = free_mem(s);
+
+      }
+
+      add_scsi_sysfs_info(hd_data, hd, sf_dev);
+
+    }
+
+  }
+
+  sysfs_close_class(sf_class);
+}
+
+
 void get_block_devs(hd_data_t *hd_data)
 {
   str_list_t *sl;
-  char *dev_name = NULL, *s, *t;
+  char *s, *t;
   unsigned u1, u2, u3;
   uint64_t ul0;
   hd_t *hd, *hd1;
@@ -160,13 +301,11 @@ void get_block_devs(hd_data_t *hd_data)
     }
 
     if(hd) {
-      str_printf(&dev_name, 0, "/dev/%s", sl->str);
+      str_printf(&hd->unix_dev_name, 0, "/dev/%s", hd_sysfs_name2_dev(sf_cdev->name));
 
       hd->base_class.id = bc_storage_device;
 
       hd->sysfs_id = new_str(hd_sysfs_id(sf_cdev->path));
-
-      hd->unix_dev_name = dev_name; dev_name = NULL;
 
       hd->unix_dev_num = dev_num;
 
@@ -391,13 +530,22 @@ void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_
   hd_res_t *geo, *size;
   int fd;
   unsigned u0, u1;
+  char c;
 
-  if(
-    hd->sysfs_id &&
-    sscanf(hd->sysfs_id, "/block/cciss!c%ud%u", &u0, &u1) == 2
-  ) {
-    hd->slot = (u0 << 8) + u1;
-    str_printf(&hd->device.name, 0, "CCISS disk %u/%u", u0, u1);
+  if(hd->sysfs_id) {
+    if(
+      sscanf(hd->sysfs_id, "/block/cciss!c%ud%u", &u0, &u1) == 2
+    ) {
+      hd->slot = (u0 << 8) + u1;
+      str_printf(&hd->device.name, 0, "CCISS disk %u/%u", u0, u1);
+    }
+    else if(
+      sscanf(hd->sysfs_id, "/block/i2o!hd%c", &c) == 1 &&
+      c >= 'a'
+    ) {
+      hd->slot = c - 'a';
+      str_printf(&hd->device.name, 0, "I2O disk %u", hd->slot);
+    }
   }
 
 
