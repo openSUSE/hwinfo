@@ -1,3 +1,4 @@
+17/3/2005:	v10.11
 	- another notebook (#67412)
 	- do wlan detection for --netcard (#73077)
 	- remove Eicon cards from 64 bit archs, the driver does not support
