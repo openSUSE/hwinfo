@@ -1,3 +1,11 @@
+1/2/2000:	v0.55
+	- made hd_module_is_active() global
+	- added pcnet32 info
+	- added 'static' target
+	- fixed ddc string parser
+	- fixed monitor driver info parser
+	- added tiny target: -> libhd_tiny.a is minimum version for linuxrc
+
 27/10/2000:	v0.54
 	- rescan == 3 --> return new entries since last call with rescan == 2
 

@@ -194,6 +194,9 @@ if [ "$prompt" ] ; then
   echo "timeout $prompt" >>$tmp_msg
 fi
 
+echo "readinfo 1" >>$tmp_msg
+echo "framebuffer 1" >>$tmp_msg
+
 mcopy $tmp_msg r:syslinux.cfg || error 20 "no space left on the boot floppy"
 
 cp $tmp_boot $boot || error 8 "failed to install boot floppy"

@@ -691,6 +691,7 @@ enum probe_feature hd_probe_feature_by_name(char *name);
 char *hd_probe_feature_by_value(enum probe_feature feature);
 
 driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd);
+int hd_module_is_active(hd_data_t *hd_data, char *mod);
 
 hd_t *hd_cd_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_disk_list(hd_data_t *hd_data, int rescan);

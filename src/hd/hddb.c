@@ -9,7 +9,7 @@
 /* activate special data base debug code */
 #undef DEBUG_HDDB
 
-#ifdef SMALL_HDDB
+#ifdef LIBHD_TINY
 #define HDDB_DEV	hddb_dev_s
 #else
 #define HDDB_DEV	hddb_dev

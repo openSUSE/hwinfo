@@ -1,7 +1,7 @@
 TOPDIR		= ..
 SUBDIRS		= hd ids pnpdump
 TARGETS		= touch $(LIBHD)
-CLEANFILES	= $(LIBHD) $(LIBHD_D)
+CLEANFILES	= $(LIBHD) $(LIBHD_D) $(LIBHD_T)
 
 .PHONY: touch
 

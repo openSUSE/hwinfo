@@ -62,7 +62,6 @@
 static hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd);
 static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
 static char *module_cmd(hd_t *, char *);
-static int module_is_active(hd_data_t *hd_data, char *mod);
 static void timeout_alarm_handler(int signal);
 
 /*
@@ -457,6 +456,7 @@ void hd_scan(hd_data_t *hd_data)
   /* get basic system info */
   hd_scan_misc(hd_data);
 
+#ifndef LIBHD_TINY
   /* start the detection  */
   hd_scan_cpu(hd_data);
   hd_scan_memory(hd_data);
@@ -465,6 +465,7 @@ void hd_scan(hd_data_t *hd_data)
 #if defined(__i386__)
   hd_scan_bios(hd_data);
 #endif
+#endif	/* LIBHD_TINY */
 
 #if defined(__i386__) || defined(__alpha__)
   hd_scan_isapnp(hd_data);
@@ -476,8 +477,10 @@ void hd_scan(hd_data_t *hd_data)
   /* merge basic system info & the easy stuff */
   hd_scan_misc2(hd_data);
 
+#ifndef LIBHD_TINY
   hd_scan_parallel(hd_data);	/* after hd_scan_misc*() */
   hd_scan_modem(hd_data);	/* do it before hd_scan_mouse() */
+#endif
   hd_scan_mouse(hd_data);
   hd_scan_ide(hd_data);
   hd_scan_scsi(hd_data);
@@ -1048,12 +1051,13 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
             di->display.bandwidth = u1;
           }
         }
+        break;
 
       case di_module:
         for(i = 0, sl = di->module.hddb0; sl; sl = sl->next, i++) {
           if(i == 0) {
             di->module.name = new_str(sl->str);
-            di->module.active = module_is_active(hd_data, di->module.name);
+            di->module.active = hd_module_is_active(hd_data, di->module.name);
           }
           else if(i == 1) {
             di->module.mod_args = new_str(module_cmd(hd, sl->str));
@@ -1106,7 +1110,7 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 }
 
 
-int module_is_active(hd_data_t *hd_data, char *mod)
+int hd_module_is_active(hd_data_t *hd_data, char *mod)
 {
   str_list_t *sl = read_kmods(hd_data);
 

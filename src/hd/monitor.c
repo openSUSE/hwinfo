@@ -59,9 +59,10 @@ void hd_scan_monitor(hd_data_t *hd_data)
     }
   }
 
-  sl = free_str_list(sl);
-
-  if(!ok) return;
+  if(!ok) {
+    free_str_list(sl);
+    return;
+  }
 
   /* Ok, we've got it. Now we split the fields. */
 
@@ -113,6 +114,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
   if(((se - s) & 1) || se - s > 8 * 4) {
 //    h->error = 1;
 //    h->err_text1 = "strange timing data";
+    free_str_list(sl);
     return;
   }
 
@@ -126,6 +128,9 @@ void hd_scan_monitor(hd_data_t *hd_data)
     }
     if(k) add_monitor_res(hd, i, k, (j & 0x3f) + 60);
   }
+
+  free_str_list(sl);
+
 }
 
 void add_monitor_res(hd_t *hd, unsigned width, unsigned height, unsigned vfreq)
