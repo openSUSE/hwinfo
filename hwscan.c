@@ -23,7 +23,8 @@ struct option options[] = {
   { "camera", 0, NULL, 1000 + hw_camera },
   { "isdn", 0, NULL, 1000 + hw_isdn },
   { "tv", 0, NULL, 1000 + hw_tv },
-  { "scanner", 0, NULL, 1000 + hw_scanner }
+  { "scanner", 0, NULL, 1000 + hw_scanner },
+  { }
 };
 
 int verbose = 0;

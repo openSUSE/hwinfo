@@ -84,7 +84,8 @@ struct option options[] = {
   { "isapnp", 0, NULL, 3003 },
   { "ide", 0, NULL, 3004 },
   { "scsi", 0, NULL, 3005 },
-  { "manual", 0, NULL, 3006 }
+  { "manual", 0, NULL, 3006 },
+  { }
 };
 
 
