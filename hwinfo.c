@@ -466,7 +466,14 @@ void do_short(hd_data_t *hd_data, hd_t *hd, FILE *f)
 
 void do_test(hd_data_t *hd_data)
 {
+  hd_t *hd, *hd0;
 
+  hd0 = hd_list(hd_data, hw_sound, 1, NULL);
+  hd0 = hd_list(hd_data, hw_sound, 1, NULL);
+
+  for(hd = hd0; hd; hd = hd->next) {
+    hd_dump_entry(hd_data, hd, stdout);
+  }
 }
 
 

@@ -25,7 +25,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+#if defined(__PPC__)
 static void scan_ide2(hd_data_t *hd_data);
+#endif
 
 void hd_scan_ide(hd_data_t *hd_data)
 {
