@@ -697,7 +697,7 @@
 +subclass.name		Modem
 
  baseclass.id		0x102
-&subclass.id		0x01+3
+&subclass.id		0x01+4
 +subclass.name		LinModem
 
  baseclass.id		0x103

@@ -38,3 +38,55 @@
 +baseclass.id		0x102
 +subclass.id		0x03
 +requires		ltmodem
+
+
+# modules.alias, #37335
+ subclass.id		pci 0x03
+&vendor.id		pci 0x1039
+&device.id		pci 0x7013
+|subclass.id		pci 0x03
+&vendor.id		pci 0x1039
+&device.id		pci 0x7018
+|vendor.id		pci 0x1022
+&device.id		pci 0x7446
+|vendor.id		pci 0x1055
+&device.id		pci 0x9178
+|vendor.id		pci 0x10a5
+&device.id		pci 0x3052
+|vendor.id		pci 0x10a5
+&device.id		pci 0x5459
+|vendor.id		pci 0x10b9
+&device.id		pci 0x5457
+|vendor.id		pci 0x10b9
+&device.id		pci 0x5459+0x0002
+|vendor.id		pci 0x10de
+&device.id		pci 0x01c1
+|vendor.id		pci 0x10ec
+&device.id		pci 0x8197
+|vendor.id		pci 0x1106
+&device.id		pci 0x3068
+|vendor.id		pci 0x1131
+&device.id		pci 0x3400
+|vendor.id		pci 0x163c
+&device.id		pci 0x3052
+|vendor.id		pci 0x163c
+&device.id		pci 0x5459
+|vendor.id		pci 0x8086
+&device.id		pci 0x2416
+|vendor.id		pci 0x8086
+&device.id		pci 0x2426
+|vendor.id		pci 0x8086
+&device.id		pci 0x2446
+|vendor.id		pci 0x8086
+&device.id		pci 0x2486
+|vendor.id		pci 0x8086
+&device.id		pci 0x24c6
+|vendor.id		pci 0x8086
+&device.id		pci 0x24d6
+|vendor.id		pci 0x8086
+&device.id		pci 0x7196
++driver.module.modprobe	slamr
++baseclass.id		0x102
++subclass.id		0x04
++requires		smartlink-softmodem
+

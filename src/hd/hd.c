@@ -663,7 +663,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_bios_fb);
       hd_set_probe_feature(hd_data, pr_bios_mode);
       hd_set_probe_feature(hd_data, pr_monitor);
-      hd_set_probe_feature(hd_data, pr_fb);
       break;
 
     case hw_manual:

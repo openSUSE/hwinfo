@@ -242,7 +242,7 @@ typedef enum sc_camera {
 
 /* subclass values of bc_modem */
 typedef enum sc_modem {
-  sc_mod_at, sc_mod_win1, sc_mod_win2, sc_mod_win3
+  sc_mod_at, sc_mod_win1, sc_mod_win2, sc_mod_win3, sc_mod_win4
 } hd_sc_modem_t;
 
 /* subclass values of bc_dsl */

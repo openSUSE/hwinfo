@@ -14,26 +14,6 @@
 &device.id		pci 0x6005
 +driver.any		snd-cs4281
 
- vendor.id		pci 0x1022
-&device.id		pci 0x7445
-|vendor.id		pci 0x1022
-&device.id		pci 0x764d
-|vendor.id		pci 0x1039
-&device.id		pci 0x7012
-|vendor.id		pci 0x10de
-&device.id		pci 0x01b1
-|vendor.id		pci 0x8086
-&device.id		pci 0x2415
-|vendor.id		pci 0x8086
-&device.id		pci 0x2425
-|vendor.id		pci 0x8086
-&device.id		pci 0x2445
-|vendor.id		pci 0x8086
-&device.id		pci 0x2485
-|vendor.id		pci 0x8086
-&device.id		pci 0x7195
-+driver.any		snd-intel8x0
-
  vendor.id		pci 0x1023
 &device.id		pci 0x2000+0x0002
 |vendor.id		pci 0x1039

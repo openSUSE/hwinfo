@@ -760,6 +760,8 @@ void int_modem(hd_data_t *hd_data)
 {
   hd_t *hd;
   char *s;
+  hd_dev_num_t dev_num = { type: 'c', range: 1 };
+  unsigned cnt4 = 0;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
@@ -768,18 +770,33 @@ void int_modem(hd_data_t *hd_data)
       s = NULL;
       switch(hd->sub_class.id) {
         case sc_mod_win1:
-          s = "/dev/ham";
+          s = new_str("/dev/ham");
+          dev_num.major = 240;
+          dev_num.minor = 1;
           break;
         case sc_mod_win2:
-          s = "/dev/536ep";
+          s = new_str("/dev/536ep");
+          dev_num.major = 240;
+          dev_num.minor = 1;
           break;
         case sc_mod_win3:
-          s = "/dev/ttyLT0";
+          s = new_str("/dev/ttyLT0");
+          dev_num.major = 62;
+          dev_num.minor = 64;
+          break;
+        case sc_mod_win4:
+          if(cnt4 < 4) {
+            str_printf(&s, 0, "/dev/ttySLT%u", cnt4);
+            dev_num.major = 212;
+            dev_num.minor = cnt4++;
+          }
           break;
       }
       if(s) {
         free_mem(hd->unix_dev_name);
-        hd->unix_dev_name = new_str(s);
+        hd->unix_dev_name = s;
+        s = NULL;
+        hd->unix_dev_num = dev_num;
       }
     }
   }
