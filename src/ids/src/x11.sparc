@@ -284,7 +284,7 @@
 &device.id		special 0x0017
 +device.name		Sun|FFB 67MHz Creator (ffb)
 +driver.xfree		4|sunffb|||||8,24
-+driver.xfree		4|sunffb|3d||dri,glx||8,24||switch2xf86_glx
++driver.xfree		4|sunffb|3d||dri||8,24||switch2xf86_glx
 +driver.xfree		3|SUN24
 +requires		xf86_glx
 
@@ -292,7 +292,7 @@
 &device.id		special 0x0018
 +device.name		Sun|FFB 67MHz Creator 3D (ffb)
 +driver.xfree		4|sunffb|||||8,24
-+driver.xfree		4|sunffb|3d||dri,glx||8,24||switch2xf86_glx
++driver.xfree		4|sunffb|3d||dri||8,24||switch2xf86_glx
 +driver.xfree		3|SUN24|||||24
 +requires		xf86_glx
 
@@ -300,7 +300,7 @@
 &device.id		special 0x0019
 +device.name		Sun|FFB 75MHz Creator 3D (ffb)
 +driver.xfree		4|sunffb|||||8,24
-+driver.xfree		4|sunffb|3d||dri,glx||8,24||switch2xf86_glx
++driver.xfree		4|sunffb|3d||dri||8,24||switch2xf86_glx
 +driver.xfree		3|SUN24|||||24
 +requires		xf86_glx
 
@@ -308,7 +308,7 @@
 &device.id		special 0x001a
 +device.name		Sun|FFB2 Vertical Creator (ffb)
 +driver.xfree		4|sunffb|||||8,24
-+driver.xfree		4|sunffb|3d||dri,glx||8,24||switch2xf86_glx
++driver.xfree		4|sunffb|3d||dri||8,24||switch2xf86_glx
 +driver.xfree		3|SUN24|||||24
 +requires		xf86_glx
 
@@ -316,7 +316,7 @@
 &device.id		special 0x001b
 +device.name		Sun|FFB2 Vertical Creator 3D (ffb)
 +driver.xfree		4|sunffb|||||8,24
-+driver.xfree		4|sunffb|3d||dri,glx||8,24||switch2xf86_glx
++driver.xfree		4|sunffb|3d||dri||8,24||switch2xf86_glx
 +driver.xfree		3|SUN24|||||8
 +requires		xf86_glx
 
@@ -324,7 +324,7 @@
 &device.id		special 0x001c
 +device.name		Sun|FFB2+ Vertical Creator (ffb)
 +driver.xfree		4|sunffb|||||8,24
-+driver.xfree		4|sunffb|3d||dri,glx||8,24||switch2xf86_glx
++driver.xfree		4|sunffb|3d||dri||8,24||switch2xf86_glx
 +driver.xfree		3|SUN24|||||24
 +requires		xf86_glx
 
@@ -332,7 +332,7 @@
 &device.id		special 0x001d
 +device.name		Sun|FFB2+ Vertical Creator 3D (ffb)
 +driver.xfree		4|sunffb|||||8,24
-+driver.xfree		4|sunffb|3d||dri,glx||8,24||switch2xf86_glx
++driver.xfree		4|sunffb|3d||dri||8,24||switch2xf86_glx
 +driver.xfree		3|SUN24|||||24
 +requires		xf86_glx
 
@@ -340,7 +340,7 @@
 &device.id		special 0x001e
 +device.name		Sun|FFB2 Horizontal Creator (ffb)
 +driver.xfree		4|sunffb|||||8,24
-+driver.xfree		4|sunffb|3d||dri,glx||8,24||switch2xf86_glx
++driver.xfree		4|sunffb|3d||dri||8,24||switch2xf86_glx
 +driver.xfree		3|SUN24|||||24
 +requires		xf86_glx
 
@@ -348,7 +348,7 @@
 &device.id		special 0x001f
 +device.name		Sun|FFB2 Horizontal Creator 3D (ffb)
 +driver.xfree		4|sunffb|||||8,24
-+driver.xfree		4|sunffb|3d||dri,glx||8,24||switch2xf86_glx
++driver.xfree		4|sunffb|3d||dri||8,24||switch2xf86_glx
 +driver.xfree		3|SUN24|||||24
 +requires		xf86_glx
 
@@ -356,7 +356,7 @@
 &device.id		special 0x0020
 +device.name		Sun|FFB [unknown type] (ffb)
 +driver.xfree		4|sunffb|||||8,24
-+driver.xfree		4|sunffb|3d||dri,glx||8,24||switch2xf86_glx
++driver.xfree		4|sunffb|3d||dri||8,24||switch2xf86_glx
 +driver.xfree		3|SUN24|||||24
 +requires		xf86_glx
 

@@ -34,7 +34,7 @@
 &device.id		pci 0x4c46
 +device.name		Mobility M3 AGP 2x
 +driver.xfree		4|r128||||dpms,usefbdev|8,15
-+driver.xfree		4|r128|3d||dri,glx|dpms,usefbdev|16||switch2xf86_glx
++driver.xfree		4|r128|3d||dri|dpms,usefbdev|16||switch2xf86_glx
 +driver.xfree		3|FBDev|||||8,15
 +requires		xf86_glx
 
@@ -73,7 +73,7 @@
 &device.id		pci 0x5046
 +device.name		Rage 128 PF
 +driver.xfree		4|r128||||dpms,usefbdev|15,24
-+driver.xfree		4|r128|3d||dri,glx|dpms,usefbdev|16,24||switch2xf86_glx
++driver.xfree		4|r128|3d||dri|dpms,usefbdev|16,24||switch2xf86_glx
 +driver.xfree		3|FBDev
 +requires		xf86_glx
 
@@ -82,7 +82,7 @@
 +device.name		Rage 128 PR
 +driver.xfree		4|r128||||dpms,usefbdev|15
 +driver.xfree.config	ati_r128_rl
-+driver.xfree		4|r128|3d||dri,glx|dpms,usefbdev|16||switch2xf86_glx
++driver.xfree		4|r128|3d||dri|dpms,usefbdev|16||switch2xf86_glx
 +driver.xfree.config	ati_r128_rl
 +driver.xfree		3|FBDev
 +requires		xf86_glx
@@ -111,7 +111,7 @@
 &device.id		pci 0x5245
 +device.name		Rage 128 RE
 +driver.xfree		4|r128||||dpms,usefbdev|15,24
-+driver.xfree		4|r128|3d||dri,glx|dpms,usefbdev|16,24||switch2xf86_glx
++driver.xfree		4|r128|3d||dri|dpms,usefbdev|16,24||switch2xf86_glx
 +driver.xfree		3|FBDev
 +requires		xf86_glx
 

@@ -342,7 +342,7 @@
 &device.id		pci 0x5246
 +device.name		Rage 128 RF
 +driver.xfree		4|r128|||||8,15,16,24
-+driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++driver.xfree		4|r128|3d||dri||16||switch2xf86_glx
 +driver.xfree		3|SVGA|||||8,16,24,32
 +requires		xf86_glx
 
@@ -362,7 +362,7 @@
 &device.id		pci 0x524c
 +device.name		Rage 128 RL
 +driver.xfree		4|r128|||||8,15,16,24
-+driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++driver.xfree		4|r128|3d||dri||16||switch2xf86_glx
 +driver.xfree		3|SVGA|||||8,16,24,32
 +requires		xf86_glx
 
@@ -659,7 +659,7 @@
 +driver.xfree.config	Option "NumTMBuffers" "4"
 +driver.xfree.config	Option "Capabilities" "0x00000000"
 +driver.xfree.config	Option "Capabilities2" "0x00000000"
-+driver.xfree		4|firegl1|3d||dri,fgl1,glx|DDCInfo,accel|24||switch2xf86_glx
++driver.xfree		4|firegl1|3d||dri,fgl1|DDCInfo,accel|24||switch2xf86_glx
 +driver.xfree.config	Option "no_accel" "no"
 +driver.xfree.config	Option "NumDMABuffers2D" "4"
 +driver.xfree.config	Option "NumDMABuffers" "24"
@@ -678,7 +678,7 @@
 +driver.xfree.config	Option "NumTMBuffers" "4"
 +driver.xfree.config	Option "Capabilities" "0x00000000"
 +driver.xfree.config	Option "Capabilities2" "0x00000000"
-+driver.xfree		4|firegl23|3d||dri,fgl23,glx||24||switch2xf86_glx
++driver.xfree		4|firegl23|3d||dri,fgl23||24||switch2xf86_glx
 +driver.xfree.config	Option "no_accel" "no"
 +driver.xfree.config	Option "enable DVI" "on"
 +driver.xfree.config	Option "NumDMABuffers" "24"
@@ -926,7 +926,7 @@
 &device.id		pci 0x0520
 +device.name		MGA G200
 +driver.xfree		4|mga||||NoHal|8,16,24
-+driver.xfree		4|mga|3d||dri,glx|NoHal|16||switch2xf86_glx
++driver.xfree		4|mga|3d||dri|NoHal|16||switch2xf86_glx
 +driver.xfree		3|SVGA|||||8,16,24,32
 +requires		xf86_glx
 
@@ -935,7 +935,7 @@
 +device.name		MGA G200 AGP
 +driver.xfree		4|mga||||NoHal|8,16,24
 +driver.xfree.config	VideoRam 8192
-+driver.xfree		4|mga|3d||dri,glx|NoHal|16||switch2xf86_glx
++driver.xfree		4|mga|3d||dri|NoHal|16||switch2xf86_glx
 +driver.xfree.config	VideoRam 8192
 +driver.xfree		3|SVGA|||||8,16,24,32
 +requires		xf86_glx
@@ -944,7 +944,7 @@
 &device.id		pci 0x0525
 +device.name		MGA G400 AGP
 +driver.xfree		4|mga||||NoHal|8,15,16,24
-+driver.xfree		4|mga|3d||dri,glx|NoHal|16||switch2xf86_glx
++driver.xfree		4|mga|3d||dri|NoHal|16||switch2xf86_glx
 +driver.xfree		3|SVGA|||||8,16,24,32
 +requires		xf86_glx
 
@@ -1274,7 +1274,7 @@
 &device.id		pci 0x4820
 +device.name		Viper V550 with TV out
 +driver.xfree		4|nv|||||8,15,16,24
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +driver.xfree		3|SVGA|||||8,16,32
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
@@ -1376,7 +1376,7 @@
 &device.id		pci 0x0020
 +device.name		RIVA TNT
 +driver.xfree		4|nv|||||8,15,16,24
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +driver.xfree		3|SVGA|||||8,16,32
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
@@ -1384,7 +1384,7 @@
 &device.id		pci 0x0028
 +device.name		RIVA TNT2
 +driver.xfree		4|nv|||||8,15,16,24
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +driver.xfree		3|SVGA|||||8,16,32
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
@@ -1392,7 +1392,7 @@
 &device.id		pci 0x0029
 +device.name		RIVA TNT2 Ultra
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +driver.xfree		3|SVGA
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
@@ -1400,7 +1400,7 @@
 &device.id		pci 0x002c
 +device.name		Vanta
 +driver.xfree		4|nv|||||8,16,24
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +driver.xfree		3|SVGA
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
@@ -1408,7 +1408,7 @@
 &device.id		pci 0x002d
 +device.name		RIVA TNT2 Model 64
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +driver.xfree		3|SVGA
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
@@ -1416,7 +1416,7 @@
 &device.id		pci 0x00a0
 +device.name		Aladdin TNT2
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +driver.xfree		3|SVGA
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
@@ -1424,7 +1424,7 @@
 &device.id		pci 0x0100
 +device.name		GeForce 256
 +driver.xfree		4|nv|||||8,15,16,24
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +driver.xfree		3|SVGA
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
@@ -1432,7 +1432,7 @@
 &device.id		pci 0x0101
 +device.name		GeForce DDR
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +driver.xfree		3|SVGA
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
@@ -1440,7 +1440,7 @@
 &device.id		pci 0x0103
 +device.name		Quadro
 +driver.xfree		4|nv|||||8,15,16,24
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +driver.xfree		3|SVGA|||||8,16,32
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
@@ -1448,14 +1448,14 @@
 &device.id		pci 0x0110
 +device.name		GeForce2 MX/MX 400
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0111
 +device.name		GeForce2 MX 100/200
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
  vendor.id		pci 0x10de
@@ -1469,35 +1469,35 @@
 &device.id		pci 0x0113
 +device.name		Quadro2 MXR/EX/Go
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0150
 +device.name		GeForce2 GTS
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0151
 +device.name		GeForce2 Ti
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0152
 +device.name		GeForce2 Ultra
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0153
 +device.name		Quadro2 Pro
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
  vendor.id		pci 0x10e3
@@ -1562,7 +1562,7 @@
 &device.id		pci 0x0003
 +device.name		Voodoo Banshee
 +driver.xfree		4|tdfx|||||8,16,24
-+driver.xfree		4|tdfx|3d||dri,glx||16||switch2xf86_glx
++driver.xfree		4|tdfx|3d||dri||16||switch2xf86_glx
 +driver.xfree		3|SVGA|||||8,16,24,32
 +requires		glidedri|xf86_glx
 
@@ -1570,7 +1570,7 @@
 &device.id		pci 0x0005
 +device.name		Voodoo 3
 +driver.xfree		4|tdfx|||||8,16
-+driver.xfree		4|tdfx|3d||dri,glx||16||switch2xf86_glx
++driver.xfree		4|tdfx|3d||dri||16||switch2xf86_glx
 +driver.xfree		3|SVGA|||||8,16,24,32
 +requires		glidedri|xf86_glx
 
@@ -1578,7 +1578,7 @@
 &device.id		pci 0x0009
 +device.name		Voodoo5 5500
 +driver.xfree		4|tdfx|||||8,16,24
-+driver.xfree		4|tdfx|3d||dri,glx||16||switch2xf86_glx
++driver.xfree		4|tdfx|3d||dri||16||switch2xf86_glx
 +requires		gldri_v5|xf86_glx
 
  vendor.id		pci 0x1236
@@ -1954,7 +1954,7 @@
 &device.id		pci 0x1132
 +device.name		I815
 +driver.xfree		4|i810|||||8,16,24
-+driver.xfree		4|i810|3d||dri,glx||16||switch2xf86_glx
++driver.xfree		4|i810|3d||dri||16||switch2xf86_glx
 +driver.xfree.config	VideoRam 16384
 +requires		xf86_glx
 
@@ -1962,7 +1962,7 @@
 &device.id		pci 0x7121
 +device.name		82810 CGC [Chipset Graphics Controller]
 +driver.xfree		4|i810|||||8,16,24
-+driver.xfree		4|i810|3d||dri,glx||16||switch2xf86_glx
++driver.xfree		4|i810|3d||dri||16||switch2xf86_glx
 +driver.xfree.config	VideoRam 16384
 +requires		xf86_glx
 
@@ -1970,7 +1970,7 @@
 &device.id		pci 0x7123
 +device.name		82810-DC100 CGC [Chipset Graphics Controller]
 +driver.xfree		4|i810|||||8,16,24
-+driver.xfree		4|i810|3d||dri,glx||16||switch2xf86_glx
++driver.xfree		4|i810|3d||dri||16||switch2xf86_glx
 +driver.xfree.config	VideoRam 16384
 +requires		xf86_glx
 
@@ -1978,7 +1978,7 @@
 &device.id		pci 0x7125
 +device.name		82810E CGC [Chipset Graphics Controller]
 +driver.xfree		4|i810|||||8,16,24
-+driver.xfree		4|i810|3d||dri,glx||16||switch2xf86_glx
++driver.xfree		4|i810|3d||dri||16||switch2xf86_glx
 +driver.xfree.config	VideoRam 16384
 +requires		xf86_glx
 
