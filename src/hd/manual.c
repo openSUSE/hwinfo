@@ -276,7 +276,7 @@ char *hd_status_value_name(hd_status_value_t status)
 /*
  * read an entry
  */
-hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, char *id)
+hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
 {
   char path[PATH_MAX];
   int i, j, line;
@@ -942,7 +942,7 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
 }
 
 
-hd_t *hd_read_config(hd_data_t *hd_data, char *id)
+hd_t *hd_read_config(hd_data_t *hd_data, const char *id)
 {
   hd_t *hd = NULL;
   hd_manual_t *entry;

@@ -1234,10 +1234,10 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *hd, FILE *f);
 cdrom_info_t *hd_read_cdrom_info(hd_data_t *hd_data, hd_t *hd);
 
 /* implemented in manual.c */
-hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, char *id);
+hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id);
 int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry);
 hd_manual_t *hd_free_manual(hd_manual_t *manual);
-hd_t *hd_read_config(hd_data_t *hd_data, char *id);
+hd_t *hd_read_config(hd_data_t *hd_data, const char *id);
 int hd_write_config(hd_data_t *hd_data, hd_t *hd);
 char *hd_hw_item_name(hd_hw_item_t item);
 char *hd_status_value_name(hd_status_value_t status);
