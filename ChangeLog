@@ -1,3 +1,8 @@
+	- hwscanqueue: remember commands and ignore the same commands for 20
+	  seconds (workaround some unexpected signals from kernel)
+	- hwscand: set long timeout to 10 seconds
+	- hwscan*: add --partition command
+
 31/3/2004:	v8.28
 	- rewrote input device handling
 	- load ide-cd, sd_mod, sr_mod before looking for block devs (#37558)
