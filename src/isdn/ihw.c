@@ -36,9 +36,8 @@ static int compare_id(const int *c1, const int *c2) {
 	return(x);
 }
 
-#if 0
 /* interface */
-static ihw_card_info      *ihw_get_card(int handle)
+ihw_card_info      *hd_ihw_get_card(int handle)
 {
 	if (handle<0)
 		return(NULL);
@@ -46,7 +45,6 @@ static ihw_card_info      *ihw_get_card(int handle)
 		return(NULL);
 	return(&isdncard_info[handle]);
 }
-#endif
 
 static ihw_driver_info *ihw_get_driver_from_type(int typ, int subtyp)
 {

@@ -1353,12 +1353,10 @@ typedef struct  {
        					/* of values */
 } ihw_para_info;
 
-#if 0
 /* get card informations in alphabetically order handle = 0,1,... */
 /* if handle is out of bounds NULL is returned */
 
 extern ihw_card_info	*hd_ihw_get_card(int handle);
-#endif
 
 /* get card informations  for the card with typ and */
 /* subtyp returns NULL if no card match */
