@@ -70,6 +70,7 @@ void hd_scan_sys(hd_data_t *hd_data)
     if(sscanf(sl->str, "motherboard : %79[^\n]", buf0) == 1) {
       if(strstr(buf0, "MacRISC")) {
         st->system_type = new_str("MacRISC");
+        hd_data->flags.no_parport = 1;
       }
     }
     if(sscanf(sl->str, "machine : %79[^\n]", buf0) == 1) {

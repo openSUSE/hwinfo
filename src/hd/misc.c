@@ -71,7 +71,7 @@ void hd_scan_misc(hd_data_t *hd_data)
 #endif
 
   /* this is enough to load the module */
-  if(hd_probe_feature(hd_data, pr_misc_par)) {
+  if(!hd_data->flags.no_parport && hd_probe_feature(hd_data, pr_misc_par)) {
     PROGRESS(1, 2, "open parallel");
     /* what can the BIOS tell us? */
     for(hd = hd_data->hd; hd; hd = hd->next) {

@@ -507,6 +507,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_storage_ctrl:
+      hd_set_probe_feature(hd_data, pr_sys);
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_sbus);
       hd_set_probe_feature(hd_data, pr_misc_par);
@@ -533,6 +534,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_printer:
+      hd_set_probe_feature(hd_data, pr_sys);
       hd_set_probe_feature(hd_data, pr_bios);
       hd_set_probe_feature(hd_data, pr_misc_par);
       hd_set_probe_feature(hd_data, pr_parallel_lp);
@@ -1396,6 +1398,9 @@ void hd_scan(hd_data_t *hd_data)
 #endif
 #endif
   
+  /* before hd_scan_misc(): we need some ppc info later */
+  hd_scan_sys(hd_data);
+
   /* get basic system info */
   hd_scan_misc(hd_data);
 
@@ -1409,8 +1414,6 @@ void hd_scan(hd_data_t *hd_data)
 #if defined(__PPC__)
   hd_scan_prom(hd_data);
 #endif
-
-  hd_scan_sys(hd_data);
 
   /* after hd_scan_prom() and hd_scan_bios() */
   hd_scan_monitor(hd_data);
@@ -1433,7 +1436,9 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_misc2(hd_data);
 
 #ifndef LIBHD_TINY
-  hd_scan_parallel(hd_data);	/* after hd_scan_misc*() */
+  if(!hd_data->flags.no_parport) {
+    hd_scan_parallel(hd_data);	/* after hd_scan_misc*() */
+  }
 #endif
   hd_scan_ide(hd_data);
   hd_scan_scsi(hd_data);

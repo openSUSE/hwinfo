@@ -37,6 +37,7 @@ void hd_scan_fb(hd_data_t *hd_data)
   hd_res_t *res;
   unsigned imac_dev, imac_vend;
   unsigned imac = 0;
+  monitor_info_t *mi = NULL;
 
   if(!hd_probe_feature(hd_data, pr_fb)) return;
 
@@ -82,6 +83,22 @@ void hd_scan_fb(hd_data_t *hd_data)
       res->monitor.width = fb->width;
       res->monitor.height = fb->height;
       res->monitor.vfreq = fb->v_freq + 0.5;
+
+      if(!hd->detail) {
+        mi = new_mem(sizeof *mi);
+        hd->detail = new_mem(sizeof *hd->detail);
+        hd->detail->type = hd_detail_monitor;
+        hd->detail->monitor.data = mi;
+
+        mi->min_vsync = 50;
+        mi->min_hsync = 31;
+        mi->max_vsync = fb->v_freq * 1.11 + 0.9;
+        mi->max_hsync = fb->h_freq / 1000.0 + 1.9;
+        if(mi->max_vsync <= mi->min_vsync) mi->max_vsync = mi->min_vsync + 10;
+        if(mi->max_hsync <= mi->min_hsync) mi->max_hsync = mi->min_hsync + 5;
+        /* round up */
+        mi->max_vsync = ((mi->max_vsync + 9) / 10) * 10;
+      }
     }
   }
 }
