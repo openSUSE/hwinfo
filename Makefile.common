@@ -4,12 +4,12 @@ ARCH	= $(shell uname -m)
 
 CC	= gcc
 ifeq "$(ARCH)" "alpha"
-#CFLAGS	= -Wall -O1 -fomit-frame-pointer $(EXTRA_FLAGS) -I$(TOPDIR)/src/hd
+CFLAGS	= -Wall -O1 -fomit-frame-pointer $(EXTRA_FLAGS) -I$(TOPDIR)/src/hd
 else
-#CFLAGS	= -Wall -O2 -fomit-frame-pointer $(EXTRA_FLAGS) -I$(TOPDIR)/src/hd
+CFLAGS	= -Wall -O2 -fomit-frame-pointer $(EXTRA_FLAGS) -I$(TOPDIR)/src/hd
 endif
 
-CFLAGS	= -Wall -g -O -I$(TOPDIR)/src/hd
+#CFLAGS	= -Wall -g -O -I$(TOPDIR)/src/hd
 LDFLAGS	= -Lsrc -lhd
 
 CFILES	= $(wildcard *.c)
