@@ -857,6 +857,13 @@ void dump_bios(hd_data_t *hd_data, hd_t *hd, FILE *f)
     dump_line("APM BIOS Flags: 0x%x\n", bt->apm_bios_flags);
   }
 
+  if(bt->led.ok) {
+    dump_line_str("BIOS Keyboard LED Status:\n");
+    dump_line("  Scroll Lock: %s\n", bt->led.scroll_lock ? "on" : "off");
+    dump_line("  Num Lock: %s\n", bt->led.num_lock ? "on" : "off");
+    dump_line("  Caps Lock: %s\n", bt->led.caps_lock ? "on" : "off");
+  }
+
   if(bt->ser_port0) dump_line("Serial Port 0: 0x%x\n", bt->ser_port0);
   if(bt->ser_port1) dump_line("Serial Port 1: 0x%x\n", bt->ser_port1);
   if(bt->ser_port2) dump_line("Serial Port 2: 0x%x\n", bt->ser_port2);

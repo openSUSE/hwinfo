@@ -709,6 +709,13 @@ typedef struct {
     unsigned compat_dev;
   } mouse;
 
+  struct {
+    unsigned ok:1;
+    unsigned scroll_lock:1;
+    unsigned num_lock:1;
+    unsigned caps_lock:1;
+  } led;
+
 } bios_info_t;
 
 

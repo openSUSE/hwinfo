@@ -179,6 +179,11 @@ void hd_scan_bios(hd_data_t *hd_data)
     bt->par_port1 = (bios_ram[0xb] << 8) + bios_ram[0xa];
     bt->par_port2 = (bios_ram[0xd] << 8) + bios_ram[0xc];
 
+    bt->led.scroll_lock = bios_ram[0x97] & 1;
+    bt->led.num_lock = (bios_ram[0x97] >> 1) & 1;
+    bt->led.caps_lock = (bios_ram[0x97] >> 2) & 1;
+    bt->led.ok = 1;
+
     ADD2LOG("  bios: %u disks\n", bios_ram[0x75]);
 
     bt->low_mem_size = ((bios_ram[0x14] << 8) + bios_ram[0x13]) << 10;

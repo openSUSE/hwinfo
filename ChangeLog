@@ -1,3 +1,7 @@
+13/6/2002:	v5.01
+	- made ia64 cpu model entry more useful
+	- get bios led status
+
 6/6/2002:	v5.00
 	- assign hardware added via 'hwprobe' a proper inital status
 	- added alsa driver info
