@@ -13,4 +13,6 @@ if [ -n "$neededchanged" ] ; then
 fi
 /usr/sbin/hwscan --pci
 /usr/sbin/hwscan --isapnp
+/usr/sbin/hwscan --cdrom
+/usr/sbin/hwscan --fast --disk
 exit 0

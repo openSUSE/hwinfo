@@ -440,8 +440,11 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 //      hd_set_probe_feature(hd_data, pr_scsi_geo);
       hd_set_probe_feature(hd_data, pr_dac960);
       hd_set_probe_feature(hd_data, pr_smart);
-      hd_set_probe_feature(hd_data, pr_i2o);
-      hd_set_probe_feature(hd_data, pr_cciss);
+      if(!hd_data->flags.fast) {
+        /* i2o & cciss handling is awkward and much too slow */
+        hd_set_probe_feature(hd_data, pr_i2o);
+        hd_set_probe_feature(hd_data, pr_cciss);
+      }
       hd_set_probe_feature(hd_data, pr_dasd);
       hd_set_probe_feature(hd_data, pr_partition);
       hd_set_probe_feature(hd_data, pr_disk);

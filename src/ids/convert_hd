@@ -30,12 +30,21 @@ sub join_skey;
 
 sub split_item;
 
-sub add_name;
 sub get_xml_data;
 sub parse_xml_item;
+sub parse_xml_key;
 sub parse_xml_id;
-sub parse_xml_class;
+sub parse_xml_id_id;
+sub parse_xml_id_range;
+sub parse_xml_id_mask;
+sub parse_xml_driver;
+sub parse_xml_driver_display;
+sub parse_xml_driver_module;
+sub parse_xml_driver_mouse;
+sub parse_xml_driver_xfree;
+sub parse_xml_pair;
 sub parse_xml_cdata;
+sub idstr2value;
 
 sub dump2ids;
 sub dump2xml;
@@ -43,6 +52,9 @@ sub dump_xml_item;
 sub dump_xml_names;
 sub dump_xml_drivers;
 sub id2xml;
+
+sub hd_dtd;
+sub hd_dtd_internal;
 
 $dump = new Dumpvalue();
 
@@ -78,11 +90,13 @@ $he_class_id = $he_nomask;
   "vendor", "device", "subvendor", "subdevice",
   "revision", "serial", "driver", "requires"
 );
+@xml_values{@xml_names} = ( 0 .. 100 );
 
 ( $tag_none, $tag_pci, $tag_eisa, $tag_usb, $tag_special ) = ( 0 .. 4 );
 
 @tag_name = ( "", "pci", "eisa", "usb", "special" );
 @tag_values{@tag_name} = ( 0 .. 4 );
+$tag_values{none} = 0;
 
 ( $flag_id, $flag_range, $flag_mask, $flag_string, $flag_regexp ) = ( 0 .. 4 );
 $flag_cont = 8;
@@ -98,6 +112,7 @@ $opt_split = 0;
 $opt_with_source = 0;
 $opt_fix_driver = 1;
 $opt_help = 0;
+$opt_internal_dtd = 0;
 
 $opt_ok = GetOptions(
   'ids'           => \$opt_write_ids,
@@ -111,6 +126,7 @@ $opt_ok = GetOptions(
   'with-source'   => \$opt_with_source,
   'fix-driver'    => \$opt_fix_driver,
   'no-fix-driver' => sub { $opt_fix_driver = 0 },
+  'internal-dtd'  => \$opt_internal_dtd,
   'help'          => \&help
 ) ;
 
@@ -235,11 +251,12 @@ sub help
   print STDERR
   "Usage: convert_hd [options] files\n" .
   "Convert various hardware info to libhd/hwinfo internal format or to XML.\n" .
-  "  --ids          write internal format (default)\n" .
-  "  --no-ids       do not write internal format\n" .
-  "  --xml          write XML\n" .
-  "  --no-xml       do not write XML (default)\n" .
-  "  --with-source  add comment to each item indicating info source\n\n" .
+  "  --ids           write internal format (default) to \"hd.ids\"\n" .
+  "  --no-ids        do not write internal format\n" .
+  "  --xml           write XML to \"hd.xml\", DTD to \"hd.dtd\"\n" .
+  "  --no-xml        do not write XML (default)\n" .
+  "  --with-source   add comment to each item indicating info source\n" .
+  "  --internal-dtd  generate internal dtd\n\n" .
   "  Note: for more sophisticated operations on hardware data use check_hd.\n";
 
   exit 0;
@@ -1454,7 +1471,7 @@ sub get_xml_data
 
   for($i = 1; $i < @{$xml->[1]}; $i += 2) {
     if($xml->[1][$i] eq 'item') {
-      push @hd, parse_xml_item $xml->[1][$i + 1];
+      push @hd, parse_xml_item($xml->[1][$i + 1]);
     }
   }
 }
@@ -1462,108 +1479,459 @@ sub get_xml_data
 
 sub parse_xml_item
 {
-  my (@xml, %attr, $i, @id, $nc, @driver);
+  my (@xml, %attr, $i, $item);
 
   @xml = @{$_[0]};
   %attr = %{shift @xml};
 
-  if($attr{type}) {
-    print "type = $attr{type}\n";
+  for($i = 0; $i < @xml; $i += 2) {
+    if($xml[$i] eq 'key') {
+      push @{$item->[1]}, parse_xml_key($xml[$i + 1]);
+    }
+    else {
+      $item->[2] = parse_xml_key($_[0]);
+    }
   }
+
+  return $item;
+}
+
+
+sub parse_xml_key
+{
+  my (@xml, %attr, $i, @key, $val, $id, $is_id, $keyid, $keyid2, $tmp);
+
+  @xml = @{$_[0]};
+  %attr = %{shift @xml};
 
   for($i = 0; $i < @xml; $i += 2) {
-    if($xml[$i] eq 'id') {
-      push @id, parse_xml_id $xml[$i + 1];
+    next if $xml[$i] eq '0' || $xml[$i] eq 'key';
+    
+    $keyid = $xml_values{$xml[$i]};
+    $is_id = $keyid < $he_nomask && $ent_names[$keyid] =~ /\.(id|name)$/ ? 1 : 0;
+
+    if(!defined($keyid)) {
+      die "invalid key element \"$xml[$i]\"\n";
     }
-    elsif($xml[$i] eq 'name') {
-      $nc->[0] = parse_xml_cdata $xml[$i + 1];
+
+    if($keyid == $he_driver) {
+      $id = parse_xml_driver($xml[$i + 1]);
+      if(!defined($key[$keyid])) {
+        $key[$keyid] = $id;
+      }
+      else {
+        push @{$key[$keyid]}, $id->[1];
+      }
     }
-    elsif($xml[$i] eq 'class') {
-      $nc->[1] = parse_xml_class $xml[$i + 1];
+    elsif($is_id) {
+      $id = parse_xml_id($xml[$i + 1]);
+      if($id->[0] == $flag_id) {
+        $tmp = $ent_names[$keyid];
+        $tmp =~ s/\.name$/.id/;
+        $keyid2 = $ent_values{$tmp};
+        if(!defined($keyid2)) {
+          die "oops, no .id for $xml[$i]?";
+        }
+      }
+      else {
+        $tmp = $ent_names[$keyid];
+        $tmp =~ s/\.id$/.name/;
+        $keyid2 = $ent_values{$tmp};
+        if(!defined($keyid2)) {
+          die "oops, no .name for $xml[$i]?";
+        }
+      }
+      $key[$keyid2] = $id;
+    }
+    else {
+      $val = parse_xml_cdata($xml[$i + 1]);
+      if(defined($key[$keyid]) && $keyid == $he_requires) {
+        $key[$keyid][1] .= "|$val";
+      }
+      else {
+        $key[$keyid] = [ $flag_string, $val ];
+      }
     }
   }
 
-  if(defined($nc) || !defined(@driver)) {
-    for $i (@id) {
-      add_name $nc, @{$i};
-    }
-  }
-
-  return [ "", [ ],  ];
+  return [ @key ];
 }
 
 
 sub parse_xml_id
 {
-  my (@xml, %attr, $i, $id, $tag, $value, $range, @idlist);
+  my (@xml, %attr, $i, $id, $val);
 
   @xml = @{$_[0]};
   %attr = %{shift @xml};
 
-  $tag = $tag{$attr{type}};
+  for($i = 0; $i < @xml; $i += 2) {
+    next if $xml[$i] eq '0';
 
-  if(!$tag) {
+    if($xml[$i] eq 'id') {
+      $id = parse_xml_id_id($xml[$i + 1]);
+    }
+    elsif($xml[$i] eq 'idrange') {
+      $id = parse_xml_id_range($xml[$i + 1]);
+    }
+    elsif($xml[$i] eq 'idmask') {
+      $id = parse_xml_id_mask($xml[$i + 1]);
+    }
+    elsif($xml[$i] eq 'name') {
+      $val = parse_xml_cdata($xml[$i + 1]);
+      $id = [ $flag_string, $val ];
+    }
+    else {
+      die "invalid id element \"$xml[$i]\"\n";
+    }
+  }
+
+  return $id;
+}
+
+
+sub parse_xml_id_id
+{
+  my (@xml, %attr, $i, $tag, $value);
+
+  @xml = @{$_[0]};
+  %attr = %{shift @xml};
+
+  $tag = $tag_values{$attr{type}};
+
+  if(!defined($tag)) {
+    die "missing/unsupported id attribute \"$attr{type}\"\n";
+  }
+
+  for($i = 0; $i < @xml; $i += 2) {
+    if($xml[$i] eq '0') {
+      $value = idstr2value $tag, $xml[$i + 1];
+    }
+    else {
+      die "cdata expected, got \"$xml[$i]\"\n";
+    }
+  }
+
+  return [ $flag_id, $tag, $value ];
+}
+
+
+sub parse_xml_id_range
+{
+  my (@xml, %attr, $i, $tag, $value, $range);
+
+  @xml = @{$_[0]};
+  %attr = %{shift @xml};
+
+  $tag = $tag_values{$attr{type}};
+
+  if(!defined($tag)) {
     die "missing/unsupported id attribute \"$attr{type}\"\n";
   }
 
   for($i = 0; $i < @xml; $i += 2) {
     next if $xml[$i] eq '0';
-    if(
-      $xml[$i] eq 'bus' ||
-      $xml[$i] eq 'baseclass' ||
-      $xml[$i] eq 'subclass' ||
-      $xml[$i] eq 'progif' ||
-      $xml[$i] eq 'vendor' ||
-      $xml[$i] eq 'device' ||
-      $xml[$i] eq 'subvendor' ||
-      $xml[$i] eq 'subdevice'
-    ) {
-      $value = parse_xml_cdata $xml[$i + 1];
-
-      if($tag == $tag_eisa) {
-        if(length($value) == 3 && $value !~ /^[0-9]/) {
-          $value = eisa_id $value;
-        }
-      }
-      $value = num $value;
-
-      $id = [ $tag, $value ];
-      $id->[2] = $range if defined $range;
-      push @idlist, $id;
-      # printf "%d, 0x%x\n", $id->[0], $id->[1];
+    if($xml[$i] eq 'first') {
+      $value = idstr2value $tag, parse_xml_cdata($xml[$i + 1]);
+    }
+    elsif($xml[$i] eq 'last') {
+      $range = idstr2value $tag, parse_xml_cdata($xml[$i + 1]);
     }
     else {
-      die "unknown id element \"$xml[$i]\"\n";
+      die "invalid idrange element \"$xml[$i]\"\n";
     }
   }
 
+  if(!defined($value) || !defined($range)) {
+    die "invalid idrange\n";
+  }
 
-  return [ @idlist ];
+  return [ $flag_id, $tag, $value, $range - $value + 1 ];
 }
 
 
-sub parse_xml_class
+sub parse_xml_id_mask
 {
-  my (@xml, %attr, $i, $value);
+  my (@xml, %attr, $i, $tag, $value, $mask);
+
+  @xml = @{$_[0]};
+  %attr = %{shift @xml};
+
+  $tag = $tag_values{$attr{type}};
+
+  if(!defined($tag)) {
+    die "missing/unsupported id attribute \"$attr{type}\"\n";
+  }
+
+  for($i = 0; $i < @xml; $i += 2) {
+    next if $xml[$i] eq '0';
+    if($xml[$i] eq 'value') {
+      $value = idstr2value $tag, parse_xml_cdata($xml[$i + 1]);
+    }
+    elsif($xml[$i] eq 'mask') {
+      $mask = idstr2value $tag, parse_xml_cdata($xml[$i + 1]);
+    }
+    else {
+      die "invalid idmask element \"$xml[$i]\"\n";
+    }
+  }
+
+  if(!defined($value) || !defined($mask)) {
+    die "invalid idmask\n";
+  }
+
+  return [ $flag_id, $tag, $value, undef, $mask ];
+}
+
+
+sub parse_xml_driver
+{
+  my (@xml, %attr, $i, $val);
 
   @xml = @{$_[0]};
   %attr = %{shift @xml};
 
   for($i = 0; $i < @xml; $i += 2) {
     next if $xml[$i] eq '0';
-    if(
-      $xml[$i] eq 'baseclass' ||
-      $xml[$i] eq 'subclass'
-    ) {
-      $value = ($value << 8) + parse_xml_cdata($xml[$i + 1]);
+
+    if($xml[$i] eq 'any') {
+      $val = "a\t" . parse_xml_cdata($xml[$i + 1]);
+    }
+    elsif($xml[$i] eq 'display') {
+      $val = parse_xml_driver_display($xml[$i + 1]);
+    }
+    elsif($xml[$i] eq 'module') {
+      $val = parse_xml_driver_module($xml[$i + 1]);
+    }
+    elsif($xml[$i] eq 'mouse') {
+      $val = parse_xml_driver_mouse($xml[$i + 1]);
+    }
+    elsif($xml[$i] eq 'xfree') {
+      $val = parse_xml_driver_xfree($xml[$i + 1]);
     }
     else {
-      die "unknown class element \"$xml[$i]\"\n";
+      die "invalid driver element \"$xml[$i]\"\n";
     }
   }
 
-  # hm, I wonder why this must be a string...
-  return sprintf "%05x", $value;
+  return [ $flag_string, $val ];
+}
+
+
+sub parse_xml_driver_display
+{
+  my (@xml, %attr, $i, @val);
+
+  @xml = @{$_[0]};
+  %attr = %{shift @xml};
+
+  for($i = 0; $i < @xml; $i += 2) {
+    next if $xml[$i] eq '0';
+
+    if($xml[$i] eq 'resolution') {
+      $val[0] = join('x', parse_xml_pair($xml[$i + 1], 'width', 'height'));
+    }
+    elsif($xml[$i] eq 'vsync') {
+      $val[1] = join('-', parse_xml_pair($xml[$i + 1], 'min', 'max'));
+    }
+    elsif($xml[$i] eq 'hsync') {
+      $val[2] = join('-', parse_xml_pair($xml[$i + 1], 'min', 'max'));
+    }
+    elsif($xml[$i] eq 'bandwidth') {
+      $val[3] = parse_xml_cdata($xml[$i + 1]);
+    }
+    else {
+      die "invalid display element \"$xml[$i]\"\n";
+    }
+  }
+
+  if(!@val) {
+    die "invalid display info\n";
+  }
+
+  return "d\t" . join('|', @val);
+}
+
+
+sub parse_xml_driver_module
+{
+  my (@xml, %attr, $i, $val, $type, @conf, @mods);
+
+  @xml = @{$_[0]};
+  %attr = %{shift @xml};
+
+  for($i = 0; $i < @xml; $i += 2) {
+    next if $xml[$i] eq '0';
+
+    $val = parse_xml_cdata($xml[$i + 1]);
+
+    if($xml[$i] eq 'modprobe') {
+      if($type && $type ne 'm') {
+        die "invalid module info: \"$xml[$i]\"\n";
+      }
+      $type = 'm';
+      push @mods, $val;
+    }
+    elsif($xml[$i] eq 'insmod') {
+      if($type && $type ne 'i') {
+        die "invalid module info: \"$xml[$i]\"\n";
+      }
+      $type = 'i';
+      push @mods, $val;
+    }
+    elsif($xml[$i] eq 'modconf') {
+      if($type && $type ne 'm') {
+        die "invalid module info: \"$xml[$i]\"\n";
+      }
+      push @conf, "\x00M\t$val";
+    }
+    else {
+      die "invalid module element \"$xml[$i]\"\n";
+    }
+  }
+
+  if(!$type && !@mods) {
+    die "invalid module info\n";
+  }
+
+  $val = "$type\t" . join('|', @mods);
+
+  if(@conf) {
+    $val .= join('', @conf);
+  }
+
+  return $val;
+}
+
+
+sub parse_xml_driver_mouse
+{
+  my (@xml, %attr, $i, $val, @val);
+
+  @xml = @{$_[0]};
+  %attr = %{shift @xml};
+
+  for($i = 0; $i < @xml; $i += 2) {
+    next if $xml[$i] eq '0';
+
+    $val = parse_xml_cdata($xml[$i + 1]);
+
+    if($xml[$i] eq 'xf86') {
+      $val[0] = $val;
+    }
+    elsif($xml[$i] eq 'gpm') {
+      $val[1] = $val;
+    }
+    elsif($xml[$i] eq 'buttons') {
+      $val[2] = $val;
+    }
+    elsif($xml[$i] eq 'wheels') {
+      $val[3] = $val;
+    }
+    else {
+      die "invalid mouse element \"$xml[$i]\"\n";
+    }
+  }
+
+  if(!@val) {
+    die "invalid mouse info\n";
+  }
+
+  return "p\t" . join('|', @val);
+}
+
+
+sub parse_xml_driver_xfree
+{
+  my (@xml, %attr, $i, $val, @val, @conf);
+
+  @xml = @{$_[0]};
+  %attr = %{shift @xml};
+
+  for($i = 0; $i < @xml; $i += 2) {
+    next if $xml[$i] eq '0';
+
+    if($xml[$i] eq 'has3d') {
+      $val[2] = '3d';
+    }
+    else {
+      $val = parse_xml_cdata($xml[$i + 1]);
+
+      if($xml[$i] eq 'version') {
+        $val[0] = $val;
+      }
+      elsif($xml[$i] eq 'server') {
+        $val[1] = $val;
+      }
+      elsif($xml[$i] eq 'extension') {
+        $val[4] .= "," if defined $val[4];
+        $val[4] .= $val;
+      }
+      elsif($xml[$i] eq 'option') {
+        $val[5] .= "," if defined $val[5];
+        $val[5] .= $val;
+      }
+      elsif($xml[$i] eq 'bpp') {
+        $val[6] .= "," if defined $val[6];
+        $val[6] .= $val;
+      }
+      elsif($xml[$i] eq 'dacspeed') {
+        $val[7] = $val;
+      }
+      elsif($xml[$i] eq 'script') {
+        $val[8] = $val;
+      }
+      elsif($xml[$i] eq 'xf86conf') {
+        push @conf, "\x00X\t$val";
+      }
+      else {
+        die "invalid xfree element \"$xml[$i]\"\n";
+      }
+    }
+  }
+
+  if(!@val) {
+    die "invalid xfree info\n";
+  }
+
+  $val = "x\t" . join('|', @val);
+
+  if(@conf) {
+    $val .= join('', @conf);
+  }
+
+  return $val;
+}
+
+
+sub parse_xml_pair
+{
+  my (@xml, %attr, $i, $val0, $val1, $elem0, $elem1);
+
+  $elem0 = $_[1];
+  $elem1 = $_[2];
+
+  @xml = @{$_[0]};
+  %attr = %{shift @xml};
+
+  for($i = 0; $i < @xml; $i += 2) {
+    next if $xml[$i] eq '0';
+    if($xml[$i] eq $elem0) {
+      $val0 = parse_xml_cdata($xml[$i + 1]);
+    }
+    elsif($xml[$i] eq $elem1) {
+      $val1 = parse_xml_cdata($xml[$i + 1]);
+    }
+    else {
+      die "invalid element \"$xml[$i]\"\n";
+    }
+  }
+
+  if(!defined($val0) || !defined($val1)) {
+    die "invalid element\n";
+  }
+
+  return ($val0, $val1);
 }
 
 
@@ -1581,6 +1949,22 @@ sub parse_xml_cdata
   }
 }
 
+
+sub idstr2value
+{
+  my ($tag, $value);
+
+  ($tag, $value) = @_;
+
+  if($tag == $tag_eisa && length($value) == 3 && $value !~ /^[0-9]/) {
+    $value = eisa_id $value;
+  }
+  else {
+    $value = num $value;
+  }
+
+  return $value;
+}
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -1753,8 +2137,12 @@ sub dump2xml
 {
   my ($item, $dtd);
 
-  # $dtd = `cat hd.dtd.internal`;
-  $dtd = "<!DOCTYPE hwdata SYSTEM \"hd.dtd\">\n";
+  if($opt_internal_dtd) {
+    $dtd = hd_dtd_internal;
+  }
+  else {
+    $dtd = "<!DOCTYPE hwdata SYSTEM \"hd.dtd\">\n";
+  }
 
   $xml_file = new IO::File(">hd.xml");
   $xml = new XML::Writer(OUTPUT => $xml_file, DATA_MODE => 1, DATA_INDENT => 2);
@@ -1773,6 +2161,13 @@ sub dump2xml
 
   $xml->endTag("hwdata");
   $xml->end();
+
+  if(!$opt_internal_dtd) {
+    print STDERR "writing \"hd.dtd\"\n";
+    open DTD, ">hd.dtd";
+    print DTD hd_dtd;
+    close DTD;
+  }
 }
 
 
@@ -2063,4 +2458,150 @@ sub dump_xml_item
   print $xml_file "\n";
 }
 
+
+sub hd_dtd
+{
+  my $dtd = <<'EOF'
+<!-- libhd DTD V0.2 -->
+
+<!ENTITY % keyfields "bus|baseclass|subclass|progif|vendor|device|subvendor|subdevice|revision|serial|driver|requires">
+<!ENTITY % idelements "id|idrange|idmask|name">
+<!ENTITY % idtypes "none|pci|eisa|usb|special">
+
+<!ELEMENT hwdata (item*)>
+
+<!ELEMENT item (key+,(%keyfields;)*)>
+
+<!ELEMENT key (%keyfields;)+>
+
+  <!ELEMENT bus (%idelements;)>
+  <!ELEMENT baseclass (%idelements;)>
+  <!ELEMENT subclass (%idelements;)>
+  <!ELEMENT progif (%idelements;)>
+  <!ELEMENT vendor (%idelements;)>
+  <!ELEMENT device (%idelements;)>
+  <!ELEMENT subvendor (%idelements;)>
+  <!ELEMENT subdevice (%idelements;)>
+  <!ELEMENT revision (%idelements;)>
+  <!ELEMENT serial (#PCDATA)>
+  <!ELEMENT requires (#PCDATA)>
+  <!ELEMENT id (#PCDATA)>
+  <!ELEMENT idrange (first,last)>
+    <!ELEMENT first (#PCDATA)>
+    <!ELEMENT last (#PCDATA)>
+  <!ELEMENT idmask (value,mask)>
+    <!ELEMENT value (#PCDATA)>
+    <!ELEMENT mask (#PCDATA)>
+  <!ATTLIST id type (%idtypes;) "none">
+  <!ATTLIST idrange type (%idtypes;) "none">
+  <!ATTLIST idmask type (%idtypes;) "none">
+  <!ELEMENT name (#PCDATA)>
+
+<!ELEMENT driver (any|display|module|mouse|xfree)?>
+
+  <!ELEMENT any (#PCDATA)>
+
+  <!ELEMENT display (resolution?,vsync?,hsync?,bandwidth?)>
+    <!ELEMENT resolution (width,height)>
+      <!ELEMENT width (#PCDATA)>
+      <!ELEMENT height (#PCDATA)>
+    <!ELEMENT vsync (min,max)>
+    <!ELEMENT hsync (min,max)>
+      <!ELEMENT min (#PCDATA)>
+      <!ELEMENT max (#PCDATA)>
+    <!ELEMENT bandwidth (#PCDATA)>
+
+  <!ELEMENT module (insmod+|(modprobe+,modconf*))>
+    <!ELEMENT insmod (#PCDATA)>
+    <!ELEMENT modprobe (#PCDATA)>
+    <!ELEMENT modconf (#PCDATA)>
+
+  <!ELEMENT mouse (xf86?,gpm?,buttons?,wheels?)>
+    <!ELEMENT xf86 (#PCDATA)>
+    <!ELEMENT gpm (#PCDATA)>
+    <!ELEMENT buttons (#PCDATA)>
+    <!ELEMENT wheels (#PCDATA)>
+
+  <!ELEMENT xfree (version,server?,has3d?,extension*,option*,bpp*,dacspeed?,script?,xf86conf*)>
+    <!ELEMENT version (#PCDATA)>
+    <!ELEMENT server (#PCDATA)>
+    <!ELEMENT has3d EMPTY>
+    <!ELEMENT extension (#PCDATA)>
+    <!ELEMENT option (#PCDATA)>
+    <!ELEMENT bpp (#PCDATA)>
+    <!ELEMENT dacspeed (#PCDATA)>
+    <!ELEMENT script (#PCDATA)>
+    <!ELEMENT xf86conf (#PCDATA)>
+EOF
+;
+
+  return $dtd;
+}
+
+
+sub hd_dtd_internal
+{
+  my $dtd = <<'EOF'
+<!DOCTYPE hwdata [
+  <!ELEMENT hwdata (item*)>
+  <!ELEMENT item (key+,(bus|baseclass|subclass|progif|vendor|device|subvendor|subdevice|revision|serial|driver|requires)*)>
+    <!ELEMENT key (bus|baseclass|subclass|progif|vendor|device|subvendor|subdevice|revision|serial|driver|requires)+>
+      <!ELEMENT bus (id|idrange|idmask|name)>
+      <!ELEMENT baseclass (id|idrange|idmask|name)>
+      <!ELEMENT subclass (id|idrange|idmask|name)>
+      <!ELEMENT progif (id|idrange|idmask|name)>
+      <!ELEMENT vendor (id|idrange|idmask|name)>
+      <!ELEMENT device (id|idrange|idmask|name)>
+      <!ELEMENT subvendor (id|idrange|idmask|name)>
+      <!ELEMENT subdevice (id|idrange|idmask|name)>
+      <!ELEMENT revision (id|idrange|idmask|name)>
+      <!ELEMENT serial (#PCDATA)>
+      <!ELEMENT requires (#PCDATA)>
+      <!ELEMENT id (#PCDATA)>
+      <!ELEMENT idrange (first,last)>
+        <!ELEMENT first (#PCDATA)>
+        <!ELEMENT last (#PCDATA)>
+      <!ELEMENT idmask (value,mask)>
+        <!ELEMENT value (#PCDATA)>
+        <!ELEMENT mask (#PCDATA)>
+      <!ATTLIST id type (none|pci|eisa|usb|special) "none">
+      <!ATTLIST idrange type (none|pci|eisa|usb|special) "none">
+      <!ATTLIST idmask type (none|pci|eisa|usb|special) "none">
+    <!ELEMENT name (#PCDATA)>
+    <!ELEMENT driver (any|display|module|mouse|xfree)?>
+      <!ELEMENT any (#PCDATA)>
+      <!ELEMENT display (resolution?,vsync?,hsync?,bandwidth?)>
+        <!ELEMENT resolution (width,height)>
+          <!ELEMENT width (#PCDATA)>
+          <!ELEMENT height (#PCDATA)>
+        <!ELEMENT vsync (min,max)>
+        <!ELEMENT hsync (min,max)>
+          <!ELEMENT min (#PCDATA)>
+          <!ELEMENT max (#PCDATA)>
+        <!ELEMENT bandwidth (#PCDATA)>
+      <!ELEMENT module (insmod+|(modprobe+,modconf*))>
+        <!ELEMENT insmod (#PCDATA)>
+        <!ELEMENT modprobe (#PCDATA)>
+        <!ELEMENT modconf (#PCDATA)>
+      <!ELEMENT mouse (xf86?,gpm?,buttons?,wheels?)>
+        <!ELEMENT xf86 (#PCDATA)>
+        <!ELEMENT gpm (#PCDATA)>
+        <!ELEMENT buttons (#PCDATA)>
+        <!ELEMENT wheels (#PCDATA)>
+      <!ELEMENT xfree (version,server?,has3d?,extension*,option*,bpp*,dacspeed?,script?,xf86conf*)>
+        <!ELEMENT version (#PCDATA)>
+        <!ELEMENT server (#PCDATA)>
+        <!ELEMENT has3d EMPTY>
+        <!ELEMENT extension (#PCDATA)>
+        <!ELEMENT option (#PCDATA)>
+        <!ELEMENT bpp (#PCDATA)>
+        <!ELEMENT dacspeed (#PCDATA)>
+        <!ELEMENT script (#PCDATA)>
+        <!ELEMENT xf86conf (#PCDATA)>
+]> 
+EOF
+;
+
+  return $dtd;
+}
 

@@ -362,10 +362,14 @@
 &device.id		pci 0x9132
 +driver.module.insmod	dmfe
 
+# see #19271
+ vendor.id		pci 0x1282
+&device.id		pci 0x9102
++driver.module.insmod	dmfe
++driver.module.insmod	tulip
+
  vendor.id		pci 0x1282
 &device.id		pci 0x9100
-|vendor.id		pci 0x1282
-&device.id		pci 0x9102
 +driver.module.insmod	tulip
 +driver.module.insmod	dmfe
 
