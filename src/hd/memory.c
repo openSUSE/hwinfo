@@ -16,7 +16,7 @@
 void hd_scan_memory(hd_data_t *hd_data)
 {
   hd_t *hd;
-  uint64 u;
+  uint64_t u;
   size_t ps = getpagesize();
   struct stat sb;
   hd_res_t *res;

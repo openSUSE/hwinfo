@@ -126,7 +126,7 @@ void get_pci_data(hd_data_t *hd_data)
 {
   unsigned char *t;
   unsigned long u, ul[10], nxt;
-  uint64 u64;
+  uint64_t u64;
   int fd, i, j, o_fl;
   pci_t *p;
   char *pci_data_file = NULL;

@@ -442,13 +442,13 @@ void read_ioports(misc_t *m)
 {
   char buf[100];
   misc_io_t *r;
-  uint64 u, v;
+  uint64_t u, v;
   str_list_t *sl;
 
   if(!(m->proc_io = read_file(PROC_IOPORTS, 0, 0))) return;
 
   for(sl = m->proc_io; sl; sl = sl->next) {
-    if(sscanf(sl->str, " %"HD_LL"x - %"HD_LL"x : %99[^\n]", &u, &v, buf) == 3) {
+    if(sscanf(sl->str, " %"PRIx64" - %"PRIx64" : %99[^\n]", &u, &v, buf) == 3) {
       m->io = add_mem(m->io, sizeof *m->io, m->io_len);
       r = m->io + m->io_len++;
       r->addr = u;
@@ -627,7 +627,7 @@ void dump_misc_data(hd_data_t *hd_data)
 
   for(i = 0; i < m->io_len; i++) {
     ADD2LOG(
-      "i/o:%u 0x%04"HD_LL"x - 0x%04"HD_LL"x (0x%02"HD_LL"x) \"%s\"\n",
+      "i/o:%u 0x%04"PRIx64" - 0x%04"PRIx64" (0x%02"PRIx64") \"%s\"\n",
       m->io[i].tag,
       m->io[i].addr, m->io[i].addr + m->io[i].size - 1,
       m->io[i].size, m->io[i].dev

@@ -82,7 +82,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
 
   if(
     h->attached_to &&
-    (hd_tmp = get_device_by_idx(hd_data, h->attached_to))
+    (hd_tmp = hd_get_device_by_idx(hd_data, h->attached_to))
   ) {
     s = hd_class_name(hd_data, 2, hd_tmp->base_class, hd_tmp->sub_class, 0);
     s = s ? s : "?";
@@ -138,7 +138,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 {
   int i, j;
   char *s, *a0;
-  uint64 u64;
+  uint64_t u64;
   hd_res_t *res;
   char buf[256];
   driver_info_t *di, *di0;
@@ -184,10 +184,10 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     switch(res->any.type) {
       case res_phys_mem:
         if((u64 = (res->phys_mem.range >> 10) & ~(-1 << 10))) {
-          dump_line("Memory Size: %"HD_LL"dM + %"HD_LL"dk\n", res->phys_mem.range >> 20, u64);
+          dump_line("Memory Size: %"PRId64"M + %"PRId64"k\n", res->phys_mem.range >> 20, u64);
         }
         else {
-          dump_line("Memory Size: %"HD_LL"dM\n", res->phys_mem.range >> 20);
+          dump_line("Memory Size: %"PRId64"M\n", res->phys_mem.range >> 20);
         }
         break;
 
@@ -199,12 +199,12 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
         if(*s == ',') s++;
         if(res->mem.range) {
           dump_line(
-            "Memory Range: 0x%08"HD_LL"x-0x%08"HD_LL"x (%s)\n",
+            "Memory Range: 0x%08"PRIx64"-0x%08"PRIx64" (%s)\n",
             res->mem.base, res->mem.base + res->mem.range - 1, s
           );
         }
         else {
-          dump_line("Memory Range: 0x%08"HD_LL"x-??? (%s)\n", res->mem.base, s);
+          dump_line("Memory Range: 0x%08"PRIx64"-??? (%s)\n", res->mem.base, s);
         }
         break;
 
@@ -214,13 +214,13 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
         if(!res->io.enabled) strcat(buf, ",disabled");
         if(*s == ',') s++;
         if(res->io.range == 0) {
-          dump_line("I/O Ports: 0x%02"HD_LL"x-??? (%s)\n", res->io.base, s);
+          dump_line("I/O Ports: 0x%02"PRIx64"-??? (%s)\n", res->io.base, s);
         }
         else if(res->io.range == 1) {
-          dump_line("I/O Port: 0x%02"HD_LL"x (%s)\n", res->io.base, s);
+          dump_line("I/O Port: 0x%02"PRIx64" (%s)\n", res->io.base, s);
         }
         else {
-          dump_line("I/O Ports: 0x%02"HD_LL"x-0x%02"HD_LL"x (%s)\n", res->io.base, res->io.base + res->io.range -1, s);
+          dump_line("I/O Ports: 0x%02"PRIx64"-0x%02"PRIx64" (%s)\n", res->io.base, res->io.base + res->io.range -1, s);
         }
         break;
 

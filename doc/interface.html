@@ -100,6 +100,11 @@ They return <code>NULL</code> resp. <code>0</code> if the argument is not valid.
 Return a list of CDROM/disk/network entries only. If <code>rescan</code> is
 set, re-probe the hardware first.<p>
 
+<code><strong><a href="#hd_t">hd_t</a> *hd_base_class_list(<a href="#hd_data_t">hd_data_t</a> *hd_data, unsigned base_class)</strong></code><br>
+<code><strong><a href="#hd_t">hd_t</a> *hd_sub_class_list(<a href="#hd_data_t">hd_data_t</a> *hd_data, unsigned base_class, unsigned sub_class)</strong></code><p>
+
+Return a list of entries which have the given class/subclass ids.<p>
+
 <code><strong>int hd_has_special_eide(<a href="#hd_data_t">hd_data_t</a> *hd_data)</strong></code><p>
 
 Return 1 or 0 depending on whether we need a kernel with special eide

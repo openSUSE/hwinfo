@@ -78,7 +78,6 @@ str_list_t *add_str_list(str_list_t **sl, char *str);
 str_list_t *free_str_list(str_list_t *list);
 str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines);
 void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg);
-hd_t *get_device_by_idx(hd_data_t *hd_data, int idx);
 
 void remove_hd_entries(hd_data_t *hd_data);
 void remove_tagged_hd_entries(hd_data_t *hd_data);

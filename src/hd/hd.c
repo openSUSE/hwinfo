@@ -661,7 +661,7 @@ char *float2str(int f, int n)
 /*
  * find hardware entry with given index
  */
-hd_t *get_device_by_idx(hd_data_t *hd_data, int idx)  
+hd_t *hd_get_device_by_idx(hd_data_t *hd_data, int idx)  
 {
   hd_t *hd;
 
@@ -1122,7 +1122,7 @@ char *module_cmd(hd_t *hd, char *cmd)
   while(*cmd) {
     if(sscanf(cmd, "<io%u>%n", &idx, &ofs) >= 1) {
       if((res = get_res(hd, res_io, idx))) {
-        s += sprintf(s, "0x%02"HD_LL"x", res->io.base);
+        s += sprintf(s, "0x%02"PRIx64, res->io.base);
         cmd += ofs;
       }
       else {
@@ -1307,6 +1307,36 @@ hd_t *hd_net_list(hd_data_t *hd_data, int rescan)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class == bc_network_interface) {
+      hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+      *hd1 = *hd;
+      hd1->next = NULL;
+    }
+  }
+
+  return hd_list;
+}
+
+hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
+{
+  hd_t *hd, *hd1, *hd_list = NULL;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == base_class) {
+      hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+      *hd1 = *hd;
+      hd1->next = NULL;
+    }
+  }
+
+  return hd_list;
+}
+
+hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_class)
+{
+  hd_t *hd, *hd1, *hd_list = NULL;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == base_class && hd->sub_class == sub_class) {
       hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
       *hd1 = *hd;
       hd1->next = NULL;

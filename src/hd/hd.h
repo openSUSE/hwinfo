@@ -33,6 +33,7 @@ extern "C" {
 #define HD_DEB_USB		(1 << 17)
 #define HD_DEB_ADB		(1 << 18)
 
+#include <inttypes.h>
 
 /*
  * flags to control the probing.
@@ -47,20 +48,6 @@ enum probe_feature {
   pr_mouse, pr_ide, pr_scsi, pr_usb, pr_adb,
   pr_all		/* pr_all must be the last */
 };
-
-
-/*
- * define a 64 bit unsigned int
- */
-#include <limits.h>
-
-#if ULONG_MAX > 0xfffffffful
-#define HD_LL "l"
-typedef unsigned long uint64;
-#else
-#define HD_LL "ll"
-typedef unsigned long long uint64;
-#endif
 
 
 /*
@@ -288,8 +275,7 @@ typedef struct {
 enum resource_types {
   res_any, res_phys_mem, res_mem, res_io,
   res_irq, res_dma, res_monitor, res_size,
-  res_disk_geo, res_cache, res_clock, res_baud,
-  res_disk_log_geo, res_disk_phys_geo
+  res_disk_geo, res_cache, res_clock, res_baud
 };
 
 
@@ -324,7 +310,7 @@ typedef struct {
 typedef struct {
   union u_hd_res_t *next;
   enum resource_types type;
-  uint64 base, range;
+  uint64_t base, range;
   unsigned
     enabled:1,				/* 0: disabled, 1 enabled */
     access:2,				/* enum access_flags */
@@ -334,13 +320,13 @@ typedef struct {
 typedef struct {
   union u_hd_res_t *next;
   enum resource_types type;
-  uint64 range;
+  uint64_t range;
 } res_phys_mem_t;
 
 typedef struct {
   union u_hd_res_t *next;
   enum resource_types type;
-  uint64 base, range;
+  uint64_t base, range;
   unsigned
     enabled:1,				/* 0: disabled, 1 enabled */
     access:2;				/* enum access_flags */
@@ -414,7 +400,7 @@ typedef union u_hd_res_t {
  * data gathered by the misc module; basically resources from /proc
  */
 typedef struct {
-  uint64 addr, size;
+  uint64_t addr, size;
   char *dev;
   unsigned tag;
 } misc_io_t;
@@ -674,10 +660,14 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd);
 hd_t *hd_cd_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_disk_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_net_list(hd_data_t *hd_data, int rescan);
+hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class);
+hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_class);
 
 int hd_has_special_eide(hd_data_t *hd_data);
 int hd_has_pcmcia(hd_data_t *hd_data);
 enum boot_arch hd_boot_arch(hd_data_t *hd_data);
+
+hd_t *hd_get_device_by_idx(hd_data_t *hd_data, int idx);
 
 /* implemented in hddb.c */
 
