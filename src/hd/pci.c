@@ -12,7 +12,7 @@
 #include "hd.h"
 #include "hd_int.h"
 #include "hddb.h"
-
+#include "pci.h"
 
 /*
  * linux/ioport.h
@@ -539,6 +539,27 @@ char *hd_sysfs_name2_dev(char *str)
 
   while(*str) {
     if(*str == '!') *str = '/';
+    str++;
+  }
+
+  return s;
+}
+
+
+/*
+ * Convert '/' to '!'.
+ */
+char *hd_sysfs_dev2_name(char *str)
+{
+  static char *s = NULL;
+
+  if(!str) return NULL;
+
+  free_mem(s);
+  s = str = new_str(str);
+
+  while(*str) {
+    if(*str == '/') *str = '!';
     str++;
   }
 

@@ -27,7 +27,6 @@ static void int_media_check(hd_data_t *hd_data);
 static int contains_word(char *str, char *str2);
 static int is_zip(hd_t *hd);
 static void int_floppy(hd_data_t *hd_data);
-static void int_fix_ide_scsi(hd_data_t *hd_data);
 static void int_fix_usb_scsi(hd_data_t *hd_data);
 static void int_mouse(hd_data_t *hd_data);
 static void new_id(hd_data_t *hd_data, hd_t *hd);
@@ -45,9 +44,6 @@ void hd_scan_int(hd_data_t *hd_data)
 
   /* some clean-up */
   remove_hd_entries(hd_data);
-
-  PROGRESS(1, 0, "idescsi");
-  int_fix_ide_scsi(hd_data);
 
   PROGRESS(2, 0, "cdrom");
   int_cdrom(hd_data);
@@ -463,6 +459,7 @@ void int_media_check(hd_data_t *hd_data)
   int i, j = 0;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(!hd_report_this(hd_data, hd)) continue;
     if(
       hd->base_class.id == bc_storage_device &&
       (
@@ -588,6 +585,7 @@ void int_floppy(hd_data_t *hd_data)
 }
 
 
+#if 0
 #define COPY_ENTRY(a) if(hd_ide->a) { free_mem(hd_scsi->a); hd_scsi->a = new_str(hd_ide->a); }
 /*
  * Remove ide entries that are handled by ide-scsi.
@@ -640,6 +638,7 @@ void int_fix_ide_scsi(hd_data_t *hd_data)
   remove_tagged_hd_entries(hd_data);
 }
 #undef COPY_ENTRY
+#endif
 
 
 #define COPY_ENTRY(a) if(hd_scsi->a) { free_mem(hd_usb->a); hd_usb->a = new_str(hd_scsi->a); }

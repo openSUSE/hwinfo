@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
+#include <linux/iso_fs.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -25,6 +26,8 @@
  */
 
 static void get_block_devs(hd_data_t *hd_data);
+static void add_partitions(hd_data_t *hd_data, hd_t *hd, char *path);
+static void add_cdrom_info(hd_data_t *hd_data, hd_t *hd);
 static void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev);
 static void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev);
 static void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev);
@@ -63,6 +66,9 @@ void hd_scan_sysfs_block(hd_data_t *hd_data)
 
   get_block_devs(hd_data);
 
+  if(hd_data->cdrom) {
+    ADD2LOG("oops: cdrom list not empty\n");
+  }
 }
 
 
@@ -75,10 +81,25 @@ void get_block_devs(hd_data_t *hd_data)
   hd_t *hd, *hd1;
   hd_dev_num_t dev_num;
 
+  struct sysfs_bus *sf_bus;
   struct sysfs_class *sf_class;
   struct sysfs_class_device *sf_cdev;
   struct sysfs_device *sf_dev;
   struct dlist *sf_cdev_list;
+  struct dlist *sf_ide_list = NULL;
+  struct sysfs_device *sf_ide;
+
+  sf_bus = sysfs_open_bus("ide");
+  if(sf_bus) {
+    sf_ide_list = sysfs_get_bus_devices(sf_bus);
+    if(sf_ide_list) dlist_for_each_data(sf_ide_list, sf_ide, struct sysfs_device) {
+      ADD2LOG(
+        "  ide: bus_id = %s path = %s\n",
+        sf_ide->bus_id,
+        hd_sysfs_id(sf_ide->path)
+      );
+    }
+  }
 
   sf_class = sysfs_open_class("block");
 
@@ -184,7 +205,18 @@ void get_block_devs(hd_data_t *hd_data)
         }
         s = free_mem(s);
 
-
+        /* look for ide-scsi handled devices */
+        if(hd->bus.id == bus_scsi) {
+          if(sf_ide_list) dlist_for_each_data(sf_ide_list, sf_ide, struct sysfs_device) {
+            if(
+              strcmp(sf_dev->path, sf_ide->path) &&
+              !strncmp(sf_dev->path, sf_ide->path, strlen(sf_ide->path)) &&
+              sscanf(sf_ide->bus_id, "%u.%u", &u1, &u2) == 2
+            ) {
+              str_printf(&hd->unix_dev_name2, 0, "/dev/hd%c", 'a' + (u1 << 1) + u2);
+            }
+          }
+        }
       }
 
       if(hd->bus.id == bus_ide) {
@@ -206,13 +238,25 @@ void get_block_devs(hd_data_t *hd_data)
       ) {
         add_str_list(&hd->drivers, sf_dev->driver_name);
       }
+
+      if(hd->sub_class.id == sc_sdev_cdrom) {
+        add_cdrom_info(hd_data, hd);
+      }
+
+      if(
+        hd->sub_class.id == sc_sdev_disk &&
+        hd_probe_feature(hd_data, pr_block_part)
+      ) {
+        add_partitions(hd_data, hd, sf_cdev->path);
+      }
+
     }
 
   }
 
-
   sysfs_close_class(sf_class);
 
+  sysfs_close_bus(sf_bus);
 }
 
 
@@ -255,10 +299,107 @@ char *hd_sysfs_find_driver(hd_data_t *hd_data, char *sysfs_id, int exact)
 }
 
 
+void add_partitions(hd_data_t *hd_data, hd_t *hd, char *path)
+{
+  hd_t *hd1;
+  str_list_t *sl;
+  char *s;
+  size_t len;
+
+  s = hd->unix_dev_name + sizeof "/dev/" - 1;
+  len = strlen(s);
+  for(sl = hd_data->partitions; sl; sl = sl->next) {
+    if(!strncmp(sl->str, s, len)) {
+      hd1 = add_hd_entry(hd_data, __LINE__, 0);
+      hd1->base_class.id = bc_partition;
+      str_printf(&hd1->unix_dev_name, 0, "/dev/%s", sl->str);
+      hd1->attached_to = hd->idx;
+
+      str_printf(&hd1->sysfs_id, 0, "%s/%s", hd->sysfs_id, hd_sysfs_dev2_name(sl->str));
+    }
+  }
+}
+
+
+void add_cdrom_info(hd_data_t *hd_data, hd_t *hd)
+{
+  cdrom_info_t *ci, **prev;
+
+  hd->detail = free_hd_detail(hd->detail);
+  hd->detail = new_mem(sizeof *hd->detail);
+  hd->detail->type = hd_detail_cdrom;
+
+  for(ci = *(prev = &hd_data->cdrom); ci; ci = *(prev = &ci->next)) {
+    if(!strcmp(hd->unix_dev_name + sizeof "/dev/" - 1, ci->name)) {
+      hd->detail->cdrom.data = ci;
+      *prev = ci->next;
+      hd->detail->cdrom.data->next = NULL;
+      break;
+    }
+  }
+
+  ci = hd->detail->cdrom.data;
+
+  /* update prog_if: cdr, cdrw, ... */
+  if(
+    /* ###### FIXME: dosn't work anyway: ide-scsi doesn't support sysfs */
+    hd->bus.id == bus_scsi &&
+    !search_str_list(hd->drivers, "ide-scsi")		/* could be ide, though */
+  ) {
+    /* scsi devs lie */
+    if(ci->dvd && (ci->cdrw || ci->dvdr || ci->dvdram)) {
+      ci->dvd = ci->dvdr = ci->dvdram = 0;
+    }
+    ci->dvdr = ci->dvdram = 0;
+    ci->cdr = ci->cdrw = 0;
+    if(hd->prog_if.id == pif_cdr) ci->cdr = 1;
+  }
+
+  /* trust ide info */
+  if(ci->dvd) {
+    hd->is.dvd = 1;
+    hd->prog_if.id = pif_dvd;
+  }
+  if(ci->cdr) {
+    hd->is.cdr = 1;
+    hd->prog_if.id = pif_cdr;
+  }
+  if(ci->cdrw) {
+    hd->is.cdrw = 1;
+    hd->prog_if.id = pif_cdrw;
+  }
+  if(ci->dvdr) {
+    hd->is.dvdr = 1;
+    hd->prog_if.id = pif_dvdr;
+  }
+  if(ci->dvdram) {
+    hd->is.dvdram = 1;
+    hd->prog_if.id = pif_dvdram;
+  }
+
+  if(
+    hd_probe_feature(hd_data, pr_block_cdrom) &&
+    hd_report_this(hd_data, hd)
+  ) {
+    hd_read_cdrom_info(hd_data, hd);
+  }
+}
+
+
 void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_dev)
 {
   hd_res_t *geo, *size;
   int fd;
+  unsigned u0, u1;
+
+  if(
+    hd->sysfs_id &&
+    sscanf(hd->sysfs_id, "/block/cciss!c%ud%u", &u0, &u1) == 2
+  ) {
+    hd->slot = (u0 << 8) + u1;
+    str_printf(&hd->device.name, 0, "CCISS disk %u/%u", u0, u1);
+  }
+
 
   if(
     hd->unix_dev_name &&
@@ -295,7 +436,6 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_de
     hd->slot = (u0 << 1) + u1;
   }
 
-
   if(
     hd->unix_dev_name &&
     strlen(hd->unix_dev_name) > 5
@@ -317,7 +457,21 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_de
 
     str_printf(&fname, 0, PROC_IDE "/%s/model", dev_name);
     if((sl = read_file(fname, 0, 1))) {
-      hd->device.name = canon_str(sl->str, strlen(sl->str));
+      hd->vendor.name = canon_str(sl->str, strlen(sl->str));
+      if((s = strchr(hd->vendor.name, ' '))) {
+        hd->device.name = canon_str(s, strlen(s));
+        if(*hd->device.name) {
+          *s = 0;
+        }
+        else {
+          hd->device.name = free_mem(hd->device.name);
+        }
+      }
+      if(!hd->device.name) {
+        hd->device.name = hd->vendor.name;
+        hd->vendor.name = NULL;
+      }
+
       free_str_list(sl);
     }
 
@@ -482,7 +636,8 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
 #endif
 
 
-#if 0
+// ###### FIXME
+#if 1
 #if defined(__s390__) || defined(__s390x__)
   /* find out WWPN and FCP LUN */
   scsi->wwpn=scsi->fcp_lun=(uint64_t)-1;
@@ -519,6 +674,7 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
 #endif
 
   if(
+    hd_report_this(hd_data, hd) &&
     hd->unix_dev_name &&
     hd->sub_class.id == sc_sdev_cdrom &&
     hd_data->in_vmware != 1		/* VMWare doesn't like it */
@@ -556,6 +712,7 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
 
 
   if(
+    hd_report_this(hd_data, hd) &&
     hd->unix_dev_name &&
     hd->sub_class.id == sc_sdev_disk
   ) {
@@ -721,163 +878,9 @@ void add_partition(hd_data_t *hd_data)
 #endif
 
 
-
-
-
-#if 0
-
-void hd_scan_cdrom(hd_data_t *hd_data)
-{
-  int found;
-  hd_t *hd;
-  cdrom_info_t *ci, **prev, *next;
-
-  if(!hd_probe_feature(hd_data, pr_cdrom)) return;
-
-  hd_data->module = mod_cdrom;
-
-  /* some clean-up */
-  remove_hd_entries(hd_data);
-  hd_data->cdrom = NULL;
-
-  PROGRESS(1, 0, "get devices");
-
-  read_cdroms(hd_data);
-
-  PROGRESS(2, 0, "build list");
-
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    /* look for existing entries... */
-    if(
-      hd->base_class.id == bc_storage_device &&
-      hd->sub_class.id == sc_sdev_cdrom &&
-      hd->unix_dev_name
-    ) {
-      found = 0;
-      for(ci = *(prev = &hd_data->cdrom); ci; ci = *(prev = &ci->next)) {
-        /* ...and remove those from the CDROM list */
-        if(!strcmp(hd->unix_dev_name, ci->name)) {
-          hd->detail = free_hd_detail(hd->detail);
-          hd->detail = new_mem(sizeof *hd->detail);
-          hd->detail->type = hd_detail_cdrom;
-          hd->detail->cdrom.data = ci;
-          *prev = ci->next;
-          ci = *prev;
-          hd->detail->cdrom.data->next = NULL;
-          found = 1;
-          break;
-        }
-      }
-      /* Oops, we didn't find our entries in the 'official' kernel list? */
-      if(!found && (hd_data->debug & HD_DEB_CDROM)) {
-        ADD2LOG("CD drive \"%s\" not in kernel CD list\n", hd->unix_dev_name);
-      }
-    }
-  }
-
-  /*
-   * everything still in hd_data->cdrom are new entries
-   */
-  for(ci = hd_data->cdrom; ci; ci = next) {
-    next = ci->next;
-    ci->next = NULL;
-    hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class.id = bc_storage_device;
-    hd->sub_class.id = sc_sdev_cdrom;
-    hd->unix_dev_name = new_str(ci->name);
-    hd->bus.id = bus_none;
-    hd->detail = free_hd_detail(hd->detail);
-    hd->detail = new_mem(sizeof *hd->detail);
-    hd->detail->type = hd_detail_cdrom;
-    hd->detail->cdrom.data = ci;
-  }
-
-  hd_data->cdrom = NULL;
-
-  /* update prog_if: cdr, cdrw, ... */
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(
-      hd->base_class.id == bc_storage_device &&
-      hd->sub_class.id == sc_sdev_cdrom &&
-      hd->detail &&
-      hd->detail->type == hd_detail_cdrom
-    ) {
-      ci = hd->detail->cdrom.data;
-
-      if(
-        ci->name &&
-        ci->name[5] == 's' &&
-        ci->name[6] == 'r' &&
-        (!hd->driver || strcmp(hd->driver, "ide-scsi"))		/* could be ide, though */
-      ) {	/* "/dev/sr..." */
-        /* scsi devs lie */
-        if(ci->dvd && (ci->cdrw || ci->dvdr || ci->dvdram)) {
-          ci->dvd = ci->dvdr = ci->dvdram = 0;
-        }
-        ci->dvdr = ci->dvdram = 0;
-        ci->cdr = ci->cdrw = 0;
-        if(hd->prog_if.id == pif_cdr) ci->cdr = 1;
-      }
-
-      /* trust ide info */
-      if(ci->dvd) {
-        hd->is.dvd = 1;
-        hd->prog_if.id = pif_dvd;
-      }
-      if(ci->cdr) {
-        hd->is.cdr = 1;
-        hd->prog_if.id = pif_cdr;
-      }
-      if(ci->cdrw) {
-        hd->is.cdrw = 1;
-        hd->prog_if.id = pif_cdrw;
-      }
-      if(ci->dvdr) {
-        hd->is.dvdr = 1;
-        hd->prog_if.id = pif_dvdr;
-      }
-      if(ci->dvdram) {
-        hd->is.dvdram = 1;
-        hd->prog_if.id = pif_dvdram;
-      }
-    }
-  }
-}
-
-
 /*
- * Read CD data and get ISO9660 info.
- */
-void hd_scan_cdrom2(hd_data_t *hd_data)
-{
-  hd_t *hd;
-  int i;
-
-  if(!hd_probe_feature(hd_data, pr_cdrom)) return;
-
-  hd_data->module = mod_cdrom;
-
-  /*
-   * look for a CD and get some info
-   */
-  if(!hd_probe_feature(hd_data, pr_cdrom_info)) return;
-
-  for(i = 0, hd = hd_data->hd; hd; hd = hd->next) {
-    if(
-      hd->base_class.id == bc_storage_device &&
-      hd->sub_class.id == sc_sdev_cdrom &&
-      hd->status.available != status_no &&
-      hd->unix_dev_name
-    ) {
-      PROGRESS(3, ++i, "read cdrom");
-      hd_read_cdrom_info(hd_data, hd);
-    }
-  }
-}
-
-/*
- * Read the CDROM info, if there is a CD inserted.
- * returns NULL if nothing was found
+ * Read iso9660/el torito info, if there is a CD inserted.
+ * Returns NULL if nothing was found
  */
 cdrom_info_t *hd_read_cdrom_info(hd_data_t *hd_data, hd_t *hd)
 {
@@ -1038,7 +1041,6 @@ cdrom_info_t *hd_read_cdrom_info(hd_data_t *hd_data, hd_t *hd)
           }
         }
 
-
         ci->el_torito.geo.size = ci->el_torito.geo.s * ci->el_torito.geo.c * ci->el_torito.geo.h;
       }
     }
@@ -1048,9 +1050,6 @@ cdrom_info_t *hd_read_cdrom_info(hd_data_t *hd_data, hd_t *hd)
 
   return ci;
 }
-
-
-#endif
 
 
 /*

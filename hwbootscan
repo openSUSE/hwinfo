@@ -17,8 +17,6 @@ if [ -n "$neededchanged" ] ; then
   has_keyboard && /sbin/yast2 x11 reprobe
 fi
 
-/usr/sbin/hwscan --silent --boot        --isapnp --disk
-/usr/sbin/hwscan --silent --boot        --pci
-/usr/sbin/hwscan --silent --boot --fast --cdrom --mouse
+/usr/sbin/hwscan --silent --boot --fast --isapnp --pci --block --mouse
 
 exit 0

@@ -49,7 +49,6 @@
 #define DEV_SUNMOUSE		"/dev/sunmouse"
 #define DEV_MICE		"/dev/input/mice"
 #define DEV_I2O			"/dev/i2o"
-#define DEV_CCISS		"/dev/cciss"
 #define DEV_FB			"/dev/fb"
 
 #define PROG_INSMOD		"/sbin/insmod"
@@ -115,9 +114,9 @@ FILE *libhd_log;
 enum mod_idx {
   mod_none, mod_memory, mod_pci, mod_isapnp, mod_pnpdump, mod_cdrom,
   mod_net, mod_floppy, mod_misc, mod_bios, mod_cpu, mod_monitor, mod_mouse,
-  mod_ide, mod_scsi, mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel,
+  mod_scsi, mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel,
   mod_isa, mod_dac960, mod_smart, mod_isdn, mod_kbd, mod_prom, mod_sbus,
-  mod_int, mod_braille, mod_xtra, mod_sys, mod_dasd, mod_i2o, mod_cciss,
+  mod_int, mod_braille, mod_xtra, mod_sys, mod_dasd, mod_i2o,
   mod_manual, mod_fb, mod_veth, mod_partition, mod_disk, mod_ataraid, mod_pppoe,
   mod_pcmcia, mod_s390, mod_sysfs, mod_dsl, mod_block
 };
@@ -232,8 +231,10 @@ int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u);
 char *hd_attr_str(struct sysfs_attribute *attr);
 char *hd_sysfs_id(char *path);
 char *hd_sysfs_name2_dev(char *str);
+char *hd_sysfs_dev2_name(char *str);
 void hd_sysfs_driver_list(hd_data_t *hd_data);
 char *hd_sysfs_find_driver(hd_data_t *hd_data, char *sysfs_id, int exact);
+int hd_report_this(hd_data_t *hd_data, hd_t *hd);
 
 
 #ifdef __cplusplus

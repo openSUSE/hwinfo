@@ -73,6 +73,7 @@ struct option options[] = {
   { "separate", 0, NULL, 308 },
   { "root", 1, NULL, 309 },
   { "db", 1, NULL, 310 },
+  { "only", 1, NULL, 311 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -145,7 +146,6 @@ int main(int argc, char **argv)
   hd_data_t *hd_data;
   hd_t *hd;
   FILE *f = NULL;
-  long l = 0;
   int i;
   unsigned first_probe = 1;
 
@@ -239,6 +239,10 @@ int main(int argc, char **argv)
           ask_db(hd_data, optarg);
           break;
 
+        case 311:
+          if(*optarg) add_str_list(&hd_data->only, optarg);
+          break;
+
         case 400:
           printf("%s\n", hd_version());
 	  break;
@@ -265,11 +269,16 @@ int main(int argc, char **argv)
     if(!hw_items && is_short) hw_item[hw_items++] = 2000;	/* all */
 
     if(hw_items >= 0 || showconfig || saveconfig) {
-      if(*log_file) f = fopen(log_file, "w+");
-
-      if(opt.root) {
-        do_chroot(hd_data, opt.root);
+      if(*log_file) {
+        if(!strcmp(log_file, "-")) {
+          f = fdopen(1, "w");
+        }
+        else {
+          f = fopen(log_file, "w+");
+        }
       }
+
+      if(opt.root) do_chroot(hd_data, opt.root);
 
       if(opt.separate || hw_items <= 1) {
         for(i = 0; i < hw_items; i++) {
@@ -340,13 +349,22 @@ int main(int argc, char **argv)
     deb = hd_data->debug;
     argc -= i; argv += i;
 
+    if(opt.root && first_probe) do_chroot(hd_data, opt.root);
+
     hd_scan(hd_data);
     if(hd_data->progress) printf("\r%64s\r", "");
 
     first_probe = 0;
   } while(argc);
 
-  if(*log_file) f = fopen(log_file, "w+");
+  if(*log_file) {
+    if(!strcmp(log_file, "-")) {
+      f = fdopen(1, "w");
+    }
+    else {
+      f = fopen(log_file, "w+");
+    }
+  }
 
   if((hd_data->debug & HD_DEB_SHOW_LOG) && hd_data->log) {
     if(*log_file) {
@@ -359,8 +377,6 @@ int main(int argc, char **argv)
       hd_data->log
     );
   }
-
-  if(f) l = ftell(f);
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     hd_dump_entry(hd_data, hd, f ? f : stdout);
@@ -1327,6 +1343,18 @@ int get_probe_flags(int argc, char **argv, hd_data_t *hd_data)
     t = "log=";
     if(!strncmp(s, t, strlen(t))) {
       log_file = s + strlen(t);
+      continue;
+    }
+
+    t = "only=";
+    if(!strncmp(s, t, strlen(t))) {
+      add_str_list(&hd_data->only, s + strlen(t));
+      continue;
+    }
+
+    t = "root=";
+    if(!strncmp(s, t, strlen(t))) {
+      opt.root = s + strlen(t);
       continue;
     }
 

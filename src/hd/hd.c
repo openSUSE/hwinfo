@@ -38,7 +38,6 @@
 #include "misc.h"
 #include "mouse.h"
 #include "floppy.h"
-#include "ide.h"
 #include "scsi.h"
 #include "cdrom.h"
 #include "bios.h"
@@ -61,7 +60,6 @@
 #include "sys.h"
 #include "dasd.h"
 #include "i2o.h"
-#include "cciss.h"
 #include "manual.h"
 #include "fb.h"
 #include "veth.h"
@@ -71,7 +69,7 @@
 #include "pppoe.h"
 #include "pcmcia.h"
 #include "s390.h"
-#include "sysfs.h"
+#include "pci.h"
 #include "block.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -183,7 +181,6 @@ static struct s_mod_names {
   { mod_monitor, "monitor"},
   { mod_serial, "serial"},
   { mod_mouse, "mouse"},
-  { mod_ide, "ide"},
   { mod_scsi, "scsi"},
   { mod_usb, "usb"},
   { mod_adb, "adb"},
@@ -202,7 +199,6 @@ static struct s_mod_names {
   { mod_sys, "sys" },
   { mod_dasd, "dasd" },
   { mod_i2o, "i2o" },
-  { mod_cciss, "cciss" },
   { mod_manual, "manual" },
   { mod_fb, "fb" },
   { mod_veth, "veth" },
@@ -260,7 +256,6 @@ static struct s_pr_flags {
 #else
   { pr_mouse,         0,              4|2|1, "mouse"         },
 #endif
-  { pr_ide,           0,            8|4|2|1, "ide"           },
   { pr_scsi,          0,            8|4|2|1, "scsi"          },
   { pr_scsi_geo,      pr_scsi,        4|2  , "scsi.geo"      },
   { pr_scsi_cache,    pr_scsi,        4|2|1, "scsi.cache"    },
@@ -299,7 +294,6 @@ static struct s_pr_flags {
   { pr_sys,           0,            8|4|2|1, "sys"           },
   { pr_dasd,          0,            8|4|2|1, "dasd"          },
   { pr_i2o,           0,            8|4|2|1, "i2o"           },
-  { pr_cciss,         0,            8|4|2|1, "cciss"         },
   { pr_manual,        0,            8|4|2|1, "manual"        },
   { pr_fb,            0,            8|4|2|1, "fb"            },
   { pr_veth,          0,            8|4|2|1, "veth"          },
@@ -317,7 +311,8 @@ static struct s_pr_flags {
   { pr_dsl,           0,              4|2|1, "dsl"           },
   { pr_udev,          0,                  0, "udev"          },
   { pr_block,         0,                  0, "block"         },
-  { pr_block_cdrom,   pr_block,           0, "block.cdrom"   }
+  { pr_block_cdrom,   pr_block,           0, "block.cdrom"   },
+  { pr_block_part,    pr_block,           0, "block.part"    }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -459,13 +454,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_cdrom:
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_usb);
-      hd_set_probe_feature(hd_data, pr_ide);
-      hd_set_probe_feature(hd_data, pr_scsi_cache);
-      hd_set_probe_feature(hd_data, pr_cdrom);
-      if(!hd_data->flags.fast) {
-        hd_set_probe_feature(hd_data, pr_cdrom_info);
-      }
-      hd_set_probe_feature(hd_data, pr_partition);
       hd_set_probe_feature(hd_data, pr_block);
       if(!hd_data->flags.fast) {
         hd_set_probe_feature(hd_data, pr_block_cdrom);
@@ -474,18 +462,15 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_floppy:
       hd_set_probe_feature(hd_data, pr_floppy);
-      hd_set_probe_feature(hd_data, pr_ide);
-      hd_set_probe_feature(hd_data, pr_scsi_cache);	// really necessary?
       hd_set_probe_feature(hd_data, pr_misc_floppy);
       hd_set_probe_feature(hd_data, pr_prom);
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_usb);
-      hd_set_probe_feature(hd_data, pr_partition);
       hd_set_probe_feature(hd_data, pr_block);
       break;
 
     case hw_partition:
-      hd_set_probe_feature(hd_data, pr_partition_add);
+      hd_set_probe_feature(hd_data, pr_block_part);
 
     case hw_disk:
 #if defined(__s390__) || defined(__s390x__)
@@ -493,16 +478,13 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 #endif      
       hd_set_probe_feature(hd_data, pr_bios);		// bios disk order
       hd_set_probe_feature(hd_data, pr_pci);		// assign disk -> controller
-      hd_set_probe_feature(hd_data, pr_ide);
-      hd_set_probe_feature(hd_data, pr_scsi_cache);
       hd_set_probe_feature(hd_data, pr_dac960);
       hd_set_probe_feature(hd_data, pr_smart);
       hd_set_probe_feature(hd_data, pr_dasd);
       hd_set_probe_feature(hd_data, pr_partition);
       hd_set_probe_feature(hd_data, pr_disk);
       hd_set_probe_feature(hd_data, pr_block);
-      hd_set_probe_feature(hd_data, pr_ataraid);
-      hd_set_probe_feature(hd_data, pr_block);
+//      hd_set_probe_feature(hd_data, pr_ataraid);
       break;
 
     case hw_network:
@@ -619,7 +601,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 #ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_prom);
       hd_set_probe_feature(hd_data, pr_misc);
-      hd_set_probe_feature(hd_data, pr_ide);		/* dasd on iseries */
 #endif
       break;
 
@@ -707,8 +688,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_isdn);	// need pr_misc, too?
       hd_set_probe_feature(hd_data, pr_dsl);
-      hd_set_probe_feature(hd_data, pr_scsi);
-      hd_set_probe_feature(hd_data, pr_partition);
       hd_set_probe_feature(hd_data, pr_block);
       hd_data->flags.fast = 1;
       break;
@@ -745,19 +724,12 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_scsi:
-      hd_set_probe_feature(hd_data, pr_usb);
-      hd_set_probe_feature(hd_data, pr_scsi_cache);
-      hd_set_probe_feature(hd_data, pr_ide);
-      hd_set_probe_feature(hd_data, pr_partition);
-      hd_set_probe_feature(hd_data, pr_cdrom);
+      hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_block);
       break;
 
     case hw_ide:
-      hd_set_probe_feature(hd_data, pr_ide);
-      hd_set_probe_feature(hd_data, pr_scsi);
-      hd_set_probe_feature(hd_data, pr_cdrom);
-      hd_set_probe_feature(hd_data, pr_partition);
+      hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_block);
       break;
 
@@ -867,6 +839,8 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
 
   hd_data->udevinfo = hd_free_udevinfo(hd_data->udevinfo);
   hd_data->sysfsdrv = hd_free_sysfsdrv(hd_data->sysfsdrv);
+
+  hd_data->only = free_str_list(hd_data->only);
 
   hd_data->last_idx = 0;
 
@@ -1686,6 +1660,12 @@ void hd_scan(hd_data_t *hd_data)
     ADD2LOG("shm: failed to get shm segment; will not fork\n");
   }
 
+  if(hd_data->only) {
+    s = hd_join(", ", hd_data->only);
+    ADD2LOG("only: %s\n", s);
+    s = free_mem(s);
+  }
+
 #ifndef LIBHD_TINY
   /*
    * There might be old 'manual' entries left from an earlier scan. Remove
@@ -1761,7 +1741,8 @@ void hd_scan(hd_data_t *hd_data)
   }
 #endif
 
-  if(hd_data->flags.nosysfs) {
+#if 0
+// ###### FIXME: remove
     /* do it rather early */
     hd_scan_partition(hd_data);
 
@@ -1770,11 +1751,9 @@ void hd_scan(hd_data_t *hd_data)
     hd_scan_dac960(hd_data);
     hd_scan_smart(hd_data);
     hd_scan_i2o(hd_data);
-    hd_scan_cciss(hd_data);
-  }
-  else {
-    hd_scan_sysfs_block(hd_data);
-  }
+#endif
+
+  hd_scan_sysfs_block(hd_data);
 
 #if defined(__s390__) || defined(__s390x__)
   hd_scan_dasd(hd_data);
@@ -1800,11 +1779,14 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_fb(hd_data);
 
   /* keep these at the end of the list */
+#if 0
   if(hd_data->flags.nosysfs) {
     hd_scan_cdrom(hd_data);
   }
+#endif
   hd_scan_net(hd_data);
 
+#if 0
   if(hd_data->flags.nosysfs) {
     hd_scan_disk(hd_data);
     hd_scan_ataraid(hd_data);
@@ -1812,6 +1794,7 @@ void hd_scan(hd_data_t *hd_data)
     /* after ataraid */
     hd_scan_partition2(hd_data);
   }
+#endif
 
   hd_scan_pppoe(hd_data);
 
@@ -1831,9 +1814,11 @@ void hd_scan(hd_data_t *hd_data)
 #endif
   hd_scan_int(hd_data);
 
+#if 0
   if(hd_data->flags.nosysfs) {
     hd_scan_cdrom2(hd_data);
   }
+#endif
 
   /* and again... */
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd_data, hd);
@@ -3108,6 +3093,8 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
   }
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(!hd_report_this(hd_data, hd)) continue;
+
     if(
       (
         item == hw_manual || hd_is_hw_class(hd, item)
@@ -3233,6 +3220,7 @@ hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan)
   }
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(!hd_report_this(hd_data, hd)) continue;
     if(
       (
         is_manual || has_hw_class(hd, items)
@@ -5510,7 +5498,7 @@ void hd_sysfs_driver_list(hd_data_t *hd_data)
 
   sfp = &hd_data->sysfsdrv;
 
-  ADD2LOG("----- sysfs driver list (id 0x%16"PRIx64") -----\n", id);
+  ADD2LOG("----- sysfs driver list (id 0x%016"PRIx64") -----\n", id);
 
   sf_subsys = sysfs_open_subsystem_list("bus");
 
@@ -5537,5 +5525,13 @@ void hd_sysfs_driver_list(hd_data_t *hd_data)
   sysfs_close_list(sf_subsys);
 
   ADD2LOG("----- sysfs driver list end -----\n");
+}
+
+
+int hd_report_this(hd_data_t *hd_data, hd_t *hd)
+{
+  if(!hd_data->only) return 1;
+
+  return search_str_list(hd_data->only, hd->sysfs_id) ? 1 : 0;
 }
 

@@ -5,6 +5,7 @@
 #include <getopt.h>
 
 #include "hd.h"
+#include "hd_int.h"
 
 struct option options[] = {
   { "help", 0, NULL, 'h' },
@@ -20,6 +21,7 @@ struct option options[] = {
   { "silent", 0, NULL, 507 },
   { "boot", 0, NULL, 508 },
   { "active", 1, NULL, 509 },
+  { "only", 1, NULL, 510 },
   { "sys", 0, NULL, 1000 + hw_sys },
   { "cpu", 0, NULL, 1000 + hw_cpu },
   { "keyboard", 0, NULL, 1000 + hw_keyboard },
@@ -94,6 +96,7 @@ struct {
   unsigned fast:1;
   unsigned silent:1;
   unsigned boot:1;
+  str_list_t *only;
 } opt;
 
 void help(void);
@@ -177,6 +180,10 @@ int main(int argc, char **argv)
       case 509:
         opt.config_active = 1;
         config_active = optarg;
+        break;
+
+      case 510:
+        if(*optarg) add_str_list(&opt.only, optarg);
         break;
 
       case 1000 ... 1100:
@@ -296,6 +303,9 @@ int do_scan(hd_hw_item_t *items)
       return 0;
     }
   }
+
+  hd_data->only = opt.only;
+  opt.only = NULL;
 
   hd_data->flags.list_all = 1;
   hd_data->flags.fast = opt.fast;
@@ -474,7 +484,23 @@ int do_config(int type, char *val, char *id)
 
   hd_data = calloc(1, sizeof *hd_data);
 
-  hd = hd_read_config(hd_data, id);
+  if ( id[0] == '/' ){
+     int nr=0;
+     char *_id = 0;
+     hd_t *hd_manual;
+
+     hd_manual = hd_list(hd_data, hw_manual, 1, NULL);
+     for(hd = hd_manual; hd; hd = hd->next) {
+        if(!hd->status.available) continue;
+        if(!hd->unix_dev_name || strlen(hd->unix_dev_name)<1) continue;
+        if(strcmp(hd->unix_dev_name, id)) continue;
+	_id = hd->unique_id;
+        nr++;
+     }
+     if ( nr == 1 )
+        hd = hd_read_config(hd_data, _id);
+  }else
+    hd = hd_read_config(hd_data, id);
 
   if(hd) {
     for(i = 1; i < 8; i++) {
