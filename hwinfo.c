@@ -1911,6 +1911,13 @@ void ask_db(hd_data_t *hd_data, char *query)
     if(!strcmp(sl->str, "special")) { tag = TAG_SPECIAL; continue; }
     if(!strcmp(sl->str, "pcmcia")) { tag = TAG_PCMCIA; continue; }
 
+    if(sscanf(sl->str, "class=%i%n", &u, &cnt) >= 1 && !sl->str[cnt]) {
+      hd->base_class.id = u >> 16;
+      hd->sub_class.id = (u >> 8) & 0xff;
+      hd->prog_if.id = u & 0xff;
+      continue;
+    }
+
     if(sscanf(sl->str, "vendor=%i%n", &u, &cnt) >= 1 && !sl->str[cnt]) {
       hd->vendor.id = MAKE_ID(tag, u);
       continue;

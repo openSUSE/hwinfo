@@ -45,6 +45,7 @@ static struct {
   { 1024,  768, "Dell Computer Corporation", "Latitude CPt C400GT", NULL },
   { 1024,  768, "Hewlett-Packard", "HP OmniBook PC", "HP OmniBook 4150 B" },
   { 1280,  800, "Hewlett-Packard", "hp compaq nx9105 (DU367T#ABD)", "03" },
+  { 1280,  800, "Hewlett-Packard", "Pavilion zv5000 (PA456EA#ABD)", "F.11" },
 #include "ibm-notebooks.h"
   { 1024,  768, "KDST", "KDS6KSUMO", NULL  },
   { 1024,  768, "Sony Corporation", "PCG-F370(UC)", NULL },

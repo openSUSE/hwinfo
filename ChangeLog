@@ -1,5 +1,8 @@
+4/3/2005:	v10.7
 	- s390: made ccwgroup walking more robust
 	- fixed bios base mem detection
+	- allow device class in 'hwinfo --db' request
+	- updated X11 data
 
 28/2/2005:	v10.6
 	- jg: improved wlan patch (no dependency on libiw)
