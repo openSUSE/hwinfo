@@ -36,6 +36,10 @@ struct serial_struct {
   int     reserved[2];
 };
 
+#ifdef DIET
+typedef unsigned int u_int;
+#endif
+
 #include <asm/kbio.h>
 #include <asm/openpromio.h>
 #endif

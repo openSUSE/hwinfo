@@ -1,4 +1,9 @@
-4/1/2001:	v3.37
+14/1/2002:	v3.38
+	- olh: assume veth always present
+	- make it work with dietlibc on sparc
+	- new class: hw_usb_ctrl
+
+4/1/2002:	v3.37
 	- reimplemented iSeries veth device detection (#12680)
 
 14/12/2001:	v3.36

@@ -76,6 +76,7 @@ struct option options[] = {
   { "sys", 0, NULL, 1000 + hw_sys },
   { "cpu", 0, NULL, 1000 + hw_cpu },
   { "partition", 0, NULL, 1000 + hw_partition },
+  { "usb_ctrl", 0, NULL, 1000 + hw_usb_ctrl },
   { "all", 0, NULL, 2000 },
   { "reallyall", 0, NULL, 2001 },
   { "smp", 0, NULL, 3000 },

@@ -22,6 +22,7 @@ static void int_bios(hd_data_t *hd_data);
 static void int_media_check(hd_data_t *hd_data);
 static void int_floppy(hd_data_t *hd_data);
 static void int_fix_ide_scsi(hd_data_t *hd_data);
+static void int_driver(hd_data_t *hd_data);
 
 void hd_scan_int(hd_data_t *hd_data)
 {
@@ -51,6 +52,9 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(6, 0, "bios");
   int_bios(hd_data);
 #endif
+
+  PROGRESS(7, 0, "driver");
+  int_driver(hd_data);
 }
 
 /*
@@ -279,3 +283,36 @@ void int_fix_ide_scsi(hd_data_t *hd_data)
   remove_tagged_hd_entries(hd_data);
 }
 #undef COPY_ENTRY
+
+
+/*
+ * Add driver info in some special cases.
+ */
+void int_driver(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  hd_res_t *res;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->drv_vend || hd->drv_dev) continue;
+
+    if(hd->base_class == bc_serial && hd->sub_class == sc_ser_usb) {
+      hd->drv_vend = MAKE_ID(TAG_SPECIAL, 0x7001);
+      hd->drv_dev = MAKE_ID(TAG_SPECIAL, 0x0000 + hd->prog_if);
+      for(res = hd->res; res; res = res->next) {
+        if(res->any.type == res_irq) break;
+      }
+      if(!res) hd->is.notready = 1;
+      continue;
+    }
+
+    if(hd->base_class == bc_i2o) {
+      hd->drv_vend = MAKE_ID(TAG_SPECIAL, 0x7002);
+      hd->drv_dev = MAKE_ID(TAG_SPECIAL, 0x0000);
+      continue;
+    }
+
+  }
+}
+
+

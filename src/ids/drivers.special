@@ -1,0 +1,14 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# special devices
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+s7001 0000
+	i	usbcore|usb-uhci
+
+s7001 0010
+	i	usbcore|usb-ohci
+
+s7002 0000
+	i	i2o_pci|i2o_core|i2o_config|i2o_block

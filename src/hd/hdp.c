@@ -109,19 +109,23 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
   else
     dump_normal(hd_data, h, f);
 
-  if(
-    h->base_class == bc_storage_device &&
-    h->is.notready
-  ) {
-    dump_line_str("Drive status: no medium\n");
+  if(h->is.notready) {
+    if(h->base_class == bc_storage_device) {
+      dump_line_str("Drive status: no medium\n");
+    }
+    else {
+      dump_line_str("Device status: not configured\n");
+    }
   }
 
   if(
-    h->status.configured ||
-    h->status.available ||
-    h->status.critical ||
-    h->status.invalid ||
-    h->is.manual
+    hd_data->debug == -1 && (
+      h->status.configured ||
+      h->status.available ||
+      h->status.critical ||
+      h->status.invalid ||
+      h->is.manual
+    )
   ) {
     dump_line_str("Config Status: ");
     i = 0;

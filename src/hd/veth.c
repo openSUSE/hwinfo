@@ -17,6 +17,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+#if defined(__PPC__)
+
 void hd_scan_veth(hd_data_t *hd_data)
 {
   unsigned u;
@@ -45,6 +47,17 @@ void hd_scan_veth(hd_data_t *hd_data)
       }
     }
     closedir(dir);
+    return;
   }
+  if((dir = opendir(PROC_ISERIES))) {
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->base_class = bc_network;
+    hd->slot = 0;
+    hd->vend = MAKE_ID(TAG_SPECIAL, 0x6001);	// IBM
+    hd->dev = MAKE_ID(TAG_SPECIAL, 0x0000);
+    str_printf(&hd->dev_name, 0, "Ethernet card %d", hd->slot);
+  }
+
 }
 
+#endif	/* __PPC__ */

@@ -116,11 +116,13 @@ static void free_old_hd_entries(hd_data_t *hd_data);
 static hd_t *free_hd_entry(hd_t *hd);
 static hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd);
 static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
+static driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd);
 #if WITH_ISDN
 static int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len);
 static isdn_parm_t *new_isdn_parm(isdn_parm_t **ip);
 static driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici);
 #endif
+static driver_info_t *monitor_driver(hd_data_t *hd_data, hd_t *hd);
 static char *module_cmd(hd_t *, char *);
 static void timeout_alarm_handler(int signal);
 static void get_probe_env(hd_data_t *hd_data);
@@ -583,6 +585,10 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_manual:
       hd_set_probe_feature(hd_data, pr_manual);
+      break;
+
+    case hw_usb_ctrl:
+      hd_set_probe_feature(hd_data, pr_pci);
       break;
 
     case hw_all:
@@ -1462,7 +1468,9 @@ void hd_scan(hd_data_t *hd_data)
 #if defined(__s390__) || defined(__s390x__)
   hd_scan_dasd(hd_data);
 #endif
+#if defined(__PPC__)   
   hd_scan_veth(hd_data);
+#endif
   hd_scan_usb(hd_data);
 #if defined(__PPC__)
   hd_scan_adb(hd_data);
@@ -2707,6 +2715,10 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 
   if(!di0 && (hd->compat_vend || hd->compat_dev)) {
     di0 = device_driver(hd_data, hd->compat_vend, hd->compat_dev);
+  }
+
+  if(!di0 && (hd->drv_vend || hd->drv_dev)) {
+    di0 = device_driver(hd_data, hd->drv_vend, hd->drv_dev);
   }
 
 #if WITH_ISDN
@@ -4644,6 +4656,12 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
       case hw_cpu:
         base_class = bc_internal;
         sub_class = sc_int_cpu;
+        sc = 1;
+        break;
+
+      case hw_usb_ctrl:
+        base_class = bc_serial;
+        sub_class = sc_ser_usb;
         sc = 1;
         break;
 

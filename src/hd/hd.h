@@ -94,7 +94,7 @@ typedef enum hw_item {
   hw_printer, hw_scanner, hw_chipcard, hw_monitor, hw_tv, hw_display,
   hw_framebuffer, hw_camera, hw_sound, hw_storage_ctrl, hw_network_ctrl,
   hw_isdn, hw_modem, hw_network, hw_disk, hw_partition, hw_cdrom, hw_floppy,
-  hw_manual,
+  hw_manual, hw_usb_ctrl,
   hw_all					/* hw_all must be last */
 } hd_hw_item_t;
 
@@ -1077,7 +1077,7 @@ typedef struct s_hd_t {
     unsigned isapnp:1;		/* ISA-PnP device */
     unsigned cardbus:1;		/* cardbus card */
     unsigned pcmcia:1;		/* pcmcia card */
-    unsigned notready:1;	/* for (removeable) block devices: no medium */
+    unsigned notready:1;	/* block devices: no medium, other: device not configured */
     unsigned manual:1;		/* undetectable, manually configured hardware */
   } is;
 
@@ -1094,6 +1094,8 @@ typedef struct s_hd_t {
 
   char *old_unique_id;		/* the id before v3.17 */
   char *parent_id;		/* unique_id of our parent, please do not use it for now */
+
+  unsigned drv_dev, drv_vend;	/* sometimes used for driver info lookups */
 
   /*
    * These are used internally for memory management.
