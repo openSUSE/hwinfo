@@ -912,6 +912,20 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
         }
         break;
 
+      case sm_group:
+        if(data_len >= 5) {
+          sm->group.name = get_string(sl_any, sm_data[4]);
+          u = (data_len - 5) / 3;
+          if(u) {
+            sm->group.items_len = u;
+            sm->group.item_handles = new_mem(u * sizeof *sm->group.item_handles);
+            for(u = 0; u < sm->group.items_len; u++) {
+              sm->group.item_handles[u] = *(uint16_t *) (sm_data + 6 + 3 * u);
+            }
+          }
+        }
+        break;
+
       case sm_memarray:
         if(data_len >= 0x0f) {
           sm->memarray.location.id = sm_data[4];
@@ -1195,6 +1209,11 @@ hd_smbios_t *smbios_free(hd_smbios_t *sm)
         free_mem(sm->lang.current);
         break;
 
+      case sm_group:
+        free_mem(sm->group.name);
+        free_mem(sm->group.item_handles);
+        break;
+
       case sm_memarray:
         free_mem(sm->memarray.location.name);
         free_mem(sm->memarray.use.name);
@@ -1255,7 +1274,7 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
 {
   hd_smbios_t *sm;
   str_list_t *sl;
-  char c;
+  char c, *s;
   unsigned u;
   int i;
 
@@ -1439,6 +1458,18 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
         if(sm->lang.current) fprintf(f, "    Current: %s\n", sm->lang.current);
         break;
 
+      case sm_group:
+        fprintf(f, "  Group Associations: #%d\n", sm->any.handle);
+        if(sm->group.name) fprintf(f, "    Group Name: \"%s\"\n", sm->group.name);
+        if(sm->group.items_len) {
+          fprintf(f, "    Items: ");
+          for(i = 0; i < sm->group.items_len; i++) {
+            fprintf(f, "%s#%d", i ? ", " : "", sm->group.item_handles[i]);
+          }
+          fprintf(f, "\n");
+        }
+        break;
+
       case sm_memarray:
         fprintf(f, "  Physical Memory Array: #%d\n", sm->any.handle);
         SMBIOS_PRINT_ID(memarray.use, "Use");
@@ -1597,15 +1628,29 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
         if(sm->mem64error.range != (1 << 31)) fprintf(f, "    Range: 0x%08x\n", sm->mem64error.range);
         break;
 
-      case sm_inactive:
-        fprintf(f, "  Inactive Record: #%d\n", sm->any.handle);
-        break;
-
       case sm_end:
         break;
 
       default:
-        fprintf(f, "  Type %d Record: #%d\n", sm->any.type, sm->any.handle);
+        if(sm->any.type == sm_inactive) {
+          fprintf(f, "  Inactive Record: #%d\n", sm->any.handle);
+        }
+        else {
+          fprintf(f, "  Type %d Record: #%d\n", sm->any.type, sm->any.handle);
+        }
+        if(sm->any.data_len) {
+          for(i = 0; i < sm->any.data_len; i += 0x10) {
+            u = sm->any.data_len - i;
+            if(u > 0x10) u = 0x10;
+            s = NULL;
+            hexdump(&s, 0, u, sm->any.data + i);
+            fprintf(f, "    Data %02x: %s\n", i, s);
+            s = free_mem(s);
+          }
+        }
+        for(u = 1, sl = sm->any.strings; sl; sl = sl->next, u++) {
+          if(sl->str && *sl->str) fprintf(f, "    String %u: \"%s\"\n", u, sl->str);
+        }
 	break;
     }
   }

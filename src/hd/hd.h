@@ -707,6 +707,20 @@ typedef struct {
 } smbios_lang_t;
 
 
+/* group associations */
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  char *name;			/* group name */
+  int items_len;		/* number of items in this group */
+  int *item_handles;		/* array of item handles */
+} smbios_group_t;
+
+
 /* physical memory array (consists of several memory devices) */
 typedef struct {
   union u_hd_smbios_t *next;
@@ -880,6 +894,7 @@ typedef union u_hd_smbios_t {
   smbios_oem_t oem;
   smbios_config_t config;
   smbios_lang_t lang;
+  smbios_group_t group;
   smbios_memarray_t memarray;
   smbios_memdevice_t memdevice;
   smbios_memerror_t memerror;
