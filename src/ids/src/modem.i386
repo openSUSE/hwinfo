@@ -46,7 +46,7 @@
 +driver.module.modprobe	slamr
 +baseclass.id		0x102
 +subclass.id		0x04
-+requires		kernel-nongpl
++requires		kernel-nongpl|smartlink-softmodem
 
 
  vendor.id		pci 0x1131

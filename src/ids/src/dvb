@@ -98,3 +98,25 @@
 +subclass.id		0x00
 +driver.module.modprobe	budget-ci
 
+
+ vendor.id		pci 0x14f1
+&device.id		pci 0x8802
+&subvendor.id		pci 0x17de
+&subdevice.id		pci 0x08a6
+|vendor.id		pci 0x14f1
+&device.id		pci 0x8802
+&subvendor.id		pci 0x18AC
+&subdevice.id		pci 0xDB00
+|vendor.id		pci 0x14f1
+&device.id		pci 0x8802
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0x9002
+|vendor.id		pci 0x14f1
+&device.id		pci 0x8802
+&subvendor.id		pci 0x14f1
+&subdevice.id		pci 0x0187
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	cx88-dvb
+
+
