@@ -1,0 +1,71 @@
+# cf. usmgr
+
+u03f0	HP
+	0101.10c00	4100C
+	0102.10c00	PhotoSmart S20
+	0105.10c00	4200C
+	0201.10c00	6200C
+	0205.10c00	3300C
+	0401.10c00	5200C
+	0601.10c00	6300C
+
+u0458	KYE Systems
+	2001.10c00	Genius ColorPage-Vivid Pro
+
+u0461	Colorado
+	0034.10c00	USB 9600
+	0300.10c00	G2-300
+	0301.10c00	G2E-300
+	0302.10c00	G2-300
+	0303.10c00	G2E-300
+	0341.10c00	600U
+	0360.10c00	USB 19200
+	0361.10c00	1200U
+	0380.10c00	G2-600
+	0381.10c00	ReadyScan 636i
+	0382.10c00	G2-600
+	0383.10c00	G2E-600
+
+u04a5	Acer
+	2040.10c00	Prisa Acerscan 620U
+	2060.10c00	Prisa Acerscan 620U
+
+u04a7	Visioneer
+	0221.10c00	OneTouch 5300
+	0231.10c00	6100
+
+u04b8	Epson
+	0101.10c00	Perfection 636U
+	0103.10c00	Perfection 610
+	0104.10c00	Perfection 1200U
+	010c.10c00	Perfection 640
+
+u04ce	ScanLogic
+	0300.10c00	Phantom 336CX
+
+u05da	Microtek
+	0094.10c00	Phantom 336CX
+	0099.10c00	ScanMaker X6
+	009a.10c00	Phantom C6
+	00a0.10c00	Phantom 336CX
+	00a3.10c00	ScanMaker V6USL
+	80a3.10c00	ScanMaker V6USL
+	80ac.10c00	ScanMaker V6UL
+
+u055f	Mustek
+	0001.10c00	1200 CU
+
+u0638	iVina
+	0268.10c00	1200U
+
+u06bd	Agfa
+	0001.10c00	SnapScan 1212U
+	0100.10c00	SnapScan 1212U
+	2061.10c00	SnapScan Touch
+
+u1606	UMAX
+	0002.10c00	Astra 1236U
+	0010.10c00	Astra 1220U
+	0030.10c00	Astra 2000U
+	0230.10c00	Astra 2200U
+
