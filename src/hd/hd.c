@@ -578,6 +578,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_isdn:
       hd_set_probe_feature(hd_data, pr_misc);		/* get basic i/o res */
       hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_pcmcia);
       hd_set_probe_feature(hd_data, pr_isapnp);
       hd_set_probe_feature(hd_data, pr_isapnp_mod);
       hd_set_probe_feature(hd_data, pr_isa_isdn);
@@ -768,6 +769,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pcmcia);
       hd_set_probe_feature(hd_data, pr_wlan);
       hd_set_probe_feature(hd_data, pr_net);
+      hd_set_probe_feature(hd_data, pr_isdn);
       break;
 
     case hw_bluetooth:

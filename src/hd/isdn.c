@@ -137,7 +137,9 @@ cdb_isdn_card *get_isdn_info(hd_t *hd)
 
   if(hd->bus.id == bus_pci ||
     hd->bus.id == bus_isa ||
-    hd->bus.id == bus_usb) {
+    hd->bus.id == bus_usb ||
+    hd->bus.id == bus_pcmcia ||
+    hd->bus.id == bus_cardbus) {
 
     cic = NULL;
     u0 = ID_VALUE(hd->vendor.id);
@@ -184,6 +186,25 @@ cdb_isdn_card *get_isdn_info(hd_t *hd)
       if (!cic) /* to get cards without revision info in database */
       	cic = hd_cdbisdn_get_card_from_id(ID_VALUE(hd->vendor.id), ID_VALUE(hd->device.id),
       				0xffff, 0xffff);
+    }
+    
+    if((hd->bus.id == bus_pcmcia || hd->bus.id == bus_cardbus) &&
+    	(hd->base_class.id == bc_network || hd->base_class.id == bc_isdn)) {
+    	if (hd->drivers && hd->drivers->str) {
+    		if (0 == strcmp(hd->drivers->str, "teles_cs")) {
+    			cic = hd_cdbisdn_get_card_from_type(8, 0);
+    		} else if (0 == strcmp(hd->drivers->str, "sedlbauer_cs")) {
+    			cic = hd_cdbisdn_get_card_from_type(22, 2);
+    		} else if (0 == strcmp(hd->drivers->str, "avma1_cs")) {
+    			cic = hd_cdbisdn_get_card_from_type(26, 0);
+    		} else if (0 == strcmp(hd->drivers->str, "fcpcmcia_cs")) {
+    			cic = hd_cdbisdn_get_card_from_type(8002, 5);
+    		} else if (0 == strcmp(hd->drivers->str, "elsa_cs")) {
+    			cic = hd_cdbisdn_get_card_from_type(10, 11);
+    		} else if (0 == strcmp(hd->drivers->str, "avm_cs")) {
+    			cic = hd_cdbisdn_get_card_from_type(8001, 2);
+    		}
+        }
     }
 
     if (cic && cic->Class && strcmp(cic->Class, "DSL")) {
