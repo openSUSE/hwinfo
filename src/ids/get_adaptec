@@ -10,7 +10,7 @@ sub add_entry;
 while(<>) {
   if(/^struct.*ah[cd]_pci_ident_table\s*\[\s*\]\s*=\s*$/ .. /^\}/) {
     if(/^struct.*ah([cd])_pci_ident_table\s*\[\s*\]\s*=\s*$/) {
-      $mod = $1 eq "c" ? "aic7xxx" : "aix79xx";
+      $mod = $1 eq "c" ? "aic7xxx" : "aic79xx";
     }
 
     if(/^\s+\{/ .. /^\s+\}/) {
