@@ -143,6 +143,7 @@ void hd_scan_s390(hd_data_t *hd_data)
     hd->detail->ccw.data=new_mem(sizeof(ccw_t));
     hd->detail->ccw.data->cu_model=cumod;
     hd->detail->ccw.data->dev_model=devmod;
+    hd->detail->ccw.data->lcss=(strtol(curdev->bus_id,0,16) << 8) + strtol(curdev->bus_id+2,0,16);
     hddb_add_info(hd_data,hd);
   }
 

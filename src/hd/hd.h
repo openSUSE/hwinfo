@@ -1083,6 +1083,7 @@ typedef struct devtree_s {
  * Device/CU model numbers for S/390
  */
 typedef struct ccw_s {
+  unsigned char lcss;
   unsigned char cu_model;
   unsigned char dev_model;
 } ccw_t;

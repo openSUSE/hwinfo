@@ -1,3 +1,4 @@
+	- s390: added LCSS info to ccw_t
 	- link libhd against libsysfs
 	- added hw item for quick DASD rescanning
 	- updated digital camera ids.

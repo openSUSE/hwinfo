@@ -237,6 +237,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
 
   if(h->detail && h->detail->ccw.type==hd_detail_ccw)
   {
+  	  dump_line("LCSS: %x.%x\n",h->detail->ccw.data->lcss >> 8, h->detail->ccw.data->lcss & 0xf);
 	  dump_line("CU Model: 0x%x\n",h->detail->ccw.data->cu_model);
 	  dump_line("Device Model: 0x%x\n",h->detail->ccw.data->dev_model);
   }
