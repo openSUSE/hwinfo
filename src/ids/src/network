@@ -468,40 +468,199 @@
 &device.id		pci 0x4800
 +driver.module.modprobe	aironet4500
 
-# pcimap
- vendor.id		pci 0x1148
+# modules.alias
+ vendor.id		pci 0x106b
+&device.id		pci 0x1645
+|vendor.id		pci 0x1148
 &device.id		pci 0x4400
-+driver.module.modprobe	sk9dlin
+|vendor.id		pci 0x1148
+&device.id		pci 0x4500
+|vendor.id		pci 0x14e4
+&device.id		pci 0x164d
+|vendor.id		pci 0x173b
+&device.id		pci 0x03e8+0x0004
 +driver.module.modprobe	tg3
 
-# pcimap
-# bcm5700 vs. tg3: #24125
+# modules.alias
  vendor.id		pci 0x14e4
+&device.id		pci 0x1644
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x00d1
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1644
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0106
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1644
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0109+0x0002
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1644
+&subvendor.id		pci 0x10b7
+&subdevice.id		pci 0x1000+0x0004
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1644
+&subvendor.id		pci 0x10b7
+&subdevice.id		pci 0x1005
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1644
+&subvendor.id		pci 0x10b7
+&subdevice.id		pci 0x1008
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1644
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x0002+0x0003
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1644
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x1644
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1645
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x007c
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1645
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x0085
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1645
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x00c1
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1645
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0121
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1645
+&subvendor.id		pci 0x10b7
+&subdevice.id		pci 0x1004
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1645
+&subvendor.id		pci 0x10b7
+&subdevice.id		pci 0x1006+0x0003
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1645
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x0001
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1645
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x0005+0x0004
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1645
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x8008
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1646
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x8009
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1647
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x0009+0x0003
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1647
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x800a
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1648
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x00cf+0x0003
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1648
+&subvendor.id		pci 0x10b7
+&subdevice.id		pci 0x2000
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1648
+&subvendor.id		pci 0x10b7
+&subdevice.id		pci 0x3000
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1648
+&subvendor.id		pci 0x1166
+&subdevice.id		pci 0x1648
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1653+0x0002
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x00e3
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1654
+&subvendor.id		pci 0x103c
+&subdevice.id		pci 0x3100
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1658+0x0002
+|vendor.id		pci 0x14e4
+&device.id		pci 0x1676+0x0002
+|vendor.id		pci 0x14e4
+&device.id		pci 0x167c+0x0002
+|vendor.id		pci 0x14e4
+&device.id		pci 0x16a6
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x00bb
+|vendor.id		pci 0x14e4
+&device.id		pci 0x16a6
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x000c
+|vendor.id		pci 0x14e4
+&device.id		pci 0x16a6
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x8009
+|vendor.id		pci 0x14e4
+&device.id		pci 0x16a7
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x00ca+0x0002
+|vendor.id		pci 0x14e4
+&device.id		pci 0x16a7
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x0281
+|vendor.id		pci 0x14e4
+&device.id		pci 0x16a7
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x0009+0x0003
+|vendor.id		pci 0x14e4
+&device.id		pci 0x16a7
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x800a
+|vendor.id		pci 0x14e4
+&device.id		pci 0x16a8
+&subvendor.id		pci 0x10b7
+&subdevice.id		pci 0x2001
+|vendor.id		pci 0x14e4
+&device.id		pci 0x16a8
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x16a8
+|vendor.id		pci 0x14e4
+&device.id		pci 0x16c6
+&subvendor.id		pci 0x10b7
+&subdevice.id		pci 0x1100
+|vendor.id		pci 0x14e4
+&device.id		pci 0x16c7
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x00ca+0x0002
+|vendor.id		pci 0x14e4
+&device.id		pci 0x16c7
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x000a
++driver.module.modprobe	bcm5700
+
+# modules.alias
+ vendor.id		pci 0x14e4
+&device.id		pci 0x1644+0x0006
+|vendor.id		pci 0x14e4
 &device.id		pci 0x1653+0x0002
 |vendor.id		pci 0x14e4
 &device.id		pci 0x165d+0x0002
+|vendor.id		pci 0x14e4
+&device.id		pci 0x166e
 |vendor.id		pci 0x14e4
 &device.id		pci 0x1696
 |vendor.id		pci 0x14e4
 &device.id		pci 0x169c
 |vendor.id		pci 0x14e4
-&device.id		pci 0x170d+0x0002
-+driver.module.modprobe	bcm5700
-
- vendor.id		pci 0x14e4
-&device.id		pci 0x164d
-|vendor.id		pci 0x173b
-&device.id		pci 0x03e8
-|vendor.id		pci 0x173b
-&device.id		pci 0x03ea
-+driver.module.modprobe	tg3
-
- vendor.id		pci 0x14e4
-&device.id		pci 0x1644+0x0005
-|vendor.id		pci 0x14e4
 &device.id		pci 0x16a6+0x0003
 |vendor.id		pci 0x14e4
 &device.id		pci 0x16c6+0x0002
+|vendor.id		pci 0x14e4
+&device.id		pci 0x170d+0x0002
 +driver.module.modprobe	bcm5700
 +driver.module.modprobe	tg3
 
