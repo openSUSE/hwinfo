@@ -193,10 +193,10 @@ typedef struct s_pci_t {
   unsigned base_class, sub_class, prog_if;	/* PCI device classes */
   unsigned dev, vend, sub_dev, sub_vend, rev;	/* vendor & device ids */
   unsigned irq;					/* used irq, if any */
-  unsigned base_addr[6];			/* I/O or memory base */
-  unsigned base_len[6];				/* I/O or memory ranges */
-  unsigned rom_base_addr;			/* memory base for card ROM */
-  unsigned rom_base_len;			/* memory range for card ROM */
+  uint64_t base_addr[6];			/* I/O or memory base */
+  uint64_t base_len[6];				/* I/O or memory ranges */
+  uint64_t rom_base_addr;			/* memory base for card ROM */
+  uint64_t rom_base_len;			/* memory range for card ROM */
 } pci_t;
 
 /*

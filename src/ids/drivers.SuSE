@@ -305,21 +305,65 @@ ADP 1505
 # graphics cards
 #
 # NOTE:
-#   more info comes from SaX's Identity file; it is not included here
+#   Most info comes from SaX's Identity file, it is not included here.
+#   But we must add 3d driver info.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+# 3dfx voodoo rush (with AT3D chip)
+1142 643d
+	x	SVGA|glide_vr
+
+# 3dfx voodoo 1
+121a 0001
+	x	|glide_vg
+
+# 3dfx voodo 2
+121a 0002
+	x	|glide_v2
+
+# 3dfx voodoo banshee & voodoo 3
+121a 0003
+121a 0005
+	x	SVGA|glide_v3
+
+# ati rage pro
+1002 4742
+1002 4744
+1002 4749
+1002 4750+2
+1002 4c4d
+	x	MACH64|glx
+
+# matrox g200/g400
+102b 0520+2
+102b 0525
+
+# s3 virge
+5333 5631
+5333 883d
+5333 8a01
+5333 8a10
+5333 8c01+3
+
+# intel i810
+8086 7121
+8086 7123
+8086 7125
+	x	SVGA|glx
+
+# nvidia riva 128/tnt
 10de 0020
 10de 0028+2
-10de 002d
+10de 002c+2
 10de 00a0
+10de 0100
 12d2 0018+2
-12d2 0020
-12d2 0028+2
-12d2 002c
-12d2 00a0
 	x	SVGA|glxriva|17
 
+# vmware's emulated card
+15ad 0710
+	x	VMWARE
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -340,20 +384,22 @@ IVM 1901
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-LGI 800c
+LGI   800c
 	p	mouseman|mman
 
-PNP 0f04
+PNP   0f04
 	p	mousesystems|msc
 
 # KYE 0001: protocol info not verified
-KYE 0001
-LGI 8001
-PNP 0f0a
-PNP 0f0c
+KYE   0001
+LGI   8001
+PNP   0f0a
+PNP   0f0c
+s0200 0003
 	p	microsoft|ms
 
-PNP 0f0e
+PNP   0f0e
+s0200 0002
 	p	ps/2|ps2
 
 # USB mice

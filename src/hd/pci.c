@@ -10,6 +10,7 @@
 
 #include "hd.h"
 #include "hd_int.h"
+#include "hddb.h"
 #include "pci.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -32,7 +33,8 @@ void hd_scan_pci(hd_data_t *hd_data)
   pci_t *p;
   hd_res_t *res;
   int j;
-  unsigned long ul;
+  unsigned u;
+  uint64_t u64;
 
   if(!hd_probe_feature(hd_data, pr_pci)) return;
 
@@ -69,35 +71,42 @@ void hd_scan_pci(hd_data_t *hd_data)
     }
     hd->rev = p->rev;
 
+    if(hd->base_class == 0 && hd->sub_class == 0) {
+      if((u = device_class(hd_data, hd->vend, hd->dev))) {
+        hd->base_class = u >> 8;
+        hd->sub_class = u & 0xff;
+      }
+    }
+
     for(j = 0; j < 6; j++) {
-      ul = p->base_addr[j];
-      if(ul & ~PCI_BASE_ADDRESS_SPACE) {
-        if((ul & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO) {
+      u64 = p->base_addr[j];
+      if(u64 & ~PCI_BASE_ADDRESS_SPACE) {
+        if((u64 & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO) {
           res = new_mem(sizeof *res);
           res->io.type = res_io;
           res->io.enabled = p->cmd & PCI_COMMAND_IO ? 1 : 0;
-          res->io.base =  ul & PCI_BASE_ADDRESS_IO_MASK;
+          res->io.base =  u64 & PCI_BASE_ADDRESS_IO_MASK;
           res->io.range = p->base_len[j];
           res->io.access = acc_rw;
           add_res_entry(&hd->res, res);
         }
-        if((ul & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_MEMORY) {
+        if((u64 & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_MEMORY) {
           res = new_mem(sizeof *res);
           res->mem.type = res_mem;
           res->mem.enabled = p->cmd & PCI_COMMAND_MEMORY ? 1 : 0;
-          res->mem.base =  ul & PCI_BASE_ADDRESS_MEM_MASK;
+          res->mem.base =  u64 & PCI_BASE_ADDRESS_MEM_MASK;
           res->mem.range = p->base_len[j];
           res->mem.access = acc_rw;
-          res->mem.prefetch = ul & PCI_BASE_ADDRESS_MEM_PREFETCH ? flag_yes : flag_no;
+          res->mem.prefetch = u64 & PCI_BASE_ADDRESS_MEM_PREFETCH ? flag_yes : flag_no;
           add_res_entry(&hd->res, res);
         }
       }
     }
-    if((ul = p->rom_base_addr)) {
+    if((u64 = p->rom_base_addr)) {
       res = new_mem(sizeof *res);
       res->mem.type = res_mem;
-      res->mem.enabled = ul & PCI_ROM_ADDRESS_ENABLE ? 1 : 0;
-      res->mem.base =  ul & PCI_ROM_ADDRESS_MASK;
+      res->mem.enabled = u64 & PCI_ROM_ADDRESS_ENABLE ? 1 : 0;
+      res->mem.base =  u64 & PCI_ROM_ADDRESS_MASK;
       res->mem.range = p->rom_base_len;
       res->mem.access = acc_ro;
       add_res_entry(&hd->res, res);
@@ -406,10 +415,10 @@ void dump_pci_data(hd_data_t *hd_data)
 
     for(i = 0; i < 6; i++) {
       if(p->base_addr[i] || p->base_len[i])
-        ADD2LOG("  addr%d %08x, size %08x\n", i, p->base_addr[i], p->base_len[i]);
+        ADD2LOG("  addr%d %08"PRIx64", size %08"PRIx64"\n", i, p->base_addr[i], p->base_len[i]);
     }
     if(p->rom_base_addr)
-      ADD2LOG("  rom   %08x\n", p->rom_base_addr);
+      ADD2LOG("  rom   %08"PRIx64"\n", p->rom_base_addr);
 
     if(p->log) ADD2LOG("%s", p->log);
 

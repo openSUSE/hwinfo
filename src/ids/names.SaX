@@ -3,17 +3,6 @@
 #----------------------#
 NAME=REAL 3D§DEVICE=i740 (PCI)§VID=0x003D§DID=0x00D1§SERVER=SVGA
 
-
-#----------------------#
-# Compaq Cards           
-#----------------------#
-NAME=Compaq§DEVICE=QVision 1280/p§VID=0x0e11§DID=0x3033§SERVER=SVGA
-NAME=Compaq§DEVICE=Netelligent 10/100§VID=0x0e11§DID=0xae32§SERVER=SVGA
-NAME=Compaq§DEVICE=Netelligent 10§VID=0x0e11§DID=0xae34§SERVER=SVGA
-NAME=Compaq§DEVICE=NetFlex 3§VID=0x0e11§DID=0xae35§SERVER=SVGA
-NAME=Compaq§DEVICE=ThunderLAN§VID=0x0e11§DID=0xf130§SERVER=SVGA
-
-
 #----------------------#
 # ATI Cards           
 #----------------------#

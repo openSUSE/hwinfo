@@ -4,9 +4,11 @@ s0100	Apple Computer, Inc.
 	0203	ADB Keyboard 3
 	0302	ADB Mouse
 
-# generic USB mouse
-s0200
+# generic mice
+s0200	Unknown
 	0001	Generic USB Mouse
+	0002	Generic PS/2 Mouse
+	0003	MS-Compatible Serial Mouse
 
 # printer
 s1001	Minolta Co., Ltd.
