@@ -824,12 +824,13 @@ void int_wlan(hd_data_t *hd_data)
   str_list_t *sl;
   unsigned u, found;
   static char *wlan_mods[] = {
-    "acx100_pci",
+    "acx_pci",
     "airo",
     "airo_cs",
     "aironet4500_card",
     "aironet4500_cs",
     "airport",
+    "adm8211",
     "arlan",
     "at76c503",
     "at76c503-i3861",

@@ -12,12 +12,12 @@ kbd_ok=
 
 rm -f /var/lib/hardware/LOCK
 
-neededchanged=`/usr/sbin/hwscan --boot --gfxcard`
+neededchanged=`/sbin/hwscan --boot --gfxcard`
 if [ -n "$neededchanged" ] ; then
   has_keyboard && /sbin/yast2 x11 reprobe
 fi
 
-/usr/sbin/hwscan --silent --boot --fast --isapnp --pci --block --floppy --mouse
+/sbin/hwscan --silent --boot --fast --isapnp --pci --block --floppy --mouse
 
 #
 # create icons for static drives
