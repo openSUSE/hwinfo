@@ -44,6 +44,10 @@
 #define HD_ARCH "ppc"
 #endif
 
+#ifdef __sparc__
+#define HD_ARCH "sparc"
+#endif
+
 #define MOD_INFO_SEP		'|'
 #define MOD_INFO_SEP_STR	"|"
 

@@ -12,6 +12,10 @@ ifeq "$(ARCH)" "ppc"
 SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
 endif
 
+# remove the isa-pnp stuff for sparc's
+ifeq "$(ARCH)" "sparc"
+SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
+endif
 
 $(LIBHD): $(OBJS)
 	ar r $@ $?
