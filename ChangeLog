@@ -1,8 +1,8 @@
-12/04/2033:	v8.03
+4/12/2033:	v8.03
 	- proper multichannel device detection (finally...)
 	- identify virtual reader/punch/printer
 
-12/02/2003:	v8.02
+2/12/2003:	v8.02
 	- build with "-pipe"
 	- accommodated to changes in format of /proc/dasd/devices
 	- ditched storage subclass dasd, introduced s390disk prog_if instead
