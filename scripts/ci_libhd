@@ -1,0 +1,35 @@
+#! /bin/sh
+
+# check in libhd to /work/src/done/STABLE
+# call from the libhd directory
+
+ver=`cat ../VERSION`
+libhd=/tmp/libhd-$ver
+
+cd ~/b
+make clean
+rm -rf $libhd
+mkdir $libhd
+tar -cf - * | tar -C $libhd -xf -
+cd $libhd
+find . -depth -name CVS -exec rm -r {} \;
+rm MAINTAINER scripts/ci_libhd
+cd /tmp
+
+tar -zcf $libhd.tar.gz libhd-$ver
+
+if mkdir /work/src/done/STABLE/libhd ; then
+  cd /work/src/done/STABLE/libhd
+  cp $libhd.tar.gz /work/SRC/all/libhd/libhd.{changes,spec} .
+  perl -pi -e 's/^(Version:\s+)\S+/${1}'$ver'/' /work/src/done/STABLE/libhd/libhd.spec
+  perl -pi -e 's/^(Source.+?-)\S+?(\.tar\.gz)/${1}'$ver'${2}/' /work/src/done/STABLE/libhd/libhd.spec
+  . /work/src/bin/.profile
+  vc libhd
+  rm /work/src/done/STABLE/libhd/*~
+  echo "- check version info in spec file"
+  echo "- email susedist@suse.de"
+else
+  echo oops
+  exit 1
+fi
+
