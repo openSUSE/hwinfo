@@ -234,6 +234,11 @@ typedef enum sc_camera {
   sc_camera_webcam, sc_camera_digital
 } hd_sc_camera_t;
 
+/* subclass values of bc_modem */
+typedef enum sc_modem {
+  sc_mod_at, sc_mod_win1, sc_mod_win2
+} hd_sc_modem_t;
+
 /* prog_if's of sc_ser_usb */
 typedef enum pif_usb_e {
   pif_usb_uhci = 0, pif_usb_ohci = 0x10, pif_usb_ehci = 0x20,

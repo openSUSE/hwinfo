@@ -71,6 +71,9 @@ void hd_scan_int(hd_data_t *hd_data)
 
   PROGRESS(9, 0, "hotplug");
   int_hotplug(hd_data);
+
+  PROGRESS(10, 0, "modem");
+  int_modem(hd_data);
 }
 
 /*
@@ -701,3 +704,33 @@ void new_id(hd_data_t *hd_data, hd_t *hd)
 #endif
 }
  
+
+/*
+ * Assign device names to (win-)modems.
+ */
+void int_modem(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  char *s;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class.id == bc_modem
+    ) {
+      s = NULL;
+      switch(hd->sub_class.id) {
+        case sc_mod_win1:
+          s = "/dev/ham";
+          break;
+        case sc_mod_win2:
+          s = "/dev/536ep";
+          break;
+      }
+      if(s) {
+        free_mem(hd->unix_dev_name);
+        hd->unix_dev_name = new_str(s);
+      }
+    }
+  }
+}
+
