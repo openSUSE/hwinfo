@@ -81,7 +81,7 @@ typedef enum probe_feature {
  * list types for hd_list()
  */
 typedef enum hw_item {
-  hw_cdrom, hw_floppy, hw_disk, hw_network, hw_display, hw_mouse,
+  hw_cdrom=1, hw_floppy, hw_disk, hw_network, hw_display, hw_mouse,
   hw_keyboard, hw_sound, hw_isdn, hw_modem, hw_storage_ctrl, hw_network_ctrl
 } hd_hw_item_t;
 
