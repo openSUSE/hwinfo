@@ -640,3 +640,17 @@
 +subclass.id		0x00
 +device.name		DSB-650X(PNA)
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# myrinet adapter
+
+ vendor.id		pci 0x14c1
++vendor.name		Myricom, Inc.
+
+ vendor.id		pci 0x14c1
+&device.id		pci 0x8043
++baseclass.id		0x002
++subclass.id		0x81
++driver.module.insmod	gm
++device.name		Myrinet Adapter
+

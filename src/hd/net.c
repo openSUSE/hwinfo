@@ -102,6 +102,10 @@ void hd_scan_net(hd_data_t *hd_data)
         hd->sub_class.id = sc_nif_escon;
         hd->slot = u;
       }
+      else if(sscanf(sl->str, "myri%u", &u) == 1) {
+        hd->sub_class.id = sc_nif_myrinet;
+        hd->slot = u;
+      }
       else if(sscanf(sl->str, "sit%u", &u) == 1) {
         hd->sub_class.id = sc_nif_sit;	/* ipv6 over ipv4 tunnel */
         hd->slot = u;

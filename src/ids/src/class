@@ -69,6 +69,10 @@
 &subclass.id		0x80
 +subclass.name		Network controller
 
+ baseclass.id		0x002
+&subclass.id		0x81
++subclass.name		Myrinet controller
+
  baseclass.id		0x003
 +baseclass.name		Display controller
 
@@ -809,8 +813,8 @@
 +subclass.name		ESCON
 
  baseclass.id		0x107
-&subclass.id		0x03
-+subclass.name		FDDI
+&subclass.id		0x09
++subclass.name		Myrinet
 
  baseclass.id		0x107
 &subclass.id		0x80
