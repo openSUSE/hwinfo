@@ -350,6 +350,27 @@
 +requires		xf86_glx
 
  vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1002
+&subdevice.id		pci 0x010a
++subdevice.name		Radeon VE (0x010a)
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1002
+&subdevice.id		pci 0x013a
++subdevice.name		Radeon VE (0x013a)
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x103c
+&subdevice.id		pci 0x12ab
++subdevice.name		Radeon VE (HP:0x12ab)
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x515a
 +device.name		Radeon QZ
 +driver.xfree		4|radeon
@@ -520,6 +541,11 @@
 +driver.xfree		4|cirrus
 
  vendor.id		pci 0x1013
+&device.id		pci 0x00b8
++device.name		GD 5446
++driver.xfree		4|cirrus
+
+ vendor.id		pci 0x1013
 &device.id		pci 0x00bc
 +device.name		GD 5480
 +driver.xfree		4|cirrus
@@ -636,6 +662,11 @@
 +driver.xfree		4|trident
 
  vendor.id		pci 0x1023
+&device.id		pci 0x9750
++device.name		3DIm`age 975
++driver.xfree		4|trident|||||8,15,16,24
+
+ vendor.id		pci 0x1023
 &device.id		pci 0x9850
 +device.name		3DImage 9850
 +driver.xfree		4|trident
@@ -697,6 +728,14 @@
  vendor.id		pci 0x102b
 &device.id		pci 0x0525
 &subvendor.id		pci 0x102b
+&subdevice.id		pci 0x0540
++subdevice.name		G450-0540
++driver.xfree		4|mga
++driver.xfree		4|mga|3d||dri,glx||16||switch2xf86_glx
+
+ vendor.id		pci 0x102b
+&device.id		pci 0x0525
+&subvendor.id		pci 0x102b
 &subdevice.id		pci 0x0541
 +subdevice.name		G450
 
@@ -731,6 +770,14 @@
 &subvendor.id		pci 0x102b
 &subdevice.id		pci 0x2179
 +subdevice.name		G400 DH
++driver.xfree		4|mga
++driver.xfree		4|mga|3d||dri,glx||16||switch2xf86_glx
+
+ vendor.id		pci 0x102b
+&device.id		pci 0x0525
+&subvendor.id		pci 0x102b
+&subdevice.id		pci 0x23c3
++subdevice.name		G450-23c3
 +driver.xfree		4|mga
 +driver.xfree		4|mga|3d||dri,glx||16||switch2xf86_glx
 
@@ -873,6 +920,9 @@
 +driver.xfree		4|sis|3d||dri,glx||16,24||switch2xf86_glx
 +driver.xfree.config	Option "MaxXFBMem" "12288"
 +requires		xf86_glx
+
+ vendor.id		pci 0x103c
++vendor.name		Hewlett-Packard Company
 
  vendor.id		pci 0x104a
 +vendor.name		SGS Thomson Microelectronics
