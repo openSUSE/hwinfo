@@ -646,6 +646,9 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_isdn);
+#ifdef __PPC__
+      hd_set_probe_feature(hd_data, pr_prom);
+#endif
       break;
 
     case hw_isapnp:

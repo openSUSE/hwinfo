@@ -5,7 +5,11 @@ DISTCLEANFILES	= *.h *.xml *.ids check_hd
 
 include $(TOPDIR)/Makefile.common
 
-IDFILES	= src/bus src/class src/extra src/special src/scanner src/network \
+ifeq "$(ARCH)" "ia64"
+IDFILES += src/ia64
+endif
+
+IDFILES	+= src/bus src/class src/extra src/special src/scanner src/network \
 	  src/usb src/usb2 src/isapnp src/monitor src/camera src/tv src/dvb \
 	  src/chipcard
 
