@@ -36,6 +36,8 @@ struct option options[] = {
   { "isdn", 0, NULL, 1000 + hw_isdn },
   { "tv", 0, NULL, 1000 + hw_tv },
   { "dvb", 0, NULL, 1000 + hw_dvb },
+  { "pppoe", 0, NULL, 1000 + hw_pppoe },
+  { "dsl", 0, NULL, 1000 + hw_pppoe },
   { "scanner", 0, NULL, 1000 + hw_scanner },
   { "joystick", 0, NULL, 1000 + hw_joystick },
   { "usb", 0, NULL, 1000 + hw_usb },
