@@ -18,13 +18,16 @@ void hd_scan_s390(hd_data_t *hd_data)
 {
   hd_t* hd;
   hd_res_t* res;
-  struct sysfs_bus *bus, *bus_dup;
+  struct sysfs_bus *bus;
   struct sysfs_device *curdev = NULL;
-  struct sysfs_device *curdev_dup = NULL;
   struct dlist *attributes = NULL;
   struct sysfs_attribute *curattr = NULL;
 
   unsigned int devtype=0,devmod=0,cutype=0,cumod=0;
+
+  /* list of each channel's cutype, used for finding multichannel devices */
+  int cutypes[1<<16]={0};
+  int i;
 
   if (!hd_probe_feature(hd_data, pr_s390)) return;
 
@@ -34,15 +37,41 @@ void hd_scan_s390(hd_data_t *hd_data)
 
   //sl0=sl=read_file(PROCSUBCHANNELS, 2, 0);
   bus=sysfs_open_bus(BUSNAME);
-  bus_dup=sysfs_open_bus(BUSNAME);
 
-  if (!bus || !bus_dup)
+  if (!bus)
   {
     ADD2LOG("unable to open" BUSNAME "bus");
     return;
   }
 
-
+  /* build cutypes list */
+  dlist_for_each_data(bus->devices, curdev, struct sysfs_device)
+  {
+    int channel=strtol(rindex(curdev->bus_id,'.')+1,NULL,16);
+    attributes = sysfs_get_device_attributes(curdev);
+    dlist_for_each_data(attributes,curattr,struct sysfs_attribute)
+    {
+      if(strcmp("cutype",curattr->name)==0)
+	cutype=strtol(curattr->value,NULL,16);
+    }
+    cutypes[channel]=cutype;
+  }
+  /* check for each channel if it must be skipped and identify virtual reader/punch */
+  for(i=0;i<(1<<16);i++)
+  {
+    if(/* cutypes[i]==0x1731 || */ cutypes[i]==0x3088)	/* It seems that QDIO devices only appear once */
+    {
+      cutypes[i+1]=-1;	/* skip */
+      if(cutypes[i]==0x1731)
+	cutypes[i+2]=-1;
+    }
+    if(cutypes[i]==0x2540)
+    {
+      cutypes[i]=-2;	/* reader */
+      cutypes[i+1]=-3;	/* punch */
+    }
+  }
+  
   dlist_for_each_data(bus->devices, curdev, struct sysfs_device)
   {
 
@@ -69,21 +98,8 @@ void hd_scan_s390(hd_data_t *hd_data)
     res->io.base=strtol(rindex(curdev->bus_id,'.')+1,NULL,16);
 
     /* Skip additional channels for multi-channel devices */
-    /* This assumes that there are no gaps between the channels of a single device. */
-    if(cutype == 0x1731 || cutype == 0x3088)
-    {
-      int skip=0;
-      dlist_for_each_data(bus_dup->devices,curdev_dup, struct sysfs_device)
-      {
-	int tmp=strtol(rindex(curdev_dup->bus_id,'.')+1,NULL,16);
-	fprintf(stderr,"tmp is %d\n",tmp);
-	if(tmp == res->io.base - 1)
-	  skip=1;
-	if(cutype == 0x1731 && tmp == res->io.base - 2)
-	  skip=1;
-      }
-      if(skip) continue;
-    }
+    if(cutypes[res->io.base] == -1)
+      continue;
 
     res->io.range=1;
     switch (cutype)
@@ -101,6 +117,17 @@ void hd_scan_s390(hd_data_t *hd_data)
     hd->vendor.id=MAKE_ID(TAG_SPECIAL,0x6001); /* IBM */
     hd->device.id=MAKE_ID(TAG_SPECIAL,cutype);
     hd->sub_device.id=MAKE_ID(TAG_SPECIAL,devtype);
+    
+    if(cutypes[res->io.base]==-2)	/* virtual reader */
+    {
+      hd->base_class.id=bc_scanner;
+    }
+    if(cutypes[res->io.base]==-3)	/* virtual punch */
+    {
+      hd->base_class.id=bc_printer;
+    }
+    /* all other device data (names, classes etc.) comes from the s390 ID file */
+
     hd->detail=free_hd_detail(hd->detail);
     hd->detail=new_mem(sizeof *hd->detail);
     hd->detail->ccw.type=hd_detail_ccw;

@@ -30,6 +30,16 @@
 +driver.module.modprobe qeth_mod
 
  vendor.id		special 0x6001
+&device.id		special 0x2540
+&baseclass.id		0x10c
++device.name		z/VM Virtual Card Reader
+
+ vendor.id		special 0x6001
+&device.id		special 0x2540
+&baseclass.id		0x109
++device.name		z/VM Virtual Card Punch
+
+ vendor.id		special 0x6001
 &device.id		special 0x2701
 +device.name		2701 Data Adapter
 
@@ -63,6 +73,12 @@
 |device.id		special 0x4248
 |device.id		special 0x6562
 +device.name		Impact Printer
++baseclass.id		0x109
+
+ vendor.id		special 0x6001
+&device.id		special 0x3203
+&detail.ccw.data.cu_model 5
++device.name		z/VM Virtual Printer
 +baseclass.id		0x109
 
  vendor.id		special 0x6001
