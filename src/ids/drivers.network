@@ -60,12 +60,12 @@
 
 # net/epic100.c
 10b8	0005+2
-	i	epic100
+	i	mii|epic100
 
 # net/pcnet32.c
 1022 2000
 1022 2001
-	i	pcnet32
+	i	mii|pcnet32
 
 # net/ne2k-pci.c
 10ec 8029
@@ -87,7 +87,7 @@
 1186 1300
 1500 1360
 4033 1360
-	i	8139too
+	i	mii|8139too
 
 # net/tlan.c
 0e11 ae32
@@ -180,12 +180,12 @@ PNP 80d6
 1106 6100
 1106 3043
 1106 3065
-	i	via-rhine
+	i	mii|via-rhine
 
 # net/winbond-840.c
 1050 0840
 11f6 2011
-	i	winbond-840
+	i	mii|winbond-840
 
 # net/yellowfin.c
 1000 0701+2

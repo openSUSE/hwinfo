@@ -22,6 +22,7 @@ static void read_memory(memory_range_t *mem);
 static void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *label);
 static void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt);
 static void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt);
+static void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt);
 static unsigned char crc(unsigned char *mem, unsigned len);
 static int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
 static void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
@@ -122,6 +123,24 @@ void hd_scan_bios(hd_data_t *hd_data)
     s = free_mem(s);
   }
 
+  PROGRESS(1, 1, "apm");
+
+  if(!bt->apm_ver) {
+    str_list_t *sl0, *sl;
+
+    sl0 = read_file(PROC_APM, 0, 0);
+    if(sl0) {
+      bt->apm_supported = 1;
+      bt->apm_enabled = 1;
+      ADD2LOG("----- %s -----\n", PROC_APM);
+      for(sl = sl0; sl; sl = sl->next) {
+        ADD2LOG("  %s", sl->str);
+      }
+      ADD2LOG("----- %s end -----\n", PROC_APM);
+    }
+    free_str_list(sl0);
+  }
+
   /*
    * get the i/o ports for the parallel & serial interfaces from the BIOS
    * memory area starting at 0x40:0
@@ -187,6 +206,7 @@ void hd_scan_bios(hd_data_t *hd_data)
   if(hd_data->bios_rom.data) {
     get_pnp_support_status(&hd_data->bios_rom, bt);
     get_smbios_info(hd_data, &hd_data->bios_rom, bt);
+    get_fsc_info(hd_data, &hd_data->bios_rom, bt);
   }
 
   PROGRESS(3, 0, "smp");
@@ -407,6 +427,7 @@ void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt)
   }
 }
 
+
 unsigned char crc(unsigned char *mem, unsigned len)
 {
   unsigned char uc = 0;
@@ -415,6 +436,7 @@ unsigned char crc(unsigned char *mem, unsigned len)
 
   return uc;
 }
+
 
 void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
 {
@@ -492,6 +514,27 @@ void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
 
 }
 
+
+void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
+{
+  unsigned u, mtype;
+
+  if(!mem->data || mem->size < 0x20) return;
+
+  for(u = 0; u <= mem->size - 0x20; u += 0x10) {
+    if(
+      *(unsigned *) (mem->data + u) == 0x696a7546 &&
+      *(unsigned *) (mem->data + u + 4) == 0x20757374
+    ) {
+      mtype = *(unsigned *) (mem->data + u + 0x14);
+      if(!crc(mem->data + u, 0x20) && !(mtype & 0xf0000000)) {
+        bt->fsc_lcd = (mtype >> 12) & 0xf;
+        ADD2LOG("  found FSC LCD: %d\n", bt->fsc_lcd);
+        break;
+      }
+    }
+  }
+}
 
 
 int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)

@@ -22,6 +22,7 @@ static void add_old_mac_monitor(hd_data_t *hd_data);
 static void add_monitor(hd_data_t *hd_data, devtree_t *dt);
 #endif
 static int chk_edid_info(hd_data_t *hd_data, unsigned char *edid);
+static void add_fsc_info(hd_data_t *hd_data, hd_t *hd, unsigned fsc_id);
 static void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid);
 static void add_monitor_res(hd_t *hd, unsigned x, unsigned y, unsigned hz, unsigned il);
 static void fix_edid_info(hd_data_t *hd_data, unsigned char *edid);
@@ -51,6 +52,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
   }
 
   /* first, see if we got the full edid record from bios */
+  bt = NULL;
   if(
     hd &&
     hd->detail &&
@@ -65,6 +67,16 @@ void hd_scan_monitor(hd_data_t *hd_data)
 
       return;
     }
+  }
+
+  /* Maybe a FSC LCD panel? */
+  if(bt && bt->fsc_lcd) {
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->base_class = bc_monitor;
+    hd->sub_class = sc_mon_lcd;
+    add_fsc_info(hd_data, hd, bt->fsc_lcd);
+
+    return;
   }
 
   /* Maybe we have hidden edid info here? */
@@ -353,6 +365,60 @@ int chk_edid_info(hd_data_t *hd_data, unsigned char *edid)
   if(!(edid[0x12] || edid[0x13])) return 0;
 
   return 1;
+}
+
+void add_fsc_info(hd_data_t *hd_data, hd_t *hd, unsigned fsc_id)
+{
+  monitor_info_t *mi = NULL;
+  unsigned x = 640, y = 480;
+
+  hd->vend_name = new_str("Fujitsu Siemens");
+  hd->dev_name = new_str("Notebook LCD");
+
+  switch(fsc_id) {
+    case 1:
+      x = 640; y = 480;
+      break;
+
+    case 2:
+      x = 800; y = 600;
+      break;
+
+    case 3:
+      x = 1024; y = 768;
+      break;
+
+    case 4:
+      x = 1280; y = 1024;
+      break;
+
+    case 5:
+      x = 1400; y = 1050;
+      break;
+
+    case 6:
+      x = 1024; y = 512;
+      break;
+
+    case 7:
+      x = 1280; y = 600;
+      break;
+
+    case 8:
+      x = 1600; y = 1200;
+      break;
+  }
+  add_monitor_res(hd, x, y, 60, 0);
+
+  mi = new_mem(sizeof *mi);
+  hd->detail = new_mem(sizeof *hd->detail);
+  hd->detail->type = hd_detail_monitor;
+  hd->detail->monitor.data = mi;
+
+  mi->min_vsync = 50;
+  mi->min_hsync = 31;
+  mi->max_vsync = 75;
+  mi->max_hsync = (mi->max_vsync * y * 12) / 10000;
 }
 
 void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)

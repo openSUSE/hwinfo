@@ -5,7 +5,7 @@
 
 #
 
-# generated at: Mon Feb 25 18:15:46 2002
+# generated at: Mon Mar  4 16:32:13 2002
 
 # data source:  CDB
 
@@ -29,17 +29,9 @@
 5333 8811
 	x	4|s3||||||||
 
-# Compaq Computer Corporation:Compaq 3D Rage P/M Mobility AGP 2x
-1002 4c4d 0e11 b160
-	x	4|ati||||||||
-
 # SGS Thomson Microelectronics:KyroII
 104a 0010
 	x	4|fbdev||||||||
-
-# ATI Technologies Inc:3D Rage LT Pro AGP-133
-1002 4c42 1002 0044
-	x	4|ati||||||||
 
 # ATI Technologies Inc:fgl8x00
 1002 5148
@@ -49,6 +41,14 @@
 # S3 Inc.:86c795 [Savage 3D/MV]
 5333 8a21
 	x	4|savage||||||||
+
+# LeadTek Research Inc.:GeForce2 MX-200
+10de 0110 107d 2830
+	x	4|nv||||sw_cursor||||
+
+# LeadTek Research Inc.:GeForce2 MX-200
+10de 0110 107d 2830
+	x	4|nvidia|3d|NVIDIA_kernel,NVIDIA_GLX|glx|sw_cursor|4||switch2nvidia_glx|
 
 # S3 Inc.:86c325 [ViRGE]
 5333 5631
@@ -198,6 +198,10 @@
 1002 475a
 	x	4|ati|||||f|||
 
+# ATI Technologies Inc:3D Rage LT Pro AGP-133
+1002 4c42
+	x	4|ati||||||||
+
 # ATI Technologies Inc:3D Rage LT Pro AGP-66
 1002 4c44
 	x	4|ati||||||||
@@ -205,6 +209,14 @@
 # ATI Technologies Inc:Mobility M3 AGP 2x
 1002 4c46
 	x	4|r128||||||||
+
+# ATI Technologies Inc:Mobility M3 AGP 2x
+1002 4c46
+	x	4|r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
+# ATI Technologies Inc:3D Rage P/M Mobility AGP 2x
+1002 4c4d
+	x	4|ati||||||||
 
 # ATI Technologies Inc:3D Rage L Mobility AGP 2x
 1002 4c4e
@@ -230,21 +242,41 @@
 1002 5044
 	x	4|r128||||||||
 
+# ATI Technologies Inc:Rage 128 PD
+1002 5044
+	x	4|r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
 # ATI Technologies Inc:Rage 128 PF
 1002 5046
 	x	4|r128||||||||
+
+# ATI Technologies Inc:Rage 128 PF
+1002 5046
+	x	4|r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 # ATI Technologies Inc:Rage 128 PP
 1002 5050
 	x	4|r128||||||||
 
+# ATI Technologies Inc:Rage 128 PP
+1002 5050
+	x	4|r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
 # ATI Technologies Inc:Rage 128 PR
 1002 5052
 	x	4|r128||||||||
 
+# ATI Technologies Inc:Rage 128 PR
+1002 5052
+	x	4|r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
 # ATI Technologies Inc:Rage 128 RE
 1002 5245
 	x	4|r128|||||f|||
+
+# ATI Technologies Inc:Rage 128 RE
+1002 5245
+	x	4|r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 # ATI Technologies Inc:Rage 128 RF
 1002 5246
@@ -258,13 +290,25 @@
 1002 524b
 	x	4|r128||||||||
 
+# ATI Technologies Inc:Rage 128 RK
+1002 524b
+	x	4|r128|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
+
 # ATI Technologies Inc:Rage 128 RL
 1002 524c
 	x	4|r128|||||f|||
 
+# ATI Technologies Inc:Rage 128 RL
+1002 524c
+	x	4|r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
 # ATI Technologies Inc:Rage 128 SM
 1002 534d
 	x	4|r128||||||||
+
+# ATI Technologies Inc:Rage 128 SM
+1002 534d
+	x	4|r128|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
 
 # Tseng Labs Inc:ET4000/W32p rev B
 100c 3205
@@ -562,13 +606,28 @@
 8086 7121
 	x	4|i810|||||d|||
 
+# Intel Corporation:82810 CGC [Chipset Graphics Controller]
+8086 7121
+	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+		VideoRam 16384
+
 # Intel Corporation:82810-DC100 CGC [Chipset Graphics Controller]
 8086 7123
 	x	4|i810|||||d|||
 
+# Intel Corporation:82810-DC100 CGC [Chipset Graphics Controller]
+8086 7123
+	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+		VideoRam 16384
+
 # Intel Corporation:82810E CGC [Chipset Graphics Controller]
 8086 7125
 	x	4|i810|||||d|||
+
+# Intel Corporation:82810E CGC [Chipset Graphics Controller]
+8086 7125
+	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+		VideoRam 16384
 
 # S3 Inc.:ProSavage KM 133
 5333 8a26
@@ -585,6 +644,10 @@
 # ATI Technologies Inc:Rage 128 Pro TR (AGP)
 1002 5452
 	x	4|r128||||||||
+
+# ATI Technologies Inc:Rage 128 Pro TR (AGP)
+1002 5452
+	x	4|r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 # Trident Microsystems:CyberBlade/DSTN/Ai1
 1023 8620
@@ -607,21 +670,42 @@
 1002 5247
 	x	4|r128||||||||
 
+# ATI Technologies Inc:Rage 128 RG
+1002 5247
+	x	4|r128|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
+
 # ATI Technologies Inc:Rage 128 Mobility ML
 1002 4d4c
 	x	4|r128||||||||
+
+# ATI Technologies Inc:Rage 128 Mobility ML
+1002 4d4c
+	x	4|r128|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
 
 # ATI Technologies Inc:Rage 128 Mobility MF
 1002 4d46
 	x	4|r128||||||||
 
+# ATI Technologies Inc:Rage 128 Mobility MF
+1002 4d46
+	x	4|r128|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
+
 # ATI Technologies Inc:Rage 128 Mobility LE
 1002 4c45
 	x	4|r128||||||||
 
+# ATI Technologies Inc:Rage 128 Mobility LE
+1002 4c45
+	x	4|r128|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
+
 # Intel Corporation:I815
 8086 1132
 	x	4|i810|||||d|||
+
+# Intel Corporation:I815
+8086 1132
+	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+		VideoRam 16384
 
 # 3Dfx Interactive, Inc.:Voodoo5 5500
 121a 0009
@@ -634,6 +718,10 @@
 # ATI Technologies Inc:Radeon QE
 1002 5145
 	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon QE
+1002 5145
+	x	4|radeon|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 # Cirrus Logic:GD5464BD
 1013 00D5
@@ -655,9 +743,17 @@
 1002 5146
 	x	4|radeon||||||||
 
+# ATI Technologies Inc:Radeon QF
+1002 5146
+	x	4|radeon|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
 # ATI Technologies Inc:Radeon QG
 1002 5147
 	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon QG
+1002 5147
+	x	4|radeon|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 # S3 Inc.:Integrated Trio3D
 5333 8904
@@ -731,9 +827,17 @@
 1002 5446
 	x	4|r128||||||||
 
+# ATI Technologies Inc:Rage 128 Ultra TF
+1002 5446
+	x	4|r128|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
+
 # ATI Technologies Inc:Radeon VE
 1002 5159
 	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon VE
+1002 5159
+	x	4|radeon|3d|xf86_glx|glx,dri||4||switch2xf86_glx|
 
 # IBM:fgl2
 1014 0170
@@ -1091,6 +1195,11 @@ edd8 a099
 8086 3577
 	x	4|i810||||||||
 
+# Intel Corporation:i830
+8086 3577
+	x	4|i810|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+		VideoRam 16384
+
 # Tseng Labs Inc:ET6000
 100c 3208
 	x	4|tseng||||||||
@@ -1099,6 +1208,10 @@ edd8 a099
 1002 544c
 	x	4|r128||||||||
 
+# ATI Technologies Inc:Rage128 TL
+1002 544c
+	x	4|r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
 # Trident Microsystems:8820
 1023 8820
 	x	4|trident||||||||
@@ -1106,6 +1219,10 @@ edd8 a099
 # ATI Technologies Inc:Radeon QZ
 1002 515a
 	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon QZ
+1002 515a
+	x	4|radeon|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 # ATI Technologies Inc:RV200 QW
 1002 5157
@@ -1123,13 +1240,25 @@ edd8 a099
 1002 4c5a
 	x	4|radeon||||||||
 
+# ATI Technologies Inc:Radeon LZ
+1002 4c5a
+	x	4|radeon|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
 # ATI Technologies Inc:Radeon LY
 1002 4c59
 	x	4|radeon||||||||
 
+# ATI Technologies Inc:Radeon LY
+1002 4c59
+	x	4|radeon|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
+
 # ATI Technologies Inc:Radeon LW
 1002 4c57
 	x	4|radeon||||||||
+
+# ATI Technologies Inc:Radeon LW
+1002 4c57
+	x	4|radeon|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 # ATI Technologies Inc:Mach64 LI
 1002 4c49
@@ -1190,7 +1319,6 @@ edd8 a099
 # S3 Inc.:Twister_K
 5333 8d02
 	x	4|savage||||||||
-		Option "mtrr" "off"
 
 # Silicon Motion, Inc.:820
 126f 0820
@@ -1268,7 +1396,7 @@ edd8 a099
 
 #
 
-# generated at: Mon Feb 25 18:15:46 2002
+# generated at: Mon Mar  4 16:32:13 2002
 
 # data source:  CDB
 
@@ -1502,6 +1630,10 @@ edd8 a099
 
 # ATI Technologies Inc:3D Rage LT Pro AGP-66
 1002 4c44
+	x	3|MACH64||||||||
+
+# ATI Technologies Inc:3D Rage P/M Mobility AGP 2x
+1002 4c4d
 	x	3|MACH64||||||||
 
 # ATI Technologies Inc:3D Rage L Mobility AGP 2x

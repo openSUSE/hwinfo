@@ -32,6 +32,7 @@
 #define PROC_ISERIES		"/proc/iSeries"
 #define PROC_ISERIES_VETH	"/proc/iSeries/veth"
 #define PROC_PARTITIONS		"/proc/partitions"
+#define PROC_APM		"/proc/apm"
 
 #define DEV_USB_DEVICES		"/dev/usb/devices"
 #define DEV_NVRAM		"/dev/nvram"

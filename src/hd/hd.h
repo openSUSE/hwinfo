@@ -119,6 +119,11 @@ typedef enum base_classes {
   bc_framebuffer
 } hd_base_classes_t;
 
+/* subclass values of bc_monitor */
+typedef enum sc_monitor {
+  sc_mon_other, sc_mon_crt, sc_mon_lcd
+} hd_sc_monitor_t;
+
 /* subclass values of bc_storage */
 typedef enum sc_storage {
   sc_sto_scsi, sc_sto_ide, sc_sto_floppy, sc_sto_ipi, sc_sto_raid,
@@ -511,6 +516,8 @@ typedef struct {
   unsigned low_mem_size;
   smp_info_t smp;
   vbe_info_t vbe;
+
+  unsigned fsc_lcd;
 
 } bios_info_t;
 
