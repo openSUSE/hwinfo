@@ -148,7 +148,6 @@ int main( int argc, char **argv )
 			}
 			if ( lines ){
 				for (i=0; i<lines; i++){
-					fprintf(stderr, "RUN>%s<\n", commands[i]);
 					system(commands[i]);
 					free(commands[i]);
 				}
