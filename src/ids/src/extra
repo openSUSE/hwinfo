@@ -252,7 +252,7 @@
 +subdevice.name		NC7770 Gigabit Server Adapter
 
 
-# IBM ServeRAID adapters
+# IBM ServeRAID adapters (#20268)
  vendor.id		pci 0x1014
 &device.id		pci 0x002e
 &subvendor.id		pci 0x1014
