@@ -44,8 +44,8 @@ void hd_scan_parallel(hd_data_t *hd_data)
   }
   /* ... if there seems to be a parallel interface, try to load it */
   if(hd) {
-    if(sl) run_cmd(hd_data, "rmmod parport_probe");
-    run_cmd(hd_data, "insmod parport_probe");
+    if(sl) run_cmd(hd_data, "/sbin/rmmod parport_probe");
+    run_cmd(hd_data, "/sbin/insmod parport_probe");
   }
 
   sl = free_str_list(sl);

@@ -116,7 +116,8 @@ void hd_scan_kbd(hd_data_t *hd_data)
 void hd_scan_kbd(hd_data_t *hd_data)
 {
   int fd, kid, kid2, klay, ser_cons;
-  unsigned u;
+  unsigned u, u1;
+  char c;
   struct serial_struct ser_info;
   unsigned char buf[OPROMMAXPARAM];
   struct openpromio *opio = (struct openpromio *) buf;
@@ -194,10 +195,12 @@ void hd_scan_kbd(hd_data_t *hd_data)
           hd->bus = bus_serial;
           hd->vend = MAKE_ID(TAG_SPECIAL, 0x0203);
           hd->dev = MAKE_ID(TAG_SPECIAL, 0x0000);
-          if(sscanf(opio->oprom_array, "%u,", &u) == 1) {
+          if(sscanf(opio->oprom_array, "%u,%u,%c,", &u, &u1, &c) == 3) {
             res = add_res_entry(&hd->res, new_mem(sizeof *res));
             res->baud.type = res_baud;
             res->baud.speed = u;
+            res->baud.bits = u1;
+            res->baud.parity = c == 'p' ? 1 : 0;
           }
         }
       }

@@ -1,3 +1,7 @@
+24/5/2000:	v0.94
+	- fixed tmp file security hole
+	- added hd_{mouse/keyboard/floppy}_list() functions
+
 15/5/2000:	v0.93
 	- integrated Thorsten Kukuk's patches (mostly SPARC stuff)
 	- some minor other fixes

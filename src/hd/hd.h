@@ -452,6 +452,7 @@ typedef struct {
   union u_hd_res_t *next;
   enum resource_types type;
   unsigned speed;
+  unsigned bits, parity;
 } res_baud_t;
 
 typedef struct {
@@ -801,7 +802,10 @@ typedef struct {
   str_list_t *kmods;		/* list of active kernel modules */
   str_list_t *cd_list;		/* used by hd_cd_list() */
   str_list_t *disk_list;	/* dto, hd_disk_list() */
-  str_list_t *net_list;		/* dto hd_net_list() */
+  str_list_t *net_list;		/* dto, hd_net_list() */
+  str_list_t *mouse_list;	/* dto, hd_mouse_list() */
+  str_list_t *floppy_list;	/* dto, hd_floppy_list() */
+  str_list_t *keyboard_list;	/* dto, hd_keyboard_list() */
   uint64_t used_irqs;		/* irq usage */
   uint64_t assigned_irqs;	/* irqs automatically assigned by libhd (for driver info) */
   unsigned char *bios_rom;	/* BIOS 0xc0000 - 0xfffff */
@@ -840,6 +844,9 @@ int hd_module_is_active(hd_data_t *hd_data, char *mod);
 hd_t *hd_cd_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_disk_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_net_list(hd_data_t *hd_data, int rescan);
+hd_t *hd_mouse_list(hd_data_t *hd_data, int rescan);
+hd_t *hd_keyboard_list(hd_data_t *hd_data, int rescan);
+hd_t *hd_floppy_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class);
 hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_class);
 hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus);

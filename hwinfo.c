@@ -13,6 +13,7 @@ static void progress(char *, char *);
 
 static unsigned deb = 0;
 static char *log_file = "";
+static char *list = NULL;
 
 static int test = 0;
 
@@ -103,6 +104,20 @@ int main(int argc, char **argv)
   for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
 #endif
 
+  if(list) {
+    if(!strcmp(list, "disk")) hd = hd_disk_list(hd_data, 1);
+    if(!strcmp(list, "cd")) hd = hd_cd_list(hd_data, 1);
+    if(!strcmp(list, "net")) hd = hd_net_list(hd_data, 1);
+    if(!strcmp(list, "floppy")) hd = hd_floppy_list(hd_data, 1);
+    if(!strcmp(list, "mouse")) hd = hd_mouse_list(hd_data, 1);
+    if(!strcmp(list, "keyboard")) hd = hd_keyboard_list(hd_data, 1);
+
+    printf("\n");
+    printf("-- %s list --\n", list);
+    for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);
+    printf("-- %s list end --\n", list);
+  }
+
   if(f) {
 #if 0
     fseek(f, l, SEEK_SET);
@@ -134,6 +149,12 @@ int get_probe_flags(int argc, char **argv, hd_data_t *hd_data)
     t = "debug=";
     if(!strncmp(s, t, strlen(t))) {
       hd_data->debug = strtol(s + strlen(t), NULL, 0);
+      continue;
+    }
+
+    t = "list=";
+    if(!strncmp(s, t, strlen(t))) {
+      list = s + strlen(t);
       continue;
     }
 

@@ -338,6 +338,12 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
         else {
           dump_line("Speed: %s Mbps\n", float2str(res->baud.speed, 6));
         }
+        if(res->baud.bits) {
+          dump_line(
+            "Bits: %u bits, %sparity\n",
+            res->baud.bits, res->baud.parity ? "" : "no "
+          );
+        }
         break;
 
       default:

@@ -983,9 +983,17 @@ str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines)
 {
   FILE *f;
   char buf[1024];
+  int pipe = 0;
   str_list_t *sl_start = NULL, *sl_end = NULL, *sl;
 
-  if(!(f = fopen(file_name, "r"))) return NULL;
+  if(*file_name == '|') {
+    pipe = 1;
+    file_name++;
+    if(!(f = popen(file_name, "r"))) return NULL;
+  }
+  else {
+    if(!(f = fopen(file_name, "r"))) return NULL;
+  }
 
   while(fgets(buf, sizeof buf, f)) {
     if(start_line) {
@@ -1004,7 +1012,10 @@ str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines)
     lines--;
   }
 
-  fclose(f);
+  if(pipe)
+    pclose(f);
+  else
+    fclose(f);
 
   return sl_start;
 }
@@ -1950,6 +1961,105 @@ hd_t *hd_net_list(hd_data_t *hd_data, int rescan)
   return hd_list;
 }
 
+
+hd_t *hd_floppy_list(hd_data_t *hd_data, int rescan)
+{
+  hd_t *hd, *hd1, *hd_list = NULL;
+  unsigned char probe_save[sizeof hd_data->probe];
+
+  if(rescan) {
+    memcpy(probe_save, hd_data->probe, sizeof probe_save);
+    hd_clear_probe_feature(hd_data, pr_all);
+    hd_set_probe_feature(hd_data, pr_floppy);
+    hd_set_probe_feature(hd_data, pr_misc_floppy);
+    hd_scan(hd_data);
+    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
+  }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_storage_device && hd->sub_class == sc_sdev_floppy) {
+      if(!((rescan == 2 || rescan == 3) && search_str_list(hd_data->floppy_list, hd->unix_dev_name))) {
+        if(rescan == 2) {
+          add_str_list(&hd_data->floppy_list, hd->unix_dev_name);
+        }
+        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+        *hd1 = *hd;
+        hd1->next = NULL;
+      }
+    }
+  }
+
+  return hd_list;
+}
+
+
+hd_t *hd_mouse_list(hd_data_t *hd_data, int rescan)
+{
+  hd_t *hd, *hd1, *hd_list = NULL;
+  unsigned char probe_save[sizeof hd_data->probe];
+
+  if(rescan) {
+    memcpy(probe_save, hd_data->probe, sizeof probe_save);
+    hd_clear_probe_feature(hd_data, pr_all);
+    hd_set_probe_feature(hd_data, pr_misc);
+    hd_set_probe_feature(hd_data, pr_serial);
+    hd_set_probe_feature(hd_data, pr_adb);
+    hd_set_probe_feature(hd_data, pr_usb);
+    hd_set_probe_feature(hd_data, pr_mouse);
+    hd_scan(hd_data);
+    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
+  }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_mouse) {
+      if(!((rescan == 2 || rescan == 3) && search_str_list(hd_data->mouse_list, hd->unix_dev_name))) {
+        if(rescan == 2) {
+          add_str_list(&hd_data->mouse_list, hd->unix_dev_name);
+        }
+        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+        *hd1 = *hd;
+        hd1->next = NULL;
+      }
+    }
+  }
+
+  return hd_list;
+}
+
+
+hd_t *hd_keyboard_list(hd_data_t *hd_data, int rescan)
+{
+  hd_t *hd, *hd1, *hd_list = NULL;
+  unsigned char probe_save[sizeof hd_data->probe];
+
+  if(rescan) {
+    memcpy(probe_save, hd_data->probe, sizeof probe_save);
+    hd_clear_probe_feature(hd_data, pr_all);
+    hd_set_probe_feature(hd_data, pr_misc);
+    hd_set_probe_feature(hd_data, pr_adb);
+    hd_set_probe_feature(hd_data, pr_usb);
+    hd_set_probe_feature(hd_data, pr_kbd);
+    hd_scan(hd_data);
+    memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
+  }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_keyboard) {
+      if(!((rescan == 2 || rescan == 3) && search_str_list(hd_data->keyboard_list, hd->unix_dev_name))) {
+        if(rescan == 2) {
+          add_str_list(&hd_data->keyboard_list, hd->unix_dev_name);
+        }
+        hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+        *hd1 = *hd;
+        hd1->next = NULL;
+      }
+    }
+  }
+
+  return hd_list;
+}
+
+
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
@@ -2309,27 +2419,22 @@ void update_irq_usage(hd_data_t *hd_data)
 
 int run_cmd(hd_data_t *hd_data, char *cmd)
 {
-  int i;
-  char *xcmd = NULL, *log = NULL;
+  char *xcmd = NULL;
   str_list_t *sl, *sl0;
 
   ADD2LOG("----- exec: \"%s\" -----\n", cmd);
 
-  str_printf(&log, 0, "/tmp/tmplibhd.%d", getpid());
-  str_printf(&xcmd, 0, "%s >%s 2>&1", cmd, log);
+  if(*cmd == '/') {
+    str_printf(&xcmd, 0, "|%s 2>&1", cmd);
+    sl0 = read_file(xcmd, 0, 0);
+    for(sl = sl0; sl; sl = sl->next) ADD2LOG("  %s", sl->str);
+  }
 
-  i = system(xcmd);
-  sl0 = read_file(log, 0, 0);
-  unlink(log);
-
-  for(sl = sl0; sl; sl = sl->next) ADD2LOG("  %s", sl->str);
-
-  ADD2LOG("----- return code: 0x%x -----\n", i);
+  ADD2LOG("----- return code: ? -----\n");
 
   free_mem(xcmd);
-  free_mem(log);
 
-  return i;
+  return 0;
 }
 
 int load_module(hd_data_t *hd_data, char *module)
@@ -2338,7 +2443,7 @@ int load_module(hd_data_t *hd_data, char *module)
 
   if(hd_module_is_active(hd_data, module)) return 0;
 
-  str_printf(&cmd, 0, "insmod %s", module);
+  str_printf(&cmd, 0, "/sbin/insmod %s", module);
 
   return run_cmd(hd_data, cmd);
 }
