@@ -413,7 +413,7 @@ char *get_xserver(hd_data_t *hd_data, char **version, char **busid, driver_info_
 
   if(*display) return display;
 
-  if(c == 0) c = '3';	/* default to XF 3, if nothing else is known  */
+  if(c == 0) c = '4';	/* default to XF 4, if nothing else is known  */
 
   xf86_ver[0] = c;
   xf86_ver[1] = 0;

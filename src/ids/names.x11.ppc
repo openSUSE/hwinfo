@@ -1,4 +1,4 @@
-#hwinfo names data from 2001-01-12 17:12:46
+#hwinfo names data from 2001-01-15 11:15:41
 #
 
 
@@ -776,6 +776,10 @@
 
 10de
 	0153	Nvidia Quadro2 Pro
+
+10d2
+	0028
+		1092 4a00	Nvidia Riva TNT2 Elsa
 
 10C8
 	8005	Neomagic MagicMedia 256AV

@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2001-01-12 17:08:35
+#hwinfo data from 2001-01-15 11:11:40
 #
 
 
@@ -1612,16 +1612,6 @@
 	x	4|nvidia|3d|nv_glx|glx||4||switch2nv_glx|
 
 
-# Nvidia:GeForce2 Go
-10de 0112
-	x	4|nvidia||||||||
-
-
-# Nvidia:GeForce2 Go
-10de 0112
-	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx|
-
-
 # Nvidia:Quadro
 10de 0103
 	x	4|nv|||||f|||
@@ -1792,46 +1782,6 @@
 	x	3|SVGA||||||||
 
 
-# Nvidia:CARD3
-10de 0203
-	x	4|nvidia||||||||
-
-
-# Nvidia:CARD3
-10de 0203
-	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx|
-
-
-# Nvidia:CARD3
-10de 0202
-	x	4|nvidia||||||||
-
-
-# Nvidia:CARD3
-10de 0202
-	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx|
-
-
-# Nvidia:CARD2
-10de 0201
-	x	4|nvidia||||||||
-
-
-# Nvidia:CARD2
-10de 0201
-	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx|
-
-
-# Nvidia:CARD1
-10de 0200
-	x	4|nvidia||||||||
-
-
-# Nvidia:CARD1
-10de 0200
-	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx|
-
-
 # Nvidia:Riva TNT (PCI)
 10de 0020 1092 4820
 	x	4|nv|||||f|||
@@ -1934,6 +1884,16 @@
 
 # Nvidia:Quadro2 Pro
 10de 0153
+	x	4|nvidia|3d|nv_glx|glx||4||switch2nv_glx|
+
+
+# Nvidia:Riva TNT2 Elsa
+10d2 0028 1092 4a00
+	x	4|nv||||sw_cursor||||
+
+
+# Nvidia:Riva TNT2 Elsa
+10d2 0028 1092 4a00
 	x	4|nvidia|3d|nv_glx|glx||4||switch2nv_glx|
 
 

@@ -145,7 +145,7 @@ void get_serial_info(hd_data_t *hd_data)
       i = 0;
       if(
         sscanf(sl->str, "%u: uart:%31s port:%x irq:%u baud:%u", &u0, buf, &u1, &u2, &u3) == 5 ||
-        (i = 1, sscanf(sl->str, "%u: uart:%31s port:%x irq:%u tx:%*u", &u0, buf, &u1, &u2) == 5)
+        (i = 1, sscanf(sl->str, "%u: uart:%31s port:%x irq:%u tx:%u", &u0, buf, &u1, &u2, &u3) == 5)
       ) {
         /*
          * The 'baud' or 'tx' entries are only present for real interfaces.
