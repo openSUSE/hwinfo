@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -190,6 +194,16 @@ void do_zip(hd_data_t *hd_data)
       load_module(hd_data, "ppa");
       is_imm = hd_module_is_active(hd_data, "imm");
       is_ppa = hd_module_is_active(hd_data, "ppa");
+      if(!is_imm) {
+        int fd;
+        char flush[2] = { 4, 12 };
+
+        fd = open("/dev/lp0", O_NONBLOCK | O_WRONLY);
+        if(fd != -1) {
+          write(fd, flush, sizeof flush);
+          close(fd);
+        }
+      }
     }
   }
 

@@ -1,3 +1,6 @@
+13/5/2003:	v5.57
+	- write ff to /dev/lp0 if imm.o didn't load (#14175)
+
 9/5/2003:	v5.56
 	- limit the maximum amount of data we expect looking
 	  for serial mice (#25153, #26771) 
