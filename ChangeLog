@@ -1,3 +1,6 @@
+30/7/2003:	v5.57
+	- OnStream tapes have their own devices (#27954)
+
 29/7/2003:	v5.56
 	- no yast dialog for mouse config changes in hwscan boot script
 	  (#27505, #20309)
