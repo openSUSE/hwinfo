@@ -2503,12 +2503,22 @@ void expand_driver_info(hd_data_t *hd_data, hd_t *hd)
 
       case di_mouse:
         di->mouse.buttons = di->mouse.wheels = -1;
+        u1 = 0;
         if(
           hd->compat_vendor.id == MAKE_ID(TAG_SPECIAL, 0x0210) &&
           ID_TAG(hd->compat_device.id) == TAG_SPECIAL
         ) {
-          di->mouse.wheels = ID_VALUE(hd->compat_device.id) >> 4;
-          di->mouse.buttons = ID_VALUE(hd->compat_device.id) & 15;
+          u1 = hd->compat_device.id;
+        }
+        if(
+          hd->vendor.id == MAKE_ID(TAG_SPECIAL, 0x0210) &&
+          ID_TAG(hd->device.id) == TAG_SPECIAL
+        ) {
+          u1 = hd->device.id;
+        }
+        if(u1) {
+          di->mouse.wheels = ID_VALUE(u1) >> 4;
+          di->mouse.buttons = ID_VALUE(u1) & 15;
         }
         for(i = 0, sl = di->mouse.hddb0; sl; sl = sl->next, i++) {
           if(i == 0) {
