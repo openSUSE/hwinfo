@@ -48,30 +48,36 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
     return;
   }
 
-  PROGRESS(4, 2, "mode info");
+  if(hd_probe_feature(hd_data, pr_bios_fb)) {
+    PROGRESS(4, 2, "mode info");
 
-  read_vbe_info(hd_data, vbe, vbeinfo);
+    read_vbe_info(hd_data, vbe, vbeinfo);
+  }
 
-  PROGRESS(4, 3, "ddc info");
+  if(hd_probe_feature(hd_data, pr_bios_ddc)) {
+    PROGRESS(4, 3, "ddc info");
 
-  memset(vbeinfo, 0, sizeof vbeinfo);
-  ax = 0x4f15; bx = 1; cx = 0;
-  i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo, hd_data->flags.cpuemu) & 0xffff;
+    memset(vbeinfo, 0, sizeof vbeinfo);
+    ax = 0x4f15; bx = 1; cx = 0;
+    i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo, hd_data->flags.cpuemu) & 0xffff;
 
-  if(i != 0x4f) {
-    ADD2LOG("Error (0x4f15): 0x%04x\n", i);
-  } else {
-    memcpy(vbe->ddc, vbeinfo, sizeof vbe->ddc);
+    if(i != 0x4f) {
+      ADD2LOG("Error (0x4f15): 0x%04x\n", i);
+    } else {
+      memcpy(vbe->ddc, vbeinfo, sizeof vbe->ddc);
 
-    ADD2LOG("edid record:\n");
-    for(i = 0; (unsigned) i < sizeof vbe->ddc; i += 0x10) {
-      ADD2LOG("  ");
-      hexdump(&hd_data->log, 1, 0x10, vbe->ddc + i);
-      ADD2LOG("\n");
+      ADD2LOG("edid record:\n");
+      for(i = 0; (unsigned) i < sizeof vbe->ddc; i += 0x10) {
+        ADD2LOG("  ");
+        hexdump(&hd_data->log, 1, 0x10, vbe->ddc + i);
+        ADD2LOG("\n");
+      }
     }
   }
 
-  if(hd_probe_feature(hd_data, pr_bios_vbe2)) {
+  if(hd_probe_feature(hd_data, pr_bios_mode)) {
+    PROGRESS(4, 4, "gfx mode");
+
     ax = 0x4f03; bx = 0; cx = 0;
     i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo, hd_data->flags.cpuemu) & 0xffff;
 
@@ -81,15 +87,6 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
       vbe->current_mode = bx;
     }
   }
-
-#if 0
-  ax = 0x0800; bx = 0x55aa; cx = 0; dx = 0x80;
-  vbeinfo[0] = 0x80;
-  vbeinfo[1] = 0;
-  i = CallInt13(&ax, &bx, &cx, &dx, vbeinfo, sizeof vbeinfo, hd_data->flags.cpuemu);
-
-  fprintf(stderr, "  EDD: ax = 0x%04x, bx = 0x%04x, cx = 0x%04x, dx = 0x%04x\n", ax, bx, cx, dx);
-#endif
 
   FreeInt10();
 }

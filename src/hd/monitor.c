@@ -86,6 +86,9 @@ void hd_scan_monitor(hd_data_t *hd_data)
     if(chk_edid_info(hd_data, bt->vbe.ddc)) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class.id = bc_monitor;
+
+      hd_set_hw_class(hd, hw_vbe);
+
       add_edid_info(hd_data, hd, bt->vbe.ddc);
 
       return;
@@ -97,6 +100,8 @@ void hd_scan_monitor(hd_data_t *hd_data)
     hd = add_hd_entry(hd_data, __LINE__, 0);
     hd->base_class.id = bc_monitor;
     hd->sub_class.id = sc_mon_lcd;
+
+    hd_set_hw_class(hd, hw_vbe);
 
     add_lcd_info(hd_data, hd, bt);
 

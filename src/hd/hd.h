@@ -100,11 +100,11 @@ typedef enum probe_feature {
   pr_modem_usb, pr_parallel, pr_parallel_lp, pr_parallel_zip, pr_isa,
   pr_isa_isdn, pr_isdn, pr_kbd, pr_prom, pr_sbus, pr_int, pr_braille,
   pr_braille_alva, pr_braille_fhp, pr_braille_ht, pr_ignx11, pr_sys,
-  pr_bios_vbe, pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod,
-  pr_braille_baum, pr_manual, pr_fb, pr_bios_vbe2, pr_veth, pr_pppoe,
-  pr_scan, pr_pcmcia, pr_fork, pr_parallel_imm, pr_s390, pr_cpuemu,
-  pr_sysfs, pr_s390disks, pr_udev, pr_block, pr_block_cdrom, pr_block_part,
-  pr_edd, pr_edd_mod,
+  pr_bios_vbe, pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum,
+  pr_manual, pr_fb, pr_veth, pr_pppoe, pr_scan, pr_pcmcia, pr_fork,
+  pr_parallel_imm, pr_s390, pr_cpuemu, pr_sysfs, pr_s390disks, pr_udev,
+  pr_block, pr_block_cdrom, pr_block_part, pr_edd, pr_edd_mod, pr_bios_ddc,
+  pr_bios_fb, pr_bios_mode,
   pr_max, pr_lxrc, pr_dsl, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
@@ -123,7 +123,7 @@ typedef enum hw_item {
   hw_manual, hw_usb_ctrl, hw_usb, hw_bios, hw_pci, hw_isapnp, hw_bridge,
   hw_hub, hw_scsi, hw_ide, hw_memory, hw_dvb, hw_pcmcia, hw_pcmcia_ctrl,
   hw_ieee1394, hw_ieee1394_ctrl, hw_hotplug, hw_hotplug_ctrl, hw_zip, hw_pppoe,
-  hw_wlan, hw_redasd, hw_dsl, hw_block, hw_tape, /* append new entries here */
+  hw_wlan, hw_redasd, hw_dsl, hw_block, hw_tape, hw_vbe, /* append new entries here */
   hw_unknown, hw_all					/* hw_all must be last */
 } hd_hw_item_t;
 

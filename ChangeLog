@@ -1,3 +1,6 @@
+
+	- changed bios probing to do less things
+
 29/3/2004:	v8.26
 	- don't run modprobe if it doesn't exist
 

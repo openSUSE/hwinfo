@@ -405,6 +405,8 @@ void hd_scan_bios(hd_data_t *hd_data)
       hd->base_class.id = bc_framebuffer;
       hd->sub_class.id = sc_fb_vesa;
 
+      hd_set_hw_class(hd, hw_vbe);
+
 #if 0
       hd->detail = new_mem(sizeof *hd->detail);
       hd->detail->type = hd_detail_bios;
@@ -463,11 +465,6 @@ void hd_scan_bios(hd_data_t *hd_data)
 
     }
   }
-
-#if 0
-  if(hd_probe_feature(hd_data, pr_bios_32)) {
-  }
-#endif
 
   PROGRESS(5, 0, "32");
 

@@ -228,8 +228,9 @@ static struct s_pr_flags {
   { pr_misc_floppy,   pr_misc,      8|4|2|1, "misc.floppy"   },
   { pr_bios,          0,            8|4|2|1, "bios"          },
   { pr_bios_vbe,      pr_bios,        4|2|1, "bios.vbe"      },
-  { pr_bios_vbe2,     pr_bios,            0, "bios.vbe2"     },
-//  { pr_bios_32,       pr_bios,            0, "bios.32"       },
+  { pr_bios_ddc,      pr_bios_vbe,        0, "bios.ddc"      },
+  { pr_bios_fb,       pr_bios_vbe,        0, "bios.fb"       },
+  { pr_bios_mode,     pr_bios_vbe,        0, "bios.mode"     },
   { pr_cpu,           0,            8|4|2|1, "cpu"           },
   { pr_monitor,       0,            8|4|2|1, "monitor"       },
   { pr_serial,        0,              4|2|1, "serial"        },
@@ -492,7 +493,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_prom);
       hd_set_probe_feature(hd_data, pr_pci);
-      hd_set_probe_feature(hd_data, pr_bios_vbe);
+      hd_set_probe_feature(hd_data, pr_bios_ddc);
       hd_set_probe_feature(hd_data, pr_fb);
       hd_set_probe_feature(hd_data, pr_monitor);
       break;
@@ -501,7 +502,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_prom);
       hd_set_probe_feature(hd_data, pr_pci);
-      hd_set_probe_feature(hd_data, pr_bios_vbe);
+      hd_set_probe_feature(hd_data, pr_bios_fb);
       hd_set_probe_feature(hd_data, pr_fb);
       break;
 
@@ -655,9 +656,14 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_bios:
       hd_set_probe_feature(hd_data, pr_bios);
-      hd_set_probe_feature(hd_data, pr_bios_vbe);
-      hd_set_probe_feature(hd_data, pr_bios_vbe2);
-//      hd_set_probe_feature(hd_data, pr_bios_32);
+      break;
+
+    case hw_vbe:
+      hd_set_probe_feature(hd_data, pr_bios_ddc);
+      hd_set_probe_feature(hd_data, pr_bios_fb);
+      hd_set_probe_feature(hd_data, pr_bios_mode);
+      hd_set_probe_feature(hd_data, pr_monitor);
+      hd_set_probe_feature(hd_data, pr_fb);
       break;
 
     case hw_manual:
@@ -4347,6 +4353,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         case hw_wlan:
         case hw_block:
         case hw_tape:
+        case hw_vbe:
           break;
 
         case hw_unknown:
@@ -4448,6 +4455,10 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 
   if(hd->is.wlan) {
     hd_set_hw_class(hd, hw_wlan);
+  }
+
+  if(hd_is_hw_class(hd, hw_bios)) {
+    hd_set_hw_class(hd, hw_vbe);
   }
 
   if(
