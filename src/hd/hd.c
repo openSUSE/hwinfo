@@ -62,6 +62,7 @@
 #include "partition.h"
 #include "disk.h"
 #include "ataraid.h"
+#include "pppoe.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -186,7 +187,8 @@ static struct s_mod_names {
   { mod_veth, "veth" },
   { mod_partition, "partition" },
   { mod_disk, "disk" },
-  { mod_ataraid, "ataraid" }
+  { mod_ataraid, "ataraid" },
+  { mod_pppoe, "pppoe" }
 };
 
 /*
@@ -276,7 +278,8 @@ static struct s_pr_flags {
   { pr_veth,         0,           8|4|2|1, "veth"         },
   { pr_partition,    0,           8|4|2|1, "partition"    },
   { pr_disk,         0,           8|4|2|1, "disk"         },
-  { pr_ataraid,      0,           8|4|2|1, "ataraid"      }
+  { pr_ataraid,      0,           8|4|2|1, "ataraid"      },
+  { pr_pppoe,        0,           8|4|2|1, "pppoe"        }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -691,6 +694,11 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_scsi);
       hd_set_probe_feature(hd_data, pr_cdrom);
       hd_set_probe_feature(hd_data, pr_partition);
+      break;
+
+    case hw_pppoe:
+      hd_set_probe_feature(hd_data, pr_net);
+      hd_set_probe_feature(hd_data, pr_pppoe);
       break;
 
     case hw_all:
@@ -1728,6 +1736,8 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_net(hd_data);
   hd_scan_disk(hd_data);
   hd_scan_ataraid(hd_data);
+
+  hd_scan_pppoe(hd_data);
 
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd_data, hd);
 
@@ -4160,6 +4170,10 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           test_func = is_pcmcia_ctrl;
           break;
 
+        case hw_pppoe:
+          base_class = bc_network_interface;
+          break;
+
         case hw_unknown:
         case hw_all:
         case hw_manual:		/* special */
@@ -4211,7 +4225,6 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           hd->func
         ) continue;
 
-
         hd->hw_class = item;
         break;
       }
@@ -4235,6 +4248,9 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
     }
     else if(hd->bus.id == bus_isa && hd->is.isapnp) {
       hd->hw_class2 = hw_isapnp;
+    }
+    else if(hd->hw_class == hw_network && hd->is.pppoe) {
+      hd->hw_class2 = hw_pppoe;
     }
   }
 

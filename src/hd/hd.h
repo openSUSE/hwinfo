@@ -98,7 +98,7 @@ typedef enum probe_feature {
   pr_sbus, pr_int, pr_braille, pr_braille_alva, pr_braille_fhp,
   pr_braille_ht, pr_ignx11, pr_sys, pr_dasd, pr_i2o, pr_cciss, pr_bios_vbe,
   pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
-  pr_fb, pr_bios_vbe2, pr_veth, pr_partition, pr_disk, pr_ataraid,
+  pr_fb, pr_bios_vbe2, pr_veth, pr_partition, pr_disk, pr_ataraid, pr_pppoe,
   /* pr_bios_32, */
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
@@ -117,7 +117,7 @@ typedef enum hw_item {
   hw_isdn, hw_modem, hw_network, hw_disk, hw_partition, hw_cdrom, hw_floppy,
   hw_manual, hw_usb_ctrl, hw_usb, hw_bios, hw_pci, hw_isapnp, hw_bridge,
   hw_hub, hw_scsi, hw_ide, hw_memory, hw_dvb, hw_pcmcia, hw_pcmcia_ctrl,
-  hw_ieee1394, hw_ieee1394_ctrl, hw_hotplug, hw_hotplug_ctrl, hw_zip,
+  hw_ieee1394, hw_ieee1394_ctrl, hw_hotplug, hw_hotplug_ctrl, hw_zip, hw_pppoe,
   hw_unknown, hw_all					/* hw_all must be last */
 } hd_hw_item_t;
 
@@ -1635,6 +1635,7 @@ typedef struct s_hd_t {
     unsigned dvd:1;		/* DVD */
     unsigned dvdr:1;		/* DVD-R */
     unsigned dvdram:1;		/* DVD-RAM */
+    unsigned pppoe:1;		/* PPPOE modem connected */
   } is;
 
   struct tag_s {		/* this struct is for internal purposes only */

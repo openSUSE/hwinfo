@@ -400,7 +400,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line_str("Tags: ser_skip\n");
   }
 
-  if(h->is.cdr || h->is.cdrw || h->is.dvd || h->is.dvdr || h->is.dvdram) {
+  if(h->is.cdr || h->is.cdrw || h->is.dvd || h->is.dvdr || h->is.dvdram | h->is.pppoe) {
     dump_line_str("Features:");
     i = 0;
     if(h->is.cdr) dump_line0("%s CD-R", i++ ? "," : "");
@@ -408,6 +408,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     if(h->is.dvd) dump_line0("%s DVD", i++ ? "," : "");
     if(h->is.dvdr) dump_line0("%s DVD-R", i++ ? "," : "");
     if(h->is.dvdram) dump_line0("%s DVDRAM", i++ ? "," : "");
+    if(h->is.pppoe) dump_line0("%s PPPOE", i++ ? "," : "");
     dump_line0("\n");
   }
 
