@@ -17,6 +17,8 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * mouse info
  *
+ * TODO: reset serial lines to old values (cf. modem.c)
+ *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
@@ -263,13 +265,14 @@ void get_serial_mouse(hd_data_t *hd_data)
 
   set0 = set;
   for(;;) {
-   /* to.tv_sec = 0; to.tv_usec = 200000; */
+   to.tv_sec = 0; to.tv_usec = 300000;
     set = set0;
     if((sel = select(fd_max + 1, &set, NULL, NULL, &to)) > 0) {
       for(sm = hd_data->ser_mouse; sm; sm = sm->next) {
         if(FD_ISSET(sm->fd, &set)) {
           if((j = read(sm->fd, sm->buf + sm->buf_len, sizeof sm->buf - sm->buf_len)) > 0)
             sm->buf_len += j;
+          if(j <= 0) FD_CLR(sm->fd, &set0);	// #####
         }
       }
     }

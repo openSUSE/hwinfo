@@ -35,8 +35,10 @@ extern "C" {
 #define HD_DEB_SCSI		(1 << 16)
 #define HD_DEB_USB		(1 << 17)
 #define HD_DEB_ADB		(1 << 18)
+#define HD_DEB_MODEM		(1 << 19)
 
 #include <inttypes.h>
+#include <termios.h>
 
 /*
  * flags to control the probing.
@@ -48,7 +50,7 @@ typedef enum probe_feature {
   pr_default = 1, pr_memory, pr_pci, pr_pci_range, pr_pci_ext, pr_isapnp,
   pr_cdrom, pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial,
   pr_misc_par, pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor,
-  pr_mouse, pr_ide, pr_scsi, pr_usb, pr_adb,
+  pr_mouse, pr_ide, pr_scsi, pr_usb, pr_adb, pr_modem,
   pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
@@ -439,6 +441,7 @@ typedef struct s_ser_mouse_t {
   unsigned hd_idx;
   char *dev_name;
   int fd;
+  struct termios tio;
   unsigned is_mouse:1;
   unsigned char buf[256];
   int buf_len;
@@ -447,6 +450,22 @@ typedef struct s_ser_mouse_t {
   unsigned pnp_rev;
   unsigned bits;
 } ser_mouse_t;
+
+typedef struct s_ser_modem_t {
+  struct s_ser_modem_t *next;
+  unsigned hd_idx;
+  char *dev_name;
+  int fd;
+  struct termios tio;
+  unsigned is_modem:1;
+  unsigned char buf[1024];
+  int buf_len;
+  int garbage, pnp;
+  unsigned char pnp_id[8];
+  char *serial, *class_name, *dev_id, *user_name;
+  unsigned pnp_rev;
+  unsigned bits;
+} ser_modem_t;
 
 
 /*
@@ -555,6 +574,7 @@ typedef struct {
   serial_t *serial;		/* /proc's serial info */
   str_list_t *scsi;		/* /proc/scsi/scsi */
   ser_mouse_t *ser_mouse;	/* info about serial mice */
+  ser_modem_t *ser_modem;	/* info about serial modems */
   str_list_t *cpu;		/* /proc/cpuinfo */
   str_list_t *klog;		/* kernel log */
   str_list_t *usb;		/* usb info */

@@ -30,6 +30,7 @@
 #include "version.h"
 #include "usb.h"
 #include "adb.h"
+#include "modem.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -88,7 +89,8 @@ static struct s_mod_names {
   { mod_ide, "ide"},
   { mod_scsi, "scsi"},
   { mod_usb, "usb"},
-  { mod_adb, "adb"}
+  { mod_adb, "adb"},
+  { mod_modem, "modem"}
 };
 
 /*
@@ -123,7 +125,8 @@ static struct s_pr_flags {
   { pr_ide, "ide" },
   { pr_scsi, "scsi" },
   { pr_usb, "usb" },
-  { pr_adb, "adb" }
+  { pr_adb, "adb" },
+  { pr_modem, "modem" }
 };
 
 #define PR_OFS			2		/* skip 0, default */
@@ -470,6 +473,7 @@ void hd_scan(hd_data_t *hd_data)
   /* merge basic system info & the easy stuff */
   hd_scan_misc2(hd_data);
 
+  hd_scan_modem(hd_data);	/* do it before hd_scan_mouse() */
   hd_scan_mouse(hd_data);
   hd_scan_ide(hd_data);
   hd_scan_scsi(hd_data);
