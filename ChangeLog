@@ -1,3 +1,6 @@
+24/2/2003:	v6.01
+	- add fibre channel adapters to storage controller list (#23686)
+
 24/2/2003:	v6.00
 	- fixed gcc warnings
 	- updated module info
