@@ -2,12 +2,14 @@
 &device.id		pci 0x4000
 +baseclass.id		0x102
 +subclass.id		0x01
++driver.module.modprobe	ham
 +requires		Intel-v92ham
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1040
 +baseclass.id		0x102
 +subclass.id		0x02
++driver.module.modprobe	536ep
 +requires		Intel-536ep
 
  vendor.id		pci 0x11c1
@@ -18,5 +20,6 @@
 &device.id		pci 0x0440+0x001d
 +baseclass.id		0x102
 +subclass.id		0x03
++driver.module.modprobe	lt_serial
 +requires		ltmodem
 

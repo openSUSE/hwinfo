@@ -1093,21 +1093,6 @@
 +driver.xfree.config	Option "Capabilities2" "0x00000000"
 +requires		xfiregl1
 
- vendor.id		pci 0x1014
-&device.id		pci 0x0170
-+device.name		fgl2
-+driver.xfree		4|firegl23|||||24
-+driver.xfree.config	Option "no_accel" "no"
-+driver.xfree.config	Option "enable DVI" "off"
-+driver.xfree.config	Option "NumDMABuffers" "24"
-+driver.xfree.config	Option "NumTMBuffers" "4"
-+driver.xfree.config	Option "Capabilities" "0x00000000"
-+driver.xfree.config	Option "Capabilities2" "0x00000000"
-+driver.xfree.config	Option "Overlay" "off"
-+driver.xfree.config	Option "Qbs" "off"
-+driver.xfree.config	Option "PBuffer" "0"
-+requires		xfiregl23
-
  vendor.id		pci 0x1017
 +vendor.name		SPEA Software AG
 
@@ -3020,13 +3005,6 @@
 &device.id		pci 0x8c2e
 +device.name		SuperSavage/IXC 64 SDR
 +driver.xfree		4|savage||||ShadowFB
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8c2e
-&subvendor.id		pci 0x1014
-&subdevice.id		pci 0x01fc
-+subdevice.name		IBM SuperSavage/IXC 64 SDR
-+driver.xfree		4|fbdev
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8c2f
