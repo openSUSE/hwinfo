@@ -46,6 +46,7 @@ static struct {
   { 1280,  800, "Hewlett-Packard", "hp compaq nx9105 (DU367T#ABD)", "03" },
   { 1280,  800, "Hewlett-Packard", "Pavilion zv5000 (PA456EA#ABD)", "F.11" },
 #include "ibm-notebooks.h"
+  { 1400, 1050, "IBM", "73geu99", NULL },
   { 1024,  768, "KDST", "KDS6KSUMO", NULL  },
   { 1024,  768, "Sony Corporation", "PCG-F370(UC)", NULL },
   { 1024,  768, "Sony Corporation", "PCG-N505SN", NULL },

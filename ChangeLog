@@ -1,5 +1,8 @@
-	- remove Eicon cards from 64 bit archs, the driver do not support
+	- another notebook (#67412)
+	- do wlan detection for --netcard (#73077)
+	- remove Eicon cards from 64 bit archs, the driver does not support
 	  64 bit yet (#55722)
+
 16/3/2005:	v10.10
 	- updated notebook display data
 	- fix udev db reading

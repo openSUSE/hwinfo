@@ -624,6 +624,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_dsl);
       hd_set_probe_feature(hd_data, pr_prom);
       hd_set_probe_feature(hd_data, pr_s390);
+      hd_set_probe_feature(hd_data, pr_wlan);
       break;
 
     case hw_printer:
