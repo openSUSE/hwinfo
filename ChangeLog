@@ -1,5 +1,6 @@
 12/5/2004:	v8.49
-	- use mmap() to access /dev/mem (#34550)
+	- use mmap() to access /dev/mem & re-enable bios access
+	  on ia64 (#34550)
 
 11/5/2004:	v8.48
 	- take out ips (#39993)

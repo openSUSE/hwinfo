@@ -23,7 +23,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#if defined(__i386__) || defined (__x86_64__)
+#if defined(__i386__) || defined (__x86_64__) || defined (__ia64__)
 
 #ifndef LIBHD_TINY
 static struct {
