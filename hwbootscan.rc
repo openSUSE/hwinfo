@@ -9,7 +9,8 @@
 #
 ### BEGIN INIT INFO
 # Provides: hwscan
-# Required-Start: hotplug kbd
+# Required-Start:
+# X-UnitedLinux-Should-Start: hotplug kbd
 # Required-Stop:
 # Default-Start: 2 3 5
 # Default-Stop:
