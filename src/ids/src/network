@@ -1,5 +1,8 @@
-# network controller
+# network adapter
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# pci/isapnp/sbus adapter
 
 # net/tokenring/tmspci.c
  vendor.id		pci 0x0e11
@@ -472,4 +475,143 @@
  vendor.id		special 0x4001
 &device.id		special 0x3004
 +driver.module.insmod	myri_sbus
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# usb network adapter
+
+ vendor.id		usb 0x0411
++vendor.name		MELCO
+
+ vendor.id		usb 0x0411
+&device.id		usb 0x0001
++baseclass.id		0x002
++subclass.id		0x00
++device.name		BUFFALO LUA-TX
+
+ vendor.id		usb 0x04bb
++vendor.name		IO Data
+
+ vendor.id		usb 0x04bb
+&device.id		usb 0x0904
++baseclass.id		0x002
++subclass.id		0x00
++device.name		USB ET/TX
+
+ vendor.id		usb 0x056e
++vendor.name		LANEED
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x4002
++baseclass.id		0x002
++subclass.id		0x00
++device.name		LD-USB/TX
+
+ vendor.id		usb 0x05e9
++vendor.name		SONY
+
+ vendor.id		usb 0x05e9
+&device.id		usb 0x0009
++baseclass.id		0x002
++subclass.id		0x00
++device.name		Ethernet USB
+
+ vendor.id		usb 0x066b
++vendor.name		Linksys
+
+ vendor.id		usb 0x066b
+&device.id		usb 0x2203+0x0002
++baseclass.id		0x002
++subclass.id		0x00
++device.name		USB100TX
+
+ vendor.id		usb 0x066b
+&device.id		usb 0x2206
++baseclass.id		0x002
++subclass.id		0x00
+
+ vendor.id		usb 0x0707
++vendor.name		SMC
+
+ vendor.id		usb 0x0707
+&device.id		usb 0x0100
++baseclass.id		0x002
++subclass.id		0x00
++device.name		2102 EZ Ethernet USB
+
+ vendor.id		usb 0x0707
+&device.id		usb 0x0200
++baseclass.id		0x002
++subclass.id		0x00
++device.name		202 USB Ethernet
+
+ vendor.id		usb 0x07a6
++vendor.name		ADMtek
+
+ vendor.id		usb 0x07a6
+&device.id		usb 0x0986
++baseclass.id		0x002
++subclass.id		0x00
++device.name		AN986 USB Ethernet
+
+ vendor.id		usb 0x07aa
++vendor.name		Corega
+
+ vendor.id		usb 0x07aa
+&device.id		usb 0x0001
++baseclass.id		0x002
++subclass.id		0x00
++device.name		FEther USB-T
+
+ vendor.id		usb 0x07aa
+&device.id		usb 0x0004
++baseclass.id		0x002
++subclass.id		0x00
++device.name		FEther USB-TX
+
+ vendor.id		usb 0x07b8
+|vendor.id		usb 0x2001
++vendor.name		D-Link
+
+ vendor.id		usb 0x07b8
+&device.id		usb 0x4002
++baseclass.id		0x002
++subclass.id		0x00
++device.name		DRU-E100
+
+ vendor.id		usb 0x07b8
+&device.id		usb 0xabc1
++baseclass.id		0x002
++subclass.id		0x00
++device.name		DU-10
+
+ vendor.id		usb 0x083a
++vendor.name		Accton
+
+ vendor.id		usb 0x083a
+&device.id		usb 0x1046
++baseclass.id		0x002
++subclass.id		0x00
++device.name		USB 10/100 Ethernet Adapter
+
+ vendor.id		usb 0x08dd
++vendor.name		Billionton
+
+ vendor.id		usb 0x08dd
+&device.id		usb 0x0986
++baseclass.id		0x002
++subclass.id		0x00
++device.name		USB-100
+
+ vendor.id		usb 0x2001
+&device.id		usb 0x4001+0x0002
++baseclass.id		0x002
++subclass.id		0x00
++device.name		DSB-650X
+
+ vendor.id		usb 0x2001
+&device.id		usb 0x4003
++baseclass.id		0x002
++subclass.id		0x00
++device.name		DSB-650X(PNA)
 

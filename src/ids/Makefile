@@ -5,7 +5,7 @@ DISTCLEANFILES	= *.h *.xml *.ids check_hd
 
 include $(TOPDIR)/Makefile.common
 
-IDFILES	= src/names.SuSE src/bus src/class src/names.special \
+IDFILES	= src/bus src/class src/extra src/names.special \
 	  src/scanner src/network src/names.usbutils src/names.usb \
 	  src/names.eisa src/monitor src/camera src/tv src/dvb
 
