@@ -2,6 +2,7 @@
 	- probe for cdrom & disk at boot (#19297)
 	- '--fast' option has effect on disk probing (no i2o & cciss)
 	- dmfe instead of tulip (#19271)
+	- convert_hd now understands XML properly
 
 9/9/2002:	v5.30
 	- probe also USB isdn controllers (#18830)
