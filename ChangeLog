@@ -2,6 +2,7 @@
 	- detect IUCV pseudodevices (bug #39456)
 	- added hd_busid_to_hwcfg() (bug #39456)
 	- updated X11 data (#39767)
+	- fixed strange side effect of UML detection (#39946)
 
 29/4/2004:	v8.45
 	- s390: enhance grouped channel detection using ccwgroup bus
