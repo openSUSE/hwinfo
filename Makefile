@@ -21,9 +21,10 @@ tiny:
 
 shared: hwinfo.o
 	@make EXTRA_FLAGS=-fpic
-	$(LD) -shared --whole-archive -soname libhd.so.$(LIBHD_MAJOR_VERSION)\
-		-o $(LIBHD_SO) $(LIBHD)
-	$(CC) hwinfo.o $(LDFLAGS) $(LIBHD_SO) -o hwinfo
+	$(CC) -shared -Wl,--whole-archive $(LIBHD) -Wl,--no-whole-archive \
+		-Wl,-soname=libhd.so.$(LIBHD_MAJOR_VERSION)\
+		-o $(LIBHD_SO) 
+	$(CC) hwinfo.o $(LDFLAGS) -Lsrc -lhd -lpthread -o hwinfo
 
 install:
 	install -d -m 755 /usr/sbin /usr/lib /usr/include
