@@ -1897,6 +1897,7 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
         if(hd_tmp->base_class == bc_internal && hd_tmp->sub_class == sc_int_cpu) {
           s1 = hd_tmp->detail->cpu.data->vend_name;
           if(s1 && (strstr(s1, "CHRP ") == s1 || strstr(s1, "PReP ") == s1)) {
+            free_mem(ki->XkbModel);
             ki->XkbModel = new_str("powerpcps2");
           }
         }
@@ -3064,12 +3065,12 @@ void hd_copy(hd_t *dst, hd_t *src)
 
   dst->next = tmp;
 
-  /* needed to keep in sync with the real devce tree */
+  /* needed to keep in sync with the real device tree */
   if(
     dst->detail &&
     dst->detail->type == hd_detail_devtree
   ) {
-    dst->detail = free_mem(dst->detail);
+    dst->detail = NULL;		/* ??? was: free_mem(dst->detail); */
   }
 }
 
@@ -3085,10 +3086,12 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
   driver_info_t *di;
 
 #ifdef LIBHD_MEMCHECK
+#ifndef __PPC__
   {
     if(libhd_log)
       fprintf(libhd_log, "; %s\t%p\t%p\t%u\t%u\t%p\n", __FUNCTION__, CALLED_FROM(hd_list, hd_data), hd_data, items, rescan, hd_old);
   }
+#endif
 #endif
 
   if(rescan) {

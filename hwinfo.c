@@ -30,6 +30,7 @@ int oem_install_info(hd_data_t *hd_data);
 int dump_packages(hd_data_t *hd_data);
 
 void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item);
+void do_test(hd_data_t *hd_data);
 void help(void);
 
 struct option options[] = {
@@ -39,6 +40,7 @@ struct option options[] = {
   { "debug", 1, NULL, 'd' },
   { "log", 1, NULL, 'l' },
   { "packages", 0, NULL, 'p' },
+  { "test", 0, NULL, 300 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -117,6 +119,10 @@ int main(int argc, char **argv)
         case 'p':
           dump_packages(hd_data);
 	  break;
+
+        case 300:
+          do_test(hd_data);
+          break;
 
         case 1000 ... 1100:
           do_hw(hd_data, f, i - 1000);
@@ -284,6 +290,19 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
   }
 
   hd_free_hd_list(hd0);
+}
+
+void do_test(hd_data_t *hd_data)
+{
+  hd_t *hd;
+
+  hd = hd_list(hd_data, hw_display, 1, NULL);
+
+//  hd_free_hd_list(hd);
+
+  hd = hd_list(hd_data, hw_display, 1, NULL);
+
+//  hd_free_hd_list(hd);
 }
 
 
