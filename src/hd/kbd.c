@@ -9,10 +9,7 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/ioctl.h>
-
-#ifdef __PPC__
 #include <linux/serial.h>
-#endif
 
 #ifdef __sparc__
 
@@ -49,25 +46,23 @@ typedef unsigned int u_int;
 #include "kbd.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * kbd detection
+ *
+ * Look for keyboards not covered by kernel input device driver, mainly
+ * some sort of serial consoles.
  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#if defined(__i386__) || defined(__x86_64__) || defined(__PPC__) || defined(__alpha__) || defined(__ia64__) || defined(__arm__) || defined(__mips__)
+#ifdef __sparc__
+static void add_sun_console(hd_data_t *hd_data);
+#else
+static void add_serial_console(hd_data_t *hd_data);
+#endif
+
 
 void hd_scan_kbd(hd_data_t *hd_data)
 {
-#ifdef __PPC__
-  hd_t *hd1;
-  hd_res_t *res;
-  int fd;
-  str_list_t *cmd;
   hd_t *hd;
-  unsigned u;
-  str_list_t *sl;
-  struct serial_struct ser_info;
-#endif
 
   if(!hd_probe_feature(hd_data, pr_kbd)) return;
 
@@ -76,64 +71,108 @@ void hd_scan_kbd(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
 
-#ifdef __PPC__
-  PROGRESS(2, 0, "serial console");
+  PROGRESS(2, 0, "uml");
 
-  if((fd = open(DEV_CONSOLE, O_RDWR | O_NONBLOCK | O_NOCTTY)) >= 0) {
-    if(!ioctl(fd, TIOCGSERIAL, &ser_info)) {
-      ADD2LOG("serial console at line %d\n", ser_info.line);
+  if(hd_is_uml(hd_data)) {
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->base_class.id = bc_keyboard;
+    hd->sub_class.id = sc_keyboard_kbd;
+    hd->bus.id = bus_none;
+    hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0201);
+    hd->device.id = MAKE_ID(TAG_SPECIAL, 2);
+  }
 
-      hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class.id = bc_keyboard;
-      hd->sub_class.id = sc_keyboard_console;
-      hd->bus.id = bus_serial;
-      hd->device.name = new_str("serial console");
-      str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%d", ser_info.line);
-      u = 9600;
-      for(hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
-        if(
-          hd1->base_class.id == bc_comm &&
-          hd1->sub_class.id == sc_com_ser &&
-          hd1->unix_dev_name &&
-          !strcmp(hd1->unix_dev_name, hd->unix_dev_name)
-        ) {
-          hd->attached_to = hd1->idx;
-          for(res = hd1->res; res; res = res->next) {
-            if(res->any.type == res_baud) {
-              u = res->baud.speed;
-              break;
-            }
-          }
-          break;
-        }
-      }
+  PROGRESS(3, 0, "serial console");
 
-      /* get baud settings from /proc/cmdline */
-      cmd = get_cmdline(hd_data, "console");
-      for(sl = cmd; sl; sl = sl->next) {
-        unsigned u0, u1;
-        if(sscanf(sl->str, "ttyS%u,%u", &u0, &u1) == 2) {
-          if(ser_info.line == u0 && u1) u = u1;
-        }
-      }
-      free_str_list(cmd);
+#ifdef __sparc__
+  add_sun_console(hd_data);
+#else
+  add_serial_console(hd_data);
+#endif
+}
 
-      res = add_res_entry(&hd->res, new_mem(sizeof *res));
+
+#ifndef __sparc__
+
+void add_serial_console(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  hd_res_t *res = NULL;
+  int fd, i;
+  str_list_t *cmd, *cmd0, *sl;
+  unsigned u, u1;
+  struct serial_struct ser_info;
+  unsigned tty_major = 0, tty_minor = 0;
+  char c, *dev = NULL, *s;
+
+  /* first, try console= option */
+  cmd = cmd0 = get_cmdline(hd_data, "console");
+
+  /* use last console entry */
+  if(cmd) while(cmd->next) cmd = cmd->next;
+
+  if(
+    cmd &&
+    (
+      /* everything != "ttyN" */
+      strncmp(cmd->str, "tty", 3) ||
+      !(cmd->str[3] == 0 || (cmd->str[3] >= '0' && cmd->str[3] <= '9'))
+    )
+  ) {
+    sl = hd_split(',', cmd->str);
+    s = sl->str;
+    if(!strncmp(s, "/dev/", sizeof "/dev/" - 1)) s += sizeof "/dev/" - 1;
+    dev = new_str(s);
+    if(sl->next && (i = sscanf(sl->next->str, "%u%c%u", &u, &c, &u1)) >= 1) {
+      res = add_res_entry(&res, new_mem(sizeof *res));
       res->baud.type = res_baud;
       res->baud.speed = u;
+      if(i >= 2) res->baud.parity = c;
+      if(i >= 3) res->baud.bits = u1;
+    }
+    free_str_list(sl);
+  }
+
+  if(!dev && (fd = open(DEV_CONSOLE, O_RDWR | O_NONBLOCK | O_NOCTTY)) >= 0) {
+    if(ioctl(fd, TIOCGDEV, &u) != -1) {
+      tty_major = (u >> 8) & 0xfff;
+      tty_minor = (u & 0xff) | ((u >> 12) & 0xfff00);
+      ADD2LOG(DEV_CONSOLE ": major %u, minor %u\n", tty_major, tty_minor);
+    }
+
+    if(tty_major == 229 /* iseries hvc */) {
+      str_printf(&dev, 0, "hvc%u", tty_minor);
+    }
+    else if(!ioctl(fd, TIOCGSERIAL, &ser_info)) {
+      ADD2LOG("serial console at line %d\n", ser_info.line);
+      str_printf(&dev, 0, "ttyS%d", ser_info.line);
     }
     close(fd);
   }
-#endif
 
+  if(dev) {
+
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->base_class.id = bc_keyboard;
+    hd->sub_class.id = sc_keyboard_console;
+    hd->bus.id = bus_serial;
+    hd->device.name = new_str("serial console");
+
+    if(*dev) str_printf(&hd->unix_dev_name, 0, "/dev/%s", dev);
+
+    hd->res = res;
+
+    free_mem(dev);
+  }
+
+  free_str_list(cmd0);
 }
 
-#endif	/* __i386__ || __x86_64__ || __PPC__ || __alpha__ || __ia64__ */
+
+#else	/* defined(__sparc__) */
 
 
-#if defined(__sparc__)
-
-void hd_scan_kbd(hd_data_t *hd_data)
+void add_sun_console(hd_data_t *hd_data)
 {
   int fd, kid, kid2, klay, ser_cons, i;
   unsigned u, u1, u2;
@@ -143,15 +182,6 @@ void hd_scan_kbd(hd_data_t *hd_data)
   struct openpromio *opio = (struct openpromio *) buf;
   hd_t *hd;
   hd_res_t *res;
-
-  if(!hd_probe_feature(hd_data, pr_kbd)) return;
-
-  hd_data->module = mod_kbd;
-
-  /* some clean-up */
-  remove_hd_entries(hd_data);
-
-  PROGRESS(1, 0, "sun serial console");
 
   if((fd = open(DEV_CONSOLE, O_RDWR | O_NONBLOCK | O_NOCTTY)) >= 0)
     {
@@ -267,11 +297,4 @@ void hd_scan_kbd(hd_data_t *hd_data)
 
 #endif	/* __sparc__ */
 
-
-#if defined(__s390__) || defined(__s390x__)
-void hd_scan_kbd(hd_data_t *hd_data)
-{
-
-}
-#endif
 

@@ -2,16 +2,6 @@
 +vendor.name		ATI Technologies Inc
 
  vendor.id		pci 0x1002
-&device.id		pci 0x0084
-+device.name		RageIIC
-+driver.xfree		3|Mach64
-
- vendor.id		pci 0x1002
-&device.id		pci 0x0088
-+device.name		Mach64
-+driver.xfree		3|Mach64
-
- vendor.id		pci 0x1002
 &device.id		pci 0x4136
 +device.name		RS100 4136
 +driver.xfree		4|radeon
@@ -104,11 +94,6 @@
 +driver.xfree.config	ChipID 0x4154
 
  vendor.id		pci 0x1002
-&device.id		pci 0x4158
-+device.name		68800AX [Mach32]
-+driver.xfree		3|Mach64
-
- vendor.id		pci 0x1002
 &device.id		pci 0x4237
 +device.name		RS250 4237
 +driver.xfree		4|radeon
@@ -139,13 +124,11 @@
 &device.id		pci 0x4354
 +device.name		215CT [Mach64 CT]
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4358
 +device.name		210888CX [Mach64 CX]
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4437
@@ -156,12 +139,6 @@
 &device.id		pci 0x4554
 +device.name		210888ET [Mach64 ET]
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
-
- vendor.id		pci 0x1002
-&device.id		pci 0x4654
-+device.name		Mach64 VT
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4742
@@ -172,12 +149,6 @@
 &device.id		pci 0x4744
 +device.name		3D Rage Pro AGP 1X
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
-
- vendor.id		pci 0x1002
-&device.id		pci 0x4747
-+device.name		3D Rage Pro
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4749
@@ -188,37 +159,31 @@
 &device.id		pci 0x474c
 +device.name		Rage XC
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x474d
 +device.name		Rage XL AGP
 +driver.xfree		4|ati|||||8,16,24
-+driver.xfree		3|Mach64|||||8,16,24
 
  vendor.id		pci 0x1002
 &device.id		pci 0x474e
 +device.name		Rage XC AGP
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x474f
 +device.name		Rage XL
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4750
 +device.name		3D Rage Pro 215GP
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4751
 +device.name		3D Rage Pro 215GQ
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4752
@@ -234,37 +199,31 @@
 &device.id		pci 0x4754
 +device.name		3D Rage I/II 215GT [Mach64 GT]
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4755
 +device.name		3D Rage II+ 215GTB [Mach64 GTB]
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4756
 +device.name		3D Rage IIC 215IIC [Mach64 GT IIC]
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4757
 +device.name		3D Rage IIC AGP
 +driver.xfree		4|ati|||||8,15,16,24
-+driver.xfree		3|Mach64|||||8,16,24,32
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4758
 +device.name		210888GX [Mach64 GX]
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4759
 +device.name		3D Rage IIC
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x475a
@@ -306,7 +265,6 @@
 &device.id		pci 0x4c44
 +device.name		3D Rage LT Pro AGP-66
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c45
@@ -324,7 +282,6 @@
 &device.id		pci 0x4c47
 +device.name		3D Rage LT-G 215LG
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c49
@@ -335,7 +292,6 @@
 &device.id		pci 0x4c4d
 +device.name		3D Rage P/M Mobility AGP 2x
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c4d
@@ -348,13 +304,11 @@
 &device.id		pci 0x4c4e
 +device.name		3D Rage L Mobility AGP 2x
 +driver.xfree		4|ati
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c50
 +device.name		3D Rage LT Pro
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c51
@@ -365,18 +319,11 @@
 &device.id		pci 0x4c52
 +device.name		3D Rage P/M Mobility
 +driver.xfree		4|ati
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c53
 +device.name		3D Rage L Mobility
 +driver.xfree		4|ati
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1002
-&device.id		pci 0x4c54
-+device.name		264LT [Mach64 LT]
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c57
@@ -765,13 +712,11 @@
 +device.name		Rage 128 RE
 +driver.xfree		4|r128|||||8,15,16,24
 +driver.xfree		4|r128|3d||dri||16
-+driver.xfree		3|SVGA|||||8,16,24,32
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5246
 +device.name		Rage 128 RF
 +driver.xfree		4|r128|||||8,15,16,24
-+driver.xfree		3|SVGA|||||8,16,24,32
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5247
@@ -784,80 +729,60 @@
 +device.name		Rage 128 RK
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1002
 &device.id		pci 0x524c
 +device.name		Rage 128 RL
 +driver.xfree		4|r128|||||8,15,16,24
 +driver.xfree		4|r128|3d||dri||16
-+driver.xfree		3|SVGA|||||8,16,24,32
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5345
 +device.name		Rage 128 SE
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5346
 +device.name		Rage 128 SF
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5347
 +device.name		Rage 128 SG
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5348
 +device.name		Rage 128 4x
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1002
 &device.id		pci 0x534b
 +device.name		Rage 128 SK
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1002
 &device.id		pci 0x534c
 +device.name		Rage 128 SL
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1002
 &device.id		pci 0x534d
 +device.name		Rage 128 SM
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1002
 &device.id		pci 0x534e
 +device.name		Rage 128 SN
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri||16
-
- vendor.id		pci 0x1002
-&device.id		pci 0x5354
-+device.name		Mach 64 VT
-+driver.xfree		3|Mach64
-
- vendor.id		pci 0x1002
-&device.id		pci 0x5354
-&subvendor.id		pci 0x1002
-&subdevice.id		pci 0x5654
-+subdevice.name		Mach 64 reference
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5446
@@ -904,13 +829,11 @@
 &device.id		pci 0x5655
 +device.name		264VT3 [Mach64 VT3]
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5656
 +device.name		264VT4 [Mach64 VT4]
 +driver.xfree		4|ati
-+driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5834
@@ -983,11 +906,6 @@
 +device.name		SC1200
 +driver.xfree		4|nsc
 
- vendor.id		pci 0x100b
-&device.id		pci 0xd001
-+device.name		87410
-+driver.xfree		3|Mach64
-
  vendor.id		pci 0x100c
 +vendor.name		Tseng Labs Inc
 
@@ -995,49 +913,26 @@
 &device.id		pci 0x3202
 +device.name		ET4000/W32p rev A
 +driver.xfree		4|tseng
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x100c
 &device.id		pci 0x3205
 +device.name		ET4000/W32p rev B
 +driver.xfree		4|tseng
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x100c
 &device.id		pci 0x3206
 +device.name		ET4000/W32p rev C
 +driver.xfree		4|tseng
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x100c
 &device.id		pci 0x3207
 +device.name		ET4000/W32p rev D
 +driver.xfree		4|tseng
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x100c
 &device.id		pci 0x3208
 +device.name		ET6000
 +driver.xfree		4|tseng
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x100c
-&device.id		pci 0x4702
-+device.name		ET6300
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x100e
-+vendor.name		Weitek
-
- vendor.id		pci 0x100e
-&device.id		pci 0x9000+0x0002
-+device.name		P9000
-+driver.xfree		3|P9000
-
- vendor.id		pci 0x100e
-&device.id		pci 0x9100
-+device.name		P9100
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1013
 +vendor.name		Cirrus Logic
@@ -1046,51 +941,26 @@
 &device.id		pci 0x0038
 +device.name		GD 7548
 +driver.xfree		4|cirrus
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1013
-&device.id		pci 0x0040
-+device.name		GD 7555 Flat Panel GUI Accelerator
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1013
-&device.id		pci 0x004c
-+device.name		GD 7556 Video/Graphics LCD/CRT Ctrlr
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1013
 &device.id		pci 0x00a0
 +device.name		GD 5430/40 [Alpine]
 +driver.xfree		4|cirrus||||Noaccel
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1013
-&device.id		pci 0x00a2
-+device.name		GD 5432 [Alpine]
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1013
 &device.id		pci 0x00a4
 +device.name		GD 5434-4 [Alpine]
 +driver.xfree		4|cirrus
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1013
 &device.id		pci 0x00a8
 +device.name		GD 5434-8 [Alpine]
 +driver.xfree		4|cirrus
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1013
 &device.id		pci 0x00ac
 +device.name		GD 5436 [Alpine]
 +driver.xfree		4|cirrus
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1013
-&device.id		pci 0x00b0
-+device.name		GD 5440
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1013
 &device.id		pci 0x00b8
@@ -1101,105 +971,32 @@
 &device.id		pci 0x00bc
 +device.name		GD 5480
 +driver.xfree		4|cirrus
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1013
 &device.id		pci 0x00d0
 +device.name		GD 5462
 +driver.xfree		4|cirrus
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1013
-&device.id		pci 0x00d2
-+device.name		GD 5462 [Laguna I]
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1013
 &device.id		pci 0x00d4
 +device.name		GD 5464 [Laguna]
 +driver.xfree		4|cirrus
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1013
 &device.id		pci 0x00d5
 +device.name		GD5464BD
 +driver.xfree		4|cirrus
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1013
 &device.id		pci 0x00d6
 +device.name		GD 5465 [Laguna]
 +driver.xfree		4|cirrus
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1013
-&device.id		pci 0x00e8
-+device.name		GD 5436U
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1013
-&device.id		pci 0x1112
-+device.name		PD 6834 PCMCIA/CardBus Ctrlr
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1013
-&device.id		pci 0x1113
-+device.name		PD 6833 PCMCIA/CardBus Ctrlr
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1013
-&device.id		pci 0x1200
-+device.name		GD 7542 [Nordic]
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1013
-&device.id		pci 0x1202
-+device.name		GD 7543 [Viking]
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1013
-&device.id		pci 0x1204
-+device.name		GD 7541 [Nordic Light]
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1013
-&device.id		pci 0x4400
-+device.name		CD 4400
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1014
 +vendor.name		IBM
 
- vendor.id		pci 0x1014
-&device.id		pci 0x000a
-+device.name		Fire Coral
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1014
-&device.id		pci 0x001d
-+device.name		82G2675
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1014
-&device.id		pci 0x0022
-+device.name		IBM27-82351
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1017
-+vendor.name		SPEA Software AG
-
- vendor.id		pci 0x1017
-&device.id		pci 0x5343
-+device.name		SPEA 3D Accelerator
-+driver.xfree		3|SVGA
-
  vendor.id		pci 0x1023
 +vendor.name		Trident Microsystems Inc.
-
- vendor.id		pci 0x1023
-&device.id		pci 0x0194
-+device.name		82C194
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1023
 &device.id		pci 0x2100
@@ -1210,19 +1007,16 @@
 &device.id		pci 0x8400
 +device.name		CyberBlade/i7
 +driver.xfree		4|trident
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1023
 &device.id		pci 0x8420
 +device.name		CyberBlade/i7d
 +driver.xfree		4|trident
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1023
 &device.id		pci 0x8500
 +device.name		CyberBlade/i1
 +driver.xfree		4|trident||||CyberStretch,sw_cursor
-+driver.xfree		3|SVGA||||CyberStretch,sw_cursor
 
  vendor.id		pci 0x1023
 &device.id		pci 0x8520
@@ -1250,91 +1044,39 @@
 +driver.xfree		4|trident
 
  vendor.id		pci 0x1023
-&device.id		pci 0x9350
-+device.name		GUI Accelerator
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9360
-+device.name		Flat panel GUI Accelerator
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9382
-+device.name		Cyber 9382 [Reference design]
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9383
-+device.name		Cyber 9383 [Reference design]
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9385
-+device.name		Cyber 9385 [Reference design]
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9386
-+device.name		Cyber 9386
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
 &device.id		pci 0x9388
 +device.name		Cyber 9388
 +driver.xfree		4|trident
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1023
 &device.id		pci 0x9397
 +device.name		Cyber 9397
 +driver.xfree		4|trident
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1023
 &device.id		pci 0x939a
 +device.name		Cyber 9397DVD
 +driver.xfree		4|trident
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1023
 &device.id		pci 0x9420
 +device.name		TGUI 9420
 +driver.xfree		4|trident
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9430
-+device.name		TGUI 9430
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1023
 &device.id		pci 0x9440
 +device.name		TGUI 9440
 +driver.xfree		4|trident
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9460
-+device.name		TGUI 9460
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9470
-+device.name		TGUI 9470
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1023
 &device.id		pci 0x9520
 +device.name		Cyber 9520
 +driver.xfree		4|trident
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1023
 &device.id		pci 0x9525
 +device.name		Cyber 9525
 +driver.xfree		4|trident
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1023
 &device.id		pci 0x9540
@@ -1345,27 +1087,6 @@
 &device.id		pci 0x9660
 +device.name		TGUI 9660/968x/968x
 +driver.xfree		4|trident
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9680
-+device.name		TGUI 9680
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9682
-+device.name		TGUI 9682
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9683
-+device.name		TGUI 9683
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9685
-+device.name		ProVIDIA 9685
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1023
 &device.id		pci 0x9750
@@ -1373,35 +1094,9 @@
 +driver.xfree		4|trident|||||8,15,16,24
 
  vendor.id		pci 0x1023
-&device.id		pci 0x9753
-+device.name		TGUI 9753
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9754
-+device.name		TGUI 9754
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9759
-+device.name		TGUI 975
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9783
-+device.name		TGUI 9783
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
-&device.id		pci 0x9785
-+device.name		TGUI 9785
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1023
 &device.id		pci 0x9850
 +device.name		3DImage 9850
 +driver.xfree		4|trident
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1023
 &device.id		pci 0x9880
@@ -1420,56 +1115,29 @@
 +vendor.name		Matrox Graphics, Inc.
 
  vendor.id		pci 0x102b
-&device.id		pci 0x0100
-+device.name		Millennium II
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x102b
-&device.id		pci 0x0518
-+device.name		MGA-II [Athena]
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x102b
 &device.id		pci 0x0519
 +device.name		MGA 2064W [Millennium]
 +driver.xfree		4|mga||||NoHal|8,16,24
-+driver.xfree		3|SVGA|||||8,16,24
 
  vendor.id		pci 0x102b
 &device.id		pci 0x051a
 +device.name		MGA 1064SG [Mystique]
 +driver.xfree		4|mga||||NoHal|8,16,24
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x102b
-&device.id		pci 0x051a
-&subvendor.id		pci 0x102b
-&subdevice.id		pci 0x1100
-+subdevice.name		MGA-1084SG Mystique
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x102b
 &device.id		pci 0x051b
 +device.name		MGA 2164W [Millennium II]
 +driver.xfree		4|mga||||NoHal|8,16,24
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x102b
-&device.id		pci 0x051e
-+device.name		MGA 1064SG [Mystique] AGP
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x102b
 &device.id		pci 0x051f
 +device.name		MGA 2164W [Millennium II] AGP
 +driver.xfree		4|mga||||NoHal
-+driver.xfree		3|SVGA|||||8,16,24,32
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0520
 +device.name		MGA G200
 +driver.xfree		4|mga|||||8,16,24
-+driver.xfree		3|SVGA|||||8,16,24,32
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0521
@@ -1478,54 +1146,42 @@
 +driver.xfree.config	VideoRam 8192
 +driver.xfree		4|mga|3d||dri||16
 +driver.xfree.config	VideoRam 8192
-+driver.xfree		3|SVGA|||||8,16,24,32
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0525
 +device.name		MGA G400 AGP
 +driver.xfree		4|mga
 +driver.xfree		4|mga|3d||dri
-+driver.xfree		3|SVGA|||||8,16,24,32
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0525
 &subvendor.id		pci 0x102b
 &subdevice.id		pci 0x0540
 +subdevice.name		G450-0540
-+driver.xfree		4|mga
-+driver.xfree		4|mga|3d||dri
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0525
 &subvendor.id		pci 0x102b
 &subdevice.id		pci 0x0541
 +subdevice.name		G450
-+driver.xfree		4|mga
-+driver.xfree		4|mga|3d||dri
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0525
 &subvendor.id		pci 0x102b
 &subdevice.id		pci 0x0641
 +subdevice.name		Matrox G400 DH-0641
-+driver.xfree		4|mga
-+driver.xfree		4|mga|3d||dri
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0525
 &subvendor.id		pci 0x102b
 &subdevice.id		pci 0x07c0
 +subdevice.name		G450 LE
-+driver.xfree		4|mga
-+driver.xfree		4|mga|3d||dri
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0525
 &subvendor.id		pci 0x102b
 &subdevice.id		pci 0x0d41
 +subdevice.name		G450 DH G450
-+driver.xfree		4|mga
-+driver.xfree		4|mga|3d||dri
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0525
@@ -1539,38 +1195,22 @@
 &subvendor.id		pci 0x102b
 &subdevice.id		pci 0x2179
 +subdevice.name		G400 DH
-+driver.xfree		4|mga
-+driver.xfree		4|mga|3d||dri
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0525
 &subvendor.id		pci 0x102b
 &subdevice.id		pci 0x23c3
 +subdevice.name		G450-23c3
-+driver.xfree		4|mga
-+driver.xfree		4|mga|3d||dri
-
- vendor.id		pci 0x102b
-&device.id		pci 0x0d10
-+device.name		MGA Ultima/Impression
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x102b
 &device.id		pci 0x1000
 +device.name		MGA G100 [Productiva]
 +driver.xfree		4|mga||||NoHal
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x102b
 &device.id		pci 0x1001
 +device.name		MGA G100 [Productiva] AGP
 +driver.xfree		4|mga||||NoHal|8,16,24
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x102b
-&device.id		pci 0x2007
-+device.name		MGA Mistral
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x102b
 &device.id		pci 0x2527
@@ -1578,41 +1218,23 @@
 +driver.xfree		4|mga
 +driver.xfree		4|mga|3d||dri
 
- vendor.id		pci 0x102b
-&device.id		pci 0xff03
-+device.name		Millennium G200 SD
-+driver.xfree		3|SVGA
-
  vendor.id		pci 0x102c
 +vendor.name		Chips and Technologies
-
- vendor.id		pci 0x102c
-&device.id		pci 0x00b8
-+device.name		64310
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x102c
 &device.id		pci 0x00c0
 +device.name		F69000 HiQVideo
 +driver.xfree		4|chips
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x102c
-&device.id		pci 0x00d0
-+device.name		F65545
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x102c
 &device.id		pci 0x00d8
 +device.name		F65545
 +driver.xfree		4|chips
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x102c
 &device.id		pci 0x00dc
 +device.name		F65548
 +driver.xfree		4|chips
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x102c
 &device.id		pci 0x00e0
@@ -1623,65 +1245,21 @@
 &device.id		pci 0x00e4
 +device.name		F65554
 +driver.xfree		4|chips
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x102c
 &device.id		pci 0x00e5
 +device.name		F65555 HiQVPro
 +driver.xfree		4|chips
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x102c
-&device.id		pci 0x00f0
-+device.name		F68554
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x102c
 &device.id		pci 0x00f4
 +device.name		F68554 HiQVision
 +driver.xfree		4|chips
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x102c
-&device.id		pci 0x00f5
-+device.name		F68555
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x102c
 &device.id		pci 0x0c30
 +device.name		69030
 +driver.xfree		4|chips
-
- vendor.id		pci 0x1031
-+vendor.name		Miro Computer Products AG
-
- vendor.id		pci 0x1031
-&device.id		pci 0x5601
-+device.name		DC20 ASIC
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1031
-&device.id		pci 0x5607
-+device.name		Video I/O & motion JPEG compressor
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1031
-&device.id		pci 0x5631
-+device.name		Media 3D
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1031
-&device.id		pci 0x6057
-+device.name		MiroVideo DC10/DC30+
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1033
-+vendor.name		NEC Corporation
-
- vendor.id		pci 0x1033
-&device.id		pci 0x0009
-+device.name		GUI Accelerator for W98
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1039
 +vendor.name		Silicon Integrated Systems Corp.
@@ -1690,13 +1268,11 @@
 &device.id		pci 0x0200
 +device.name		5597/5598 VGA
 +driver.xfree		4|sis|||||16,24
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1039
 &device.id		pci 0x0300
 +device.name		SIS300
 +driver.xfree		4|sis
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1039
 &device.id		pci 0x0310
@@ -1717,7 +1293,6 @@
 &device.id		pci 0x5300
 +device.name		SiS540 PCI Display Adapter
 +driver.xfree		4|sis
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1039
 &device.id		pci 0x5315
@@ -1743,33 +1318,11 @@
 &device.id		pci 0x6326
 +device.name		86C326
 +driver.xfree		4|sis|||||8,16,24
-+driver.xfree		3|SVGA|||||8,16
 
  vendor.id		pci 0x1039
 &device.id		pci 0x6330
 +device.name		SiS 660
 +driver.xfree		4|sis
-
- vendor.id		pci 0x1042
-+vendor.name		Micron
-
- vendor.id		pci 0x1042
-&device.id		pci 0x1000
-+device.name		FDC 37C665
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1042
-&device.id		pci 0x1001
-+device.name		37C922
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x104a
-+vendor.name		SGS Thomson Microelectronics
-
- vendor.id		pci 0x104a
-&device.id		pci 0x0008
-+device.name		STG 2000X
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x104c
 +vendor.name		Texas Instruments
@@ -1778,46 +1331,11 @@
 &device.id		pci 0x3d04
 +device.name		TVP4010 [Permedia]
 +driver.xfree		4|glint
-+driver.xfree		3|3DLABS|||||8,16,32
 
  vendor.id		pci 0x104c
 &device.id		pci 0x3d07
 +device.name		TVP4020 [Permedia 2]
 +driver.xfree		4|glint|||||8,15,16,24
-+driver.xfree		3|3DLABS|||||8,16,24,32
-
- vendor.id		pci 0x104e
-+vendor.name		Oak Technology, Inc
-
- vendor.id		pci 0x104e
-&device.id		pci 0x0017
-+device.name		OTI-64017
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x104e
-&device.id		pci 0x0107
-+device.name		OTI-107 [Spitfire]
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x104e
-&device.id		pci 0x0109
-+device.name		Video Adapter
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x104e
-&device.id		pci 0x0111
-+device.name		OTI-64111 [Spitfire]
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x104e
-&device.id		pci 0x0217
-+device.name		OTI-64217
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x104e
-&device.id		pci 0x0317
-+device.name		OTI-64317
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x105d
 +vendor.name		Number 9 Computer Company
@@ -1826,33 +1344,21 @@
 &device.id		pci 0x2309
 +device.name		Imagine 128
 +driver.xfree		4|i128
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x105d
 &device.id		pci 0x2339
 +device.name		Imagine 128-II
 +driver.xfree		4|i128
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x105d
 &device.id		pci 0x493d
 +device.name		Imagine 128 T2R [Ticket to Ride]
 +driver.xfree		4|i128
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x105d
 &device.id		pci 0x5348
 +device.name		Revolution 4
 +driver.xfree		4|i128
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1074
-+vendor.name		NexGen Microsystems
-
- vendor.id		pci 0x1074
-&device.id		pci 0x4e78
-+device.name		82c500/1
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1078
 +vendor.name		Cyrix Corporation
@@ -1863,50 +1369,14 @@
 +driver.xfree		4|cyrix
 
  vendor.id		pci 0x1078
-&device.id		pci 0x0001
-+device.name		PCI Master
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1078
 &device.id		pci 0x0002
 +device.name		5520 [Cognac]
 +driver.xfree		4|cyrix
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1078
 &device.id		pci 0x0104
 +device.name		5530 Video [Kahlua]
 +driver.xfree		4|cyrix
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1092
-+vendor.name		Diamond Multimedia Systems
-
- vendor.id		pci 0x1092
-&device.id		pci 0x0550
-+device.name		Viper V550
-+driver.xfree		3|SVGA|||||8,15,16,24
-
- vendor.id		pci 0x1098
-+vendor.name		Quantum Designs (H.K.) Ltd
-
- vendor.id		pci 0x1098
-&device.id		pci 0x0001
-+device.name		QD-8500
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1098
-&device.id		pci 0x0002
-+device.name		QD-8580
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x10a8
-+vendor.name		Sierra semiconductor
-
- vendor.id		pci 0x10a8
-&device.id		pci 0x0000
-+device.name		STB Horizon 64
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10b0
 +vendor.name		nVidia Corporation
@@ -1915,45 +1385,34 @@
 +vendor.name		Neomagic Corporation
 
  vendor.id		pci 0x10c8
-&device.id		pci 0x0000
-+device.name		Graphics Controller
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x10c8
 &device.id		pci 0x0001
 +device.name		NM2070 [MagicGraph NM2070]
 +driver.xfree		4|neomagic
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10c8
 &device.id		pci 0x0002
 +device.name		NM2090 [MagicGraph 128V]
 +driver.xfree		4|neomagic
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10c8
 &device.id		pci 0x0003
 +device.name		NM2093 [MagicGraph 128ZV]
 +driver.xfree		4|neomagic
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10c8
 &device.id		pci 0x0004
 +device.name		NM2160 [MagicGraph 128XD]
 +driver.xfree		4|neomagic|||||8,16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10c8
 &device.id		pci 0x0005
 +device.name		MagicMedia 256AV
 +driver.xfree		4|neomagic|||||8,16,24
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10c8
 &device.id		pci 0x0006
 +device.name		NM2360 [MagicMedia 256ZX]
 +driver.xfree		4|neomagic|||||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10c8
 &device.id		pci 0x0016
@@ -1970,36 +1429,27 @@
 &device.id		pci 0x0083
 +device.name		MagicGraph 128ZV Plus
 +driver.xfree		4|neomagic
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10de
 +vendor.name		nVidia Corporation
-
- vendor.id		pci 0x10de
-&device.id		pci 0x0008
-+device.name		EDGE 3D [NV1]
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0020
 +device.name		RIVA TNT
 +driver.xfree		4|nv|||||8,15,16,24
 +driver.xfree		4|nvidia|3d||||16
-+driver.xfree		3|SVGA|||||8,16,32
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0028
 +device.name		RIVA TNT2
 +driver.xfree		4|nv|||||8,15,16,24
 +driver.xfree		4|nvidia|3d||||16
-+driver.xfree		3|SVGA|||||8,16,32
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0029
 +device.name		RIVA TNT2 Ultra
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10de
 &device.id		pci 0x002a
@@ -2012,42 +1462,36 @@
 +device.name		Vanta
 +driver.xfree		4|nv|||||8,16,24
 +driver.xfree		4|nvidia|3d||||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10de
 &device.id		pci 0x002d
 +device.name		RIVA TNT2 Model 64
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10de
 &device.id		pci 0x00a0
 +device.name		Aladdin TNT2
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0100
 +device.name		GeForce 256
 +driver.xfree		4|nv|||||8,15,16,24
 +driver.xfree		4|nvidia|3d||||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0101
 +device.name		GeForce DDR
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||||16
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0103
 +device.name		Quadro
 +driver.xfree		4|nv|||||8,15,16,24
 +driver.xfree		4|nvidia|3d||||16
-+driver.xfree		3|SVGA|||||8,16,32
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0110
@@ -2743,27 +2187,6 @@
 +device.name		Imstt3D
 +driver.xfree		4|imstt
 
- vendor.id		pci 0x10e3
-+vendor.name		Tundra Semiconductor Corp.
-
- vendor.id		pci 0x10e3
-&device.id		pci 0x0000
-+device.name		CA91C042 [Universe]
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x10ea
-+vendor.name		Intergraphics Systems
-
- vendor.id		pci 0x10ea
-&device.id		pci 0x1680
-+device.name		IGA-1680
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x10ea
-&device.id		pci 0x1682
-+device.name		IGA-1682
-+driver.xfree		3|SVGA
-
  vendor.id		pci 0x1106
 +vendor.name		VIA Technologies, Inc.
 
@@ -2789,13 +2212,11 @@
 &device.id		pci 0x6422
 +device.name		ProVideo 6422
 +driver.xfree		4|apm
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1142
 &device.id		pci 0x6424
 +device.name		ProVideo 6424
 +driver.xfree		4|apm
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1163
 +vendor.name		Rendition
@@ -2810,14 +2231,6 @@
 +device.name		Verite V2000/V2100/V2200
 +driver.xfree		4|rendition
 
- vendor.id		pci 0x1179
-+vendor.name		Toshiba America Info Systems
-
- vendor.id		pci 0x1179
-&device.id		pci 0x0001
-+device.name		Crystal CS4281 PCI Audio
-+driver.xfree		3|SVGA
-
  vendor.id		pci 0x121a
 +vendor.name		3Dfx Interactive, Inc.
 
@@ -2826,56 +2239,18 @@
 +device.name		Voodoo Banshee
 +driver.xfree		4|tdfx|||||8,16,24
 +driver.xfree		4|tdfx|3d||dri||16
-+driver.xfree		3|SVGA|||||8,16,24,32
 
  vendor.id		pci 0x121a
 &device.id		pci 0x0005
 +device.name		Voodoo 3
 +driver.xfree		4|tdfx|||||8,16,24
 +driver.xfree		4|tdfx|3d||dri||16
-+driver.xfree		3|SVGA|||||8,16,24,32
 
  vendor.id		pci 0x121a
 &device.id		pci 0x0009
 +device.name		Voodoo5 5500
 +driver.xfree		4|tdfx|||||8,16,24
 +driver.xfree		4|tdfx|3d||dri||16
-
- vendor.id		pci 0x1236
-+vendor.name		Sigma Designs Corporation
-
- vendor.id		pci 0x1236
-&device.id		pci 0x6401
-+device.name		REALmagic 64/GX (SD 6425)
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1255
-+vendor.name		Optibase Ltd
-
- vendor.id		pci 0x1255
-&device.id		pci 0x1110
-+device.name		MPEG Forge
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1255
-&device.id		pci 0x1210
-+device.name		MPEG Fusion
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1255
-&device.id		pci 0x2110
-+device.name		VideoPlex
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1255
-&device.id		pci 0x2120
-+device.name		VideoPlex CC
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x1255
-&device.id		pci 0x2130
-+device.name		VideoQuest
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x126f
 +vendor.name		Silicon Motion, Inc.
@@ -2884,19 +2259,16 @@
 &device.id		pci 0x0710
 +device.name		SM710 LynxEM
 +driver.xfree		4|siliconmotion
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x126f
 &device.id		pci 0x0712
 +device.name		SM712 LynxEM+
 +driver.xfree		4|siliconmotion
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x126f
 &device.id		pci 0x0720
 +device.name		SM720 Lynx3DM
 +driver.xfree		4|siliconmotion
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x126f
 &device.id		pci 0x0730
@@ -2907,7 +2279,6 @@
 &device.id		pci 0x0810
 +device.name		SM810 LynxE
 +driver.xfree		4|siliconmotion
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x126f
 &device.id		pci 0x0820
@@ -2918,7 +2289,6 @@
 &device.id		pci 0x0910
 +device.name		SM910
 +driver.xfree		4|siliconmotion
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x12d2
 +vendor.name		NVidia / SGS Thomson (Joint Venture)
@@ -2927,12 +2297,6 @@
 &device.id		pci 0x0018
 +device.name		Riva128
 +driver.xfree		4|nv|||||15,24
-+driver.xfree		3|SVGA|||||8,16,32
-
- vendor.id		pci 0x12d2
-&device.id		pci 0x0019
-+device.name		Riva128ZX
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x1462
 +vendor.name		Micro-Star International Co., Ltd.
@@ -2969,31 +2333,26 @@
 &device.id		pci 0x0002
 +device.name		GLINT 500TX
 +driver.xfree		4|glint
-+driver.xfree		3|3DLABS|||||8,32
 
  vendor.id		pci 0x3d3d
 &device.id		pci 0x0004
 +device.name		Permedia
 +driver.xfree		4|glint
-+driver.xfree		3|3DLABS|||||8,16,32
 
  vendor.id		pci 0x3d3d
 &device.id		pci 0x0006
 +device.name		GLINT MX
 +driver.xfree		4|glint
-+driver.xfree		3|3DLABS|||||8,32
 
  vendor.id		pci 0x3d3d
 &device.id		pci 0x0007
 +device.name		3D Extreme
 +driver.xfree		4|glint|||||8,15,16,24
-+driver.xfree		3|3DLABS|||||8,16,24,32
 
  vendor.id		pci 0x3d3d
 &device.id		pci 0x0009
 +device.name		Permedia II 2D+3D
 +driver.xfree		4|glint|||||8,15,16,24
-+driver.xfree		3|3DLABS|||||8,16,24,32
 
  vendor.id		pci 0x3d3d
 &device.id		pci 0x000a
@@ -3010,198 +2369,43 @@
 +device.name		R4
 +driver.xfree		4|glint
 
- vendor.id		pci 0x4005
-+vendor.name		Avance Logic Inc.
-
- vendor.id		pci 0x4005
-&device.id		pci 0x2064
-+device.name		ALG-2064i
-+driver.xfree		3|SVGA
-
  vendor.id		pci 0x5333
 +vendor.name		S3 Inc.
-
- vendor.id		pci 0x5333
-&device.id		pci 0x0551
-+device.name		Plato/PX (system)
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x5333
 &device.id		pci 0x5631
 +device.name		86c325 [ViRGE]
 +driver.xfree		4|s3virge
-+driver.xfree		3|SVGA|||||8,16,24,32
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8801
-+device.name		86c964 [Vision 964]
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8810
-+device.name		86c764_0 [Trio 32 vers 0]
-+driver.xfree		3|S3
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8811
 +device.name		86c764/765 [Trio32/64/64V+]
 +driver.xfree		4|s3
-+driver.xfree		3|S3
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8812
 +device.name		86cM65 [Aurora64V+]
 +driver.xfree		4|s3
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8813
-+device.name		86c764_3 [Trio 32/64 vers 3]
-+driver.xfree		3|S3
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8814
 +device.name		86c767 [Trio 64UV+]
 +driver.xfree		4|s3
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8815
-+device.name		86cM65 [Aurora 128]
-+driver.xfree		3|S3
 
  vendor.id		pci 0x5333
 &device.id		pci 0x883d
 +device.name		86c988 [ViRGE/VX]
 +driver.xfree		4|s3virge
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8880
-+device.name		86c868 [Vision 868 VRAM] vers 0
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8881
-+device.name		86c868 [Vision 868 VRAM] vers 1
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8882
-+device.name		86c868 [Vision 868 VRAM] vers 2
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8883
-+device.name		86c868 [Vision 868 VRAM] vers 3
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88b0
-+device.name		86c928 [Vision 928 VRAM] vers 0
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88b1
-+device.name		86c928 [Vision 928 VRAM] vers 1
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88b2
-+device.name		86c928 [Vision 928 VRAM] vers 2
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88b3
-+device.name		86c928 [Vision 928 VRAM] vers 3
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88c0
-+device.name		86c864 [Vision 864 DRAM] vers 0
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88c1
-+device.name		86c864 [Vision 864 DRAM] vers 1
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88c2
-+device.name		86c864 [Vision 864-P DRAM] vers 2
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88c3
-+device.name		86c864 [Vision 864-P DRAM] vers 3
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88d0
-+device.name		86c964 [Vision 964 VRAM] vers 0
-+driver.xfree		3|S3|||||8,15,16,24
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88d1
-+device.name		86c964 [Vision 964 VRAM] vers 1
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88d2
-+device.name		86c964 [Vision 964-P VRAM] vers 2
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88d3
-+device.name		86c964 [Vision 964-P VRAM] vers 3
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88f0
-+device.name		86c968 [Vision 968 VRAM] rev 0
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88f1
-+device.name		86c968 [Vision 968 VRAM] rev 1
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88f2
-+device.name		86c968 [Vision 968 VRAM] rev 2
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x88f3
-+device.name		86c968 [Vision 968 VRAM] rev 3
-+driver.xfree		3|S3
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8901
 +device.name		Trio 64V2/DX or /GX
 +driver.xfree		4|s3
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8902
-+device.name		Plato/PX
-+driver.xfree		3|S3
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8903
-+device.name		Trio 3D business multimedia
-+driver.xfree		3|S3
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8904
 +device.name		Integrated Trio3D
 +driver.xfree		4|s3virge
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8905
-+device.name		Trio 64V+ family
-+driver.xfree		3|S3
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8a01
@@ -3212,31 +2416,26 @@
 &device.id		pci 0x8a10
 +device.name		ViRGE/GX2
 +driver.xfree		4|s3virge
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8a13
 +device.name		86c368 [Trio 3D/2X]
 +driver.xfree		4|s3virge
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8a20
 +device.name		86c794 [Savage 3D]
 +driver.xfree		4|savage
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8a21
 +device.name		86c795 [Savage 3D/MV]
 +driver.xfree		4|savage
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8a22
 +device.name		Savage 4
 +driver.xfree		4|savage
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8a25
@@ -3249,38 +2448,24 @@
 +driver.xfree		4|savage
 
  vendor.id		pci 0x5333
-&device.id		pci 0x8c00
-+device.name		ViRGE/M3
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x5333
 &device.id		pci 0x8c01
 +device.name		ViRGE/MX
 +driver.xfree		4|s3virge
-+driver.xfree		3|SVGA
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8c02
-+device.name		ViRGE/MX+
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8c03
 +device.name		ViRGE/MX+MV
 +driver.xfree		4|s3virge
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8c10
 +device.name		86C270-294 Savage/MX-/IX
 +driver.xfree		4|savage
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8c11
 +device.name		Savage MX
 +driver.xfree		4|savage
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8c12
@@ -3298,7 +2483,6 @@
 &device.id		pci 0x8c13
 +device.name		Savage IX
 +driver.xfree		4|savage
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8c22
@@ -3369,7 +2553,6 @@
 &device.id		pci 0x9102
 +device.name		86C410 Savage 2000
 +driver.xfree		4|savage
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0x8086
 +vendor.name		Intel Corporation
@@ -3439,7 +2622,6 @@
 &device.id		pci 0x7800
 +device.name		i740
 +driver.xfree		4|i740
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0xedd8
 +vendor.name		ARK Logic Inc
@@ -3448,17 +2630,14 @@
 &device.id		pci 0xa091
 +device.name		1000PV [Stingray]
 +driver.xfree		4|ark
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0xedd8
 &device.id		pci 0xa099
 +device.name		2000PV [Stingray]
 +driver.xfree		4|ark
-+driver.xfree		3|SVGA
 
  vendor.id		pci 0xedd8
 &device.id		pci 0xa0a1
 +device.name		2000MT
 +driver.xfree		4|ark
-+driver.xfree		3|SVGA
 

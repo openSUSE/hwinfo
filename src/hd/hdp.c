@@ -262,7 +262,8 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     h->base_class.id == bc_storage_device &&
     h->sub_class.id == sc_sdev_cdrom &&
     h->detail &&
-    h->detail->type == hd_detail_cdrom
+    h->detail->type == hd_detail_cdrom &&
+    h->detail->cdrom.data
   ) {
     cdrom_info_t *ci = h->detail->cdrom.data;
 
