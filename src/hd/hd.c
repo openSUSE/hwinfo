@@ -5076,8 +5076,16 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
   struct hd_big_geometry big_geo_s;
   unsigned long secs;
   unsigned sec_size;
+  int close_fd = 0;
 
   *geo = *size = NULL;
+
+  if(fd < 0) {
+    if(!dev) return;
+    fd = open(dev, O_RDONLY | O_NONBLOCK);
+    close_fd = 1;
+    if(fd < 0) return;
+  }
 
   if(!ioctl(fd, HDIO_GETGEO_BIG, &big_geo_s)) {
     if(dev) ADD2LOG("%s: ioctl(big geo) ok\n", dev);
@@ -5117,5 +5125,7 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
       if(sec_size) res->size.val2 = sec_size;
     }
   }
+
+  if(close_fd) close(fd);
 }
 

@@ -2,12 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mount.h>
-#include <linux/hdreg.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -28,12 +22,10 @@ void hd_scan_dac960(hd_data_t *hd_data)
   char *fname = NULL;
   char buf0[32], buf1[32];
   str_list_t *sl, *sl0;
-  int i, j, fd;
+  int i, j;
   unsigned u0, u1, u2, secs, heads;
-  unsigned long lsecs;
   unsigned pci_slot, pci_func;
-  hd_res_t *res;
-  struct hd_geometry geo;
+  hd_res_t *geo, *size;
 
   if(!hd_probe_feature(hd_data, pr_dac960)) return;
 
@@ -71,7 +63,7 @@ void hd_scan_dac960(hd_data_t *hd_data)
     }
 
     for(j = 0; sl; sl = sl->next, j++) {
-      if(sscanf(sl->str, " /dev/rd/c%ud%u: %31s %31s %u blocks,", &u0, &u1, buf0, buf1, &u2) == 5) {
+      if(sscanf(sl->str, " " DEV_DAC960 "/c%ud%u: %31s %31s %u blocks,", &u0, &u1, buf0, buf1, &u2) == 5) {
         hd = add_hd_entry(hd_data, __LINE__, 0);
         hd->base_class = bc_storage_device;
         hd->sub_class = sc_sdev_disk;
@@ -80,44 +72,12 @@ void hd_scan_dac960(hd_data_t *hd_data)
         hd->func = u1;
         str_printf(&hd->unix_dev_name, 0, DEV_DAC960 "/c%ud%u", hd->slot, hd->func);
 
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->disk_geo.type = res_disk_geo;
-        res->disk_geo.logical = 1;
-
-        lsecs = 0; geo.cylinders = 0; fd = -1;
-        if((fd = open(hd->unix_dev_name, O_RDONLY)) >= 0) {
-          if(!ioctl(fd, BLKGETSIZE, &lsecs)) {
-            ADD2LOG("dac960 ioctl(secs) ok\n");
-          }
-
-          if(!ioctl(fd, HDIO_GETGEO, &geo)) {
-            ADD2LOG("dac960 ioctl(geo) ok\n");
-            res->disk_geo.cyls = geo.cylinders;
-            res->disk_geo.heads = geo.heads;
-            res->disk_geo.sectors = geo.sectors;
-          }
-        }
-
-        if(fd >= 0) close(fd);
-
-        if(!geo.cylinders) {
-          if(secs && heads) {
-            res->disk_geo.cyls = u2 / (heads * secs);
-            res->disk_geo.heads = heads;
-            res->disk_geo.sectors = secs;
-          }
-          else {
-            res->disk_geo.heads = 255;
-            res->disk_geo.sectors = 63;
-            res->disk_geo.cyls = u2 / (63 * 255);
-          }
-        }
-
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->size.type = res_size;
-        res->size.unit = size_unit_sectors;
-        res->size.val1 = lsecs ? lsecs : u2;
-        res->size.val2 = 512;
+        str_printf(&hd->dev_name, 0, "DAC960 RAID Array %u/%u", hd->slot, hd->func);
+        
+        hd_getdisksize(hd_data, hd->unix_dev_name, -1, &geo, &size);
+      
+        if(geo) add_res_entry(&hd->res, geo);
+        if(size) add_res_entry(&hd->res, size);
 
         if(pci_slot || pci_func) {
           for(hd2 = hd_data->hd; hd2; hd2 = hd2->next) {
@@ -131,9 +91,6 @@ void hd_scan_dac960(hd_data_t *hd_data)
             }
           }
         }
-      }
-      else {
-        break;
       }
     }
 

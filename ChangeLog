@@ -1,3 +1,6 @@
+7/2/2002:	v4.07
+	- fixed dac960 detection: we used to return just the 1st disk
+
 7/2/2002:	v4.06
 	- first attempt to handle ide raid controller
 	- use /proc/partitions to find disks, too
