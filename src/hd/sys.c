@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
+
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -16,7 +20,9 @@
 
 #ifdef __i386__
 int is_txt(char c);
-int chk_vaio(hd_data_t *hd_data, sys_info_t *st);
+static int chk_vaio(hd_data_t *hd_data, sys_info_t *st);
+static void sigsegv_handler(int signum);
+static void chk_vmware(hd_data_t *hd_data, sys_info_t *st);
 #endif
 
 void hd_scan_sys(hd_data_t *hd_data)
@@ -94,6 +100,7 @@ void hd_scan_sys(hd_data_t *hd_data)
 
 #ifdef __i386__
   chk_vaio(hd_data, st);
+  chk_vmware(hd_data, st);
 #endif
 
 }
@@ -179,6 +186,56 @@ int chk_vaio(hd_data_t *hd_data, sys_info_t *st)
 
   return st->model ? 1 : 0;
 }
+
+
+void sigsegv_handler(int signum) { exit(77); }
+
+void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
+{
+  static int is_vmware = -1;
+  int child, status;
+
+  /* do the check only once */
+  if(is_vmware < 0) {
+
+    child = fork();
+
+    if(child == 0) {
+      signal(SIGSEGV, sigsegv_handler);
+
+      asm(
+        "\tpush %edx\n"
+        "\tpush %eax\n"
+        "\tpush %ecx\n"
+        "\tmov $0x564d5868,%eax\n"
+        "\tmov $0xa,%ecx\n"
+        "\tmov $0x5658,%edx\n"
+        "\tin (%dx),%eax\n"
+        "\tpop %ecx\n"
+        "\tpop %eax\n"
+        "\tpop %edx\n"
+      );
+
+      exit(66);
+    }
+    else {
+      if(waitpid(child, &status, 0) == child) {
+        status = WEXITSTATUS(status);
+        if(status == 66) is_vmware = 1;
+        if(status == 77) is_vmware = 0;
+      }
+    }
+
+    ADD2LOG("vmware check: %d\n", is_vmware);
+  }
+
+  if(is_vmware == 1) {
+    st->model = new_str("VMWare");
+  }
+
+  hd_data->in_vmware = is_vmware;
+}
+
 
 #endif	/* __i386__ */
 

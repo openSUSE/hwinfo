@@ -1,9 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+
+#if 0 /* __ia64__ */
+#include <fcntl.h>
+#include <errno.h>
+#include <stdint.h>
+#include <sys/mman.h>
+#endif
 
 #include "hd.h"
 #include "hd_int.h"
+#include "klog.h"
 #include "cpu.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -14,10 +23,53 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-
+static void read_cpuinfo(hd_data_t *hd_data);
 static void dump_cpu_data(hd_data_t *hd_data);
 
+#ifdef __ia64__
+static int ia64DetectSMP(hd_data_t *hd_data);
+#endif
+
 void hd_scan_cpu(hd_data_t *hd_data)
+{
+  hd_t *hd0, *hd;
+  int i, cpus;
+
+  if(!hd_probe_feature(hd_data, pr_cpu)) return;
+
+  hd_data->module = mod_cpu;
+
+  /* some clean-up */
+  remove_hd_entries(hd_data);
+  hd_data->cpu = free_str_list(hd_data->cpu);
+
+  PROGRESS(1, 0, "cpuinfo");
+
+  read_cpuinfo(hd_data);
+
+  for(hd0 = hd_data->hd; hd0; hd0 = hd0->next) {
+    if(hd0->base_class == bc_internal && hd0->sub_class == sc_int_cpu) break;
+  }
+
+  if(!hd0 || hd0->next) return;		/* 0 or > 1 entries */
+
+  /* only one entry, maybe UP kernel on SMP system */
+
+  cpus = 0;
+
+#ifdef __ia64__
+  cpus = ia64DetectSMP(hd_data);
+#endif
+
+  for(i = 1; i < cpus; i++) {
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd_copy(hd, hd0);
+    hd->slot = i;
+  }
+}
+
+
+void read_cpuinfo(hd_data_t *hd_data)
 {
   hd_t *hd;
   unsigned cpus = 0;
@@ -57,16 +109,6 @@ void hd_scan_cpu(hd_data_t *hd_data)
   unsigned bogo;
   unsigned u0, u1, u2, u3;
 #endif
-
-  if(!hd_probe_feature(hd_data, pr_cpu)) return;
-
-  hd_data->module = mod_cpu;
-
-  /* some clean-up */
-  remove_hd_entries(hd_data);
-  hd_data->cpu = free_str_list(hd_data->cpu);
-
-  PROGRESS(1, 0, "cpuinfo");
 
   hd_data->cpu = read_file(PROC_CPUINFO, 0, 0);
   if((hd_data->debug & HD_DEB_CPU)) dump_cpu_data(hd_data);
@@ -372,6 +414,7 @@ void hd_scan_cpu(hd_data_t *hd_data)
       }
     }
   }
+
 #endif /* __ia64__  */
 
 
@@ -409,7 +452,6 @@ void hd_scan_cpu(hd_data_t *hd_data)
 #endif /* __s390__  */
 }
 
-
 /*
  * Add some cpu data to the global log.
  */
@@ -423,4 +465,394 @@ void dump_cpu_data(hd_data_t *hd_data)
   }
   ADD2LOG("----- /proc/cpuinfo end -----\n");
 }
+
+
+#if 0
+#ifdef __ia64__
+
+/*
+ * IA64 SMP detection code
+ */
+
+#define ACPI_RSDP_SIG "RSD PTR "
+#define ACPI_RSDT_SIG "RSDT"
+#define ACPI_SAPIC_SIG "SPIC"
+
+#define PAGE_OFFSET(addr) ((uintptr_t)(addr) & (getpagesize() - 1))
+
+struct acpi20_rsdp
+{
+  char signature[8];
+  uint8_t checksum;
+  char oem_id[6];
+  uint8_t revision;
+  uint32_t rsdt;
+  uint32_t lenth;
+  unsigned long xsdt;
+  uint8_t ext_checksum;
+  uint8_t reserved[3];
+} __attribute__ ((packed));
+typedef struct acpi20_rsdp acpi20_rsdp_t;
+
+struct acpi_desc_table_hdr
+{
+  char signature[4];
+  uint32_t length;
+  uint8_t revision;
+  uint8_t checksum;
+  char oem_id[6];
+  char oem_table_id[8];
+  uint32_t oem_revision;
+  uint32_t creator_id;
+  uint32_t creator_revision;
+} __attribute__ ((packed));
+typedef struct acpi_desc_table_hdr acpi_desc_table_hdr_t;
+
+#define ACPI_XSDT_SIG "XSDT"
+struct acpi_xsdt
+{
+  acpi_desc_table_hdr_t header;
+  unsigned long entry_ptrs[0];
+} __attribute__ ((packed));
+typedef struct acpi_xsdt acpi_xsdt_t;
+
+#define ACPI_MADT_SIG "APIC"
+struct acpi_madt {
+  acpi_desc_table_hdr_t header;
+  uint32_t lapic_address;
+  uint32_t flags;
+} __attribute__ ((packed));
+typedef struct acpi_madt acpi_madt_t;
+
+#define ACPI20_ENTRY_LOCAL_SAPIC                7
+
+struct acpi20_entry_lsapic
+{
+  uint8_t type;
+  uint8_t length;
+  uint8_t acpi_processor_id;
+  uint8_t id;
+  uint8_t eid;
+  uint8_t reserved[3];
+  uint32_t flags;
+} __attribute__ ((packed));
+typedef struct acpi20_entry_lsapic acpi20_entry_lsapic_t;
+
+struct acpi_rsdt
+{
+  acpi_desc_table_hdr_t header;
+  uint8_t reserved[4];
+  unsigned long entry_ptrs[0];
+} __attribute__ ((packed));
+typedef struct acpi_rsdt acpi_rsdt_t;
+
+struct acpi_sapic
+{
+  acpi_desc_table_hdr_t header;
+  uint8_t reserved[4];
+  unsigned long interrupt_block;
+} __attribute__ ((packed));
+typedef struct acpi_sapic acpi_sapic_t;
+
+/* SAPIC structure types */
+#define ACPI_ENTRY_LOCAL_SAPIC         0
+
+struct acpi_entry_lsapic
+{
+  uint8_t type;
+  uint8_t length;
+  uint16_t acpi_processor_id;
+  uint16_t flags;
+  uint8_t id;
+  uint8_t eid;
+} __attribute__ ((packed));
+typedef struct acpi_entry_lsapic acpi_entry_lsapic_t;
+
+/* Local SAPIC flags */
+#define LSAPIC_ENABLED                (1<<0)
+#define LSAPIC_PERFORMANCE_RESTRICTED (1<<1)
+#define LSAPIC_PRESENT                (1<<2)
+
+/*
+ * Map an ACPI table into virtual memory
+ */
+static acpi_desc_table_hdr_t *
+acpi_map_table (int mem, unsigned long addr, char *signature)
+{
+  /* mmap header to determine table size */
+  acpi_desc_table_hdr_t *table = NULL;
+  unsigned long offset = PAGE_OFFSET (addr);
+  uint8_t *mapped = mmap (NULL,
+			  sizeof (acpi_desc_table_hdr_t) + offset,
+			  PROT_READ,
+			  MAP_PRIVATE,
+			  mem,
+			  (unsigned long) addr - offset);
+  table = (acpi_desc_table_hdr_t *) (mapped != MAP_FAILED
+				     ? mapped + offset
+				     : NULL);
+  if (table)
+    {
+      if (memcmp (table->signature, signature, sizeof (table->signature)))
+	{
+	  munmap ((char *) table - offset,
+		  sizeof (acpi_desc_table_hdr_t) + offset);
+	  return NULL;
+	}
+      {
+	/* re-mmap entire table */
+	unsigned long size = table->length;
+	munmap ((uint8_t *) table - offset,
+		sizeof (acpi_desc_table_hdr_t) + offset);
+	mapped = mmap (NULL, size + offset, PROT_READ, MAP_PRIVATE, mem,
+		       (unsigned long) addr - offset);
+	table = (acpi_desc_table_hdr_t *) (mapped != MAP_FAILED
+					   ? mapped + offset
+					   : NULL);
+      }
+    }
+  return table;
+}
+
+/*
+ * Unmap an ACPI table from virtual memory
+ */
+static void
+acpi_unmap_table (acpi_desc_table_hdr_t * table)
+{
+  if (table)
+    {
+      unsigned long offset = PAGE_OFFSET (table);
+      munmap ((uint8_t *) table - offset, table->length + offset);
+    }
+}
+
+/*
+ * Locate the RSDP
+ */
+static unsigned long
+acpi_find_rsdp (int mem,
+		unsigned long base, unsigned long size, acpi20_rsdp_t *rsdp)
+{
+  unsigned long addr = 0;
+  uint8_t *mapped = mmap (NULL, size, PROT_READ, MAP_PRIVATE, mem, base);
+  if (mapped != MAP_FAILED)
+    {
+      uint8_t *i;
+      for (i = mapped; i < mapped + size; i += 16)
+	{
+	  acpi20_rsdp_t *r = (acpi20_rsdp_t *) i;
+	  if (memcmp (r->signature, ACPI_RSDP_SIG, sizeof (r->signature)) == 0)
+	    {
+	      memcpy (rsdp, r, sizeof (*rsdp));
+	      addr = base + (i - mapped);
+	      break;
+	    }
+	}
+      munmap (mapped, size);
+    }
+  return addr;
+}
+
+int
+acpi20_lsapic (char *p)
+{
+  acpi20_entry_lsapic_t *lsapic = (acpi20_entry_lsapic_t *) p;
+
+  return ((lsapic->flags & LSAPIC_ENABLED) != 0);
+}
+
+static int
+acpi20_parse_madt (acpi_madt_t *madt)
+{
+  char *p, *end;
+  int n_cpu = 0;
+
+  p = (char *) (madt + 1);
+  end = p + (madt->header.length - sizeof (acpi_madt_t));
+
+  while (p < end)
+    {
+      if (*p == ACPI20_ENTRY_LOCAL_SAPIC)
+	n_cpu += acpi20_lsapic (p);
+
+      p += p[1];
+    }
+
+  return n_cpu;
+}
+
+static int
+acpi_lsapic (char *p)
+{
+  acpi_entry_lsapic_t *lsapic = (acpi_entry_lsapic_t *) p;
+
+  if ((lsapic->flags & LSAPIC_PRESENT) == 0
+      || (lsapic->flags & LSAPIC_ENABLED) == 0
+      || lsapic->flags & LSAPIC_PERFORMANCE_RESTRICTED)
+    return 0;
+  return 1;
+}
+
+static int
+acpi_parse_msapic (acpi_sapic_t *msapic)
+{
+  char *p, *end;
+  int n_cpu = 0;
+
+  p = (char *) (msapic + 1);
+  end = p + (msapic->header.length - sizeof (acpi_sapic_t));
+
+  while (p < end)
+    {
+      if (*p == ACPI_ENTRY_LOCAL_SAPIC)
+	n_cpu += acpi_lsapic(p);
+
+      p += p[1];
+    }
+
+  return n_cpu;
+}
+
+static int
+acpi_parse_rsdp (int mem_fd, acpi20_rsdp_t *rsdp)
+{
+  int n_cpu = 0;
+  int i;
+  acpi_rsdt_t *rsdt = 0;
+  acpi_xsdt_t *xsdt = 0;
+  int tables;
+
+  if (rsdp->xsdt)
+    xsdt = (acpi_xsdt_t *) acpi_map_table (mem_fd, rsdp->xsdt, ACPI_XSDT_SIG);
+  if (xsdt)
+    {
+      tables = (xsdt->header.length - sizeof (acpi_desc_table_hdr_t)) / 8;
+      for (i = 0; i < tables; i++)
+	{
+	  acpi_desc_table_hdr_t *dt
+	    = acpi_map_table (mem_fd, xsdt->entry_ptrs[i], ACPI_MADT_SIG);
+	  if (dt)
+	    n_cpu += acpi20_parse_madt ((acpi_madt_t *) dt);
+	  acpi_unmap_table (dt);
+	}
+      acpi_unmap_table ((acpi_desc_table_hdr_t *) xsdt);
+    }
+  else
+    {
+      if (rsdp->rsdt)
+	rsdt = (acpi_rsdt_t *) acpi_map_table (mem_fd, rsdp->rsdt,
+					       ACPI_RSDT_SIG);
+      if (rsdt)
+	{
+	  tables = (rsdt->header.length - sizeof (acpi_desc_table_hdr_t)) / 8;
+	  for (i = 0; i < tables; i++)
+	    {
+	      acpi_desc_table_hdr_t *dt
+		= acpi_map_table (mem_fd, rsdt->entry_ptrs[i], ACPI_SAPIC_SIG);
+	      if (dt)
+		n_cpu += acpi_parse_msapic ((acpi_sapic_t *) dt);
+	      acpi_unmap_table (dt);
+	    }
+	  acpi_unmap_table ((acpi_desc_table_hdr_t *) rsdt);
+	}
+    }
+  return n_cpu;
+}
+
+int ia64DetectSMP(hd_data_t *hd_data)
+{
+  int n_cpu = 0, mem_fd, i;
+  acpi20_rsdp_t rsdp;
+  unsigned long addr = 0;
+  int ok = 0;
+  str_list_t *sl;
+  static char *rsd_klog = "Root System Description Ptr at ";
+  char *s;
+  off_t o;
+
+  unsigned long ranges[][2] = {
+    { 0x7fe00000, 0x80000000 - 0x7fe00000 },
+    { 0x3fe00000, 0x40000000 - 0x3fe00000 },
+    { 0x000e0000, 0x00100000 - 0x000e0000 }
+  };
+
+  mem_fd = open("/dev/mem", O_RDONLY);
+  if(mem_fd == -1) return -1;
+
+  if(!hd_data->klog) read_klog(hd_data);
+
+  for(sl = hd_data->klog; sl; sl = sl->next) {
+    if((s = strstr(sl->str, rsd_klog))) {
+      if(sscanf(s + strlen(rsd_klog), "%lx", &addr) == 1) {
+//        addr &= ~(0xfL << 60);
+        if(lseek(mem_fd, (off_t) addr, SEEK_SET) != -1) {
+          ADD2LOG("seek to 0x%lx\n", addr);
+          if((o = read(mem_fd, &rsdp, sizeof rsdp)) == sizeof rsdp) {
+            ADD2LOG("got rsdp at 0x%lx\n", addr);
+            ok = 1;
+          }
+          ADD2LOG("size = 0x%lx\n", o);
+        }
+        break;
+      }
+    }
+  }
+
+#if 0
+  for(i = 0; i < sizeof ranges / sizeof *ranges; i++) {
+    if(ranges[i][0]) {
+      ADD2LOG("looking for RSDP in 0x%lx - 0x%lx\n",
+        ranges[i][0], ranges[i][0] + ranges[i][1] - 1
+      );
+      if((addr = acpi_find_rsdp(mem_fd, ranges[i][0], ranges[i][1], &rsdp))) {
+        n_cpu = acpi_parse_rsdp(mem_fd, &rsdp);
+        if(n_cpu) {
+          ADD2LOG("RSDP found at 0x%lx\n", addr);
+          break;
+        }
+      }
+    }
+  }
+#endif
+
+  if(ok) {
+    n_cpu = acpi_parse_rsdp(mem_fd, &rsdp);
+    if(n_cpu) {
+      ADD2LOG("RSDP found at 0x%lx\n", addr);
+    }
+  }
+
+  close (mem_fd);
+
+  ADD2LOG("n_cpu = %d\n", n_cpu);
+
+  return n_cpu;
+}
+
+
+#endif	/* __ia64__ */
+
+#else	/* 0 */
+
+int ia64DetectSMP(hd_data_t *hd_data)
+{
+  str_list_t *sl;
+  unsigned u1 = 0, u2;
+
+  if(!hd_data->klog) read_klog(hd_data);
+
+  for(sl = hd_data->klog; sl; sl = sl->next) {
+    if(sscanf(sl->str, "<4> %u CPUs available, %u CPUs total", &u1, &u2) == 2) {
+      ADD2LOG("cpus: %u available, %u total\n", u1, u2);
+      break;
+    }
+  }
+
+  return u1;
+}
+
+
+
+#endif	/* 0 */
 

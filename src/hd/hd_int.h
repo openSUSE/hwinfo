@@ -166,6 +166,8 @@ int detect_smp(hd_data_t *hd_data);
 
 unsigned char *read_block0(hd_data_t *hd_data, char *dev, int *timeout);
 
+void hd_copy(hd_t *dst, hd_t *src);
+
 #ifdef __cplusplus
 }
 #endif

@@ -372,7 +372,10 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
           if(scsi->type == sc_sdev_cdrom) {
             PROGRESS(2, i * 100 + j, "cache");
 
-            if(hd_probe_feature(hd_data, pr_scsi_cache)) {
+            if(
+              hd_probe_feature(hd_data, pr_scsi_cache) &&
+              hd_data->in_vmware != 1		/* VMWare doesn't like this */
+            ) {
               memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
               *((unsigned *) (scsi_cmd_buf + 4)) = sizeof scsi_cmd_buf - 0x100;
               scsi_cmd_buf[8 + 0] = 0x1a;

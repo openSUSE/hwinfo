@@ -1,3 +1,9 @@
+3/5/2001:	v2.08
+	- added vmware check
+	- don't do scsi write cache detection in vmware
+	- added ia64 smp detection
+	- ia64 x11 data added
+
 30/4/2001:	v2.07
 	- updated x11 data
 	- fixed multi-head display handling

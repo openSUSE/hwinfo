@@ -1037,6 +1037,7 @@ typedef struct {
   str_list_t *xtra_hd;		/* fake hd entries (for testing) */
   devtree_t *devtree;		/* prom device tree on ppc */
   unsigned kernel_version;	/* kernel version */
+  int in_vmware;		/* running in vmware */
 } hd_data_t;
 
 

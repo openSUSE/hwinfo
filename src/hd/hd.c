@@ -110,8 +110,6 @@ static void get_probe_env(hd_data_t *hd_data);
 static void hd_scan_xtra(hd_data_t *hd_data);
 static void hd_add_id(hd_t *hd);
 
-static void hd_copy(hd_t *dst, hd_t *src);
-
 static void test_read_block0_open(void *arg);
 static void get_kernel_version(hd_data_t *hd_data);
 
@@ -1148,7 +1146,7 @@ void hd_scan(hd_data_t *hd_data)
   /* get basic system info */
   hd_scan_misc(hd_data);
 
-  /* start the detection  */
+  /* hd_scan_cpu() after hd_scan_misc(): klog needed */
   hd_scan_cpu(hd_data);
   hd_scan_memory(hd_data);
 
@@ -1255,7 +1253,12 @@ void hd_scan(hd_data_t *hd_data)
     ADD2LOG("  pcmcia support: %d\n", hd_has_pcmcia(hd_data));
     ADD2LOG("  special eide chipset: %d\n", hd_has_special_eide(hd_data));
     ADD2LOG("  apm status: %sabled\n", hd_apm_enabled(hd_data) ? "en" : "dis");
-    ADD2LOG("  smp board: %s\n", hd_smp_support(hd_data) ? "yes" : "no");
+    i = hd_smp_support(hd_data);
+    ADD2LOG("  smp board: ");
+    if(i)
+      ADD2LOG("yes (%d cpus)\n", i);
+    else
+      ADD2LOG("no\n");
     switch(hd_cpu_arch(hd_data)) {
       case arch_intel:
         s = "ia32";
@@ -3073,14 +3076,17 @@ enum boot_arch hd_boot_arch(hd_data_t *hd_data)
 void hd_copy(hd_t *dst, hd_t *src)
 {
   hd_t *tmp;
+  unsigned u;
 
   tmp = dst->next;
+  u = dst->idx;
 
   *dst = *src;
   src->ref_cnt++;
   dst->ref = src;
 
   dst->next = tmp;
+  dst->idx = u;
 
   /* needed to keep in sync with the real device tree */
   if(
