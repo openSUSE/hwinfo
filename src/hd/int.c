@@ -510,7 +510,7 @@ void int_floppy(hd_data_t *hd_data)
       hd->base_class.id == bc_storage_device &&
       hd->sub_class.id == sc_sdev_disk
     ) {
-      if(is_zip(hd)) {
+      if(hd->is.zip) {
         hd->sub_class.id = sc_sdev_floppy;
         new_id(hd_data, hd);
       }
