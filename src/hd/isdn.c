@@ -14,7 +14,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#if !defined(__s390__)
+#if !defined(__s390__) && !defined(__alpha__)
 
 void hd_scan_isdn(hd_data_t *hd_data)
 {

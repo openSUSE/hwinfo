@@ -7,9 +7,9 @@ CLEANFILES	= $(LIBHD) $(LIBHD_D) $(LIBHD_SO)
 
 include $(TOPDIR)/Makefile.common
 
-#ifeq "$(ARCH)" "alpha"
-#SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
-#endif
+ifeq "$(ARCH)" "alpha"
+SUBDIRS	:= $(filter-out isdn, $(SUBDIRS))
+endif
 
 ifeq "$(findstring $(ARCH), i386 alpha)" ""
 SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))

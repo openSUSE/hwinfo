@@ -805,7 +805,7 @@ sub dump_nums
 
     die "internal oops" if length($s) != $j;
 
-    $s =~ s/(["\\])/\\$1/g;
+    $s =~ s/(["\\?])/\\$1/g;
     $s =~ s/\t/\\t/g;
     $s =~ s/\n/\\n/g;
     $s =~ s/([\x00-\x1f])/sprintf("\\%03o", ord($1))/eg;

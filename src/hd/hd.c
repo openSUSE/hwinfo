@@ -77,7 +77,7 @@
 #define HD_ARCH "s390"
 #endif
 
-#if defined(__s390__)
+#if defined(__s390__) || defined(__alpha__)
 #define WITH_ISDN	0
 #else
 #define WITH_ISDN	1

@@ -1,3 +1,7 @@
+28/2/2001:	v1.95
+	- stepan: removed ISDN on alpha
+	- avoid trigraphs while generating the data base
+
 22/2/2001:	v1.94
 	- fixed hd_copy() segfault bug (ppc)
 
