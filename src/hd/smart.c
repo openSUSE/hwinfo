@@ -43,7 +43,10 @@ void hd_scan_smart(hd_data_t *hd_data)
   for(i = 0; i < 8; i++) {
     PROGRESS(1, 1 + i, "read info");
 
-    str_printf(&fname, 0, PROC_SMART "/ida%i", i);
+    str_printf(&fname, 0, "%s/ida%i",
+      hd_data->kernel_version == KERNEL_24 ? PROC_SMART_24 : PROC_SMART_22,
+      i
+    );
     if(!(sl0 = read_file(fname, 0, 0))) continue;
 
     if(hd_data->debug) dump_smart_data(hd_data, fname, sl0);

@@ -365,6 +365,7 @@ void hd_scan_misc2(hd_data_t *hd_data)
   /* VGA */
   res = NULL;
   gather_resources(hd_data->misc, &res, "vga+", 0);
+  gather_resources(hd_data->misc, &res, "vesafb", 0);
   if(res) {
     for(i = 0, hd1 = NULL, hd = hd_data->hd; hd; hd = hd->next) {
       if(hd->base_class == bc_display && hd->sub_class == sc_dis_vga) {

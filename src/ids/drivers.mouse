@@ -49,3 +49,7 @@ u05ac 0301
 u0458 0002
 	p	imps/2|ps2|4|0
 
+# MS IntelliMouse Explorer
+u045e 001e
+	p	imps/2|ps2|3|1
+

@@ -1,3 +1,8 @@
+30/4/2001:	v2.07
+	- updated x11 data
+	- fixed multi-head display handling
+	- adapted compaq smart array detection for kernel 2.4
+
 25/4/2001:	v2.06
 	- parport detection updated for kernel 2.4
 	- add scsi hostadapter info to debug output

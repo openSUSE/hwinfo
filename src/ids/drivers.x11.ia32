@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2001-04-18 11:37:55
+#hwinfo data from 2001-04-30 15:43:17
 #
 
 
@@ -269,6 +269,30 @@
 
 # Diamond:Fire GL3
 1014 0170 1092 1073
+	x	4|firegl23|3d|xfiregl1,xf86_glx|dri,glx,fgl23||8||switch2xf86_glx|
+		Option "NoDDC"
+		Option "no_accel" "no"
+		Option "enable DVI" "on"
+		Option "NumDMABuffers" "24"
+		Option "NumTMBuffers" "4"
+		Option "Capabilities" "0x00000000"
+		Option "Capabilities2" "0x00000000"
+
+
+# Diamond:Fire GL4
+1014 0170 1092 0174
+	x	4|firegl23||xfiregl1|||8|||
+		Option "NoDDC"
+		Option "no_accel" "no"
+		Option "enable DVI" "on"
+		Option "NumDMABuffers" "24"
+		Option "NumTMBuffers" "4"
+		Option "Capabilities" "0x00000000"
+		Option "Capabilities2" "0x00000000"
+
+
+# Diamond:Fire GL4
+1014 0170 1092 0174
 	x	4|firegl23|3d|xfiregl1,xf86_glx|dri,glx,fgl23||8||switch2xf86_glx|
 		Option "NoDDC"
 		Option "no_accel" "no"
@@ -757,6 +781,11 @@
 # ATI:Rage 3D Pro AGP
 1002 4742
 	x	3|MACH64|||||1d|||
+
+
+# ATI:Rage 3D Pro AGP
+1002 4742
+	x	3|MACH64|3d|glx|glx.so|no_pixmap_cache,no_font_cache|4||switch2glx|
 
 
 # ATI:Mach64 VT
@@ -1688,6 +1717,11 @@
 	x	3|SVGA|||||15|||
 
 
+# Nvidia:RIVA 128 2D/3D
+12D2 0018
+	x	3|SVGA|3d|glx|glx.so||4||switch2glx|
+
+
 # Nvidia:RIVA 128ZX 2D/3D
 12D2 0019
 	x	3|SVGA||||||||
@@ -2074,13 +2108,8 @@
 	x	3|SVGA||||||||
 
 
-# SiS:SIS630
-1039 0300
-	x	3|SVGA||||||||
-
-
 # SiS:SIS300
-1039 1039
+1039 0300
 	x	3|SVGA||||||||
 
 
@@ -2094,33 +2123,8 @@
 	x	4|sis||||Noaccel,FastVRam|1|||
 
 
-# SiS:SG86C225
-1039 0225
-	x	3|SVGA||||||||
-
-
-# SiS:SG86C215
-1039 0215
-	x	3|SVGA||||||||
-
-
-# SiS:SG86C205
-1039 0205
-	x	3|SVGA||||||||
-
-
 # SiS:5597
 1039 0200
-	x	3|SVGA||||||||
-
-
-# SiS:SG86C202
-1039 0002
-	x	3|SVGA||||||||
-
-
-# SiS:SG86C201
-1039 0001
 	x	3|SVGA||||||||
 
 

@@ -1,4 +1,4 @@
-#hwinfo names data from 2001-04-18 11:37:55
+#hwinfo names data from 2001-04-30 15:43:17
 #
 
 
@@ -95,6 +95,10 @@
 1014
 	0170
 		1092 1073	Diamond Fire GL3
+
+1014
+	0170
+		1092 0174	Diamond Fire GL4
 
 1048
 	0a32	Elsa Gloria Synergy
@@ -926,10 +930,10 @@
 	6300	SiS SIS630
 
 1039
-	0300	SiS SIS630
+	0300	SiS SIS300
 
 1039
-	1039	SiS SIS300
+	1039	SiS SIS_not_exist
 
 1039
 	6326	SiS SiS6326
