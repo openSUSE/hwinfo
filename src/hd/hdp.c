@@ -735,6 +735,9 @@ void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
       case arch_ppc:
 	dump_line0 ("PowerPC\n");
 	break;
+      case arch_ppc64:
+	dump_line0 ("PowerPC (64)\n");
+	break;
       case arch_68k:
 	dump_line0 ("68k\n");
 	break;

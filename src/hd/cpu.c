@@ -316,7 +316,10 @@ void read_cpuinfo(hd_data_t *hd_data)
       if(*model_id) {	/* at least one of those */
         ct = new_mem(sizeof *ct);
         ct->architecture = arch_ppc;
-        if(model_id) ct->model_name = new_str(model_id);
+        if(model_id) {
+          ct->model_name = new_str(model_id);
+          if(strstr(model_id, "POWER3 ")) ct->architecture = arch_ppc64;
+        }
         if(vendor_id) ct->vend_name = new_str(vendor_id);
         if(motherboard) ct->platform = new_str(motherboard);
         ct->family = family;

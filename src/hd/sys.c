@@ -32,7 +32,7 @@ void hd_scan_sys(hd_data_t *hd_data)
 #if defined(__PPC__) || defined(__sparc__)
   char buf0[80];
   str_list_t *sl;
-  int is_64 = 0;
+//  int is_64 = 0;
 #endif
 
   if(!hd_probe_feature(hd_data, pr_sys)) return;
@@ -56,6 +56,7 @@ void hd_scan_sys(hd_data_t *hd_data)
   }
 
 #ifdef __PPC__
+#if 0
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(sscanf(sl->str, "cpu : %79[^\n]", buf0) == 1) {
       if(strstr(buf0, "POWER3 ") == buf0) {
@@ -64,6 +65,7 @@ void hd_scan_sys(hd_data_t *hd_data)
       }
     }
   }
+#endif
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(sscanf(sl->str, "motherboard : %79[^\n]", buf0) == 1) {
       if(strstr(buf0, "MacRISC")) {
@@ -75,7 +77,7 @@ void hd_scan_sys(hd_data_t *hd_data)
         st->system_type = new_str("PReP");
       }
       else if(strstr(buf0, "CHRP")) {
-        st->system_type = new_str(is_64 ? "CHRP64" : "CHRP");
+        st->system_type = new_str(/* is_64 ? "CHRP64" : */ "CHRP");
       }
       if(strstr(buf0, "PowerBook2,")) {
         st->model = new_str("iBook");
