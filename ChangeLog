@@ -1,3 +1,6 @@
+19/11/2002:	v5.44
+	- use eepro100 instead of e100 on ia64 (#21055)
+
 11/11/2002:	v5.43
 	- fixed qla* module info (#21567)
 
