@@ -1,3 +1,6 @@
+18/2/2003:	v5.54
+	- removed experimental code causing segfault on compaq machines
+
 10/2/2003:	v5.53
 	- remove mouse probing from hwbootscan, it sometimes
 	  hangs and takes too long.
