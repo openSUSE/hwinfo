@@ -11,18 +11,17 @@
 # CRT monitors, for example.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-AOC	AOC International (USA) Ltd.
-	A566	AOC SPECTRUM 5Nlr
-	A782	AOC SPECTRUM 7Nlr
+AOC	AOC
+	a566	SPECTRUM 5NLR
+	A782	SPECTRUM 7NLR
 	D350	AOC SPECTRUM 4V, 4VA, 4Vlr, 4VlrA
 	D566	AOC SPECTRUM 5Vlr, 5VlrA
-	E570	AOC SPECTRUM 5Glr
+	E570	SPECTRUM 5GLR
 	E750	AOC SPECTRUM 7DlrA
 
 API	Acer
 	0037	AcerView 55
-	424C	AcerView 76ie
+	424C	ACERVIEW 76IE
 	440B	AcerView 11D
 	4421	AcerView 33D
 	4522	AcerView 7134e
@@ -31,13 +30,13 @@ API	Acer
 	454C	AcerView 7176ie
 	454E	AcerView 7178ie
 	4938	AcerView 7156i
-	494C	AcerView 76i
+	494C	ACERVIEW 76I
 	494E	AcerView 78i
-	4962	AcerView 98i
+	4962	ACERVIEW 98I
 	4C21	AcerView 33DL
 	4C22	AcerView 34TL
 	4C37	AcerView 55L
-	4C38	AcerView 56L
+	4C38	ACERVIEW 56L
 	4E4C	AcerView 76N
 	5321	AcerView 7133s
 	5322	AcerView 7134s
@@ -46,23 +45,23 @@ API	Acer
 	534C	AcerView 7176is
 	5422	AcerView 34T
 
-APP	Apple Computer, Inc.
+APP	Apple
 	0352	AppleVision 850
 
-AST	AST Research
+AST	AST
 	8001	ASTVision 4V
 	8002	ASTVision 4I
 	8003	ASTVision 4N
-	8004	ASTVision 4L
-	8005	ASTVision 5L
-	8006	ASTVision 7L
-	8007	ASTVision 7H
-	8008	ASTVision 20H
+	8004	ASTVISION 4L
+	8005	ASTVISION 5L
+	8006	ASTVISION 7L
+	8007	ASTVISION 7H
+	8008	ASTVISION 20H
 	8009	AST Sabre
-	800A	ASTVision 5V
+	800A	ASTVISION 5V
 
-CPL	ALFA
-	096B	ALFA TH-450
+CPL	Alpha
+	096B	TH-450
 
 CPQ	COMPAQ
 	0011	COMPAQ 1024
@@ -77,47 +76,47 @@ CPQ	COMPAQ
 	001A	COMPAQ PRB
 	0020	COMPAQ PRB
 	0021	COMPAQ PRB
-	0022	COMPAQ 151FS
-	0023	COMPAQ 151FS
-	0024	COMPAQ 151FS
-	0025	COMPAQ 151FS
-	0026	COMPAQ 151FS
-	0027	COMPAQ 151FS
-	0028	COMPAQ 151FS
+	0022	151FS
+	0023	151FS
+	0024	151FS
+	0025	151FS
+	0026	151FS
+	0027	151FS
+	0028	151FS
 	0029	COMPAQ PRB
 	002A	COMPAQ PRB
 	002B	COMPAQ PRB
 	002C	COMPAQ PRB
-	002D	COMPAQ 171FS
-	002E	COMPAQ 171FS
-	002F	COMPAQ 171FS
-	0030	COMPAQ 171FS
-	0031	COMPAQ 171FS
-	0032	COMPAQ 171FS
-	0033	COMPAQ 171FS
-	0040	COMPAQ QVision 200
-	0041	COMPAQ QVision 200
-	0042	COMPAQ QVision 200
-	0043	COMPAQ QVision 200
-	0044	COMPAQ QVision 200
-	0045	COMPAQ QVision 200
-	0046	COMPAQ QVision 200
-	0047	COMPAQ QVision 200
-	0048	COMPAQ QVision 200
-	0049	COMPAQ QVision 200
+	002D	171FS
+	002E	171FS
+	002F	171FS
+	0030	171FS
+	0031	171FS
+	0032	171FS
+	0033	171FS
+	0040	QVISION 200
+	0041	QVISION 200
+	0042	QVISION 200
+	0043	QVISION 200
+	0044	QVISION 200
+	0045	QVISION 200
+	0046	QVISION 200
+	0047	QVISION 200
+	0048	QVISION 200
+	0049	QVISION 200
 	0100	COMPAQ 1024
 	0146	COMPAQ 1024
 	0147	COMPAQ 1024
-	0346	COMPAQ 151FS
-	0347	COMPAQ 151FS
-	0348	COMPAQ 151FS
-	0349	COMPAQ 151FS
-	034A	COMPAQ 151FS
-	034B	COMPAQ 151FS
-	0546	COMPAQ 171FS
-	0547	COMPAQ 171FS
-	0548	COMPAQ 171FS
-	0549	COMPAQ 171FS
+	0346	151FS
+	0347	151FS
+	0348	151FS
+	0349	151FS
+	034A	151FS
+	034B	151FS
+	0546	171FS
+	0547	171FS
+	0548	171FS
+	0549	171FS
 	0746	COMPAQ PRB
 	0747	COMPAQ PRB
 	0846	COMPAQ PRA
@@ -157,7 +156,7 @@ CPQ	COMPAQ
 	0F4C	COMPAQ 150
 	0F4D	COMPAQ 150
 
-CTX	CTX - Chuntex Electronic
+CTX	CTX
 	1451	CTX 1451
 	1551	CTX 1551
 	1562	CTX 1562
@@ -165,7 +164,7 @@ CTX	CTX - Chuntex Electronic
 	1569	CTX 1569S 15-inch
 	1765	CTX 1765
 	1785	CTX 1785 XE
-	2085	CTX 2085
+	2085	2085
 	2185	CTX 2185
 
 DEC	Digital Equipment Corporation
@@ -174,7 +173,7 @@ DEC	Digital Equipment Corporation
 	BA08	Digital 15" Color Monitor (FR-PCXBV-E*)
 	DA08	Digital 17" Color Monitor (FR-PCXBV-F*)
 
-DEL	Dell Computer Corp.
+DEL	Dell
 	139A	Dell Ultrascan 14XE
 	139B	Dell Ultrascan 14XE
 	139C	Dell Ultrascan 14XE
@@ -201,14 +200,14 @@ DPC	Delta Electronics, Inc.
 DWE	Daewoo
 	1423	Daewoo CMC-1423B1
 	1427	Daewoo CMC-1427X1
-	1502	Daewoo CMC-1502B1
+	1502	CMC-1502B1
 	1505	Daewoo CMC-1505X
 	1507	Daewoo CMC-1507X1
-	1703	Daewoo CMC-1703B
+	1703	CMC-1703B
 	5133	Daewoo CMC-1511B
-	7044	Daewoo CMC-1704C
+	7044	CMC-1704C
 
-ECS	ELITEGROUP Computer Systems
+ECS	ELITEGROUP
 	0001	ECS VERTOS 1401
 	0002	ECS VERTOS 1501
 	0003	ECS VERTOS 1502
@@ -240,12 +239,12 @@ EIZ	EIZO
 	030F	EIZO FlexScan F760iW
 	0310	EIZO FlexScan F780iW
 	0311	EIZO FlexScan T560i
-	0312	EIZO FlexScan T660i
+	0312	FLEXSCAN T660I
 	0313	EIZO FlexScan T562
 	0314	EIZO FlexScan T662
 	038C	EIZO FlexScan F550iW
 
-GSM	LG Electronics Inc.
+GSM	LG
 	36B4	LG StudioWorks 44m
 	36B9	LG StudioWorks 44i
 	3AA0	LG 1505s
@@ -268,15 +267,15 @@ GSM	LG Electronics Inc.
 	42CF	LG 1725s
 	4E21	LG StudioWorks 20i
 
-HEI	Hyundai Electronics Industries Co., Ltd.
-	0B42	Hyundai Deluxscan 21	   
-	12F0	Hyundai Deluxscan 14S	
-	16D8	Hyundai Deluxscan 15B	
-	16E8	Hyundai Deluxscan 15G	
-	16EE	Hyundai Delucscan 15G+	
+HEI	Hyundai
+	0B42	Hyundai Deluxscan 21
+	12F0	Hyundai Deluxscan 14S
+	16D8	Hyundai Deluxscan 15B
+	16E8	Hyundai Deluxscan 15G
+	16EE	Hyundai Delucscan 15G+
 	1E02	Hyundai Deluxscan 17 Pro
-	1EB8	Hyundai Deluxscan 17B	
-	1EBE	Hyundai Deluxscan 17B+	
+	1EB8	Hyundai Deluxscan 17B
+	1EBE	Hyundai Deluxscan 17B+
 	5864	Hyundai DeluxScan 15 Pro
 	B81E	Hyundai DeluxScan 17
 
@@ -299,11 +298,11 @@ HIT	Hitachi
 	6811	Hitachi Accuvue UX6821
 	6821	Hitachi HM6821
 
-HSL	Hansol Electronics
+HSL	Hansol
 	0579	Hansol Electronics Mazellan14px
 	057A	Hansol Electronics Mazellan400A
 	05DD	Hansol Electronics Mazellan15ax
-	A605	Hansol Electronics Mazellan17px 
+	A605	Hansol Electronics Mazellan17px
 
 HTC	Hitachi Ltd.
 	AB6F	CM-1711M
@@ -330,17 +329,17 @@ HWP	Hewlett Packard
 	0b16	HP D2838 M700 17"
 	0b18	HP D2840 Ergo 1280 Monitor 17"
 	0b1d	HP D2845 Ergo 1600 Monitor 21"
-	0b1e	HP D2846 21"
+	0b1e	HP D2846 21
 	0F11	HP D3857A Multi Media 15"
 	0F12	HP D3858A Multi Media 14"
 
-IBM	IBM PC Company
+IBM	IBM
 	198E	IBM G41
 	198F	IBM G50
 	1990	IBM G70
 	1991	IBM G200
 	1999	IBM P50
-	199A	IBM P70
+	199A	P70
 	199B	IBM P200
 	1BB7	IBM 7095
 	1BB9	IBM 7097
@@ -402,31 +401,25 @@ ICL	Fujitsu ICL
 	2200	FUJITSU ErgoPro e154
 	2400	FUJITSU ErgoPro x174
 
-IVM	Idek Iiyama North America, Inc.
-	1901	Iiyama A901HT, VisionMaster Pro 450
+IVM	Iiyama
 	1700	Iiyama Vision Master MF-8617
+	1901	VISION MASTER PRO 450 (A901HT)
 
 LKM	AZALEA
 
 LNK	LINK Technologies, Inc.
 
-MAG	MAG Technology Co., Ltd.
+MAG	MAG
 	5620	DX1595
 	5624	DX15T
 	5626	DX1795
 
-MAX	Maxdata Computer GmbH
-	07e4	Belinea 10 20 20
-	0bea	Belinea 10 30 50
-	13ab	Belinea 10 50 35
-
-MEI	Panasonic Comm. & Systems Co.
+MEI	Panasonic
 	1604	Panasonic TX-D2151W-ES
 	1610	Panasonic TX-D2151NM
 
-MEL	Mitsubishi Electronics
+MEL	Mitsubishi
 	0040	Mitsubishi Diamond Pro 21TX (THN-9105)
-	2040	Mitsubishi Diamond Scan 20H (FR-8905)
 	2040	Mitsubishi Diamond Pro 20X (FR-8905B)
 	6140	Mitsubishi Diamond Scan 17HX (FFF8705)
 	8040	Mitsubishi Diamond Pro 15H (SD-57xxC)
@@ -434,7 +427,7 @@ MEL	Mitsubishi Electronics
 	408F	Mitsubishi Diamond Scan 15VX (SD58xx)
 	40C0	Mitsubishi Diamond Pro 87TXM (TFM8705)
 
-MIR	miro Computer Products AG
+MIR	miro
 	0721	PROOFSCREEN miroC21107
 	6815	miroD1568
 	6817	PROOFSCREEN miroC1768
@@ -496,7 +489,7 @@ NAN	NANAO
 	0991	NANAO FlexScan T567
 	0993	NANAO FlexScan 53T
 
-NEC	NEC Technologies, Inc.
+NEC	NEC
 	37FA	NEC MultiSync XV14
 	37FB	NEC MultiSync XV14
 	3A66	NEC MultiSync C400
@@ -505,7 +498,7 @@ NEC	NEC Technologies, Inc.
 	3C14	NEC MultiSync XV15
 	3C1E	NEC MultiSync XE15
 	3D5E	NEC MultiSync XV15+
-	3D68	NEC MultiSync M500
+	3D68	MULTISYNC M500
 	3E4E	NEC MultiSync C500
 	43A8	NEC MultiSync XE17
 	43B2	NEC MultiSync XE17
@@ -518,10 +511,10 @@ NOK	Nokia
 	008D	NOKIA 449M
 	0098	NOKIA 449X
 	00A3	NOKIA 447KC
-	00A9	NOKIA 447XI
+	00A9	447XI
 	00AB	NOKIA 447KA
-	00AD	NOKIA 447M
-	00B7	NOKIA 447W
+	00AD	447M
+	00B7	447W
 	00B8	NOKIA 447X
 	00BB	NOKIA 447XAV
 	00BC	NOKIA 447K
@@ -539,11 +532,11 @@ OQI	OPTIQUEST
 	3832	OPTIQUEST V665
 	4637	OPTIQUEST 1769DC
 
-PGS	Princeton Graphic Systems
+PGS	Princeton
 	003B	Princeton EO15
 	003D	Princeton EO17
 
-PHL	Philips Consumer Electronics Co.
+PHL	Philips
 	0200	Philips CM0200 (15C)
 	0500	Philips CM0500 (20C)
 	0700	Philips CM0700 (20T)
@@ -566,35 +559,35 @@ SAM	Samsung
 	1530	Samsung 15GLsi
 	4610	Samsung SyncMaster 21GLs
 	4690	Samsung SyncMaster 20GLsi
-	4D50	Samsung SyncMaster 15GLe
-	4D51	Samsung SyncMaster 15GLi
+	4D50	SYNCMASTER 15GLE
+	4D51	SYNCMASTER 15GLI
 	4D52	Samsung SyncMaster 15M
-	4D70	Samsung SyncMaster 17GLi
-	4D71	Samsung SyncMaster 17GLsi
+	4D70	SYNCMASTER 17GLI
+	4D71	SYNCMASTER 17GLSI
 	4D72	Samsung SyncMaster 6Ne
-	4D73	Samsung 17GLi
-	4D74	Samsung 17GLsi
+	4D73	17GLI
+	4D74	17GLSI
 	5450	Samsung SyncMaster 15Me
-	6D20	Samsung SyncMaster 15GLe
+	6D20	SYNCMASTER 15GLE
 
 SDI	Samtron
 	1428	Samtron 428PT/PTL
-	1528	Samtron SC-528TXL
-	1529	Samtron SC-528UXL
+	1528	SC-528TXL
+	1529	SC-528UXL
 	1530	Samtron SC-528MXLJ
 	4690	Samtron SC-208DXL+
-	4D70	Samtron SC-728FXL
-	4D71	Samtron SC-726GXL
+	4D70	SC-728FXL
+	4D71	SC-726GXL
 	5451	Samtron SC-528MDL
 
 SNI	Siemens Nixdorf
 
-SNY	Sony Corporation
+SNY	Sony
 
-SUN	Sun Microsystems, Inc.
+SUN	Sun
 	0567	21" Premium Color Monitor
 
-TAT	Tatung Co. of America, Inc.
+TAT	Tatung
 	1F65	Intelliscan TM651x series 15"
 	1F67	Intelliscan TM671x series 17"
 	2F44	Intelliscan TM442x series 14"
@@ -608,8 +601,8 @@ TRL	Royal Information Company
 
 UNM	Unisys Corporation
 
-VSC	ViewSonic Corporation
-	0C00	ViewSonic 17GS
+VSC	ViewSonic
+	0C00	17GS
 	0C0F	ViewSonic 17PS
 	0C1F	ViewSonic 17GA
 	1600	ViewSonic 21PS-2
@@ -663,6 +656,8 @@ VSC	ViewSonic Corporation
 	444A	ViewSonic 17GA-2
 	4637	ViewSonic 1769DC
 
-___	Targa
-
+MAX	BELINEA
+	07e4	102020
+	13ab	105035
+	0bea	103050
 
