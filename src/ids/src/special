@@ -613,43 +613,6 @@
 +device.name		MyriCOM MyriNET Gigabit Ethernet
 
 
-# special s390 hardware
- vendor.id		special 0x6001
-+vendor.name		IBM
-
- vendor.id		special 0x6001
-&device.id		special 0x0000
-+device.name		Ethernet card
-
- vendor.id		special 0x6001
-&device.id		special 0x0001
-+device.name		Token ring card
-
- vendor.id		special 0x6001
-&device.id		special 0x0004
-+device.name		CTC
-
- vendor.id		special 0x6001
-&device.id		special 0x0005
-+device.name		IUCV
-
- vendor.id		special 0x6001
-&device.id		special 0x0006
-+device.name		HSI
-
- vendor.id		special 0x6001
-&device.id		special 0x0007
-+device.name		QETH
-
- vendor.id		special 0x6001
-&device.id		special 0x0008
-+device.name		ESCON
-
- vendor.id		special 0x6001
-&device.id		special 0x0080
-+device.name		Network card
-
-
 # iSeries network
  vendor.id		special 0x6001
 &device.id		special 0x1000
