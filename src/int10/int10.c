@@ -108,12 +108,12 @@ unsigned get_data(unsigned char *buf, unsigned buf_size, unsigned addr)
   if(addr >= bufferaddr && addr < bufferaddr + 0x200) {
     len = bufferaddr + 0x200 - addr;
     if(len >= buf_size) len = buf_size - 1;
-    memcpy(buf, (void *) addr, len);
+    memcpy(buf, addr + (char *) 0, len);
   }
   else if(addr >= 0x0c0000 && addr < 0x100000) {
     len = 0x100000 - addr;
     if(len >= buf_size) len = buf_size - 1;
-    memcpy(buf, (void *) addr, len);
+    memcpy(buf, addr + (char *) 0, len);
   }
 
   buf[len] = 0;

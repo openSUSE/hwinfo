@@ -6,50 +6,52 @@
 #include "vm86_struct.h"
 #endif
 
+#define INT2PTR(a)	((a) + (unsigned char *) 0)
+
 #include "emu_x86emu.h"
 #include "AsmMacros.h"
 
 int emu_vm86_ret;
 
 static u8 Mem_rb(u32 addr) {
-  return *(u8 *)addr;
+  return *(u8 *)(INT2PTR(addr));
 }
 static void Mem_wb(u32 addr, u8 val) {
-  *(u8 *)addr = val;
+  *(u8 *)INT2PTR(addr) = val;
 }
 #ifdef __ia64__
 
 static u16 Mem_rw(u32 addr) {
-  return *(u8 *)addr | *(u8 *)(addr + 1) << 8;
+  return *(u8 *)INT2PTR(addr) | *(u8 *)INT2PTR(addr + 1) << 8;
 }
 static u32 Mem_rl(u32 addr) {
-  return *(u8 *)addr             | *(u8 *)(addr + 1) << 8 |
-         *(u8 *)(addr + 2) << 16 | *(u8 *)(addr + 3) << 24;
+  return *(u8 *)INT2PTR(addr)           | *(u8 *)INT2PTR(addr + 1) << 8 |
+         *(u8 *)INT2PTR(addr + 2) << 16 | *(u8 *)INT2PTR(addr + 3) << 24;
 }
 static void Mem_ww(u32 addr, u16 val) {
-  *(u8 *)addr = val;
-  *(u8 *)(addr + 1) = val >> 8;
+  *(u8 *)INT2PTR(addr) = val;
+  *(u8 *)INT2PTR(addr + 1) = val >> 8;
 }
 static void Mem_wl(u32 addr, u32 val) {
-  *(u8 *)addr = val;
-  *(u8 *)(addr + 1) = val >> 8;
-  *(u8 *)(addr + 2) = val >> 16;
-  *(u8 *)(addr + 3) = val >> 24;
+  *(u8 *)INT2PTR(addr) = val;
+  *(u8 *)INT2PTR(addr + 1) = val >> 8;
+  *(u8 *)INT2PTR(addr + 2) = val >> 16;
+  *(u8 *)INT2PTR(addr + 3) = val >> 24;
 }
 
 #else
 
 static u16 Mem_rw(u32 addr) {
-  return *(u16 *)addr;
+  return *(u16 *)INT2PTR(addr);
 }
 static u32 Mem_rl(u32 addr) {
-  return *(u32 *)addr;
+  return *(u32 *)INT2PTR(addr);
 }
 static void Mem_ww(u32 addr, u16 val) {
-  *(u16 *)addr = val;
+  *(u16 *)INT2PTR(addr) = val;
 }
 static void Mem_wl(u32 addr, u32 val) {
-  *(u32 *)addr = val;
+  *(u32 *)INT2PTR(addr) = val;
 }
 
 #endif
@@ -133,7 +135,7 @@ emu_vm86(struct vm86_struct *vm)
   vm->regs.fs = M.x86.R_FS;
   vm->regs.gs = M.x86.R_GS;
 
-  if (emu_vm86_ret == 0 && *(unsigned char *)(((u32)M.x86.R_CS << 4) + (M.x86.R_IP - 1)) == 0xf4)
+  if (emu_vm86_ret == 0 && *(unsigned char *)INT2PTR(((u32)M.x86.R_CS << 4) + (M.x86.R_IP - 1)) == 0xf4)
     {
       vm->regs.eip--;
       return VM86_UNKNOWN;

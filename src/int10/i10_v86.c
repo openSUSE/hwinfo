@@ -34,6 +34,10 @@
 #include "v86bios.h"
 #include "AsmMacros.h"
 
+extern int emu_vm86(struct vm86_struct *vm);
+
+#define INT2PTR(a)	((a) + (unsigned char *) 0)
+
 void log_err(char *format, ...) __attribute__ ((format (printf, 1, 2)));
 
 struct vm86_struct vm86s;
@@ -49,8 +53,7 @@ void log_registers(void);
 #define CPU_REG_LW(reg)      (*((CARD16 *)&CPU_REG(reg)))
 #define CPU_REG_HW(reg)      (*((CARD16 *)&CPU_REG(reg) + 1))
 #define CPU_REG_LB(reg)      (*(CARD8 *)&CPU_REG(e##reg))
-#define SEG_ADR(type, seg, reg)  type((CPU_REG_LW(seg) << 4) \
-									  + CPU_REG_LW(e##reg))
+#define SEG_ADR(type, seg, reg)  type((CPU_REG_LW(seg) << 4) + CPU_REG_LW(e##reg) + (unsigned char *) 0)
 #define DF (1 << 10)
 
 struct pio P;
@@ -249,7 +252,7 @@ vm86_GP_fault(void)
 	case 0x6e:                  /* (rep) outsb */
 		if (pref_seg < 0) pref_seg = CPU_REG_LW(ds);
 		/* WARNING: no test for _SI wrapping! */
-		CPU_REG_LW(esi) += port_rep_outb(CPU_REG_LW(edx),(CARD8*)LIN_PREF_SI,
+		CPU_REG_LW(esi) += port_rep_outb(CPU_REG_LW(edx),(CARD8*)INT2PTR(LIN_PREF_SI),
 										 CPU_REG_LW(eflags)&DF,
 										 (is_rep? LWECX:1));
 		if (is_rep) LWECX = 0;
@@ -261,13 +264,13 @@ vm86_GP_fault(void)
 		/* WARNING: no test for _SI wrapping! */
 		if (prefix66) {
 			CPU_REG_LW(esi) += port_rep_outl(CPU_REG_LW(edx),
-											 (CARD32 *)LIN_PREF_SI,
+											 (CARD32 *)INT2PTR(LIN_PREF_SI),
 											 CPU_REG_LW(eflags)&DF,
 											 (is_rep? LWECX:1));
 		}
 		else {
 			CPU_REG_LW(esi) += port_rep_outw(CPU_REG_LW(edx),
-											 (CARD16 *)LIN_PREF_SI,
+											 (CARD16 *)INT2PTR(LIN_PREF_SI),
 											 CPU_REG_LW(eflags)&DF,
 											 (is_rep? LWECX:1));
 		} 
@@ -429,9 +432,9 @@ __asm__ __volatile__( \
 #else
 
 #define pushw(base, ptr, val) {					\
-	ptr = (ptr) - 1 & 0xffff;				\
+	ptr = ((ptr) - 1) & 0xffff;				\
 	*((unsigned char *)(base) + (ptr)) = (val) >> 8;	\
-	ptr = (ptr) - 1 & 0xffff;				\
+	ptr = ((ptr) - 1) & 0xffff;				\
 	*((unsigned char *)(base) + (ptr)) = (val);		\
 	}
 
@@ -459,7 +462,7 @@ run_bios_int(int num, struct regs86 *regs)
 	}
 #endif
 	
-	ssp = (CARD16*)(CPU_REG(ss)<<4);
+	ssp = (CARD16*)INT2PTR(CPU_REG(ss)<<4);
 	sp = (CARD32) CPU_REG_LW(esp);
 
 	eflags = regs->eflags;

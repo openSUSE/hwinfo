@@ -1,3 +1,6 @@
+25/2/2003:	v6.02
+	- fixed 64 bit int -> pointer gcc warnings
+
 24/2/2003:	v6.01
 	- add fibre channel adapters to storage controller list (#23686)
 

@@ -97,8 +97,10 @@ static void (*writePci)(CARD32 reg, CARD32 val) = axpPciCfgWrite;
 #else
 static CARD32 readPciCfg1(CARD32 reg);
 static void writePciCfg1(CARD32 reg, CARD32 val);
+#ifndef __ia64__
 static CARD32 readPciCfg2(CARD32 reg);
 static void writePciCfg2(CARD32 reg, CARD32 val);
+#endif
 
 static CARD32 (*readPci)(CARD32 reg) = readPciCfg1;
 static void (*writePci)(CARD32 reg, CARD32 val) = writePciCfg1;
@@ -274,6 +276,7 @@ writePciCfg1(CARD32 reg, CARD32 val)
     outl(PCI_MODE1_ADDRESS_REG, 0);
 }
 
+#ifndef __ia64__
 static CARD32
 readPciCfg2(CARD32 reg)
 {
@@ -301,6 +304,7 @@ writePciCfg2(CARD32 reg, CARD32 val)
     outl((dev << 8) + num,val);
     outb(PCI_MODE2_ENABLE_REG, 0x00);
 }
+#endif
 #endif
 
 void
