@@ -117,7 +117,6 @@ misc_t *free_misc(misc_t *m);
 scsi_t *free_scsi(scsi_t *scsi, int free_all);
 hd_detail_t *free_hd_detail(hd_detail_t *d);
 devtree_t *free_devtree(hd_data_t *hd_data);
-hd_manual_t *free_manual(hd_manual_t *manual);
 
 char *isa_id2str(unsigned);
 char *eisa_vendor_str(unsigned);
@@ -179,6 +178,8 @@ void hd_copy(hd_t *dst, hd_t *src);
 
 void gather_resources(misc_t *m, hd_res_t **r, char *name, unsigned which);
 
+char *hd_hw_item_name(hd_hw_item_t item);
+char *hd_status_value_name(hd_status_value_t status);
 
 #ifdef __cplusplus
 }

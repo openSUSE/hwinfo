@@ -45,6 +45,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
   char *s, *a0, *a1;
   char buf1[32], buf2[32];
   hd_t *hd_tmp;
+  int i;
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -89,6 +90,10 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("Unique ID: %s\n", h->unique_id);
   }
 
+  if(h->hw_class && (s = hd_hw_item_name(h->hw_class))) {
+    dump_line("Hardware Class: %s\n", s);
+  }
+
   if(h->base_class == bc_internal && h->sub_class == sc_int_cpu)
     dump_cpu(hd_data, h, f);
   else if(h->base_class == bc_internal && h->sub_class == sc_int_bios)
@@ -105,6 +110,44 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     h->is.notready
   ) {
     dump_line_str("Drive status: no medium\n");
+  }
+
+  if(
+    h->status.configured ||
+    h->status.available ||
+    h->status.critical ||
+    h->status.invalid ||
+    h->is.manual
+  ) {
+    dump_line_str("Config Status: ");
+    i = 0;
+
+    if(h->status.invalid) {
+      dump_line0("invalid");
+      i++;
+    }
+
+    if(h->is.manual) {
+      dump_line0("%smanual", i ? ", " : "");
+      i++;
+    }
+
+    if(h->status.configured && (s = hd_status_value_name(h->status.configured))) {
+      dump_line0("%scfg=%s", i ? ", " : "", s);
+      i++;
+    }
+
+    if(h->status.available && (s = hd_status_value_name(h->status.available))) {
+      dump_line0("%savail=%s", i ? ", " : "", s);
+      i++;
+    }
+
+    if(h->status.critical && (s = hd_status_value_name(h->status.critical))) {
+      dump_line0("%scrit=%s", i ? ", " : "", s);
+      i++;
+    }
+
+    dump_line0("\n");
   }
 
   if(
@@ -215,10 +258,12 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
   str_list_t *sl, *sl1, *sl2;
   isdn_parm_t *ip;
 
+  if(h->model) dump_line("Model: \"%s\"\n", h->model);
+
   if(h->vend || h->dev || h->dev_name || h->vend_name) {
     if(h->vend || h->vend_name || h->dev)
       dump_line("Vendor: %s\n", make_vend_name_str(hd_data, h, buf, sizeof buf));
-    dump_line("Model: %s\n", make_device_name_str(hd_data, h, buf, sizeof buf));
+    dump_line("Device: %s\n", make_device_name_str(hd_data, h, buf, sizeof buf));
   }
 
   if(h->sub_vend || h->sub_dev || h->sub_dev_name || h->sub_vend_name) {

@@ -424,7 +424,7 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->cmd_line = free_mem(hd_data->cmd_line);
   hd_data->xtra_hd = free_str_list(hd_data->xtra_hd);
   hd_data->devtree = free_devtree(hd_data);
-  hd_data->manual = free_manual(hd_data->manual);
+  hd_data->manual = hd_free_manual(hd_data->manual);
 
   return NULL;
 }
@@ -703,6 +703,7 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->rom_id);
   free_mem(hd->unique_id);
   free_mem(hd->block0);
+  free_mem(hd->parent_id);
 
   free_res_list(hd->res);
 
@@ -778,7 +779,7 @@ scsi_t *free_scsi(scsi_t *scsi, int free_all)
 }
 
 
-hd_manual_t *free_manual(hd_manual_t *manual)
+hd_manual_t *hd_free_manual(hd_manual_t *manual)
 {
   hd_manual_t *next;
 
@@ -1259,6 +1260,8 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_cdrom(hd_data);
   hd_scan_net(hd_data);
 
+  for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd);
+
   hd_scan_manual(hd_data);
 
   /* add test entries */
@@ -1274,6 +1277,7 @@ void hd_scan(hd_data_t *hd_data)
 
   hd_scan_cdrom2(hd_data);
 
+  /* and again... */
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd);
 
   /* we are done... */
@@ -2957,7 +2961,8 @@ int hd_smp_support(hd_data_t *hd_data)
       if(!bf) hd_clear_probe_feature(hd_data, pr_bios);
     }
     is_smp = detect_smp(hd_data);
-    if(is_smp < 0) is_smp = 0;
+    // at least 2 processors
+    if(is_smp < 2) is_smp = 0;
   }
 #endif
 #endif

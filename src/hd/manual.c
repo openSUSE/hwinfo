@@ -5,6 +5,7 @@
 #include <dirent.h>
 #include <ctype.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -67,10 +68,46 @@ static hash_t hw_ids_status[] = {
   { 0,                NULL         }
 };
 
+/* structure elements from hd_t */
+typedef enum {
+  hwdi_bus = 1, hwdi_slot, hwdi_func, hwdi_base_class, hwdi_sub_class,
+  hwdi_prog_if, hwdi_dev, hwdi_vend, hwdi_sub_dev, hwdi_sub_vend, hwdi_rev,
+  hwdi_compat_dev, hwdi_compat_vend, hwdi_dev_name, hwdi_vend_name,
+  hwdi_sub_dev_name, hwdi_sub_vend_name, hwdi_rev_name, hwdi_serial,
+  hwdi_unix_dev_name, hwdi_rom_id
+} hw_hd_items_t;
+
+static hash_t hw_ids_hd_items[] = {
+  { hwdi_bus,           "Bus"            },
+  { hwdi_slot,          "Slot"           },
+  { hwdi_func,          "Function"       },
+  { hwdi_base_class,    "BaseClass"      },
+  { hwdi_sub_class,     "SubClass"       },
+  { hwdi_prog_if,       "ProgIF"         },
+  { hwdi_dev,           "DeviceID"       },
+  { hwdi_vend,          "VendorID"       },
+  { hwdi_sub_dev,       "SubDeviceID"    },
+  { hwdi_sub_vend,      "SubVendorID"    },
+  { hwdi_rev,           "RevisionID"     },
+  { hwdi_compat_dev,    "CompatDeviceID" },
+  { hwdi_compat_vend,   "CompatVendorID" },
+  { hwdi_dev_name,      "DeviceName"     },
+  { hwdi_vend_name,     "VendorName"     },
+  { hwdi_sub_dev_name,  "SubDeviceName"  },
+  { hwdi_sub_vend_name, "SubVendorName"  },
+  { hwdi_rev_name,      "RevisionName"   },
+  { hwdi_serial,        "Serial"         },
+  { hwdi_unix_dev_name, "UnixDevice"     },
+  { hwdi_rom_id,        "ROMID"          },
+  { 0,                  NULL             }
+};
+
 static char *key2value(hash_t *hash, int id);
 static int value2key(hash_t *hash, char *str);
 hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, char *id);
 static void dump_manual(hd_data_t *hd_data);
+static unsigned str2id(char *str);
+static void manual2hd(hd_manual_t *entry, hd_t *hd);
 
 void hd_scan_manual(hd_data_t *hd_data)
 {
@@ -78,6 +115,7 @@ void hd_scan_manual(hd_data_t *hd_data)
   struct dirent *de;
   hd_manual_t *entry, **entry_next;
   int i;
+  hd_t *hd, *hd1;
 
   if(!hd_probe_feature(hd_data, pr_manual)) return;
 
@@ -86,7 +124,7 @@ void hd_scan_manual(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
 
-  hd_data->manual = free_manual(hd_data->manual);
+  hd_data->manual = hd_free_manual(hd_data->manual);
   entry_next = &hd_data->manual;
 
   if((dir = opendir(MANUAL_DIR))) {
@@ -104,6 +142,32 @@ void hd_scan_manual(hd_data_t *hd_data)
   }
 
   if(hd_data->debug) dump_manual(hd_data);
+
+  for(entry = hd_data->manual; entry; entry = entry->next) {
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      if(hd->unique_id && !strcmp(hd->unique_id, entry->unique_id)) break;
+    }
+
+    if(hd) {
+      /* just update config status */
+      hd->status = entry->status;
+    }
+    else {
+      /* add new entry */
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+
+      manual2hd(entry, hd);
+
+      if(hd->parent_id) {
+        for(hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
+          if(hd1->unique_id && !strcmp(hd1->unique_id, hd->parent_id)) {
+            hd->attached_to = hd1->idx;
+            break;
+          }
+        }
+      }
+    }
+  }
 }
 
 
@@ -125,6 +189,16 @@ char *key2value(hash_t *hash, int id)
   return hash->value;
 }
 
+char *hd_hw_item_name(hd_hw_item_t item)
+{
+  return key2value(hw_items, item);
+}
+
+
+char *hd_status_value_name(hd_status_value_t status)
+{
+  return key2value(status_names, status);
+}
 
 /*
  * read an entry
@@ -260,6 +334,21 @@ hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, char *id)
     err = 1;
   }
 
+  /*
+   * if the status info is completely missing, fake some:
+   * new hardware, not autodetectable, not critical
+   */
+  if(
+    !entry->status.configured &&
+    !entry->status.available &&
+    !entry->status.critical &&
+    !entry->status.invalid
+  ) {
+    entry->status.configured = status_new;
+    entry->status.available = status_unknown;
+    entry->status.critical = status_no;
+  }
+
   if(
     !entry->status.configured ||
     !entry->status.available ||
@@ -280,102 +369,139 @@ hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, char *id)
   }
 
   if(err) {
-    entry = free_manual(entry);
+    entry = hd_free_manual(entry);
   }
 
   return entry;
 }
 
-#if 0
 
 /*
  * write an entry
  */
-int SuSEhw_write_entry(hw_SuSE *entry)
+
+int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
 {
   FILE *f;
   char path[PATH_MAX];
   int error = 0;
   struct stat sbuf;
+  str_list_t *sl1, *sl2;
 
-  if(!entry || !entry->unique_id || entry->status.invalid) return HW_ERROR;
+  if(!entry) return 0;
+  if(!entry->unique_id || entry->status.invalid) return 1;
 
-  snprintf(path, sizeof path, "%s/%s", HW_SUSE_PATH, entry->unique_id);
+  snprintf(path, sizeof path, "%s/%s", MANUAL_DIR, entry->unique_id);
 
   if(!(f = fopen(path, "w"))) {
-    /* maybe we have to create the HW_SUSE_PATH directory first... */
+    /* maybe we have to create the MANUAL_DIR directory first... */
 
-    if(stat(HW_SUSE_PATH, &sbuf)) {
-      mkdir(HW_SUSE_PATH, 0755);
+    if(lstat(MANUAL_DIR, &sbuf)) {
+      mkdir(MANUAL_DIR, 0755);
     }
 
-    if(!(f = fopen(path, "w"))) {
-      return HW_OPEN_ERROR;
+    if(!(f = fopen(path, "w"))) return 2;
+  }
+
+  fprintf(f, "[%s]\n", MAN_SECT_GENERAL);
+
+  if(
+    !fprintf(f, "%s=%s\n",
+      key2value(hw_ids_general, hw_id_unique),
+      entry->unique_id
+    )
+  ) error = 3;
+
+  if(
+    entry->parent_id &&
+    !fprintf(f, "%s=%s\n",
+      key2value(hw_ids_general, hw_id_parent),
+      entry->parent_id
+    )
+  ) error = 3;
+
+  if(
+    (entry->hw_class && key2value(hw_items, entry->hw_class)) &&
+    !fprintf(f, "%s=%s\n",
+      key2value(hw_ids_general, hw_id_hwclass),
+      key2value(hw_items, entry->hw_class)
+    )
+  ) error = 3;
+
+  if(
+    entry->model &&
+    !fprintf(f, "%s=%s\n",
+      key2value(hw_ids_general, hw_id_model),
+      entry->model
+    )
+  ) error = 3;
+
+  fprintf(f, "\n[%s]\n", MAN_SECT_STATUS);
+
+  if(
+    (entry->status.configured && key2value(status_names, entry->status.configured)) &&
+    !fprintf(f, "%s=%s\n",
+      key2value(hw_ids_status, hw_id_configured),
+      key2value(status_names, entry->status.configured)
+    )
+  ) error = 4;
+
+  if(
+    (entry->status.available && key2value(status_names, entry->status.available)) &&
+    !fprintf(f, "%s=%s\n",
+      key2value(hw_ids_status, hw_id_available),
+      key2value(status_names, entry->status.available)
+    )
+  ) error = 4;
+
+  if(
+    (entry->status.critical && key2value(status_names, entry->status.critical)) &&
+    !fprintf(f, "%s=%s\n",
+      key2value(hw_ids_status, hw_id_critical),
+      key2value(status_names, entry->status.critical)
+    )
+  ) error = 4;
+
+  fprintf(f, "\n[%s]\n", MAN_SECT_HARDWARE);
+
+  for(
+    sl1 = entry->key, sl2 = entry->value;
+    sl1 && sl2;
+    sl1 = sl1->next, sl2 = sl2->next
+  ) {
+    if(!fprintf(f, "%s=%s\n", sl1->str, sl2->str)) {
+      error = 5;
+      break;
     }
   }
 
-  fputs("[General]\n", f);
-  if(!fprintf(f, "%s=%s\n", HW_F_UNIQ_TAG, entry->unique_id)) error = 1;
-  if(entry->parent_id)
-    if(!fprintf(f, "%s=%s\n", HW_F_PARENT_TAG, entry->parent_id)) error = 1;
-  if(entry->hwclass && entry->hwclass < SHW_CLASS_NAMES_SIZE) {
-    if(!fprintf(f, "%s=%s\n", HW_F_HWCLASS_TAG, shw_class_names[entry->hwclass])) error = 1;
-  }
-  if(entry->model)
-    if(!fprintf(f, "%s=%s\n", HW_F_MODEL_TAG, entry->model)) error = 1;
-  fputs("\n", f);
-
-  fputs("[Status]\n", f);
-  if(entry->status.configured && entry->status.configured < STATUS_NAMES_SIZE) {
-    if(!fprintf(f, "%s=%s\n", HW_F_CONFIG_TAG, status_names[entry->status.configured])) error = 1;
-  }
-  if(entry->status.available && entry->status.available < STATUS_NAMES_SIZE) {
-    if(!fprintf(f, "%s=%s\n", HW_F_AVAILABLE_TAG, status_names[entry->status.available])) error = 1;
-  }
-  if(entry->status.critical && entry->status.critical < STATUS_NAMES_SIZE) {
-    if(!fprintf(f, "%s=%s\n", HW_F_CRITICAL_TAG, status_names[entry->status.critical])) error = 1;
-  }
-  fputs("\n", f);
-
-  fputs("[Hardware]\n", f);
-  if(entry->unix_dev)
-    if(!fprintf(f, "%s=%s\n", HW_F_UNIX_DEV_TAG, entry->unix_dev)) error = 1;
-  if(!fprintf(f, "%s=0x%03x\n", HW_F_BASE_CLASS_TAG, entry->base_class)) error = 1;
-  if(entry->sub_class)
-    if(!fprintf(f, "%s=0x%02x\n", HW_F_SUB_CLASS_TAG, entry->sub_class)) error = 1;
-  if(entry->vendor_name)
-    if(!fprintf(f, "%s=%s\n", HW_F_VENDOR_NAME_TAG, entry->vendor_name)) error = 1;
-  if(entry->device_name)
-    if(!fprintf(f, "%s=%s\n", HW_F_DEVICE_NAME_TAG, entry->device_name)) error = 1;
   fputs("\n", f);
 
   fclose(f);
 
-  return error ? HW_WRITE_ERROR : HW_OK;
+  return error;
 }
 
 
-#endif
-
 void dump_manual(hd_data_t *hd_data)
 {
-  hd_manual_t *manual;
+  hd_manual_t *entry;
   static const char *txt = "manually configured harware";
   str_list_t *sl1, *sl2;
 
   if(!hd_data->manual) return;
 
   ADD2LOG("----- %s -----\n", txt);
-  for(manual = hd_data->manual; manual; manual = manual->next) {
-    ADD2LOG("  UniqueID=%s\n", manual->unique_id);
-    if(manual->parent_id) ADD2LOG("    ParentID=%s\n", manual->parent_id);
-    ADD2LOG("    HWClass=%s\n", key2value(hw_items, manual->hw_class));
-    ADD2LOG("    Model=%s\n", manual->model);
-    ADD2LOG("    Configured=%s\n", key2value(status_names, manual->status.configured));
-    ADD2LOG("    Available=%s\n", key2value(status_names, manual->status.available));
-    ADD2LOG("    Critical=%s\n", key2value(status_names, manual->status.critical));
+  for(entry = hd_data->manual; entry; entry = entry->next) {
+    ADD2LOG("  UniqueID=%s\n", entry->unique_id);
+    if(entry->parent_id) ADD2LOG("    ParentID=%s\n", entry->parent_id);
+    ADD2LOG("    HWClass=%s\n", key2value(hw_items, entry->hw_class));
+    ADD2LOG("    Model=%s\n", entry->model);
+    ADD2LOG("    Configured=%s\n", key2value(status_names, entry->status.configured));
+    ADD2LOG("    Available=%s\n", key2value(status_names, entry->status.available));
+    ADD2LOG("    Critical=%s\n", key2value(status_names, entry->status.critical));
     for(
-      sl1 = manual->key, sl2 = manual->value;
+      sl1 = entry->key, sl2 = entry->value;
       sl1 && sl2;
       sl1 = sl1->next, sl2 = sl2->next
     ) {
@@ -383,5 +509,191 @@ void dump_manual(hd_data_t *hd_data)
     }
   }
   ADD2LOG("----- %s end -----\n", txt);
+}
+
+
+unsigned str2id(char *str)
+{
+  unsigned id;
+  unsigned tag = 0;
+
+  if(strlen(str) == 3) return name2eisa_id(str);
+
+  switch(*str) {
+    case 'p':
+      tag = TAG_PCI; str++; break;
+
+    case 'r':
+      str++; break;
+
+    case 'u':
+      tag = TAG_USB; str++; break;
+
+    case 's':
+      tag = TAG_SPECIAL; str++; break;
+  }
+
+  id = strtoul(str, &str, 16);
+  if(*str) return 0;
+
+  return MAKE_ID(tag, ID_VALUE(id));
+}
+
+
+/*
+ * move info from hd_manual_t to hd_t
+ */
+void manual2hd(hd_manual_t *entry, hd_t *hd)
+{
+  str_list_t *sl1, *sl2;
+  hw_hd_items_t item;
+  unsigned tag;
+
+  hd->unique_id = new_str(entry->unique_id);
+  hd->parent_id = new_str(entry->parent_id);
+  hd->model = new_str(entry->model);
+  hd->hw_class = entry->hw_class;
+
+  hd->status = entry->status;
+
+  for(
+    sl1 = entry->key, sl2 = entry->value;
+    sl1 && sl2;
+    sl1 = sl1->next, sl2 = sl2->next
+  ) {
+    switch(item = value2key(hw_ids_hd_items, sl1->str)) {
+      case hwdi_bus:
+        hd->bus = strtoul(sl2->str, NULL, 0);
+        break;
+
+      case hwdi_slot:
+        hd->slot = strtoul(sl2->str, NULL, 0);
+        break;
+
+      case hwdi_func:
+        hd->func = strtoul(sl2->str, NULL, 0);
+        break;
+
+      case hwdi_base_class:
+        hd->base_class = strtoul(sl2->str, NULL, 0);
+        break;
+
+      case hwdi_sub_class:
+        hd->sub_class = strtoul(sl2->str, NULL, 0);
+        break;
+
+      case hwdi_prog_if:
+        hd->prog_if = strtoul(sl2->str, NULL, 0);
+        break;
+
+      case hwdi_dev:
+        hd->dev = str2id(sl2->str);
+        break;
+
+      case hwdi_vend:
+        hd->vend = str2id(sl2->str);
+        break;
+
+      case hwdi_sub_dev:
+        hd->sub_dev = str2id(sl2->str);
+        break;
+
+      case hwdi_sub_vend:
+        hd->sub_vend = str2id(sl2->str);
+        break;
+
+      case hwdi_rev:
+        hd->rev = strtoul(sl2->str, NULL, 0);
+        break;
+
+      case hwdi_compat_dev:
+        hd->compat_dev = str2id(sl2->str);
+        break;
+
+      case hwdi_compat_vend:
+        hd->compat_vend = str2id(sl2->str);
+        break;
+
+      case hwdi_dev_name:
+        hd->dev_name = new_str(sl2->str);
+        break;
+
+      case hwdi_vend_name:
+        hd->vend_name = new_str(sl2->str);
+        break;
+
+      case hwdi_sub_dev_name:
+        hd->sub_dev_name = new_str(sl2->str);
+        break;
+
+      case hwdi_sub_vend_name:
+        hd->sub_vend_name = new_str(sl2->str);
+        break;
+
+      case hwdi_rev_name:
+        hd->rev_name = new_str(sl2->str);
+        break;
+
+      case hwdi_serial:
+        hd->serial = new_str(sl2->str);
+        break;
+
+      case hwdi_unix_dev_name:
+        hd->unix_dev_name = new_str(sl2->str);
+        break;
+
+      case hwdi_rom_id:
+        hd->rom_id = new_str(sl2->str);
+        break;
+    }
+  }
+
+  if(hd->dev || hd->vend) {
+    tag = ID_TAG(hd->dev);
+    tag = tag ? tag : ID_TAG(hd->vend);
+    tag = tag ? tag : TAG_PCI;
+    hd->dev = MAKE_ID(tag, ID_VALUE(hd->dev));
+    hd->vend = MAKE_ID(tag, ID_VALUE(hd->vend));
+  }
+
+  if(hd->sub_dev || hd->sub_vend) {
+    tag = ID_TAG(hd->sub_dev);
+    tag = tag ? tag : ID_TAG(hd->sub_vend);
+    tag = tag ? tag : TAG_PCI;
+    hd->sub_dev = MAKE_ID(tag, ID_VALUE(hd->sub_dev));
+    hd->sub_vend = MAKE_ID(tag, ID_VALUE(hd->sub_vend));
+  }
+
+  if(hd->compat_dev || hd->compat_vend) {
+    tag = ID_TAG(hd->compat_dev);
+    tag = tag ? tag : ID_TAG(hd->compat_vend);
+    tag = tag ? tag : TAG_PCI;
+    hd->compat_dev = MAKE_ID(tag, ID_VALUE(hd->compat_dev));
+    hd->compat_vend = MAKE_ID(tag, ID_VALUE(hd->compat_vend));
+  }
+
+  if(hd->status.available == status_unknown) hd->is.manual = 1;
+
+  /* create some entries, if missing */
+
+  if(!hd->dev && !hd->vend && !hd->dev_name) {
+    hd->dev_name = new_str(hd->model);
+  }
+
+  if(hd->hw_class && !hd->base_class) {
+    switch(hd->hw_class) {
+      case hw_cdrom:
+        hd->base_class = bc_storage_device;
+        hd->sub_class = sc_sdev_cdrom;
+        break;
+
+      case hw_mouse:
+        hd->base_class = bc_mouse;
+        hd->sub_class = sc_mou_other;
+        break;
+
+      default:
+    }
+  }
 }
 

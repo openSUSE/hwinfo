@@ -158,7 +158,8 @@ typedef enum sc_internal {
 
 /* subclass values of bc_mouse */
 typedef enum sc_mouse {
-  sc_mou_ps2, sc_mou_ser, sc_mou_bus, sc_mou_usb, sc_mou_sun
+  sc_mou_ps2, sc_mou_ser, sc_mou_bus, sc_mou_usb, sc_mou_sun,
+  sc_mou_other = 0x80
 } hd_sc_mouse_t;
 
 /* subclass values of bc_storage_device */
@@ -1028,6 +1029,9 @@ typedef struct s_hd_t {
   char *dev_name, *vend_name, *sub_dev_name, *sub_vend_name,
        *rev_name, *serial;
 
+  hd_hw_item_t hw_class;	/* not to confuse with base_class */
+  char *model;			/* combined vendor & device names */
+
   unsigned attached_to;		/* idx field of 'parent' entry */
   char *unix_dev_name;		/* name of special device file, if any */
   char *rom_id;			/* BIOS/PROM device name (if any), chpid on s390 */
@@ -1055,6 +1059,8 @@ typedef struct s_hd_t {
   } tag;
 
   unsigned char *block0;	/* for block devices: first 512 data bytes */
+
+  char *parent_id;		/* unique_id of our parent, please do not use it for now */
 
   /*
    * These are used internally for memory management.
@@ -1189,6 +1195,7 @@ cdrom_info_t *hd_read_cdrom_info(hd_data_t *hd_data, hd_t *hd);
 /* implemented in manual.c */
 hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, char *id);
 int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry);
+hd_manual_t *hd_free_manual(hd_manual_t *manual);
 
 #ifdef __cplusplus
 }

@@ -355,17 +355,33 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
   if(hd0 != hd_data->hd) hd_free_hd_list(hd0);
 }
 
+
 void do_test(hd_data_t *hd_data)
 {
-  hd_t *hd;
+  hd_manual_t *entry;
+  int i;
 
-  hd = hd_list(hd_data, hw_display, 1, NULL);
+  entry = calloc(sizeof *entry, 1);
 
-//  hd_free_hd_list(hd);
+  entry->unique_id = "as123123123.sdasda";
+  entry->hw_class = hw_cdrom;
+  entry->model = "140x speed";
 
-  hd = hd_list(hd_data, hw_display, 1, NULL);
+  entry->status.configured = status_new;
 
-//  hd_free_hd_list(hd);
+  i = hd_manual_write_entry(hd_data, entry);
+
+  printf("hd_write_manual() = %d\n", i);
+
+  entry = hd_manual_read_entry(hd_data, "gG82.g++hATXqKsF");
+
+  entry->unique_id = "77777";
+
+  i = hd_manual_write_entry(hd_data, entry);
+
+  entry = hd_free_manual(entry);
+
+  printf("hd_write_manual() = %d\n", i);
 }
 
 

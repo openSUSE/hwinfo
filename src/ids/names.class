@@ -102,6 +102,7 @@ C 105	Mouse
 	01	Serial Mouse
 	02	Bus Mouse
 	03	USB Mouse
+	80	Mouse
 C 106	Mass Storage Device
 	00	Disk
 	01	Tape

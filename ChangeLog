@@ -1,3 +1,6 @@
+24/7/2001:	v3.01
+	- report smp capability only if >1 processors are active
+
 23/7/2001:	v3.00
 	- SMP code can now handle empty MP tables
 	- support module lists in driver info
