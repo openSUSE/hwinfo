@@ -1026,11 +1026,6 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
   char c, *s, *t;
   unsigned u;
   int i;
-  static char *wakeups[] = {
-   "Reserved", "Other", "Unknown", "APM Timer",
-   "Modem Ring", "LAN Remote", "Power Switch", "PCI PME#",
-   "AC Power Restored"
-  };
   static char *chassistypes[] = {
     "Unknown", "Other", "Unknown", "Desktop",
     "Low Profile Desktop", "Pizza Box", "Mini Tower", "Tower",
@@ -1088,34 +1083,12 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
         if(sm->biosinfo.vendor) fprintf(f, "    Vendor: \"%s\"\n", sm->biosinfo.vendor);
         if(sm->biosinfo.version) fprintf(f, "    Version: \"%s\"\n", sm->biosinfo.version);
         if(sm->biosinfo.date) fprintf(f, "    Date: \"%s\"\n", sm->biosinfo.date);
+        fprintf(f, "    Start Address: 0x%05x\n", sm->biosinfo.start);
+        fprintf(f, "    ROM Size: %d kB\n", sm->biosinfo.rom_size >> 10);
         fprintf(f, "    Features: %016"PRIx64" %08x\n", sm->biosinfo.features, sm->biosinfo.xfeatures);
-        u = sm->biosinfo.features;	/* bits > 31 are not specified anyway */
-        if((u & (1 <<  4))) fprintf(f, "      ISA supported\n");
-        if((u & (1 <<  5))) fprintf(f, "      MCA supported\n");
-        if((u & (1 <<  6))) fprintf(f, "      EISA supported\n");
-        if((u & (1 <<  7))) fprintf(f, "      PCI supported\n");
-        if((u & (1 <<  8))) fprintf(f, "      PCMCIA supported\n");
-        if((u & (1 <<  9))) fprintf(f, "      PnP supported\n");
-        if((u & (1 << 10))) fprintf(f, "      APM supported\n");
-        if((u & (1 << 11))) fprintf(f, "      BIOS flashable\n");
-        if((u & (1 << 12))) fprintf(f, "      BIOS shadowing allowed\n");
-        if((u & (1 << 13))) fprintf(f, "      VL-VESA supported\n");
-        if((u & (1 << 14))) fprintf(f, "      ESCD supported\n");
-        if((u & (1 << 15))) fprintf(f, "      CD boot supported\n");
-        if((u & (1 << 16))) fprintf(f, "      Selectable boot supported\n");
-        if((u & (1 << 17))) fprintf(f, "      BIOS ROM socketed\n");
-        if((u & (1 << 18))) fprintf(f, "      PCMCIA boot supported\n");
-        if((u & (1 << 19))) fprintf(f, "      EDD spec supported\n");
-        u = sm->biosinfo.xfeatures;
-        if((u & (1 <<  0))) fprintf(f, "      ACPI supported\n");
-        if((u & (1 <<  1))) fprintf(f, "      USB Legacy supported\n");
-        if((u & (1 <<  2))) fprintf(f, "      AGP supported\n");
-        if((u & (1 <<  3))) fprintf(f, "      I2O boot supported\n");
-        if((u & (1 <<  4))) fprintf(f, "      LS-120 boot supported\n");
-        if((u & (1 <<  5))) fprintf(f, "      ATAPI ZIP boot supported\n");
-        if((u & (1 <<  6))) fprintf(f, "      IEEE1394 boot supported\n");
-        if((u & (1 <<  7))) fprintf(f, "      Smart Battery supported\n");
-        if((u & (1 <<  8))) fprintf(f, "      BIOS Boot Spec supported\n");
+        for(sl = sm->biosinfo.feature_str; sl; sl = sl->next) {
+          fprintf(f, "      %s\n", sl->str);
+        }
         break;
 
       case sm_sysinfo:
@@ -1124,8 +1097,21 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
         if(sm->sysinfo.product) fprintf(f, "    Product: \"%s\"\n", sm->sysinfo.product);
         if(sm->sysinfo.version) fprintf(f, "    Version: \"%s\"\n", sm->sysinfo.version);
         if(sm->sysinfo.serial) fprintf(f, "    Serial: \"%s\"\n", sm->sysinfo.serial);
-        s = wakeups[sm->sysinfo.wake_up < sizeof wakeups / sizeof *wakeups ? sm->sysinfo.wake_up : 0];
-        fprintf(f, "    Wake-up: 0x%02x (%s)\n", sm->sysinfo.wake_up, s);
+        for(i = u = 0; (unsigned) i < sizeof sm->sysinfo.uuid / sizeof *sm->sysinfo.uuid; i++) {
+          u |= sm->sysinfo.uuid[i];
+        }
+        fprintf(f, "    UUID: ");
+        if(u == 0 || u == 0xff) {
+          fprintf(f, "undefined");
+          if(u == 0xff) fprintf(f, ", but settable");
+        }
+        else {
+          for(i = sizeof sm->sysinfo.uuid / sizeof *sm->sysinfo.uuid - 1; i >= 0; i--) {
+            fprintf(f, "%02x", sm->sysinfo.uuid[i]);
+          }
+        }
+        fprintf(f, "\n");
+        fprintf(f, "    Wake-up: 0x%02x (%s)\n", sm->sysinfo.wake_up.id, sm->sysinfo.wake_up.name);
         break;
 
       case sm_boardinfo:

@@ -1537,6 +1537,7 @@ hd_smbios_t *free_smbios_list(hd_smbios_t *sm)
         free_mem(sm->biosinfo.vendor);
         free_mem(sm->biosinfo.version);
         free_mem(sm->biosinfo.date);
+        free_str_list(sm->biosinfo.feature_str);
         break;
 
       case sm_sysinfo:
@@ -1544,6 +1545,7 @@ hd_smbios_t *free_smbios_list(hd_smbios_t *sm)
         free_mem(sm->sysinfo.product);
         free_mem(sm->sysinfo.version);
         free_mem(sm->sysinfo.serial);
+        free_mem(sm->sysinfo.wake_up.name);
         break;
 
       case sm_boardinfo:

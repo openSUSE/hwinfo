@@ -469,13 +469,14 @@ typedef enum {
 
 typedef struct {
   union u_hd_smbios_t *next;
-  hd_smbios_type_t type;
-  int data_len;
-  unsigned char *data;
-  str_list_t *strings;
-  int handle;
+  hd_smbios_type_t type;	/* BIOS info type */
+  int data_len;			/* formatted section length */
+  unsigned char *data;		/* formatted section */
+  str_list_t *strings;		/* strings taken from the unformed section */
+  int handle;			/* handle, unique 16 bit number */
 } smbios_any_t;
 
+/* BIOS related information */
 typedef struct {
   union u_hd_smbios_t *next;
   hd_smbios_type_t type;
@@ -483,13 +484,17 @@ typedef struct {
   unsigned char *data;
   str_list_t *strings;
   int handle;
-  char *vendor;
-  char *version;
-  char *date;
-  uint64_t features;
-  unsigned xfeatures;
+  char *vendor;			/* BIOS vendor name */
+  char *version;		/* BIOS version (free form!) */
+  char *date;			/* BIOS date mm/dd/yyyy (old: yy) */
+  uint64_t features;		/* BIOS characteristics (bitmask) */
+  unsigned xfeatures;		/* BIOS characteristics extension (bitmask) */
+  str_list_t *feature_str;	/* the above two, interpreted */
+  unsigned start;		/* BIOS start address */
+  unsigned rom_size;		/* BIOS ROM size (in bytes) */
 } smbios_biosinfo_t;
 
+/* overall system related information */
 typedef struct {
   union u_hd_smbios_t *next;
   hd_smbios_type_t type;
@@ -497,13 +502,15 @@ typedef struct {
   unsigned char *data;
   str_list_t *strings;
   int handle;
-  char *manuf;
-  char *product;
-  char *version;
-  char *serial;
-  unsigned wake_up;
+  char *manuf;			/* manufacturer */
+  char *product;		/* product name */
+  char *version;		/* version */
+  char *serial;			/* serial number */
+  unsigned char uuid[16];	/* universal unique id; all 0x00: undef, all 0xff: undef but settable */
+  hd_id_t wake_up;		/* wake-up type */
 } smbios_sysinfo_t;
 
+/* motherboard related information */
 typedef struct {
   union u_hd_smbios_t *next;
   hd_smbios_type_t type;

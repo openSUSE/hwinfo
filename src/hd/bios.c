@@ -707,6 +707,55 @@ char *get_string(str_list_t *sl, int index)
   return NULL;
 }
 
+static struct {
+  unsigned bit;
+  char *name;
+} smbios_feature_name[] = {
+  {  4, "ISA supported" },
+  {  5, "MCA supported" },
+  {  6, "EISA supported" },
+  {  7, "PCI supported" },
+  {  8, "PCMCIA supported" },
+  {  9, "PnP supported" },
+  { 10, "APM supported" },
+  { 11, "BIOS flashable" },
+  { 12, "BIOS shadowing allowed" },
+  { 13, "VL-VESA supported" },
+  { 14, "ESCD supported" },
+  { 15, "CD boot supported" },
+  { 16, "Selectable boot supported" },
+  { 17, "BIOS ROM socketed" },
+  { 18, "PCMCIA boot supported" },
+  { 19, "EDD spec supported" },
+  { 20, "1.2MB NEC 9800 Japanese Floppy supported" },
+  { 21, "1.2MB Toshiba Japanese Floppy supported" },
+  { 22, "360kB Floppy supported" },
+  { 23, "1.2MB Floppy supported" },
+  { 24, "720kB Floppy supported" },
+  { 25, "2.88MB Floppy supported" },
+  { 26, "Print Screen supported" },
+  { 27, "8042 Keyboard Services supported" },
+  { 28, "Serial Services supported" },
+  { 29, "Printer Services supported" },
+  { 30, "CGA/Mono Video supported" },
+  { 31, "NEC PC-98" },
+  { 64 + 0, "ACPI supported" },
+  { 64 + 1, "USB Legacy supported" },
+  { 64 + 2, "AGP supported" },
+  { 64 + 3, "I2O boot supported" },
+  { 64 + 4, "LS-120 boot supported" },
+  { 64 + 5, "ATAPI ZIP boot supported" },
+  { 64 + 6, "IEEE1394 boot supported" },
+  { 64 + 7, "Smart Battery supported" },
+  { 64 + 8, "BIOS Boot Spec supported" },
+  { 64 + 9, "F12 Network boot supported" }
+};
+
+static char *smbios_wakeups[] = {
+ "Reserved", "Other", "Unknown", "APM Timer",
+ "Modem Ring", "LAN Remote", "Power Switch", "PCI PME#",
+ "AC Power Restored"
+};
 
 void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
 {
@@ -715,6 +764,7 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
   int cnt, data_len;
   unsigned char *sm_data;
   unsigned u, v;
+  char *s;
 
   if(!hd_data->smbios) return;
 
@@ -725,6 +775,8 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
     switch(sm->any.type) {
       case sm_biosinfo:
         if(data_len >= 0x12) {
+          sm->biosinfo.start = (*(uint16_t *) (sm_data + 6)) << 4;
+          sm->biosinfo.rom_size = (sm_data[9] + 1) << 16;
           sm->biosinfo.vendor = get_string(sl, sm_data[4]);
           sm->biosinfo.version = get_string(sl, sm_data[5]);
           sm->biosinfo.date = get_string(sl, sm_data[8]);
@@ -736,6 +788,12 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
         if(data_len >= 0x14) {
           sm->biosinfo.xfeatures |= sm_data[0x13] << 8;
         }
+        for(u = 0; u < sizeof smbios_feature_name / sizeof *smbios_feature_name; u++) {
+          v = smbios_feature_name[u].bit;
+          if(v < 64 ? sm->biosinfo.features & (1L << v) : sm->biosinfo.xfeatures & (1 << (v - 64))) {
+            add_str_list(&sm->biosinfo.feature_str, smbios_feature_name[u].name);
+          }
+        }
         break;
 
       case sm_sysinfo:
@@ -746,7 +804,10 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
           sm->sysinfo.serial = get_string(sl, sm_data[7]);
         }
         if(data_len >= 0x19) {
-          sm->sysinfo.wake_up = sm_data[0x18];
+          memcpy(sm->sysinfo.uuid, sm_data + 8, 16);
+          sm->sysinfo.wake_up.id = sm_data[0x18];
+          s = smbios_wakeups[sm->sysinfo.wake_up.id < sizeof smbios_wakeups / sizeof *smbios_wakeups ? sm->sysinfo.wake_up.id : 1];
+          sm->sysinfo.wake_up.name = new_str(s);
         }
         break;
 
