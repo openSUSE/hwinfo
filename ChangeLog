@@ -2,6 +2,7 @@
 	- camera subclass ids were 1 off from enumeration
 	- added some new hardware classes: bios, bridge, hub, usb_ctrl
 	- added '--pci' and '--isapnp' options to hwscan
+	- fixed evil segfault caused by reading some hardware configs
 
 25/2/2002:	v4.13
 	- meissner: boot.hwscan:
