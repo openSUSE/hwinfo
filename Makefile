@@ -57,10 +57,10 @@ doc:
 	@cd doc ; doxygen libhd.doxy
 
 install:
-	install -d -m 755 $(DESTDIR)/usr/sbin $(DESTDIR)$(LIBDIR) \
+	install -d -m 755 $(DESTDIR)/sbin $(DESTDIR)/usr/sbin $(DESTDIR)$(LIBDIR) \
 		$(DESTDIR)/usr/include $(DESTDIR)/etc/init.d
 	install -m 755 hwinfo $(DESTDIR)/usr/sbin
-	install -m 755 hwscan hwscand hwscanqueue $(DESTDIR)/usr/sbin
+	install -m 755 hwscan hwscand hwscanqueue $(DESTDIR)/sbin
 	install -m 755 -s src/ids/check_hd $(DESTDIR)/usr/sbin
 	install -m 755 src/ids/convert_hd $(DESTDIR)/usr/sbin
 	if [ -f $(LIBHD_SO) ] ; then \

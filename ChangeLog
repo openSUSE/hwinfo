@@ -1,3 +1,5 @@
+	- new wlan card (#42759)
+
 16/8/2004:	v9.3
 	- move hwscan* to /sbin (#43601)
 
