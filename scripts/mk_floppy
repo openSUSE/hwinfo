@@ -80,7 +80,7 @@ write_init () {
 	hw debug=-1 log=hw.log +all
 
 	echo "copying the log onto the floppy..."
-	mount -tvfat /dev/fd0 /mnt
+	mount -tmsdos /dev/fd0 /mnt
 	cat hw.log >/mnt/hw.log
 	umount /mnt
 
