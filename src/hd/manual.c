@@ -43,6 +43,7 @@ static hash_t hw_items[] = {
   { hw_display,      "graphics card"     },
   { hw_monitor,      "monitor"           },
   { hw_mouse,        "mouse"             },
+  { hw_joystick,     "joystick"          },
   { hw_keyboard,     "keyboard"          },
   { hw_sound,        "sound"             },
   { hw_isdn,         "isdn adapter"      },

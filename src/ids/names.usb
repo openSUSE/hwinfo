@@ -54,7 +54,8 @@ u0424	Standard Microsystems Corp.
 u0425	Motorola Semiconductors HK, Ltd.
 u0426	Integrated Device Technology
 u0427	Motorola Electronics Taiwan Ltd.
-u0428	Advanced Gravis Computer Tech. Ltd.
+u0428	Gravis
+	4001.10d01
 u0429	Cirrus Logic
 u042a	Ericsson Austrian, AG
 u042b	Intel Corporation
@@ -130,6 +131,7 @@ u047a	USAR Systems
 u047b	Silitek Corp.
 u047c	Dell Computer Corp.
 u047d	Kensington
+	4008.10d01
 u047e	Lucent Microelectronics Technologies
 u047f	Plantronics, Inc.
 u0480	Toshiba America Info. Systems, Inc.

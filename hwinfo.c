@@ -59,6 +59,7 @@ struct option options[] = {
   { "display", 0, NULL, 1000 + hw_display },
   { "monitor", 0, NULL, 1000 + hw_monitor },
   { "mouse", 0, NULL, 1000 + hw_mouse },
+  { "joystick", 0, NULL, 1000 + hw_joystick },
   { "keyboard", 0, NULL, 1000 + hw_keyboard },
   { "sound", 0, NULL, 1000 + hw_sound },
   { "isdn", 0, NULL, 1000 + hw_isdn },

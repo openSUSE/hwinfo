@@ -3272,6 +3272,10 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_mouse);
         break;
 
+      case hw_joystick:
+        hd_set_probe_feature(hd_data, pr_usb);
+        break;
+
       case hw_keyboard:
         hd_set_probe_feature(hd_data, pr_misc);
         hd_set_probe_feature(hd_data, pr_adb);
@@ -4335,6 +4339,10 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         base_class = bc_mouse;
         break;
 
+      case hw_joystick:
+        base_class = bc_joystick;
+        break;
+
       case hw_keyboard:
         base_class = bc_keyboard;
         break;
@@ -4468,7 +4476,7 @@ void short_vendor(char *vendor)
     america", " co", " of", "solutions", " as", "publishing", "(old)", "
     usa", " gmbh", "electronic", "components", "(matsushita)", " ab", "
     pte", " north", " japan", "limited", "microcomputer", " kg",
-    "incorporated", "semiconductor"
+    "incorporated", "semiconductor", "graphics"
   };
   int i, j;
   int len, len1, len2;

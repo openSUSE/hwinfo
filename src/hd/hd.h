@@ -87,10 +87,10 @@ typedef enum probe_feature {
  * if you want to modify this: cf. manual.c::hw_items[]
  */
 typedef enum hw_item {
-  hw_sys = 1, hw_cpu, hw_keyboard, hw_braille, hw_mouse, hw_printer,
-  hw_scanner, hw_monitor, hw_display, hw_tv, hw_sound, hw_storage_ctrl,
-  hw_network_ctrl, hw_isdn, hw_modem, hw_network, hw_disk, hw_partition,
-  hw_cdrom, hw_floppy, hw_manual,
+  hw_sys = 1, hw_cpu, hw_keyboard, hw_braille, hw_mouse, hw_joystick,
+  hw_printer, hw_scanner, hw_monitor, hw_display, hw_tv, hw_sound,
+  hw_storage_ctrl, hw_network_ctrl, hw_isdn, hw_modem, hw_network, hw_disk,
+  hw_partition, hw_cdrom, hw_floppy, hw_manual,
   hw_all					/* hw_all must be last */
 } hd_hw_item_t;
 
@@ -109,7 +109,7 @@ typedef enum base_classes {
   // add our own classes here (starting at 0x100 as PCI values are 8 bit)
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,
   bc_storage_device, bc_network_interface, bc_keyboard, bc_printer,
-  bc_hub, bc_braille, bc_scanner
+  bc_hub, bc_braille, bc_scanner, bc_joystick
 } hd_base_classes_t;
 
 /* subclass values of bc_storage */
