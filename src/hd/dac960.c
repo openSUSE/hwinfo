@@ -5,8 +5,6 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <linux/hdreg.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -27,10 +25,9 @@ void hd_scan_dac960(hd_data_t *hd_data)
   char *fname = NULL;
   char buf0[32], buf1[32];
   str_list_t *sl, *sl0;
-  int i, j, fd;
+  int i, j;
   unsigned u0, u1, u2, secs, heads;
   unsigned pci_slot, pci_func;
-  struct hd_geometry geo;
   hd_res_t *res;
 
   if(!hd_probe_feature(hd_data, pr_dac960)) return;
@@ -84,29 +81,20 @@ void hd_scan_dac960(hd_data_t *hd_data)
         res->size.val1 = u2;
         res->size.val2 = 512;
 
-        fd = -1;
-        // GETGEO always fails???
-        if(
-          (fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK)) >= 0 &&
-          !ioctl(fd, HDIO_GETGEO, &geo)
-        ) {
-          res = add_res_entry(&hd->res, new_mem(sizeof *res));
-          res->disk_geo.type = res_disk_geo;
-          res->disk_geo.cyls = geo.cylinders;
-          res->disk_geo.heads = geo.heads;
-          res->disk_geo.sectors = geo.sectors;
-          res->disk_geo.logical = 1;
-        }
-        else if(secs && heads) {
-          res = add_res_entry(&hd->res, new_mem(sizeof *res));
-          res->disk_geo.type = res_disk_geo;
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->disk_geo.type = res_disk_geo;
+        res->disk_geo.logical = 1;
+
+        if(secs && heads) {
           res->disk_geo.cyls = u2 / (heads * secs);
           res->disk_geo.heads = heads;
           res->disk_geo.sectors = secs;
-          res->disk_geo.logical = 1;
         }
-
-        if(fd >= 0) close(fd);
+        else {
+          res->disk_geo.heads = 255;
+          res->disk_geo.sectors = 63;
+          res->disk_geo.cyls = u2 / (63 * 255);
+        }
 
         if(pci_slot || pci_func) {
           for(hd2 = hd_data->hd; hd2; hd2 = hd2->next) {

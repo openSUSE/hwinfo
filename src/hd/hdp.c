@@ -50,6 +50,8 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     (h->detail->pci.data->flags & (1 << pci_flag_agp))
   ) s = "(AGP)";
 
+  //  pci_flag_pm: dump_line0(", supports PM");
+
   if(h->detail && h->detail->type == hd_detail_isapnp) s = "(PnP)";
 
   a0 = hd_bus_name(hd_data, h->bus);
@@ -59,8 +61,6 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     h->idx, a0 ? a0 : "?", s, h->slot, h->func,
     h->base_class, h->sub_class, a1 ? a1 : "?"
   );
-
-//  pci_flag_pm: dump_line0(", supports PM");
 
   ind += 2;
 

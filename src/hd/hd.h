@@ -184,6 +184,7 @@ typedef struct s_str_list_t {
 typedef struct s_pci_t {
   struct s_pci_t *next;				/* linked list */
   unsigned data_len;				/* the actual length of the data field */
+  unsigned data_ext_len;			/* max. accessed config byte; see code */
   unsigned char data[256];			/* the PCI data */
   char *log;					/* log messages */
   unsigned flags,				/* various info, see enum pci_flags */

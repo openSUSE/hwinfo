@@ -20,6 +20,7 @@
  */
 
 
+static unsigned char pci_cfg_byte(pci_t *pci, int fd, unsigned idx);
 static void get_pci_data(hd_data_t *hd_data);
 static void dump_pci_data(hd_data_t *hd_data);
 static int f_read(int fd, off_t ofs, void *buf, size_t len);
@@ -126,6 +127,25 @@ void hd_scan_pci(hd_data_t *hd_data)
   }
 }
 
+/*
+ * get a byte from pci config space
+ */
+unsigned char pci_cfg_byte(pci_t *pci, int fd, unsigned idx)
+{
+  unsigned char uc;
+
+  if(idx >= sizeof pci->data) return 0;
+  if(idx < pci->data_len) return pci->data[idx];
+  if(idx < pci->data_ext_len && pci->data[idx]) return pci->data[idx];
+  if(lseek(fd, idx, SEEK_SET) != idx) return 0;
+  if(read(fd, &uc, 1) != 1) return 0;
+  pci->data[idx] = uc;
+
+  if(idx >= pci->data_ext_len) pci->data_ext_len = idx + 1;
+
+  return uc;
+}
+
 
 /*
  * Get the (raw) PCI data.
@@ -188,7 +208,8 @@ void get_pci_data(hd_data_t *hd_data)
       PROGRESS(2, ++prog_cnt, "raw data");
 
       /* ##### for CARDBUS things: 0x80 bytes? */
-      p->data_len = read(fd, p->data, hd_probe_feature(hd_data, pr_pci_ext) ? sizeof p->data : 0x40);
+      p->data_len = p->data_ext_len =
+        read(fd, p->data, hd_probe_feature(hd_data, pr_pci_ext) ? sizeof p->data : 0x40);
       if(p->data_len >= 0x40) {
         p->hdr_type = p->data[PCI_HEADER_TYPE] & 0x7f;
         p->cmd = p->data[PCI_COMMAND] + (p->data[PCI_COMMAND + 1] << 8);
@@ -252,12 +273,13 @@ void get_pci_data(hd_data_t *hd_data)
           /* let's get through the capability list */
           if(p->hdr_type == PCI_HEADER_TYPE_NORMAL && (nxt = p->data[PCI_CAPABILITY_LIST])) {
             /*
-             * Cut out after 20 capabilities to avoid infinite recursion due
-             * to (potentially) malformed data. 20 *is* completely
-             * arbitrary, though.
+             * Cut out after 10 capabilities to avoid infinite recursion due
+             * to (potentially) malformed data. 10 is more or less
+             * arbitrary, though (the capabilities are bits in a byte, so 8 entries
+             * should suffice).
              */
-            for(j = 0; j < 20 && nxt && nxt <= 0xfe; j++) {
-              switch(p->data[nxt]) {
+            for(j = 0; j < 10 && nxt && nxt <= 0xfe; j++) {
+              switch(pci_cfg_byte(p, fd, nxt)) {
                 case PCI_CAP_ID_PM:
                   p->flags |= (1 << pci_flag_pm);
                   break;
@@ -266,7 +288,7 @@ void get_pci_data(hd_data_t *hd_data)
                   p->flags |= (1 << pci_flag_agp);
                   break;
               }
-              nxt = p->data[nxt + 1];
+              nxt = pci_cfg_byte(p, fd, nxt + 1);
             }
           }
         }
@@ -422,9 +444,9 @@ void dump_pci_data(hd_data_t *hd_data)
 
     if(p->log) ADD2LOG("%s", p->log);
 
-    for(i = 0; i < p->data_len; i += 0x10) {
+    for(i = 0; i < p->data_ext_len; i += 0x10) {
       ADD2LOG("  %02x: ", i);
-      j = p->data_len - i;
+      j = p->data_ext_len - i;
       hexdump(&hd_data->log, 1, j > 0x10 ? 0x10 : j, p->data + i);
       ADD2LOG("\n");
     }
