@@ -290,6 +290,10 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
       if(i != -1) {
         hd_clear_probe_feature(hd_data, pr_all);
         hd_set_probe_feature(hd_data, i);
+        if(i == pr_isapnp) {
+          hd_set_probe_feature(hd_data, pr_isapnp_mod);
+          hd_set_probe_feature(hd_data, pr_misc);
+        }
         hd_scan(hd_data);
         if(j != -1) {
           hd0 = hd_bus_list(hd_data, j);

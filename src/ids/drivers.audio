@@ -22,3 +22,82 @@ s4001 2003
 # SS10/SS20 DBRI
 s4001 2004
 	m	dbri
+
+# sound/cmpci.c
+13f6 0100 
+13f6 0101
+13f6 0111
+	m	cmpci
+
+# sound/cs4281.c
+1013 6005
+	m	cs4281
+
+# sound/cs46xx.c
+1013 6001
+1013 6003+2
+	m	cs46xx
+
+# sound/emu10k1/main.c
+1102 0002
+	m	emu10k1
+
+# sound/es1370.c
+1274 5000
+	m	es1370
+
+# sound/es1371.c
+1274 1371
+1274 5880
+1102 8938 
+	m	es1371
+
+# sound/esssolo1.c
+125d 1969
+	m	esssolo1
+
+# sound/i810_audio.c
+8086 2415
+8086 2425
+8086 2445
+8086 7195
+	m	i810_audio
+
+# sound/maestro.c
+125d 1968
+125d 1978
+1285 0100
+	m	maestro
+
+# sound/nm256_audio.c
+10c8 8005+2
+	m	nm256_audio
+
+# sound/sonicvibes
+5333 ca00
+	m	sonicvibes.c
+
+# sound/trident.c
+1023 2000
+1023 2001
+1039 7018
+10b9 5451
+	m	trident.o
+
+# sound/via82cxxx_audio.c
+1106 3058
+	m	via82cxxx_audio.c
+
+# sound/ymfpci.c
+1073 0004
+1073 000A
+1073 000C
+1073 000D
+1073 0010
+1073 0012
+	m	ymfpci
+
+# aureal vortex driver
+12eb 0001+3
+	m	au8820
+

@@ -4,8 +4,16 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-# bttv cards
+# media/video/bttv-driver.c
 109e 0350+2
 109e 036e+2
 	a	bttv
 
+# media/video/buz.c
+11de 6057
+	a	buz
+
+# media/video/zr36120.c
+11de 6120
+	a	zr36120
+	

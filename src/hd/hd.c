@@ -175,6 +175,9 @@ static struct s_pr_flags {
   { pr_pci_range,    pr_pci,        4|2  , "pci.range"    },
   { pr_pci_ext,      pr_pci,        4|2  , "pci.ext"      },
   { pr_isapnp,       0,             4|2|1, "isapnp"       },
+  { pr_isapnp_old,   pr_isapnp,         0, "isapnp.old"   },
+  { pr_isapnp_new,   pr_isapnp,         0, "isapnp.new"   },
+  { pr_isapnp_mod,   0,             4    , "isapnp.mod"   },
   { pr_isapnp,       0,                 0, "pnpdump"      },	/* alias for isapnp */
   { pr_cdrom,        0,           8|4|2|1, "cdrom"        },
   { pr_cdrom_info,   pr_cdrom,    8|4|2|1, "cdrom.info"   },
@@ -221,11 +224,13 @@ static struct s_pr_flags {
   { pr_braille_alva, pr_braille,    4|2|1, "braille.alva" },
   { pr_braille_fhp,  pr_braille,    4|2|1, "braille.fhp"  },
   { pr_braille_ht,   pr_braille,    4|2|1, "braille.ht"   },
+  { pr_braille_baum, pr_braille,    4|2|1, "braille.baum" },
 #else
   { pr_braille,      0,             4|2  , "braille"      },
   { pr_braille_alva, pr_braille,        0, "braille.alva" },
   { pr_braille_fhp,  pr_braille,    4|2  , "braille.fhp"  },
   { pr_braille_ht,   pr_braille,    4|2  , "braille.ht"   },
+  { pr_braille_baum, pr_braille,    4|2  , "braille.baum" },
 #endif
   { pr_ignx11,       0,                 0, "ignx11"       },
   { pr_sys,          0,           8|4|2|1, "sys"          },
@@ -2587,8 +2592,9 @@ char *module_cmd(hd_t *hd, char *cmd)
   // skip inactive PnP cards
   // ##### Really necessary here?
   if(
+    hd->is.isapnp &&
     hd->detail &&
-    hd->detail->type == hd_detail_isapnp &&
+    hd->detail->isapnp.data &&
     !(hd->detail->isapnp.data->flags & (1 << isapnp_flag_act))
   ) return NULL;
 
@@ -3092,17 +3098,17 @@ enum boot_arch hd_boot_arch(hd_data_t *hd_data)
 void hd_copy(hd_t *dst, hd_t *src)
 {
   hd_t *tmp;
-  unsigned u;
+//  unsigned u;
 
   tmp = dst->next;
-  u = dst->idx;
+//  u = dst->idx;
 
   *dst = *src;
   src->ref_cnt++;
   dst->ref = src;
 
   dst->next = tmp;
-  dst->idx = u;
+//  dst->idx = u;
 
   /* needed to keep in sync with the real device tree */
   if(
@@ -3201,12 +3207,13 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         break;
 
       case hw_sound:
+        hd_set_probe_feature(hd_data, pr_misc);
         hd_set_probe_feature(hd_data, pr_pci);
         hd_set_probe_feature(hd_data, pr_isapnp);
+        hd_set_probe_feature(hd_data, pr_isapnp_mod);
         hd_set_probe_feature(hd_data, pr_sbus);
 #ifdef __PPC__
         hd_set_probe_feature(hd_data, pr_prom);
-        hd_set_probe_feature(hd_data, pr_misc);
 #endif
         break;
 
@@ -3214,6 +3221,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_misc);		/* get basic i/o res */
         hd_set_probe_feature(hd_data, pr_pci);
         hd_set_probe_feature(hd_data, pr_isapnp);
+        hd_set_probe_feature(hd_data, pr_isapnp_mod);
         hd_set_probe_feature(hd_data, pr_isa_isdn);
         hd_set_probe_feature(hd_data, pr_isdn);
         break;
@@ -3237,13 +3245,14 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         break;
 
       case hw_network_ctrl:
+        hd_set_probe_feature(hd_data, pr_misc);
         hd_set_probe_feature(hd_data, pr_pci);
         hd_set_probe_feature(hd_data, pr_isapnp);
+        hd_set_probe_feature(hd_data, pr_isapnp_mod);
         hd_set_probe_feature(hd_data, pr_sbus);
         hd_set_probe_feature(hd_data, pr_isdn);
 #ifdef __PPC__
         hd_set_probe_feature(hd_data, pr_prom);
-        hd_set_probe_feature(hd_data, pr_misc);
 #endif
 #ifdef __s390__
         hd_set_probe_feature(hd_data, pr_net);
@@ -3270,6 +3279,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_braille_alva);
         hd_set_probe_feature(hd_data, pr_braille_fhp);
         hd_set_probe_feature(hd_data, pr_braille_ht);
+        hd_set_probe_feature(hd_data, pr_braille_baum);
         break;
 
       case hw_sys:

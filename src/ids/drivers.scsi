@@ -22,6 +22,7 @@
 	i	initio
 
 # scsi/aic7xxx.c
+9004 1078
 9004 2178
 9004 3860
 9004 5078
@@ -65,9 +66,10 @@
 1191 8030
 1191 8040
 1191 8050
+1191 8060
 	i	atp870u
 
-# scsi/eata.c
+# scsi/eata_dma.c
 1044 a400
 	i	eata
 
@@ -93,13 +95,18 @@
 
 # scsi/ncr53c8xx.c
 # scsi/sym53c8xx.c
+# sym* only
+1000 0020+2
+	i	sym53c8xx
+
 # which one to prefer???
 1000 0012
 1000 008f
 	i	sym53c8xx
 	i	ncr53c8xx
 
-1000 0001+6
+1000 0001+4
+1000 0006
 # 000f: see #5816
 1000 000f
 1000 000a+4
@@ -139,9 +146,38 @@
 10cd 2500
 	i	advansys
 
-# scsi/dpt_i2o.c
+# scsi/dpti.c
 1044 a501
 	i	dpt_i2o
+
+# scsi/3w-xxxx.c
+13c1 1000+2
+	i	3w-xxxx
+
+# scsi/53c7,8xx.c
+1000 0001+4
+	i	53c7,8xx
+
+# scsi/AM53C974.c
+1022 2020
+	i	AM53C974
+
+# scsi/dmx3191d.c
+134a 0001
+	i	dmx3191d
+
+# scsi/pci2000.c
+1256 5201
+	i	pci2000
+
+# scsi/pci2220i.c
+1256 4401
+	i	pci2220i
+
+# scsi/qlogicfc.c
+1077 2100
+1077 2200
+	i	qlogicfc
 
 # scsi/aha152x.c
 ADP 1505
@@ -167,8 +203,4 @@ s0401 0030
 # scsi/mac53c94.c
 s0401 0031
 	i	mac53c94
-
-# scsi/3w-xxxx.c
-13c1 1000
-	i	3w-xxxx
 

@@ -21,22 +21,21 @@
 #if defined(__i386__) || defined(__alpha__)
 
 static void dump_raw_isapnp(hd_data_t *hd_data);
-static void get_read_port(isapnp_t *);
+static void get_read_port(hd_data_t *hd_data, isapnp_t *);
 static isapnp_res_t *get_isapnp_res(isapnp_card_t *, int, int);    
 static unsigned find_io_range(isapnp_card_t *, unsigned);
 static void dump_pnp_res(hd_data_t *hd_data, isapnp_card_t *);
 
+static void build_list_old(hd_data_t *hd_data);
+static void build_list_new(hd_data_t *hd_data, str_list_t *isapnp_list);
+
 void hd_scan_isapnp(hd_data_t *hd_data)
 {
   hd_t *hd;
-  int i, j, k;
-  unsigned u, u2, ser;
-  static unsigned mem32_cfgs[4] = { CFG_MEM32_0, CFG_MEM32_1, CFG_MEM32_2, CFG_MEM32_3 };
-  unsigned char *t, *v, *s;
-  isapnp_card_t *c;
-  isapnp_res_t *r;
-  isapnp_dev_t *dev;
   hd_res_t *res;
+  int method;
+  int isapnp_ok;
+  str_list_t *isapnp_list = NULL, *sl;
   
   if(!hd_probe_feature(hd_data, pr_isapnp)) return;
 
@@ -57,21 +56,50 @@ void hd_scan_isapnp(hd_data_t *hd_data)
     /* keep the port */
   }
 
-  if(!hd_data->isapnp->read_port) get_read_port(hd_data->isapnp);
+  if(!hd_data->isapnp->read_port) get_read_port(hd_data, hd_data->isapnp);
 
-  PROGRESS(2, 0, "get pnp data");
-  
-  hd_data->module = mod_pnpdump;
-  pnpdump(hd_data, 0);
-  hd_data->module = mod_isapnp;
+  method = hd_data->kernel_version == KERNEL_22 ? 0 : 1;
+  if(hd_probe_feature(hd_data, pr_isapnp_old)) method = 0;
+  if(hd_probe_feature(hd_data, pr_isapnp_new)) method = 1;
 
-  if(!hd_data->isapnp->cards) hd_data->isapnp->read_port = 0;
+  if(
+    method == 1 &&
+    !hd_probe_feature(hd_data, pr_isapnp_new) &&
+    !hd_module_is_active(hd_data, "isa-pnp")
+  ) method = 0;
 
-  if((hd_data->debug & HD_DEB_ISAPNP)) dump_raw_isapnp(hd_data);
+  if(method == 0) {
+    PROGRESS(2, 0, "get pnp data");
+    
+    hd_data->module = mod_pnpdump;
+    pnpdump(hd_data, 0);
+    hd_data->module = mod_isapnp;
 
-  PROGRESS(3, 0, "build list");
+    if(!hd_data->isapnp->cards) hd_data->isapnp->read_port = 0;
 
-  if(hd_data->isapnp->cards) {
+    if((hd_data->debug & HD_DEB_ISAPNP)) dump_raw_isapnp(hd_data);
+
+    isapnp_ok = hd_data->isapnp->cards;
+  }
+  else {
+    PROGRESS(3, 0, "get pnp data");
+
+    isapnp_list = read_file(PROC_ISAPNP, 0, 0);
+
+    if((hd_data->debug & HD_DEB_ISAPNP)) {
+      ADD2LOG("----- %s -----\n", PROC_ISAPNP);
+      for(sl = isapnp_list; sl; sl = sl->next) {
+        ADD2LOG("  %s", sl->str);
+      }
+      ADD2LOG("----- %s end -----\n", PROC_ISAPNP);
+    }
+
+    isapnp_ok = isapnp_list && hd_data->isapnp->read_port ? 1 : 0;
+  }
+
+  PROGRESS(4, 0, "build list");
+
+  if(isapnp_ok) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
     hd->bus = bus_isa;
     hd->base_class = bc_internal;
@@ -99,209 +127,14 @@ void hd_scan_isapnp(hd_data_t *hd_data)
     res->io.access = acc_ro;
   }
 
-  for(i = 0; i < hd_data->isapnp->cards; i++) {
-    c = hd_data->isapnp->card + i;
-    t = c->serial;
-
-    for(j = 0; j < c->log_devs; j++) {
-      hd = add_hd_entry(hd_data, __LINE__, 0);
-
-      hd->detail = new_mem(sizeof *hd->detail);
-      hd->detail->type = hd_detail_isapnp;
-      dev = hd->detail->isapnp.data = new_mem(sizeof *hd->detail->isapnp.data);
-      dev->card = new_mem(sizeof *dev->card);
-      *dev->card = *c;
-      dev->dev = j;
-      dev->ref = j ? 1 : 0;
-
-      if(c->broken) hd->broken = 1;
-
-      hd->bus = bus_isa;
-      hd->is.isapnp = 1;
-      hd->slot = c->csn;
-      hd->func = j;
-
-      hd->vend = MAKE_ID(TAG_EISA, (t[0] << 8) + t[1]);
-      hd->dev = MAKE_ID(TAG_EISA, (t[2] << 8) + t[3]);
-
-      if((u = device_class(hd_data, hd->vend, hd->dev))) {
-        hd->base_class = u >> 8;
-        hd->sub_class = u & 0xff;
-      }
-
-      if(
-        (ID_VALUE(hd->vend) || ID_VALUE(hd->dev)) &&
-        !((s = hd_device_name(hd_data, hd->vend, hd->dev)) && *s)
-      ) {
-        if((r = get_isapnp_res(c, 0, RES_ANSI_NAME))) {
-          s = canon_str(r->data, r->len);
-          add_device_name(hd_data, hd->vend, hd->dev, s);
-          free_mem(s);
-        }
-      }
-
-      ser = (t[7] << 24) + (t[6] << 16) + (t[5] << 8)+ t[4];
-      if(ser != -1) {
-        str_printf(&hd->serial, 0, "%u", ser);
-      }
-
-      if((c->ldev_regs[j][0] & 1)) {
-        dev->flags |= (1 << isapnp_flag_act);
-      }
-
-      if((r = get_isapnp_res(c, j + 1, RES_LOG_DEV_ID))) {
-        v = r->data;
-        hd->sub_vend = MAKE_ID(TAG_EISA, (v[0] << 8) + v[1]);
-        hd->sub_dev = MAKE_ID(TAG_EISA, (v[2] << 8) + v[3]);
-        if(
-          c->log_devs == 1 &&
-          hd->sub_vend == hd->vend &&
-          hd->sub_dev == hd->dev
-        ) {
-          hd->sub_vend = hd->sub_dev = 0;
-        }
-
-        if((u = sub_device_class(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev))) {
-          hd->base_class = u >> 8;
-          hd->sub_class = u & 0xff;
-        }
-
-        if(
-          (ID_VALUE(hd->sub_vend) || ID_VALUE(hd->sub_dev)) &&
-          !hd_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev)
-        ) {
-          if((r = get_isapnp_res(c, j + 1, RES_ANSI_NAME))) {
-            s = canon_str(r->data, r->len);
-            add_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev, s);
-            free_mem(s);
-          }
-        }
-      }
-
-      if((r = get_isapnp_res(c, j + 1, RES_COMPAT_DEV_ID))) {
-        v = r->data;
-
-        hd->compat_vend = MAKE_ID(TAG_EISA, (v[0] << 8) + v[1]);
-        hd->compat_dev = MAKE_ID(TAG_EISA, (v[2] << 8) + v[3]);
-
-        if(!(hd->base_class || hd->sub_class)) {
-          if((u = device_class(hd_data, hd->compat_vend, hd->compat_dev))) {
-            hd->base_class = u >> 8;
-            hd->sub_class = u & 0xff;
-          }
-          else if(hd->compat_vend == MAKE_ID(TAG_EISA, 0x41d0)) {
-            /* 0x41d0 is 'PNP' */
-            switch((hd->compat_dev >> 12) & 0xf) {
-              case   8:
-                hd->base_class = bc_network;
-                hd->sub_class = 0x80;
-                break;
-              case 0xa:
-                hd->base_class = bc_storage;
-                hd->sub_class = 0x80;
-                break;
-              case 0xb:
-                hd->base_class = bc_multimedia;
-                hd->sub_class = 0x80;
-                break;
-              case 0xc:
-              case 0xd:
-                hd->base_class = bc_modem;
-                break;
-            }
-          }
-        }
-      }
-
-
-      v = c->ldev_regs[j];
-
-      for(k = 0; k < 4; k++) {
-        u = (v[CFG_MEM24     - 0x30 + 8 * k] << 16) +
-            (v[CFG_MEM24 + 1 - 0x30 + 8 * k] << 8) +
-             v[CFG_MEM24 + 2 - 0x30 + 8 * k];
-        if(u) {
-          res = add_res_entry(&hd->res, new_mem(sizeof *res));
-          res->mem.type = res_mem;
-          res->mem.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
-          res->mem.access = acc_rw;
-          res->mem.base = u & ~0xff;
-          u2 = (v[CFG_MEM24 + 3 - 0x30 + 8 * k] << 16) +
-               (v[CFG_MEM24 + 4 - 0x30 + 8 * k] << 8);
-          if(u & 1) {
-            if(u2 >= res->mem.base)
-              res->mem.range = u2 - res->mem.base;
-          }
-          else {
-            res->mem.range = u2 + 0x100;
-          }
-        }
-      }
-
-      for(k = 0; k < 4; k++) {
-        u = (v[mem32_cfgs[k]     - 0x30] << 24) +
-            (v[mem32_cfgs[k] + 1 - 0x30] << 16) +
-            (v[mem32_cfgs[k] + 2 - 0x30] << 8) +
-             v[mem32_cfgs[k] + 3 - 0x30];
-        if(u) {
-          res = add_res_entry(&hd->res, new_mem(sizeof *res));
-          res->mem.type = res_mem;
-          res->mem.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
-          res->mem.access = acc_rw;
-          res->mem.base = u;
-          u2 = (v[mem32_cfgs[k] + 5 - 0x30] << 24) +
-               (v[mem32_cfgs[k] + 6 - 0x30] << 16) +
-               (v[mem32_cfgs[k] + 7 - 0x30] << 8) +
-                v[mem32_cfgs[k] + 8 - 0x30];
-          if(v[mem32_cfgs[k] + 4 - 0x30] & 1) {
-            if(u2 >= res->mem.base)
-              res->mem.range = u2 - res->mem.base;
-          }
-          else {
-            res->mem.range = u2;
-            res->mem.range++;
-          }
-        }
-      }
-
-      for(k = 0; k < 8; k++) {
-        u = (v[CFG_IO_HI_BASE - 0x30 + 2 * k] << 8) +
-             v[CFG_IO_LO_BASE - 0x30 + 2 * k];
-        if(u) {
-          res = add_res_entry(&hd->res, new_mem(sizeof *res));
-          res->io.type = res_io;
-          res->io.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
-          res->io.base = u;
-          res->io.range = find_io_range(c, u);
-          res->io.access = acc_rw;
-        }
-      }
-
-      for(k = 0; k < 2; k++) {
-        u = v[CFG_IRQ - 0x30 + 2 * k] & 15;
-        if(u) {
-          res = add_res_entry(&hd->res, new_mem(sizeof *res));
-          res->irq.type = res_irq;
-          res->irq.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
-          res->irq.base = u;
-        }
-      }
-
-      for(k = 0; k < 2; k++) {
-        u = v[CFG_DMA - 0x30 + k] & 7;
-        if(u != 4) {
-          res = add_res_entry(&hd->res, new_mem(sizeof *res));
-          res->dma.type = res_dma;
-          res->dma.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
-          res->dma.base = u;
-        }
-      }
-
-    }
+  if(method == 0) {
+    build_list_old(hd_data);
+  }
+  else {
+    build_list_new(hd_data, isapnp_list);
   }
 
-  hd_data->isapnp->card = free_mem(hd_data->isapnp->card);
-
+  free_str_list(isapnp_list);
 }
 
 unsigned char *add_isapnp_card_res(isapnp_card_t *ic, int len, int type)
@@ -382,23 +215,29 @@ void dump_raw_isapnp(hd_data_t *hd_data)
 }
 
 
-void get_read_port(isapnp_t *p)
+void get_read_port(hd_data_t *hd_data, isapnp_t *p)
 {
-  FILE *f;
-  char buf[200];
   int i = 0;
+  str_list_t *sl0, *sl;
+  hd_res_t *res;
 
   p->read_port = 0;
 
-  if(!(f = fopen(ISAPNP_CONF, "r"))) return;
+  res = NULL;
+  gather_resources(hd_data->misc, &res, "isapnp read", W_IO);
+  if(res && res->any.type == res_io) p->read_port = res->io.base;
+  free_res_list(res);
 
-  while(fgets(buf, sizeof buf, f)) {
-    if(sscanf(buf, " ( READPORT %x )", &i) == 1) break;
+  if(p->read_port) return;
+
+  sl0 = read_file(ISAPNP_CONF, 0, 0);
+  for(sl = sl0; sl; sl = sl->next) {
+    if(sscanf(sl->str, " ( READPORT %x )", &i) == 1) {
+      p->read_port = i;
+      break;
+    }
   }
-
-  fclose(f);
-
-  p->read_port = i;
+  free_str_list(sl0);
 }
 
 
@@ -540,6 +379,405 @@ void dump_pnp_res(hd_data_t *hd_data, isapnp_card_t *c)
     }
   }
 }
+
+
+void build_list_old(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  int i, j, k;
+  unsigned u, u2, ser;
+  static unsigned mem32_cfgs[4] = { CFG_MEM32_0, CFG_MEM32_1, CFG_MEM32_2, CFG_MEM32_3 };
+  unsigned char *t, *v, *s;
+  isapnp_card_t *c;
+  isapnp_res_t *r;
+  isapnp_dev_t *dev;
+  hd_res_t *res;
+
+  for(i = 0; i < hd_data->isapnp->cards; i++) {
+    c = hd_data->isapnp->card + i;
+    t = c->serial;
+
+    for(j = 0; j < c->log_devs; j++) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+
+      hd->detail = new_mem(sizeof *hd->detail);
+      hd->detail->type = hd_detail_isapnp;
+      dev = hd->detail->isapnp.data = new_mem(sizeof *hd->detail->isapnp.data);
+      dev->card = new_mem(sizeof *dev->card);
+      *dev->card = *c;
+      dev->dev = j;
+      dev->ref = j ? 1 : 0;
+
+      if(c->broken) hd->broken = 1;
+
+      hd->bus = bus_isa;
+      hd->is.isapnp = 1;
+      hd->slot = c->csn;
+      hd->func = j;
+
+      hd->vend = MAKE_ID(TAG_EISA, (t[0] << 8) + t[1]);
+      hd->dev = MAKE_ID(TAG_EISA, (t[2] << 8) + t[3]);
+
+      if((u = device_class(hd_data, hd->vend, hd->dev))) {
+        hd->base_class = u >> 8;
+        hd->sub_class = u & 0xff;
+      }
+
+      if(
+        (ID_VALUE(hd->vend) || ID_VALUE(hd->dev)) &&
+        !((s = hd_device_name(hd_data, hd->vend, hd->dev)) && *s)
+      ) {
+        if((r = get_isapnp_res(c, 0, RES_ANSI_NAME))) {
+          s = canon_str(r->data, r->len);
+          add_device_name(hd_data, hd->vend, hd->dev, s);
+          free_mem(s);
+        }
+      }
+
+      ser = (t[7] << 24) + (t[6] << 16) + (t[5] << 8)+ t[4];
+      if(ser != -1) {
+        str_printf(&hd->serial, 0, "%u", ser);
+      }
+
+      if((c->ldev_regs[j][0] & 1)) {
+        dev->flags |= (1 << isapnp_flag_act);
+      }
+
+      if((r = get_isapnp_res(c, j + 1, RES_LOG_DEV_ID))) {
+        v = r->data;
+        hd->sub_vend = MAKE_ID(TAG_EISA, (v[0] << 8) + v[1]);
+        hd->sub_dev = MAKE_ID(TAG_EISA, (v[2] << 8) + v[3]);
+        if(
+//          c->log_devs == 1 &&
+          hd->sub_vend == hd->vend &&
+          hd->sub_dev == hd->dev
+        ) {
+          hd->sub_vend = hd->sub_dev = 0;
+        }
+
+        if((u = sub_device_class(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev))) {
+          hd->base_class = u >> 8;
+          hd->sub_class = u & 0xff;
+        }
+
+        if(
+          (ID_VALUE(hd->sub_vend) || ID_VALUE(hd->sub_dev)) &&
+          !hd_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev)
+        ) {
+          if((r = get_isapnp_res(c, j + 1, RES_ANSI_NAME))) {
+            s = canon_str(r->data, r->len);
+            add_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev, s);
+            free_mem(s);
+          }
+        }
+      }
+
+      if((r = get_isapnp_res(c, j + 1, RES_COMPAT_DEV_ID))) {
+        v = r->data;
+
+        hd->compat_vend = MAKE_ID(TAG_EISA, (v[0] << 8) + v[1]);
+        hd->compat_dev = MAKE_ID(TAG_EISA, (v[2] << 8) + v[3]);
+
+        if(!(hd->base_class || hd->sub_class)) {
+          if((u = device_class(hd_data, hd->compat_vend, hd->compat_dev))) {
+            hd->base_class = u >> 8;
+            hd->sub_class = u & 0xff;
+          }
+          else if(hd->compat_vend == MAKE_ID(TAG_EISA, 0x41d0)) {
+            /* 0x41d0 is 'PNP' */
+            switch((hd->compat_dev >> 12) & 0xf) {
+              case   8:
+                hd->base_class = bc_network;
+                hd->sub_class = 0x80;
+                break;
+              case 0xa:
+                hd->base_class = bc_storage;
+                hd->sub_class = 0x80;
+                break;
+              case 0xb:
+                hd->base_class = bc_multimedia;
+                hd->sub_class = 0x80;
+                break;
+              case 0xc:
+              case 0xd:
+                hd->base_class = bc_modem;
+                break;
+            }
+          }
+        }
+      }
+
+
+      v = c->ldev_regs[j];
+
+      for(k = 0; k < 4; k++) {
+        u = (v[CFG_MEM24     - 0x30 + 8 * k] << 16) +
+            (v[CFG_MEM24 + 1 - 0x30 + 8 * k] << 8) +
+             v[CFG_MEM24 + 2 - 0x30 + 8 * k];
+        if(u) {
+          res = add_res_entry(&hd->res, new_mem(sizeof *res));
+          res->mem.type = res_mem;
+          res->mem.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
+          res->mem.access = acc_rw;
+          res->mem.base = u & ~0xff;
+          u2 = (v[CFG_MEM24 + 3 - 0x30 + 8 * k] << 16) +
+               (v[CFG_MEM24 + 4 - 0x30 + 8 * k] << 8);
+          if(u & 1) {
+            if(u2 >= res->mem.base)
+              res->mem.range = u2 - res->mem.base;
+          }
+          else {
+            res->mem.range = u2 + 0x100;
+          }
+        }
+      }
+
+      for(k = 0; k < 4; k++) {
+        u = (v[mem32_cfgs[k]     - 0x30] << 24) +
+            (v[mem32_cfgs[k] + 1 - 0x30] << 16) +
+            (v[mem32_cfgs[k] + 2 - 0x30] << 8) +
+             v[mem32_cfgs[k] + 3 - 0x30];
+        if(u) {
+          res = add_res_entry(&hd->res, new_mem(sizeof *res));
+          res->mem.type = res_mem;
+          res->mem.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
+          res->mem.access = acc_rw;
+          res->mem.base = u;
+          u2 = (v[mem32_cfgs[k] + 5 - 0x30] << 24) +
+               (v[mem32_cfgs[k] + 6 - 0x30] << 16) +
+               (v[mem32_cfgs[k] + 7 - 0x30] << 8) +
+                v[mem32_cfgs[k] + 8 - 0x30];
+          if(v[mem32_cfgs[k] + 4 - 0x30] & 1) {
+            if(u2 >= res->mem.base)
+              res->mem.range = u2 - res->mem.base;
+          }
+          else {
+            res->mem.range = u2;
+            res->mem.range++;
+          }
+        }
+      }
+
+      for(k = 0; k < 8; k++) {
+        u = (v[CFG_IO_HI_BASE - 0x30 + 2 * k] << 8) +
+             v[CFG_IO_LO_BASE - 0x30 + 2 * k];
+        if(u) {
+          res = add_res_entry(&hd->res, new_mem(sizeof *res));
+          res->io.type = res_io;
+          res->io.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
+          res->io.base = u;
+          res->io.range = find_io_range(c, u);
+          res->io.access = acc_rw;
+        }
+      }
+
+      for(k = 0; k < 2; k++) {
+        u = v[CFG_IRQ - 0x30 + 2 * k] & 15;
+        if(u) {
+          res = add_res_entry(&hd->res, new_mem(sizeof *res));
+          res->irq.type = res_irq;
+          res->irq.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
+          res->irq.base = u;
+        }
+      }
+
+      for(k = 0; k < 2; k++) {
+        u = v[CFG_DMA - 0x30 + k] & 7;
+        if(u != 4) {
+          res = add_res_entry(&hd->res, new_mem(sizeof *res));
+          res->dma.type = res_dma;
+          res->dma.enabled = dev->flags & (1 << isapnp_flag_act) ? 1 : 0;
+          res->dma.base = u;
+        }
+      }
+    }
+  }
+
+  hd_data->isapnp->card = free_mem(hd_data->isapnp->card);
+
+}
+
+
+void build_list_new(hd_data_t *hd_data, str_list_t *isapnp_list)
+{
+  hd_t *hd = NULL;
+  str_list_t *sl;
+  char s1[4], s2[100];
+  int card, ldev, cdev_id, ldev_active = 0;
+  char *dev_name = NULL, *ldev_name = NULL, *db_name;
+  unsigned dev_id = 0, vend_id = 0, base_class = 0, sub_class = 0, ldev_id;
+  unsigned u, ux[5];
+  int i, j;
+  hd_res_t *res;
+
+  for(sl = isapnp_list; sl; sl = sl->next) {
+
+    if(sscanf(sl->str, "Card %d '%3s%4x:%99[^']", &card, s1, &dev_id, s2) == 4) {
+//      ADD2LOG("\n\n** card %d >%s< %04x >%s<**\n", card, s1, dev_id, s2);
+
+      dev_name = free_mem(dev_name);
+      if(strcmp(s2, "Unknown")) dev_name = new_str(s2);
+
+      dev_id = MAKE_ID(TAG_EISA, dev_id);
+      vend_id = name2eisa_id(s1);
+
+      base_class  = sub_class = 0;
+      if((u = device_class(hd_data, vend_id, dev_id))) {
+        base_class = u >> 8;
+        sub_class = u & 0xff;
+      }
+      
+      if(
+        (ID_VALUE(vend_id) || ID_VALUE(dev_id)) &&
+        !((db_name = hd_device_name(hd_data, vend_id, dev_id)) && *db_name)
+      ) {
+        if(dev_name) {
+          add_device_name(hd_data, vend_id, dev_id, dev_name);
+        }
+      }
+
+      continue;
+    }
+
+    if(sscanf(sl->str, " Logical device %d '%3s%4x:%99[^']", &ldev, s1, &ldev_id, s2) == 4) {
+//      ADD2LOG("\n\n** ldev %d >%s< %04x >%s<**\n", ldev, s1, ldev_id, s2);
+
+      ldev_name = free_mem(ldev_name);
+      if(strcmp(s2, "Unknown")) ldev_name = new_str(s2);
+
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+
+      hd->bus = bus_isa;
+      hd->is.isapnp = 1;
+      hd->slot = card;
+      hd->func = ldev;
+
+      hd->vend = vend_id;
+      hd->dev = dev_id;
+
+      hd->base_class = base_class;
+      hd->sub_class = sub_class;
+
+      hd->sub_dev = MAKE_ID(TAG_EISA, ldev_id);
+      hd->sub_vend = name2eisa_id(s1);
+
+      if(hd->sub_vend == hd->vend && hd->sub_dev == hd->dev) {
+        hd->sub_vend = hd->sub_dev = 0;
+      }
+
+      if((u = sub_device_class(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev))) {
+        hd->base_class = u >> 8;
+        hd->sub_class = u & 0xff;
+      }
+
+      if(
+        (ID_VALUE(hd->sub_vend) || ID_VALUE(hd->sub_dev)) &&
+        !hd_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev)
+      ) {
+        if(ldev_name) {
+          add_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev, ldev_name);
+        }
+      }
+
+      continue;
+    }
+
+    if(strstr(sl->str, "Device is not active")) {
+      ldev_active = 0;
+      continue;
+    }
+
+    if(strstr(sl->str, "Device is active")) {
+      ldev_active = 1;
+      continue;
+    }
+
+    if(hd && sscanf(sl->str, " Compatible device %3s%4x", s1, &cdev_id) == 2) {
+//      ADD2LOG("\n\n** cdev >%s< %04x **\n", s1, cdev_id);
+
+      hd->compat_dev = MAKE_ID(TAG_EISA, cdev_id);
+      hd->compat_vend = name2eisa_id(s1);
+
+      if(!(hd->base_class || hd->sub_class)) {
+        if((u = device_class(hd_data, hd->compat_vend, hd->compat_dev))) {
+          hd->base_class = u >> 8;
+          hd->sub_class = u & 0xff;
+        }
+        else if(hd->compat_vend == MAKE_ID(TAG_EISA, 0x41d0)) {
+          /* 0x41d0 is 'PNP' */
+          switch((hd->compat_dev >> 12) & 0xf) {
+            case   8:
+              hd->base_class = bc_network;
+              hd->sub_class = 0x80;
+              break;
+            case 0xa:
+              hd->base_class = bc_storage;
+              hd->sub_class = 0x80;
+              break;
+            case 0xb:
+              hd->base_class = bc_multimedia;
+              hd->sub_class = 0x80;
+              break;
+            case 0xc:
+            case 0xd:
+              hd->base_class = bc_modem;
+              break;
+          }
+        }
+      }
+
+      continue;
+    }
+
+    if(
+      hd &&
+      (j = sscanf(sl->str,
+        " Active port %x, %x, %x, %x, %x, %x",
+        ux, ux + 1, ux + 2, ux + 3, ux + 4, ux + 5
+      )) >= 1
+    ) {
+
+      for(i = 0; i < j; i++) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->io.type = res_io;
+        res->io.enabled = ldev_active ? 1 : 0;
+        res->io.base = ux[i];
+        res->io.access = acc_rw;
+      }
+
+      continue;
+    }
+
+    if(hd && (j = sscanf(sl->str, " Active IRQ %d [%x], %d [%x]", ux, ux + 1, ux + 2, ux + 3)) >= 1) {
+      for(i = 0; i < j; i += 2) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->irq.type = res_irq;
+        res->irq.enabled = ldev_active ? 1 : 0;
+        res->irq.base = ux[i];
+      }
+
+      continue;
+    }
+
+    if(hd && (j = sscanf(sl->str, " Active DMA %d, %d", ux, ux + 1)) >= 1) {
+      for(i = 0; i < j; i++) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->dma.type = res_dma;
+        res->dma.enabled = ldev_active ? 1 : 0;
+        res->dma.base = ux[i];
+      }
+
+      continue;
+    }
+
+
+  }
+
+  free_mem(dev_name);
+  free_mem(ldev_name);
+
+}
+
 
 #endif /* defined(__i386__) || defined(__alpha__) */
 

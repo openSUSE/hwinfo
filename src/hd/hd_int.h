@@ -27,6 +27,7 @@
 #define PROC_MEMINFO		"/proc/meminfo"
 #define PROC_DASD		"/proc/dasd"
 #define PROC_VERSION		"/proc/version"
+#define PROC_ISAPNP		"/proc/isapnp"
 
 #define DEV_USB_DEVICES		"/dev/usb/devices"
 #define DEV_NVRAM		"/dev/nvram"
@@ -167,6 +168,14 @@ int detect_smp(hd_data_t *hd_data);
 unsigned char *read_block0(hd_data_t *hd_data, char *dev, int *timeout);
 
 void hd_copy(hd_t *dst, hd_t *src);
+
+/* parameter for gather_resources(,,, which) */
+#define W_IO    (1 << 0)
+#define W_DMA   (1 << 1)
+#define W_IRQ   (1 << 2)
+
+void gather_resources(misc_t *m, hd_res_t **r, char *name, unsigned which);
+
 
 #ifdef __cplusplus
 }

@@ -1,18 +1,18 @@
 #x11DB
-#hwinfo data from 2001-04-30 15:43:17
+#hwinfo data from 2001-05-07 17:54:51
 #
 
 
 
 # Matrox:MGA G200 AGP
 102b 0521
-	x	4|mga||||NoHal|d|||
+	x	4|mga|||||d|||
 		VideoRam 8192
 
 
 # Matrox:MGA G200 AGP
 102b 0521
-	x	4|mga|3d|xf86_glx|dri,glx|NoHal|4||switch2xf86_glx|
+	x	4|mga|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 		VideoRam 8192
 
 
@@ -68,12 +68,12 @@
 
 # Matrox:MGA G400
 102B 0525
-	x	4|mga||||NoHal|f|||
+	x	4|mga|||||f|||
 
 
 # Matrox:MGA G400
 102B 0525
-	x	4|mga|3d|xf86_glx|dri,glx|NoHal|4||switch2xf86_glx|
+	x	4|mga|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 
 # Matrox:MGA G400
@@ -83,12 +83,12 @@
 
 # Matrox:MGA G200 SD PCI
 102B 0520
-	x	4|mga||||NoHal|d|||
+	x	4|mga|||||d|||
 
 
 # Matrox:MGA G200 SD PCI
 102B 0520
-	x	4|mga|3d|xf86_glx|dri,glx|NoHal|4||switch2xf86_glx|
+	x	4|mga|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 
 # Matrox:MGA G200 SD PCI
@@ -148,12 +148,12 @@
 
 # Matrox:Matrox G400
 102b 0525 102b 0378
-	x	4|mga||||NoHal|f|||
+	x	4|mga|||||f|||
 
 
 # Matrox:Matrox G400
 102b 0525 102b 0378
-	x	4|mga|3d|xf86_glx|dri,glx|NoHal|4||switch2xf86_glx|
+	x	4|mga|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 
 # Matrox:Matrox G400
@@ -640,7 +640,7 @@
 
 # ATI:Rage P/M Mobility AGP 2x
 1002 4C4D
-	x	4|ati||||||||
+	x	4|ati|||||e|||
 
 
 # ATI:Rage P/M Mobility AGP 2x
@@ -716,6 +716,11 @@
 # ATI:Rage XC PCI
 1002 4753
 	x	3|MACH64||||||||
+
+
+# ATI:Mach64 XL or XC
+1002 4752
+	x	4|ati||||||||
 
 
 # ATI:Mach64 XL or XC
@@ -845,7 +850,12 @@
 
 # ATI:Rage P/M Mobility AGP 2x (HP Omnibook)
 1002 4C4D 103c 000a
-	x	4|ati||||||||
+	x	4|ati|||||e|||
+
+
+# ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
+1002 4C4D 14c0 000a
+	x	4|ati|||||e|||
 
 
 # ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
@@ -1244,7 +1254,17 @@
 
 # S3:Savage3D+MacroVision
 5333 8A21
+	x	4|savage||||||||
+
+
+# S3:Savage3D+MacroVision
+5333 8A21
 	x	3|SVGA||||||||
+
+
+# S3:Savage3D (86E391)
+5333 8A20
+	x	4|savage||||||||
 
 
 # S3:Savage3D (86E391)
@@ -1270,6 +1290,11 @@
 # S3:PLATO/PX
 5333 0551
 	x	3|SVGA||||||||
+
+
+# S3:SAVAGE2000
+5333 9102
+	x	4|savage||||||||
 
 
 # S3:SAVAGE2000
@@ -1514,7 +1539,17 @@
 
 # S3:Savage 4
 5333 8a22
+	x	4|savage||||||||
+
+
+# S3:Savage 4
+5333 8a22
 	x	3|SVGA||||||||
+
+
+# S3:Savage 4
+5333 8a23
+	x	4|savage||||||||
 
 
 # S3:Savage 4
@@ -1539,7 +1574,17 @@
 
 # S3:Savage IX8
 5333 8c12
+	x	4|savage||||||||
+
+
+# S3:Savage IX8
+5333 8c12
 	x	3|SVGA||||||||
+
+
+# S3:Savage  MX (Macrovision)
+5333 8c10
+	x	4|savage||||||||
 
 
 # S3:Savage  MX (Macrovision)
@@ -1549,12 +1594,47 @@
 
 # S3:Savage MX
 5333 8c11
+	x	4|savage||||||||
+
+
+# S3:Savage MX
+5333 8c11
 	x	3|SVGA||||||||
 
 
 # S3:Savage IX
 5333 8c13
+	x	4|savage||||||||
+
+
+# S3:Savage IX
+5333 8c13
 	x	3|SVGA||||||||
+
+
+# S3:Savage IX8 Toshiba Notebook
+5333 8c12 1179 0001
+	x	4|savage||||||||
+
+
+# S3:S3Twister_P
+5333 8d01
+	x	4|savage||||||||
+
+
+# S3:S3Twister_K
+5333 8d02
+	x	4|savage||||||||
+
+
+# S3:ProSavage PM 133
+5333 8a25
+	x	4|savage||||||||
+
+
+# S3:ProSavage KM 133
+5333 8a26
+	x	4|savage||||||||
 
 
 # 3DLabs:Permedia2V 2D+3D
@@ -2100,7 +2180,17 @@
 
 # SiS:SIS540
 1039 5300
+	x	4|sis||||||||
+
+
+# SiS:SIS540
+1039 5300
 	x	3|SVGA||||||||
+
+
+# SiS:SIS630
+1039 6300
+	x	4|sis||||||||
 
 
 # SiS:SIS630
@@ -2110,7 +2200,17 @@
 
 # SiS:SIS300
 1039 0300
+	x	4|sis||||||||
+
+
+# SiS:SIS300
+1039 0300
 	x	3|SVGA||||||||
+
+
+# SiS:SiS6326
+1039 6326
+	x	4|sis|||||5|||
 
 
 # SiS:SiS6326
@@ -2120,7 +2220,12 @@
 
 # SiS:530
 1039 6306
-	x	4|sis||||Noaccel,FastVRam|1|||
+	x	4|sis|||||4|||
+
+
+# SiS:5597
+1039 0200
+	x	4|sis|||||4|||
 
 
 # SiS:5597
@@ -2410,7 +2515,17 @@
 
 # Silicon Motion:SMI-910
 126F 0910
+	x	4|siliconmotion||||||||
+
+
+# Silicon Motion:SMI-910
+126F 0910
 	x	3|SVGA||||||||
+
+
+# Silicon Motion:SMI-810
+126F 0810
+	x	4|siliconmotion||||||||
 
 
 # Silicon Motion:SMI-810
@@ -2420,12 +2535,17 @@
 
 # Silicon Motion:SMI-820
 126F 0820
+	x	4|siliconmotion||||||||
+
+
+# Silicon Motion:SMI-820
+126F 0820
 	x	3|SVGA||||||||
 
 
 # Silicon Motion:SMI-710
 126F 0710
-	x	4|siliconmotion|||||f|||
+	x	4|siliconmotion||||||||
 
 
 # Silicon Motion:SMI-710
@@ -2435,7 +2555,17 @@
 
 # Silicon Motion:SMI-712
 126F 0712
+	x	4|siliconmotion||||||||
+
+
+# Silicon Motion:SMI-712
+126F 0712
 	x	3|SVGA||||||||
+
+
+# Silicon Motion:SMI-720
+126F 0720
+	x	4|siliconmotion||||||||
 
 
 # Silicon Motion:SMI-720

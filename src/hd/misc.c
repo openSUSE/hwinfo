@@ -14,11 +14,6 @@
 #include "misc.h"
 #include "klog.h"
 
-// parameter for gather_resources(, , which)
-#define W_IO	(1 << 0)
-#define W_DMA	(1 << 1)
-#define W_IRQ	(1 << 2)
-
 #if 0
 static void test_floppy_open(void *arg);
 static void test_floppy_read(void *arg);
@@ -26,7 +21,6 @@ static void test_floppy_read(void *arg);
 static void read_ioports(misc_t *m);
 static void read_dmas(misc_t *m);
 static void read_irqs(misc_t *m);
-static void gather_resources(misc_t *m, hd_res_t **, char *, unsigned);
 static int active_vga_card(hd_t *);
 
 static void dump_misc_proc_data(hd_data_t *hd_data);
@@ -168,6 +162,11 @@ void hd_scan_misc(hd_data_t *hd_data)
       }
     }
     remove_tagged_hd_entries(hd_data);
+  }
+
+  if(hd_probe_feature(hd_data, pr_isapnp_mod) && !hd_probe_feature(hd_data, pr_isapnp_old)) {
+    PROGRESS(1, 4, "isa-pnp");
+    load_module(hd_data, "isa-pnp");
   }
 
   PROGRESS(2, 1, "io");
@@ -612,6 +611,8 @@ void gather_resources(misc_t *m, hd_res_t **r, char *name, unsigned which)
 {
   int i, j;
   hd_res_t *res;
+
+  if(!m) return;
 
   if(!which) which = W_IO | W_DMA | W_IRQ;
 

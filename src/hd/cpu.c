@@ -34,6 +34,7 @@ void hd_scan_cpu(hd_data_t *hd_data)
 {
   hd_t *hd0, *hd;
   int i, cpus;
+  unsigned u;
 
   if(!hd_probe_feature(hd_data, pr_cpu)) return;
 
@@ -63,7 +64,9 @@ void hd_scan_cpu(hd_data_t *hd_data)
 
   for(i = 1; i < cpus; i++) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
+    u = hd->idx;
     hd_copy(hd, hd0);
+    hd->idx = u;
     hd->slot = i;
   }
 }

@@ -10,38 +10,32 @@
 	i	dmfe
 
 # net/3c59x.c
+10b7 4500
 10b7 5055
 10b7 5057
 10b7 5157
+10b7 5257
 10b7 5900
+10b7 5920
 10b7 5950+3
+10b7 5970
+10b7 5b57
+10b7 6055+2
 10b7 6560
+10b7 6562
+10b7 6564
 10b7 7646
 10b7 9000+2
-10b7 9050+2
-	i	3c59x
-
-# net/3c59x.c && net/3c90x.c
-# there seem to be some problems with the 3c59x?
-# cf. Michael Kleinhenz <kleinhen@linuxtag.de> on suse-beta; 10 Feb 2000
+10b7 9004+3
 10b7 900a
+10b7 9050+2
 10b7 9055
 10b7 9058
 10b7 905a
 10b7 9200
 10b7 9800
-	i	3c90x
-	i	3c59x
-# cf. bugzilla #2567
-10b7 9005
-	i	3c59x
-	i	3c90x
-
-# net/3c90x.c
-10b7 9004
-10b7 9006
 10b7 9805
-	i	3c90x
+	i	3c59x
 
 # net/eepro100.c
 8086 1209
@@ -57,12 +51,7 @@
 	i	epic100
 
 # net/pcnet32.c
-# net/lance.c
 1022 2000
-	i	pcnet32
-# cf. mail von kkaempf, 11 Jul 2000
-#	i	lance
-
 1022 2001
 	i	pcnet32
 
@@ -79,17 +68,14 @@
 8e2e 3000
 	i	ne2k-pci
 
-# net/rtl8139.c
 # net/8139too.c
-1039 0900
-1039 7016
-	i	rtl8139
+10ec 8129
 10ec 8138+2
 1113 1211
+1186 1300
 1500 1360
 4033 1360
 	i	8139too
-	i	rtl8139
 
 # net/tlan.c
 0e11 ae32
@@ -113,16 +99,27 @@
 	i	de4x5
 
 # net/tulip.c
+1011 0002
+1011 0009
+1011 0014
+1011 0019
+104a 0981
+104a 2774
 10d9 0512
 10d9 0531
-115d 0003
+1113 1217 
 11ad 0002
 11ad c115
 11f6 9881
 125b 1400
+1282 9100
+1282 9102
 1317 0981
 1317 0985
-8086 0039
+1317 1985
+13d1 ab02
+13d1 ab03
+8086 0039 
 	i	tulip
 
 # net/ne.c
@@ -131,61 +128,56 @@ PNP 80d6
 	m	ne
 		options ne		io=<io0> irq=<irq0>
 
-# net/defxx.c	not modular due to makefile
-#define PCI_VENDOR_ID_DEC               0x1011
-#define PCI_DEVICE_ID_DEC_FDDI          0x000F
+# net/defxx.c
+1011 000f
+	i	defxx
 
 # net/dgrs.c
-114F 0003
+114f 0003
 	i	dgrs
 
 # net/hp100.c
 101a 0005
 103c 1030+2
-103c 11f6
-103c 0112
+11f6 0112
 	i	hp100
 
 # net/olympic.c
 1014 003e
 	i	olympic
 
-# net/rcpci.c
+# net/rcpci45.c
 4916 1960
-	i	rcpci
+	i	rcpci45
 
 # net/rrunner.c
 120f 0001
 	i	rrunner
 
-# net/sdla.c
-11B0 0002
-	i	sdla
+# net/wan/sdladrv.c
+11b0 0002
+	i	sdladrv
 
 # net/via_rhine.c
 1106 6100
 1106 3043
+1106 3065
 	i	via-rhine
 
-# net/sktr.c
-1148 4200
-0e11 0508
-	i	sktr
-
-# net/rl100a.c
+# net/winbond-840.c
 1050 0840
-11F6 2011
-	i	rl100a
+11f6 2011
+	i	winbond-840
 
 # net/yellowfin.c
-1000 0702
-1000 0701
+1000 0701+2
 	i	yellowfin
 
 # net/acenic.c
-12ae 0001
+12ae 0001+2
 10b7 0001
 1385 620a
+1385 630a
 1011 001a
 10a9 0009
 	i	acenic
@@ -229,6 +221,10 @@ s0401 0021+2
 1148 4000
 	i	skfp
 
+# net/sk98lin/
+1148 4300
+	i	sk98lin
+
 # net/e100.c
 8086 1029
 8086 1209
@@ -243,5 +239,52 @@ s0401 0021+2
 
 # net/starfire.c
 9004 6915
-	m	starfire
+	i	starfire
+
+# net/aironet4500_card.c
+14b9 0001
+14b9 4500
+14b9 4800
+	i	aironet4500
+
+# net/arcnet/com20020-pci.c
+1571 a001+13
+1571 a201+6
+	i	om20020-pci
+
+# net/fc/iph5526.c
+107e 0004+2
+	i	iph5526 
+
+# net/irda/toshoboe.c
+1179 0701
+	i	toshoboe
+
+# net/natsemi.c
+100b 0020
+	i	natsemi 
+
+# net/sundance.c
+1186 1002
+13f0 0201
+	i	sundance
+
+# net/tokenring/abyss.c
+10b6 0002
+	i	abyss
+
+# net/tokenring/lanstreamer.c 
+1014 0018
+	i	lanstreamer
+
+# net/tokenring/tmspci.c
+0e11 0508
+1148 4200
+10da 0508 
+10b7 3390
+	i	tmspci 
+
+# net/wan/lmc/lmc_main.c
+1011 0009
+	i	lmc
 

@@ -213,11 +213,15 @@ s5002	Papenmeier
 s5003	Handy Tech
 	0005	brlwave
 	0009	brlwave
-	0044	vario40
+	0044	vario40-ht
 	0080	ht20
-	0084	vario80
+	0084	vario80-ht
 	0088	ht80
 	0089	ht40
+
+s5004	Baum
+	0001	Vario40
+	0002	Vario80
 
 # special s390 hardware
 s6001	IBM

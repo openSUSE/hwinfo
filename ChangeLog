@@ -1,3 +1,8 @@
+7/5/2001:	v2.10
+	- rewrote isapnp detection for 2.4 kernel
+	- updated driver info data
+	- added "Baum" braille display detection
+
 3/5/2001:	v2.09
 	- support vbe bios calls to get monitor data (default: disabled)
 	- added more usb wheel mice

@@ -20,6 +20,7 @@
 static unsigned do_alva(hd_data_t *hd_data, char *dev_name, int cnt);
 static unsigned do_fhp(hd_data_t *hd_data, char *dev_name, unsigned baud, int cnt);
 static unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt);
+static unsigned do_baum(hd_data_t *hd_data, char *dev_name, int cnt);
 
 void hd_scan_braille(hd_data_t *hd_data)
 {
@@ -67,6 +68,12 @@ void hd_scan_braille(hd_data_t *hd_data)
         dev = do_ht(hd_data, hd->unix_dev_name, cnt);
       }
 
+      if(!dev && hd_probe_feature(hd_data, pr_braille_baum)) {
+        PROGRESS(1, cnt, "baum");
+        vend = MAKE_ID(TAG_SPECIAL, 0x5004);
+        dev = do_baum(hd_data, hd->unix_dev_name, cnt);
+      }
+
       if(dev) {
         hd_tmp = add_hd_entry(hd_data, __LINE__, 0);
         hd_tmp->base_class = bc_braille;
@@ -94,8 +101,6 @@ void hd_scan_braille(hd_data_t *hd_data)
 /* Communication codes */
 #define BRL_ID	"\033ID="
 
-#if 1
-/* new alva code */
 
 #define WAIT_DTR	700000
 #define WAIT_FLUSH	200
@@ -176,87 +181,6 @@ unsigned do_alva(hd_data_t *hd_data, char *dev_name, int cnt)
 
   return dev;
 }
-
-#else
-/* old alva code */
-
-unsigned do_alva(hd_data_t *hd_data, char *dev_name, int cnt)
-{
-  int fd, i, timeout = 100;
-  struct termios oldtio, newtio;		/* old & new terminal settings */
-  int model = -1;
-  unsigned char buffer[sizeof BRL_ID];
-  unsigned dev = 0;
-
-  PROGRESS(2, cnt, "alva open");
-
-  /* Open the Braille display device for random access */
-  fd = open(dev_name, O_RDWR | O_NOCTTY);
-  if(fd < 0) return 0;
-
-  tcgetattr(fd, &oldtio);	/* save current settings */
-
-  /* Set flow control and 8n1, enable reading */
-  memset(&newtio, 0, sizeof newtio);
-  newtio.c_cflag = CRTSCTS | CS8 | CLOCAL | CREAD;
-  /* Ignore bytes with parity errors and make terminal raw and dumb */
-  newtio.c_iflag = IGNPAR;
-  newtio.c_oflag = 0;		/* raw output */
-  newtio.c_lflag = 0;		/* don't echo or generate signals */
-  newtio.c_cc[VMIN] = 0;	/* set nonblocking read */
-  newtio.c_cc[VTIME] = 0;
-
-  PROGRESS(3, cnt, "alva init ok");
-
-  PROGRESS(4, cnt, "alva read data");
-
-  i = 0;
-  while(timeout-- && model == -1) {
-    /* autodetecting ABT model */
-    /* to force DTR off */
-    cfsetispeed(&newtio, B0);
-    cfsetospeed(&newtio, B0);
-    tcsetattr(fd, TCSANOW, &newtio);	/* activate new settings */
-    usleep(5000);
-    tcflush(fd, TCIOFLUSH);		/* clean line */
-    usleep(5000);
-    /* DTR back on */
-    cfsetispeed(&newtio, B9600);
-    cfsetospeed(&newtio, B9600);
-    tcsetattr(fd, TCSANOW, &newtio);	/* activate new settings */
-    usleep(1000);			/* give time to send ID string */
-    if((i = read(fd, &buffer, sizeof buffer)) == sizeof buffer) {
-      if(!strncmp(buffer, BRL_ID, sizeof BRL_ID - 1)) {
-        model = buffer[sizeof buffer - 1];
-      }
-    }
-    ADD2LOG("alva.%d@%s[%d]: ", timeout, dev_name, i);
-    if(i > 0) hexdump(&hd_data->log, 1, i, buffer);
-    ADD2LOG("\n");
-  }
-
-  PROGRESS(5, cnt, "alva read done");
-
-  switch(model) {
-    case  0:
-    case  1:
-    case  2:
-    case  3:
-    case  4:
-    case 11:
-    case 13:
-      dev = MAKE_ID(TAG_SPECIAL, model);
-      break;
-  }
-
-  /* reset serial lines */
-  tcflush(fd, TCIOFLUSH);
-  tcsetattr(fd, TCSAFLUSH, &oldtio);
-  close(fd);
-
-  return dev;
-}
-#endif
 
 
 /*
@@ -453,6 +377,78 @@ unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt)
 
   return dev;
 }
+
+
+/*
+ * autodetect for Baum Braille-displays
+ * Author: marco Skambraks <marco@suse.de>
+ * Suse GmbH Nuernberg
+ *
+ * This is free software, placed under the terms of the
+ * GNU General Public License, as published by the Free Software
+ * Foundation.  Please see the file COPYING for details.
+*/
+
+#define BAUDRATE	B19200		/* But both run at 19k2 */
+#define MAXREAD		18
+
+unsigned do_baum(hd_data_t *hd_data, char *dev_name, int cnt)
+{
+  static char device_id[] = { 0x1b, 0x84 };
+  int fd;
+  struct termios oldtio, curtio;
+  unsigned char buf[MAXREAD + 1];
+  int i;
+
+  PROGRESS(2, cnt, "baum open");
+
+  fd = open(dev_name, O_RDWR | O_NOCTTY);
+  if(fd < 0) return 0;
+
+  tcgetattr(fd, &curtio);
+
+  oldtio = curtio;
+  cfmakeraw(&curtio);
+
+  /* no SIGTTOU to backgrounded processes */
+  curtio.c_lflag &= ~TOSTOP;
+  curtio.c_cflag = BAUDRATE | CS8 | CLOCAL | CREAD;
+  /* no input parity check, no XON/XOFF */
+  curtio.c_iflag &= ~(INPCK | ~IXOFF);
+
+  curtio.c_cc[VTIME] = 1;	/* 0.1s timeout between chars on input */
+  curtio.c_cc[VMIN] = 0;	/* no minimum input */
+
+  tcsetattr(fd, TCSAFLUSH, &curtio);
+
+  /* write ID-request */
+  write(fd, device_id, sizeof device_id);
+
+  /* wait for response */
+  usleep(100000);
+
+  PROGRESS(3, cnt, "baum write ok");
+
+  i = read(fd, buf, sizeof buf - 1);
+  buf[sizeof buf - 1] = 0;
+
+  PROGRESS(4, cnt, "baum read done");
+
+  ADD2LOG("baum@%s[%d]: ", dev_name, i);
+  if(i > 0) hexdump(&hd_data->log, 1, i, buf);
+  ADD2LOG("\n");
+
+  /* reset serial lines */
+  tcflush(fd, TCIOFLUSH);
+  tcsetattr(fd, TCSAFLUSH, &oldtio);
+  close(fd);
+
+  if(!strcmp(buf + 2, "Baum Vario40")) return 1;
+  if(!strcmp(buf + 2, "Baum Vario80")) return 2;
+
+  return 0;
+}
+
 
 #endif	/* ifndef LIBHD_TINY */
 

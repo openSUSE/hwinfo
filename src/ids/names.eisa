@@ -41,6 +41,7 @@ AZT	Aztech Systems
 	2320.00401
 	3000.00401
 	3002.00401
+	3005.00401
 
 BRI	Boca Research
 
@@ -52,27 +53,35 @@ CMI
 
 CSC	Crystal Semiconductor
 	0000.00401
+	0225.00401
 	0437.00401
 	0b35.00401
 	1425.00401
 	1525.00401
+	1e37.00401
 	4236.00401
 	4237.00401
 	4336.00401
+	4536.00401
+	4637.00401
 	4837.00401
 	6835.00401
 	6836.00401
 	7532.00401
 	7537.00401
 	7632.00401
+	8025.00401
+	8037.00401
 	9836.00401
 	9837.00401
 	a836.00401
+	c835.00401
 	d925.00401
 	d937.00401
 	e825.00401
 	f032.00401
 	f235.00401
+	f238.00401
 
 CTL	Creative Technology Ltd.
 	0024.00401	Sound Blaster 16
@@ -80,7 +89,9 @@ CTL	Creative Technology Ltd.
 	0027.00401	Sound Blaster 16
 	0028.00401	Sound Blaster 16
 	0029.00401	Sound Blaster 16
+	002a.00401
 	002b.00401	Sound Blaster 16
+	002c.00401
 	0039.00401	Sound Blaster AWE 32
 	0042.00401	Sound Blaster AWE 32
 	0043.00401	Sound Blaster AWE 32
@@ -91,15 +102,18 @@ CTL	Creative Technology Ltd.
 	0054.00401	Sound Blaster AWE 32
 	0070.00401	Sound Blaster Vibra16C
 	0080.00401	Sound Blaster Vibra16CL
+	009a.00401
 	009c.00401	Sound Blaster AWE 32
 	009d.00401	Sound Blaster AWE 64
 	009e.00401	Creative SB AWE64 Gold
+	009f.00401
 	00b2.00401	Creative SB AWE64 Gold
 	00c1.00401	Sound Blaster AWE 64
 	00c3.00401	Sound Blaster AWE 64
 	00c5.00401	Sound Blaster AWE 64
 	00c7.00401	Sound Blaster AWE 64
 	00e4.00401	Sound Blaster AWE 64
+	00ed.00401
 	00f0.00401	Creative ViBRA16X
 
 DLK	D-Link Corporation
@@ -138,6 +152,7 @@ LGI	Logitech
 
 LWC
 	1060.00401
+	1061.00401
 
 MDK
 	1605.00401
@@ -145,6 +160,9 @@ MDK
 MDY	Microdyne
 
 NDC	NDC
+
+NMX
+	2200.00401
 
 OPT
 	0924.00401

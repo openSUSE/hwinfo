@@ -36,12 +36,16 @@ s5003 0005
 s5003 0009
 	a	brlwave
 s5003 0044
-	a	vario40
+	a	vario40-ht
 s5003 0080
 	a	ht20
 s5003 0084
-	a	vario80
+	a	vario80-ht
 s5003 0088
 	a	ht80
 s5003 0089
 	a	ht40
+s5004 0001
+	a	vario40
+s5004 0002
+	a	vario80
