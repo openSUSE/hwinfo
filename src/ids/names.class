@@ -133,5 +133,6 @@ C 10d	Joystick
 C 10e	Chipcard Reader
 C 10f	Camera
 	01	WebCam
+	02	Digital Camera
 C 110	Framebuffer
 	01	VESA Framebuffer
