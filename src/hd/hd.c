@@ -3665,7 +3665,7 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
 
   i = strlen(s);
 
-  if(i > 0 && i <= 8) {
+  if(i >= 8) {
     crc = hex(s, i);
   }
   else {

@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-12-15 11:06:08
+#hwinfo data from 2000-12-18 10:05:01
 #
 
 
@@ -19,6 +19,11 @@
 	x	3|SVGA|||||||
 
 
+# Matrox:MGA G200 AGP
+102b 0521  
+	x	3|SVGA|3d|glx|glx.so||||switch2glx
+
+
 # Matrox:Marvel G200 SD
 102b ff04  
 	x	4|mga||||sw_cursor|||
@@ -181,7 +186,7 @@
 
 # Matrox:MGA G400
 102B 0525  
-	x	4||3d||||||
+	x	4|mga|3d|xf86_glx|dri,glx||||switch2xf86_glx
 
 
 # Matrox:MGA G400
@@ -191,7 +196,7 @@
 
 # Matrox:MGA G400
 102B 0525  
-	x	3|SVGA|3d|glx|glx.so||16||
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Matrox:MGA G200 SD PCI
@@ -406,7 +411,7 @@
 
 # Diamond:Fire GL1
 1014 00b7  
-	x	4|firegl1||xfiregl1||DDCInfo||
+	x	4|firegl1||xfiregl1||accel,DDCInfo||
 		Option "no_accel" "no"
 		Option "NumDMABuffers2D" "4"
 		Option "NumDMABuffers" "24"
@@ -415,6 +420,19 @@
 		Option "Capabilities2" "0x00000000"
 		#Option "TFT Display" "off"
 		#Option "PipelineSpeed" "100"|
+
+
+# Diamond:Fire GL1
+1014 00b7  
+	x	4|firegl1|3d|xfiregl1|fgl1,dri,glx|DDCInfo,accel||
+		Option "no_accel" "no"
+		Option "NumDMABuffers2D" "4"
+		Option "NumDMABuffers" "24"
+		Option "NumTMBuffers" "4"
+		Option "Capabilities" "0x00000000"
+		Option "Capabilities2" "0x00000000"
+		#Option "TFT Display" "off"
+		#Option "PipelineSpeed" "100"|switch2xfiregl1
 
 
 # Diamond:Viper 330
@@ -446,12 +464,43 @@
 		Option "NumTMBuffers" "4"
 		Option "Capabilities" "0x00000000"
 		Option "Capabilities2" "0x00000000"
-		Option "TFT Display" "off|switch2xfiregl1
+		Option "TFT Display" "off|
+
+
+# Diamond:Fire GL2
+1014 0170  
+	x	4|firegl23|3d|xfiregl1|dri,glx,fgl23|||
+		Option "no_accel" "no"
+		Option "PnP Monitor" "off"
+		Option "NumDMABuffers" "24"
+		Option "NumTMBuffers" "4"
+		Option "Capabilities" "0x00000000"
+		Option "Capabilities2" "0x00000000"
+		Option "TFT Display" "off"|switch2xfiregl1
 
 
 # Diamond:Fire GL3
 1014 0170 1092 1073
-	x	4|firegl23||xfiregl1|dri|DDCInfo|||switch2xfiregl1
+	x	4|firegl23||xfiregl1|dri|||
+		Option "no_accel" "no"
+		Option "PnP Monitor" "off"
+		Option "NumDMABuffers" "24"
+		Option "NumTMBuffers" "4"
+		Option "Capabilities" "0x00000000"
+		Option "Capabilities2" "0x00000000"
+		Option "TFT Display" "off"|
+
+
+# Diamond:Fire GL3
+1014 0170 1092 1073
+	x	4|firegl23|3d|xfiregl1|dri,glx,fgl23|||
+		Option "no_accel" "no"
+		Option "PnP Monitor" "off"
+		Option "NumDMABuffers" "24"
+		Option "NumTMBuffers" "4"
+		Option "Capabilities" "0x00000000"
+		Option "Capabilities2" "0x00000000"
+		Option "TFT Display" "off"|switch2xfiregl1
 
 
 # Elsa:Gloria Synergy
@@ -1396,7 +1445,12 @@
 
 # ATI:Rage P/M Mobility AGP 2x (HP Omnibook)
 1002 4C4D 103c 000a
-	x	3|SVGA|3d|glx|glx.so|no_pixmap_cache,no_font_cache|||switch2glx
+	x	3|MACH64|||||||
+
+
+# ATI:Rage P/M Mobility AGP 2x (HP Omnibook)
+1002 4C4D 103c 000a
+	x	3|MACH64|3d|glx|glx.so|no_pixmap_cache,no_font_cache|||switch2glx
 
 
 # ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
@@ -1406,12 +1460,12 @@
 
 # ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
 1002 4C4D 14c0 000a
-	x	3|SVGA|||||||
+	x	3|MACH64|||||||
 
 
 # ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
 1002 4C4D 14c0 000a
-	x	3|SVGA|3d|glx|glx.so|no_pixmap_cache,no_font_cache|||switch2glx
+	x	3|MACH64|3d|glx|glx.so|no_pixmap_cache,no_font_cache|||switch2glx
 
 
 # ATI:Rage Mobility M3 AGP 2x
@@ -2031,12 +2085,17 @@
 
 # 3Dfx:Voodoo3
 121a 0005  
-	x	4|tdfx|3d|xf86_glx,glidedri|dri||||switch2xf86_glx
+	x	4|tdfx|3d|xf86_glx,glidedri|dri,glx||||switch2xf86_glx
 
 
 # 3Dfx:Voodoo3
 121a 0005  
 	x	3|SVGA|||||||
+
+
+# 3Dfx:Voodoo3
+121a 0005  
+	x	3|SVGA|3d|mesa3dfx,dev3dfx,glide_v3|||||switch2mesa3dfx
 
 
 # 3Dfx:Banshee
@@ -2052,6 +2111,11 @@
 # 3Dfx:Banshee
 121A 0003  
 	x	3|SVGA|||||||
+
+
+# 3Dfx:Banshee
+121A 0003  
+	x	3|SVGA|3d|mesa3dfx,dev3dfx,glide_v3|||||switch2mesa3dfx
 
 
 # 3Dfx:3Dfx Voodoo2
@@ -2127,6 +2191,11 @@
 # Intel:I810_DC100
 8086 7123  
 	x	3|SVGA|||||||
+
+
+# Intel:I810_DC100
+8086 7123  
+	x	3|SVGA|3d|glx|glx.so||16||switch2glx
 
 
 # Intel:i810
@@ -2956,11 +3025,6 @@
 
 # Nvidia:RIVA 128 2D/3D
 12D2 0018  
-	x	4||3d||||||
-
-
-# Nvidia:RIVA 128 2D/3D
-12D2 0018  
 	x	3|SVGA|||||8,16,24||
 
 
@@ -2981,7 +3045,7 @@
 
 # Nvidia:RIVA 128ZX 2D/3D
 12D2 0019  
-	x	3|SVGA|3d||||||
+	x	3|SVGA|3d|glx|glx.so||||switch2glx
 
 
 # Nvidia:Riva Integrated
@@ -3061,7 +3125,7 @@
 
 # Nvidia:Riva TNT2 Ultra
 10DE 0029  
-	x	3|SVGA|3d||||||switch2glx
+	x	3|SVGA|3d|glx|glx.so||||switch2glx
 
 
 # Nvidia:Riva TNT2
@@ -3071,7 +3135,7 @@
 
 # Nvidia:Riva TNT2
 10DE 0028  
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||switch2nv_glx
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
 
 
 # Nvidia:Riva TNT2
@@ -3136,7 +3200,7 @@
 
 # Nvidia:Riva TNT (PCI)
 10de 0020 1092 4820
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||switch2nv_glx
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
 
 
 # Nvidia:Riva TNT (PCI)
@@ -3156,7 +3220,7 @@
 
 # Nvidia:Elsa Erazor 2 (TNT)
 10de 0020 1048 0c1c
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|||switch2nv_glx
+	x	4|nvidia|3d|nv_glx|glx||||switch2nv_glx
 
 
 # Nvidia:Elsa Erazor 2 (TNT)
@@ -3483,12 +3547,17 @@
 
 # SiS:SiS6326
 1039 6326  
+	x	4||3d||||||
+
+
+# SiS:SiS6326
+1039 6326  
 	x	3|SVGA|||||||
 
 
 # SiS:SiS6326
 1039 6326  
-	x	3|SVGA|3d||||||
+	x	3|SVGA|3d|glx|glx.so||||switch2glx
 
 
 # SiS:530

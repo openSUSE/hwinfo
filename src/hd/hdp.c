@@ -714,6 +714,10 @@ void dump_bios(hd_data_t *hd_data, hd_t *hd, FILE *f)
     dump_line("PnP BIOS: %s\n", s);
     free_mem(s);
   }
+
+  if(bt->lba_support) {
+    dump_line_str("BIOS: extended read supported\n");
+  }
 }
 
 

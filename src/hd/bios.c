@@ -72,6 +72,14 @@ void hd_scan_bios(hd_data_t *hd_data)
     s = free_mem(s);
   }
 
+  if((s = get_cmd_param(hd_data, 2))) {
+    if(strlen(s) > 8) {
+      if(s[8] == '.') bt->lba_support = 1;
+    }
+
+    s = free_mem(s);
+  }
+
   /*
    * get the i/o ports for the parallel & serial interfaces from the BIOS
    * memory area starting at 0x40:0
@@ -95,12 +103,13 @@ void hd_scan_bios(hd_data_t *hd_data)
     bt->par_port0 = (bios_ram[  9] << 8) + bios_ram[  8];
     bt->par_port1 = (bios_ram[0xb] << 8) + bios_ram[0xa];
     bt->par_port2 = (bios_ram[0xd] << 8) + bios_ram[0xc];
+
+    ADD2LOG("  bios: %u disks\n", bios_ram[0x75]);
   }
   else {
     hd_data->bios_ram = free_mem(hd_data->bios_ram);
   }
   if(fd >= 0) close(fd);
-
 
   /*
    * read the bios rom and look for useful things there...
