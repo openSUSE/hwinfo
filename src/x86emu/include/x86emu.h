@@ -37,21 +37,28 @@
 *               include this header
 *
 ****************************************************************************/
-/* $XFree86: xc/extras/x86emu/include/x86emu.h,v 1.2 2000/11/21 23:10:25 tsi Exp $ */
+/* $XFree86$ */
 
 #ifndef __X86EMU_X86EMU_H
 #define __X86EMU_X86EMU_H
 
-// #define DEBUG	1
-
-#include "emu_types.h"
+#ifdef SCITECH
+#include "scitech.h"
+#define	X86API	_ASMAPI
+#define	X86APIP	_ASMAPIP
+typedef int X86EMU_pioAddr;
+#else
+#include "x86emu/types.h"
 #define	X86API
 #define	X86APIP	*
-#include "emu_regs.h"
+#endif
+#include "x86emu/regs.h"
 
 /*---------------------- Macros and type definitions ----------------------*/
 
-#pragma	pack(1)
+#ifdef PACK
+# pragma	PACK   /* Don't pack structs with function pointers! */
+#endif
 
 /****************************************************************************
 REMARKS:
@@ -124,8 +131,10 @@ extern u32 X86API rdl(u32 addr);
 extern void X86API wrb(u32 addr, u8 val);
 extern void X86API wrw(u32 addr, u16 val);
 extern void X86API wrl(u32 addr, u32 val);
- 
-#pragma	pack()
+
+#ifdef END_PACK
+# pragma	END_PACK
+#endif
 
 /*--------------------- type definitions -----------------------------------*/
 
@@ -133,6 +142,10 @@ typedef void (X86APIP X86EMU_intrFuncs)(int num);
 extern X86EMU_intrFuncs _X86EMU_intrTab[256];
 
 /*-------------------------- Function Prototypes --------------------------*/
+
+#ifdef  __cplusplus
+extern "C" {            			/* Use "C" linkage when in C++ mode */
+#endif
 
 void 	X86EMU_setupMemFuncs(X86EMU_memFuncs *funcs);
 void 	X86EMU_setupPioFuncs(X86EMU_pioFuncs *funcs);
@@ -160,6 +173,7 @@ void 	X86EMU_halt_sys(void);
 #define DEBUG_DISASSEMBLE_F     0x000008
 #define DEBUG_BREAK_F           0x000010
 #define DEBUG_SVC_F             0x000020
+#define DEBUG_SAVE_IP_CS_F      0x000040
 #define DEBUG_FS_F              0x000080
 #define DEBUG_PROC_F            0x000100
 #define DEBUG_SYSINT_F          0x000200 /* bios system interrupts. */
@@ -169,16 +183,17 @@ void 	X86EMU_halt_sys(void);
 #define DEBUG_IO_TRACE_F        0x002000 
 #define DEBUG_TRACECALL_REGS_F  0x004000
 #define DEBUG_DECODE_NOPRINT_F  0x008000 
-#define DEBUG_SAVE_IP_CS_F      0x010000
+#define DEBUG_EXIT              0x010000
 #define DEBUG_SYS_F             (DEBUG_SVC_F|DEBUG_FS_F|DEBUG_PROC_F)
-
-#define DEBUG_DECODE(x)		1
-#define CHECK_DATA_ACCESS(x)	0
 
 void 	X86EMU_trace_regs(void);
 void 	X86EMU_trace_xregs(void);
 void 	X86EMU_dump_memory(u16 seg, u16 off, u32 amt);
 int 	X86EMU_trace_on(void);
 int 	X86EMU_trace_off(void);
+
+#ifdef  __cplusplus
+}                       			/* End of "C" linkage for C++   	*/
+#endif
 
 #endif /* __X86EMU_X86EMU_H */

@@ -35,14 +35,16 @@
 * Description:  Header file for x86 register definitions.
 *
 ****************************************************************************/
-/* $XFree86: xc/extras/x86emu/include/x86emu/regs.h,v 1.3 2001/10/28 03:32:25 tsi Exp $ */
+/* $XFree86: xc/extras/x86emu/include/x86emu/regs.h,v 1.5 2003/10/22 20:03:05 tsi Exp $ */
 
 #ifndef __X86EMU_REGS_H
 #define __X86EMU_REGS_H
 
 /*---------------------- Macros and type definitions ----------------------*/
 
-#pragma pack(1)
+#ifdef PACK
+# pragma PACK
+#endif
 
 /*
  * General EAX, EBX, ECX, EDX type registers.  Note that for
@@ -305,9 +307,15 @@ typedef struct {
 	X86EMU_regs		x86;
 	} X86EMU_sysEnv;
 
-#pragma pack()
+#ifdef END_PACK
+# pragma END_PACK
+#endif
 
 /*----------------------------- Global Variables --------------------------*/
+
+#ifdef  __cplusplus
+extern "C" {            			/* Use "C" linkage when in C++ mode */
+#endif
 
 /* Global emulator machine state.
  *
@@ -316,11 +324,15 @@ typedef struct {
 
 extern    X86EMU_sysEnv	_X86EMU_env;
 #define   M             _X86EMU_env
-		
+
 /*-------------------------- Function Prototypes --------------------------*/
 
 /* Function to log information at runtime */
 
 void	printk(const char *fmt, ...);
+
+#ifdef  __cplusplus
+}                       			/* End of "C" linkage for C++   	*/
+#endif
 
 #endif /* __X86EMU_REGS_H */

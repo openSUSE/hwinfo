@@ -8,7 +8,7 @@
 
 #define INT2PTR(a)	((a) + (unsigned char *) 0)
 
-#include "emu_x86emu.h"
+#include "../x86emu/include/x86emu.h"
 #include "AsmMacros.h"
 
 int emu_vm86_ret;

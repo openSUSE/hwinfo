@@ -37,9 +37,9 @@
 *
 ****************************************************************************/
 
-/* $XFree86: xc/extras/x86emu/src/x86emu/decode.c,v 1.9 2001/01/06 20:19:03 tsi Exp $ */
+/* $XFree86: xc/extras/x86emu/src/x86emu/decode.c,v 1.11 2002/07/23 20:20:43 tsi Exp $ */
 
-#include "emu_x86emui.h"
+#include "x86emu/x86emui.h"
 
 /*----------------------------- Implementation ----------------------------*/
 
@@ -94,25 +94,37 @@ void X86EMU_exec(void)
 	u8 op1;
 
 	M.x86.intr = 0;
+	DB(x86emu_end_instr();)
 
     for (;;) {
+DB(		if (CHECK_IP_FETCH())
+		  x86emu_check_ip_access();)
+		/* If debugging, save the IP and CS values. */
+		SAVE_IP_CS(M.x86.R_CS, M.x86.R_IP);
+		INC_DECODED_INST_LEN(1);
 		if (M.x86.intr) {
 			if (M.x86.intr & INTR_HALTED) {
+DB(             if (M.x86.R_SP != 0) {
+                    printk("halted\n");
+                    X86EMU_trace_regs();
+                    }
+                else {
+                    if (M.x86.debug)
+                        printk("Service completed successfully\n");
+                    })
 				return;
-			}
+            }
 			if (((M.x86.intr & INTR_SYNCH) && (M.x86.intno == 0 || M.x86.intno == 2)) ||
 				!ACCESS_FLAG(F_IF)) {
 				x86emu_intr_handle();
-				if (M.x86.intr & INTR_HALTED) {
-				    return;
-				}
 			}
 		}
-#ifdef DEBUG
-		fprintf(stderr, "%04x:%04x  ", M.x86.R_CS, M.x86.R_IP);
-#endif
 		op1 = (*sys_rdb)(((u32)M.x86.R_CS << 4) + (M.x86.R_IP++));
 		(*x86emu_optab[op1])(op1);
+        if (M.x86.debug & DEBUG_EXIT) {
+            M.x86.debug &= ~DEBUG_EXIT;
+            return;
+        }
     }
 }
 
@@ -144,6 +156,8 @@ void fetch_decode_modrm(
 {
 	int fetched;
 
+DB(	if (CHECK_IP_FETCH())
+	  x86emu_check_ip_access();)
 	fetched = (*sys_rdb)(((u32)M.x86.R_CS << 4) + (M.x86.R_IP++));
 	INC_DECODED_INST_LEN(1);
 	*mod  = (fetched >> 6) & 0x03;
@@ -165,6 +179,8 @@ u8 fetch_byte_imm(void)
 {
 	u8 fetched;
 
+DB(	if (CHECK_IP_FETCH())
+		x86emu_check_ip_access();)
 	fetched = (*sys_rdb)(((u32)M.x86.R_CS << 4) + (M.x86.R_IP++));
 	INC_DECODED_INST_LEN(1);
 	return fetched;
@@ -184,6 +200,8 @@ u16 fetch_word_imm(void)
 {
 	u16	fetched;
 
+DB(	if (CHECK_IP_FETCH())
+		x86emu_check_ip_access();)
 	fetched = (*sys_rdw)(((u32)M.x86.R_CS << 4) + (M.x86.R_IP));
 	M.x86.R_IP += 2;
 	INC_DECODED_INST_LEN(2);
@@ -204,6 +222,8 @@ u32 fetch_long_imm(void)
 {
 	u32 fetched;
 
+DB(	if (CHECK_IP_FETCH())
+	  x86emu_check_ip_access();)
 	fetched = (*sys_rdl)(((u32)M.x86.R_CS << 4) + (M.x86.R_IP));
 	M.x86.R_IP += 4;
 	INC_DECODED_INST_LEN(4);
@@ -689,7 +709,11 @@ u16* decode_rm_seg_register(
 		DECODE_PRINTF("DS");
 		return &M.x86.R_DS;
 	  case 4:
+		DECODE_PRINTF("FS");
+		return &M.x86.R_FS;
 	  case 5:
+		DECODE_PRINTF("GS");
+		return &M.x86.R_GS;
 	  case 6:
 	  case 7:
 		DECODE_PRINTF("ILLEGAL SEGREG");
@@ -697,6 +721,99 @@ u16* decode_rm_seg_register(
 	}
 	HALT_SYS();
 	return NULL;                /* NOT REACHED OR REACHED ON ERROR */
+}
+
+/*
+ *
+ * return offset from the SIB Byte
+ */
+u32 decode_sib_address(int sib, int mod)
+{
+    u32 base = 0, i = 0, scale = 1;
+
+    switch(sib & 0x07) {
+    case 0:
+	DECODE_PRINTF("[EAX]");
+	base = M.x86.R_EAX;
+	break;
+    case 1:
+	DECODE_PRINTF("[ECX]");
+	base = M.x86.R_ECX;
+	break;
+    case 2:
+	DECODE_PRINTF("[EDX]");
+	base = M.x86.R_EDX;
+	break;
+    case 3:
+	DECODE_PRINTF("[EBX]");
+	base = M.x86.R_EBX;
+	break;
+    case 4:
+	DECODE_PRINTF("[ESP]");
+	base = M.x86.R_ESP;
+	M.x86.mode |= SYSMODE_SEG_DS_SS;
+	break;
+    case 5:
+	if (mod == 0) {
+	    base = fetch_long_imm();
+	    DECODE_PRINTF2("%08x", base);
+	} else {
+	    DECODE_PRINTF("[EBP]");
+	    base = M.x86.R_ESP;
+	    M.x86.mode |= SYSMODE_SEG_DS_SS;
+	}
+	break;
+    case 6:
+	DECODE_PRINTF("[ESI]");
+	base = M.x86.R_ESI;
+	break;
+    case 7:
+	DECODE_PRINTF("[EDI]");
+	base = M.x86.R_EDI;
+	break;
+    }
+    switch ((sib >> 3) & 0x07) {
+    case 0:
+	DECODE_PRINTF("[EAX");
+	i = M.x86.R_EAX;
+	break;
+    case 1:
+	DECODE_PRINTF("[ECX");
+	i = M.x86.R_ECX;
+	break;
+    case 2:
+	DECODE_PRINTF("[EDX");
+	i = M.x86.R_EDX;
+	break;
+    case 3:
+	DECODE_PRINTF("[EBX");
+	i = M.x86.R_EBX;
+	break;
+    case 4:
+	i = 0;
+	break;
+    case 5:
+	DECODE_PRINTF("[EBP");
+	i = M.x86.R_EBP;
+	break;
+    case 6:
+	DECODE_PRINTF("[ESI");
+	i = M.x86.R_ESI;
+	break;
+    case 7:
+	DECODE_PRINTF("[EDI");
+	i = M.x86.R_EDI;
+	break;
+    }
+    scale = 1 << ((sib >> 6) & 0x03);
+    if (((sib >> 3) & 0x07) != 4) {
+	if (scale == 1) {
+	    DECODE_PRINTF("]");
+	} else {
+	    DECODE_PRINTF2("*%d]", scale);
+	}
+    }
+    return base + (i * scale);
 }
 
 /****************************************************************************
@@ -719,26 +836,59 @@ NOTE: 	The code which specifies the corresponding segment (ds vs ss)
 		if a SS access is needed, set this bit.  Otherwise, DS access
 		occurs (unless any of the segment override bits are set).
 ****************************************************************************/
-unsigned decode_rm00_address(
+u32 decode_rm00_address(
 	int rm)
 {
-	unsigned offset;
+    u32 offset;
+    int sib;
 
+    if (M.x86.mode & SYSMODE_PREFIX_ADDR) {
+        /* 32-bit addressing */
 	switch (rm) {
-      case 0:
+	  case 0:
+		DECODE_PRINTF("[EAX]");
+		return M.x86.R_EAX;
+	  case 1:
+		DECODE_PRINTF("[ECX]");
+		return M.x86.R_ECX;
+	  case 2:
+		DECODE_PRINTF("[EDX]");
+		return M.x86.R_EDX;
+	  case 3:
+		DECODE_PRINTF("[EBX]");
+		return M.x86.R_EBX;
+	  case 4:
+		sib = fetch_byte_imm();
+		return decode_sib_address(sib, 0);
+	  case 5:
+		offset = fetch_long_imm();
+		DECODE_PRINTF2("[%08x]", offset);
+		return offset;
+	  case 6:
+		DECODE_PRINTF("[ESI]");
+		return M.x86.R_ESI;
+	  case 7:
+		DECODE_PRINTF("[EDI]");
+		return M.x86.R_EDI;
+	}
+	HALT_SYS();
+    } else {
+        /* 16-bit addressing */
+	switch (rm) {
+	  case 0:
 		DECODE_PRINTF("[BX+SI]");
-		return M.x86.R_BX + M.x86.R_SI;
+            return (M.x86.R_BX + M.x86.R_SI) & 0xffff;
 	  case 1:
 		DECODE_PRINTF("[BX+DI]");
-		return M.x86.R_BX + M.x86.R_DI;
+            return (M.x86.R_BX + M.x86.R_DI) & 0xffff;
 	  case 2:
 		DECODE_PRINTF("[BP+SI]");
 		M.x86.mode |= SYSMODE_SEG_DS_SS;
-		return M.x86.R_BP + M.x86.R_SI;
+            return (M.x86.R_BP + M.x86.R_SI) & 0xffff;
 	  case 3:
 		DECODE_PRINTF("[BP+DI]");
 		M.x86.mode |= SYSMODE_SEG_DS_SS;
-		return M.x86.R_BP + M.x86.R_DI;
+            return (M.x86.R_BP + M.x86.R_DI) & 0xffff;
 	  case 4:
 		DECODE_PRINTF("[SI]");
 		return M.x86.R_SI;
@@ -754,6 +904,7 @@ unsigned decode_rm00_address(
 		return M.x86.R_BX;
 	}
 	HALT_SYS();
+    }
     return 0;
 }
 
@@ -768,40 +919,80 @@ REMARKS:
 Return the offset given by mod=01 addressing.  Also enables the
 decoding of instructions.
 ****************************************************************************/
-unsigned decode_rm01_address(
+u32 decode_rm01_address(
 	int rm)
 {
-	int displacement = (s8)fetch_byte_imm();
+    int displacement = 0;
+    int sib;
+
+    /* Fetch disp8 if no SIB byte */
+    if (!((M.x86.mode & SYSMODE_PREFIX_ADDR) && (rm == 4)))
+	displacement = (s8)fetch_byte_imm();
+
+    if (M.x86.mode & SYSMODE_PREFIX_ADDR) {
+        /* 32-bit addressing */
 	switch (rm) {
-      case 0:
+	  case 0:
+		DECODE_PRINTF2("%d[EAX]", displacement);
+		return M.x86.R_EAX + displacement;
+	  case 1:
+		DECODE_PRINTF2("%d[ECX]", displacement);
+		return M.x86.R_ECX + displacement;
+	  case 2:
+		DECODE_PRINTF2("%d[EDX]", displacement);
+		return M.x86.R_EDX + displacement;
+	  case 3:
+		DECODE_PRINTF2("%d[EBX]", displacement);
+		return M.x86.R_EBX + displacement;
+	  case 4:
+		sib = fetch_byte_imm();
+		displacement = (s8)fetch_byte_imm();
+		DECODE_PRINTF2("%d", displacement);
+		return decode_sib_address(sib, 1) + displacement;
+	  case 5:
+		DECODE_PRINTF2("%d[EBP]", displacement);
+		return M.x86.R_EBP + displacement;
+	  case 6:
+		DECODE_PRINTF2("%d[ESI]", displacement);
+		return M.x86.R_ESI + displacement;
+	  case 7:
+		DECODE_PRINTF2("%d[EDI]", displacement);
+		return M.x86.R_EDI + displacement;
+	}
+	HALT_SYS();
+    } else {
+        /* 16-bit addressing */
+	switch (rm) {
+	  case 0:
 		DECODE_PRINTF2("%d[BX+SI]", displacement);
-		return M.x86.R_BX + M.x86.R_SI + displacement;
+            return (M.x86.R_BX + M.x86.R_SI + displacement) & 0xffff;
 	  case 1:
 		DECODE_PRINTF2("%d[BX+DI]", displacement);
-		return M.x86.R_BX + M.x86.R_DI + displacement;
+            return (M.x86.R_BX + M.x86.R_DI + displacement) & 0xffff;
 	  case 2:
 		DECODE_PRINTF2("%d[BP+SI]", displacement);
 		M.x86.mode |= SYSMODE_SEG_DS_SS;
-		return M.x86.R_BP + M.x86.R_SI + displacement;
+            return (M.x86.R_BP + M.x86.R_SI + displacement) & 0xffff;
 	  case 3:
 		DECODE_PRINTF2("%d[BP+DI]", displacement);
 		M.x86.mode |= SYSMODE_SEG_DS_SS;
-		return M.x86.R_BP + M.x86.R_DI + displacement;
+            return (M.x86.R_BP + M.x86.R_DI + displacement) & 0xffff;
 	  case 4:
 		DECODE_PRINTF2("%d[SI]", displacement);
-		return M.x86.R_SI + displacement;
+            return (M.x86.R_SI + displacement) & 0xffff;
 	  case 5:
 		DECODE_PRINTF2("%d[DI]", displacement);
-		return M.x86.R_DI + displacement;
+            return (M.x86.R_DI + displacement) & 0xffff;
 	  case 6:
 		DECODE_PRINTF2("%d[BP]", displacement);
 		M.x86.mode |= SYSMODE_SEG_DS_SS;
-		return M.x86.R_BP + displacement;
+            return (M.x86.R_BP + displacement) & 0xffff;
 	  case 7:
 		DECODE_PRINTF2("%d[BX]", displacement);
-		return M.x86.R_BX + displacement;
+            return (M.x86.R_BX + displacement) & 0xffff;
 	}
 	HALT_SYS();
+    }
     return 0;                   /* SHOULD NOT HAPPEN */
 }
 
@@ -816,40 +1007,87 @@ REMARKS:
 Return the offset given by mod=10 addressing.  Also enables the
 decoding of instructions.
 ****************************************************************************/
-unsigned decode_rm10_address(
+u32 decode_rm10_address(
 	int rm)
 {
-	unsigned displacement = (u16)fetch_word_imm();
-	switch (rm) {
-      case 0:
-		DECODE_PRINTF2("%04x[BX+SI]", displacement);
-		return M.x86.R_BX + M.x86.R_SI + displacement;
+    u32 displacement = 0;
+    int sib;
+
+    /* Fetch disp16 if 16-bit addr mode */
+    if (!(M.x86.mode & SYSMODE_PREFIX_ADDR))
+	displacement = (u16)fetch_word_imm();
+    else {
+	/* Fetch disp32 if no SIB byte */
+	if (rm != 4)
+	    displacement = (u32)fetch_long_imm();
+    }
+
+    if (M.x86.mode & SYSMODE_PREFIX_ADDR) {
+        /* 32-bit addressing */
+      switch (rm) {
+	  case 0:
+		DECODE_PRINTF2("%08x[EAX]", displacement);
+		return M.x86.R_EAX + displacement;
 	  case 1:
-		DECODE_PRINTF2("%04x[BX+DI]", displacement);
-		return M.x86.R_BX + M.x86.R_DI + displacement;
+		DECODE_PRINTF2("%08x[ECX]", displacement);
+		return M.x86.R_ECX + displacement;
+	  case 2:
+		DECODE_PRINTF2("%08x[EDX]", displacement);
+		M.x86.mode |= SYSMODE_SEG_DS_SS;
+		return M.x86.R_EDX + displacement;
+	  case 3:
+		DECODE_PRINTF2("%08x[EBX]", displacement);
+		return M.x86.R_EBX + displacement;
+	  case 4:
+		sib = fetch_byte_imm();
+		displacement = (u32)fetch_long_imm();
+		DECODE_PRINTF2("%08x", displacement);
+		return decode_sib_address(sib, 2) + displacement;
+		break;
+	  case 5:
+		DECODE_PRINTF2("%08x[EBP]", displacement);
+		return M.x86.R_EBP + displacement;
+	  case 6:
+		DECODE_PRINTF2("%08x[ESI]", displacement);
+		return M.x86.R_ESI + displacement;
+	  case 7:
+		DECODE_PRINTF2("%08x[EDI]", displacement);
+		return M.x86.R_EDI + displacement;
+	}
+	HALT_SYS();
+    } else {
+        /* 16-bit addressing */
+      switch (rm) {
+	  case 0:
+            DECODE_PRINTF2("%04x[BX+SI]", displacement);
+            return (M.x86.R_BX + M.x86.R_SI + displacement) & 0xffff;
+	  case 1:
+            DECODE_PRINTF2("%04x[BX+DI]", displacement);
+            return (M.x86.R_BX + M.x86.R_DI + displacement) & 0xffff;
 	  case 2:
 		DECODE_PRINTF2("%04x[BP+SI]", displacement);
 		M.x86.mode |= SYSMODE_SEG_DS_SS;
-		return M.x86.R_BP + M.x86.R_SI + displacement;
+            return (M.x86.R_BP + M.x86.R_SI + displacement) & 0xffff;
 	  case 3:
 		DECODE_PRINTF2("%04x[BP+DI]", displacement);
 		M.x86.mode |= SYSMODE_SEG_DS_SS;
-		return M.x86.R_BP + M.x86.R_DI + displacement;
+            return (M.x86.R_BP + M.x86.R_DI + displacement) & 0xffff;
 	  case 4:
-		DECODE_PRINTF2("%04x[SI]", displacement);
-		return M.x86.R_SI + displacement;
+            DECODE_PRINTF2("%04x[SI]", displacement);
+            return (M.x86.R_SI + displacement) & 0xffff;
 	  case 5:
-		DECODE_PRINTF2("%04x[DI]", displacement);
-		return M.x86.R_DI + displacement;
+            DECODE_PRINTF2("%04x[DI]", displacement);
+            return (M.x86.R_DI + displacement) & 0xffff;
 	  case 6:
 		DECODE_PRINTF2("%04x[BP]", displacement);
 		M.x86.mode |= SYSMODE_SEG_DS_SS;
-		return M.x86.R_BP + displacement;
+            return (M.x86.R_BP + displacement) & 0xffff;
 	  case 7:
-		DECODE_PRINTF2("%04x[BX]", displacement);
-		return M.x86.R_BX + displacement;
+            DECODE_PRINTF2("%04x[BX]", displacement);
+            return (M.x86.R_BX + displacement) & 0xffff;
 	}
 	HALT_SYS();
+    }
     return 0;
     /*NOTREACHED */
 }

@@ -32,56 +32,30 @@
 * Environment:	Any
 * Developer:    Kendall Bennett
 *
-* Description:  Header file for x86 emulator type definitions.
+* Description:  Header file for FPU instruction decoding.
 *
 ****************************************************************************/
 
-/* $XFree86: xc/extras/x86emu/include/x86emu/types.h,v 1.4 2000/09/26 15:56:44 tsi Exp $ */
+#ifndef __X86EMU_FPU_H
+#define __X86EMU_FPU_H
 
-#ifndef __X86EMU_TYPES_H
-#define __X86EMU_TYPES_H
-
-#include <sys/types.h>
-
-/*
- * The following kludge is an attempt to work around typedef conflicts with
- * <sys/types.h>.
- */
-#define u8   x86emuu8
-#define u16  x86emuu16
-#define u32  x86emuu32
-#define u64  x86emuu64
-#define s8   x86emus8
-#define s16  x86emus16
-#define s32  x86emus32
-#define s64  x86emus64
-#define uint x86emuuint
-#define sint x86emusint
-
-/*---------------------- Macros and type definitions ----------------------*/
-
-/* Currently only for Linux/32bit */
-#if defined(__GNUC__) && !defined(NO_LONG_LONG)
-#define __HAS_LONG_LONG__
+#ifdef  __cplusplus
+extern "C" {            			/* Use "C" linkage when in C++ mode */
 #endif
 
-typedef unsigned char 		u8;
-typedef unsigned short 		u16;
-typedef unsigned int 		u32;
-#ifdef __HAS_LONG_LONG__
-typedef unsigned long long 	u64;
+/* these have to be defined, whether 8087 support compiled in or not. */
+
+extern void x86emuOp_esc_coprocess_d8 (u8 op1);
+extern void x86emuOp_esc_coprocess_d9 (u8 op1);
+extern void x86emuOp_esc_coprocess_da (u8 op1);
+extern void x86emuOp_esc_coprocess_db (u8 op1);
+extern void x86emuOp_esc_coprocess_dc (u8 op1);
+extern void x86emuOp_esc_coprocess_dd (u8 op1);
+extern void x86emuOp_esc_coprocess_de (u8 op1);
+extern void x86emuOp_esc_coprocess_df (u8 op1);
+
+#ifdef  __cplusplus
+}                       			/* End of "C" linkage for C++   	*/
 #endif
 
-typedef char 				s8;
-typedef short 				s16;
-typedef int 				s32;
-#ifdef __HAS_LONG_LONG__
-typedef long long 			s64;
-#endif
-
-typedef unsigned int			uint;
-typedef int 				sint;
-
-typedef u16 X86EMU_pioAddr;
-
-#endif	/* __X86EMU_TYPES_H */
+#endif /* __X86EMU_FPU_H */

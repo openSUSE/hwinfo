@@ -35,6 +35,7 @@
 * Description:  Header file for instruction decoding logic.
 *
 ****************************************************************************/
+/* $XFree86$ */
 
 #ifndef __X86EMU_DECODE_H
 #define __X86EMU_DECODE_H
@@ -50,6 +51,10 @@
 #define DECODE_CLEAR_SEGOVR()         	M.x86.mode &= ~SYSMODE_CLRMASK
 
 /*-------------------------- Function Prototypes --------------------------*/
+
+#ifdef  __cplusplus
+extern "C" {            			/* Use "C" linkage when in C++ mode */
+#endif
 
 void 	x86emu_intr_raise (u8 type);
 void    fetch_decode_modrm (int *mod,int *regh,int *regl);
@@ -72,8 +77,13 @@ u8* 	decode_rm_byte_register(int reg);
 u16* 	decode_rm_word_register(int reg);
 u32* 	decode_rm_long_register(int reg);
 u16* 	decode_rm_seg_register(int reg);
-unsigned decode_rm00_address(int rm);
-unsigned decode_rm01_address(int rm);
-unsigned decode_rm10_address(int rm);
+u32	decode_rm00_address(int rm);
+u32	decode_rm01_address(int rm);
+u32	decode_rm10_address(int rm);
+u32	decode_sib_address(int sib, int mod);
+
+#ifdef  __cplusplus
+}                       			/* End of "C" linkage for C++   	*/
+#endif
 
 #endif /* __X86EMU_DECODE_H */

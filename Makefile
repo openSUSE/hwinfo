@@ -3,8 +3,13 @@ SUBDIRS		= src
 TARGETS		= hwinfo hwscan
 CLEANFILES	= hwinfo hwinfo.static hwscan hwscan.static doc/libhd doc/*~
 LIBDIR		= /usr/lib
+LIBS		= -lhd -lsysfs
 
 include Makefile.common
+
+ifneq "$(findstring $(ARCH), i386 x86_64 ia64)" ""
+LIBS += -lx86emu
+endif
 
 SHARED_FLAGS	=
 OBJS_NO_TINY	= names.o parallel.o modem.o
@@ -12,10 +17,10 @@ OBJS_NO_TINY	= names.o parallel.o modem.o
 .PHONY:	fullstatic static shared tiny doc diet tinydiet uc tinyuc
 
 hwscan: hwscan.o $(LIBHD)
-	$(CC) hwscan.o $(LDFLAGS) -lhd -lsysfs -o $@
+	$(CC) hwscan.o $(LDFLAGS) $(LIBS) -o $@
 
 hwinfo: hwinfo.o $(LIBHD)
-	$(CC) hwinfo.o $(LDFLAGS) -lhd -lsysfs -o $@
+	$(CC) hwinfo.o $(LDFLAGS) $(LIBS) -o $@
 
 # kept for compatibility
 shared:
@@ -41,8 +46,8 @@ static:
 	@make SHARED_FLAGS=
 
 fullstatic: static
-	$(CC) -static hwinfo.o $(LDFLAGS) -lhd -lsysfs -o hwinfo.static
-	$(CC) -static hwscan.o $(LDFLAGS) -lhd -lsysfs -o hwscan.static
+	$(CC) -static hwinfo.o $(LDFLAGS) $(LIBS) -o hwinfo.static
+	$(CC) -static hwscan.o $(LDFLAGS) $(LIBS) -o hwscan.static
 	strip -R .note -R .comment hwinfo.static
 	strip -R .note -R .comment hwscan.static
 

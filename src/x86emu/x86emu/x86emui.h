@@ -38,47 +38,51 @@
 *
 ****************************************************************************/
 
+/* $XFree86: xc/extras/x86emu/src/x86emu/x86emu/x86emui.h,v 1.3 2000/04/17 16:29:47 eich Exp $ */
+
 #ifndef __X86EMU_X86EMUI_H
 #define __X86EMU_X86EMUI_H
 
+/* If we are compiling in C++ mode, we can compile some functions as
+ * inline to increase performance (however the code size increases quite
+ * dramatically in this case).
+ */
+
+#if	defined(__cplusplus) && !defined(_NO_INLINE)
+#define	_INLINE	inline
+#else
 #define	_INLINE static
+#endif
 
 /* Get rid of unused parameters in C++ compilation mode */
 
+#ifdef __cplusplus
+#define	X86EMU_UNUSED(v)
+#else
 #define	X86EMU_UNUSED(v)	v
+#endif
 
-#include "emu_x86emu.h"
-#include "emu_regs.h"
-#include "emu_decode.h"
-#include "emu_ops.h"
-#include "emu_prim_ops.h"
-#include "emu_fpu.h"
-#include "emu_fpu_regs.h"
+#include "x86emu.h"
+#include "x86emu/regs.h"
+#include "x86emu/debug.h"
+#include "x86emu/decode.h"
+#include "x86emu/ops.h"
+#include "x86emu/prim_ops.h"
+#include "x86emu/fpu.h"
+#include "x86emu/fpu_regs.h"
 
+#ifdef IN_MODULE
+#include <xf86_ansic.h>
+#else
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define INC_DECODED_INST_LEN(x)
-#ifdef DEBUG
-#define DECODE_PRINTF(x) fprintf(stderr, x)
-#define DECODE_PRINTF2(x,y) fprintf(stderr, x, y)
-#else
-#define DECODE_PRINTF(x)
-#define DECODE_PRINTF2(x,y)
-#endif
-#define SAVE_IP_CS(x,y)
-#define START_OF_INSTR()
-#define END_OF_INSTR()
-#define END_OF_INSTR_NO_TRACE()
-#define TRACE_REGS()
-#define SINGLE_STEP()
-#define TRACE_AND_STEP()
-#define CALL_TRACE(u,v,w,x,s)
-#define RETURN_TRACE(n,u,v)
-
-
+#endif                                                                                           
 /*--------------------------- Inline Functions ----------------------------*/
+
+#ifdef  __cplusplus
+extern "C" {            			/* Use "C" linkage when in C++ mode */
+#endif
 
 extern u8  	(X86APIP sys_rdb)(u32 addr);
 extern u16 	(X86APIP sys_rdw)(u32 addr);
@@ -93,5 +97,9 @@ extern u32 	(X86APIP sys_inl)(X86EMU_pioAddr addr);
 extern void (X86APIP sys_outb)(X86EMU_pioAddr addr,u8 val);
 extern void (X86APIP sys_outw)(X86EMU_pioAddr addr,u16 val);
 extern void	(X86APIP sys_outl)(X86EMU_pioAddr addr,u32 val);
+
+#ifdef  __cplusplus
+}                       			/* End of "C" linkage for C++   	*/
+#endif
 
 #endif /* __X86EMU_X86EMUI_H */

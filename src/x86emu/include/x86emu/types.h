@@ -32,22 +32,76 @@
 * Environment:	Any
 * Developer:    Kendall Bennett
 *
-* Description:  Header file for FPU instruction decoding.
+* Description:  Header file for x86 emulator type definitions.
 *
 ****************************************************************************/
 
-#ifndef __X86EMU_FPU_H
-#define __X86EMU_FPU_H
+/* $XFree86: xc/extras/x86emu/include/x86emu/types.h,v 1.6 2003/06/12 14:12:26 eich Exp $ */
 
-/* these have to be defined, whether 8087 support compiled in or not. */
+#ifndef __X86EMU_TYPES_H
+#define __X86EMU_TYPES_H
 
-extern void x86emuOp_esc_coprocess_d8 (u8 op1);
-extern void x86emuOp_esc_coprocess_d9 (u8 op1);
-extern void x86emuOp_esc_coprocess_da (u8 op1);
-extern void x86emuOp_esc_coprocess_db (u8 op1);
-extern void x86emuOp_esc_coprocess_dc (u8 op1);
-extern void x86emuOp_esc_coprocess_dd (u8 op1);
-extern void x86emuOp_esc_coprocess_de (u8 op1);
-extern void x86emuOp_esc_coprocess_df (u8 op1);
+#ifndef IN_MODULE
+#include <sys/types.h>
+#endif
 
-#endif /* __X86EMU_FPU_H */
+/*
+ * The following kludge is an attempt to work around typedef conflicts with
+ * <sys/types.h>.
+ */
+#define u8   x86emuu8
+#define u16  x86emuu16
+#define u32  x86emuu32
+#define u64  x86emuu64
+#define s8   x86emus8
+#define s16  x86emus16
+#define s32  x86emus32
+#define s64  x86emus64
+#define uint x86emuuint
+#define sint x86emusint
+
+/*---------------------- Macros and type definitions ----------------------*/
+
+/* Currently only for Linux/32bit */
+#undef  __HAS_LONG_LONG__
+#if defined(__GNUC__) && !defined(NO_LONG_LONG)
+#define __HAS_LONG_LONG__
+#endif
+
+/* Taken from Xmd.h */
+#undef NUM32
+#if defined (_LP64) || \
+    defined(__alpha) || defined(__alpha__) || \
+    defined(__ia64__) || defined(ia64) || \
+    defined(__sparc64__) || \
+    defined(__s390x__) || \
+    (defined(__hppa__) && defined(__LP64)) || \
+    defined(__AMD64__) || defined(AMD64) || \
+    (defined(__sgi) && (_MIPS_SZLONG == 64))
+#define NUM32 int
+#else
+#define NUM32 long
+#endif
+
+typedef unsigned char 		u8;
+typedef unsigned short 		u16;
+typedef unsigned NUM32 		u32;
+#ifdef __HAS_LONG_LONG__
+typedef unsigned long long 	u64;
+#endif
+
+typedef char 				s8;
+typedef short 				s16;
+typedef NUM32 				s32;
+#ifdef __HAS_LONG_LONG__
+typedef long long 			s64;
+#endif
+
+typedef unsigned int			uint;
+typedef int 				sint;
+
+typedef u16 X86EMU_pioAddr;
+
+#undef NUM32
+
+#endif	/* __X86EMU_TYPES_H */
