@@ -2,6 +2,7 @@ TOPDIR		= $(CURDIR)
 SUBDIRS		= src
 TARGETS		= hwinfo hwscan
 CLEANFILES	= hwinfo hwinfo.static hwscan hwscan.static
+LIBDIR		= /usr/lib
 
 include Makefile.common
 
@@ -36,15 +37,15 @@ fullstatic: static
 	strip -R .note -R .comment hwscan.static
 
 install:
-	install -d -m 755 $(DESTDIR)/usr/sbin $(DESTDIR)/usr/lib $(DESTDIR)/usr/include
+	install -d -m 755 $(DESTDIR)/usr/sbin $(DESTDIR)$(LIBDIR) $(DESTDIR)/usr/include
 	install -m 755 -s hwinfo $(DESTDIR)/usr/sbin
 	install -m 755 -s hwscan $(DESTDIR)/usr/sbin
 	if [ -f $(LIBHD_SO) ] ; then \
-		install $(LIBHD_SO) $(DESTDIR)/usr/lib ; \
-		ln -snf libhd.so.$(LIBHD_VERSION) $(DESTDIR)/usr/lib/libhd.so.$(LIBHD_MAJOR_VERSION) ; \
-		ln -snf libhd.so.$(LIBHD_MAJOR_VERSION) $(DESTDIR)/usr/lib/libhd.so ; \
+		install $(LIBHD_SO) $(DESTDIR)$(LIBDIR) ; \
+		ln -snf libhd.so.$(LIBHD_VERSION) $(DESTDIR)$(LIBDIR)/libhd.so.$(LIBHD_MAJOR_VERSION) ; \
+		ln -snf libhd.so.$(LIBHD_MAJOR_VERSION) $(DESTDIR)$(LIBDIR)/libhd.so ; \
 	else \
-		install -m 644 $(LIBHD) $(DESTDIR)/usr/lib ; \
+		install -m 644 $(LIBHD) $(DESTDIR)$(LIBDIR) ; \
 	fi
 	install -m 644 src/hd/hd.h $(DESTDIR)/usr/include
 	install -m 755 hwbootscan $(DESTDIR)/usr/sbin
