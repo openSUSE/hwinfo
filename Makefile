@@ -28,6 +28,9 @@ shared: hwinfo.o
 install:
 	install -d -m 755 /usr/sbin /usr/lib /usr/include
 	install -m 755 -s hwinfo /usr/sbin
-	install -m 644 $(LIBHD) /usr/lib
-	install -m 644 $(LIBHD_SO) /usr/lib
+	if [ -f $(LIBHD_SO) ] ; then \
+		install -m 644 $(LIBHD_SO) /usr/lib ; \
+	else \
+		install -m 644 $(LIBHD) /usr/lib ; \
+	fi
 	install -m 644 src/hd/hd.h /usr/include
