@@ -35,8 +35,12 @@
 
 # net/eepro100.c
 8086 1209
+	i	eepro100
+
+# net/eepro100.c && net/eepro100-old.c
 8086 1229
 	i	eepro100
+	i	eepro100-old
 
 # net/epic100.c
 10b8	0005+2
@@ -110,6 +114,36 @@ AXE 2201
 	m	ne
 		options ne		io=<io0> irq=<irq0>
 
+# net/defxx.c	not modular due to makefile
+#define PCI_VENDOR_ID_DEC               0x1011
+#define PCI_DEVICE_ID_DEC_FDDI          0x000F
+
+# net/dgrs.c
+114F 0003
+	i	dgrs
+
+# net/hp100.c
+101a 0005
+103c 1030+2
+103c 11f6
+103c 0112
+	i	hp100
+
+# net/olympic.c
+1014 003e
+	i	olympic
+
+# net/rcpci.c
+4916 1960
+	i	rcpci
+
+# net/rrunner.c
+120f 0001
+	i	rrunner
+
+# net/sdla.c
+11B0 0002
+	i	sdla
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
