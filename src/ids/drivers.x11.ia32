@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-07-15 18:43:28
+#hwinfo data from 2000-07-17 19:26:41
 #
 
 
@@ -196,6 +196,11 @@
 
 # Elsa:Gloria Synergy
 1048 0a32  
+	x	3|3DLABS|||||
+
+
+# Elsa:Winner 2000 Office
+104c 3d07 1048 0a31
 	x	3|3DLABS|||||
 
 
@@ -1316,22 +1321,22 @@
 
 # Nvidia:GeForce-2
 10de 0150  
-	x	4|nvidia||nv_glx|||4
+	x	4|nvidia||nv_glx||sw_cursor|4
 
 
 # Nvidia:GeForce-2
 10de 0150  
-	x	4|nvidia|3d|nv_glx|glx||4
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|4
 
 
 # Nvidia:Quadro
 10de 0103  
-	x	4|nv|||||4
+	x	4|nv||||sw_cursor|4
 
 
 # Nvidia:Quadro
 10de 0103  
-	x	4|nvidia|3d|nv_glx|glx||4
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|4
 
 
 # Nvidia:Quadro
@@ -1341,12 +1346,12 @@
 
 # Nvidia:GEFORCEDDR
 10de 0101  
-	x	4|nv|||||
+	x	4|nv||||sw_cursor|
 
 
 # Nvidia:GEFORCEDDR
 10de 0101  
-	x	4|nvidia|3d|nv_glx|glx||
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|
 
 
 # Nvidia:GEFORCEDDR
@@ -1356,12 +1361,12 @@
 
 # Nvidia:GEFORCE256
 10de 0100  
-	x	4|nv|||||
+	x	4|nv||||sw_cursor|
 
 
 # Nvidia:GEFORCE256
 10de 0100  
-	x	4|nvidia|3d|nv_glx|glx||4
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|4
 
 
 # Nvidia:GEFORCE256
@@ -1421,7 +1426,7 @@
 
 # Nvidia:Riva TNT2
 10DE 0028  
-	x	4|nvidia|3d|nv_glx|glx||4
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|4
 
 
 # Nvidia:Riva TNT2
@@ -1431,12 +1436,12 @@
 
 # Nvidia:Riva TNT
 10DE 0020  
-	x	4|nv|||||f
+	x	4|nv||||sw_cursor|f
 
 
 # Nvidia:Riva TNT
 10DE 0020  
-	x	4|nvidia|3d|nv_glx|glx||4
+	x	4|nvidia|3d|nv_glx|glx|sw_cursor|4
 
 
 # Nvidia:Riva TNT
@@ -1607,6 +1612,11 @@
 # Chips&Technologies:F68554
 102C 00F0  
 	x	3|SVGA|||||
+
+
+# Chips&Technologies:F65555 HiQVPro
+102C 00E5  
+	x	4|chips|||||
 
 
 # Chips&Technologies:F65555 HiQVPro
