@@ -56,13 +56,13 @@ static int map(void);
 static void unmap(void);
 static int map_vram(void);
 static void unmap_vram(void);
-static int copy_vbios(void);
+static int copy_vbios(hd_data_t *hd_data);
 // static int copy_sbios(void);
 #if MAP_SYS_BIOS
-static int copy_sys_bios(void);
+static int copy_sys_bios(hd_data_t *hd_data);
 #endif
-static int copy_bios_ram();
-static int setup_system_bios(void);
+static int copy_bios_ram(hd_data_t *hd_data);
+static int setup_system_bios(hd_data_t *hd_data);
 static void setup_int_vect(void);
 static int chksum(CARD8 *start);
 
@@ -75,13 +75,13 @@ static sigjmp_buf longjmp_buf;
 
 static void sigsegv_handler(int);
 
-int InitInt10(int pci_cfg_method)
+int InitInt10(hd_data_t *hd_data, int pci_cfg_method)
 {
   if(geteuid()) return -1;
 
   if(!map()) return -1;
 
-  if(!setup_system_bios()) {
+  if(!setup_system_bios(hd_data)) {
     unmap();
     return -1;
   }
@@ -103,30 +103,17 @@ int InitInt10(int pci_cfg_method)
 
   setup_int_vect();
 
-  if(!copy_vbios()) {
+  if(!copy_vbios(hd_data)) {
     unmap();
     return -1;
   }
 
-#if 0
-  if(!copy_sbios()) {
-    unmap();
-    return -1;
-  }
-#endif
-
-  if(!map_vram() || !copy_bios_ram()) {
+  if(!map_vram() || !copy_bios_ram(hd_data)) {
     unmap();
     return -1;
   }
 
   int10inited = 1;
-
-#if 0
-  /* int 13 default location (fdd) */
-  ((CARD16*)0)[(0x13<<1)+1] = 0xf000;
-  ((CARD16*)0)[0x13<<1] = 0xec59;
-#endif
 
   return 0;
 }
@@ -317,128 +304,45 @@ void unmap_vram()
  *  0: failed
  *  1: ok
  */
-int copy_vbios()
+int copy_vbios(hd_data_t *hd_data)
 {
-  int mem_fd, size, ok = 0;
+  unsigned size;
   unsigned char tmp[3];
 
-  if((mem_fd = open(MEM_FILE, O_RDONLY)) == -1) {
-    log_err("vbe: failed to open BIOS memory, errno = %d", errno);
-
+  if(!hd_read_mmap(hd_data, MEM_FILE, tmp, V_BIOS, sizeof tmp)) {
+    log_err("vbe: failed to read %u bytes at 0x%x\n", (unsigned) sizeof tmp, V_BIOS);
     return 0;
   }
 
-  if(lseek(mem_fd, (off_t) V_BIOS, SEEK_SET) != (off_t) V_BIOS) {
-    log_err("vbe: lseek failed, errno = %d\n", errno);
-  }
-  else {
-    if(read(mem_fd, tmp, sizeof tmp) != sizeof tmp) {
-      log_err("vbe: failed to read %u bytes at 0x%x, errno = %d\n", (unsigned) sizeof tmp, V_BIOS, errno);
-    }
-    else {
-      if(lseek(mem_fd, V_BIOS, SEEK_SET) != V_BIOS) {
-        log_err("vbe: lseek failed, errno = %d\n", errno);
-      }
-      else {
-        if(tmp[0] != 0x55 || tmp[1] != 0xAA ) {
-          log_err("vbe: no bios found at: 0x%x\n", V_BIOS);
-        }
-        else {
-          size = tmp[2] * 0x200;
-
-          if(read(mem_fd, (char *) V_BIOS, size) != size) {
-            log_err("vbe: failed to read %d bytes at 0x%x, errno = %d\n", size, V_BIOS, errno);
-          }
-          else {
-            if(chksum((CARD8 *) V_BIOS)) ok = 1;
-          }
-        }
-      }
-    }
-  }
-
-  close(mem_fd);
-
-  return ok;
-}
-
-
-#if 0
-#define SYS_BIOS	0xe0000
-#define SYS_BIOS_SIZE	0x20000
-int copy_sbios()
-{
-  int fd;
-
-  if((fd = open(MEM_FILE, O_RDONLY)) < 0) {
-    perror("opening memory");
+  if(tmp[0] != 0x55 || tmp[1] != 0xAA ) {
+    log_err("vbe: no bios found at: 0x%x\n", V_BIOS);
     return 0;
   }
 
-  if(lseek(fd,(off_t) SYS_BIOS, SEEK_SET) == (off_t) SYS_BIOS) {
-    read(fd, (void *) SYS_BIOS, SYS_BIOS_SIZE);
+  size = tmp[2] * 0x200;
+
+  if(!hd_read_mmap(hd_data, MEM_FILE, (unsigned char *) V_BIOS, V_BIOS, size)) {
+    log_err("vbe: failed to read %d bytes at 0x%x\n", size, V_BIOS);
+    return 0;
   }
 
-  close(fd);
-
-  return 1;
+  return chksum((CARD8 *) V_BIOS) ? 1 : 0;
 }
-#endif
 
 
 #if MAP_SYS_BIOS
 static int
-copy_sys_bios(void)
+copy_sys_bios(hd_data_t *hd_data)
 {
-#define SYS_BIOS 0xF0000
-	int mem_fd;
-
-	if ((mem_fd = open(MEM_FILE,O_RDONLY))<0) {
-		perror("opening memory");
-		return (0);
-	}
-  
-	if (lseek(mem_fd,(off_t) SYS_BIOS,SEEK_SET) != (off_t) SYS_BIOS) 
-		goto Error;
-	if (read(mem_fd, (char *)SYS_BIOS, (size_t) 0xFFFF) != (size_t) 0xFFFF) 
-		goto Error;
-
-	close(mem_fd);
-	return (1);
-
-Error:
-	perror("sys_bios");
-	close(mem_fd);
-	return (0);
+  return hd_read_mmap(hd_data, MEM_FILE, (unsigned char *) 0xf0000, 0xf0000, 0xffff);
 }
 #endif
 
 
-static int
-copy_bios_ram(void)
+static int copy_bios_ram(hd_data_t *hd_data)
 {
-#define BIOS_RAM 0
-	int mem_fd;
-
-	if ((mem_fd = open(MEM_FILE,O_RDONLY))<0) {
-		perror("opening memory");
-		return (0);
-	}
-  
-	if (lseek(mem_fd,(off_t) BIOS_RAM,SEEK_SET) != (off_t) BIOS_RAM) 
-		goto Error;
-	if (read(mem_fd, (char *)BIOS_RAM, (size_t) 0x1000) != (size_t) 0x1000) 
-		goto Error;
-
-	close(mem_fd);
-	return (1);
-
-Error:
-	perror("bios_ram");
-	close(mem_fd);
-	return (0);
+  return hd_read_mmap(hd_data, MEM_FILE, (unsigned char *) 0, 0, 0x1000);
 }
-
 
 void loadCodeToMem(unsigned char *ptr, CARD8 *code)
 {
@@ -510,13 +414,13 @@ setup_int_vect(void)
 }
 
 static int
-setup_system_bios(void)
+setup_system_bios(hd_data_t *hd_data)
 {
 	char *date = "06/01/99";
 	char *eisa_ident = "PCI/ISA";
 	
 #if MAP_SYS_BIOS
-	if (!copy_sys_bios()) return 0;
+	if (!copy_sys_bios(hd_data)) return 0;
 	return 1;
 #endif
 //    memset((void *)0xF0000,0xf4,0xfff7);

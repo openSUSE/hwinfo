@@ -25,7 +25,7 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 
   log_hd_data = hd_data;
 
-  if(InitInt10(hd_data->pci_config_type)) {
+  if(InitInt10(hd_data, hd_data->pci_config_type)) {
     ADD2LOG("VBE: Could not init Int10\n");
     return;
   }

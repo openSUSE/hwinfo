@@ -73,7 +73,7 @@ void hd_scan_sysfs_usb(hd_data_t *hd_data)
 
 void get_usb_devs(hd_data_t *hd_data)
 {
-  uint64_t ul0, ul1;
+  uint64_t ul0;
   unsigned u1, u2, u3;
   hd_t *hd, *hd1;
   usb_t *usb;
@@ -113,9 +113,7 @@ void get_usb_devs(hd_data_t *hd_data)
     );
 
     if(
-      hd_attr_uint(sysfs_get_device_attr(sf_dev, "bInterfaceNumber"), &ul0, 16) &&
-      hd_attr_uint(sysfs_get_device_attr(sf_dev, "bAlternateSetting"), &ul1, 0) &&
-      ul1 == 0
+      hd_attr_uint(sysfs_get_device_attr(sf_dev, "bInterfaceNumber"), &ul0, 16)
     ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
 

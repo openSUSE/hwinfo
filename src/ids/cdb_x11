@@ -81,10 +81,10 @@ sub write_info
 
   return unless $vId ne "" && $dId ne "";
 
-  # print FH "# vId = $vId, dId = $dId, svId = $svId, sdId = $sdId, vName = \"$vName\", dName = \"$dName\"\n";
+  # print FH "\n# vId = $vId, dId = $dId, svId = $svId, sdId = $sdId, vName = \"$vName\", dName = \"$dName\"\n";
 
   if($svId ne "" && $sdId ne "") {
-    print FH "\n vendor.id\t\t${\new_id $svId, $vId}\n";
+    print FH "\n vendor.id\t\t${\new_id $vId}\n";
     print FH "+vendor.name\t\t$vName\n";
 
     print FH "\n vendor.id\t\t${\new_id $vId}\n";
