@@ -30,13 +30,13 @@ void hd_scan_cpu(hd_data_t *hd_data)
 #endif
 
 #ifdef __alpha__
-  char model_id[80], system_id[80], serial_number[80];
-  unsigned cpu_variation, cpu_revision, u;
+  char model_id[80], system_id[80], serial_number[80], platform[80];
+  unsigned cpu_variation, cpu_revision, u, hz;
   cpu_info_t *ct1;
 #endif
 
 #ifdef __PPC__
-  char model_id[80], vendor_id[80];
+  char model_id[80], vendor_id[80], motherboard[80];
   unsigned bogo, mhz, cache, family, model, stepping;
 #endif
 
@@ -55,9 +55,8 @@ void hd_scan_cpu(hd_data_t *hd_data)
   if(!hd_data->cpu) return;
 
 #ifdef __alpha__
-  *model_id = *system_id = *serial_number = 0;
-  cpu_variation = cpu_revision = 0;
-  cpus = 1;
+  *model_id = *system_id = *serial_number = *platform = 0;
+  cpu_variation = cpu_revision = hz = 0;
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(sscanf(sl->str, "cpu model : %79[^\n]", model_id) == 1) continue;
@@ -66,6 +65,8 @@ void hd_scan_cpu(hd_data_t *hd_data)
     if(sscanf(sl->str, "cpu revision : %u", &cpu_revision) == 1) continue;
     if(sscanf(sl->str, "system serial number : %79[^\n]", serial_number) == 1) continue;
     if(sscanf(sl->str, "cpus detected : %u", &cpus) == 1) continue;
+    if(sscanf(sl->str, "cycle frequency [Hz] : %u", &hz) == 1) continue;
+    if(sscanf(sl->str, "platform string : %79[^\n]", platform) == 1) continue;
   }
 
   if(*model_id || *system_id) {	/* at least one of those */
@@ -82,8 +83,13 @@ void hd_scan_cpu(hd_data_t *hd_data)
     ct->model = cpu_revision;
     ct->stepping = 0;
     ct->cache = 0;
-    ct->clock = 0;
+    ct->clock = (hz + 500000) / 1000000;
 
+    if(platform) {
+      if(strcmp(platform, "N/A")) ct->platform = new_str(platform);
+    }
+
+    if(!cpus) cpus = 1;		/* at least 1 machine had a "cpus: 0" entry... */
     for(u = 0; u < cpus; u++) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class = bc_internal;
@@ -185,19 +191,16 @@ void hd_scan_cpu(hd_data_t *hd_data)
 #endif /* __i386__  */
 
 #ifdef __PPC__
-  *model_id = *vendor_id = 0;
+  *model_id = *vendor_id = *motherboard = 0;
   bogo = mhz = cache = family = model = stepping = 0;
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(sscanf(sl->str, "cpu : %79[^\n]", model_id) == 1) continue;
-//    if(sscanf(sl->str, "vendor_id : %79[^\n]", vendor_id) == 1) continue;
+    if(sscanf(sl->str, "machine : %79[^\n]", vendor_id) == 1) continue;
+    if(sscanf(sl->str, "motherboard : %79[^\n]", motherboard) == 1) continue;
     if(sscanf(sl->str, "bogomips : %u", &bogo) == 1) continue;
     if(sscanf(sl->str, "clock : %u", &mhz) == 1) continue;
     if(sscanf(sl->str, "L2 cache : %u KB", &cache) == 1) continue;
-
-//    if(sscanf(sl->str, "cpu family : %u", &family) == 1) continue;
-//    if(sscanf(sl->str, "model : %u", &model) == 1) continue;
-//    if(sscanf(sl->str, "stepping : %u", &stepping) == 1) continue;
 
     if(strstr(sl->str, "processor") == sl->str || !sl->next) {		/* EOF */
       if(*model_id || *vendor_id) {	/* at least one of those */
@@ -205,6 +208,7 @@ void hd_scan_cpu(hd_data_t *hd_data)
 	ct->architecture = arch_ppc;
         if(model_id) ct->model_name = new_str(model_id);
         if(vendor_id) ct->vend_name = new_str(vendor_id);
+        if(motherboard) ct->platform = new_str(motherboard);
         ct->family = family;
         ct->model = model;
         ct->stepping = stepping;

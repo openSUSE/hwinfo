@@ -1,3 +1,7 @@
+17/2/2000:	v0.67
+	- improved CPU code on axp & ppc
+	- changed serial line code: use non-blocking open
+
 16/2/2000:	v0.66
 	- new ids
 	- added Mylex detection (dac960)

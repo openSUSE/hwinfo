@@ -486,6 +486,8 @@ void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
       ct->family, ct->model, ct->stepping, ct->model_name
     );
 
+  if(ct->platform) dump_line("Platform: \"%s\"\n", ct->platform);
+
   if(ct->clock) dump_line("Clock: %u MHz\n", ct->clock);
 
   if(ct->cache) dump_line("Cache: %u kb\n", ct->cache);

@@ -315,13 +315,14 @@ typedef enum boot_arch {
 /* special cpu entry */
 typedef struct {
   enum cpu_arch architecture;
-  unsigned family;		/* cpu variation on alpha  */
-  unsigned model;		/* cpu revision on alpha  */
+  unsigned family;		/* axp: cpu variation */
+  unsigned model;		/* axp: cpu revision */
   unsigned stepping;
   unsigned cache;
   unsigned clock;
-  char *vend_name;		/* system type on alpha  */
-  char *model_name;		/* cpu model on alpha  */
+  char *vend_name;		/* axp: system type */
+  char *model_name;		/* axp: cpu model */
+  char *platform;		/* x86: NULL */
 } cpu_info_t;
 
 

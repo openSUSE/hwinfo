@@ -99,7 +99,7 @@ void get_serial_modem(hd_data_t *hd_data)
       ) && hd->unix_dev_name
     ) {
       if(dev_name_duplicate(hd_data, hd->unix_dev_name)) continue;
-      if((fd = open(hd->unix_dev_name, O_RDWR)) >= 0) {
+      if((fd = open(hd->unix_dev_name, O_RDWR | O_NONBLOCK)) >= 0) {
         sm = add_ser_modem_entry(&hd_data->ser_modem, new_mem(sizeof *sm));
         sm->dev_name = new_str(hd->unix_dev_name);
         sm->fd = fd;
@@ -123,12 +123,12 @@ void get_serial_modem(hd_data_t *hd_data)
 
   /* just a quick test if we get a response to an AT command */
 
-  for(i = 0; i < 3; i++) {
+  for(i = 0; i < 4; i++) {
     PROGRESS(3, i + 1, "at test");
 
     for(sm = hd_data->ser_modem; sm; sm = sm->next) {
       if(!sm->is_modem)
-        set_modem_speed(sm, i == 0 ? 38400 : i == 1 ? 9600 : 1200);
+        set_modem_speed(sm, i == 0 ? 115200 : i == 1 ? 38400 : i == 2 ? 9600 : 1200);
     }
 
     at_cmd(hd_data, "AT\r", 1, 1);

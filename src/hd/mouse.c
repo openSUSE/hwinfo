@@ -25,7 +25,9 @@
 
 static void get_ps2_mouse(hd_data_t *hd_data);
 static void test_ps2_open(void *arg);
+#if 0
 static void test_serial_open(void *arg);
+#endif
 
 static void get_serial_mouse(hd_data_t* hd_data);
 static int _setspeed(int fd, int old, int new, int needtowrite, unsigned short flags);
@@ -218,11 +220,12 @@ void test_ps2_open(void *arg)
   open(DEV_PSAUX, O_RDWR | O_NONBLOCK);
 }
 
+#if 0
 void test_serial_open(void *arg)
 {
-  open((char *) arg, O_RDWR);
+  open((char *) arg, O_RDWR | O_NONBLOCK);
 }
-
+#endif
 
 void get_serial_mouse(hd_data_t *hd_data)
 {
@@ -238,10 +241,13 @@ void get_serial_mouse(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class == bc_comm && hd->sub_class == sc_com_ser && hd->unix_dev_name) {
+#if 0
       if(timeout(test_serial_open, hd->unix_dev_name, 3) > 0) {
         ADD2LOG("serial: open(%s) timed out\n", hd->unix_dev_name);
       }
-      else if((fd = open(hd->unix_dev_name, O_RDWR)) >= 0) {
+      else
+#endif
+      if((fd = open(hd->unix_dev_name, O_RDWR | O_NONBLOCK)) >= 0) {
         sm = add_ser_mouse_entry(&hd_data->ser_mouse, new_mem(sizeof *sm));
         sm->dev_name = new_str(hd->unix_dev_name);
         sm->fd = fd;
