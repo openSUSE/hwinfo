@@ -16,9 +16,6 @@
 # Description: Hardware scan and reconfiguration on boot.
 ### END INIT INFO
 
-# Source SuSE config
-. /etc/rc.config
-
 HWBOOTSCAN_BIN=/usr/sbin/hwbootscan
 test -x $HWBOOTSCAN_BIN || exit 5
 
