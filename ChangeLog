@@ -1,6 +1,5 @@
 13/3/2003:	v6.17
 	- updated X11 data (#25217)
-	- completed winmodem info (#25220)
 
 12/3/2003:	v6.16
 	- be more careful when joining feature flags of
