@@ -133,7 +133,7 @@ int chk_vaio(hd_data_t *hd_data, sys_info_t *st)
 
   data = hd_data->bios_rom + 0xf0000 - BIOS_ROM_START;
 
-  if(!(s = memmem(data, 0x2000, "Sony Corp", sizeof "Sony Corp" - 1))) return 0;
+  if(!(s = memmem(data, 0x8000, "Sony Corp", sizeof "Sony Corp" - 1))) return 0;
 
   if((i = txt_len(s))) st->vendor = canon_str(s, i);
   s += i;
@@ -161,6 +161,7 @@ int chk_vaio(hd_data_t *hd_data, sys_info_t *st)
       for(s = st->lang; *s; s++) {
         if(*s >= 'A' && *s <= 'Z') *s += 'a' - 'A';
       }
+      if(!strcmp(st->lang, "uc")) strcpy(st->lang, "en");
       *s0 = 0;	/* cut the model entry */
     }
   }

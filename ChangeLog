@@ -1,3 +1,11 @@
+20/7/2000:	v1.24
+	- fixed Vaio detection
+	- updated special ide chipset list
+	- updated x11 data
+
+19/7/2000:	v1.23
+	- updated x11 data
+
 18/7/2000:	v1.22
 	- dropped alva probing
 	- updated x11 data

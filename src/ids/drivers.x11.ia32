@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-07-18 17:39:49
+#hwinfo data from 2000-07-20 14:27:01
 #
 
 
@@ -12,11 +12,6 @@
 # Matrox:MGA G200 AGP
 102b 0521  
 	x	3|SVGA|||||
-
-
-# Matrox:MGA G200 AGP
-102b 0521  
-	x	3|SVGA|3d|glx|glx.so||
 
 
 # Matrox:Marvel G200 SD
@@ -1321,12 +1316,12 @@
 
 # Nvidia:GeForce-2
 10de 0150  
-	x	4|nvidia||nv_glx||sw_cursor|4
+	x	4|nvidia||nv_glx|||4
 
 
 # Nvidia:GeForce-2
 10de 0150  
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|4
+	x	4|nvidia|3d|nv_glx|glx||4
 
 
 # Nvidia:Quadro
@@ -1387,6 +1382,16 @@
 # Nvidia:Riva Integrated
 10DE 00A0  
 	x	3|SVGA|||||
+
+
+# Nvidia:RIVA TNT2 Model 64
+10DE 002D  
+	x	4|nv|||||
+
+
+# Nvidia:RIVA TNT2 Model 64
+10DE 002D  
+	x	4|nvidia|3d|nv_glx|glx||4
 
 
 # Nvidia:RIVA TNT2 Model 64
