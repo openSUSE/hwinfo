@@ -1,128 +1,7 @@
 # sound cards
 
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# alsa sound driver
-
- vendor.id		pci 0x1013
-&device.id		pci 0x6001
-|vendor.id		pci 0x1013
-&device.id		pci 0x6003+0x0002
-+driver.any		snd-cs46xx
-
- vendor.id		pci 0x1013
-&device.id		pci 0x6005
-+driver.any		snd-cs4281
-
- vendor.id		pci 0x1023
-&device.id		pci 0x2000+0x0002
-|vendor.id		pci 0x1039
-&device.id		pci 0x7018
-+driver.any		snd-trident
-
- vendor.id		pci 0x1073
-&device.id		pci 0x0004
-|vendor.id		pci 0x1073
-&device.id		pci 0x000a
-|vendor.id		pci 0x1073
-&device.id		pci 0x000c+0x0002
-|vendor.id		pci 0x1073
-&device.id		pci 0x0010
-|vendor.id		pci 0x1073
-&device.id		pci 0x0012
-+driver.any		snd-ymfpci
-
- vendor.id		pci 0x10b5
-&device.id		pci 0x906d
-+driver.any		snd-korg1212
-
- vendor.id		pci 0x10b9
-&device.id		pci 0x0111
-|vendor.id		pci 0x13f6
-&device.id		pci 0x0100+0x0002
-|vendor.id		pci 0x13f6
-&device.id		pci 0x0111+0x0002
-+driver.any		snd-cmipci
-
- vendor.id		pci 0x10b9
-&device.id		pci 0x5451
-+driver.any		snd-ali5451
-
- vendor.id		pci 0x10c8
-&device.id		pci 0x8005+0x0002
-+driver.any		snd-nm256
-
- vendor.id		pci 0x10ee
-&device.id		pci 0x3fc0+0x0004
-+driver.any		snd-rme96
-
- vendor.id		pci 0x10ee
-&device.id		pci 0x3fc4
-+driver.any		snd-rme9652
-
- vendor.id		pci 0x1102
-&device.id		pci 0x0002
-|vendor.id		pci 0x1102
-&device.id		pci 0x0004
-+driver.any		snd-emu10k1
-
- vendor.id		pci 0x1102
-&device.id		pci 0x8938
-|vendor.id		pci 0x1274
-&device.id		pci 0x1371
-|vendor.id		pci 0x1274
-&device.id		pci 0x5880
-+driver.any		snd-ens1371
-
- vendor.id		pci 0x1106
-&device.id		pci 0x3058
-+driver.any		snd-via686
-
- vendor.id		pci 0x1106
-&device.id		pci 0x3059
-+driver.any		snd-via686|snd-via8233
-
- vendor.id		pci 0x125d
-&device.id		pci 0x1968
-|vendor.id		pci 0x125d
-&device.id		pci 0x1978
-|vendor.id		pci 0x1285
-&device.id		pci 0x0100
-+driver.any		snd-es1968
-
- vendor.id		pci 0x125d
-&device.id		pci 0x1969
-+driver.any		snd-es1938
-
- vendor.id		pci 0x125d
-&device.id		pci 0x1988+0x0002
-|vendor.id		pci 0x125d
-&device.id		pci 0x1990
-|vendor.id		pci 0x125d
-&device.id		pci 0x1992
-|vendor.id		pci 0x125d
-&device.id		pci 0x1998+0x0004
-+driver.any		snd-maestro3
-
- vendor.id		pci 0x1274
-&device.id		pci 0x5000
-+driver.any		snd-ens1370
-
- vendor.id		pci 0x1319
-&device.id		pci 0x0801
-+driver.any		snd-fm801
-
- vendor.id		pci 0x1412
-&device.id		pci 0x1712
-+driver.any		snd-ice1712
-
- vendor.id		pci 0x4005
-&device.id		pci 0x4000
-+driver.any		snd-als4000
-
- vendor.id		pci 0x5333
-&device.id		pci 0xca00
-+driver.any		snd-sonicvibes
+# module info from kernel/sound/*.ko
 
  vendor.id		ADS
 &device.id		eisa 0x7150
@@ -140,11 +19,12 @@
 &device.id		eisa 0x1112
 |vendor.id		TER
 &device.id		eisa 0x1411
-+driver.any		snd-ad1816a
++driver.module.modprobe	snd-ad1816a
 
  vendor.id		ADV
 &device.id		eisa 0x550a
-+driver.any		snd-interwave-stb
++driver.module.modprobe	snd-interwave-stb
++driver.module.modprobe	snd-interwave
 
  vendor.id		ADV
 &device.id		eisa 0x55ff
@@ -156,7 +36,7 @@
 &device.id		eisa 0x0001
 |vendor.id		STB
 &device.id		eisa 0x011a
-+driver.any		snd-interwave
++driver.module.modprobe	snd-interwave
 
  vendor.id		ALS
 &device.id		eisa 0x0001
@@ -168,7 +48,13 @@
 &device.id		eisa 0x0200
 |vendor.id		RTL
 &device.id		eisa 0x3000
-+driver.any		snd-als100
++driver.module.modprobe	snd-als100
+
+ vendor.id		ALS
+&device.id		eisa 0x0007
+|vendor.id		RWB
+&device.id		eisa 0x1688
++driver.module.modprobe	snd-dt019x
 
  vendor.id		AZT
 &device.id		eisa 0x1008
@@ -182,11 +68,19 @@
 &device.id		eisa 0x3005
 |vendor.id		AZT
 &device.id		eisa 0x3011
-+driver.any		snd-azt2320
++driver.module.modprobe	snd-azt2320
 
  vendor.id		CMI
 &device.id		eisa 0x0001
-+driver.any		snd-cmi8330
++driver.module.modprobe	snd-cmi8330
+
+ vendor.id		CSC
+&device.id		eisa 0x0000
+|vendor.id		CSC
+&device.id		eisa 0x0100
+|vendor.id		GIM
+&device.id		eisa 0x0100
++driver.module.modprobe	cs4232
 
  vendor.id		CSC
 &device.id		eisa 0x0225
@@ -195,7 +89,7 @@
 |vendor.id		CSC
 &device.id		eisa 0x0735
 |vendor.id		CSC
-&device.id		eisa 0x0b35
+&device.id		eisa 0x0b35+0x0002
 |vendor.id		CSC
 &device.id		eisa 0x1335
 |vendor.id		CSC
@@ -205,11 +99,13 @@
 |vendor.id		CSC
 &device.id		eisa 0x1e37
 |vendor.id		CSC
-&device.id		eisa 0x4236+0x0002
+&device.id		eisa 0x4237
 |vendor.id		CSC
 &device.id		eisa 0x4336
 |vendor.id		CSC
 &device.id		eisa 0x4536
+|vendor.id		CSC
+&device.id		eisa 0x4625
 |vendor.id		CSC
 &device.id		eisa 0x4637
 |vendor.id		CSC
@@ -235,12 +131,14 @@
 |vendor.id		CSC
 &device.id		eisa 0xe825
 |vendor.id		CSC
-&device.id		eisa 0xe836
+&device.id		eisa 0xe835+0x0002
+|vendor.id		CSC
+&device.id		eisa 0xe936
 |vendor.id		CSC
 &device.id		eisa 0xf235
 |vendor.id		CSC
 &device.id		eisa 0xf238
-+driver.any		snd-cs4236
++driver.module.modprobe	snd-cs4236
 
  vendor.id		CSC
 &device.id		eisa 0x0d32
@@ -250,18 +148,22 @@
 &device.id		eisa 0x4232
 |vendor.id		CSC
 &device.id		eisa 0xf032
-+driver.any		snd-cs4232
++driver.module.modprobe	snd-cs4232
+
+ vendor.id		CSC
+&device.id		eisa 0x4236
++driver.module.modprobe	snd-cs4232
++driver.module.modprobe	snd-cs4236
 
  vendor.id		CSC
 &device.id		eisa 0x7532
 |vendor.id		CSC
 &device.id		eisa 0x7632
-+driver.any		snd-cs4232|snd-wavefront
++driver.module.modprobe	snd-cs4232
++driver.module.modprobe	snd-wavefront
 
  vendor.id		CTL
-&device.id		eisa 0x0024
-|vendor.id		CTL
-&device.id		eisa 0x0026+0x0007
+&device.id		eisa 0x0024+0x0009
 |vendor.id		CTL
 &device.id		eisa 0x0051
 |vendor.id		CTL
@@ -269,17 +171,17 @@
 |vendor.id		CTL
 &device.id		eisa 0x0080
 |vendor.id		CTL
+&device.id		eisa 0x0086
+|vendor.id		CTL
 &device.id		eisa 0x00f0
-+driver.any		snd-sb16
++driver.module.modprobe	snd-sb16
 
  vendor.id		CTL
 &device.id		eisa 0x0035
 |vendor.id		CTL
 &device.id		eisa 0x0039
 |vendor.id		CTL
-&device.id		eisa 0x0042+0x0004
-|vendor.id		CTL
-&device.id		eisa 0x0047+0x0002
+&device.id		eisa 0x0042+0x0007
 |vendor.id		CTL
 &device.id		eisa 0x0054
 |vendor.id		CTL
@@ -302,7 +204,11 @@
 &device.id		eisa 0x00e9
 |vendor.id		CTL
 &device.id		eisa 0x00ed
-+driver.any		snd-sbawe
++driver.module.modprobe	snd-sbawe
+
+ vendor.id		ENS
+&device.id		eisa 0x3081
++driver.module.modprobe	snd-sscape
 
  vendor.id		ESS
 &device.id		eisa 0x0003
@@ -310,11 +216,11 @@
 &device.id		eisa 0x1868+0x0002
 |vendor.id		ESS
 &device.id		eisa 0x1878+0x0002
-+driver.any		snd-es18xx
++driver.module.modprobe	snd-es18xx
 
  vendor.id		ESS
 &device.id		eisa 0x0968
-+driver.any		snd-es968
++driver.module.modprobe	snd-es968
 
  vendor.id		NMX
 &device.id		eisa 0x2200
@@ -323,129 +229,138 @@
 |vendor.id		YMH
 &device.id		eisa 0x0030
 |vendor.id		YMH
-&device.id		eisa 0x0800
-+driver.any		snd-opl3sa2
+&device.id		eisa 0x0800+0x0002
++driver.module.modprobe	snd-opl3sa2
 
  vendor.id		OPT
 &device.id		eisa 0x0924+0x0002
-+driver.any		snd-opti92x-ad1848|snd-opti92x-cs4231
++driver.module.modprobe	snd-opti92x-cs4231
++driver.module.modprobe	snd-opti92x-ad1848
 
  vendor.id		OPT
 &device.id		eisa 0x0931
-+driver.any		snd-opti93x
++driver.module.modprobe	snd-opti93x
 
- vendor.id		RWB
-&device.id		eisa 0x1688
-+driver.any		snd-dt0197h
+ vendor.id		YMH
+&device.id		eisa 0x0021
++driver.module.modprobe	opl3sa2
+
+ vendor.id		usb 0x041e
+&device.id		usb 0x3010
+|vendor.id		usb 0x0499
+&device.id		usb 0x1000+0x000b
+|vendor.id		usb 0x0499
+&device.id		usb 0x100e+0x0008
+|vendor.id		usb 0x0499
+&device.id		usb 0x1017+0x0006
+|vendor.id		usb 0x0499
+&device.id		usb 0x101e
+|vendor.id		usb 0x0499
+&device.id		usb 0x1020+0x000c
+|vendor.id		usb 0x0499
+&device.id		usb 0x102e
+|vendor.id		usb 0x0499
+&device.id		usb 0x1030+0x000d
+|vendor.id		usb 0x0499
+&device.id		usb 0x2000+0x0003
+|vendor.id		usb 0x0499
+&device.id		usb 0x5000+0x0009
+|vendor.id		usb 0x0499
+&device.id		usb 0x500a+0x0003
+|vendor.id		usb 0x0499
+&device.id		usb 0x7000
+|vendor.id		usb 0x0499
+&device.id		usb 0x7010
+|vendor.id		usb 0x0582
+&device.id		usb 0x0000
+|vendor.id		usb 0x0582
+&device.id		usb 0x0002+0x0004
+|vendor.id		usb 0x0582
+&device.id		usb 0x0007+0x0003
+|vendor.id		usb 0x0582
+&device.id		usb 0x000b+0x0002
+|vendor.id		usb 0x0582
+&device.id		usb 0x0010
+|vendor.id		usb 0x0582
+&device.id		usb 0x0012
+|vendor.id		usb 0x0582
+&device.id		usb 0x0014
+|vendor.id		usb 0x0582
+&device.id		usb 0x0016
+|vendor.id		usb 0x0582
+&device.id		usb 0x001b
+|vendor.id		usb 0x0582
+&device.id		usb 0x001d
+|vendor.id		usb 0x0582
+&device.id		usb 0x0023
+|vendor.id		usb 0x0582
+&device.id		usb 0x0025
+|vendor.id		usb 0x0582
+&device.id		usb 0x0027
+|vendor.id		usb 0x0582
+&device.id		usb 0x0029
+|vendor.id		usb 0x0582
+&device.id		usb 0x002b
+|vendor.id		usb 0x0582
+&device.id		usb 0x002d
+|vendor.id		usb 0x0582
+&device.id		usb 0x002f
+|vendor.id		usb 0x0582
+&device.id		usb 0x0033
+|vendor.id		usb 0x0582
+&device.id		usb 0x0037
+|vendor.id		usb 0x0582
+&device.id		usb 0x003b
+|vendor.id		usb 0x0582
+&device.id		usb 0x0040
+|vendor.id		usb 0x0582
+&device.id		usb 0x0044
+|vendor.id		usb 0x0582
+&device.id		usb 0x0048
+|vendor.id		usb 0x0582
+&device.id		usb 0x004d
+|vendor.id		usb 0x0582
+&device.id		usb 0x0050
+|vendor.id		usb 0x0582
+&device.id		usb 0x0052
+|vendor.id		usb 0x0582
+&device.id		usb 0x0065
+|vendor.id		usb 0x0763
+&device.id		usb 0x1002
+|vendor.id		usb 0x0763
+&device.id		usb 0x1011
+|vendor.id		usb 0x0763
+&device.id		usb 0x1015
+|vendor.id		usb 0x0763
+&device.id		usb 0x1021
+|vendor.id		usb 0x0763
+&device.id		usb 0x1033
+|vendor.id		usb 0x0763
+&device.id		usb 0x1041
+|vendor.id		usb 0x0763
+&device.id		usb 0x2001
+|vendor.id		usb 0x0763
+&device.id		usb 0x2003
+|vendor.id		usb 0x0763
+&device.id		usb 0x2008
+|vendor.id		usb 0x0763
+&device.id		usb 0x200d
+|vendor.id		usb 0x07fd
+&device.id		usb 0x0001
+|vendor.id		usb 0x0ccd
+&device.id		usb 0x0013
++driver.module.modprobe	snd-usb-audio
+
+ vendor.id		usb 0x1604
+&device.id		usb 0x8001
+|vendor.id		usb 0x1604
+&device.id		usb 0x8005
+|vendor.id		usb 0x1604
+&device.id		usb 0x8007
++driver.module.modprobe	snd-usb-usx2y
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# non-alsa (oss) sound driver
-
-# sound/cs46xx.c
- vendor.id		pci 0x1013
-&device.id		pci 0x6001
-|vendor.id		pci 0x1013
-&device.id		pci 0x6003+0x0002
-+driver.module.modprobe	cs46xx
-
-# sound/cs4281.c
- vendor.id		pci 0x1013
-&device.id		pci 0x6005
-+driver.module.modprobe	cs4281
-
-# sound/trident.c
- vendor.id		pci 0x1023
-&device.id		pci 0x2000+0x0002
-|vendor.id		pci 0x1039
-&device.id		pci 0x7018
-|vendor.id		pci 0x10b9
-&device.id		pci 0x5451
-+driver.module.modprobe	trident
-
-# sound/ymfpci.c
- vendor.id		pci 0x1073
-&device.id		pci 0x0004
-|vendor.id		pci 0x1073
-&device.id		pci 0x000a
-|vendor.id		pci 0x1073
-&device.id		pci 0x000c+0x0002
-|vendor.id		pci 0x1073
-&device.id		pci 0x0010
-|vendor.id		pci 0x1073
-&device.id		pci 0x0012
-+driver.module.modprobe	ymfpci
-
-# sound/nm256_audio.c
- vendor.id		pci 0x10c8
-&device.id		pci 0x8005+0x0002
-+driver.module.modprobe	nm256_audio
-
-# sound/emu10k1/main.c
- vendor.id		pci 0x1102
-&device.id		pci 0x0002
-+driver.module.modprobe	emu10k1
-
-# sound/es1371.c
- vendor.id		pci 0x1102
-&device.id		pci 0x8938
-|vendor.id		pci 0x1274
-&device.id		pci 0x1371
-|vendor.id		pci 0x1274
-&device.id		pci 0x5880
-+driver.module.modprobe	es1371
-
-# sound/via82cxxx_audio.c
- vendor.id		pci 0x1106
-&device.id		pci 0x3058
-+driver.module.modprobe	via82cxxx_audio
-
-# sound/maestro.c
- vendor.id		pci 0x125d
-&device.id		pci 0x1968
-|vendor.id		pci 0x125d
-&device.id		pci 0x1978
-|vendor.id		pci 0x1285
-&device.id		pci 0x0100
-+driver.module.modprobe	maestro
-
-# sound/esssolo1.c
- vendor.id		pci 0x125d
-&device.id		pci 0x1969
-+driver.module.modprobe	esssolo1
-
-# sound/es1370.c
- vendor.id		pci 0x1274
-&device.id		pci 0x5000
-+driver.module.modprobe	es1370
-
-# aureal vortex driver
- vendor.id		pci 0x12eb
-&device.id		pci 0x0001+0x0003
-+driver.module.modprobe	au8820
-
-# sound/cmpci.c
- vendor.id		pci 0x13f6
-&device.id		pci 0x0100+0x0002
-|vendor.id		pci 0x13f6
-&device.id		pci 0x0111
-+driver.module.modprobe	cmpci
-
-# sound/sonicvibes
- vendor.id		pci 0x5333
-&device.id		pci 0xca00
-+driver.module.modprobe	sonicvibes
-
-# sound/i810_audio.c
- vendor.id		pci 0x8086
-&device.id		pci 0x2415
-|vendor.id		pci 0x8086
-&device.id		pci 0x2425
-|vendor.id		pci 0x8086
-&device.id		pci 0x2445
-|vendor.id		pci 0x8086
-&device.id		pci 0x7195
-+driver.module.modprobe	i810_audio
 
 # ppc audio
  vendor.id		special 0x0401
@@ -471,13 +386,4 @@
  vendor.id		special 0x4001
 &device.id		special 0x2004
 +driver.module.modprobe	dbri
-
-# pcimap
- vendor.id		pci 0x10de
-&device.id		pci 0x006a
-|vendor.id		pci 0x10de
-&device.id		pci 0x00da
-|vendor.id		pci 0x10de
-&device.id		pci 0x01b1
-+driver.module.modprobe	nvaudio
 

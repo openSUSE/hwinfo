@@ -168,12 +168,12 @@ for $f (@ARGV) {
         last;
       }
 
-      if(/^\s*alias\s+(pci|usb):v\S+\s+\S+$/) {
+      if(/^\s*alias\s+(pci|pnp|usb):\S+\s+\S+$/) {
         $format = 'alias';
         last;
       }
 
-      if(/^\s*alias:\s+(pci|usb):v\S+\s*$/) {
+      if(/^\s*alias:\s+(pci|pnp|usb):\S+\s*$/) {
         $format = 'modinfo';
         last;
       }
@@ -1016,7 +1016,7 @@ sub read_usbmap_file
 
 sub read_alias_file
 {
-  my ($f, $id, $n, $key, $val, $mask, $tag, $module, $spec);
+  my ($f, $id, $n, $key, $val, $mask, $tag, $module, $spec, $t1, $t2);
   local $_;
 
   $f = '[0-9A-F*]+';
@@ -1030,9 +1030,12 @@ sub read_alias_file
     next if /^\s*#/;
     next if /^$/;
 
-    next unless /^\s*alias\s+(pci|usb):(\S+)\s+(\S+)/;
+    next unless /^\s*alias\s+(pci|pnp|usb):(\S+)\s+(\S+)/;
 
-    $tag = $1 eq 'pci' ? $tag_pci : $tag_usb;
+    $tag = $tag_pci if $1 eq 'pci';
+    $tag = $tag_eisa if $1 eq 'pnp';
+    $tag = $tag_usb if $1 eq 'usb';
+
     $spec = $2;
     $module = $3;
 
@@ -1042,20 +1045,44 @@ sub read_alias_file
 
     $key = [];
 
-    next if $tag ne $tag_pci;
+    if($spec =~ /^v($f)d($f)sv($f)sd($f)bc($f)sc($f)i($f)$/ ) {
+      $key->[$he_vendor_id] = [ $flag_id, $tag, hex $1 ] if $1 ne '*';
+      $key->[$he_device_id] = [ $flag_id, $tag, hex $2 ] if $2 ne '*';
+      $key->[$he_subvendor_id] = [ $flag_id, $tag, hex $3 ] if $3 ne '*';
+      $key->[$he_subdevice_id] = [ $flag_id, $tag, hex $4 ] if $4 ne '*';
+      $key->[$he_baseclass_id] = [ $flag_id, $tag_none, hex $5 ] if $5 ne '*';
+      $key->[$he_subclass_id] = [ $flag_id, $tag_none, hex $6 ] if $6 ne '*';
+      $key->[$he_progif_id] = [ $flag_id, $tag_none, hex $7 ] if $7 ne '*';
 
-    die "invalid line: $file_name($line)\n" unless
-      $spec =~ /^v($f)d($f)sv($f)sd($f)bc($f)sc($f)i($f)$/;
+      push @hd, [ "$file_name($line)", [ $key ], $val ];
+    }
+    elsif($spec =~ /^v($f)p($f)dl($f)dh($f)dc($f)dsc($f)dp($f)ic($f)isc($f)ip($f)$/ ) {
 
-    $key->[$he_vendor_id] = [ $flag_id, $tag_pci, hex $1 ] if $1 ne '*';
-    $key->[$he_device_id] = [ $flag_id, $tag_pci, hex $2 ] if $2 ne '*';
-    $key->[$he_subvendor_id] = [ $flag_id, $tag_pci, hex $3 ] if $3 ne '*';
-    $key->[$he_subdevice_id] = [ $flag_id, $tag_pci, hex $4 ] if $4 ne '*';
-    $key->[$he_baseclass_id] = [ $flag_id, $tag_none, hex $5 ] if $5 ne '*';
-    $key->[$he_subclass_id] = [ $flag_id, $tag_none, hex $6 ] if $6 ne '*';
-    $key->[$he_progif_id] = [ $flag_id, $tag_none, hex $7 ] if $7 ne '*';
+      if(
+        $3 == '*' && $4 == '*' && $5 == '*' &&
+        $6 == '*' && $7 == '*' && $8 == '*' &&
+        $9 == '*' && $10 == '*'
+      ) {
+        $key->[$he_vendor_id] = [ $flag_id, $tag, hex $1 ] if $1 ne '*';
+        $key->[$he_device_id] = [ $flag_id, $tag, hex $2 ] if $2 ne '*';
 
-    push @hd, [ "$file_name($line)", [ $key ], $val ];
+        push @hd, [ "$file_name($line)", [ $key ], $val ];
+      }
+    }
+    elsif($spec =~ /^[c|d](\S{3})([0-9a-fA-FX]{4})/ ) {
+      $t1 = $1;
+      $t2 = $2;
+
+      if($t1 =~ /[\@A-Z\[\\\]\^_]{3}/ && $t2 ne 'XXXX') {
+        $key->[$he_vendor_id] = [ $flag_id, $tag, eisa_id $t1 ];
+        $key->[$he_device_id] = [ $flag_id, $tag, hex $t2 ];
+
+        push @hd, [ "$file_name($line)", [ $key ], $val ];
+      }
+    }
+    else {
+      die "invalid line: $file_name($line)\n"
+    }
   }
 }
 
@@ -1067,7 +1094,7 @@ sub read_alias_file
 
 sub read_modinfo_file
 {
-  my ($f, $id, $n, $key, $val, $mask, $tag, $module, $spec);
+  my ($f, $id, $n, $key, $val, $mask, $tag, $module, $spec, $t1, $t2);
   local $_;
 
   $f = '[0-9A-F*]+';
@@ -1086,9 +1113,12 @@ sub read_modinfo_file
       next;
     }
 
-    next unless /^\s*alias:\s+(pci|usb):(\S+)\s*$/;
+    next unless /^\s*alias:\s+(pci|pnp|usb):(\S+)\s*$/;
 
-    $tag = $1 eq 'pci' ? $tag_pci : $tag_usb;
+    $tag = $tag_pci if $1 eq 'pci';
+    $tag = $tag_eisa if $1 eq 'pnp';
+    $tag = $tag_usb if $1 eq 'usb';
+
     $spec = $2;
 
     $val = [];
@@ -1121,10 +1151,20 @@ sub read_modinfo_file
         push @hd, [ "$file_name($line)", [ $key ], $val ];
       }
     }
+    elsif($spec =~ /^[c|d](\S{3})([0-9a-fA-FX]{4})/ ) {
+      $t1 = $1;
+      $t2 = $2;
+
+      if($t1 =~ /[\@A-Z\[\\\]\^_]{3}/ && $t2 ne 'XXXX') {
+        $key->[$he_vendor_id] = [ $flag_id, $tag, eisa_id $t1 ];
+        $key->[$he_device_id] = [ $flag_id, $tag, hex $t2 ];
+
+        push @hd, [ "$file_name($line)", [ $key ], $val ];
+      }
+    }
     else {
       die "invalid line: $file_name($line)\n"
     }
-
   }
 }
 

@@ -821,3 +821,217 @@
 +baseclass.id		0x115
 +subclass.id		0x00
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# firmware 
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x103c
+&subdevice.id		pci 0x2741
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2701+0x0002
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2711+0x0002
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2721+0x0002
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2731+0x0002
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2741+0x0002
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2751+0x0004
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2761+0x0002
+|vendor.id		pci 0x8086
+&device.id		pci 0x104f
+|vendor.id		pci 0x8086
+&device.id		pci 0x4220
+|vendor.id		pci 0x8086
+&device.id		pci 0x4223
++driver.module.modprobe	ipw2200
++requires		ipw-firmware
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2520+0x000a
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x252b+0x0003
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2550+0x0002
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2553+0x0003
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2560+0x0004
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2565+0x0003
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2570
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2580+0x0004
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2585+0x0003
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2590+0x0004
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2596
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x2598
+|vendor.id		pci 0x8086
+&device.id		pci 0x1043
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x25a0
++driver.module.modprobe	ipw2100
++requires		ipw-firmware
+
+
+ vendor.id		usb 0x03eb
+&device.id		usb 0x4102
+|vendor.id		usb 0x03eb
+&device.id		usb 0x7605
+|vendor.id		usb 0x049f
+&device.id		usb 0x0032
+|vendor.id		usb 0x04a5
+&device.id		usb 0x9001
+|vendor.id		usb 0x0506
+&device.id		usb 0x0a01
+|vendor.id		usb 0x050d
+&device.id		usb 0x0050
+|vendor.id		usb 0x0681
+&device.id		usb 0x001b
+|vendor.id		usb 0x069a
+&device.id		usb 0x0321
+|vendor.id		usb 0x077b
+&device.id		usb 0x2219
+|vendor.id		usb 0x077b
+&device.id		usb 0x2227
+|vendor.id		usb 0x07b8
+&device.id		usb 0xb000
+|vendor.id		usb 0x0864
+&device.id		usb 0x4102
+|vendor.id		usb 0x1044
+&device.id		usb 0x8003
+|vendor.id		usb 0x1371
+&device.id		usb 0x0002
+|vendor.id		usb 0x1371
+&device.id		usb 0x5743
+|vendor.id		usb 0x1668
+&device.id		usb 0x7605
+|vendor.id		usb 0x2001
+&device.id		usb 0x3200
+|vendor.id		usb 0x2019
+&device.id		usb 0x3220
++driver.module.modprobe	at76c503-rfmd
++requires		atmel-firmware
+
+ vendor.id		usb 0x03eb
+&device.id		usb 0x7603
+|vendor.id		usb 0x03f0
+&device.id		usb 0x011c
+|vendor.id		usb 0x04a5
+&device.id		usb 0x9000
+|vendor.id		usb 0x04bb
+&device.id		usb 0x0919
+|vendor.id		usb 0x05dd
+&device.id		usb 0xff31
+|vendor.id		usb 0x066b
+&device.id		usb 0x2211
+|vendor.id		usb 0x069a
+&device.id		usb 0x0320
+|vendor.id		usb 0x069a
+&device.id		usb 0x0821
+|vendor.id		usb 0x0864
+&device.id		usb 0x4100
+|vendor.id		usb 0x0b3b
+&device.id		usb 0x1612
+|vendor.id		usb 0x0cde
+&device.id		usb 0x0001
+|vendor.id		usb 0x0d5c
+&device.id		usb 0xa001
+|vendor.id		usb 0x0d8e
+&device.id		usb 0x7100
+|vendor.id		usb 0x0d8e
+&device.id		usb 0x7110
+|vendor.id		usb 0x8086
+&device.id		usb 0x0200
++driver.module.modprobe	at76c503-i3861
++requires		atmel-firmware
+
+ vendor.id		usb 0x03eb
+&device.id		usb 0x7604
+|vendor.id		usb 0x055d
+&device.id		usb 0xa000
++driver.module.modprobe	at76c503-i3863
++requires		atmel-firmware
+
+ vendor.id		usb 0x03eb
+&device.id		usb 0x7606
++driver.module.modprobe	at76c505-rfmd
++requires		atmel-firmware
+
+ vendor.id		usb 0x03eb
+&device.id		usb 0x7613
+|vendor.id		usb 0x07aa
+&device.id		usb 0x7613
+|vendor.id		usb 0x0db0
+&device.id		usb 0x1020
+|vendor.id		usb 0x12fd
+&device.id		usb 0x1001
+|vendor.id		usb 0x1371
+&device.id		usb 0x0013+0x0002
+|vendor.id		usb 0x1915
+&device.id		usb 0x2233
++driver.module.modprobe	at76c505-rfmd2958
++requires		atmel-firmware
+
+ vendor.id		usb 0x03eb
+&device.id		usb 0x7614
+|vendor.id		usb 0x03eb
+&device.id		usb 0x7617
++driver.module.modprobe	at76c505a-rfmd2958
++requires		atmel-firmware
+
+ vendor.id		usb 0x083a
+&device.id		usb 0x3501
+|vendor.id		usb 0x0d5c
+&device.id		usb 0xa002
++driver.module.modprobe	at76c503-rfmd-acc
++requires		atmel-firmware
+
