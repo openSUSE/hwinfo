@@ -67,6 +67,10 @@
 +device.name		PS/2 Keyboard
 
  vendor.id		special 0x0201
+&device.id		special 0x0002
++device.name		UML Keyboard
+
+ vendor.id		special 0x0201
 &device.id		special 0x41ab
 +device.name		MF2 Keyboard
 
@@ -616,8 +620,18 @@
 # iSeries network
  vendor.id		special 0x6001
 &device.id		special 0x1000
-+device.name		Virtual Ethernet card
-+driver.module.modprobe	veth
++driver.module.modprobe	ibmveth
+
+# IBM vscsi
+ vendor.id		special 0x6001
+&device.id		special 0x1001
++driver.module.modprobe	ibmvscsic
+
+
+# IBM veth
+ vendor.id		special 0x6001
+&device.id		special 0x1002
++driver.module.modprobe	ibmveth
 
 
 # internal: usb scanner driver list
@@ -625,4 +639,17 @@
 &device.id		special 0x0001
 +driver.module.modprobe	usbscanner
 +driver.module.modprobe	microtek
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# altix things
+
+ vendor.id		special 0x4002
++vendor.name		SGI
+
+# look at net.c if module name changes
+ vendor.id		special 0x4002
+&device.id		special 0x0001
++device.name		Cross Partition Network adapter
++driver.module.modprobe	xpnet
 
