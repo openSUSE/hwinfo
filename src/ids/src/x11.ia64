@@ -364,6 +364,13 @@
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x103c
+&subdevice.id		pci 0x12ab
++subdevice.name		Radeon VE (HP:0x12ab)
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x515a
 +device.name		Radeon QZ
 +driver.xfree		4|radeon
@@ -913,6 +920,9 @@
 +driver.xfree		4|sis|3d||dri,glx||16,24||switch2xf86_glx
 +driver.xfree.config	Option "MaxXFBMem" "12288"
 +requires		XFree86-GLX
+
+ vendor.id		pci 0x103c
++vendor.name		Hewlett-Packard Company
 
  vendor.id		pci 0x104a
 +vendor.name		SGS Thomson Microelectronics

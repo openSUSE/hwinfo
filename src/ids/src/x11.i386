@@ -12,6 +12,26 @@
 +driver.xfree		3|Mach64
 
  vendor.id		pci 0x1002
+&device.id		pci 0x4144
++device.name		R300 AD
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4145
++device.name		E300 AE
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4146
++device.name		R300 AF
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4147
++device.name		R300 AG
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x4158
 +device.name		68800AX [Mach32]
 +driver.xfree		3|Mach64
@@ -348,8 +368,36 @@
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
+&device.id		pci 0x5041
++device.name		Rage 128 PA
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5042
++device.name		Rage 128 PB
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5043
++device.name		Rage 128 PC
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x5044
 +device.name		Rage 128 PD
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5045
++device.name		Rage 128 PE
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
 +requires		XFree86-GLX
@@ -362,6 +410,69 @@
 +requires		XFree86-GLX
 
  vendor.id		pci 0x1002
+&device.id		pci 0x5047
++device.name		Rage 128 PG
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5048
++device.name		Rage 128 PH
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5049
++device.name		Rage 128 PI
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x504a
++device.name		Rage 128 PJ
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x504b
++device.name		Rage 128 PK
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x504c
++device.name		Rage 128 PL
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x504d
++device.name		Rage 128 PM
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x504e
++device.name		Rage 128 PN
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x504f
++device.name		Rage 128 PO
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x5050
 +device.name		Rage 128 PP
 +driver.xfree		4|r128
@@ -369,8 +480,57 @@
 +requires		XFree86-GLX
 
  vendor.id		pci 0x1002
+&device.id		pci 0x5051
++device.name		Rage 128 PQ
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x5052
 +device.name		Rage 128 PR
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5053
++device.name		Rage 128 PS
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5054
++device.name		Rage 128 PT
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5055
++device.name		Rage 128 PU
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5056
++device.name		Rage 128 PV
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5057
++device.name		Rage 128 PW
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5058
++device.name		Rage 128 PX
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
 +requires		XFree86-GLX
@@ -411,8 +571,36 @@
 +requires		XFree86-GLX
 
  vendor.id		pci 0x1002
+&device.id		pci 0x5149
++device.name		Radeon 8500 QI
++driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x514a
++device.name		Radeon 8500 QJ
++driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x514b
++device.name		Radeon 8500 QK
++driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x514c
 +device.name		R200 QL
++driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x514d
++device.name		Radeon 9100 QM
 +driver.xfree		4|radeon
 +driver.xfree		4|radeon|3d||dri,glx||16||switch2xf86_glx
 +requires		XFree86-GLX
@@ -466,6 +654,34 @@
 +requires		XFree86-GLX
 
  vendor.id		pci 0x1002
+&device.id		pci 0x5168
++device.name		Radeon 8500 Qh
++driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5169
++device.name		Radeon 8500 Qi (AGP)
++driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x516a
++device.name		Radeon 8500 Qj (AGP)
++driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x516b
++device.name		Radeon 8500 Qk (AGP)
++driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x516c
 +device.name		R200 Ql
 +driver.xfree		4|radeon
@@ -514,32 +730,50 @@
  vendor.id		pci 0x1002
 &device.id		pci 0x5345
 +device.name		Rage 128 SE
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
 +driver.xfree		3|SVGA
++requires		XFree86-GLX
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5346
 +device.name		Rage 128 SF
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
 +driver.xfree		3|SVGA
++requires		XFree86-GLX
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5347
 +device.name		Rage 128 SG
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
 +driver.xfree		3|SVGA
++requires		XFree86-GLX
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5348
 +device.name		Rage 128 4x
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
 +driver.xfree		3|SVGA
++requires		XFree86-GLX
 
  vendor.id		pci 0x1002
 &device.id		pci 0x534b
 +device.name		Rage 128 SK
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
 +driver.xfree		3|SVGA
++requires		XFree86-GLX
 
  vendor.id		pci 0x1002
 &device.id		pci 0x534c
 +device.name		Rage 128 SL
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
 +driver.xfree		3|SVGA
++requires		XFree86-GLX
 
  vendor.id		pci 0x1002
 &device.id		pci 0x534d
@@ -552,7 +786,10 @@
  vendor.id		pci 0x1002
 &device.id		pci 0x534e
 +device.name		Rage 128 4x
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
 +driver.xfree		3|SVGA
++requires		XFree86-GLX
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5354
@@ -582,6 +819,27 @@
  vendor.id		pci 0x1002
 &device.id		pci 0x5452
 +device.name		Rage 128 Pro TR (AGP)
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5453
++device.name		Rage 128 TS
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5454
++device.name		Rage 128 TT
++driver.xfree		4|r128
++driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
++requires		XFree86-GLX
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5455
++device.name		Rage 128 TU
 +driver.xfree		4|r128
 +driver.xfree		4|r128|3d||dri,glx||16||switch2xf86_glx
 +requires		XFree86-GLX
@@ -1914,14 +2172,14 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0186
-+device.name		NV18M
++device.name		GeForce4 448 Go
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0187
-+device.name		NV18M Pro
++device.name		GeForce4 488 Go
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
@@ -2096,28 +2354,28 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0301
-+device.name		NV30-0301
++device.name		GeForce FX 5800 Ultra
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0302
-+device.name		NV30-0302
++device.name		GeForce FX 5800
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0308
-+device.name		NV30GL-0308
++device.name		Quadro FX 2000
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0309
-+device.name		NV30GL-0309
++device.name		Quadro FX 1000
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
@@ -2202,6 +2460,55 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x031f
 +device.name		0x031f
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0321
++device.name		0x0321
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0322
++device.name		0x0322
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0323
++device.name		0x0323
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0326
++device.name		0x0326
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x032a
++device.name		0x032A
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x032b
++device.name		0x032B
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x032e
++device.name		0x032E
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
@@ -2365,6 +2672,13 @@
 +driver.xfree		3|SVGA
 
  vendor.id		pci 0x126f
+&device.id		pci 0x0720
+&subvendor.id		pci 0x1509
+&subdevice.id		pci 0x2230
++subdevice.name		SM720 Lynx3DM PaceBlade
++driver.xfree		4|fbdev
+
+ vendor.id		pci 0x126f
 &device.id		pci 0x0810
 +device.name		SM810 LynxE
 +driver.xfree		4|siliconmotion
@@ -2394,6 +2708,9 @@
 &device.id		pci 0x0019
 +device.name		Riva128ZX
 +driver.xfree		3|SVGA
+
+ vendor.id		pci 0x1509
++vendor.name		FIRST INTERNATIONAL Computer Inc
 
  vendor.id		pci 0x15ad
 +vendor.name		VMWare Inc
@@ -2777,7 +3094,7 @@
  vendor.id		pci 0x5333
 &device.id		pci 0x8c2e
 +device.name		SuperSavage/IXC 64 SDR
-+driver.xfree		4|savage
++driver.xfree		4|savage||||ShadowFB
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8c2f
@@ -2829,16 +3146,32 @@
  vendor.id		pci 0x8086
 &device.id		pci 0x2562
 +device.name		i845
-+driver.xfree		4|i810||||FixMem
-+driver.xfree		4|i810|3d||dri,glx|FixMem|16||switch2xf86_glx
++driver.xfree		4|i810
++driver.xfree		4|i810|3d||dri,glx||16||switch2xf86_glx
++driver.xfree.config	VideoRam 16384
++requires		XFree86-GLX
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x2572
++device.name		865 G
++driver.xfree		4|i810
++driver.xfree		4|i810|3d||dri,glx||16||switch2xf86_glx
 +driver.xfree.config	VideoRam 16384
 +requires		XFree86-GLX
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3577
 +device.name		i830
-+driver.xfree		4|i810||||FixMem
-+driver.xfree		4|i810|3d||dri,glx|FixMem|16||switch2xf86_glx
++driver.xfree		4|i810
++driver.xfree		4|i810|3d||dri,glx||16||switch2xf86_glx
++driver.xfree.config	VideoRam 16384
++requires		XFree86-GLX
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x3582
++device.name		855 GM
++driver.xfree		4|i810
++driver.xfree		4|i810|3d||dri,glx||16||switch2xf86_glx
 +driver.xfree.config	VideoRam 16384
 +requires		XFree86-GLX
 
