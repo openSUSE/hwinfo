@@ -1,3 +1,6 @@
+11/1/2001:	v1.0.71
+	- fixed detection of terminal adapters (arvin@suse.de)
+
 10/1/2001:	v1.0.70
 	- made res_pppd_option work (arvin@suse.de)
 
