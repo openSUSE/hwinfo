@@ -1,3 +1,5 @@
+	- fixed ia64 unaligned access (#32396)
+
 11/2/2004:	v8.06
 	- fixed segfault on s390*
 	- removed special ia64 hardware data: new kernel, new game

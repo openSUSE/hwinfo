@@ -984,7 +984,7 @@ int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios
 
   if(mem->size < 0x10) return 0;
 
-  for(u = ok = 0; u <= mem->size - 0x10; u++) {
+  for(u = ok = 0; u <= mem->size - 0x10; u += 0x10) {
     if(*(unsigned *) (mem->data + u) == 0x5f32335f) {	/* "_32_" */
       addr = *(unsigned *) (mem->data + u + 4);
       len = mem->data[u + 9];
