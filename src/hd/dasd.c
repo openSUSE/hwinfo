@@ -43,7 +43,7 @@ void hd_scan_dasd(hd_data_t *hd_data)
 
   i = 1;
   for(sl = sl0; sl; sl = sl->next) {
-    if(sscanf(sl->str, "%x%*s at %*s is dasd%c:active at blocksize: %u, %u blocks", &u0, &c, &u2, &u3) == 4) {
+    if(sscanf(sl->str, "%x%*s at (%*u:%*u) is dasd%c:active at blocksize: %u, %u blocks", &u0, &c, &u2, &u3) == 4) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class = bc_storage_device;
       hd->bus = bus_none;
