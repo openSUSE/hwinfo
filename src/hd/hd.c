@@ -2379,7 +2379,13 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
       ki->XkbRules = new_str("xfree86");
       ki->XkbModel = new_str("macintosh");
       for(hd_tmp = hd_data->hd; hd_tmp; hd_tmp = hd_tmp->next) {
-        if(hd_tmp->base_class == bc_internal && hd_tmp->sub_class == sc_int_cpu) {
+        if(
+          hd_tmp->base_class == bc_internal &&
+          hd_tmp->sub_class == sc_int_cpu &&
+          hd_tmp->detail &&
+          hd_tmp->detail->type == hd_detail_cpu &&
+          hd_tmp->detail->cpu.data
+        ) {
           s1 = hd_tmp->detail->cpu.data->vend_name;
           if(s1 && (strstr(s1, "CHRP ") == s1 || strstr(s1, "PReP ") == s1)) {
             free_mem(ki->XkbModel);
@@ -3555,7 +3561,13 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 #endif
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_internal && hd->sub_class == sc_int_cpu) {
+    if(
+      hd->base_class == bc_internal &&
+      hd->sub_class == sc_int_cpu &&
+      hd->detail &&
+      hd->detail->type == hd_detail_cpu &&
+      hd->detail->cpu.data
+    ) {
       return hd->detail->cpu.data->architecture;
     }
   }

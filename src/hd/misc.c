@@ -79,7 +79,8 @@ void hd_scan_misc(hd_data_t *hd_data)
         hd->base_class == bc_internal &&
         hd->sub_class == sc_int_bios &&
         hd->detail &&
-        hd->detail->type == hd_detail_bios
+        hd->detail->type == hd_detail_bios &&
+        hd->detail->bios.data
       ) break;
     }
     if(hd) {
