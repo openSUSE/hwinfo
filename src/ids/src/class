@@ -105,6 +105,10 @@
 &subclass.id		0x8f
 +subclass.name		ESCON controller
 
+ baseclass.id		0x002
+&subclass.id		0x90
++subclass.name		IUCV connection
+
  baseclass.id		0x003
 +baseclass.name		Display controller
 

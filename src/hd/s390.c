@@ -194,6 +194,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
   	hd->bus.id=bus_iucv;
   	hd->base_class.id=bc_network;
   	hd->status.active=status_no;
+  	hd->status.available=status_yes;
   	hddb_add_info(hd_data,hd);
   	
   	/* add activated IUCV devices */
@@ -211,6 +212,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
 	      hd->bus.id=bus_iucv;
 	      hd->base_class.id=bc_network;
 	      hd->status.active=status_yes;
+	      hd->status.available=status_yes;
 	      attributes = sysfs_get_device_attributes(curdev);
 	      dlist_for_each_data(attributes,curattr,struct sysfs_attribute)
 	      {
