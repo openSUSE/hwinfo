@@ -1,3 +1,6 @@
+11/11/2002:	v5.43
+	- fixed qla* module info (#21567)
+
 4/11/2002:	v5.42
 	- check for REDIRECT in hwscan init script (in case it gets called
 	  from the commandline). #17773
