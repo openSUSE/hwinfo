@@ -3,8 +3,9 @@
 #include <string.h>
 #include "ihw.h"
 
-#define IHW_DATABASE	"/usr/lib/YaST/ihw_database"
-//#define IHW_DATABASE	"src/isdn/ihw_database"
+#ifndef IHW_DATABASE
+#define  IHW_DATABASE "/usr/lib/YaST/ihw_database"
+#endif
 
 #define debprintf(a...)
 
@@ -38,7 +39,7 @@ static int	*isdncard_type;
 static int	*isdncard_id;
 
 
-typedef int (*fcmp)(const void *, const void *);
+typedef int (*fcmp) (const void *, const void *);
 
 int compare_name(const int *c1, const int *c2) {
 	return(strcasecmp(isdncard_info[*c1].ici.name, isdncard_info[*c2].ici.name));
@@ -68,33 +69,43 @@ int init_ihw() {
 	int i,j;
 	FILE *file;
 	int rec_count, version, dummy;
+	int v0,v1,v2,v3;
 	char *np;
 	unsigned long *pl;
 
 	if (!(file=fopen(IHW_DATABASE, "rb")))
 		return(1);
-	fread(&version, sizeof(version), 1, file);
+	v0 = fgetc(file);
+	v1 = fgetc(file);
+	v2 = fgetc(file);
+	v3 = fgetc(file);
+	version = v0 + 256*(v1 + 256*(v2 + 256*v3));
 	if (version != IHW_VERSION) {
 		fclose(file);
 		return(2);
-	}
-	fread(&rec_count, sizeof(rec_count), 1, file);
-	fread(&max_name_len, sizeof(max_name_len), 1, file);
-	fread(&max_para_rec, sizeof(max_para_rec), 1, file);
-	fread(&para_list_cnt, sizeof(para_list_cnt), 1, file);
-	fread(&max_para_name, sizeof(max_para_name), 1, file);
-	fread(&max_para_name_len, sizeof(max_para_name_len), 1, file);
+	} else {
+		fscanf(file,"%08x", &rec_count);
+		fscanf(file,"%08x", &max_name_len);
+		fscanf(file,"%08x", &max_para_rec);
+		fscanf(file,"%08x", &para_list_cnt);
+		fscanf(file,"%08x", &max_para_name);
+		fscanf(file,"%08x", &max_para_name_len);
 	/* dummy entries for extentions total 16 int */
-	fread(&dummy, sizeof(dummy), 1, file);
-	fread(&dummy, sizeof(dummy), 1, file);
-	fread(&dummy, sizeof(dummy), 1, file);
-	fread(&dummy, sizeof(dummy), 1, file);
-	fread(&dummy, sizeof(dummy), 1, file);
-	fread(&dummy, sizeof(dummy), 1, file);
-	fread(&dummy, sizeof(dummy), 1, file);
-	fread(&dummy, sizeof(dummy), 1, file);
-	fread(&dummy, sizeof(dummy), 1, file);
-	
+		fscanf(file,"%08x", &dummy);
+		fscanf(file,"%08x", &dummy);
+		fscanf(file,"%08x", &dummy);
+		fscanf(file,"%08x", &dummy);
+		fscanf(file,"%08x", &dummy);
+		fscanf(file,"%08x", &dummy);
+		fscanf(file,"%08x", &dummy);
+		fscanf(file,"%08x", &dummy);
+		fscanf(file,"%08x", &dummy);
+		v0 = fgetc(file);
+		if (v0 != '\n') {
+			fclose(file);
+			return(2);
+		}
+	}
 	if (rec_count<1) {
 		fclose(file);
 		return(11);
@@ -131,14 +142,52 @@ int init_ihw() {
 		fclose(file);
 		return(9);
 	}
-	
 	fread(namesdb, max_name_len, rec_count, file);
-	fread(isdncard_info, sizeof(cibase), rec_count, file);
-	fread(parameter_info, sizeof(ihw_para_info), max_para_rec, file);
-	fread(paralist, sizeof(unsigned long), para_list_cnt, file);
-	fread(isdncard_txt, sizeof(int), rec_count, file);
-	fread(isdncard_type, sizeof(int), rec_count, file);
-	fread(isdncard_id, sizeof(int), rec_count, file);
+	for (i=0; i< rec_count; i++) {
+		fscanf(file,"%04x",&isdncard_info[i].pcnt);
+		fscanf(file,"%08x",&isdncard_info[i].pidx);
+		fscanf(file,"%04x",&isdncard_info[i].ici.handle);
+		fscanf(file,"%04x",&isdncard_info[i].ici.type);
+		fscanf(file,"%04x",&isdncard_info[i].ici.subtype);
+		fscanf(file,"%04x",&isdncard_info[i].ici.Class);
+		fscanf(file,"%08x",&isdncard_info[i].ici.vendor);
+		fscanf(file,"%08x",&isdncard_info[i].ici.device);
+		fscanf(file,"%08x",&isdncard_info[i].ici.subvendor);
+		fscanf(file,"%08x",&isdncard_info[i].ici.subdevice);
+		fscanf(file,"%08x",&isdncard_txt[i]);
+		fscanf(file,"%08x",&isdncard_type[i]);
+		fscanf(file,"%08x",&isdncard_id[i]);
+		v0 = fgetc(file);
+		if (v0 != '\n') {
+			fclose(file);
+			return(2);
+		}
+	}
+	for (i=0; i< max_para_rec; i++) {
+		fscanf(file,"%04x",&parameter_info[i].handle);
+		fscanf(file,"%08x",&parameter_info[i].type);
+		fscanf(file,"%08x",&parameter_info[i].flags);
+		fscanf(file,"%016lx",&parameter_info[i].def_value);
+		fscanf(file,"%016lx",&parameter_info[i].bytecnt);
+		fscanf(file,"%08x", &v0);
+		if (v0)
+			parameter_info[i].list = (unsigned long *)1;
+		else
+			parameter_info[i].list = NULL;
+		v0 = fgetc(file);
+		if (v0 != '\n') {
+			fclose(file);
+			return(2);
+		}
+	}
+	for (i=0; i< para_list_cnt; i++) {
+		fscanf(file,"%016lx",&paralist[i]);
+	}
+	v0 = fgetc(file);
+	if (v0 != '\n') {
+		fclose(file);
+		return(2);
+	}
 	fread(para_name, max_para_name_len, max_para_name, file);
 	fclose(file);
 	ihw_max_handle = rec_count;

@@ -68,6 +68,7 @@
 static int is_default_feature(enum probe_feature feature);
 static hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd);
 static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
+static int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len);
 static isdn_parm_t *new_isdn_parm(isdn_parm_t **ip);
 static driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici);
 static char *module_cmd(hd_t *, char *);
@@ -486,8 +487,9 @@ hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd)
 void hd_scan(hd_data_t *hd_data)
 {
   char *s = NULL;
-  int i;
+  int i, j;
   hd_t *hd;
+  uint64_t irqs;
 
   /* log the debug & probe flags */
   if(hd_data->debug) {
@@ -554,7 +556,7 @@ void hd_scan(hd_data_t *hd_data)
 #if defined(__PPC__)
   hd_scan_adb(hd_data);
 #endif
-#if defined(__i386__)
+#if defined(__i386__) || defined(__PPC__) || defined(__alpha__)
   hd_scan_kbd(hd_data);
 #endif
 #ifndef LIBHD_TINY
@@ -569,6 +571,21 @@ void hd_scan(hd_data_t *hd_data)
 
   /* we are done... */
   hd_data->module = mod_none;
+
+  update_irq_usage(hd_data);
+
+  if(hd_data->debug) {
+    irqs = hd_data->used_irqs;
+
+    ADD2LOG("  used irqs:");
+    for(i = j = 0; i < 64; i++, irqs >>= 1) {
+      if((irqs & 1)) {
+        ADD2LOG("%c%d", j ? ',' : ' ', i);
+        j = 1;
+      }
+    }
+    ADD2LOG("\n");
+  }
 
   if(hd_data->debug) {
     ADD2LOG("  pcmcia support: %d\n", hd_has_pcmcia(hd_data));
@@ -1042,6 +1059,25 @@ void remove_tagged_hd_entries(hd_data_t *hd_data)
   }
 }
 
+int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len)
+{
+  unsigned u;
+  unsigned char c;
+
+  addr -= BIOS_ROM_START;
+  if(
+    !hd_data->bios_rom ||
+    addr > BIOS_ROM_SIZE ||
+    addr + len > BIOS_ROM_SIZE
+  ) return 0;
+
+  for(c = 0xff, u = addr; u < addr + len; u++) {
+    c &= hd_data->bios_rom[u];
+  }
+
+  return c == 0xff ? 1 : 0;
+}
+
 isdn_parm_t *new_isdn_parm(isdn_parm_t **ip)
 {
   while(*ip) ip = &(*ip)->next;
@@ -1055,7 +1091,8 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
   ihw_para_info *ipi0, *ipi;
   isdn_parm_t *ip;
   hd_res_t *res;
-  int i;
+  uint64_t irqs, irqs2;
+  int i, irq_val;
 
   di = new_mem(sizeof *di);
   ipi0 = new_mem(sizeof *ipi0);
@@ -1067,6 +1104,7 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
 
   if(hd->bus == bus_pci) return di;
 
+  ipi0->handle = -1;
   while((ipi = ihw_get_parameter(ici->handle, ipi0))) {
     ip = new_isdn_parm(&di->isdn.params);
     ip->name = new_str(ipi->name);
@@ -1080,8 +1118,77 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
     }
     ip->valid = 1;
 
-    /* now get the value */
-    if((ip->flags & P_DEFINE)) {
+    if((ip->flags & P_SOFTSET)) {
+      switch(ip->type) {
+        case P_IRQ:
+          update_irq_usage(hd_data);
+          irqs = 0;
+          for(i = 0; i < ip->alt_values; i++) {
+            irqs |= 1ull << ip->alt_value[i];
+          }
+          irqs &= ~(hd_data->used_irqs | hd_data->assigned_irqs);
+#ifdef __i386__
+          irqs &= 0xffffull;	/* max. 16 on intel */
+          /*
+           * The point is, that this is relevant for isa boards only
+           * and those have irq values < 16 anyway. So it really
+           * doesn't matter if we mask with 0xffff or not.
+           */
+#endif
+          if(!irqs) {
+            ip->conflict = 1;
+            ip->valid = 0;
+          }
+          else {
+            irqs2 = irqs & ~0xc018ull;
+            /* see if we can avoid irqs 3,4,14,15 */
+            if(irqs2) irqs = irqs2;
+            irq_val = -1;
+            /* try default value first */
+            if(ip->def_value && (irqs & (1ull << ip->def_value))) {
+              irq_val = ip->def_value;
+            }
+            else {
+              for(i = 0; i < 64 && irqs; i++, irqs >>= 1) {
+                if((irqs & 1)) irq_val = i;
+              }
+            }
+            if(irq_val >= 0) {
+              ip->value = irq_val;
+              hd_data->assigned_irqs |= 1ull << irq_val;
+            }
+            else {
+              ip->valid = 0;
+            }
+          }
+          break;
+        case P_MEM:
+          if(!hd_data->bios_rom) {
+            if(ip->def_value) {
+              ip->value = ip->def_value;
+            }
+          }
+          else {
+            /* ###### 0x2000 is just guessing -> should be provided by libihw */
+            if(ip->def_value && chk_free_biosmem(hd_data, ip->def_value, 0x2000)) {
+              ip->value = ip->def_value;
+            }
+            else {
+              for(i = ip->alt_values - 1; i >= 0; i--) {
+                if(chk_free_biosmem(hd_data, ip->alt_value[i], 0x2000)) {
+                  ip->value = ip->alt_value[i];
+                  break;
+                }
+              }
+            }
+          }
+          if(!ip->value) ip->conflict = 1;
+          break;
+        default:
+          ip->valid = 0;
+      }
+    }
+    else if((ip->flags & P_DEFINE)) {
       res = NULL;
       switch(ip->type) {
         case P_IRQ:
@@ -1112,6 +1219,8 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
           res = get_res(hd, res_mem, ip->type - P_BASE0);
           if(res) ip->value = res->mem.base;
           break;
+        default:
+          ip->valid = 0;
       }
       if(!res) ip->valid = 0;
     }
@@ -1835,4 +1944,30 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
   return hd_idx;
 }
 
+void update_irq_usage(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  misc_irq_t *mi;
+  unsigned u, v;
+  uint64_t irqs = 0;
+  hd_res_t *res;
+
+  if(hd_data->misc) {
+    mi = hd_data->misc->irq;
+    for(u = 0; u < hd_data->misc->irq_len; u++) {
+      v = mi[u].irq;
+      irqs |= 1ull << v;
+    }
+  }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    for(res = hd->res; res; res = res->next) {
+      if(res->any.type == res_irq) {
+        irqs |= 1ull << res->irq.base;
+      }
+    }
+  }
+
+  hd_data->used_irqs = irqs;
+}
 

@@ -540,6 +540,7 @@ typedef struct isdn_parm_s {
   struct isdn_parm_s *next;
   char *name;				/* parameter name */
   unsigned valid:1;			/* 1: entry is valid, 0: some inconsistencies */
+  unsigned conflict:1;			/* 1: ressource conflict (eg. no free irq) */
   uint64_t value;			/* value of the parameter */
   unsigned type;			/* libihw type (P_...) */
   unsigned flags;			/* libihw flags (P_...) */
@@ -753,6 +754,10 @@ typedef struct {
   str_list_t *cd_list;		/* used by hd_cd_list() */
   str_list_t *disk_list;	/* dto, hd_disk_list() */
   str_list_t *net_list;		/* dto hd_net_list() */
+  uint64_t used_irqs;		/* irq usage */
+  uint64_t assigned_irqs;	/* irqs automatically assigned by libhd (for driver info) */
+  unsigned char *bios_rom;	/* BIOS 0xc0000 - 0xfffff */
+  unsigned char *bios_ram;	/* BIOS   0x400 -   0x4ff */
 } hd_data_t;
 
 

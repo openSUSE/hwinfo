@@ -433,7 +433,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
           for(k = 0; ip; ip = ip->next, k++) {
             dump_line(
               "  %d%s: (0x%x/%02x): %s = 0x%"PRIx64,
-              k, ip->valid ? "" : "(invalid)",
+              k, ip->conflict ? "(conflict)" : ip->valid ? "" : "(invalid)",
               ip->type, ip->flags >> 8, ip->name, ip->value
             );
             if(ip->alt_values) {

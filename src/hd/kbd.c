@@ -15,12 +15,12 @@
 #include "kbd.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * kbd detection; ix86 only
+ * kbd detection
  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#ifdef __i386__
+#if defined(__i386__) || defined(__PPC__) || defined(__alpha__)
 
 void hd_scan_kbd(hd_data_t *hd_data)
 {
@@ -58,6 +58,10 @@ void hd_scan_kbd(hd_data_t *hd_data)
     if(strstr(sl->str, "Detected PS/2 Mouse Port")) j = 1;
   }
 
+#ifdef __PPC__
+  if(!j) return;
+#endif
+
   /* more than 2 timeouts -> assume no keyboard */
   kid = 0;
   if(i < 2) {
@@ -77,4 +81,4 @@ void hd_scan_kbd(hd_data_t *hd_data)
   }
 }
 
-#endif	/* __i386__ */
+#endif	/* __i386__ || __PPC__ || __alpha__ */

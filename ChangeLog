@@ -1,3 +1,11 @@
+25/2/2000:	v0.73
+	- sparc & baud rate fix
+	- new libihw
+	- minor usb improvements
+	- better keyboard detection
+	- ressource management for irqs
+	- isdn fixes/improvements
+
 24/2/2000:	v0.72
 	- libihw used only on ix86 & axp
 	- pc keyboard detection

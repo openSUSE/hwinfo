@@ -3,7 +3,7 @@
 #ifndef IHW_INCLUDE
 #define IHW_INCLUDE
 
-#define IHW_VERSION	0x0101
+#define IHW_VERSION	0x0102
 #define	CLASS_PCI	1
 #define CLASS_ISAPNP	2
 #define CLASS_ISALEGAL	3
@@ -72,6 +72,7 @@ typedef struct  {
 	unsigned int	flags;		/* additional information about the */
 					/* parameter */
 	unsigned long	def_value;	/* default value */
+	unsigned long   bytecnt;	/* byte count of ressource not used */
        	const unsigned long *list;	/* possible values of the parameter */
        					/* The first element gives the count */
        					/* of values */

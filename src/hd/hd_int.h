@@ -91,6 +91,8 @@ char *get_cmd_param(int field);
 /* smp/smp.c */
 int detectSMP(void);
 
+void update_irq_usage(hd_data_t *hd_data);
+
 
 #ifdef __cplusplus
 }

@@ -34,7 +34,7 @@ void hd_scan_usb(hd_data_t *hd_data)
   usb_t *usb;
   hd_res_t *res;
   int kbd_cnt, mse_cnt, lp_cnt, acm_cnt;
-  char *kbd_dev = "/dev/hidbp-kbd-", *mse_dev = "/dev/hidbp-mse-";
+  char *kbd_dev = "/dev/hidbp-kbd-", *mse_dev = "/dev/usbmouse";
   char *lp_dev = "/dev/usblp", *acm_dev = "/dev/ttyACM";
 
   if(!hd_probe_feature(hd_data, pr_usb)) return;
@@ -117,7 +117,7 @@ void hd_scan_usb(hd_data_t *hd_data)
 
       if(hd->base_class == bc_keyboard) {
         kbd_cnt = get_next_device(kbd_dev, kbd_cnt);
-        if(kbd_cnt >= 0) str_printf(&hd->unix_dev_name, 0, "%s%d", kbd_dev, kbd_cnt++);
+        // if(kbd_cnt >= 0) str_printf(&hd->unix_dev_name, 0, "%s%d", kbd_dev, kbd_cnt++);
       }
 
       if(hd->base_class == bc_printer) {
@@ -246,7 +246,11 @@ void get_usb_data(hd_data_t *hd_data)
       sscanf(usb->t->str,
         "Bus=%d Lev=%d Prnt=%d Port=%d Cnt=%d Dev#=%d Spd=%7s MxCh=%d",
         &i0, &i1, &i2, &i3, &i4, &i5, buf, &i6
-      ) == 8
+      ) == 8 ||
+      (/* old usb stack */ i0 = 0, sscanf(usb->t->str,
+        "Lev=%d Prnt=%d Port=%d Cnt=%d Dev#=%d Spd=%7s MxCh=%d",
+        &i1, &i2, &i3, &i4, &i5, buf, &i6
+      )) == 7
     ) {
       usb->bus = i0;
       usb->dev_nr = i5;

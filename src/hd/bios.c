@@ -10,12 +10,6 @@
 #include "hd_int.h"
 #include "bios.h"
 
-#define BIOS_START	0xc0000
-#define BIOS_SIZE	0x40000
-
-#define BIOS_VARS_START	0x400
-#define BIOS_VARS_SIZE	0x100
-
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * bios info
  *
@@ -30,10 +24,9 @@ void hd_scan_bios(hd_data_t *hd_data)
 {
   hd_t *hd;
   char *s;
-  unsigned char bios_vars[BIOS_VARS_SIZE];
-  unsigned char bios[BIOS_SIZE];
-  int fd;
+  int fd, i;
   bios_info_t *bt;
+  unsigned char *bios_ram;
 
   if(!hd_probe_feature(hd_data, pr_bios)) return;
 
@@ -85,21 +78,25 @@ void hd_scan_bios(hd_data_t *hd_data)
    */
   PROGRESS(2, 0, "ram");
 
+  hd_data->bios_ram = new_mem(BIOS_RAM_SIZE);
   fd = -1;
   if(
     (fd = open(DEV_MEM, O_RDWR)) >= 0 && 
-    lseek(fd, BIOS_VARS_START, SEEK_SET) >= 0 &&
-    read(fd, bios_vars, sizeof bios_vars) == sizeof bios_vars
+    lseek(fd, BIOS_RAM_START, SEEK_SET) >= 0 &&
+    read(fd, hd_data->bios_ram, BIOS_RAM_SIZE) == BIOS_RAM_SIZE
   ) {
-    bt->ser_port0 = (bios_vars[1] << 8) + bios_vars[0];
-    bt->ser_port1 = (bios_vars[3] << 8) + bios_vars[2];
-    bt->ser_port2 = (bios_vars[5] << 8) + bios_vars[4];
-    bt->ser_port3 = (bios_vars[7] << 8) + bios_vars[6];
+    bios_ram = hd_data->bios_ram;
+    bt->ser_port0 = (bios_ram[1] << 8) + bios_ram[0];
+    bt->ser_port1 = (bios_ram[3] << 8) + bios_ram[2];
+    bt->ser_port2 = (bios_ram[5] << 8) + bios_ram[4];
+    bt->ser_port3 = (bios_ram[7] << 8) + bios_ram[6];
 
-    bt->par_port0 = (bios_vars[  9] << 8) + bios_vars[  8];
-    bt->par_port1 = (bios_vars[0xb] << 8) + bios_vars[0xa];
-    bt->par_port2 = (bios_vars[0xd] << 8) + bios_vars[0xc];
-
+    bt->par_port0 = (bios_ram[  9] << 8) + bios_ram[  8];
+    bt->par_port1 = (bios_ram[0xb] << 8) + bios_ram[0xa];
+    bt->par_port2 = (bios_ram[0xd] << 8) + bios_ram[0xc];
+  }
+  else {
+    hd_data->bios_ram = free_mem(hd_data->bios_ram);
   }
   if(fd >= 0) close(fd);
 
@@ -109,18 +106,43 @@ void hd_scan_bios(hd_data_t *hd_data)
    */
   PROGRESS(2, 0, "rom");
 
+  hd_data->bios_rom = new_mem(BIOS_ROM_SIZE);
   fd = -1;
   if(
     (fd = open(DEV_MEM, O_RDWR)) >= 0 && 
-    lseek(fd, BIOS_START, SEEK_SET) >= 0 &&
-    read(fd, bios, sizeof bios) == sizeof bios
+    lseek(fd, BIOS_ROM_START, SEEK_SET) >= 0 &&
+    read(fd, hd_data->bios_rom, BIOS_ROM_SIZE) == BIOS_ROM_SIZE
   ) {
-    get_pnp_support_status(bios, bt);
-
-
-
+    get_pnp_support_status(hd_data->bios_rom, bt);
   }
+  else {
+    hd_data->bios_rom = free_mem(hd_data->bios_rom);
+  }
+
   if(fd >= 0) close(fd);
+
+  if((hd_data->debug & HD_DEB_BIOS)) {
+    if(hd_data->bios_ram) {
+      ADD2LOG("----- BIOS vars -----\n");
+      for(i = 0; i < BIOS_RAM_SIZE; i += 0x10) {
+        ADD2LOG("  %03x  ", i + BIOS_RAM_START);
+        hexdump(&hd_data->log, 1, 0x10, hd_data->bios_ram + i);
+        ADD2LOG("\n");
+      }
+      ADD2LOG("----- BIOS vars end -----\n");
+    }
+
+    if(hd_data->bios_rom) {
+      ADD2LOG("----- BIOS ROM -----\n");
+      for(i = 0; i < BIOS_ROM_SIZE; i += 0x1000) {
+        ADD2LOG("  %03x  ", i + BIOS_ROM_START);
+        hexdump(&hd_data->log, 1, 0x10, hd_data->bios_rom + i);
+        ADD2LOG("\n");
+      }
+      ADD2LOG("----- BIOS ROM end -----\n");
+    }
+  }
+
 }
 
 
@@ -131,7 +153,7 @@ void get_pnp_support_status(unsigned char *bios, bios_info_t *bt)
   unsigned char *t;
   unsigned l, cs;
 
-  for(i = 0xf0000 - BIOS_START; i < BIOS_SIZE; i += 0x10) {
+  for(i = 0xf0000 - BIOS_ROM_START; i < BIOS_ROM_SIZE; i += 0x10) {
     t = bios + i;
     if(t[0] == pnp[0] && t[1] == pnp[1] && t[2] == pnp[2] && t[3] == pnp[3]) {
       for(l = cs = 0; l < t[5]; l++) { cs += t[l]; }
