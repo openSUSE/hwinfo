@@ -23,7 +23,7 @@ int main(int argc, char **argv)
   FILE *f = NULL;
   long l = 0;
   int i;
-  unsigned def_probe = (1 << pr_memory) | (1 << pr_pci);
+  unsigned def_probe = -1;
 
   argc--; argv++;
 

@@ -1,0 +1,94 @@
+Real docu will come soon.
+
+Tested platforms:
+
+  - Intel ix86
+  - Alpha AXP
+  - PowerPC
+
+hw usage:
+
+  hw [debug=deb_flag] [log=log_file] [[+|-]probe_option1] [[+|-]probe_option2] ... [,] [[+|-]probe_option3] ...
+
+Examples:
+
+  - hw +all
+    probes for everything (this is the default when you just call "hw" without any args)
+
+  - hw debug=-1 log=hw.log +all
+    dto, with all debug info, output is written to hw.log *and* stdout (debug info
+    goes only to hw.log (this is a feature :-)))
+
+  - hw -all +ide
+    probe for ide drives only
+
+  - hw +all -isapnp -floppy
+    probe for everything *except* isapnp and floppies
+
+  - hw debug=-1 -all
+    does *no* probing at all; useful if you want to see all supported probing flags
+
+Note: the order of arguments is relevant *only* for building the internal
+representation of the probing flags. It has *no* effect on the order the
+actual probing is done!
+
+Notably
+
+  hw -all +ide +scsi
+
+is *identical* to
+
+  hw -all +scsi +ide
+
+but different from
+
+  hw +ide +scsi -all
+
+(If you don't believe it, just try it out.)
+
+The "," is a special tag to test re-probing; e.g.
+
+  hw +all , +net
+
+(note the spaces around ",") will probe everything and then call the probing function
+*again*, this time looking only for network devices. All non-network devs are unaffected
+by the second probing, so the basic effect in this example would be to move
+all the network devs at the end of the hardware list.
+
+This works even multiple times:
+
+  hw -all +scsi , +scsi , +scsi
+
+probes 3 times just for the scsi devices. But this really is useful only for
+testing the lib.
+
+Note that re-probing can have unexpected side effects, as some probing
+modules are interdependend. (Particularly the misc module.)
+
+Likewise, some modules are only useful if others are active as well; eg.
+
+  hw -all +mouse
+
+will probably do not what you want, so
+
+  hw -all +mouse +serial
+
+is better. A ps/2 mouse is only found if you add at least the "misc" module. So to get
+all the mice, do (currently)
+
+  hw -all +mouse +serial +misc
+
+Some probing flags do not stand for complete modules but enable additional
+features; e.g. "pci.range" or "cdrom.info".
+
+Example:
+  hw -all +cdrom
+  gives a list of all cdrom's
+
+  hw -all +cdrom +cdrom.info
+  additionally reads the iso9660 info
+
+  BUT:
+    hw -all +cdrom.info
+    does nothing
+
