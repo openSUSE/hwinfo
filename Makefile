@@ -29,7 +29,7 @@ install:
 	install -d -m 755 /usr/sbin /usr/lib /usr/include
 	install -m 755 -s hwinfo /usr/sbin
 	if [ -f $(LIBHD_SO) ] ; then \
-		install -m 644 $(LIBHD_SO) /usr/lib ; \
+		install $(LIBHD_SO) /usr/lib ; \
 		ln -snf libhd.so.$(LIBHD_MINOR_VERSION) /usr/lib/libhd.so ; \
 	else \
 		install -m 644 $(LIBHD) /usr/lib ; \
