@@ -34,7 +34,10 @@ void hd_scan_usb(hd_data_t *hd_data)
   usb_t *usb;
   hd_res_t *res;
   int kbd_cnt, mse_cnt, lp_cnt, acm_cnt;
-  char *s, *mse_dev = "/dev/usbmouse";
+  char *s;
+#if 0
+  char *mse_dev = "/dev/usbmouse";
+#endif
   char *lp_dev = "/dev/usblp", *acm_dev = "/dev/ttyACM";
 
   if(!hd_probe_feature(hd_data, pr_usb)) return;
@@ -121,8 +124,13 @@ void hd_scan_usb(hd_data_t *hd_data)
       }
 
       if(hd->base_class == bc_mouse) {
+#if 0
         mse_cnt = get_next_device(mse_dev, mse_cnt);
         if(mse_cnt >= 0) str_printf(&hd->unix_dev_name, 0, "%s%d", mse_dev, mse_cnt++);
+#else
+        /* new USB stack - new devices :-/ */
+        hd->unix_dev_name = new_str("/dev/input/mice");
+#endif
       }
 
       if(hd->base_class == bc_keyboard) {

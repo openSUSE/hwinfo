@@ -1,4 +1,7 @@
-2276/2000:	v1.07
+26/6/2000:	v1.08
+	- new usb mouse devices
+
+22/6/2000:	v1.07
 	- activated serial line scanning in linuxrc
 	- extendend 'hwprobe=' features
 
