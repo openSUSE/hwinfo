@@ -46,6 +46,11 @@ static void smbios_bitmap2str(hd_bitmap_t *hbm, sm_str_map_t *map);
     { (void *) a ## _ } \
   };
 
+/* ptr is (unsigned char *) */
+#define READ_MEM16(ptr) ((ptr)[0] + ((ptr)[1] << 8))
+#define READ_MEM32(ptr) ((ptr)[0] + ((ptr)[1] << 8) + ((ptr)[2] << 16) + ((ptr)[3] << 24))
+#define READ_MEM64(ptr) (READ_MEM32(ptr) + ((uint64_t) READ_MEM32(ptr + 4) << 32))
+
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -658,7 +663,7 @@ void smbios_parse(hd_data_t *hd_data)
     switch(sm->any.type) {
       case sm_biosinfo:
         if(data_len >= 0x12) {
-          sm->biosinfo.start = (*(uint16_t *) (sm_data + 6)) << 4;
+          sm->biosinfo.start = READ_MEM16(sm_data + 6) << 4;
           sm->biosinfo.rom_size = (sm_data[9] + 1) << 16;
           sm->biosinfo.vendor = get_string(sl_any, sm_data[4]);
           sm->biosinfo.version = get_string(sl_any, sm_data[5]);
@@ -704,7 +709,7 @@ void smbios_parse(hd_data_t *hd_data)
           sm->boardinfo.feature.bits = 8;
           smbios_bitmap2str(&sm->boardinfo.feature, &smbios_board_feature);
           sm->boardinfo.location = get_string(sl_any, sm_data[0x0a]);
-          sm->boardinfo.chassis = *(uint16_t *) (sm_data + 0x0b);
+          sm->boardinfo.chassis = READ_MEM16(sm_data + 0x0b);
           sm->boardinfo.board_type.id = sm_data[0x0d];
           smbios_id2str(&sm->boardinfo.board_type, &smbios_board_types, 1);
         }
@@ -714,7 +719,7 @@ void smbios_parse(hd_data_t *hd_data)
             sm->boardinfo.objects_len = u;
             sm->boardinfo.objects = new_mem(u * sizeof *sm->boardinfo.objects);
             for(u = 0; u < sm->boardinfo.objects_len; u++) {
-              sm->boardinfo.objects[u] = *(uint16_t *) (sm_data + 0x0f + 2 * u);
+              sm->boardinfo.objects[u] = READ_MEM16(sm_data + 0x0f + 2 * u);
             }
           }
         }
@@ -743,7 +748,7 @@ void smbios_parse(hd_data_t *hd_data)
           smbios_id2str(&sm->chassis.security, &smbios_chassis_sec_states, 1);
         }
         if(data_len >= 0x11) {
-          sm->chassis.oem = *(uint32_t *) (sm_data + 0x0d);
+          sm->chassis.oem = READ_MEM32(sm_data + 0x0d);
         }
         break;
 
@@ -773,10 +778,10 @@ void smbios_parse(hd_data_t *hd_data)
           }
           sm->processor.pr_type.id = sm_data[5];
           sm->processor.family.id = sm_data[6];
-          sm->processor.cpu_id = *(uint64_t *) (sm_data + 8);
-          sm->processor.ext_clock = *(uint16_t *) (sm_data + 0x12);
-          sm->processor.max_speed = *(uint16_t *) (sm_data + 0x14);
-          sm->processor.current_speed = *(uint16_t *) (sm_data + 0x16);
+          sm->processor.cpu_id = READ_MEM64(sm_data + 8);
+          sm->processor.ext_clock = READ_MEM16(sm_data + 0x12);
+          sm->processor.max_speed = READ_MEM16(sm_data + 0x14);
+          sm->processor.current_speed = READ_MEM16(sm_data + 0x16);
           sm->processor.sock_status = (sm_data[0x18] >> 6) & 1;
           sm->processor.cpu_status.id = sm_data[0x18] & 7;
           sm->processor.upgrade.id = sm_data[0x19];
@@ -786,9 +791,9 @@ void smbios_parse(hd_data_t *hd_data)
           smbios_id2str(&sm->processor.upgrade, &smbios_proc_upgrades, 1);
         }
         if(data_len >= 0x20) {
-          sm->processor.l1_cache = *(uint16_t *) (sm_data + 0x1a);
-          sm->processor.l2_cache = *(uint16_t *) (sm_data + 0x1c);
-          sm->processor.l3_cache = *(uint16_t *) (sm_data + 0x1e);
+          sm->processor.l1_cache = READ_MEM16(sm_data + 0x1a);
+          sm->processor.l2_cache = READ_MEM16(sm_data + 0x1c);
+          sm->processor.l3_cache = READ_MEM16(sm_data + 0x1e);
           if(sm->processor.l1_cache == 0xffff) sm->processor.l1_cache = 0;
           if(sm->processor.l2_cache == 0xffff) sm->processor.l2_cache = 0;
           if(sm->processor.l3_cache == 0xffff) sm->processor.l3_cache = 0;
@@ -805,13 +810,13 @@ void smbios_parse(hd_data_t *hd_data)
       case sm_cache:
         if(data_len >= 0x0f) {
           sm->cache.socket = get_string(sl_any, sm_data[4]);
-          u = *(uint16_t *) (sm_data + 7);
+          u = READ_MEM16(sm_data + 7);
           if((u & 0x8000)) u = (u & 0x7fff) << 6;
           sm->cache.max_size = u;
-          u = *(uint16_t *) (sm_data + 9);
+          u = READ_MEM16(sm_data + 9);
           if((u & 0x8000)) u = (u & 0x7fff) << 6;
           sm->cache.current_size = u;
-          u = *(uint16_t *) (sm_data + 5);
+          u = READ_MEM16(sm_data + 5);
           sm->cache.mode.id = (u >> 8) & 3;
           sm->cache.state = (u >> 7) & 1;
           sm->cache.location.id = (u >> 5) & 3;
@@ -859,7 +864,7 @@ void smbios_parse(hd_data_t *hd_data)
           sm->slot.bus_width.id = sm_data[6];
           sm->slot.usage.id = sm_data[7];
           sm->slot.length.id = sm_data[8];
-          sm->slot.id = *(uint16_t *) (sm_data + 9);
+          sm->slot.id = READ_MEM16(sm_data + 9);
           sm->slot.feature.bitmap[0] = sm_data[0x0b];
         }
         if(data_len >= 0x0d) {
@@ -919,7 +924,7 @@ void smbios_parse(hd_data_t *hd_data)
             sm->group.items_len = u;
             sm->group.item_handles = new_mem(u * sizeof *sm->group.item_handles);
             for(u = 0; u < sm->group.items_len; u++) {
-              sm->group.item_handles[u] = *(uint16_t *) (sm_data + 6 + 3 * u);
+              sm->group.item_handles[u] = READ_MEM16(sm_data + 6 + 3 * u);
             }
           }
         }
@@ -930,10 +935,10 @@ void smbios_parse(hd_data_t *hd_data)
           sm->memarray.location.id = sm_data[4];
           sm->memarray.use.id = sm_data[5];
           sm->memarray.ecc.id = sm_data[6];
-          sm->memarray.max_size = *(uint32_t *) (sm_data + 7);
+          sm->memarray.max_size = READ_MEM32(sm_data + 7);
           if(sm->memarray.max_size == 0x80000000) sm->memarray.max_size = 0;
-          sm->memarray.error_handle = *(uint16_t *) (sm_data + 0x0b);
-          sm->memarray.slots = *(uint16_t *) (sm_data + 0x0d);
+          sm->memarray.error_handle = READ_MEM16(sm_data + 0x0b);
+          sm->memarray.slots = READ_MEM16(sm_data + 0x0d);
           smbios_id2str(&sm->memarray.location, &smbios_memarray_location, 1);
           smbios_id2str(&sm->memarray.use, &smbios_memarray_use, 1);
           smbios_id2str(&sm->memarray.ecc, &smbios_memarray_ecc, 1);
@@ -942,10 +947,10 @@ void smbios_parse(hd_data_t *hd_data)
 
       case sm_memdevice:
         if(data_len >= 0x15) {
-          sm->memdevice.array_handle = *(uint16_t *) (sm_data + 0x04);
-          sm->memdevice.error_handle = *(uint16_t *) (sm_data + 0x06);
-          sm->memdevice.eccbits = *(uint16_t *) (sm_data + 8);
-          sm->memdevice.width = *(uint16_t *) (sm_data + 0xa);
+          sm->memdevice.array_handle = READ_MEM16(sm_data + 0x04);
+          sm->memdevice.error_handle = READ_MEM16(sm_data + 0x06);
+          sm->memdevice.eccbits = READ_MEM16(sm_data + 8);
+          sm->memdevice.width = READ_MEM16(sm_data + 0xa);
           if(sm->memdevice.width == 0xffff) sm->memdevice.width = 0;
           if(sm->memdevice.eccbits == 0xffff) sm->memdevice.eccbits = 0;
           if(sm->memdevice.eccbits >= sm->memdevice.width) {
@@ -954,7 +959,7 @@ void smbios_parse(hd_data_t *hd_data)
           else {
             sm->memdevice.eccbits = 0;
           }
-          sm->memdevice.size = *(uint16_t *) (sm_data + 0xc);
+          sm->memdevice.size = READ_MEM16(sm_data + 0xc);
           if(sm->memdevice.size == 0xffff) sm->memdevice.size = 0;
           if((sm->memdevice.size & 0x8000)) {
             sm->memdevice.size &= 0x7fff;
@@ -975,7 +980,7 @@ void smbios_parse(hd_data_t *hd_data)
           smbios_bitmap2str(&sm->memdevice.type_detail, &smbios_memdevice_detail);
         }
         if(data_len >= 0x17) {
-          sm->memdevice.speed = *(uint16_t *) (sm_data + 0x15);
+          sm->memdevice.speed = READ_MEM16(sm_data + 0x15);
         }
         if(data_len >= 0x1b) {
           sm->memdevice.manuf = get_string(sl_any, sm_data[0x17]);
@@ -990,10 +995,10 @@ void smbios_parse(hd_data_t *hd_data)
           sm->memerror.err_type.id = sm_data[4];
           sm->memerror.granularity.id = sm_data[5];
           sm->memerror.operation.id = sm_data[6];
-          sm->memerror.syndrome = *(uint32_t *) (sm_data + 7);
-          sm->memerror.array_addr = *(uint32_t *) (sm_data + 0xb);
-          sm->memerror.device_addr = *(uint32_t *) (sm_data + 0xf);
-          sm->memerror.range = *(uint32_t *) (sm_data + 0x13);
+          sm->memerror.syndrome = READ_MEM32(sm_data + 7);
+          sm->memerror.array_addr = READ_MEM32(sm_data + 0xb);
+          sm->memerror.device_addr = READ_MEM32(sm_data + 0xf);
+          sm->memerror.range = READ_MEM32(sm_data + 0x13);
           smbios_id2str(&sm->memerror.err_type, &smbios_memerror_type, 1);
           smbios_id2str(&sm->memerror.granularity, &smbios_memerror_granularity, 1);
           smbios_id2str(&sm->memerror.operation, &smbios_memerror_operation, 1);
@@ -1002,23 +1007,23 @@ void smbios_parse(hd_data_t *hd_data)
 
       case sm_memarraymap:
         if(data_len >= 0x0f) {
-          sm->memarraymap.start_addr = *(uint32_t *) (sm_data + 4);
+          sm->memarraymap.start_addr = READ_MEM32(sm_data + 4);
           sm->memarraymap.start_addr <<= 10;
-          sm->memarraymap.end_addr = 1 + *(uint32_t *) (sm_data + 8);
+          sm->memarraymap.end_addr = 1 + READ_MEM32(sm_data + 8);
           sm->memarraymap.end_addr <<= 10;
-          sm->memarraymap.array_handle = *(uint16_t *) (sm_data + 0xc);
+          sm->memarraymap.array_handle = READ_MEM16(sm_data + 0xc);
           sm->memarraymap.part_width = sm_data[0x0e];
         }
         break;
 
       case sm_memdevicemap:
         if(data_len >= 0x13) {
-          sm->memdevicemap.start_addr = *(uint32_t *) (sm_data + 4);
+          sm->memdevicemap.start_addr = READ_MEM32(sm_data + 4);
           sm->memdevicemap.start_addr <<= 10;
-          sm->memdevicemap.end_addr = 1 + *(uint32_t *) (sm_data + 8);
+          sm->memdevicemap.end_addr = 1 + READ_MEM32(sm_data + 8);
           sm->memdevicemap.end_addr <<= 10;
-          sm->memdevicemap.memdevice_handle = *(uint16_t *) (sm_data + 0xc);
-          sm->memdevicemap.arraymap_handle = *(uint16_t *) (sm_data + 0xe);
+          sm->memdevicemap.memdevice_handle = READ_MEM16(sm_data + 0xc);
+          sm->memdevicemap.arraymap_handle = READ_MEM16(sm_data + 0xe);
           sm->memdevicemap.row_pos = sm_data[0x10];
           sm->memdevicemap.interleave_pos = sm_data[0x11];
           sm->memdevicemap.interleave_depth = sm_data[0x12];
@@ -1064,10 +1069,10 @@ void smbios_parse(hd_data_t *hd_data)
           sm->mem64error.err_type.id = sm_data[4];
           sm->mem64error.granularity.id = sm_data[5];
           sm->mem64error.operation.id = sm_data[6];
-          sm->mem64error.syndrome = *(uint32_t *) (sm_data + 7);
-          sm->mem64error.array_addr = *(uint64_t *) (sm_data + 0xb);
-          sm->mem64error.device_addr = *(uint64_t *) (sm_data + 0x13);
-          sm->mem64error.range = *(uint32_t *) (sm_data + 0x1b);
+          sm->mem64error.syndrome = READ_MEM32(sm_data + 7);
+          sm->mem64error.array_addr = READ_MEM64(sm_data + 0xb);
+          sm->mem64error.device_addr = READ_MEM64(sm_data + 0x13);
+          sm->mem64error.range = READ_MEM32(sm_data + 0x1b);
           smbios_id2str(&sm->mem64error.err_type, &smbios_memerror_type, 1);
           smbios_id2str(&sm->mem64error.granularity, &smbios_memerror_granularity, 1);
           smbios_id2str(&sm->mem64error.operation, &smbios_memerror_operation, 1);

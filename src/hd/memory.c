@@ -43,11 +43,11 @@ void hd_scan_memory(hd_data_t *hd_data)
   if(klog2 > klog) klog = klog2;
   meminfo = meminfo_mem(hd_data);
 
-  msize0 = klog ? klog : kcore;
-  if(!msize0) msize0 = meminfo;
+  msize0 = meminfo > klog ? meminfo : klog;
+  if(!msize0) msize0 = kcore;
 
   exact = 0;
-  if(msize0 && kcore >= msize0 && ((kcore - msize0) << 2) / msize0 == 0) {
+  if(msize0 && kcore >= msize0 && ((kcore - msize0) << 4) / msize0 == 0) {
     /* trust kcore value if it's approx. msize0 */
     msize0 = kcore;
     exact = 1;
@@ -115,12 +115,12 @@ uint64_t klog_mem(hd_data_t *hd_data, uint64_t *alt)
   if(!hd_data->klog) read_klog(hd_data);
 
   for(sl = hd_data->klog; sl; sl = sl->next) {
-    if(strstr(sl->str, "<4>Memory: ") == sl->str) {
-      if(sscanf(sl->str, "<4>Memory: %"SCNu64"k/%"SCNu64"k", &u0, &u1) == 2) {
+    if(strstr(sl->str, "<6>Memory: ") == sl->str) {
+      if(sscanf(sl->str, "<6>Memory: %"SCNu64"k/%"SCNu64"k", &u0, &u1) == 2) {
         mem0 = u1 << 10;
       }
       if(
-        (i = sscanf(sl->str, "<4>Memory: %"SCNu64"k available (%"SCNu64"k kernel code, %"SCNu64"k data, %"SCNu64"k", &u0, &u1, &u2, &u3))  == 4 || i == 1
+        (i = sscanf(sl->str, "<6>Memory: %"SCNu64"k available (%"SCNu64"k kernel code, %"SCNu64"k data, %"SCNu64"k", &u0, &u1, &u2, &u3))  == 4 || i == 1
       ) {
         mem0 = (i == 1 ? u0 : u0 + u1 + u2 + u3) << 10;
       }
@@ -170,7 +170,7 @@ uint64_t klog_mem2(hd_data_t *hd_data)
   for(sl = hd_data->klog; sl; sl = sl->next) {
     if(strstr(sl->str, "<6>BIOS-provided physical RAM map:") == sl->str) {
       for(sl = sl->next ; sl; sl = sl->next) {
-        ADD2LOG(" -- %s\n", sl->str);
+        ADD2LOG(" -- %s", sl->str);
         if(sscanf(sl->str, "<4> BIOS-e820: %"SCNx64" - %"SCNx64" (%63s", &u0, &u1, buf) != 3) break;
         if(strcmp(buf, "usable)")) continue;
         if(u1 < u0) break;
@@ -190,10 +190,10 @@ uint64_t meminfo_mem(hd_data_t *hd_data)
   uint64_t u = 0, u0;
   str_list_t *sl;
 
-  sl = read_file(PROC_MEMINFO, 1, 1);
+  sl = read_file(PROC_MEMINFO, 0, 1);
 
-  if(sl && sscanf(sl->str, "Mem: %"SCNu64"", &u0) == 1) {
-    u = u0;
+  if(sl && sscanf(sl->str, "MemTotal: %"SCNu64"", &u0) == 1) {
+    u = u0 << 10;
   }
 
   free_str_list(sl);
