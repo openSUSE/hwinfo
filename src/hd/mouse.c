@@ -22,6 +22,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+#ifndef LIBHD_TINY
 
 static unsigned read_data(hd_data_t *hd_data, int fd, unsigned char *buf, unsigned buf_size);
 static void get_ps2_mouse(hd_data_t *hd_data);
@@ -732,3 +733,5 @@ void dump_ser_mouse_data(hd_data_t *hd_data)
 
   ADD2LOG("----- serial mice end -----\n");
 }
+
+#endif		/* !defined(LIBHD_TINY) */

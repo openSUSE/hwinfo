@@ -1693,8 +1693,8 @@ void hd_scan(hd_data_t *hd_data)
 #ifndef LIBHD_TINY
   hd_scan_braille(hd_data);
   hd_scan_modem(hd_data);	/* do it before hd_scan_mouse() */
-#endif
   hd_scan_mouse(hd_data);
+#endif
   hd_scan_sbus(hd_data);
 
   /* must be after hd_scan_monitor() */
