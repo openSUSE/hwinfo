@@ -232,7 +232,7 @@ void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent
   hd_t *hd;
   hd_res_t *res;
   devtree_t *dt, *dt2;
-  int irq;
+  int irq, floppy_ctrl_idx;
   unsigned sound_ok = 0, net_ok = 0, scsi_ok = 0;
   unsigned id;
   char *s;
@@ -253,7 +253,6 @@ void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent
         (!strcmp(dt->device_type, "block") || !strcmp(dt->device_type, "swim3"))
       ) {
         /* block devices */
-        // ###### fix: add floppy disk???
 
         s = dt->compatible ? dt->compatible : dt->name;
         id = 0;
@@ -280,6 +279,26 @@ void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent
             res->irq.enabled = 1;
             res->irq.base = dt->interrupt;
           }
+          floppy_ctrl_idx = hd->idx;
+
+          hd = add_hd_entry(hd_data, __LINE__, 0);
+          hd->base_class = bc_storage_device;
+          hd->sub_class = sc_sdev_floppy;
+          hd->bus = bus_floppy;
+          hd->unix_dev_name = new_str("/dev/fd0");
+
+          res = add_res_entry(&hd->res, new_mem(sizeof *res));
+          res->size.type = res_size;
+          res->size.val1 = str2float("3.5", 2);
+          res->size.unit = size_unit_cinch;
+
+          res = add_res_entry(&hd->res, new_mem(sizeof *res));
+          res->size.type = res_size;
+          res->size.val1 = 2880;
+          res->size.val2 = 0x200;
+          res->size.unit = size_unit_sectors;
+
+          hd->attached_to = floppy_ctrl_idx;
         }
       }
 

@@ -403,6 +403,8 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_ide);
       hd_set_probe_feature(hd_data, pr_scsi_cache);	// really necessary?
       hd_set_probe_feature(hd_data, pr_misc_floppy);
+      hd_set_probe_feature(hd_data, pr_prom);
+      hd_set_probe_feature(hd_data, pr_pci);
       break;
 
     case hw_disk:
@@ -430,13 +432,16 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_monitor:
       hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_prom);
+      hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_bios_vbe);
+      hd_set_probe_feature(hd_data, pr_fb);
       hd_set_probe_feature(hd_data, pr_monitor);
       break;
 
     case hw_framebuffer:
       hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_prom);
+      hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_bios_vbe);
       hd_set_probe_feature(hd_data, pr_fb);
       break;
@@ -1451,6 +1456,7 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_mouse(hd_data);
   hd_scan_sbus(hd_data);
 
+  /* must be after hd_scan_monitor() */
   hd_scan_fb(hd_data);
 
   /* keep these at the end of the list */

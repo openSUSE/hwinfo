@@ -1,3 +1,9 @@
+8/10/2001:	v3.27
+	- ppc: detect swim3 floppy (#11643)
+	- ppc: pr_prom needs pr_pci in some cases
+	- add monitor entry based on fbdev data, if we have
+	  nothing better (#11344)
+
 5/10/2001:	v3.26
 	- fix the check for active framebuffer (ppc)
 	  the current one is a hack and doesnt work in all cases
