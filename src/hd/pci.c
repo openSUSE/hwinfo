@@ -174,7 +174,8 @@ void get_pci_data(hd_data_t *hd_data)
     ) {
       PROGRESS(2, ++prog_cnt, "raw data");
 
-      p->data_len = read(fd, p->data, sizeof p->data);
+      /* ##### for CARDBUS things: 0x80 bytes? */
+      p->data_len = read(fd, p->data, hd_probe_feature(hd_data, pr_pci_ext) ? sizeof p->data : 0x40);
       if(p->data_len >= 0x40) {
         p->hdr_type = p->data[PCI_HEADER_TYPE] & 0x7f;
         p->cmd = p->data[PCI_COMMAND] + (p->data[PCI_COMMAND + 1] << 8);

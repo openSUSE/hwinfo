@@ -4,7 +4,7 @@
 
 #include "hd.h"
 #include "hd_int.h"
-#include "hdx.h"
+#include "hddb.h"
 #include "isapnp.h"
 
 
@@ -108,21 +108,21 @@ void hd_scan_isapnp(hd_data_t *hd_data)
       hd->slot = c->csn;
       hd->func = j;
 
-      hd->vend = MAKE_ID(ID_EISA, (t[0] << 8) + t[1]);
-      hd->dev = MAKE_ID(ID_EISA, (t[2] << 8) + t[3]);
+      hd->vend = MAKE_ID(TAG_EISA, (t[0] << 8) + t[1]);
+      hd->dev = MAKE_ID(TAG_EISA, (t[2] << 8) + t[3]);
 
-      if((u = device_class(hd->vend, hd->dev))) {
+      if((u = device_class(hd_data, hd->vend, hd->dev))) {
         hd->base_class = u >> 8;
         hd->sub_class = u & 0xff;
       }
 
       if(
         (ID_VALUE(hd->vend) || ID_VALUE(hd->dev)) &&
-        !hd_device_name(hd->vend, hd->dev)
+        !hd_device_name(hd_data, hd->vend, hd->dev)
       ) {
         if((r = get_isapnp_res(c, 0, RES_ANSI_NAME))) {
           s = canon_str(r->data, r->len);
-          add_device_name(hd->vend, hd->dev, 0, s);
+          add_device_name(hd_data, hd->vend, hd->dev, s);
           free_mem(s);
         }
       }
@@ -136,8 +136,8 @@ void hd_scan_isapnp(hd_data_t *hd_data)
 
       if((r = get_isapnp_res(c, j + 1, RES_LOG_DEV_ID))) {
         v = r->data;
-        hd->sub_vend = MAKE_ID(ID_EISA, (v[0] << 8) + v[1]);
-        hd->sub_dev = MAKE_ID(ID_EISA, (v[2] << 8) + v[3]);
+        hd->sub_vend = MAKE_ID(TAG_EISA, (v[0] << 8) + v[1]);
+        hd->sub_dev = MAKE_ID(TAG_EISA, (v[2] << 8) + v[3]);
         if(
           c->log_devs == 1 &&
           hd->sub_vend == hd->vend &&
@@ -146,18 +146,18 @@ void hd_scan_isapnp(hd_data_t *hd_data)
           hd->sub_vend = hd->sub_dev = 0;
         }
 
-        if((u = sub_device_class(hd->vend, hd->dev, hd->sub_vend, hd->sub_dev))) {
+        if((u = sub_device_class(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev))) {
           hd->base_class = u >> 8;
           hd->sub_class = u & 0xff;
         }
 
         if(
           (ID_VALUE(hd->sub_vend) || ID_VALUE(hd->sub_dev)) &&
-          !hd_sub_device_name(hd->vend, hd->dev, hd->sub_vend, hd->sub_dev)
+          !hd_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev)
         ) {
           if((r = get_isapnp_res(c, j + 1, RES_ANSI_NAME))) {
             s = canon_str(r->data, r->len);
-            add_sub_device_name(hd->vend, hd->dev, hd->sub_vend, hd->sub_dev, 0, s);
+            add_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev, s);
             free_mem(s);
           }
         }
@@ -166,15 +166,15 @@ void hd_scan_isapnp(hd_data_t *hd_data)
       if((r = get_isapnp_res(c, j + 1, RES_COMPAT_DEV_ID))) {
         v = r->data;
 
-        hd->compat_vend = MAKE_ID(ID_EISA, (v[0] << 8) + v[1]);
-        hd->compat_dev = MAKE_ID(ID_EISA, (v[2] << 8) + v[3]);
+        hd->compat_vend = MAKE_ID(TAG_EISA, (v[0] << 8) + v[1]);
+        hd->compat_dev = MAKE_ID(TAG_EISA, (v[2] << 8) + v[3]);
 
         if(!(hd->base_class || hd->sub_class)) {
-          if((u = device_class(hd->compat_vend, hd->compat_dev))) {
+          if((u = device_class(hd_data, hd->compat_vend, hd->compat_dev))) {
             hd->base_class = u >> 8;
             hd->sub_class = u & 0xff;
           }
-          else if(hd->compat_vend == MAKE_ID(ID_EISA, 0x41d0)) {
+          else if(hd->compat_vend == MAKE_ID(TAG_EISA, 0x41d0)) {
             /* 0x41d0 is 'PNP' */
             switch((hd->compat_dev >> 12) & 0xf) {
               case   8:

@@ -1,9 +1,7 @@
 #! /usr/bin/perl
 
-sub dump_entries;
-sub add_entry;
-sub add_subentry;
-sub add_subsubentry;
+sub add_name;
+sub add_drv;
 
 # entry: <initial letter>, <hexdigits>, <hexdigits for subentry>, <subsubentry, part1>, <..., part2>
 %spec = (
@@ -13,12 +11,14 @@ sub add_subsubentry;
   'pci'   => [ '',  4, 4, 4, 4 ],
 );
 
-
-if($ARGV[0] eq '-r') {
-  $reduced = 1;
-  $mini = 1;
-  shift
-}
+%tag = (
+  'pci'     => 0,
+  'eisa'    => 1,
+  'usb'     => 2,
+  'special' => 3,
+  'bus'     => 4,
+  'class'   => 5
+);
 
 
 for $f (@ARGV) {
@@ -26,21 +26,26 @@ for $f (@ARGV) {
     while(<F>) {
       chomp;
       s/\s*$//;
-      next if /^\s*#/;
+      next if /^\s*[#;]/;
       next if /^$/;
-
 
       # SaX Identity file
       if(/^NAME=(.+?)§DEVICE=(.+?)§VID=0x([0-9a-fA-F]+?)§DID=0x([0-9a-fA-F]+?)§SERVER=([^§]+)$/) {
-        @i = ($1, $2, $3, $4, $5);
-        $type = 'pci';
-        $subkey = undef;
-        $$type = add_entry $type, $i[2], $i[0], $f, $.;
-        $subkey = add_subentry $type, $$type, $i[3], $i[1], undef, "x|$i[4]", $f, $.;
+
+        $id1 = [ $tag{'pci'}, hex($3) ];
+        $id2 = [ $tag{'pci'}, hex($4) ];
+        $val1 = [ $1 ];
+        $val2 = [ $2 ];
+        $drv = [ 'x11', [ $5 ] ];
+
+        add_name $val1, $id1;
+        add_name $val2, $id1, $id2;
+        add_drv $drv, $id1, $id2;
+
         next;
       }
 
-
+=head1
       if(/^B\s+([0-9a-fA-F]+)\s*(.*?)$/) {
         $type = 'bus';
         $subkey = undef;
@@ -114,6 +119,8 @@ for $f (@ARGV) {
         print STDERR "invalid line at $f($.)\n";
         exit 1;
       }
+=cut
+
     }
     close F
   }
@@ -123,9 +130,97 @@ for $f (@ARGV) {
 }
 
 
+
+exit;
+
+=head1
 for (sort keys %spec) {
   dump_entries $_;
 }
+=cut
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# returns 1 if id1 > id2, 0 if id1 == id2, -1 if id1 < id2
+#
+sub cmp_id
+{
+  my ( $id1, $id2, $res );
+
+  ( $id1, $id2 ) = @_;
+
+  return 0 if !defined($id1) && !defined($id2);
+
+  return -1 if !defined($id1);
+
+  return 1 if !defined($id2);
+
+  $res = $id1->[0] <=> $id2->[0];
+  return $res if $res;
+  
+  $res = ($id1->[1] + $id1->[2]) <=> ($id2->[1] + $id2->[2]);
+  return $res if $res;
+
+  $res = $id1->[1] <=> $id2->[1];
+  return $res if $res;
+
+  return 0 if !defined($id1[2]) && !defined($id2[2]);
+
+  return -1 if !defined($id1[2]);
+
+  return 1 if !defined($id2[2]);
+
+  return $id1->[2] <=> $id2->[2];
+}
+
+sub find_name
+{
+  my ( $ent, $ind, $id1, $id2 );
+
+  $ent = shift;
+
+  for($ind = 0; $ind < @name; $ind++) {
+    next if cmp_id $name[$ind]->[0], $ent->[0];
+    next if cmp_id $name[$ind]->[1], $ent->[1];
+    next if cmp_id $name[$ind]->[2], $ent->[2];
+    next if cmp_id $name[$ind]->[3], $ent->[3];
+    return $ind;
+  }
+
+  return undef;
+}
+
+#
+# args: val, id1, id2, id3, id4
+#
+# id:   ( type, value, range )
+# val:  ( name, class )
+#
+sub add_name
+{
+  my ( $ent, $ind );
+
+  $ent = [ $_[1], $_[2], $_[3], $_[4], $_[0] ];
+
+  $ind = find_name $ent;
+
+  if(!defined($ind)) {
+    push @name, $ent;
+  }
+  else {
+    print STDERR "join $ind\n";
+  }
+}
+
+#
+# args: drv, id1, id2, id3, id4
+#
+# drv: ( type, [ standard info ], [ extended info ] ) 
+#
+sub add_drv
+{
+}
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 sub dump_entries

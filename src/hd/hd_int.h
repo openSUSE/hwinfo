@@ -25,16 +25,19 @@
 #define KLOG_BOOT		"/var/log/boot.msg"
 #define ISAPNP_CONF		"/etc/isapnp.conf"
 
-#define ID_LIST_NAME		"/lib/YaST2/id_list"
-#define ID_LIST_NAME_FALLBACK	"id_list"
+#define NAME_LIST		"hd.names"
+#define DRIVER_LIST		"hd.drivers"
 
 /* some  macros to handle internal id numbers */
-#define ID_PCI		0
-#define ID_EISA		1
-#define ID_USB		2
+#define TAG_PCI		0
+#define TAG_EISA	1
+#define TAG_USB		2
+#define TAG_SPECIAL	3	/* e.g. ADB */
+#define TAG_BUS		4
+#define TAG_CLASS	5
 
 #define ID_VALUE(a)	((a) & 0xffff)
-#define ID_CLASS(a)	(((a) >> 16) & 0xf)
+#define ID_TAG(a)	(((a) >> 16) & 0xf)
 #define MAKE_ID(a, b)	((a << 16) | (b))
 
 #define PROGRESS(a, b, c) progress(hd_data, a, b, c)

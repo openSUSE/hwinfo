@@ -8,7 +8,7 @@ Tested platforms:
 
 hw usage:
 
-  hw [debug=deb_flag] [log=log_file] [[+|-]probe_option1] [[+|-]probe_option2] ... [,] [[+|-]probe_option3] ...
+  hw [debug=deb_flag] [log=log_file] [[+|-]probe_option1] [[+|-]probe_option2] ... [.] [[+|-]probe_option3] ...
 
 Examples:
 
@@ -56,18 +56,18 @@ but different from
 
 (If you don't believe it, just try it out.)
 
-The "," is a special tag to test re-probing; e.g.
+The "." is a special tag to test re-probing; e.g.
 
-  hw +all , +net
+  hw +all . +net
 
-(note the spaces around ",") will probe everything and then call the probing function
+(note the spaces around ".") will probe everything and then call the probing function
 *again*, this time looking only for network devices. All non-network devs are unaffected
 by the second probing, so the basic effect in this example would be to move
 all the network devs at the end of the hardware list.
 
 This works even multiple times:
 
-  hw -all +scsi , +scsi , +scsi
+  hw -all +scsi . +scsi . +scsi
 
 probes 3 times just for the scsi devices. But this really is useful only for
 testing the lib.

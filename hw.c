@@ -87,7 +87,7 @@ int get_probe_flags(int argc, char **argv, hd_data_t *hd_data)
   for(i = 0; i < argc; i++) {
     s = argv[i];
 
-    if(!strcmp(s, ",")) {
+    if(!strcmp(s, ".")) {
       return i + 1;
     }
 

@@ -41,11 +41,11 @@ extern "C" {
  * change the definition of hd_data_t.probe
  */
 enum probe_feature {
-  pr_default = 1, pr_memory, pr_pci, pr_pci_range, pr_isapnp, pr_cdrom,
-  pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial, pr_misc_par,
-  pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide,
-  pr_scsi, pr_usb, pr_adb,
-  pr_all	/* pr_all must be the last */
+  pr_default = 1, pr_memory, pr_pci, pr_pci_range, pr_pci_ext, pr_isapnp,
+  pr_cdrom, pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial,
+  pr_misc_par, pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor,
+  pr_mouse, pr_ide, pr_scsi, pr_usb, pr_adb,
+  pr_all		/* pr_all must be the last */
 };
 
 
@@ -269,6 +269,18 @@ typedef struct {
   char *vend_name;		/* system type on alpha  */
   char *model_name;		/* cpu model on alpha  */
 } cpu_info_t;
+
+
+/*
+ * database info
+ */
+typedef struct {
+  unsigned data_len, data_max;
+  unsigned *data;
+  unsigned names_len, names_max;
+  char *names;
+} hddb_data_t;
+
 
 /*
  * resource types
@@ -558,61 +570,79 @@ typedef struct {
   str_list_t *cpu;		/* /proc/cpuinfo */
   str_list_t *klog;		/* kernel log */
   str_list_t *usb;		/* usb info */
+  hddb_data_t *hddb_dev;	/* device name database */
+  hddb_data_t *hddb_drv;	/* driver info database */
 } hd_data_t;
 
 
-// driver info types (module, mouse info, ...)
+/* device driver info types */
 enum driver_info_type {
-  di_none, di_module, di_mouse, di_x11, di_display
+  di_any, di_display, di_module, di_mouse, di_x11
 };
 
-// module info
+/* unspecific info */
 typedef struct {
-  enum driver_info_type type;	// driver info type
-  unsigned is_active:1;		// if module is already active
-  unsigned autoload:1;		// if it is automatically loaded (via conf.modules)
-  char *name;			// the actual module name
-  char *load_cmd;		// the command line to run ("insmod xyz")
-  char *conf;			// the conf.modules entry (e.g. for sb.o)
-} module_info_t;
+  union driver_info_u *next;
+  enum driver_info_type type;		/* driver info type */
+  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
+} driver_info_any_t;
 
-// mouse protocol info
+/* display (monitor) info */
 typedef struct {
-  enum driver_info_type type;	// driver info type
-  char *xf86;			// the XF86 protocol name
-  char *gpm;			// dto, gpm
-} mouse_info_t;
+  union driver_info_u *next;
+  enum driver_info_type type;		/* driver info type */
+  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
+  unsigned width, height;		/* max. useful display geometry */
+  unsigned min_vsync, max_vsync;	/* vsync range */
+  unsigned min_hsync, max_hsync;	/* hsync range */
+  unsigned bandwidth;			/* max. pixel clock */
+} driver_info_display_t;
 
-// X server info
+/* module info */
 typedef struct {
-  enum driver_info_type type;	// driver info type
-  char *server;			// the XF86 server name
-  char *x3d;			// 3D info
+  union driver_info_u *next;
+  enum driver_info_type type;		/* driver info type */
+  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
+  unsigned active:1;			/* if module is currently active */
+  unsigned modprobe:1;			/* modprobe or insmod  */
+  char *name;				/* the actual module name */
+  char *load_cmd;			/* the command line to run ("insmod xyz") */
+  char *conf;				/* the conf.modules entry, if any (e.g. for sb.o) */
+} driver_info_module_t;
+
+/* mouse protocol info */
+typedef struct {
+  union driver_info_u *next;
+  enum driver_info_type type;		/* driver info type */
+  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
+  char *xf86;				/* the XF86 protocol name */
+  char *gpm;				/* dto, gpm */
+} driver_info_mouse_t;
+
+/* X11 server info */
+typedef struct {
+  union driver_info_u *next;
+  enum driver_info_type type;		/* driver info type */
+  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
+  char *server;				/* the server name */
+  char *x3d;				/* 3D info */
   struct {
-    unsigned all:5;		// the next 5 entries combined
+    unsigned all:5;			/* the next 5 entries combined */
     unsigned c8:1, c15:1, c16:1, c24:1, c32:1;
-  } colors;			// supported color depths
-  unsigned dacspeed;		// max. ramdac clock
-} x11_info_t;
+  } colors;				/* supported color depths */
+  unsigned dacspeed;			/* max. ramdac clock */
+} driver_info_x11_t;
 
-// display info
-typedef struct {
-  enum driver_info_type type;		// driver info type
-  unsigned width, height;		// max. useful display geometry
-  unsigned min_vsync, max_vsync;	// vsync range
-  unsigned min_hsync, max_hsync;	// hsync range
-  unsigned bandwidth;			// max. pixel clock
-} display_info_t;
-
-// describes the device drivers; either:
-// - the actions needed to load a module
-// - or the mouse protocol
-typedef union {
-  enum driver_info_type type;	// driver info type
-  module_info_t module;
-  mouse_info_t mouse;
-  x11_info_t x11;
-  display_info_t display;
+/*
+ * holds device driver info
+ */
+typedef union driver_info_u {
+  union driver_info_u *next;
+  driver_info_any_t any;
+  driver_info_module_t module;
+  driver_info_mouse_t mouse;
+  driver_info_x11_t x11;
+  driver_info_display_t display;
 } driver_info_t;
 
 
@@ -639,7 +669,7 @@ int hd_probe_feature(hd_data_t *hd_data, enum probe_feature feature);
 enum probe_feature hd_probe_feature_by_name(char *name);
 char *hd_probe_feature_by_value(enum probe_feature feature);
 
-driver_info_t *hd_driver_info(hd_t *hd);
+driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd);
 
 hd_t *hd_cd_list(hd_data_t *hd_data, int rescan);
 hd_t *hd_disk_list(hd_data_t *hd_data, int rescan);
@@ -649,21 +679,13 @@ int hd_has_special_eide(hd_data_t *hd_data);
 int hd_has_pcmcia(hd_data_t *hd_data);
 enum boot_arch hd_boot_arch(hd_data_t *hd_data);
 
-/* implemented in hdx.c */
+/* implemented in hddb.c */
 
-char *hd_bus_name(unsigned bus);
-char *hd_base_class_name(unsigned base_class);
-char *hd_sub_class_name(unsigned base_class, unsigned sub_class);
-char *hd_vendor_name(unsigned vendor_id);
-char *hd_device_name(unsigned vendor_id, unsigned device_id);
-char *hd_sub_device_name(unsigned vendor_id, unsigned device_id, unsigned subvendor_id, unsigned subdevice_id);
-
-int hd_bus_number(char *bus_name);
-int hd_base_class_number(char *base_class_name);
-
-char *hd_device_drv_name(unsigned vendor_id, unsigned device_id);
-char *hd_sub_device_drv_name(unsigned vendor_id, unsigned device_id, unsigned subvendor_id, unsigned subdevice_id);
-
+char *hd_bus_name(hd_data_t *hd_data, unsigned bus);
+char *hd_class_name(hd_data_t *hd_data, int level, unsigned base_class, unsigned sub_class, unsigned prog_if);
+char *hd_vendor_name(hd_data_t *hd_data, unsigned vendor);
+char *hd_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device);
+char *hd_sub_device_name(hd_data_t *hd_data, unsigned vendor, unsigned device, unsigned subvendor, unsigned subdevice);
 
 /* implemented in hdp.c */
 

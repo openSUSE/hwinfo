@@ -5,7 +5,7 @@
 #include "hd.h"
 #include "hd_int.h"
 #include "hdp.h"
-#include "hdx.h"
+#include "hddb.h"
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -20,16 +20,16 @@
 #define dump_line_str(x0...) fprintf(f, "%*s%s", ind, "", x0)
 #define dump_line0(x0...) fprintf(f, x0)
 
-static int ind = 0;		// output indentation
+static int ind = 0;		/* output indentation */
 
-static void dump_normal(hd_t *, unsigned, FILE *);
-static void dump_cpu(hd_t *, unsigned, FILE *);
-static void dump_bios(hd_t *, unsigned, FILE *);
+static void dump_normal(hd_data_t *, hd_t *, FILE *);
+static void dump_cpu(hd_data_t *, hd_t *, FILE *);
+static void dump_bios(hd_data_t *, hd_t *, FILE *);
 
-static char *make_device_name_str(hd_t *h, char *buf, int buf_size);
-static char *make_sub_device_name_str(hd_t *h, char *buf, int buf_size);
-static char *make_vend_name_str(hd_t *h, char *buf, int buf_size);
-static char *make_sub_vend_name_str(hd_t *h, char *buf, int buf_size);
+static char *make_device_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size);
+static char *make_sub_device_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size);
+static char *make_vend_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size);
+static char *make_sub_vend_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size);
 
 static char *vend_id2str(unsigned vend);
 
@@ -51,8 +51,8 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
 
   if(h->detail && h->detail->type == hd_detail_isapnp) s = "(PnP)";
 
-  a0 = hd_bus_name(h->bus);
-  a1 = hd_sub_class_name(h->base_class, h->sub_class);
+  a0 = hd_bus_name(hd_data, h->bus);
+  a1 = hd_class_name(hd_data, 2, h->base_class, h->sub_class, 0);
   dump_line(
     "%02d: %s%s %02x.%x: %02x%02x %s\n",
     h->idx, a0 ? a0 : "?", s, h->slot, h->func,
@@ -74,17 +74,17 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
   }
 
   if(h->base_class == bc_internal && h->sub_class == sc_int_cpu)
-    dump_cpu(h, hd_data->debug, f);
+    dump_cpu(hd_data, h, f);
   else if(h->base_class == bc_internal && h->sub_class == sc_int_bios)
-    dump_bios(h, hd_data->debug, f);
+    dump_bios(hd_data, h, f);
   else
-    dump_normal(h, hd_data->debug, f);
+    dump_normal(hd_data, h, f);
 
   if(
     h->attached_to &&
     (hd_tmp = get_device_by_idx(hd_data, h->attached_to))
   ) {
-    s = hd_sub_class_name(hd_tmp->base_class, hd_tmp->sub_class);
+    s = hd_class_name(hd_data, 2, hd_tmp->base_class, hd_tmp->sub_class, 0);
     s = s ? s : "?";
     dump_line("Attached to: #%u (%s)\n", h->attached_to, s);
   }
@@ -134,25 +134,26 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
 /*
  * print 'normal' hardware entries
  */
-void dump_normal(hd_t *h, unsigned debug, FILE *f)
+void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 {
-  int i;
+  int i, j;
   char *s, *a0;
   uint64 u64;
   hd_res_t *res;
   char buf[256];
-  driver_info_t *mi;
+  driver_info_t *di, *di0;
+  str_list_t *sl;
 
   if(h->vend || h->dev || h->dev_name || h->vend_name) {
     if(h->vend || h->vend_name || h->dev)
-      dump_line("Vendor: %s\n", make_vend_name_str(h, buf, sizeof buf));
-    dump_line("Model: %s\n", make_device_name_str(h, buf, sizeof buf));
+      dump_line("Vendor: %s\n", make_vend_name_str(hd_data, h, buf, sizeof buf));
+    dump_line("Model: %s\n", make_device_name_str(hd_data, h, buf, sizeof buf));
   }
 
   if(h->sub_vend || h->sub_dev || h->sub_dev_name || h->sub_vend_name) {
     if(h->sub_vend || h->sub_vend_name || h->sub_dev)
-      dump_line("SubVendor: %s\n", make_sub_vend_name_str(h, buf, sizeof buf));
-    dump_line("SubDevice: %s\n", make_sub_device_name_str(h, buf, sizeof buf));
+      dump_line("SubVendor: %s\n", make_sub_vend_name_str(hd_data, h, buf, sizeof buf));
+    dump_line("SubDevice: %s\n", make_sub_device_name_str(hd_data, h, buf, sizeof buf));
   }
 
   if(h->rev_name)
@@ -164,7 +165,7 @@ void dump_normal(hd_t *h, unsigned debug, FILE *f)
     dump_line("Serial ID: \"%s\"\n", h->serial);
 
   if(h->compat_vend || h->compat_dev) {
-    a0 = hd_device_name(h->compat_vend, h->compat_dev);
+    a0 = hd_device_name(hd_data, h->compat_vend, h->compat_dev);
     dump_line(
       "Comaptible to: %s %04x \"%s\"\n",
       vend_id2str(h->compat_vend), ID_VALUE(h->compat_dev), a0 ? a0 : "?"
@@ -174,80 +175,6 @@ void dump_normal(hd_t *h, unsigned debug, FILE *f)
   if(h->broken) {
     dump_line_str("Warning: might be broken\n");
   }
-
-  if((debug & HD_DEB_DRIVER_INFO)) {
-    if(h->vend || h->dev) {
-      a0 = hd_device_drv_name(h->vend, h->dev);
-      if(a0) {
-        dump_line("Device Driver Info: \"%s\"\n", a0);
-      }
-    }
-
-    if(h->sub_vend || h->sub_dev) {
-      a0 = hd_sub_device_drv_name(h->vend, h->dev, h->sub_vend, h->sub_dev);
-      if(a0) {
-        dump_line("SubDevice Driver Info: \"%s\"\n", a0);
-      }
-    }
-  }
-
-  if((mi = hd_driver_info(h))) {
-    switch(mi->type) {
-      case di_module:
-        dump_line(
-          "Driver Status: %s is %sactive\n",
-          mi->module.name, mi->module.is_active ? "" : "not "
-        );
-
-        if(mi->module.load_cmd)
-          dump_line(
-            "Driver Activation Cmd: \"%s\"%s\n",
-            mi->module.load_cmd, mi->module.autoload ? " (required)" : ""
-          );
-
-        if(mi->module.conf)
-          dump_line("Driver \"conf.modules\" Entry: \"%s\"\n", mi->module.conf);
-      break;
-
-      case di_mouse:
-        if(mi->mouse.xf86) dump_line("XFree Protocol: %s\n", mi->mouse.xf86);
-        if(mi->mouse.gpm) dump_line("GPM Protocol: %s\n", mi->mouse.gpm);
-        break;
-
-      case di_x11:
-        if(mi->x11.server) dump_line("XFree Server: %s\n", mi->x11.server);
-        if(mi->x11.x3d) dump_line("3D-Accel: %s\n", mi->x11.x3d);
-        if(mi->x11.colors.all) {
-          dump_line_str("Color Depths: ");
-          i = 0;
-          if(mi->x11.colors.c8) { dump_line0("8"); i++; }
-          if(mi->x11.colors.c15) { if(i) dump_line0(", "); dump_line0("15"); i++; }
-          if(mi->x11.colors.c16) { if(i) dump_line0(", "); dump_line0("16"); i++; }
-          if(mi->x11.colors.c24) { if(i) dump_line0(", "); dump_line0("24"); i++; }
-          if(mi->x11.colors.c32) { if(i) dump_line0(", "); dump_line0("32"); i++; }
-          dump_line0("\n");
-        }
-        if(mi->x11.dacspeed) dump_line("Max. DAC Clock: %u MHz\n", mi->x11.dacspeed);
-        break;
-
-      case di_display:
-        if(mi->display.width)
-          dump_line("Max. Resolution: %ux%u\n", mi->display.width, mi->display.height);
-        if(mi->display.min_vsync)
-           dump_line("Vert. Sync Range: %u-%u Hz\n", mi->display.min_vsync, mi->display.max_vsync);
-        if(mi->display.min_hsync)
-           dump_line("Hor. Sync Range: %u-%u kHz\n", mi->display.min_hsync, mi->display.max_hsync);
-        if(mi->display.bandwidth)
-           dump_line("Bandwidth: %u MHz\n", mi->display.bandwidth);
-        break;
-
-      default:
-        dump_line_str("Driver Status: cannot handle driver info\n");
-    }
-
-    mi = hd_free_driver_info(mi);
-  }
-
 
   if(h->unix_dev_name) {
     dump_line("Device File: %s\n", h->unix_dev_name);
@@ -392,12 +319,90 @@ void dump_normal(hd_t *h, unsigned debug, FILE *f)
     }
   }
 
+  di0 = hd_driver_info(hd_data, h);
+
+  for(di = di0, i = 0; di; di = di->next, i++) {
+    dump_line("Driver Info #%d:\n", i);
+    ind += 2;
+    switch(di->any.type) {
+      case di_display:
+        if(di->display.width)
+          dump_line("Max. Resolution: %ux%u\n", di->display.width, di->display.height);
+        if(di->display.min_vsync)
+           dump_line("Vert. Sync Range: %u-%u Hz\n", di->display.min_vsync, di->display.max_vsync);
+        if(di->display.min_hsync)
+           dump_line("Hor. Sync Range: %u-%u kHz\n", di->display.min_hsync, di->display.max_hsync);
+        if(di->display.bandwidth)
+           dump_line("Bandwidth: %u MHz\n", di->display.bandwidth);
+        break;
+
+      case di_module:
+        dump_line(
+          "Driver Status: %s is %sactive\n",
+          di->module.name, di->module.active ? "" : "not "
+        );
+
+        if(di->module.load_cmd)
+          dump_line("Driver Activation Cmd: \"%s\"\n", di->module.load_cmd);
+
+        if(di->module.conf)
+          dump_line("Driver \"modules.conf\" Entry: \"%s\"\n", di->module.conf);
+      break;
+
+      case di_mouse:
+        if(di->mouse.xf86) dump_line("XFree Protocol: %s\n", di->mouse.xf86);
+        if(di->mouse.gpm) dump_line("GPM Protocol: %s\n", di->mouse.gpm);
+        break;
+
+      case di_x11:
+        if(di->x11.server) dump_line("XFree Server: %s\n", di->x11.server);
+        if(di->x11.x3d) dump_line("3D-Accel: %s\n", di->x11.x3d);
+        if(di->x11.colors.all) {
+          dump_line_str("Color Depths: ");
+          j = 0;
+          if(di->x11.colors.c8) { dump_line0("8"); j++; }
+          if(di->x11.colors.c15) { if(j) dump_line0(", "); dump_line0("15"); j++; }
+          if(di->x11.colors.c16) { if(j) dump_line0(", "); dump_line0("16"); j++; }
+          if(di->x11.colors.c24) { if(j) dump_line0(", "); dump_line0("24"); j++; }
+          if(di->x11.colors.c32) { if(j) dump_line0(", "); dump_line0("32"); j++; }
+          dump_line0("\n");
+        }
+        if(di->x11.dacspeed) dump_line("Max. DAC Clock: %u MHz\n", di->x11.dacspeed);
+        break;
+
+      default:
+        dump_line_str("Driver Status: unknown driver info format\n");
+    }
+
+    if((hd_data->debug & HD_DEB_DRIVER_INFO)) {
+      for(sl = di->any.hddb0, j = 0; sl; sl = sl->next, j++) {
+        if(j) {
+          dump_line0("|%s", sl->str);
+        }
+        else {
+          dump_line("Driver DB0: %d, %s", di->any.type, sl->str);
+        }
+      }
+      if(di->any.hddb0) dump_line0("\n");
+
+      for(sl = di->any.hddb1, j = 0; sl; sl = sl->next, j++) {
+        if(!j) dump_line_str("Driver DB1: \"");
+        dump_line0("%s\\n", sl->str);
+      }
+      if(di->any.hddb1) dump_line0("\"\n");
+    }
+
+    ind -= 2;
+  }
+
+  di0 = hd_free_driver_info(di0);
+
 }
 
 /*
  * print CPU entries
  */
-void dump_cpu(hd_t *hd, unsigned debug, FILE *f)
+void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
 {
   cpu_info_t *ct;
 
@@ -446,7 +451,7 @@ void dump_cpu(hd_t *hd, unsigned debug, FILE *f)
 /*
  * print BIOS entries
  */
-void dump_bios(hd_t *hd, unsigned debug, FILE *f)
+void dump_bios(hd_data_t *hd_data, hd_t *hd, FILE *f)
 {
   bios_info_t *bt;
 
@@ -480,7 +485,7 @@ void dump_bios(hd_t *hd, unsigned debug, FILE *f)
 }
 
 
-char *make_device_name_str(hd_t *h, char *buf, int buf_size)
+char *make_device_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size)
 {
   char *s;
 
@@ -488,7 +493,7 @@ char *make_device_name_str(hd_t *h, char *buf, int buf_size)
     snprintf(buf, buf_size - 1, "\"%s\"", h->dev_name);
   }
   else {
-    s = hd_device_name(h->vend, h->dev);
+    s = hd_device_name(hd_data, h->vend, h->dev);
     snprintf(buf, buf_size - 1, "%04x \"%s\"", ID_VALUE(h->dev), s ? s : "?");
   }
 
@@ -496,7 +501,7 @@ char *make_device_name_str(hd_t *h, char *buf, int buf_size)
 }
 
 
-char *make_sub_device_name_str(hd_t *h, char *buf, int buf_size)
+char *make_sub_device_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size)
 {
   char *s;
 
@@ -504,7 +509,7 @@ char *make_sub_device_name_str(hd_t *h, char *buf, int buf_size)
     snprintf(buf, buf_size - 1, "\"%s\"", h->sub_dev_name);
   }
   else {
-    s = hd_sub_device_name(h->vend, h->dev, h->sub_vend, h->sub_dev);
+    s = hd_sub_device_name(hd_data, h->vend, h->dev, h->sub_vend, h->sub_dev);
     snprintf(buf, buf_size - 1, "%04x \"%s\"", ID_VALUE(h->sub_dev), s ? s : "?");
   }
 
@@ -512,7 +517,7 @@ char *make_sub_device_name_str(hd_t *h, char *buf, int buf_size)
 }
 
 
-char *make_vend_name_str(hd_t *h, char *buf, int buf_size)
+char *make_vend_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size)
 {
   char *s;
 
@@ -520,7 +525,7 @@ char *make_vend_name_str(hd_t *h, char *buf, int buf_size)
     snprintf(buf, buf_size - 1, "\"%s\"", h->vend_name);
   }
   else {
-    s = hd_vendor_name(h->vend);
+    s = hd_vendor_name(hd_data, h->vend);
     snprintf(buf, buf_size - 1, "%s \"%s\"", vend_id2str(h->vend), s ? s : "?");
   }
 
@@ -528,7 +533,7 @@ char *make_vend_name_str(hd_t *h, char *buf, int buf_size)
 }
 
 
-char *make_sub_vend_name_str(hd_t *h, char *buf, int buf_size)
+char *make_sub_vend_name_str(hd_data_t *hd_data, hd_t *h, char *buf, int buf_size)
 {
   char *s;
 
@@ -536,7 +541,7 @@ char *make_sub_vend_name_str(hd_t *h, char *buf, int buf_size)
     snprintf(buf, buf_size - 1, "\"%s\"", h->sub_vend_name);
   }
   else {
-    s = hd_vendor_name(h->sub_vend);
+    s = hd_vendor_name(hd_data, h->sub_vend);
     snprintf(buf, buf_size - 1, "%s \"%s\"", vend_id2str(h->sub_vend), s ? s : "?");
   }
 
@@ -551,11 +556,11 @@ char *vend_id2str(unsigned vend)
 
   *(s = buf) = 0;
 
-  if(ID_CLASS(vend) == ID_EISA) {
+  if(ID_TAG(vend) == TAG_EISA) {
     strcpy(s, eisa_vendor_str(vend));
   }
   else {
-    if(ID_CLASS(vend) == ID_USB) *s++ = 'u', *s = 0;
+    if(ID_TAG(vend) == TAG_USB) *s++ = 'u', *s = 0;
     sprintf(s, "%04x", ID_VALUE(vend));
   }
 

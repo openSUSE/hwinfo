@@ -11,7 +11,7 @@
 #include <linux/pci.h>
 
 #include "hd.h"
-#include "hdx.h"
+#include "hddb.h"
 #include "hd_int.h"
 #include "memory.h"
 #include "isapnp.h"
@@ -104,6 +104,7 @@ static struct s_pr_flags {
   { pr_memory, "memory" },
   { pr_pci, "pci" },
   { pr_pci_range, "pci.range" },
+  { pr_pci_ext, "pci.ext" },
   { pr_isapnp, "isapnp" },
   { pr_isapnp, "pnpdump" },			/* alias for isapnp */
   { pr_cdrom, "cdrom" },
@@ -127,7 +128,7 @@ static struct s_pr_flags {
 
 #define PR_OFS			2		/* skip 0, default */
 #define ALL_PR_FEATURE		((1 << (pr_all - PR_OFS)) - 1)
-#define DEFAULT_PR_FEATURE	(ALL_PR_FEATURE - (1 << (pr_pci_range - PR_OFS)))
+#define DEFAULT_PR_FEATURE	(ALL_PR_FEATURE - (1 << (pr_pci_range - PR_OFS)) - (1 << (pr_pci_ext - PR_OFS)))
 
 void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
@@ -441,6 +442,9 @@ void hd_scan(hd_data_t *hd_data)
     ADD2LOG(")\n");
   }
 
+  /* init driver info database */
+  init_hddb(hd_data);
+
   /* for various reasons, do it befor scan_misc() */
   hd_scan_floppy(hd_data);
 
@@ -548,11 +552,11 @@ unsigned name2eisa_id(char *s)
 
   for(i = 0; i < 3; i++) {
     u <<= 5;
-    if(s[i] < 'A' - 1 || s[i] > 'A' - 1 + 0x1f) return MAKE_ID(ID_EISA, 0);
+    if(s[i] < 'A' - 1 || s[i] > 'A' - 1 + 0x1f) return 0;
     u += s[i] - 'A' + 1;
   }
 
-  return MAKE_ID(ID_EISA, u);
+  return MAKE_ID(TAG_EISA, u);
 }
 
 
@@ -964,162 +968,102 @@ hw_t *find_cdrom_volume(const char *volume_id, int *start)
  * If the command line returned is the empty string (""), we could not
  * figure out what to do.
  */
-driver_info_t *hd_driver_info(hd_t *hd)
+driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 {
-  char *s = NULL, *s1, *t, *s0 = NULL;
-  char cmd[256], *cmd_ptr;
-  driver_info_t *mi = new_mem(sizeof *mi);
-  char *fields[32];
   int i;
   unsigned u1, u2;
+  driver_info_t *di, *di0 = NULL;
+  str_list_t *sl;
 
   if(hd->sub_vend || hd->sub_dev) {
-    s = hd_sub_device_drv_name(hd->vend, hd->dev, hd->sub_vend, hd->sub_dev);
+    di0 = sub_device_driver(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_dev);
   }
 
-  if(!s && (hd->vend || hd->dev)) {
-    s = hd_device_drv_name(hd->vend, hd->dev);
+  if(!di0 && (hd->vend || hd->dev)) {
+    di0 = device_driver(hd_data, hd->vend, hd->dev);
   }
 
-  if(!s) return free_mem(mi);
+  if(!di0) return hd_free_driver_info(di0);
 
-  s0 = new_str(s);
-  s = s0;
-
-  /* ok, there is a module entry */
-  *(cmd_ptr = cmd) = 0;
-
-  t = "";
-  if(*s && s[1] == MOD_INFO_SEP) {
-    switch(*s) {
-      case 'i':
-        t = "insmod";
-        mi->type = di_module;
-        break;		/* insmod */
-
-      case 'M':		/* conf.modules entry */
-        mi->module.autoload = 1;
-      case 'm':
-        s1 = s + 2;
-        if(strsep(&s1, MOD_INFO_SEP_STR) && s1 && *s1) {
-          i = 0; t = s1;
-          while(t[i]) {
-            if(t[i] == '\\') {
-              switch(t[i + 1]) {
-                case 'n':
-                  *t = '\n'; i++;
-                  break;
-
-                case 't':
-                  *t = '\t'; i++;
-                  break;
-
-                case '\\':
-                  *t = '\\'; i++;
-                  break;
-
-                default:
-                  *t = t[i];
-              }
-            }
-            else {
-              *t = t[i];
-            }
-            t++;
+  for(di = di0; di; di = di->next) {
+    switch(di->any.type) {
+      case di_display:
+        for(i = 0, sl = di->display.hddb0; sl; sl = sl->next, i++) {
+          if(i == 0 && sscanf(sl->str, "%ux%u", &u1, &u2) == 2) {
+            di->display.width = u1;
+            di->display.height = u2;
           }
-          *t = 0;
-          mi->module.conf = new_str(s1);
+          else if(i == 1 && sscanf(sl->str, "%u-%u", &u1, &u2) == 2) {
+            di->display.min_vsync = u1;
+            di->display.max_vsync = u2;
+          }
+          else if(i == 2 && sscanf(sl->str, "%u-%u", &u1, &u2) == 2) {
+            di->display.min_hsync = u1;
+            di->display.max_hsync = u2;
+          }
+          else if(i == 3 && sscanf(sl->str, "%u", &u1) == 1) {
+            di->display.bandwidth = u1;
+          }
         }
-        t = "modprobe";
-        mi->type = di_module;
+
+      case di_module:
+        for(i = 0, sl = di->module.hddb0; sl; sl = sl->next, i++) {
+          if(i == 0) {
+            di->module.name = new_str(sl->str);
+            di->module.active = module_is_active(di->module.name);
+            str_printf(
+              &di->module.load_cmd, 0, "%s %s",
+              di->module.modprobe ? "modprobe" : "insmod", di->module.name
+            );
+          }
+          else if(i == 1) {
+            str_printf(&di->module.load_cmd, -1, " %s", module_cmd(hd, sl->str));
+          }
+          else {
+            str_printf(&di->module.conf, -1, "%s\n", module_cmd(hd, sl->str));
+          }
+        }
         break;
 
-      case 'p':		/* for mouse driver info */
-        mi->type = di_mouse;
+      case di_mouse:
+        for(i = 0, sl = di->mouse.hddb0; sl; sl = sl->next, i++) {
+          if(i == 0) {
+            di->mouse.xf86 = new_str(sl->str);
+          }
+          else if(i == 1) {
+            di->mouse.gpm = new_str(sl->str);
+          }
+        }
         break;
 
-      case 'x':		/* for X servers */
-        mi->type = di_x11;
+      case di_x11:
+        for(i = 0, sl = di->x11.hddb0; sl; sl = sl->next, i++) {
+          if(i == 0) {
+            di->x11.server = new_str(sl->str);
+          }
+          else if(i == 1) {
+            di->x11.x3d = new_str(sl->str);
+          }
+          else if(i == 2) {
+            di->x11.colors.all = strtol(sl->str, NULL, 16);
+            if(di->x11.colors.all & (1 << 0)) di->x11.colors.c8 = 1;
+            if(di->x11.colors.all & (1 << 1)) di->x11.colors.c15 = 1;
+            if(di->x11.colors.all & (1 << 2)) di->x11.colors.c16 = 1;
+            if(di->x11.colors.all & (1 << 3)) di->x11.colors.c24 = 1;
+            if(di->x11.colors.all & (1 << 4)) di->x11.colors.c32 = 1;
+          }
+          else if(i == 3) {
+            di->x11.dacspeed = strtol(sl->str, NULL, 10);
+          }
+        }
         break;
-
-      case 'd':		/* for displays */
-        mi->type = di_display;
-        break;
-
+    
       default:
-        s0 = free_mem(s0);
-        return free_mem(mi);
-    }
-    s += s[1] == MOD_INFO_SEP ? 2 : 1;
-  }
-  else {
-    s0 = free_mem(s0);
-    return free_mem(mi);
-  }
-
-  memset(fields, 0, sizeof fields);
-  /* split the fields */
-  for(i = 1, *fields = s1 = s; i < sizeof fields / sizeof *fields - 1; i++) {
-    if(strsep(&s1, MOD_INFO_SEP_STR) && s1 && *s1) {
-      fields[i] = s1;
-    }
-    else {
-      break;
+        break; 
     }
   }
 
-  if(mi->type == di_module) {
-    // ##### s1 may be NULL !!!!   #####
-    snprintf(cmd, sizeof cmd, "%s %s", t, s1 = module_cmd(hd, s));
-    if(s1) mi->module.load_cmd = new_str(cmd);
-    s1 = s; strsep(&s1, " \t");
-    mi->module.name = new_str(s);
-    mi->module.is_active = module_is_active(mi->module.name);
-  }
-
-  if(mi->type == di_mouse) {
-    if(fields[0] && *fields[0]) mi->mouse.xf86 = new_str(fields[0]);
-    if(fields[1] && *fields[1]) mi->mouse.gpm = new_str(fields[1]);
-  }
-
-  if(mi->type == di_x11) {
-    if(fields[0] && *fields[0]) mi->x11.server = new_str(fields[0]);
-    if(fields[1] && *fields[1]) mi->x11.x3d = new_str(fields[1]);
-
-    if(fields[2] && *fields[2]) {
-      mi->x11.colors.all = strtol(fields[2], NULL, 16);
-      if(mi->x11.colors.all & (1 << 0)) mi->x11.colors.c8 = 1;
-      if(mi->x11.colors.all & (1 << 1)) mi->x11.colors.c15 = 1;
-      if(mi->x11.colors.all & (1 << 2)) mi->x11.colors.c16 = 1;
-      if(mi->x11.colors.all & (1 << 3)) mi->x11.colors.c24 = 1;
-      if(mi->x11.colors.all & (1 << 4)) mi->x11.colors.c32 = 1;
-    }
-    if(fields[3] && *fields[3]) mi->x11.dacspeed = strtol(fields[3], NULL, 10);
-  }
-
-  if(mi->type == di_display) {
-    if(fields[0] && *fields[0] && sscanf(fields[0], "%ux%u", &u1, &u2) == 2) {
-      mi->display.width = u1;
-      mi->display.height = u2;
-    }
-
-    if(fields[1] && *fields[1]  && sscanf(fields[1], "%u-%u", &u1, &u2) == 2) {
-      mi->display.min_vsync = u1;
-      mi->display.max_vsync = u2;
-    }
-
-    if(fields[2] && *fields[2]  && sscanf(fields[2], "%u-%u", &u1, &u2) == 2) {
-      mi->display.min_hsync = u1;
-      mi->display.max_hsync = u2;
-    }
-
-    if(fields[3] && *fields[3]  && sscanf(fields[3], "%u", &u1) == 1) {
-      mi->display.bandwidth = u1;
-    }
-  }
-
-  s0 = free_mem(s0);
-  return mi;
+  return di0;
 }
 
 

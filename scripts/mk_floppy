@@ -3,6 +3,10 @@
 #
 # Script to create a bootable floppy
 #
+# usage: mk_floppy [2.88]
+#
+#   2.88: create a 2.88MB floppy image
+#
 # on errors:
 #  - exit code > 0
 #  - 1-line message to *stdout*
@@ -58,6 +62,9 @@ mtools_rc=/tmp/mtools$$
 kernel_name=`basename $kernel`
 is_mounted=
 
+sectors=18
+[ "$1" = "2.88" ] && sectors=36
+
 write_init () {
   cat <<-blubber >$mnt/sbin/init
 	#! /bin/sh
@@ -77,7 +84,7 @@ write_init () {
 	insmod /lib/serial.o
 
 	echo "running hardware probing..."
-	hw debug=-1 log=hw.log +all
+	hw debug=-1 log=hw.log
 
 	echo "copying the log onto the floppy..."
 	mount -tmsdos /dev/fd0 /mnt
@@ -155,9 +162,9 @@ gzip -9 $tmp_root
 [ -x $syslinux ] || error 6 "no syslinux installed"
 
 export MTOOLSRC=$mtools_rc
-echo "drive r: file=\"$tmp_boot\" mformat_only cylinders=80 heads=2 sectors=18" >$mtools_rc
+echo "drive r: file=\"$tmp_boot\" mformat_only cylinders=80 heads=2 sectors=$sectors" >$mtools_rc
 
-dd if=/dev/zero of=$tmp_boot bs=36b count=80 2>/dev/null
+dd if=/dev/zero of=$tmp_boot bs=${sectors}k count=80 2>/dev/null
 mformat r: || error 7 "failed to create boot disk"
 
 $syslinux $tmp_boot

@@ -3,7 +3,7 @@
 
 #include "hd.h"
 #include "hd_int.h"
-#include "hdx.h"
+#include "hddb.h"
 #include "monitor.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -71,8 +71,8 @@ void hd_scan_monitor(hd_data_t *hd_data)
 
   hd->base_class = bc_monitor;
   hd->vend = name2eisa_id(m);
-  if(sscanf(m + 3, "%x", &u) == 1) hd->dev = MAKE_ID(ID_EISA, u);
-  if((u = device_class(hd->vend, hd->dev))) {
+  if(sscanf(m + 3, "%x", &u) == 1) hd->dev = MAKE_ID(TAG_EISA, u);
+  if((u = device_class(hd_data, hd->vend, hd->dev))) {
     if((u >> 8) == bc_monitor) hd->sub_class = u & 0xff;
   }
 

@@ -1,0 +1,125 @@
+Format of the 'drivers' File
+============================
+
+o comment lines *start* with a '#'
+o empty lines are ignored
+o driver info entries start with *one* TAB ('\t') followed by a char
+  indicating the type of info; the info itself is given as strings separated
+  by vertical bars ('|')
+o additional driver infos start with *two* TABs
+o it is possible to give more than one driver info; they are treated as
+  alternatives
+o all other lines contain vendor/device_id pairs, optionally followed by
+  subvendor/subdevice_id
+o the driver info belongs to all vendor/device_id lines just preceding the
+  driver info
+o it doesn't make sense to have the same vendor/device_id twice in the file,
+  as the search stops at the first entry that matches
+
+
+vendor/device ids
+==================
+
+ o PCI ids: 16-bit hex numbers
+   - example (Riva TNT2):
+     10de 0028
+   - example with sub-ids (Viper 770):
+     10de 0028 1092 4804
+
+ o EISA ids: 3-char vendor id (all upper case), 16-bit device id
+   - example (Creative SB AWE64):
+     CTL 009e
+   - example with sub-ids (AWE64's game port):
+     CTL 009e CTL 7002
+   - NOTE: monitors & mouse devices have typically EISA ids
+
+ o USB ids: 16-bit hex numbers, (sub)verdor id starts with an 'u'
+   - example (Intel USB hub):
+     u8086 9303
+
+ o special ids for internal usage: 16-bit hex numbers, (sub)verdor id
+   starts with a 's'
+   - example:
+     s0815 0001
+
+ o (sub)device ids may optionally be followed by a range, e.g. 1000+20 is
+   a short hand for ids 1000, ..., 101f
+
+ o as all ids are 16-bit values,
+   1000 0+10000
+   matches all devices from vendor 1000
+
+
+driver info formats
+===================
+
+Note that all driver info fields are optional. If, e.g. a mouse is not
+supported by XFree but by GPM, the entry looks something like
+	p	|ms
+while an entry with XFree support only would look like
+	p	microsoft
+
+
+o display/monitor info
+
+	d	<widthxheight>|<v_sync_range>|<h_sync_range>|<band_width>
+
+  - <widthxheight>: max. (useful) display resolution
+  - <v_sync_range>: vertical sync range in Hz
+  - <h_sync_range>: horizontal sync range in kHz
+  - <band_width>: max. pixel clock in MHz
+  - example:
+	d	1600x1200|50-160|25-115|230
+
+
+o module info (insmod)
+
+	i	<module_name>|<insmod_args>
+
+  - <module_name>: module name
+  - <insmod_args>: additional insmod args
+  - examples:
+	i	tulip
+	i	aha152x|aha152x=<io0>,<irq0>
+
+  - NOTE: fields of the form <dma#>, <io#>, <irq#> and <mem#> are replaced
+    with the appropriate values the device is configured to
+
+
+o module info (modprobe)
+
+	m	<module_name>
+		<modules.conf_line1>
+		<modules.conf_line2>
+		...
+
+  - <module_name>: module name
+  - <modules.conf_line...>: modules.conf entry
+  - see the NOTE on insmod info above
+  - examples:
+	m	tulip
+	m	ne
+		io=<io0> irq=<irq0>
+
+
+o mouse protocol info
+
+	p	<xfree>|<gpm>
+  - <xfree>: XF86Config entry
+  - <gpm>: GPM mouse protocol name
+  - example:
+	p	mouseman|mman
+
+
+o X11 server info
+
+	x	<server_id>|<3d_extension>|<colors>|<dac_speed>
+  - <server_id>: X server info; this is *not* the server name but some tag
+    for YaST[12]
+  - <3d_extension>: 3D info; as above, just some tag for YaST
+  - <colors>: hexadecimal bitmask indicating the supported color depths:
+    bit0-4: 8, 15, 16, 24, 32 bits; I'm not sure if this is useful information
+  - <dac_speed>: max. RAMDAC clock in MHz
+  - example (no 24bit support, unknown max. RAMDAC speed):
+	x	SVGA|glxriva|17
+

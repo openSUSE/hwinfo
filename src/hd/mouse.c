@@ -105,7 +105,7 @@ void get_ps2_mouse(hd_data_t *hd_data)
         hd->attached_to = hd1->idx;
 
         hd->vend = name2eisa_id("PNP");
-        hd->dev = MAKE_ID(ID_EISA, 0x0f0e);
+        hd->dev = MAKE_ID(TAG_EISA, 0x0f0e);
       }
       else {	/* if the mouse has not been used so far... */
         PROGRESS(1, 2, "ps/2");
@@ -167,7 +167,7 @@ void get_ps2_mouse(hd_data_t *hd_data)
               hd->attached_to = hd1->idx;
 
               hd->vend = name2eisa_id("PNP");
-              hd->dev = MAKE_ID(ID_EISA, 0x0f0e);
+              hd->dev = MAKE_ID(TAG_EISA, 0x0f0e);
             }
 
           }
@@ -293,11 +293,11 @@ void get_serial_mouse(hd_data_t *hd_data)
         strncpy(buf, sm->pnp_id, 3);
         buf[3] = 0;
         hd->vend = name2eisa_id(buf);
-        hd->dev = MAKE_ID(ID_EISA, strtol(sm->pnp_id + 3, NULL, 16));
+        hd->dev = MAKE_ID(TAG_EISA, strtol(sm->pnp_id + 3, NULL, 16));
       }
       else {
         hd->vend = name2eisa_id("PNP");
-        hd->dev = MAKE_ID(ID_EISA, 0x0f0c);
+        hd->dev = MAKE_ID(TAG_EISA, 0x0f0c);
       }
     }
   }

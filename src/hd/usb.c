@@ -52,8 +52,8 @@ void hd_scan_usb(hd_data_t *hd_data)
           hd->base_class = bc_keyboard;
           hd->bus = bus_usb;
           if(*rev) {
-            hd->vend = MAKE_ID(ID_USB, vend);
-            hd->dev = MAKE_ID(ID_USB, dev);
+            hd->vend = MAKE_ID(TAG_USB, vend);
+            hd->dev = MAKE_ID(TAG_USB, dev);
             hd->rev_name = new_str(rev);
           }
           str_printf(&hd->unix_dev_name, 0, "/dev/%s%d", kdev, kcnt++);
@@ -64,8 +64,8 @@ void hd_scan_usb(hd_data_t *hd_data)
           hd->sub_class = sc_mou_usb;
           hd->bus = bus_usb;
           if(*rev) {
-            hd->vend = MAKE_ID(ID_USB, vend);
-            hd->dev = MAKE_ID(ID_USB, dev);
+            hd->vend = MAKE_ID(TAG_USB, vend);
+            hd->dev = MAKE_ID(TAG_USB, dev);
             hd->rev_name = new_str(rev);
           }
           str_printf(&hd->unix_dev_name, 0, "/dev/%s%d", mdev, mcnt++);
