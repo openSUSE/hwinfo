@@ -1,4 +1,5 @@
 26/8/2003:	v7.12
+	- updated X11 data (#29316)
 	- add ISDN database for ia64
 	- fix minor warnings
 
