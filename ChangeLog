@@ -1,3 +1,7 @@
+12/3/2003:	v6.16
+	- be more careful when joining feature flags of
+	  ide-scsi handled devices (#25169)
+
 12/3/2003:	v6.15
 	- limit the maximum amount of data we expect looking
 	  for serial mice (#25153) 

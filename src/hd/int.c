@@ -575,7 +575,11 @@ void int_fix_ide_scsi(hd_data_t *hd_data)
           COPY_ENTRY(revision.name);
           COPY_ENTRY(serial);
 
-          hd_scsi->is = hd_ide->is;
+          hd_scsi->is.notready &= hd_ide->is.notready;
+          hd_scsi->is.manual |= hd_ide->is.manual;
+          hd_scsi->is.softraiddisk |= hd_ide->is.softraiddisk;
+          hd_scsi->is.zip |= hd_ide->is.zip;
+          hd_scsi->is.cdr |= hd_ide->is.cdr;
 
           new_id(hd_data, hd_scsi);
 
