@@ -2509,6 +2509,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
     case hw_tv:
       base_class = bc_multimedia;
       sub_class = sc_multi_video;
+      sc = 1;
       xtra = 1;
       break;
 
@@ -2523,6 +2524,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
     case hw_sys:
       base_class = bc_internal;
       sub_class = sc_int_sys;
+      sc = 1;
       break;
 
     default:

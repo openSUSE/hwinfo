@@ -1,3 +1,6 @@
+7/7/2000:	v1.15
+	- fixed hw_sys/hw_tv probing bug
+
 6/7/2000:	v1.14
 	- new 'system' hw entry
 	- sparc smp detection: active -> probed
