@@ -126,7 +126,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
       for(s1 = s; *s1++; ) if(*s1 == '_') *s1 = ' ';
       switch(*s) {
         case '0':
-          if(!mi->name) mi->name = canon_str(s + 1, strlen(s + 1));
+          if(!mi->name && s[1]) mi->name = canon_str(s + 1, strlen(s + 1));
           break;
         case '1':
           u = 0;
@@ -151,10 +151,10 @@ void hd_scan_monitor(hd_data_t *hd_data)
           }
           break;
         case '2':
-          if(!mi->vendor) mi->vendor = canon_str(s + 1, strlen(s + 1));
+          if(!mi->vendor && s[1]) mi->vendor = canon_str(s + 1, strlen(s + 1));
           break;
         case '3':
-          if(!mi->serial) mi->serial = canon_str(s + 1, strlen(s + 1));
+          if(!mi->serial && s[1]) mi->serial = canon_str(s + 1, strlen(s + 1));
           break;
         default:
           ADD2LOG("  ddc oops: invalid tag 0x%02x\n", *s);
