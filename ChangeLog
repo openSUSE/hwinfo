@@ -1,3 +1,6 @@
+4/2/2002:	v4.03
+	- changed hd_change_status() prototype
+
 20/1/2002:	v4.02
 	- fixed bug that prevented hwprobe env var to work in some cases
 

@@ -4921,10 +4921,13 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
 }
 
 
-int hd_change_status(hd_data_t *hd_data, char *id, hd_status_t status)
+int hd_change_status(char *id, hd_status_t status)
 {
+  hd_data_t *hd_data;
   hd_manual_t *entry;
   int i;
+
+  hd_data = new_mem(sizeof *hd_data);
 
   entry = hd_manual_read_entry(hd_data, id);
 
@@ -4938,6 +4941,10 @@ int hd_change_status(hd_data_t *hd_data, char *id, hd_status_t status)
   i = hd_manual_write_entry(hd_data, entry);
   
   hd_free_manual(entry);
+
+  hd_free_hd_data(hd_data);
+
+  free_mem(hd_data);
 
   return i;
 }
