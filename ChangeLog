@@ -1,4 +1,7 @@
+13/5/2004:	v8.50
 	- load sg module before looking for scanners (#40478)
+	- updated usb scanner data (#40480)
+	- got latest pci device names from pciutils
 
 12/5/2004:	v8.49
 	- use mmap() to access /dev/mem & re-enable bios access
