@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -89,8 +90,7 @@ typedef struct disk_s {
   unsigned crc_match:1;
   unsigned hd_idx;
   char *dev_name;
-  unsigned data_len;
-  unsigned char data[0x200];
+  unsigned char *data;
 } disk_t;
 
 static struct s_pr_flags *get_pr_flags(enum probe_feature feature);
@@ -111,6 +111,8 @@ static void hd_scan_xtra(hd_data_t *hd_data);
 static void hd_add_id(hd_t *hd);
 
 static void hd_copy(hd_t *dst, hd_t *src);
+
+static void test_read_block0_open(void *arg);
 
 /*
  * Names of the probing modules.
@@ -677,6 +679,7 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->unix_dev_name);
   free_mem(hd->rom_id);
   free_mem(hd->unique_id);
+  free_mem(hd->block0);
 
   free_res_list(hd->res);
 
@@ -3108,6 +3111,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
   if(rescan) {
     memcpy(probe_save, hd_data->probe, sizeof probe_save);
     hd_clear_probe_feature(hd_data, pr_all);
+    hd_set_probe_feature(hd_data, pr_int);
     switch(items) {
       case hw_cdrom:
         hd_set_probe_feature(hd_data, pr_ide);
@@ -3117,6 +3121,8 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
 
       case hw_floppy:
         hd_set_probe_feature(hd_data, pr_floppy);
+        hd_set_probe_feature(hd_data, pr_ide);
+        hd_set_probe_feature(hd_data, pr_scsi_cache);	// really necessary?
         hd_set_probe_feature(hd_data, pr_misc_floppy);
         break;
 
@@ -3129,7 +3135,6 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd_set_probe_feature(hd_data, pr_i2o);
         hd_set_probe_feature(hd_data, pr_cciss);
         hd_set_probe_feature(hd_data, pr_dasd);
-        hd_set_probe_feature(hd_data, pr_int);
         break;
 
       case hw_network:
@@ -3666,44 +3671,17 @@ char *get_cmd_param(hd_data_t *hd_data, int field)
 }
 
 
-void get_disk_crc(int fd, disk_t *dl)
+unsigned get_disk_crc(unsigned char *data, unsigned len)
 {
-  int i, sel;
-  fd_set set, set0;
-  struct timeval to;
-  unsigned crc;
-
-  FD_ZERO(&set0);
-  FD_SET(fd, &set0);
-
-  for(;;) {
-    to.tv_sec = 0; to.tv_usec = 500000;
-    set = set0;
-
-    if((sel = select(fd + 1, &set, NULL, NULL, &to)) > 0) {
-//    fprintf(stderr, "sel: %d\n", sel);
-      if(FD_ISSET(fd, &set)) {
-        if((i = read(fd, dl->data + dl->data_len, sizeof dl->data - dl->data_len)) > 0) {
-          dl->data_len += i;
-        }
-//        fprintf(stderr, "%s: got %d\n", dl->dev_name, i);
-        if(i <= 0) break;
-      }
-    }
-    else {
-      break;
-    }
-  }
-
-//  fprintf(stderr, "got %d from %s\n", dl->data_len, dl->dev_name);
+  unsigned i, crc;
 
   crc = -1;
-  for(i = 0; i < sizeof dl->data; i++) {
-    crc += dl->data[i];
+  for(i = 0; i < len; i++) {
+    crc += data[i];
     crc *= 57;
   }
 
-  dl->crc = crc;
+  return crc;
 }
 
 disk_t *add_disk_entry(disk_t **dl, disk_t *new_dl)
@@ -3735,7 +3713,7 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
   hd_t *hd;
   unsigned crc, hd_idx = 0;
   char *s;
-  int i, j, fd;
+  int i, j;
   disk_t *dl, *dl0 = NULL, *dl1 = NULL;
 
 #ifdef LIBHD_MEMCHECK
@@ -3769,16 +3747,13 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
     if(
       hd->base_class == bc_storage_device &&
       hd->sub_class == sc_sdev_disk &&
-      hd->unix_dev_name
+      hd->block0
     ) {
       if(dev_name_duplicate(dl0, hd->unix_dev_name)) continue;
-      if((fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK)) >= 0) {
-        dl = add_disk_entry(&dl0, new_mem(sizeof *dl0));
-        dl->dev_name = hd->unix_dev_name;
-        dl->hd_idx = hd->idx;
-        get_disk_crc(fd, dl);
-        close(fd);
-      }
+      dl = add_disk_entry(&dl0, new_mem(sizeof *dl0));
+      dl->dev_name = hd->unix_dev_name;
+      dl->hd_idx = hd->idx;
+      dl->crc = get_disk_crc(dl->data = hd->block0, 512);
     }
   }
 
@@ -3791,7 +3766,7 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
   }
 
   for(i = 0, dl = dl0; dl; dl = dl->next) {
-    if(crc == dl->crc && dl->data_len == sizeof dl->data) {
+    if(crc == dl->crc) {
       dl->crc_match = 1;
       dl1 = dl;
       if(!i++) hd_idx = dl->hd_idx;
@@ -3800,7 +3775,7 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
 
   if(i == 1 && dl1 && (hd_data->debug & HD_DEB_BOOT)) {
     ADD2LOG("----- MBR -----\n");
-    for(j = 0; j < sizeof dl1->data; j += 0x10) {
+    for(j = 0; j < 512; j += 0x10) {
       ADD2LOG("  %03x  ", j);
       hexdump(&hd_data->log, 1, 0x10, dl1->data + j);
       ADD2LOG("\n");
@@ -4230,4 +4205,56 @@ devtree_t *free_devtree(hd_data_t *hd_data)
   return hd_data->devtree = NULL;
 }
 
+
+
+void test_read_block0_open(void *arg)
+{
+  open((char *) arg, O_RDONLY);
+}
+
+unsigned char *read_block0(hd_data_t *hd_data, char *dev, int *timeout)
+{
+  int fd, len, buf_size = 512, k, sel;
+  unsigned char *buf = NULL;
+  struct timeval to;
+  fd_set set, set0;
+
+  if(hd_timeout(test_read_block0_open, dev, *timeout) > 0) {
+    ADD2LOG("  read_block0: open(%s) timed out\n", dev);
+    *timeout = -1;
+    fd = -2;
+  }
+  else {
+    fd = open(dev, O_RDONLY);
+    if(fd < 0) ADD2LOG("  read_block0: open(%s) failed\n", dev);
+  }
+  if(fd >= 0) {
+    buf = new_mem(buf_size);
+    len = k = 0;
+
+    FD_ZERO(&set0);
+    FD_SET(fd, &set0);
+
+    to.tv_sec = *timeout; to.tv_usec = 0;
+    for(;;) {
+      set = set0;
+      if((sel = select(fd + 1, &set, NULL, NULL, &to)) > 0) {
+        if((k = read(fd, buf + len, buf_size - len)) > 0) len += k;
+        ADD2LOG("  read_block0: %d bytes (%ds, %dus)\n", k, (int) to.tv_sec, (int) to.tv_usec);
+        if(k <= 0 || buf_size == len) break;
+      }
+      if(sel == 0) {
+        *timeout = -2; break;
+      }
+    }
+
+    if(k < 0) {
+      ADD2LOG("  read_block0: read error(%s, %d, %d): errno %d\n", dev, len, buf_size - len, errno);
+      buf = free_mem(buf);
+    }
+    close(fd);
+  }
+
+  return buf;
+}
 

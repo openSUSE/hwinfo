@@ -19,6 +19,8 @@ static void int_cdrom(hd_data_t *hd_data);
 static int set_bios_id(hd_data_t *hd_data, char *dev_name, int bios_id);
 static void int_bios(hd_data_t *hd_data);
 #endif
+static void int_media_check(hd_data_t *hd_data);
+static void int_zip(hd_data_t *hd_data);
 
 void hd_scan_int(hd_data_t *hd_data)
 {
@@ -29,14 +31,22 @@ void hd_scan_int(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
 
+  PROGRESS(1, 0, "pcmcia");
   int_pcmcia(hd_data);
 
 #if defined(__i386__)
-  PROGRESS(1, 0, "bios");
+  PROGRESS(2, 0, "bios");
   int_bios(hd_data);
 #endif
 
+  PROGRESS(3, 0, "cdrom");
   int_cdrom(hd_data);
+
+  PROGRESS(4, 0, "media");
+  int_media_check(hd_data);
+
+  PROGRESS(5, 0, "zip");
+  int_zip(hd_data);
 }
 
 /*
@@ -161,3 +171,59 @@ void int_bios(hd_data_t *hd_data)
 
 }
 #endif	/* defined(__i386__) */
+
+/*
+ * Try to read block 0 for block devices.
+ */
+void int_media_check(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  int i, j = 0;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class == bc_storage_device &&
+      (
+        /* hd->sub_class == sc_sdev_cdrom || */ /* cf. cdrom.c */
+        hd->sub_class == sc_sdev_disk ||
+        hd->sub_class == sc_sdev_floppy
+      ) &&
+      hd->unix_dev_name &&
+      !hd->block0 &&
+      !hd->is.notready
+    ) {
+      i = 5;
+      PROGRESS(4, ++j, hd->unix_dev_name);
+      hd->block0 = read_block0(hd_data, hd->unix_dev_name, &i);
+      hd->is.notready = hd->block0 ? 0 : 1;
+    }
+  }
+}
+
+
+/*
+ * Turn SCSI/USB zip drives into flppies.
+ */
+void int_zip(hd_data_t *hd_data)
+{
+  hd_t *hd;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class == bc_storage_device &&
+      hd->sub_class == sc_sdev_disk &&
+      (
+        (hd->vend_name && !strcasecmp(hd->vend_name, "iomega")) ||
+        (hd->sub_vend_name && !strcasecmp(hd->vend_name, "iomega"))
+      ) &&
+      (
+        (hd->dev_name && strstr(hd->dev_name, "ZIP")) ||
+        (hd->sub_dev_name && strstr(hd->dev_name, "Zip"))
+      )
+    ) {
+      hd->sub_class = sc_sdev_floppy;
+    }
+  }
+}
+
+

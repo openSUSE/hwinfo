@@ -69,11 +69,13 @@ void hd_scan_ide(hd_data_t *hd_data)
       if((sl0 = read_file(fname, 0, 2))) {
         for(sl = sl0; sl; sl = sl->next) {
           if(sscanf(sl->str, " physical %u / %u / %u", &u0, &u1, &u2) == 3) {
-            res = add_res_entry(&hd->res, new_mem(sizeof *res));
-            res->disk_geo.type = res_disk_geo;
-            res->disk_geo.cyls = u0;
-            res->disk_geo.heads = u1;
-            res->disk_geo.sectors = u2;
+            if(u0 || u1 || u2) {
+              res = add_res_entry(&hd->res, new_mem(sizeof *res));
+              res->disk_geo.type = res_disk_geo;
+              res->disk_geo.cyls = u0;
+              res->disk_geo.heads = u1;
+              res->disk_geo.sectors = u2;
+            }
             continue;
           }
 

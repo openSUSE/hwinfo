@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
+#include <sys/ioctl.h>
+
+#include <linux/hdreg.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -17,8 +19,10 @@
 #define W_DMA	(1 << 1)
 #define W_IRQ	(1 << 2)
 
+#if 0
 static void test_floppy_open(void *arg);
 static void test_floppy_read(void *arg);
+#endif
 static void read_ioports(misc_t *m);
 static void read_dmas(misc_t *m);
 static void read_irqs(misc_t *m);
@@ -34,7 +38,6 @@ static void dump_misc_data(hd_data_t *hd_data);
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-
 void hd_scan_misc(hd_data_t *hd_data)
 {
   hd_t *hd;
@@ -43,7 +46,6 @@ void hd_scan_misc(hd_data_t *hd_data)
   char *s = NULL;
   bios_info_t *bt = NULL;
   char par[] = "parport0";
-  floppy_info_t *fi;
   int fd_ser0, fd_ser1;
 
   if(!hd_probe_feature(hd_data, pr_misc)) return;
@@ -65,7 +67,7 @@ void hd_scan_misc(hd_data_t *hd_data)
   fd_ser0 = fd_ser1 = -1;
 
 #if !defined(__sparc__)
-  /* On sparc, the close needs to long */
+  /* On sparc, the close needs too long */
   if(hd_probe_feature(hd_data, pr_misc_serial)) {
     PROGRESS(1, 1, "open serial");
     fd_ser0 = open("/dev/ttyS0", O_RDONLY | O_NONBLOCK);
@@ -119,34 +121,47 @@ void hd_scan_misc(hd_data_t *hd_data)
     /* look for a floppy *device* entry... */
     for(hd = hd_data->hd; hd; hd = hd->next) {
       if(hd->base_class == bc_storage_device && hd->sub_class == sc_sdev_floppy) {
-        s = hd->unix_dev_name;
 
-        PROGRESS(1, 3, "open floppy");
-        /* ...then try to read from it... */
-        if(hd_timeout(test_floppy_open, s, 5) > 0) {
-          ADD2LOG("misc.floppy: open(%s) timed out\n", s);
-          fd = -2;
+        PROGRESS(1, 3, "read floppy");
+        i = 5;
+        hd->block0 = read_block0(hd_data, hd->unix_dev_name, &i);
+        hd->is.notready = hd->block0 ? 0 : 1;
+        if(i < 0) {
+          hd->tag.remove = 1;
+          ADD2LOG("misc.floppy: removing floppy entry %u (timed out)\n", hd->idx);
         }
-        else {
-          fd = open(s, O_RDONLY | O_NONBLOCK);
-        }
-        if(fd >= 0) {
-          PROGRESS(1, 4, "read floppy");
-          if(hd_timeout(test_floppy_read, &fd, 5) > 0) {
-            hd->tag.remove = 1;
-            ADD2LOG("misc.floppy: read(%s) timed out\n", s);
-            ADD2LOG("misc.floppy: removing floppy entry %u\n", hd->idx);
-          }
-          else {
-            hd->detail = new_mem(sizeof *hd->detail);
-            hd->detail->type = hd_detail_floppy;
-            hd->detail->floppy.data = fi = new_mem(sizeof *fi);
-            if(read(fd, fi->block0, sizeof fi->block0) != sizeof fi->block0) {
-              hd->detail->floppy.data = free_mem(fi);
+
+        if(!hd->is.notready) {
+          struct hd_geometry geo;
+          int fd;
+          unsigned size, blk_size = 0x200;
+
+          fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK);
+          if(fd >= 0) {
+            if(!ioctl(fd, HDIO_GETGEO, &geo)) {
+              ADD2LOG("floppy ioctl(geo) ok\n");
+              res = add_res_entry(&hd->res, new_mem(sizeof *res));
+              res->disk_geo.type = res_disk_geo;
+              res->disk_geo.cyls = geo.cylinders;
+              res->disk_geo.heads = geo.heads;
+              res->disk_geo.sectors = geo.sectors;
+              res->disk_geo.logical = 1;
+              size = geo.cylinders * geo.heads * geo.sectors;
+              for(res = hd->res; res; res = res->next) {
+                if(res->any.type == res_size && res->size.unit == size_unit_sectors) {
+                  res->size.val1 = size; res->size.val2 = blk_size;
+                  break;
+                }
+              }
+              if(!res) {
+                res = add_res_entry(&hd->res, new_mem(sizeof *res));
+                res->size.type = res_size;
+                res->size.unit = size_unit_sectors;
+                res->size.val1 = size; res->size.val2 = blk_size;
+              }
             }
-            // we might as well have a look at the floppy data...
+            close(fd);
           }
-          close(fd);
         }
 
         break;
@@ -474,6 +489,7 @@ void hd_scan_misc2(hd_data_t *hd_data)
   if((hd_data->debug & HD_DEB_MISC)) dump_misc_data(hd_data);
 }
 
+#if 0
 void test_floppy_open(void *arg)
 {
   open((char *) arg, O_RDWR | O_NONBLOCK);
@@ -485,6 +501,7 @@ void test_floppy_read(void *arg)
 
   read(*(int *) arg, buf, sizeof buf);
 }
+#endif
 
 
 /*

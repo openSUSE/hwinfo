@@ -101,6 +101,13 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_normal(hd_data, h, f);
 
   if(
+    h->base_class == bc_storage_device &&
+    h->is.notready
+  ) {
+    dump_line_str("Drive status: no medium\n");
+  }
+
+  if(
     h->attached_to &&
     (hd_tmp = hd_get_device_by_idx(hd_data, h->attached_to))
   ) {
@@ -128,6 +135,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
       if(ci->iso9660.preparer) dump_line("Preparer: \"%s\"\n", ci->iso9660.preparer);
       if(ci->iso9660.creation_date) dump_line("Creation date: \"%s\"\n", ci->iso9660.creation_date);
     }
+#if 0
     else {
       if(ci->cdrom) {
         dump_line_str("Drive status: non-ISO9660 cdrom\n");
@@ -136,6 +144,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
         dump_line_str("Drive status: no cdrom found\n");
       }
     }
+#endif
     if(ci->el_torito.ok) {
       dump_line(
         "El Torito info: platform %u, %sbootable\n",
@@ -168,6 +177,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     }
   }
 
+#if 0
   if(
     h->base_class == bc_storage_device &&
     h->sub_class == sc_sdev_floppy &&
@@ -183,6 +193,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
       dump_line_str("Drive status: no floppy found\n");
     }
   }
+#endif
 
   ind -= 2;
 

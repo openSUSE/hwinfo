@@ -158,6 +158,8 @@ char *get_cmdline(hd_data_t *hd_data, char *key);
 int detect_smp(hd_data_t *hd_data);
 #endif
 
+unsigned char *read_block0(hd_data_t *hd_data, char *dev, int *timeout);
+
 #ifdef __cplusplus
 }
 #endif

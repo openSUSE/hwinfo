@@ -101,8 +101,9 @@ void hd_scan_floppy(hd_data_t *hd_data)
 
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
       res->size.type = res_size;
-      res->size.val1 = i;
-      res->size.unit = size_unit_kbyte;
+      res->size.val1 = i << 1;
+      res->size.val2 = 0x200;
+      res->size.unit = size_unit_sectors;
 
       /* the only choice... */
       if(floppy_ctrls == 1) hd->attached_to = floppy_ctrl_idx;

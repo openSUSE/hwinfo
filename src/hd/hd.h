@@ -407,6 +407,7 @@ typedef struct cdrom_info_s {
 
 } cdrom_info_t;
 
+// note: obsolete, will be removed
 typedef struct {
   unsigned char block0[512];
 } floppy_info_t;
@@ -965,6 +966,7 @@ typedef struct s_hd_t {
     unsigned isapnp:1;		/* ISA-PnP device */
     unsigned cardbus:1;		/* cardbus card */
     unsigned pcmcia:1;		/* pcmcia card */
+    unsigned notready:1;	/* for (removeable) block devices: no medium */
   } is;
 
   struct {			/* this struct is for internal purposes only */
@@ -972,6 +974,8 @@ typedef struct s_hd_t {
     unsigned ser_skip:1;	/* if serial line, don't scan for devices */
     unsigned ser_device:2;	/* if != 0: info about attached serial device; see serial.c */
   } tag;
+
+  unsigned char *block0;	/* for block devices: first 512 data bytes */
 
   /*
    * These are used internally for memory management.

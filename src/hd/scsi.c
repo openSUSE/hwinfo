@@ -83,7 +83,9 @@ void hd_scan_scsi(hd_data_t *hd_data)
   PROGRESS(1, 0, "read info");
 
   get_proc_scsi(hd_data);
-  ioctl_scsi = get_ioctl_scsi(hd_data);
+
+  // only if get_proc_scsi() found at least 1 device
+  ioctl_scsi = hd_data->scsi ? get_ioctl_scsi(hd_data) : NULL;
 
   for(scsi = hd_data->scsi; scsi; scsi = scsi->next) {
     for(scsi2 = ioctl_scsi; scsi2; scsi2 = scsi2->next) {
