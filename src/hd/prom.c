@@ -7,6 +7,7 @@
 
 #include "hd.h"
 #include "hd_int.h"
+#include "hddb.h"
 #include "prom.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -24,7 +25,8 @@ static void read_str(char *path, char *name, char **str);
 static void read_mem(char *path, char *name, unsigned char **mem, unsigned len);
 static void read_int(char *path, char *name, int *val);
 static void read_devtree(hd_data_t *hd_data);
-static void add_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent);
+static void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent);
+static void add_legacy_prom_devices(hd_data_t *hd_data, devtree_t *dt);
 static void add_devices(hd_data_t *hd_data);
 static void dump_devtree_data(hd_data_t *hd_data);
 
@@ -209,7 +211,7 @@ void read_devtree(hd_data_t *hd_data)
 
 }
 
-void add_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent)
+void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent)
 {
   hd_t *hd;
   hd_res_t *res;
@@ -400,9 +402,50 @@ void add_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent)
           }
         }
       }
+    }
+  }
+}
 
+void add_legacy_prom_devices(hd_data_t *hd_data, devtree_t *dt)
+{
+  hd_t *hd;
+  hd_res_t *res;
+  unsigned id;
 
+  if(dt->pci) return;
 
+  if(
+    dt->device_type &&
+    !strcmp(dt->device_type, "display")
+  ) {
+    /* display devices */
+
+    id = 0;
+
+    if(dt->name) {
+      if(!strcmp(dt->name, "valkyrie")) {
+        id = MAKE_ID(TAG_SPECIAL, 0x3000);
+      }
+      else if(!strcmp(dt->name, "platinum")) {
+        id = MAKE_ID(TAG_SPECIAL, 0x3001);
+      }
+    }
+
+    if(id) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->bus = bus_none;
+      hd->base_class = bc_display;
+      hd->sub_class = sc_dis_other;
+
+      hd->vend = MAKE_ID(TAG_SPECIAL, 0x0401);
+      hd->dev = id;
+      hd->rom_id = new_str(dt->path);
+      if(dt->interrupt) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->irq.type = res_irq;
+        res->irq.enabled = 1;
+        res->irq.base = dt->interrupt;
+      }
     }
   }
 }
@@ -412,7 +455,7 @@ void add_devices(hd_data_t *hd_data)
   hd_t *hd;
   hd_res_t *res;
   devtree_t *dt;
-  unsigned pci_slot = 0;
+  unsigned pci_slot = 0, u;
 
   /* remove old assignments */
   for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -452,6 +495,12 @@ void add_devices(hd_data_t *hd_data)
         hd->sub_class =  (dt->class_code >> 8) & 0xff;
         hd->prog_if = dt->class_code & 0xff;
 
+        /* fix up old VGA's entries */
+        if(hd->base_class == bc_none && hd->sub_class == 0x01) {
+          hd->base_class = bc_display;
+          hd->sub_class = sc_dis_vga;
+        }
+
         hd->dev = MAKE_ID(TAG_PCI, dt->device_id);
         hd->vend = MAKE_ID(TAG_PCI, dt->vendor_id);
         if(dt->subdevice_id != -1) {
@@ -461,6 +510,14 @@ void add_devices(hd_data_t *hd_data)
           hd->sub_vend = MAKE_ID(TAG_PCI, dt->subvendor_id);
         }
         hd->rev = dt->revision_id;
+
+        if((hd->base_class == 0 || hd->base_class == 0xff) && hd->sub_class == 0) {
+          if((u = device_class(hd_data, hd->vend, hd->dev))) {
+            hd->base_class = u >> 8;
+            hd->sub_class = u & 0xff;
+          }
+        } 
+
         if(dt->interrupt > 1) {
           res = add_res_entry(&hd->res, new_mem(sizeof *res));
           res->irq.type = res_irq;
@@ -473,11 +530,12 @@ void add_devices(hd_data_t *hd_data)
       hd->detail = new_mem(sizeof *hd->detail);
       hd->detail->type = hd_detail_devtree;
       hd->detail->devtree.data = dt;
-      add_prom_devices(hd_data, hd, dt);
+      add_pci_prom_devices(hd_data, hd, dt);
+    }
+    else {
+      add_legacy_prom_devices(hd_data, dt);
     }
   }
-
-
 }
 
 void dump_devtree_data(hd_data_t *hd_data)

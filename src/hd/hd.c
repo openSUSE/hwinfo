@@ -71,8 +71,15 @@
 #define HD_ARCH "sparc"
 #endif
 
-#define MOD_INFO_SEP		'|'
-#define MOD_INFO_SEP_STR	"|"
+#ifdef __s390__
+#define HD_ARCH "s390"
+#endif
+
+#if defined(__s390__)
+#define WITH_ISDN	0
+#else
+#define WITH_ISDN	1
+#endif
 
 typedef struct disk_s {
   struct disk_s *next;
@@ -89,9 +96,11 @@ static void fix_probe_features(hd_data_t *hd_data);
 static void set_probe_feature(hd_data_t *hd_data, enum probe_feature feature, unsigned val);
 static hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd);
 static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
+#if WITH_ISDN
 static int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len);
 static isdn_parm_t *new_isdn_parm(isdn_parm_t **ip);
 static driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici);
+#endif
 static char *module_cmd(hd_t *, char *);
 static char *get_cmdline(hd_data_t *hd_data, char *key);
 static void timeout_alarm_handler(int signal);
@@ -693,7 +702,9 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_xtra(hd_data);
 
   /* some final fixup's */
+#if WITH_ISDN
   hd_scan_isdn(hd_data);
+#endif
   hd_scan_int(hd_data);
 
   /* we are done... */
@@ -749,6 +760,9 @@ void hd_scan(hd_data_t *hd_data)
         break;
       case arch_68k:
         s = "68k";
+        break;
+      case arch_s390:
+        s = "s390";
         break;
       default:
         s = "unknown";
@@ -1227,6 +1241,7 @@ void remove_tagged_hd_entries(hd_data_t *hd_data)
   }
 }
 
+#if WITH_ISDN
 int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len)
 {
   unsigned u;
@@ -1252,6 +1267,7 @@ isdn_parm_t *new_isdn_parm(isdn_parm_t **ip)
 
   return *ip = new_mem(sizeof **ip);
 }
+#endif		/* WITH_ISDN */
 
 driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
 {
@@ -1405,6 +1421,7 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
 }
 
 
+#if WITH_ISDN
 driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
 {
   driver_info_t *di;
@@ -1549,6 +1566,7 @@ driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
 
   return di;
 }
+#endif		/* WITH_ISDN */
 
 driver_info_t *monitor_driver(hd_data_t *hd_data, hd_t *hd)
 {
@@ -1661,7 +1679,9 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
   unsigned u1, u2;
   char *s, *t, *t0;
   driver_info_t *di, *di0 = NULL;
+#if WITH_ISDN
   ihw_card_info *ici;
+#endif
   str_list_t *sl;
   hd_t *bridge_hd;
 
@@ -1690,10 +1710,12 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
     di0 = device_driver(hd_data, hd->compat_vend, hd->compat_dev);
   }
 
+#if WITH_ISDN
   if((ici = get_isdn_info(hd))) {
     di0 = isdn_driver(hd_data, hd, ici);
     if(di0) return di0;
   }
+#endif
 
   if(hd->base_class == bc_keyboard) {
     di0 = kbd_driver(hd_data, hd);
@@ -2265,7 +2287,11 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 #ifdef __sparc__
   return arch_sparc;
 #else
+#ifdef __s390__
+  return arch_s390;
+#else
   return arch_unknown;
+#endif
 #endif
 #endif
 #endif
@@ -2544,10 +2570,12 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
       case hw_display:
         hd_set_probe_feature(hd_data, pr_pci);
         hd_set_probe_feature(hd_data, pr_sbus);
+        hd_set_probe_feature(hd_data, pr_prom);
         hd_set_probe_feature(hd_data, pr_misc);		/* for isa cards */
         break;
 
       case hw_monitor:
+        hd_set_probe_feature(hd_data, pr_misc);
         hd_set_probe_feature(hd_data, pr_monitor);
         break;
 

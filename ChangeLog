@@ -1,3 +1,9 @@
+24/8/2000:	v1.33
+	- better monitor & display detection on ppc
+
+23/8/2000:	v1.32
+	- made libhd at least to compile on s390
+
 23/8/2000:	v1.31
 	- slightly changed memory detection
 	- ADB mice: /dev/input/mice

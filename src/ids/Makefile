@@ -31,6 +31,10 @@ ifeq "$(ARCH)" "ia64"
 IDFILES	+= drivers.x11.ia64 names.x11.ia64
 endif
 
+#ifeq "$(ARCH)" "s390"
+#IDFILES	+= drivers.x11.s390 names.x11.s390
+#endif
+
 IDFILES += names.pciutils\
 	   drivers.network drivers.scsi drivers.block drivers.monitor\
 	   drivers.audio drivers.mouse drivers.video

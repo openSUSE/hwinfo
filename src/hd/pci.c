@@ -85,7 +85,7 @@ void hd_scan_pci(hd_data_t *hd_data)
     }
     hd->rev = p->rev;
 
-    if(hd->base_class == 0 && hd->sub_class == 0) {
+    if((hd->base_class == 0 || hd->base_class == 0xff) && hd->sub_class == 0) {
       if((u = device_class(hd_data, hd->vend, hd->dev))) {
         hd->base_class = u >> 8;
         hd->sub_class = u & 0xff;

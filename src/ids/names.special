@@ -69,6 +69,10 @@ s0401	Apple Computer, Inc.
 	1730	PAL Monitor
 	173a	19" Monitor
 	173f	Unknown Monitor
+	2000	800x600 LCD
+	2001	1024x768 LCD
+	3000	Valkyrie
+	3001	Platinum
 
 # printer
 s1001	Minolta Co., Ltd.

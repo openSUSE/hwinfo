@@ -1,10 +1,105 @@
 #x11DB
-#hwinfo data from 2000-08-16 10:03:52
+#hwinfo data from 2000-08-24 14:35:55
 #
 
 
 
+# Matrox:MGA G200 SD PCI
+102B 0520  
+	x	3|FBDEV|||||
+
+
+# ATI:Mach64 VT4 PCI
+1002 5656  
+	x	4|r128|||||
+
+
+# ATI:Mach64 VT4 PCI
+1002 5656  
+	x	3|FBDEV|||||
+
+
+# ATI:Rage 128 GL AGP 2x
+1002 5246  
+	x	4|r128|||||
+
+
+# ATI:Rage 128 GL AGP 2x
+1002 5246  
+	x	3|FBDEV|||||
+
+
+# ATI:Rage 128 GL PCI
+1002 5245  
+	x	4|r128|||||
+
+
+# ATI:Rage 128 GL PCI
+1002 5245  
+	x	3|FBDEV|||||
+
+
+# ATI:Rage 128 Pro AGP 4x (TMDS)
+1002 5052  
+	x	3|FBDEV|||||
+
+
+# ATI:Rage 128 Pro AGP 4x (TMDS)
+1002 5046  
+	x	4|r128|||||
+
+
+# ATI:Rage 128 Pro AGP 4x (TMDS)
+1002 5046  
+	x	3|FBDEV|||||
+
+
+# ATI:Rage L Mobility AGP 2x
+1002 4C4E  
+	x	4|ati|||||
+
+
+# ATI:Rage L Mobility AGP 2x
+1002 4C4E  
+	x	3|FBDEV|||||
+
+
 # ATI:Mach64 LI
 1002 4C49  
+	x	3|FBDEV|||||
+
+
+# ATI:Rage 3D LT-G
+1002 4C47  
+	x	4|ati|||||
+
+
+# ATI:Rage 3D LT-G
+1002 4C47  
+	x	3|FBDEV|||||
+
+
+# ATI:Mach64 based
+1002 4756  
+	x	3|FBDEV|||||
+
+
+# ATI:Mach64 GT (Rage II)
+1002 4754  
+	x	4|ati|||||
+
+
+# ATI:Mach64 GT (Rage II)
+1002 4754  
+	x	3|FBDEV|||||
+
+
+# Chips&Technologies:65550
+102c 00e0  
+	x	3|FBDEV|||||
+
+
+# Cirrus Logic:GD 5446
+1013 00b8  
 	x	3|FBDEV|||||
 

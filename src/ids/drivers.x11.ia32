@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-08-16 09:31:01
+#hwinfo data from 2000-08-24 14:35:03
 #
 
 
@@ -132,6 +132,16 @@
 # Matrox:Millennium II
 102b 0100  
 	x	3|SVGA|||||
+
+
+# Matrox:Matrox G400
+102b 0525 102b 0378
+	x	3|SVGA|||||
+
+
+# Matrox:Matrox G400
+102b 0525 102b 0378
+	x	3|SVGA|3d|glx|glx.so||4
 
 
 # Miro:Video I/O & motion JPEG compressor
