@@ -1,8 +1,11 @@
+25/2/2005:	v10.4
 	- report pci class 0x403 as audio devices (#66466)
 	- load ahci *and* ata_piix (#65218)
 	- symlink /dev/fb might be missing; trying fb0, too (#66501)
 	- reorder modules.pcimap entries so that more specific matches are
 	  considered first (#66594)
+	- ensure nvida network cards are network cards (#65852)
+	- updated X11 data 
 
 23/2/2005:	v10.3
 	- reworked pcmcia code to give cardbus devices sysfs ids

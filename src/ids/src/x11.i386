@@ -22,7 +22,7 @@
 &subdevice.id		pci 0x0450
 +subdevice.name		Sapphire Radeon X600 Pro
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d|
++driver.xfree		4|fglrx|3d||dri
 +requires		fglrx
 
  vendor.id		pci 0x1002
@@ -999,6 +999,12 @@
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
+&device.id		pci 0x5969
++device.name		ES1000 (PCI)
++driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x5b60
 +device.name		Radeon X300 (RV370) 5B60 (PCIE)
 +driver.xfree		4|radeon
@@ -1009,7 +1015,7 @@
 &subdevice.id		pci 0x0440
 +subdevice.name		Sapphire Radeon X300 SE
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d|
++driver.xfree		4|fglrx|3d||dri
 +requires		fglrx
 
  vendor.id		pci 0x1002

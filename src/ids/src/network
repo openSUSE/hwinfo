@@ -608,9 +608,35 @@
 &device.id		pci 0x6915
 +driver.module.modprobe	starfire
 
+
  vendor.id		pci 0x8086
 &device.id		pci 0x1043
 +driver.module.modprobe	ipw2100
+
+
+# make it an ethernet card explicitly (#65852)
+ vendor.id		pci 0x10de
+&device.id		pci 0x0037+0x0002
+|vendor.id		pci 0x10de
+&device.id		pci 0x0056+0x0002
+|vendor.id		pci 0x10de
+&device.id		pci 0x0066
+|vendor.id		pci 0x10de
+&device.id		pci 0x0086
+|vendor.id		pci 0x10de
+&device.id		pci 0x008c
+|vendor.id		pci 0x10de
+&device.id		pci 0x00d6
+|vendor.id		pci 0x10de
+&device.id		pci 0x00df
+|vendor.id		pci 0x10de
+&device.id		pci 0x00e6
+|vendor.id		pci 0x10de
+&device.id		pci 0x01c3
++baseclass.id		0x002
++subclass.id		0x00
++driver.module.modprobe	forcedeth
+
 
 # net/ne.c
  vendor.id		AXE
