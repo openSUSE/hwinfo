@@ -542,26 +542,26 @@
  baseclass.id		0x00c
 &subclass.id		0x03
 &progif.id		0x00
-+driver.module.insmod	usbcore|uhci-hcd
++driver.module.modprobe	uhci-hcd
 
  baseclass.id		0x00c
 &subclass.id		0x03
 &progif.id		0x10
-+driver.module.insmod	usbcore|ohci-hcd
++driver.module.modprobe	ohci-hcd
 
  baseclass.id		0x00c
 &subclass.id		0x03
 &progif.id		0x20
-+driver.module.insmod	usbcore|ehci-hcd
++driver.module.modprobe	ehci-hcd
 
  baseclass.id		0x00c
 &subclass.id		0x00
 &progif.id		0x10
-+driver.module.insmod	ieee1394|ohci1394
++driver.module.modprobe	ohci1394
 
  vendor.id		pci 0x104c
 &device.id		pci 0x8000
-+driver.module.insmod	ieee1394|pcilynx
++driver.module.modprobe	pcilynx
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -470,12 +470,12 @@
 # ppc audio
  vendor.id		special 0x0401
 &device.id		special 0x0010+0x0004
-+driver.module.insmod	dmasound
++driver.module.modprobe	dmasound
 
 # ppc audio
  vendor.id		special 0x0402
 &device.id		special 0x0014
-+driver.module.insmod	cs4232
++driver.module.modprobe	cs4232
 
 # AMD7930
  vendor.id		special 0x4001

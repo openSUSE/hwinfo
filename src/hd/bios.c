@@ -23,7 +23,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#if defined(__i386__) || defined (__x86_64__) || defined(__ia64__)
+#if defined(__i386__) || defined (__x86_64__)
 
 #ifndef LIBHD_TINY
 static struct {
@@ -1009,4 +1009,4 @@ int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios
 #endif		/* !defined(LIBHD_TINY) */
 
 
-#endif /* defined(__i386__) || defined (__x86_64__) || defined (__ia64__) */
+#endif /* defined(__i386__) || defined (__x86_64__) */
