@@ -1,5 +1,6 @@
 13/1/2003:	v5.50
 	- added Myrinet support (#21130)
+	- make it compile on !(x86_64 & ia64) again
 
 9/1/2003:	v5.49
 	- fixed some network card names (#22795)
