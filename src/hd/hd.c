@@ -1033,16 +1033,18 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
       {
         cdrom_info_t *c = d->cdrom.data;
 
-        free_mem(c->name);
-        free_mem(c->iso9660.volume);
-        free_mem(c->iso9660.publisher);
-        free_mem(c->iso9660.preparer);
-        free_mem(c->iso9660.application);
-        free_mem(c->iso9660.creation_date);
-        free_mem(c->el_torito.id_string);
-        free_mem(c->el_torito.label);
+        if(c) {
+          free_mem(c->name);
+          free_mem(c->iso9660.volume);
+          free_mem(c->iso9660.publisher);
+          free_mem(c->iso9660.preparer);
+          free_mem(c->iso9660.application);
+          free_mem(c->iso9660.creation_date);
+          free_mem(c->el_torito.id_string);
+          free_mem(c->el_torito.label);
 
-        free_mem(c);
+          free_mem(c);
+        }
       }
       break;
 

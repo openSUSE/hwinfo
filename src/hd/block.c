@@ -377,43 +377,43 @@ void add_cdrom_info(hd_data_t *hd_data, hd_t *hd)
     }
   }
 
-  ci = hd->detail->cdrom.data;
-
-  /* update prog_if: cdr, cdrw, ... */
-  if(
-    /* ###### FIXME: dosn't work anyway: ide-scsi doesn't support sysfs */
-    hd->bus.id == bus_scsi &&
-    !search_str_list(hd->drivers, "ide-scsi")		/* could be ide, though */
-  ) {
-    /* scsi devs lie */
-    if(ci->dvd && (ci->cdrw || ci->dvdr || ci->dvdram)) {
-      ci->dvd = ci->dvdr = ci->dvdram = 0;
+  if((ci = hd->detail->cdrom.data)) {
+    /* update prog_if: cdr, cdrw, ... */
+    if(
+      /* ###### FIXME: dosn't work anyway: ide-scsi doesn't support sysfs */
+      hd->bus.id == bus_scsi &&
+      !search_str_list(hd->drivers, "ide-scsi")		/* could be ide, though */
+    ) {
+      /* scsi devs lie */
+      if(ci->dvd && (ci->cdrw || ci->dvdr || ci->dvdram)) {
+        ci->dvd = ci->dvdr = ci->dvdram = 0;
+      }
+      ci->dvdr = ci->dvdram = 0;
+      ci->cdr = ci->cdrw = 0;
+      if(hd->prog_if.id == pif_cdr) ci->cdr = 1;
     }
-    ci->dvdr = ci->dvdram = 0;
-    ci->cdr = ci->cdrw = 0;
-    if(hd->prog_if.id == pif_cdr) ci->cdr = 1;
-  }
 
-  /* trust ide info */
-  if(ci->dvd) {
-    hd->is.dvd = 1;
-    hd->prog_if.id = pif_dvd;
-  }
-  if(ci->cdr) {
-    hd->is.cdr = 1;
-    hd->prog_if.id = pif_cdr;
-  }
-  if(ci->cdrw) {
-    hd->is.cdrw = 1;
-    hd->prog_if.id = pif_cdrw;
-  }
-  if(ci->dvdr) {
-    hd->is.dvdr = 1;
-    hd->prog_if.id = pif_dvdr;
-  }
-  if(ci->dvdram) {
-    hd->is.dvdram = 1;
-    hd->prog_if.id = pif_dvdram;
+    /* trust ide info */
+    if(ci->dvd) {
+      hd->is.dvd = 1;
+      hd->prog_if.id = pif_dvd;
+    }
+    if(ci->cdr) {
+      hd->is.cdr = 1;
+      hd->prog_if.id = pif_cdr;
+    }
+    if(ci->cdrw) {
+      hd->is.cdrw = 1;
+      hd->prog_if.id = pif_cdrw;
+    }
+    if(ci->dvdr) {
+      hd->is.dvdr = 1;
+      hd->prog_if.id = pif_dvdr;
+    }
+    if(ci->dvdram) {
+      hd->is.dvdram = 1;
+      hd->prog_if.id = pif_dvdram;
+    }
   }
 
   if(
