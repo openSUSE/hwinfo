@@ -1,6 +1,6 @@
 TOPDIR		= ../..
 TARGETS		= $(LIBHD_D)
-CLEANFILES	= *.h *.err hd.names hd.drivers
+CLEANFILES	= *.h *.err hd.names hd.drivers drivers.c
 
 include $(TOPDIR)/Makefile.common
 
