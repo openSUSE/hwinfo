@@ -1,3 +1,7 @@
+26/8/2003:
+	- default ISDN data for all ARCH
+	- update ISDN CDB data
+
 26/8/2003:	v7.12
 	- updated X11 data (#29316)
 	- add ISDN database for ia64
