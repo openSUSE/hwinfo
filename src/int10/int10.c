@@ -120,7 +120,7 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v)
   unsigned modelist[0x100];
   unsigned bpp, res_bpp, fb, clock;
   vbe_mode_info_t *mi;
-  int ax, bx;
+  int ax, bx, cx;
 
   vbe->ok = 1;
 
@@ -173,8 +173,8 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v)
 
     mi->number =  modelist[i];
     
-    ax = 0x4f01; bx = 0;
-    l = CallInt10(&ax, &bx, modelist + i, tmp, sizeof tmp) & 0xffff;
+    ax = 0x4f01; bx = 0; cx = modelist[i];
+    l = CallInt10(&ax, &bx, &cx, tmp, sizeof tmp) & 0xffff;
 
     if(l != 0x4f) {
       ADD2LOG("0x%04x: no mode info\n", modelist[i]);

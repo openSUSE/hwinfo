@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#if 0 /* __ia64__ */
+#ifdef __ia64__
 #include <fcntl.h>
 #include <errno.h>
 #include <stdint.h>
@@ -518,7 +518,7 @@ inline unsigned units_per_cpu()
 #endif
 
 
-#if 0
+#if 1
 #ifdef __ia64__
 
 /*
@@ -678,6 +678,7 @@ acpi_unmap_table (acpi_desc_table_hdr_t * table)
     }
 }
 
+#if 0
 /*
  * Locate the RSDP
  */
@@ -704,6 +705,7 @@ acpi_find_rsdp (int mem,
     }
   return addr;
 }
+#endif
 
 int
 acpi20_lsapic (char *p)
@@ -813,20 +815,24 @@ acpi_parse_rsdp (int mem_fd, acpi20_rsdp_t *rsdp)
 
 int ia64DetectSMP(hd_data_t *hd_data)
 {
-  int n_cpu = 0, mem_fd, i;
+  int n_cpu = 0, mem_fd;
   acpi20_rsdp_t rsdp;
-  unsigned long addr = 0;
+  uint8_t *mapped;
+  unsigned long addr = 0, offset;
   int ok = 0;
   str_list_t *sl;
-  static char *rsd_klog = "Root System Description Ptr at ";
+  static char *rsd_klog = "ACPI 2.0=";
   char *s;
+#if 0
   off_t o;
+  int i;
 
   unsigned long ranges[][2] = {
     { 0x7fe00000, 0x80000000 - 0x7fe00000 },
     { 0x3fe00000, 0x40000000 - 0x3fe00000 },
     { 0x000e0000, 0x00100000 - 0x000e0000 }
   };
+#endif
 
   mem_fd = open("/dev/mem", O_RDONLY);
   if(mem_fd == -1) return -1;
@@ -837,13 +843,14 @@ int ia64DetectSMP(hd_data_t *hd_data)
     if((s = strstr(sl->str, rsd_klog))) {
       if(sscanf(s + strlen(rsd_klog), "%lx", &addr) == 1) {
 //        addr &= ~(0xfL << 60);
-        if(lseek(mem_fd, (off_t) addr, SEEK_SET) != -1) {
-          ADD2LOG("seek to 0x%lx\n", addr);
-          if((o = read(mem_fd, &rsdp, sizeof rsdp)) == sizeof rsdp) {
-            ADD2LOG("got rsdp at 0x%lx\n", addr);
-            ok = 1;
-          }
-          ADD2LOG("size = 0x%lx\n", o);
+	offset= PAGE_OFFSET (addr);
+        mapped = mmap(NULL, sizeof rsdp + offset, PROT_READ, MAP_PRIVATE,
+		      mem_fd, (unsigned long) addr - offset);
+	if(mapped != MAP_FAILED) {
+	  ADD2LOG("seek to 0x%lx\n", addr);
+          memcpy(&rsdp, mapped + offset, sizeof rsdp);
+	  munmap(mapped, sizeof rsdp + offset);
+	  ok = 1;
         }
         break;
       }
