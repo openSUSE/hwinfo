@@ -46,21 +46,13 @@ void *resize_mem(void *, size_t);
 void *add_mem(void *, size_t, size_t);
 char *new_str(const char *);
 void *free_mem(void *);
-void add_res(res_t *, enum resource_types type, unsigned long, unsigned long, unsigned long);
 int have_common_res(hd_res_t *res1, hd_res_t *res2);
 void join_res_io(hd_res_t **res1, hd_res_t *res2);
 void join_res_irq(hd_res_t **res1, hd_res_t *res2);
 void join_res_dma(hd_res_t **res1, hd_res_t *res2);
 hd_res_t *free_res_list(hd_res_t *res);
-void free_all_res(res_t *);
-hw_t *add_hw_entry(int);
 hd_res_t *add_res_entry(hd_res_t **res, hd_res_t *new_res);
 hd_t *add_hd_entry(hd_data_t *hd_data, unsigned line, unsigned count);
-
-
-extern hw_t *hw;
-extern unsigned hw_len;
-extern unsigned hw_idx;
 
 char *isa_id2str(unsigned);
 char *eisa_vendor_str(unsigned);
@@ -78,6 +70,12 @@ void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg);
 hd_t *get_device_by_idx(hd_data_t *hd_data, int idx);
 
 void remove_hd_entries(hd_data_t *hd_data);
+
+int str2float(char *s, int n);
+char *float2str(int i, int n);
+
+/* return the file name of a module */
+char *mod_name_by_idx(unsigned idx);
 
 
 #ifdef __cplusplus

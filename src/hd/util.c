@@ -31,6 +31,7 @@ static char *module_cmd(hd_t *, char *);
 
 // ####### replace or fix this!!!
 
+#if 0
 hw_t *find_cdrom_volume(const char *volume_id, int *start)
 {
   int i;
@@ -59,6 +60,7 @@ hw_t *find_cdrom_volume(const char *volume_id, int *start)
 
   return NULL;	/* CD not found :-( */
 }
+#endif
 
 
 /*
@@ -311,6 +313,7 @@ char *module_cmd(hd_t *h, char *cmd)
 }
 
 
+#if 0
 /*
  * cf. /usr/src/linux/drivers/block/ide-pci.c
  */
@@ -395,6 +398,6 @@ int has_pcmcia_support()
 
   return 0;
 }
-
+#endif
 
 

@@ -36,10 +36,6 @@
 #endif
 
 
-// For the moment, we need it outside this file... :-(
-hw_t *hw = NULL;
-unsigned hw_len = 0;
-
 /*
  * Names of the probing modules.
  * Cf. enum mod_idx in hd_int.h.
@@ -161,18 +157,6 @@ void *free_mem(void *p)
 
   return NULL;
 }
-
-void add_res(res_t *res, enum resource_types type, unsigned long r0, unsigned long r1, unsigned long r2)
-{
-  res->ent = add_mem(res->ent, sizeof *res->ent, res->n);
-
-  res->ent[res->n].type = type;
-  res->ent[res->n].r0 = r0;
-  res->ent[res->n].r1 = r1;
-  res->ent[res->n].r2 = r2;
-  res->n++;
-}
-
 
 void join_res_io(hd_res_t **res1, hd_res_t *res2)
 {
@@ -308,23 +292,6 @@ hd_res_t *free_res_list(hd_res_t *res)
 }
 
 
-
-void free_all_res(res_t *res)
-{
-  res->ent = free_mem(res->ent);
-  res->n = 0;
-}
-
-
-// ##### no category entry anymore...
-hw_t *add_hw_entry(int cat)
-{
-  hw = add_mem(hw, sizeof *hw, hw_len);
-
-  hw[hw_len].idx = hw_len + 1;
-
-  return hw + hw_len++;
-}
 
 /*
  * Note: new_res is directly inserted into the list, so you *must* make sure
@@ -485,36 +452,6 @@ char *canon_str(char *s, int len)
 }
 
 
-void free_hw()
-{
-  int i;
-  hw_t *h;
-
-  if(hw) for(i = 0; i < hw_len; i++) {
-    h = hw + i;
-
-    free_mem(h->dev_name);
-    free_mem(h->vend_name);
-    free_mem(h->sub_dev_name);
-    free_mem(h->sub_vend_name);
-    free_mem(h->rev_name);
-    free_mem(h->serial);
-
-    free_mem(h->err_text1);
-    free_mem(h->err_text2);
-
-    free_mem(h->unix_dev_name);
-    free_all_res(&h->res);
-
-    // ###### ... h->ext ... 
-  }
-
-
-  hw = free_mem(hw);
-  hw_len = 0;
-}
-
-
 /*
  * Convert a n-digit hex number to its numerical value.
  */
@@ -531,18 +468,7 @@ int hex(char *s, int n)
 }
 
 
-/*
- * Get the current hardware list and its size.
- */
-hw_t *hw_get_list(unsigned *list_len)
-{
-  *list_len = hw_len;
-
-  return hw;
-}
-
-
-// n: decimals
+/* simple 32 bit fixed point numbers with n decimals */
 int str2float(char *s, int n)
 {
   int i = 0;
@@ -573,7 +499,7 @@ int str2float(char *s, int n)
 }
 
 
-// n: decimals
+/* simple 32 bit fixed point numbers with n decimals */
 char *float2str(int f, int n)
 {
   int i = 1, j, m = n;
@@ -598,7 +524,7 @@ char *float2str(int f, int n)
 
 
 /*
- * Find hardware entry with given index.
+ * find hardware entry with given index
  */
 hd_t *get_device_by_idx(hd_data_t *hd_data, int idx)  
 {
@@ -762,7 +688,7 @@ str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines)
  */
 void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg)
 {
-  char buf1[32], buf2[32], *fn;
+  char buf1[32], buf2[32], buf3[128], *fn;
 
   if(!msg) msg = "";
 
@@ -770,10 +696,12 @@ void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg)
   sprintf(buf2, ".%u", count);
   fn = mod_name_by_idx(hd_data->module);
 
-  if((hd_data->debug & HD_DEB_PROGRESS))
-    ADD2LOG(">> %s.%u%s: %s\n", *fn ? fn : buf1, pos, count ? buf2 : "", msg);
+  sprintf(buf3, "%s.%u%s", *fn ? fn : buf1, pos, count ? buf2 : "");
 
-  if(hd_data->progress) hd_data->progress(hd_data->module, pos, count, msg);
+  if((hd_data->debug & HD_DEB_PROGRESS))
+    ADD2LOG(">> %s: %s\n", buf3, msg);
+
+  if(hd_data->progress) hd_data->progress(buf3, msg);
 }
 
 

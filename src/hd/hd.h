@@ -3,8 +3,12 @@ extern "C" {
 #endif
 
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ *
+ *                      libhd data structures
+ *
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ */
 
 /*
  * debug flags
@@ -27,6 +31,20 @@ extern "C" {
 #define HD_DEB_IDE		(1 << 15)
 #define HD_DEB_SCSI		(1 << 16)
 
+
+/*
+ * flags to control the probing.
+ *
+ * Note: only 32 features are supported at this time; if you want more,
+ * change the definition of hd_data_t.probe
+ */
+enum probe_feature {
+  pr_memory, pr_pci, pr_pci_range, pr_isapnp, pr_cdrom, pr_cdrom_info,
+  pr_net, pr_floppy, pr_misc, pr_misc_serial, pr_misc_par, pr_misc_floppy,
+  pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide, pr_scsi
+};
+
+
 /*
  * define a 64 bit unsigned int
  */
@@ -40,14 +58,15 @@ typedef unsigned long uint64;
 typedef unsigned long long uint64;
 #endif
 
+
 /*
- * device base classes
+ * device base classes and bus types
  *
  */
 
-// base class values (superset of PCI classes)
+/* base class values (superset of PCI classes) */
 enum base_classes {
-  // these *must* match standard PCI class numbers
+  /* these *must* match standard PCI class numbers */
   bc_none, bc_storage, bc_network, bc_display, bc_multimedia,
   bc_memory, bc_bridge, bc_comm, bc_system, bc_input, bc_docking,
   bc_processor, bc_serial, bc_other = 0xff,
@@ -57,74 +76,61 @@ enum base_classes {
   bc_storage_device, bc_network_interface
 };
 
-// subclass values of bc_storage
+/* subclass values of bc_storage */
 enum sc_storage {
   sc_sto_scsi, sc_sto_ide, sc_sto_floppy, sc_sto_ipi, sc_sto_raid,
   sc_sto_other = 0x80
 };
 
-// subclass values of bc_display
+/* subclass values of bc_display */
 enum sc_display {
   sc_dis_vga, sc_dis_xga, sc_dis_other = 0x80
 };
 
-// subclass values of bc_comm
+/* subclass values of bc_comm */
 enum sc_comm {
   sc_com_ser, sc_com_par, sc_com_other = 0x80
 };
 
-// subclass values of bc_system
+/* subclass values of bc_system */
 enum sc_system {
   sc_sys_pic, sc_sys_dma, sc_sys_timer, sc_sys_rtc, sc_sys_other = 0x80
 };
 
-// subclass values of bc_input
+/* subclass values of bc_input */
 enum sc_input {
   sc_inp_keyb, sc_inp_digit, sc_inp_mouse, sc_inp_other = 0x80
 };
 
-// internal sub class values
+/* internal sub class values */
 enum sc_internal {
   sc_int_none, sc_int_isapnp_if, sc_int_main_mem, sc_int_cpu, sc_int_fpu, sc_int_bios
 };
 
-// subclass values of bc_mouse
+/* subclass values of bc_mouse */
 enum sc_mouse {
   sc_mou_ps2, sc_mou_ser, sc_mou_bus
 };
 
-// subclass values of bc_storage_device
+/* subclass values of bc_storage_device */
 enum sc_std {
   sc_sdev_disk, sc_sdev_tape, sc_sdev_cdrom, sc_sdev_floppy,
   sc_sdev_other = 0x80
 };
 
-// subclass values of bc_network_interface
+/* subclass values of bc_network_interface */
 enum sc_net_if {
   sc_nif_loopback, sc_nif_ethernet, sc_nif_tokenring, sc_nif_fddi, sc_nif_other = 0x80
 };
 
-// bus type values similar to PCI bridge subclasses
+/* bus type values similar to PCI bridge subclasses */
 enum bus_types {
   bus_none, bus_isa, bus_eisa, bus_mc, bus_pci, bus_pcmcia, bus_nubus,
   bus_cardbus, bus_other,
 
-  // should be far out of the PCI values...
+  /* outside the range of the PCI values */
   bus_ps2 = 0x80, bus_serial, bus_parallel, bus_floppy, bus_scsi, bus_ide
 };
-
-/*
- * Flags to control the probing.
- *
- * Note: only 32 features are supported at this time; if you want more,
- * change the definition of hd_data_t.probe
- */
-enum probe_feature {
-  pr_memory, pr_pci, pr_pci_range, pr_isapnp, pr_cdrom, pr_cdrom_info,
-  pr_net, pr_floppy, pr_misc, pr_misc_serial, pr_misc_par, pr_misc_floppy,
-  pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide, pr_scsi
-};
-
 
 /*
  * Used whenever we create a list of strings (e.g. file read).
@@ -157,7 +163,7 @@ typedef struct s_pci_t {
 } pci_t;
 
 /*
- * PCI related flags cf. (pci_t).flags
+ * pci related flags cf. (pci_t).flags
  */
 enum pci_flags {
   pci_flag_ok, pci_flag_pm, pci_flag_agp
@@ -509,7 +515,7 @@ typedef struct {
   hd_t *hd;			/* the hardware list */
 
   /* a callback to indicate that we are still doing something... */
-  void (*progress)(unsigned file, unsigned pos, unsigned count, char *msg);
+  void (*progress)(char *pos, char *msg);
   
   char *log;			/* log messages */
   unsigned debug;		/* debug flags */
@@ -588,118 +594,24 @@ typedef union {
 } driver_info_t;
 
 
-
-
-
-
-
-
-
-
-
-
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-/*
- * resources
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  *
+ *                      libhd interface functions
+ *
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-// I/O access types for port resources
-
-enum io_access_types {
-  io_rw, io_ro, io_wo		// port access read/write, read only, write only
-};
-
-
-typedef struct {
-  enum resource_types type;
-  unsigned long r0, r1, r2;		// should be 64bit on at least 64bit systems
-/*#warning FIXME make union in res_ent_t*/
-  // eg. r0 = start, r1 = size
-  //     r0 = x-res, r1 = y-res
-  //     r0 = width, r1 = height, r2 = v-freq
-} res_ent_t;
-
-typedef struct {
-  unsigned n;			/* number of resource entries  */
-  res_ent_t *ent;		/* array of n resource entries  */
-} res_t;
-
-
-// describe things to be probed for
-typedef struct {
-  unsigned
-    add_entries:1,		// if 0, the old list is freed first
-    probe_bus:1,
-    probe_slot:1,
-    probe_func:1,
-    probe_base_class:1,
-    probe_sub_class:1,
-    probe_prog_if:1,
-    probe_pci_addr_range:1,	// this is quite dangerous...
-    probe_serial_mod:1,		// try to activate serial module before probing
-    probe_parport_mod:1,	// dto, parport
-    probe_floppy_cntl:1,	// access floppy to get floppy controller resources
-    probe_cdrom_label:1,	// look for CDs and read their label
-    debug;			// a bit mask
-
-  unsigned bus, slot, func;
-  unsigned base_class, sub_class, prog_if;
-} probe_t;
-
-
-typedef struct struct_hw_t {
-  int idx;
-  unsigned bus, slot, func;
-  enum base_classes base_class;
-  unsigned sub_class, prog_if;
-  unsigned dev, vend, sub_dev, sub_vend, rev;
-  unsigned compat_dev, compat_vend;
-
-  char *dev_name, *vend_name, *sub_dev_name, *sub_vend_name,
-       *rev_name, *serial;
-
-  int error;
-  char *err_text1, *err_text2;
-
-  int attached_to;		// idx field of 'parent' entry
-  char *unix_dev_name;		// name of special device file, if any
-  res_t res;
-  unsigned ext_flags;
-  void* ext;
-} hw_t;
-
-
-/*
- * Here they finally are ... the actual interface functions.
- */
-
-/*
- * implemented in hd.c
- */
-hw_t *scan_hw(unsigned *list_len, probe_t *pt);
-void free_hw(void);
-hw_t *hw_get_list(unsigned *list_len);
-int str2float(char *s, int n);
-char *float2str(int i, int n);
+/* implemented in hd.c */
 
 /* the actual hardware scan */
 void hd_scan(hd_data_t *hd_data);
-
-/* return the file name of a module */
-char *mod_name_by_idx(unsigned idx);
 
 unsigned str2probe_flag(char *name);
 char *probe_flag2str(unsigned flag);
 
 
-/*
- * implemented in hdx.c
- */
+/* implemented in hdx.c */
+
 char *bus_name(unsigned bus);
 char *base_class_name(unsigned base_class);
 char *sub_class_name(unsigned base_class, unsigned sub_class);
@@ -713,24 +625,20 @@ int base_class_number(char *base_class_name);
 char *device_drv_name(unsigned vendor_id, unsigned device_id);
 char *sub_device_drv_name(unsigned vendor_id, unsigned device_id, unsigned subvendor_id, unsigned subdevice_id);
 
-/*
- * implemented in hdp.c
- */
-void dump_hw_ent(hw_t *hw_entry, unsigned debug, FILE *f);
+/* implemented in hdp.c */
 
 void hd_dump_entry(hd_data_t *hd_data, hd_t *hd, FILE *f);
 
-/*
- * implemented in util.c
- */
+
+/* implemented in util.c */
 
 driver_info_t *get_driver_info(hd_t *h);
 int needs_eide_kernel(void);
 int has_pcmcia_support(void);
 
-/*
- * implemented in cdrom.c
- */
+
+/* implemented in cdrom.c */
+
 cdrom_info_t *hd_read_cdrom_info(hd_t *h);
 
 #ifdef __cplusplus

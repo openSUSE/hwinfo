@@ -8,7 +8,7 @@
 #include "hd.h"
 
 static int get_probe_flags(int, char **, hd_data_t *);
-static void progress(unsigned, unsigned, unsigned, char *);
+static void progress(char *, char *);
 
 static unsigned deb = 0;
 static char *log_file = "";
@@ -126,18 +126,10 @@ int get_probe_flags(int argc, char **argv, hd_data_t *hd_data)
 /*
  * A simple progress function.
  */
-void progress(unsigned file, unsigned pos, unsigned count, char *msg)
+void progress(char *pos, char *msg)
 {
-  char buf1[32], buf2[32], *fn;
-
-  if(!msg) msg = "";
-
-  sprintf(buf1, "%u", file);
-  sprintf(buf2, ".%u", count);
-  fn = mod_name_by_idx(file);
-
   printf("\r%64s\r", "");
-  printf("> %s.%u%s: %s ", *fn ? fn : buf1, pos, count ? buf2 : "", msg);
+  printf("> %s: %s ", pos, msg);
   fflush(stdout);
 }
 
