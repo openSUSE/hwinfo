@@ -1,3 +1,6 @@
+30/9/2004:	v9.26
+	- updated X11 data (#45870)
+
 29/9/2004:	v9.25
 	- removed obsolete module info; reworked pcmcia info
 

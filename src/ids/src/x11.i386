@@ -2903,7 +2903,8 @@
  vendor.id		pci 0x8086
 &device.id		pci 0x1132
 +device.name		I815
-+driver.xfree		4|i810||||Noaccel|8,16,24
++driver.xfree		4|i810|||||8,16,24
++driver.xfree		4|i810|3d||dri||16
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2562
@@ -2938,17 +2939,20 @@
  vendor.id		pci 0x8086
 &device.id		pci 0x7121
 +device.name		82810 CGC [Chipset Graphics Controller]
-+driver.xfree		4|i810||||Noaccel|8,16,24
++driver.xfree		4|i810|||||8,16,24
++driver.xfree		4|i810|3d||dri||16
 
  vendor.id		pci 0x8086
 &device.id		pci 0x7123
 +device.name		82810-DC100 CGC [Chipset Graphics Controller]
-+driver.xfree		4|i810||||Noaccel|8,16,24
++driver.xfree		4|i810|||||8,16,24
++driver.xfree		4|i810|3d||dri||16
 
  vendor.id		pci 0x8086
 &device.id		pci 0x7125
 +device.name		82810E CGC [Chipset Graphics Controller]
-+driver.xfree		4|i810||||Noaccel|8,16,24
++driver.xfree		4|i810|||||8,16,24
++driver.xfree		4|i810|3d||dri||16
 
  vendor.id		pci 0x8086
 &device.id		pci 0x7800
