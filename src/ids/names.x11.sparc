@@ -1,4 +1,4 @@
-#hwinfo names data from 2001-01-30 17:08:23
+#hwinfo names data from 2001-02-07 17:00:59
 #
 
 
@@ -488,6 +488,9 @@
 
 1023
 	0194	Trident 82c194 CardBus Controller
+
+1023
+	8620	Trident Generic
 
 121A
 	0009	3Dfx Voodoo5 5500

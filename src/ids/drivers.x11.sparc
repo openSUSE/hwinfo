@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2001-01-30 17:08:23
+#hwinfo data from 2001-02-07 17:00:59
 #
 
 
@@ -151,7 +151,12 @@ s4001 0012
 
 # Sun:Sun - TCX (8bit)
 s4001 0013
-	x	3|SUN||||||||
+	x	4|suntcx|||||1|||
+
+
+# Sun:Sun - TCX (8bit)
+s4001 0013
+	x	3|SUN|||||1|||
 
 
 # Sun:Sun - TCX (S24)
