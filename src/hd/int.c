@@ -962,8 +962,7 @@ void int_softraid(hd_data_t *hd_data)
 
   for(sl = raid; sl; sl = sl->next) {
     s = hd_sysfs_id(sl->str);
-    if (s)
-    {
+    if(s) {
       sl1 = add_str_list(&raid_sysfs, s);
       len = strlen(sl1->str);
       if(len) sl1->str[len - 1] = 0;
