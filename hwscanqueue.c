@@ -109,6 +109,13 @@ int main( int argc, char **argv )
 			signal(SIGCHLD,SIG_IGN);
 			pid=fork();
 			if (pid==0){
+				/* Change directory to allow clean shut-down */
+				chdir("/");
+				/* Close std fds */
+				close(0);
+				close(1);
+				close(2);
+				/* Start hwscand */
 				execve("/usr/sbin/hwscand", 0, 0);
 			}
 		}

@@ -53,19 +53,6 @@
 &device.id		pci 0x0628
 +driver.module.modprobe	mptscsih
 
-# pcimap
- vendor.id		pci 0x9005
-&device.id		pci 0x0250
-+driver.module.modprobe	ips
-
-# pcimap
- vendor.id		pci 0x1014
-&device.id		pci 0x002e
-|vendor.id		pci 0x1014
-&device.id		pci 0x01bd
-+driver.module.modprobe	ips
-+driver.module.modprobe	ips_old
-
  vendor.id		pci 0x1014
 &device.id		pci 0x0096
 +driver.module.modprobe	ibmsis
@@ -362,11 +349,13 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # block devices (RAID, ...)
 
-# block/DAC960.c
+# modules.alias
  vendor.id		pci 0x1011
 &device.id		pci 0x1065
+&subvendor.id		pci 0x1069
+&subdevice.id		pci 0x0020
 |vendor.id		pci 0x1069
-&device.id		pci 0x0002
+&device.id		pci 0x0001+0x0002
 |vendor.id		pci 0x1069
 &device.id		pci 0x0010
 |vendor.id		pci 0x1069
@@ -374,6 +363,8 @@
 |vendor.id		pci 0x1069
 &device.id		pci 0xba56
 +driver.module.modprobe	DAC960
++baseclass.id		0x001
++subclass.id		0x04
 
 # pcimap
  vendor.id		pci 0x0e11
@@ -535,6 +526,15 @@
 &device.id		pci 0x3512
 +driver.module.modprobe	sata_sil
 
+
+# modules.alias, #38628
+ baseclass.id		0x00b
+&subclass.id		0x40
+&progif.id		0x00
+&vendor.id		pci 0x10a9
+&device.id		pci 0x100a
++driver.module.modprobe	sgiioc4
++baseclass.id		0x001
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # usb controller
