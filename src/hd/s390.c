@@ -94,6 +94,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     dl=sysfs_get_dir_links(d);
     dlist_for_each_data(dl,cl,struct sysfs_link)	/* iterate over this channel group */
     {
+        if(!rindex(cl->target,'.')) continue;
 	int channel=strtol(rindex(cl->target,'.')+1,NULL,16);
     	//printf("channel %x name %s target %s\n",channel,cl->name,cl->target);
     	if(strncmp("cdev",cl->name,4)==0)

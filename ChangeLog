@@ -1,3 +1,4 @@
+	- s390: made ccwgroup walking more robust
 	- fixed bios base mem detection
 
 28/2/2005:	v10.6
