@@ -5321,3 +5321,12 @@ void read_udevinfo(hd_data_t *hd_data)
   free_str_list(udevinfo);
 }
 
+
+/*
+ * Return libhd version.
+ */
+char *hd_version()
+{
+  return HD_VERSION_STRING;
+}
+

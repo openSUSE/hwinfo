@@ -2235,6 +2235,8 @@ hd_t *hd_get_device_by_idx(hd_data_t *hd_data, unsigned idx);
 void hd_set_hw_class(hd_t *hd, hd_hw_item_t hw_class);
 int hd_is_hw_class(hd_t *hd, hd_hw_item_t hw_class);
 
+char *hd_version(void);
+
 /* implemented in hddb.c */
 
 str_list_t *get_hddb_packages(hd_data_t *hd_data);

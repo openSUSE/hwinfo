@@ -34,7 +34,7 @@ static int hw_items = 0;
 int braille_install_info(hd_data_t *hd_data);
 int x11_install_info(hd_data_t *hd_data);
 int oem_install_info(hd_data_t *hd_data);
-int dump_packages(hd_data_t *hd_data);
+void dump_packages(hd_data_t *hd_data);
 
 void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item);
 void do_hw_multi(hd_data_t *hd_data, FILE *f, hd_hw_item_t *hw_items);
@@ -52,8 +52,9 @@ struct {
 
 struct option options[] = {
   { "special", 1, NULL, 1 },
-  { "help", 1, NULL, 'h' },
+  { "help", 0, NULL, 'h' },
   { "debug", 1, NULL, 'd' },
+  { "version", 0, NULL, 400 },
   { "log", 1, NULL, 'l' },
   { "packages", 0, NULL, 'p' },
   { "test", 0, NULL, 300 },
@@ -220,6 +221,10 @@ int main(int argc, char **argv)
           /* basically for debugging */
           opt.separate = 1;
           break;
+
+        case 400:
+          printf("%s\n", hd_version());
+	  break;
 
         case 1000 ... 1100:
           if(hw_items < (int) (sizeof hw_item / sizeof *hw_item) - 1)
@@ -1249,6 +1254,7 @@ void help()
     "  --short        just a short listing\n"
     "  --log logfile  write info to logfile\n"
     "  --debug level  set debuglevel\n"
+    "  --version      show libhd version\n"
     "  --dump-db n    dump hardware data base, 0: external, 1: internal\n"
     "  --hw_item      probe for hw_item\n"
     "  hw_item is one of:\n"
@@ -1639,6 +1645,7 @@ int x11_install_info(hd_data_t *hd_data)
   return 0;
 }
 
+
 char *xserver3map[] =
 {
 #ifdef __i386__
@@ -1669,7 +1676,7 @@ char *xserver3map[] =
 };
 
 
-int dump_packages(hd_data_t *hd_data)
+void dump_packages(hd_data_t *hd_data)
 {
   str_list_t *sl;
   int i;
@@ -1687,9 +1694,8 @@ int dump_packages(hd_data_t *hd_data)
   for(; sl; sl = sl->next) {
     printf("%s\n", sl->str);
   }
-
-  return 0;
 }
+
 
 struct x11pack {
   struct x11pack *next;

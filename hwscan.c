@@ -9,6 +9,7 @@
 struct option options[] = {
   { "help", 0, NULL, 'h' },
   { "verbose", 0, NULL, 'v' },
+  { "version", 0, NULL, 400 },
   { "show", 1, NULL, 500 },
   { "list", 0, NULL, 501 },
   { "cfg", 1, NULL, 502 },
@@ -125,6 +126,11 @@ int main(int argc, char **argv)
     switch(i) {
       case 'v':
         verbose++;
+        break;
+
+      case 400:
+        printf("%s\n", hd_version());
+        ok = 1;
         break;
 
       case 500:
@@ -245,6 +251,7 @@ void help()
     "Usage: hwscan [options]\n"
     "Show information about currently known hardware.\n"
     "  --list            show list of known hardware\n"
+    "  --version         show libhd version\n"
     "  --silent          don't show hardware config changes\n"
     "  --boot            run only if we haven't been disabled via 'hwprobe=-scan'\n"
     "  --cfg=state id    change 'configured' status; id is one of the\n"
