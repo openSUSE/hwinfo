@@ -30,6 +30,7 @@ static void int_fix_usb_scsi(hd_data_t *hd_data);
 static void int_mouse(hd_data_t *hd_data);
 static void new_id(hd_data_t *hd_data, hd_t *hd);
 static void int_modem(hd_data_t *hd_data);
+static void int_wlan(hd_data_t *hd_data);
 
 void hd_scan_int(hd_data_t *hd_data)
 {
@@ -75,6 +76,9 @@ void hd_scan_int(hd_data_t *hd_data)
 
   PROGRESS(10, 0, "modem");
   int_modem(hd_data);
+
+  PROGRESS(11, 0, "wlan");
+  int_wlan(hd_data);
 }
 
 /*
@@ -735,6 +739,49 @@ void int_modem(hd_data_t *hd_data)
         hd->unix_dev_name = new_str(s);
       }
     }
+  }
+}
+
+
+/*
+ * Look for WLAN cards by checking module info.
+ */
+void int_wlan(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  driver_info_t *di;
+  str_list_t *sl;
+  unsigned u, found;
+  static char *wlan_mods[] = {
+    "airo",
+    "airo_cs",
+    "aironet4500_card",
+    "aironet4500_cs",
+    "airport",
+    "arlan",
+    "netwave_cs",
+    "orinoco_cs",
+    "orinoco_pci",
+    "orinoco_plx",
+    "ray_cs",
+    "wavelan",
+    "wavelan_cs"
+  };
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    for(found = 0, di = hd->driver_info; di && !found; di = di->next) {
+      if(di->any.type == di_module) {
+        for(sl = di->module.names; sl && !found; sl = sl->next) {
+          for(u = 0; u < sizeof wlan_mods / sizeof *wlan_mods; u++) {
+            if(!strcmp(sl->str, wlan_mods[u])) {
+              found = 1;
+              break;
+            }
+          }
+        }
+      }
+    }
+    hd->is.wlan = found ? 1 : 0;
   }
 }
 

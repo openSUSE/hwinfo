@@ -601,6 +601,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_tv:
     case hw_dvb:
+    case hw_wlan:
       hd_set_probe_feature(hd_data, pr_pci);
       break;
 
@@ -4180,6 +4181,9 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           base_class = bc_network_interface;
           break;
 
+        case hw_wlan:
+          break;
+
         case hw_unknown:
         case hw_all:
         case hw_manual:		/* special */
@@ -4278,6 +4282,10 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
       if(hd->bus.id == bus_scsi) {
         hd->hw_class3 = hw_usb;
       }
+    }
+    if(hd->is.wlan) {
+      hd->hw_class3 = hd->hw_class;
+      hd->hw_class = hw_wlan;
     }
   }
 }

@@ -1,3 +1,6 @@
+8/3/2003:	v6.10
+	- detect wlan cards (#23491)
+
 7/3/2003:	v6.09
 	- usb multiple interfaces again: only for HID devices (#24824)
 	- add monitor vendor & device name

@@ -115,6 +115,7 @@ struct option options[] = {
   { "zip", 0, NULL, 1000 + hw_zip },
   { "pppoe", 0, NULL, 1000 + hw_pppoe },
   { "dsl", 0, NULL, 1000 + hw_pppoe },
+  { "wlan", 0, NULL, 1000 + hw_wlan },
   { "all", 0, NULL, 2000 },
   { "reallyall", 0, NULL, 2001 },
   { "smp", 0, NULL, 2002 },

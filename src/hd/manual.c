@@ -68,6 +68,7 @@ static hash_t hw_items[] = {
   { hw_memory,        "memory"              },
   { hw_dvb,           "dvb card"            },
   { hw_ieee1394_ctrl, "firewire controller" },
+  { hw_wlan,          "wlan card"           },
   { hw_unknown,       "unknown"             },
   { 0,                NULL                  }
 };
@@ -959,6 +960,7 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
         if(u0 & (1 << 7)) hd->is.dvdr = 1;
         if(u0 & (1 << 8)) hd->is.dvdram = 1;
         if(u0 & (1 << 9)) hd->is.pppoe = 1;
+        if(u0 & (1 << 10)) hd->is.wlan = 1;
         break;
     }
   }
@@ -1175,6 +1177,7 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
   if(hd->is.dvdr)         u |= 1 << 7;
   if(hd->is.dvdram)       u |= 1 << 8;
   if(hd->is.pppoe)        u |= 1 << 9;
+  if(hd->is.wlan)         u |= 1 << 10;
   
   if(u) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_features));

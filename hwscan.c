@@ -39,6 +39,7 @@ struct option options[] = {
   { "dvb", 0, NULL, 1000 + hw_dvb },
   { "pppoe", 0, NULL, 1000 + hw_pppoe },
   { "dsl", 0, NULL, 1000 + hw_pppoe },
+  { "wlan", 0, NULL, 1000 + hw_wlan },
   { "scanner", 0, NULL, 1000 + hw_scanner },
   { "joystick", 0, NULL, 1000 + hw_joystick },
   { "usb", 0, NULL, 1000 + hw_usb },
