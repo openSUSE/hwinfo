@@ -217,7 +217,7 @@ void hd_move_to_shm(hd_data_t *hd_data);
 void read_udevinfo(hd_data_t *hd_data);
 
 hd_t *hd_find_sysfs_id(hd_data_t *hd_data, char *id);
-int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u);
+int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u, int base);
 char *hd_attr_str(struct sysfs_attribute *attr);
 char *hd_sysfs_id(char *path);
 char *hd_sysfs_name2_dev(char *str);

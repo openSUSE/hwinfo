@@ -129,7 +129,7 @@ void get_block_devs(hd_data_t *hd_data)
       ADD2LOG("    dev = %u:%u\n", u1, u2);
     }
 
-    if(hd_attr_uint(sysfs_get_classdev_attr(sf_cdev, "range"), &ul0)) {
+    if(hd_attr_uint(sysfs_get_classdev_attr(sf_cdev, "range"), &ul0, 0)) {
       dev_num.range = ul0;
       ADD2LOG("    range = %u\n", dev_num.range);
     }
@@ -643,7 +643,7 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
     }
   }
 
-  if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "type"), &ul0)) {
+  if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "type"), &ul0, 0)) {
     ADD2LOG("    type = %u\n", (unsigned) ul0);
     if(ul0 == 6 /* scanner */) {
       hd->sub_class.id = sc_sdev_scanner;
@@ -659,7 +659,7 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
   }
 
   /* s390: wwpn & fcp lun */
-  if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "wwpn"), &ul0)) {
+  if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "wwpn"), &ul0, 0)) {
     ADD2LOG("    wwpn = 0x%016"PRIx64"\n", ul0);
     scsi->wwpn = ul0;
 
@@ -673,7 +673,7 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
     t = free_mem(t);
   }
 
-  if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "fcp_lun"), &ul0)) {
+  if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "fcp_lun"), &ul0, 0)) {
     ADD2LOG("    fcp_lun = 0x%016"PRIx64"\n", ul0);
     scsi->fcp_lun = ul0;
   }
@@ -1206,7 +1206,7 @@ void get_generic_scsi_devs(hd_data_t *hd_data)
       ADD2LOG("    dev = %u:%u\n", u1, u2);
     }
 
-    if(hd_attr_uint(sysfs_get_classdev_attr(sf_cdev, "range"), &ul0)) {
+    if(hd_attr_uint(sysfs_get_classdev_attr(sf_cdev, "range"), &ul0, 0)) {
       dev_num.range = ul0;
       ADD2LOG("    range = %u\n", dev_num.range);
     }

@@ -113,34 +113,34 @@ void get_pci_data(hd_data_t *hd_data)
     pci->slot = u2;
     pci->func = u3;
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "class"), &ul0)) {
+    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "class"), &ul0, 0)) {
       ADD2LOG("    class = 0x%x\n", (unsigned) ul0);
       pci->prog_if = ul0 & 0xff;
       pci->sub_class = (ul0 >> 8) & 0xff;
       pci->base_class = (ul0 >> 16) & 0xff;
     }
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "vendor"), &ul0)) {
+    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "vendor"), &ul0, 0)) {
       ADD2LOG("    vendor = 0x%x\n", (unsigned) ul0);
       pci->vend = ul0 & 0xffff;
     }
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "device"), &ul0)) {
+    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "device"), &ul0, 0)) {
       ADD2LOG("    device = 0x%x\n", (unsigned) ul0);
       pci->dev = ul0 & 0xffff;
     }
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "subsystem_vendor"), &ul0)) {
+    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "subsystem_vendor"), &ul0, 0)) {
       ADD2LOG("    subvendor = 0x%x\n", (unsigned) ul0);
       pci->sub_vend = ul0 & 0xffff;
     }
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "subsystem_device"), &ul0)) {
+    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "subsystem_device"), &ul0, 0)) {
       ADD2LOG("    subdevice = 0x%x\n", (unsigned) ul0);
       pci->sub_dev = ul0 & 0xffff;
     }
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "irq"), &ul0)) {
+    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "irq"), &ul0, 0)) {
       ADD2LOG("    irq = %d\n", (unsigned) ul0);
       pci->irq = ul0;
     }
@@ -475,7 +475,7 @@ void dump_pci_data(hd_data_t *hd_data)
 /*
  * Parse attribute and return integer value.
  */
-int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u)
+int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u, int base)
 {
   char *s;
   uint64_t u2;
@@ -483,7 +483,7 @@ int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u)
 
   if(!(s = hd_attr_str(attr))) return 0;
 
-  u2 = strtoull(s, &s, 0);
+  u2 = strtoull(s, &s, base);
   ok = !*s || isspace(*s) ? 1 : 0;
 
   if(ok && u) *u = u2;

@@ -451,6 +451,9 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_block:
+      hd_set_probe_feature(hd_data, pr_floppy);
+      hd_set_probe_feature(hd_data, pr_misc_floppy);
+      hd_set_probe_feature(hd_data, pr_prom);
       hd_set_probe_feature(hd_data, pr_s390disks);
       hd_set_probe_feature(hd_data, pr_bios);		// bios disk order
       hd_set_probe_feature(hd_data, pr_pci);
@@ -458,6 +461,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       if(!hd_data->flags.fast) {
         hd_set_probe_feature(hd_data, pr_block_cdrom);
       }
+      hd_set_probe_feature(hd_data, pr_block_part);
       break;
 
     case hw_network:
@@ -3926,8 +3930,6 @@ void hd_add_old_id(hd_t *hd)
 void hd_add_id(hd_data_t *hd_data, hd_t *hd)
 {
   uint64_t id0 = 0, id1 = 0;
-  hd_t *hd1;
-  int cnt;
 
   if(hd->unique_id) return;
 
@@ -3961,26 +3963,27 @@ void hd_add_id(hd_data_t *hd_data, hd_t *hd)
   hd->unique_id1 = new_str(numid2str(id1, 64));
 
   INT_CRC(id0, bus.id);
-  // usb likes to re-attach devices at different places
-  if(hd->unix_dev_name) {
-    STR_CRC(id0, unix_dev_name);
+
+  if(
+    hd->bus.id == bus_usb &&
+    hd->sysfs_bus_id
+  ) {
+    STR_CRC(id0, sysfs_bus_id);
   }
   else if(
-    hd->bus.id == bus_usb
+    hd->bus.id != bus_usb &&
+    hd->sysfs_id
   ) {
-    for(cnt = 0, hd1 = hd_data->hd; hd1 && hd1->idx != hd->idx; hd1 = hd1->next) {
-      if(
-        hd1->unique_id1 &&
-        !hd1->tag.remove &&
-        !strcmp(hd1->unique_id1, hd->unique_id1)
-      ) cnt++;
-    }
-    crc64(&id0, &cnt, sizeof cnt);
+    STR_CRC(id0, sysfs_id);
+  }
+  else if(hd->unix_dev_name) {
+    STR_CRC(id0, unix_dev_name);
   }
   else {
     INT_CRC(id0, slot);
     INT_CRC(id0, func);
   }
+
   STR_CRC(id0, rom_id);
 
   id0 += (id0 >> 32);
