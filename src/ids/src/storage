@@ -65,6 +65,10 @@
 &device.id		pci 0x1960
 |vendor.id		pci 0x8086
 &device.id		pci 0x1960
+|vendor.id		pci 0x1077
+&device.id		pci 0x1216
+&subvendor.id		pci 0x101e
+&subdevice.id		pci 0x8493
 +driver.module.insmod	megaraid
 
 # scsi/tmscsim.c
