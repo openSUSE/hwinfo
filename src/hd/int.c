@@ -319,6 +319,9 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
 
           /* join usb & scsi info */
           hd_usb->bus = hd_scsi->bus;
+          hd_usb->base_class = hd_scsi->base_class;
+          hd_usb->sub_class = hd_scsi->sub_class;
+          hd_usb->prog_if = hd_scsi->prog_if;
           COPY_ENTRY(unix_dev_name);
           COPY_ENTRY(model);
           COPY_ENTRY(driver);
