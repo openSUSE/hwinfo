@@ -1,3 +1,6 @@
+	- changed hwbootscan to use bash (#44199)
+	- fixed hd.ids parser bug
+
 23/8/2004:	v9.5
 	- updated X11 data
 	- added display sizes for a number of IBM notebooks

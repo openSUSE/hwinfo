@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 function has_keyboard {
   if [ ! "$kbd_ok" ] ; then

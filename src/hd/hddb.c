@@ -570,6 +570,7 @@ int parse_id(char *str, unsigned *id, unsigned *range, unsigned *mask)
     else if(!strcmp(s, "special")) tag = TAG_SPECIAL;
     else if(!strcmp(s, "eisa")) tag = TAG_EISA;
     else if(!strcmp(s, "isapnp")) tag = TAG_EISA;
+    else if(!strcmp(s, "pcmcia")) tag = TAG_PCMCIA;
     else {
       str = s;
       if(t) *t = c;	/* restore */
