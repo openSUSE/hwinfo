@@ -39,6 +39,8 @@
 #include "AsmMacros.h"
 #include "vbios.h"
 
+void log_err(char *format, ...) __attribute__ ((format (printf, 1, 2)));
+
 #define SIZE 0x100000
 #define VRAM_START 0xA0000
 #define VRAM_SIZE 0x1FFFF
@@ -274,7 +276,7 @@ copy_vbios(void)
 	}
 	free(tmp);
 	close(mem_fd);
-	if (!chksum((CARD8)V_BIOS))
+	if (!chksum((CARD8 *)V_BIOS))
 		return (0);
 
 	return (1);
@@ -463,6 +465,6 @@ chksum(CARD8 *start)
   if (!val)
     return 1;
 
-  fprintf(stderr,"BIOS cksum wrong!\n");
+  log_err("BIOS chksum wrong\n");
   return 0;
 }
