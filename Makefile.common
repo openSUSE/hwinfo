@@ -1,11 +1,11 @@
 CC	= gcc
-CFLAGS	= -Wall -O2 -fomit-frame-pointer -I$(TOPDIR)/libhd/hd
-LDFLAGS	= -Llibhd -lhd
+CFLAGS	= -Wall -O2 -fomit-frame-pointer -I$(TOPDIR)/src/hd
+LDFLAGS	= -Lsrc -lhd
 
 CFILES	= $(wildcard *.c)
 OBJS	= $(CFILES:.c=.o)
-LIBHD	= $(TOPDIR)/libhd/libhd.a
-LIBHD_D	= $(TOPDIR)/libhd/.lib
+LIBHD	= $(TOPDIR)/src/libhd.a
+LIBHD_D	= $(TOPDIR)/src/.lib
 
 ARCH	= $(shell uname -m)
 
