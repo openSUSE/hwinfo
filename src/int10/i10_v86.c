@@ -34,7 +34,7 @@
 #include "v86bios.h"
 #include "AsmMacros.h"
 
-extern int emu_vm86(struct vm86_struct *vm);
+extern int emu_vm86(struct vm86_struct *vm, unsigned debug);
 
 #define INT2PTR(a)	((a) + (unsigned char *) 0)
 
@@ -127,13 +127,13 @@ static int do_vm86(int cpuemu)
 
 #ifdef __i386__
 	if(cpuemu) {
-	  retval = emu_vm86(&vm86s);
+	  retval = emu_vm86(&vm86s, cpuemu & 2);
 	}
 	else {
 	  retval = vm86_rep(&vm86s);
 	}
 #else
-	retval = emu_vm86(&vm86s);
+	retval = emu_vm86(&vm86s, cpuemu & 2);
 #endif
 
 	switch (VM86_TYPE(retval)) {

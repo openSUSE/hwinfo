@@ -9,7 +9,7 @@
 +device.name		OSA Express Ethernet card
 +baseclass.id		2
 +subclass.id		0
-+driver.module.modprobe	qeth_mod
++driver.module.modprobe	qeth
 
  vendor.id		special 0x6001
 &device.id		special 0x1731
@@ -26,8 +26,8 @@
 &detail.ccw.data.cu_model 5
 +device.name		Hipersocket
 +baseclass.id		2
-+subclass.id		0
-+driver.module.modprobe qeth_mod
++subclass.id		0x87
++driver.module.modprobe qeth
 
  vendor.id		special 0x6001
 &device.id		special 0x2540
@@ -91,17 +91,61 @@
 &device.id		special 0x3990
 &subdevice.id		special 0x3390
 |subdevice.id		special 0x3380
-|subdevice.id		special 0x9345
 |subdevice.id		special 0x3350
 |subdevice.id		special 0x3330
 |subdevice.id		special 0x3375
 |subdevice.id		special 0x3851
-|subdevice.id		special 0x9336
-|subdevice.id		special 0x3370
 +device.name		DASD
 +baseclass.id		0x106
 +subclass.id		0
 +progif.id		1
++driver.module.modprobe dasd_eckd_mod
+
+ vendor.id		special 0x6001
+&device.id		special 0x2105
+&subdevice.id		special 0x3390
+|subdevice.id		special 0x3380
++device.name		DASD
++baseclass.id		0x106
++subclass.id		0
++progif.id		1
++driver.module.modprobe dasd_eckd_mod
+
+ vendor.id		special 0x6001
+&device.id		special 0x3880
+&subdevice.id		special 0x3390
++device.name		DASD
++baseclass.id		0x106
++subclass.id		0
++progif.id		1
++driver.module.modprobe dasd_eckd_mod
+
+ vendor.id		special 0x6001
+&device.id		special 0x3880
+&subdevice.id		special 0x3370
++device.name		DASD
++baseclass.id		0x106
++subclass.id		0
++progif.id		1
++driver.module.modprobe dasd_fba_mod
+
+ vendor.id		special 0x6001
+&device.id		special 0x9343
+&subdevice.id		special 0x9345
++device.name		DASD
++baseclass.id		0x106
++subclass.id		0
++progif.id		1
++driver.module.modprobe dasd_eckd_mod
+
+ vendor.id		special 0x6001
+&device.id		special 0x6310
+&subdevice.id		special 0x9336
++device.name		DASD
++baseclass.id		0x106
++subclass.id		0
++progif.id		1
++driver.module.modprobe dasd_fba_mod
 
  vendor.id		special 0x6001
 &device.id		special 0x3705
@@ -180,7 +224,7 @@
 &detail.ccw.data.cu_model 8
 +device.name		parallel CTC Adapter
 +baseclass.id		2
-+subclass.id		0
++subclass.id		0x88
 +driver.module.modprobe ctc
 
  vendor.id		special 0x6001
@@ -188,47 +232,34 @@
 &detail.ccw.data.cu_model 0x1f
 +device.name		ESCON Adapter
 +baseclass.id		2
-+subclass.id		0
++subclass.id		0x8f
++driver.module.modprobe ctc
 
  vendor.id		special 0x6001
 &device.id		special 0x3088
 &detail.ccw.data.cu_model 0x1e
 +device.name		FICON Adapter
 +baseclass.id		2
-+subclass.id		0
++subclass.id		0x8e
 
  vendor.id		special 0x6001
 &device.id		special 0x3088
 &detail.ccw.data.cu_model 1
 +device.name		P/390
 +baseclass.id		2
-+subclass.id		0
++subclass.id		0x89
 
  vendor.id		special 0x6001
 &device.id		special 0x3088
 &detail.ccw.data.cu_model 0x60
 +device.name		OSA2 Adapter
 +baseclass.id		2
-+subclass.id		0
++subclass.id		0x89
 +driver.module.modprobe lcs
 
  vendor.id		special 0x6001
 &device.id		special 0x0005
 +device.name		IUCV
-
- vendor.id		special 0x6001
-&device.id		special 0x0006
-+device.name		HSI
-
- vendor.id		special 0x6001
-&device.id		special 0x0007
-+device.name		QETH
-
- vendor.id		special 0x6001
-&device.id		special 0x0008
-+device.name		ESCON
-
- vendor.id		special 0x6001
-&device.id		special 0x0080
-+device.name		Network card
-
++baseclass.id		2
++subclass.id		0x90
++driver.module.modprobe netiucv
