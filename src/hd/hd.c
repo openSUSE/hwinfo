@@ -1725,6 +1725,8 @@ void hd_scan(hd_data_t *hd_data)
 #endif
 
   /* we are done... */
+  for(hd = hd_data->hd; hd; hd = hd->next) hd->tag.fixed = 1;
+
   hd_data->module = mod_none;
 
   if(hd_data->debug && !hd_data->flags.internal) {

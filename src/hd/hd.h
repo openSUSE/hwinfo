@@ -1631,6 +1631,7 @@ typedef struct s_hd_t {
   struct tag_s {		/* this struct is for internal purposes only */
     unsigned remove:1;		/* schedule for removal */
     unsigned freeit:1;		/* for internal memory management */
+    unsigned fixed:1;		/* fixed, do no longer modify this entry */
     unsigned ser_skip:1;	/* if serial line, don't scan for devices */
     unsigned ser_device:2;	/* if != 0: info about attached serial device; see serial.c */
   } tag;

@@ -1604,6 +1604,8 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
   ihw_card_info *ici;
 #endif
 
+  if(hd->tag.fixed) return;
+
   hs.base_class.id = hd->base_class;
   hs.key |= 1 << he_baseclass_id;
 
@@ -1665,6 +1667,9 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
 #if WITH_ISDN
   if((ici = get_isdn_info(hd))) {
     new_driver_info = isdn_driver(hd_data, hd, ici);
+    if(!hd->model && ici->name && *ici->name) {
+      hd->model = new_str(ici->name);
+    }
     free_mem(ici);
   }
 #endif

@@ -1,3 +1,5 @@
+	- get isdn model name from isdn data base
+
 13/8/2002:	v5.09
 	- added info for firewire module
 	- fixed convert_hd to work with perl 5.8
