@@ -660,13 +660,18 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_scsi:
-      hd_set_probe_feature(hd_data, pr_scsi);
       hd_set_probe_feature(hd_data, pr_usb);
+      hd_set_probe_feature(hd_data, pr_scsi_cache);
+      hd_set_probe_feature(hd_data, pr_ide);
       hd_set_probe_feature(hd_data, pr_partition);
+      hd_set_probe_feature(hd_data, pr_cdrom);
       break;
 
     case hw_ide:
       hd_set_probe_feature(hd_data, pr_ide);
+      hd_set_probe_feature(hd_data, pr_scsi);
+      hd_set_probe_feature(hd_data, pr_cdrom);
+      hd_set_probe_feature(hd_data, pr_partition);
       break;
 
     case hw_all:

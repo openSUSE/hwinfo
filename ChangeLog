@@ -1,3 +1,7 @@
+27/3/2002:	v4.24
+	- fixed cdrom device detection (#15553)
+	- don't assign lp8 to nonexistent usb printers
+
 25/3/2002:	v4.23
 	- updated help texts
 

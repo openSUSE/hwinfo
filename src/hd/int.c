@@ -268,13 +268,12 @@ void int_fix_ide_scsi(hd_data_t *hd_data)
           hd_ide->driver &&
           !strcmp(hd_ide->driver, "ide-scsi")
         ) {
-          hd_ide->tag.remove = 1;
+          // FIXME: we need a proper solution for this!
+          if(hd_ide->status.configured != status_no) {
+            hd_ide->tag.remove = 1;
+          }
+          hd_ide->status.available = status_no;
 
-          /* ide info is more accurate, take it instead */
-          hd_scsi->base_class = hd_ide->base_class;
-          hd_scsi->sub_class = hd_ide->sub_class;
-          hd_scsi->prog_if = hd_ide->prog_if;
-          
           COPY_ENTRY(dev_name);
           COPY_ENTRY(vend_name);
           COPY_ENTRY(sub_dev_name);

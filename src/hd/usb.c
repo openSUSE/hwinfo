@@ -160,7 +160,7 @@ void hd_scan_usb(hd_data_t *hd_data)
 
       if(hd->base_class == bc_printer) {
         lp_cnt = get_next_device(lp_dev, lp_cnt);
-        if(lp_cnt >= 0) str_printf(&hd->unix_dev_name, 0, "%s%d", lp_dev, lp_cnt++);
+        if(lp_cnt >= 0 && lp_cnt < 8) str_printf(&hd->unix_dev_name, 0, "%s%d", lp_dev, lp_cnt++);
       }
 
       if(hd->base_class == bc_modem) {
