@@ -75,6 +75,7 @@ struct option options[] = {
   { "dsl", 0, NULL, 1000 + hw_dsl },
   { "wlan", 0, NULL, 1000 + hw_wlan },
   { "block", 0, NULL, 1000 + hw_block },
+  { "tape", 0, NULL, 1000 + hw_tape },
   { "all", 0, NULL, 1000 + hw_all },
   { }
 };

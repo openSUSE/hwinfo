@@ -426,6 +426,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_scsi);
       if(!hd_data->flags.fast) {
         hd_set_probe_feature(hd_data, pr_block_cdrom);
       }
@@ -438,6 +439,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_scsi);
       break;
 
     case hw_partition:
@@ -449,6 +451,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_scsi);
       break;
 
     case hw_block:
@@ -458,6 +461,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_scsi);
       if(!hd_data->flags.fast) {
         hd_set_probe_feature(hd_data, pr_floppy);
         hd_set_probe_feature(hd_data, pr_misc_floppy);
@@ -667,6 +671,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_isdn);	// need pr_misc, too?
       hd_set_probe_feature(hd_data, pr_dsl);
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_scsi);
       hd_data->flags.fast = 1;
       break;
 
@@ -702,9 +707,10 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_scsi:
+    case hw_tape:
       hd_set_probe_feature(hd_data, pr_pci);
-      hd_set_probe_feature(hd_data, pr_scsi);
       hd_set_probe_feature(hd_data, pr_block);
+      hd_set_probe_feature(hd_data, pr_scsi);
       break;
 
     case hw_ide:
@@ -4437,6 +4443,13 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
     hd->base_class.id == bc_partition
   ) {
     hd_set_hw_class(hd, hw_block);
+  }
+
+  if(
+    hd->base_class.id == bc_storage_device &&
+    hd->sub_class.id == sc_sdev_tape
+  ) {
+    hd_set_hw_class(hd, hw_tape);
   }
 
   if(

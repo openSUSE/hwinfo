@@ -1,5 +1,7 @@
 	- added hwscand hwscanqueue
 	- use sysfs for usb devices
+	- scsi tapes detected again
+	- added hardware class 'tape'
 
 25/3/2004:	v8.23
 	- added hd_is_uml() to report if we're running in an UM kernel
