@@ -21,7 +21,7 @@ tiny:
 
 shared: hwinfo.o
 	@make EXTRA_FLAGS=-fpic
-	$(LD) -shared --whole-archive -soname libhd.so.$(LIBHD_MINOR_VERSION)\
+	$(LD) -shared --whole-archive -soname libhd.so.$(LIBHD_MAJOR_VERSION)\
 		-o $(LIBHD_SO) $(LIBHD)
 	$(CC) hwinfo.o $(LDFLAGS) $(LIBHD_SO) -o hwinfo
 
@@ -30,7 +30,7 @@ install:
 	install -m 755 -s hwinfo /usr/sbin
 	if [ -f $(LIBHD_SO) ] ; then \
 		install $(LIBHD_SO) /usr/lib ; \
-		ln -snf libhd.so.$(LIBHD_MINOR_VERSION) /usr/lib/libhd.so ; \
+		ln -snf libhd.so.$(LIBHD_VERSION) /usr/lib/libhd.so ; \
 	else \
 		install -m 644 $(LIBHD) /usr/lib ; \
 	fi

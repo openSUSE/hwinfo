@@ -12,7 +12,7 @@ ARCH	:= i386
 endif
 
 LIBHD_VERSION		:= $(shell cat $(TOPDIR)/VERSION)
-LIBHD_MINOR_VERSION	:= $(shell cut -d . -f 1-2 $(TOPDIR)/VERSION)
+LIBHD_MINOR_VERSION	:= $(shell cut -d . -f 2 $(TOPDIR)/VERSION)
 LIBHD_MAJOR_VERSION	:= $(shell cut -d . -f 1 $(TOPDIR)/VERSION)
 
 CC	= gcc
