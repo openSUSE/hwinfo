@@ -509,7 +509,7 @@ int _setspeed(int fd, int old, int new, int needtowrite, unsigned short flags)
     default:    tty.c_cflag = flags | B1200; break;
     }
 
-  if(tcsetattr(fd, TCSAFLUSH, &tty)) return errno;
+  if(tcsetattr(fd, TCSANOW, &tty)) return errno;
 
   switch (new)
     {
@@ -526,7 +526,7 @@ int _setspeed(int fd, int old, int new, int needtowrite, unsigned short flags)
 
   usleep(100000);
 
-  if(tcsetattr(fd, TCSAFLUSH, &tty)) return errno;
+  if(tcsetattr(fd, TCSANOW, &tty)) return errno;
 
   return err;
 }

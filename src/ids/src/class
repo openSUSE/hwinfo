@@ -889,3 +889,6 @@
  baseclass.id		0x112
 +baseclass.name		TV Card
 
+ baseclass.id		0x113
++baseclass.name		Partition
+

@@ -434,6 +434,9 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_partition);
       break;
 
+    case hw_partition:
+      hd_data->flags.add_partitions = 1;
+
     case hw_disk:
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_ide);
@@ -646,6 +649,9 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_isdn);
+#ifdef __PPC__
+      hd_set_probe_feature(hd_data, pr_prom);
+#endif
       break;
 
     case hw_isapnp:
@@ -685,7 +691,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_all:
     case hw_unknown:
-    case hw_partition:
     case hw_pcmcia:
     case hw_ieee1394:
     case hw_hotplug:
@@ -1719,6 +1724,9 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_disk(hd_data);
   hd_scan_ataraid(hd_data);
 
+  /* after ataraid */
+  hd_scan_partition2(hd_data);
+
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd_data, hd);
 
 #ifndef LIBHD_TINY
@@ -1755,6 +1763,8 @@ void hd_scan(hd_data_t *hd_data)
 
   /* we are done... */
   for(hd = hd_data->hd; hd; hd = hd->next) hd->tag.fixed = 1;
+
+  hd_data->flags.add_partitions = 0;
 
   hd_data->module = mod_none;
 
@@ -4150,6 +4160,10 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           test_func = is_pcmcia_ctrl;
           break;
 
+        case hw_partition:
+          base_class = bc_partition;
+          break;
+
         case hw_unknown:
         case hw_all:
         case hw_manual:		/* special */
@@ -4166,7 +4180,6 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         case hw_hotplug:	/* not handled */
         case hw_hotplug_ctrl:	/* not handled */
         case hw_zip:		/* not handled */
-        case hw_partition:	/* not handled */
           break;
       }
 
@@ -4189,7 +4202,14 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         )
         ||
         ( /* make i2o storage controllers */
-          item == hw_storage_ctrl && hd->base_class.id == bc_i2o
+          item == hw_storage_ctrl &&
+          hd->base_class.id == bc_i2o
+        )
+        ||
+        ( /* add fibre channel to storage ctrl list */
+          item == hw_storage_ctrl &&
+          hd->base_class.id == bc_serial &&
+          hd->sub_class.id == sc_ser_fiber
         )
       ) {
 

@@ -155,10 +155,10 @@
 +driver.module.modprobe	pcnet32
 +driver.module.insmod	mii|pcnet32
 
-# net/amd-8111/
+# net/amd8111e.c
  vendor.id		pci 0x1022
 &device.id		pci 0x7462
-+driver.module.insmod	amd-8111
++driver.module.insmod	amd8111e
 
 # net/sis900.c
  vendor.id		pci 0x1039
@@ -393,14 +393,30 @@
 &device.id		pci 0x4800
 +driver.module.insmod	aironet4500
 
-# net/tg3.c
 # net/bcm/b57um.c
+# net/tg3.c
  vendor.id		pci 0x14e4
-&device.id		pci 0x1644+0x0002
+&device.id		pci 0x1644+0x0004
 |vendor.id		pci 0x14e4
-&device.id		pci 0x1647
-+driver.module.insmod	tg3
+&device.id		pci 0x16a6+2
 +driver.module.insmod	bcm5700
++driver.module.insmod	tg3
+
+ vendor.id		pci 0x14e4
+&device.id		pci 0x1648
+|vendor.id		pci 0x14e4
+&device.id		pci 0x16a8
++driver.module.insmod	bcm5700
+
+ vendor.id		pci 0x14e4
+&device.id		pci 0x164d
+|vendor.id		pci 0x173b
+&device.id		pci 0x03e8
+|vendor.id		pci 0x173b
+&device.id		pci 0x03ea
+|vendor.id		pci 0x1148
+&device.id		pci 0x4400
++driver.module.insmod	tg3
 
 # net/arcnet/com20020-pci.c
  vendor.id		pci 0x1571
