@@ -73,7 +73,7 @@ int main(int argc, char **argv)
     hd_dump_entry(hd_data, hd, f ? f : stdout);
   }
 
-#if 1
+#if 0
   printf("-- display cards --\n");
 
   hd = hd_base_class_list(hd_data, bc_display); printf("\n");
