@@ -119,10 +119,11 @@ typedef enum {
   hwdi_prog_if, hwdi_dev, hwdi_vend, hwdi_sub_dev, hwdi_sub_vend, hwdi_rev,
   hwdi_compat_dev, hwdi_compat_vend, hwdi_dev_name, hwdi_vend_name,
   hwdi_sub_dev_name, hwdi_sub_vend_name, hwdi_rev_name, hwdi_serial,
-  hwdi_unix_dev_name, hwdi_rom_id, hwdi_broken, hwdi_usb_guid, hwdi_res_mem,
-  hwdi_res_phys_mem, hwdi_res_io, hwdi_res_irq, hwdi_res_dma, hwdi_res_size,
-  hwdi_res_baud, hwdi_res_cache, hwdi_res_disk_geo, hwdi_res_monitor,
-  hwdi_res_framebuffer, hwdi_features, hwdi_hotplug, hwdi_class_list
+  hwdi_unix_dev_name, hwdi_unix_dev_name2, hwdi_unix_dev_names, hwdi_rom_id,
+  hwdi_broken, hwdi_usb_guid, hwdi_res_mem, hwdi_res_phys_mem, hwdi_res_io,
+  hwdi_res_irq, hwdi_res_dma, hwdi_res_size, hwdi_res_baud, hwdi_res_cache,
+  hwdi_res_disk_geo, hwdi_res_monitor, hwdi_res_framebuffer, hwdi_features,
+  hwdi_hotplug, hwdi_class_list
 } hw_hd_items_t;
 
 static hash_t hw_ids_hd_items[] = {
@@ -146,6 +147,8 @@ static hash_t hw_ids_hd_items[] = {
   { hwdi_rev_name,        "RevisionName"     },
   { hwdi_serial,          "Serial"           },
   { hwdi_unix_dev_name,   "UnixDevice"       },
+  { hwdi_unix_dev_name2,  "UnixDeviceAlt"    },
+  { hwdi_unix_dev_names,  "UnixDeviceList"   },
   { hwdi_rom_id,          "ROMID"            },
   { hwdi_broken,          "Broken"           },
   { hwdi_usb_guid,        "USBGUID"          },
@@ -887,6 +890,14 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
         hd->unix_dev_name = new_str(sl2->str);
         break;
 
+      case hwdi_unix_dev_name2:
+        hd->unix_dev_name2 = new_str(sl2->str);
+        break;
+
+      case hwdi_unix_dev_names:
+        hd->unix_dev_names = hd_split(' ', sl2->str);
+        break;
+
       case hwdi_rom_id:
         hd->rom_id = new_str(sl2->str);
         break;
@@ -1242,6 +1253,18 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
   if(hd->unix_dev_name) {
     add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_unix_dev_name));
     add_str_list(&entry->value, hd->unix_dev_name);
+  }
+
+  if(hd->unix_dev_name2) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_unix_dev_name2));
+    add_str_list(&entry->value, hd->unix_dev_name2);
+  }
+
+  if(hd->unix_dev_names) {
+    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_unix_dev_names));
+    s = free_mem(s);
+    s = hd_join(" ", hd->unix_dev_names);
+    add_str_list(&entry->value, s);
   }
 
   if(hd->rom_id) {

@@ -2714,10 +2714,8 @@ int hd_smp_support(hd_data_t *hd_data)
   int is_smp = 0;
   unsigned u;
   hd_t *hd, *hd0;
-#if defined(__i386__) || (!defined(LIBHD_TINY) && defined (__x86_64__))
+#if defined(__i386__) || defined (__x86_64__)
   unsigned cpu_threads = 0;
-#endif
-#ifdef __i386__
   cpu_info_t *ct;
 #endif
 
@@ -2737,7 +2735,7 @@ int hd_smp_support(hd_data_t *hd_data)
   for(is_smp = 0, hd0 = hd; hd0; hd0 = hd0->next) is_smp++;
   if(is_smp == 1) is_smp = 0;
 
-#if defined(__i386__)
+#if defined(__i386__) || defined (__x86_64__)
   if(
     hd &&
     hd->detail &&
