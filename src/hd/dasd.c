@@ -84,7 +84,7 @@ void hd_scan_dasd(hd_data_t *hd_data)
     hd = add_hd_entry(hd_data, __LINE__, 0);
     hd->base_class.id = bc_storage;
     hd->sub_class.id = sc_sto_other;
-    hd->vend_name = new_str("IBM");
+    hd->vendor.name = new_str("IBM");
     hd->device.name = new_str("VIO DASD");
   }
 }

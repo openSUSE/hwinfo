@@ -218,7 +218,7 @@ void build_list(hd_data_t *hd_data, str_list_t *isapnp_list)
 #if 0
 # ############# FIXME
       if(
-        (ID_VALUE(hd>sub_vendor.id) || ID_VALUE(hd->sub_device.id)) &&
+        (ID_VALUE(hd->sub_vendor.id) || ID_VALUE(hd->sub_device.id)) &&
         !hd_sub_device_name(hd_data, hd->vend, hd->dev, hd->sub_vend, hd->sub_device.id)
       ) {
         if(ldev_name) {

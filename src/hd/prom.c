@@ -554,7 +554,7 @@ void add_devices(hd_data_t *hd_data)
           hd->sub_device.id = MAKE_ID(TAG_PCI, dt->subdevice_id);
         }
         if(dt->subvendor_id != -1) {
-          hd>sub_vendor.id = MAKE_ID(TAG_PCI, dt->subvendor_id);
+          hd->sub_vendor.id = MAKE_ID(TAG_PCI, dt->subvendor_id);
         }
         hd->revision.id = dt->revision_id;
 

@@ -279,7 +279,7 @@ void hd_scan_kbd(hd_data_t *hd_data)
 	  if(kid2 == 5) {
 	    if(klay == 0x22 || klay == 0x51)
 	      {
-		hd>sub_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0202);
+		hd->sub_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0202);
 		hd->sub_device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
 	      }
 	    else if(!(
@@ -287,7 +287,7 @@ void hd_scan_kbd(hd_data_t *hd_data)
 		      klay == 0x50 || (klay >= 0x5e && klay <= 0x60)
 		      ))
 	      {
-		hd>sub_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0202);
+		hd->sub_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0202);
 		hd->sub_device.id = MAKE_ID(TAG_SPECIAL, 0x0002);
 	      }
 	  }
