@@ -1493,7 +1493,7 @@ int hd_change_status(const char *id, hd_status_t status, const char *config_stri
 
 /* (C) kkeil@suse.de */
 
-#define IHW_VERSION	0x0203
+#define IHW_VERSION	0x0204
 #define	CLASS_PCI	1
 #define CLASS_ISAPNP	2
 #define CLASS_ISALEGAL	3
