@@ -1,4 +1,7 @@
+24/5/2004:	v8.53
 	- hwscanqueue: closing file descriptors to allow parent to terminate
+	- added debug option to cpu emulation to help tracing bios related system
+	  crashes (#40644)
 
 21/5/2004:	v8.52
 	- use sysfs_bus_id for unique ID calculation on CCW devices to avoid

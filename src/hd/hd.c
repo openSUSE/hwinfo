@@ -280,6 +280,7 @@ static struct s_pr_flags {
   { pr_pcmcia,        0,            8|4|2|1, "pcmcia"        },
   { pr_fork,          0,                  0, "fork"          },
   { pr_cpuemu,        0,                  0, "cpuemu"        },
+  { pr_cpuemu_debug,  pr_cpuemu,          0, "cpuemu.debug"  },
   { pr_sysfs,         0,                  0, "sysfs"         },
   { pr_dsl,           0,              4|2|1, "dsl"           },
   { pr_udev,          0,            8|4|2|1, "udev"          },
