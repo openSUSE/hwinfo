@@ -1,3 +1,4 @@
+	- run hwbootscan rc script after "kbd" script
 	- don't _change_ config status in hwbootscan
 	- save %gs register around vm86() syscall (%gs may be used in glibc)
 
