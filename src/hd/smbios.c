@@ -461,6 +461,57 @@ static sm_num2str_t smbios_mouse_interface_[] = {
 SMBIOS_DEF_MAP(smbios_mouse_interface);
 
 
+static char *smbios_memdevice_form_[] = {
+  NULL, "Other", "Unknown", "SIMM",
+  "SIP", "Chip", "DIP", "ZIP",
+  "Proprietary Card", "DIMM", "TSOP", "Row of Chips",
+  "RIMM", "SODIMM", "SRIMM"
+};
+SMBIOS_DEF_MAP(smbios_memdevice_form);
+
+
+static char *smbios_memdevice_type_[] = {
+  NULL, "Other", "Unknown", "DRAM",
+  "EDRAM", "VRAM", "SRAM", "RAM",
+  "ROM", "FLASH", "EEPROM", "FEPROM",
+  "EPROM", "CDRAM", "3DRAM", "SDRAM",
+  "SGRAM", "RDRAM", "DDR"
+};
+SMBIOS_DEF_MAP(smbios_memdevice_type);
+
+
+static char *smbios_memdevice_detail_[] = {
+  NULL, "Other", "Unknown", "Fast-paged",
+  "Static column", "Pseudo-static", "RAMBUS", "Synchronous",
+  "CMOS", "EDO", "Window DRAM", "Cache DRAM",
+  "Non-volatile"
+};
+SMBIOS_DEF_MAP(smbios_memdevice_detail);
+
+
+static char *smbios_memerror_type_[] = {
+  NULL, "Other", "Unknown", "OK",
+  "Bad read", "Parity error", "Single-bit error", "Double-bit error",
+  "Multi-bit error", "Nibble error", "Checksum error", "CRC error",
+  "Corrected single-bit error", "Corrected error", "Uncorrectable error"
+};
+SMBIOS_DEF_MAP(smbios_memerror_type);
+
+
+static char *smbios_memerror_granularity_[] = {
+  NULL, "Other", "Unknown", "Device level",
+  "Memory partition level"
+};
+SMBIOS_DEF_MAP(smbios_memerror_granularity);
+
+
+static char *smbios_memerror_operation_[] = {
+  NULL, "Other", "Unknown", "Read",
+  "Write", "Partial write"
+};
+SMBIOS_DEF_MAP(smbios_memerror_operation);
+
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 /*
@@ -872,6 +923,8 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
 
       case sm_memdevice:
         if(data_len >= 0x15) {
+          sm->memdevice.array_handle = *(uint16_t *) (sm_data + 0x04);
+          sm->memdevice.error_handle = *(uint16_t *) (sm_data + 0x06);
           sm->memdevice.eccbits = *(uint16_t *) (sm_data + 8);
           sm->memdevice.width = *(uint16_t *) (sm_data + 0xa);
           if(sm->memdevice.width == 0xffff) sm->memdevice.width = 0;
@@ -890,14 +943,41 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
           else {
             sm->memdevice.size <<= 10;
           }
-          sm->memdevice.form = sm_data[0xe];
+          sm->memdevice.form.id = sm_data[0xe];
+          sm->memdevice.set = sm_data[0xf];
           sm->memdevice.location = get_string(sl_any, sm_data[0x10]);
           sm->memdevice.bank = get_string(sl_any, sm_data[0x11]);
-          sm->memdevice.type1 = sm_data[0x12];
-          sm->memdevice.type2 = sm_data[0x13] + (sm_data[0x14] << 8);
+          sm->memdevice.mem_type.id = sm_data[0x12];
+          smbios_id2str(&sm->memdevice.form, &smbios_memdevice_form, 1);
+          smbios_id2str(&sm->memdevice.mem_type, &smbios_memdevice_type, 1);
+          sm->memdevice.type_detail.bitmap[0] = sm_data[0x13];
+          sm->memdevice.type_detail.bitmap[1] = sm_data[0x14];
+          sm->memdevice.type_detail.bits = 16;
+          smbios_bitmap2str(&sm->memdevice.type_detail, &smbios_memdevice_detail);
         }
         if(data_len >= 0x17) {
-          sm->memdevice.speed = sm_data[0x15] + (sm_data[0x16] << 8);
+          sm->memdevice.speed = *(uint16_t *) (sm_data + 0x15);
+        }
+        if(data_len >= 0x1b) {
+          sm->memdevice.manuf = get_string(sl_any, sm_data[0x17]);
+          sm->memdevice.serial = get_string(sl_any, sm_data[0x18]);
+          sm->memdevice.asset = get_string(sl_any, sm_data[0x19]);
+          sm->memdevice.part = get_string(sl_any, sm_data[0x1a]);
+        }
+        break;
+
+      case sm_memerror:
+        if(data_len >= 0x17) {
+          sm->memerror.err_type.id = sm_data[4];
+          sm->memerror.granularity.id = sm_data[5];
+          sm->memerror.operation.id = sm_data[6];
+          sm->memerror.syndrome = *(uint32_t *) (sm_data + 7);
+          sm->memerror.array_addr = *(uint32_t *) (sm_data + 0xb);
+          sm->memerror.device_addr = *(uint32_t *) (sm_data + 0xf);
+          sm->memerror.range = *(uint32_t *) (sm_data + 0x13);
+          smbios_id2str(&sm->memerror.err_type, &smbios_memerror_type, 1);
+          smbios_id2str(&sm->memerror.granularity, &smbios_memerror_granularity, 1);
+          smbios_id2str(&sm->memerror.operation, &smbios_memerror_operation, 1);
         }
         break;
 
@@ -908,6 +988,21 @@ void smbios_parse(hd_data_t *hd_data, bios_info_t *bt)
           sm->mouse.buttons = sm_data[6];
           smbios_id2str(&sm->mouse.mtype, &smbios_mouse_type, 1);
           smbios_id2str(&sm->mouse.interface, &smbios_mouse_interface, 1);
+        }
+        break;
+
+      case sm_mem64error:
+        if(data_len >= 0x1f) {
+          sm->mem64error.err_type.id = sm_data[4];
+          sm->mem64error.granularity.id = sm_data[5];
+          sm->mem64error.operation.id = sm_data[6];
+          sm->mem64error.syndrome = *(uint32_t *) (sm_data + 7);
+          sm->mem64error.array_addr = *(uint64_t *) (sm_data + 0xb);
+          sm->mem64error.device_addr = *(uint64_t *) (sm_data + 0x13);
+          sm->mem64error.range = *(uint32_t *) (sm_data + 0x1b);
+          smbios_id2str(&sm->mem64error.err_type, &smbios_memerror_type, 1);
+          smbios_id2str(&sm->mem64error.granularity, &smbios_memerror_granularity, 1);
+          smbios_id2str(&sm->mem64error.operation, &smbios_memerror_operation, 1);
         }
         break;
 
@@ -1054,11 +1149,30 @@ hd_smbios_t *smbios_free(hd_smbios_t *sm)
       case sm_memdevice:
         free_mem(sm->memdevice.location);
         free_mem(sm->memdevice.bank);
+        free_mem(sm->memdevice.manuf);
+        free_mem(sm->memdevice.serial);
+        free_mem(sm->memdevice.asset);
+        free_mem(sm->memdevice.part);
+        free_mem(sm->memdevice.form.name);
+        free_mem(sm->memdevice.mem_type.name);
+        free_str_list(sm->memdevice.type_detail.str);
+        break;
+
+      case sm_memerror:
+        free_mem(sm->memerror.err_type.name);
+        free_mem(sm->memerror.granularity.name);
+        free_mem(sm->memerror.operation.name);
         break;
 
       case sm_mouse:
         free_mem(sm->mouse.mtype.name);
         free_mem(sm->mouse.interface.name);
+        break;
+
+      case sm_mem64error:
+        free_mem(sm->mem64error.err_type.name);
+        free_mem(sm->mem64error.granularity.name);
+        free_mem(sm->mem64error.operation.name);
         break;
 
       default:
@@ -1079,22 +1193,9 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
 {
   hd_smbios_t *sm;
   str_list_t *sl;
-  char c, *s, *t;
+  char c;
   unsigned u;
   int i;
-  static char *memtypes[] = {
-    "Unknown", "Other", "Unknown", "DRAM",
-    "EDRAM", "VRAM", "SRAM", "RAM",
-    "ROM", "FLASH", "EEPROM", "FEPROM",
-    "EPROM", "CDRAM", "3DRAM", "SDRAM",
-    "SGRAM"
-  };
-  static char *memforms[] = {
-    NULL, NULL, NULL, "SIMM",
-    "SIP", "Chip", "DIP", "ZIP",
-    "Proprietary Card", "DIMM", "TSOP", "Row of Chips",
-    "RIMM", "SODIMM"
-  };
 
   if(!hd_data->smbios) return;
 
@@ -1292,7 +1393,7 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
         if(sm->memarray.error_handle != 0xfffe) {
           fprintf(f, "    Error Info: ");
           if(sm->memarray.error_handle != 0xffff) {
-            fprintf(f, "%d\n", sm->memarray.error_handle);
+            fprintf(f, "#%d\n", sm->memarray.error_handle);
           }
           else {
             fprintf(f, "No Error\n");
@@ -1302,40 +1403,50 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
 
       case sm_memdevice:
         fprintf(f, "  Memory Device: #%d\n", sm->any.handle);
-        if(sm->memdevice.location) fprintf(f, "    Location: \"%s\"\n", sm->memdevice.location);
-        if(sm->memdevice.bank) fprintf(f, "    Bank: \"%s\"\n", sm->memdevice.bank);
+        SMBIOS_PRINT_STR(memdevice.location, "Location");
+        SMBIOS_PRINT_STR(memdevice.bank, "Bank");
+        SMBIOS_PRINT_STR(memdevice.manuf, "Manufacturer");
+        SMBIOS_PRINT_STR(memdevice.serial, "Serial");
+        SMBIOS_PRINT_STR(memdevice.asset, "Asset Tag");
+        SMBIOS_PRINT_STR(memdevice.part, "Part Number");
+        fprintf(f, "    Memory Array: #%d\n", sm->memdevice.array_handle);
+        if(sm->memdevice.error_handle != 0xfffe) {
+          fprintf(f, "    Error Info: ");
+          if(sm->memdevice.error_handle != 0xffff) {
+            fprintf(f, "#%d\n", sm->memdevice.error_handle);
+          }
+          else {
+            fprintf(f, "No Error\n");
+          }
+        }
+        SMBIOS_PRINT_ID(memdevice.form, "Form Factor");
+        SMBIOS_PRINT_ID(memdevice.mem_type, "Type");
+        SMBIOS_PRINT_BITMAP_SHORT(memdevice.type_detail, "Type Detail");
+        fprintf(f, "    Data Width: %u bits", sm->memdevice.width);
+        if(sm->memdevice.eccbits) fprintf(f, " (+%u ECC bits)", sm->memdevice.eccbits);
+        fprintf(f, "\n");
         if(sm->memdevice.size) {
           u = sm->memdevice.size;
           c = 'k';
           if(!(u & 0x3ff)) { u >>= 10; c = 'M'; }
           if(!(u & 0x3ff)) { u >>= 10; c = 'G'; }
           fprintf(f, "    Size: %u %cB\n", u, c);
-
-          fprintf(f, "    Type: %u bits", sm->memdevice.width);
-          if(sm->memdevice.eccbits) fprintf(f, " (+%u ecc bits)", sm->memdevice.eccbits);
-          fprintf(f, ",");
-          u = sm->memdevice.type2;
-          if((u & (1 <<  3))) fprintf(f, " Fast-paged");
-          if((u & (1 <<  4))) fprintf(f, " Static column");
-          if((u & (1 <<  5))) fprintf(f, " Pseudo static");
-          if((u & (1 <<  6))) fprintf(f, " RAMBUS");
-          if((u & (1 <<  7))) fprintf(f, " Syncronous");
-          if((u & (1 <<  8))) fprintf(f, " CMOS");
-          if((u & (1 <<  9))) fprintf(f, " EDO");
-          if((u & (1 << 10))) fprintf(f, " Window DRAM");
-          if((u & (1 << 11))) fprintf(f, " Cache DRAM");
-          if((u & (1 << 12))) fprintf(f, " Non-volatile");
-          u = sm->memdevice.type1;
-          fprintf(f, " %s", memtypes[u < sizeof memtypes / sizeof *memtypes ? u : 0]);
-          u = sm->memdevice.form;
-          s = memforms[u < sizeof memforms / sizeof *memforms ? u : 0];
-          if(s) fprintf(f, ", %s", s);
-          fprintf(f, "\n");
-          if(sm->memdevice.speed) fprintf(f, "    Speed: %u MHz\n", sm->memdevice.speed);
         }
         else {
           fprintf(f, "    Size: No Memory Installed\n");
         }
+        if(sm->memdevice.speed) fprintf(f, "    Speed: %u MHz\n", sm->memdevice.speed);
+        break;
+
+      case sm_memerror:
+        fprintf(f, "  32bit-Memory Error Info: #%d\n", sm->any.handle);
+        SMBIOS_PRINT_ID(memerror.err_type, "Type");
+        SMBIOS_PRINT_ID(memerror.granularity, "Granularity");
+        SMBIOS_PRINT_ID(memerror.operation, "Operation");
+        if(sm->memerror.syndrome) fprintf(f, "    Syndrome: 0x%08x\n", sm->memerror.syndrome);
+        if(sm->memerror.array_addr != (1 << 31)) fprintf(f, "    Mem Array Addr: 0x%08x\n", sm->memerror.array_addr);
+        if(sm->memerror.device_addr != (1 << 31)) fprintf(f, "    Mem Device Addr: 0x%08x\n", sm->memerror.device_addr);
+        if(sm->memerror.range != (1 << 31)) fprintf(f, "    Range: 0x%08x\n", sm->memerror.range);
         break;
 
       case sm_mouse:
@@ -1343,6 +1454,17 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
         SMBIOS_PRINT_ID(mouse.mtype, "Type");
         SMBIOS_PRINT_ID(mouse.interface, "Interface");
         if(sm->mouse.buttons) fprintf(f, "    Buttons: %u\n", sm->mouse.buttons);
+        break;
+
+      case sm_mem64error:
+        fprintf(f, "  64bit-Memory Error Info: #%d\n", sm->any.handle);
+        SMBIOS_PRINT_ID(mem64error.err_type, "Type");
+        SMBIOS_PRINT_ID(mem64error.granularity, "Granularity");
+        SMBIOS_PRINT_ID(mem64error.operation, "Operation");
+        if(sm->mem64error.syndrome) fprintf(f, "    Syndrome: 0x%08x\n", sm->mem64error.syndrome);
+        if(sm->mem64error.array_addr != (1ll << 63)) fprintf(f, "    Mem Array Addr: 0x%016"PRIx64"\n", sm->mem64error.array_addr);
+        if(sm->mem64error.device_addr != (1ll << 63)) fprintf(f, "    Mem Device Addr: 0x%016"PRIx64"\n", sm->mem64error.device_addr);
+        if(sm->mem64error.range != (1 << 31)) fprintf(f, "    Range: 0x%08x\n", sm->mem64error.range);
         break;
 
       case sm_inactive:

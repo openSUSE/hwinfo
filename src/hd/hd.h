@@ -471,7 +471,7 @@ typedef enum {
   sm_memdevicemap, sm_mouse, sm_battery, sm_reset,
   sm_secure, sm_power, sm_voltage, sm_cool,
   sm_temperature, sm_current, sm_outofband, sm_bis,
-  sm_boot, sm_memerror64, sm_mandev, sm_mandevcomp,
+  sm_boot, sm_mem64error, sm_mandev, sm_mandevcomp,
   sm_mdtd, sm_inactive = 126, sm_end = 127
 } hd_smbios_type_t;
 
@@ -707,7 +707,7 @@ typedef struct {
 } smbios_lang_t;
 
 
-/* physical memory array */
+/* physical memory array (consists of several memory devices) */
 typedef struct {
   union u_hd_smbios_t *next;
   hd_smbios_type_t type;
@@ -724,6 +724,7 @@ typedef struct {
 } smbios_memarray_t;
 
 
+/* memory device */
 typedef struct {
   union u_hd_smbios_t *next;
   hd_smbios_type_t type;
@@ -731,16 +732,41 @@ typedef struct {
   unsigned char *data;
   str_list_t *strings;
   int handle;
-  char *location;
-  char *bank;
-  unsigned width;
-  unsigned eccbits;
+  char *location;		/* device location */
+  char *bank;			/* bank location */
+  char *manuf;			/* manufacturer */
+  char *serial;			/* serial number */
+  char *asset;			/* asset tag */
+  char *part;			/* part number */
+  int array_handle;		/* memory array this device belongs to */
+  int error_handle;		/* points to error info record; 0xfffe: not supported, 0xffff: no error */
+  unsigned width;		/* data width in bits */
+  unsigned eccbits;		/* ecc bits */
   unsigned size;		/* kB */
-  unsigned form;
-  unsigned type1;
-  unsigned type2;
-  unsigned speed;
+  hd_id_t form;			/* form factor */
+  unsigned set;			/* 0: does not belong to a set; 1-0xfe: set number; 0xff: unknown */
+  hd_id_t mem_type;		/* memory type */
+  hd_bitmap_t type_detail;	/* memory type details */
+  unsigned speed;		/* in MHz */
 } smbios_memdevice_t;
+
+
+/* 32-bit memory error information  */
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  hd_id_t err_type;		/* error type memory */
+  hd_id_t granularity;		/* memory array or memory partition */
+  hd_id_t operation;		/* mem operation causing the error */
+  unsigned syndrome;		/* vendor-specific ECC syndrome; 0: unknown */
+  unsigned array_addr;		/* fault address rel. to mem array; 0x80000000: unknown */
+  unsigned device_addr;		/* fault address rel to mem device; 0x80000000: unknown */
+  unsigned range;		/* range, within which the error can be determined; 0x80000000: unknown */
+} smbios_memerror_t;
 
 
 /* pointing device (aka 'mouse') information */
@@ -755,6 +781,24 @@ typedef struct {
   hd_id_t interface;		/* interface type */
   unsigned buttons;		/* number of buttons */
 } smbios_mouse_t;
+
+
+/* 64-bit memory error information  */
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  hd_id_t err_type;		/* error type memory */
+  hd_id_t granularity;		/* memory array or memory partition */
+  hd_id_t operation;		/* mem operation causing the error */
+  unsigned syndrome;		/* vendor-specific ECC syndrome; 0: unknown */
+  uint64_t array_addr;		/* fault address rel. to mem array; 0x80000000: unknown */
+  uint64_t device_addr;		/* fault address rel to mem device; 0x80000000: unknown */
+  unsigned range;		/* range, within which the error can be determined; 0x80000000: unknown */
+} smbios_mem64error_t;
 
 
 typedef union u_hd_smbios_t {
@@ -774,7 +818,9 @@ typedef union u_hd_smbios_t {
   smbios_lang_t lang;
   smbios_memarray_t memarray;
   smbios_memdevice_t memdevice;
+  smbios_memerror_t memerror;
   smbios_mouse_t mouse;
+  smbios_mem64error_t mem64error;
 } hd_smbios_t;
 
 

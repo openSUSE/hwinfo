@@ -349,7 +349,7 @@ void hd_scan_bios(hd_data_t *hd_data)
 
   if(bt->smp.ok && bt->smp.mpconfig) {
     mem.start = bt->smp.mpconfig;
-    mem.size = 1 << 10;
+    mem.size = 1 << 16;
     mem.data = NULL;
     read_memory(&mem);
     parse_mpconfig(hd_data, &mem, &bt->smp);
@@ -515,18 +515,14 @@ void read_memory(memory_range_t *mem)
   mem->data = new_mem(mem->size);
   fd = -1;
   if(
-    !(
 #ifdef BIOS_TEST
-      (fd = open(s ? s : DEV_MEM, O_RDONLY)) >= 0 &&
+    (fd = open(s ? s : DEV_MEM, O_RDONLY)) >= 0 &&
 #else
-      (fd = open(DEV_MEM, O_RDONLY)) >= 0 &&
+    (fd = open(DEV_MEM, O_RDONLY)) >= 0 &&
 #endif
-      lseek(fd, mem->start, SEEK_SET) >= 0 &&
-      (unsigned) read(fd, mem->data, mem->size) == mem->size
-    )
+    lseek(fd, mem->start, SEEK_SET) >= 0
   ) {
-    mem->data = free_mem(mem->data);
-    mem->size = mem->start = 0;
+    read(fd, mem->data, mem->size);
   }
 
   if(fd >= 0) close(fd);
@@ -972,6 +968,10 @@ void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
       if(len + u > xcfg_len) len = xcfg_len - u;
       hexdump(&hd_data->log, 1, len, mem->data + cfg_len + u);
       ADD2LOG("\n");
+      if(len < 2) {
+        ADD2LOG("  oops: invalid record lenght\n");
+        break;
+      }
     }
   }
 }
