@@ -20,7 +20,7 @@
 &device.id		pci 0x3e50
 &subvendor.id		pci 0x174b
 &subdevice.id		pci 0x0450
-+subdevice.name		Sapphire Radeon X600 Pro
++subdevice.name		Radeon X600 Pro
 +driver.xfree		4|radeon
 +driver.xfree		4|fglrx|3d||dri
 +requires		fglrx
@@ -322,6 +322,8 @@
 &device.id		pci 0x4a50
 +device.name		R420 JP
 +driver.xfree		4|radeon
++driver.xfree		4|fglrx|3d||dri
++requires		fglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c42
@@ -458,6 +460,8 @@
 &device.id		pci 0x4e44
 +device.name		R300 ND
 +driver.xfree		4|radeon
++driver.xfree		4|fglrx|3d||dri
++requires		fglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e44
@@ -479,6 +483,8 @@
 &device.id		pci 0x4e47
 +device.name		R300 NG
 +driver.xfree		4|radeon
++driver.xfree		4|fglrx|3d||dri
++requires		fglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e47
@@ -935,7 +941,7 @@
 &device.id		pci 0x554d
 &subvendor.id		pci 0x174b
 &subdevice.id		pci 0x0600
-+subdevice.name		Sapphire Radeon X800 XL
++subdevice.name		Radeon X800 XL
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5551
@@ -1025,7 +1031,7 @@
 &device.id		pci 0x5b60
 &subvendor.id		pci 0x174b
 &subdevice.id		pci 0x0440
-+subdevice.name		Sapphire Radeon X300 SE
++subdevice.name		Radeon X300 SE
 +driver.xfree		4|radeon
 +driver.xfree		4|fglrx|3d||dri
 +requires		fglrx
@@ -1061,6 +1067,38 @@
 &device.id		pci 0x5d57
 +device.name		Radeon X800XT (R423) 5D57 (PCIE)
 +driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5e4a
++device.name		Radeon X700 XT
++driver.xfree		4|radeon
++driver.xfree.config	ChipID 0x5D57
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5e4b
++device.name		Radeon X700 Pro
++driver.xfree		4|radeon
++driver.xfree.config	ChipID 0x5549
++driver.xfree		4|fglrx|3d||dri
++requires		fglrx
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5e4c
++device.name		Radeon X700 SE
++driver.xfree		4|radeon
++driver.xfree.config	ChipID 0x554B
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5e4d
++device.name		Radeon X700 (5E4D)
++driver.xfree		4|radeon
++driver.xfree.config	ChipID 0x5548
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5e4f
++device.name		Radeon X700 (5E4F)
++driver.xfree		4|radeon
++driver.xfree.config	ChipID 0x5548
 
  vendor.id		pci 0x1002
 &device.id		pci 0x7834

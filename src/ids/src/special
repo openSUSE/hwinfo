@@ -663,6 +663,11 @@
 +device.name		Sony Notebook
 +requires		spicctrl
 
+ vendor.id		special 0xf001
+&device.id		special 0x0004
++device.name		HP Notebook
++driver.module.modprobe	thermal|fan
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # altix things

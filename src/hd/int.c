@@ -728,7 +728,6 @@ void int_modem(hd_data_t *hd_data)
   hd_t *hd;
   char *s;
   hd_dev_num_t dev_num = { type: 'c', range: 1 };
-  unsigned cnt4 = 0;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
@@ -747,16 +746,10 @@ void int_modem(hd_data_t *hd_data)
           dev_num.minor = 1;
           break;
         case sc_mod_win3:
+        case sc_mod_win4:
           s = new_str("/dev/ttyLT0");
           dev_num.major = 62;
           dev_num.minor = 64;
-          break;
-        case sc_mod_win4:
-          if(cnt4 < 4) {
-            str_printf(&s, 0, "/dev/ttySL%u", cnt4);
-            dev_num.major = 212;
-            dev_num.minor = cnt4++;
-          }
           break;
       }
       if(s) {
@@ -974,6 +967,7 @@ void int_system(hd_data_t *hd_data)
   hd_smbios_t *sm;
   struct {
     unsigned notebook:1;
+    unsigned acpi_mods:1;	/*  *** evil hack *** */
     enum { v_none = 0, v_ibm = 1, v_toshiba, v_sony } vendor;
   } is = { };
   char *s;
@@ -1002,6 +996,16 @@ void int_system(hd_data_t *hd_data)
   }
 
   for(sm = hd_data->smbios; sm; sm = sm->next) {
+    if(
+      sm->any.type == sm_sysinfo &&
+      sm->sysinfo.manuf &&
+      sm->sysinfo.product &&
+      !strcasecmp(sm->sysinfo.manuf, "Hewlett-Packard") &&
+      !strcasecmp(sm->sysinfo.product, "HP Compaq nc6220")
+    ) {
+      is.acpi_mods = 1;
+    }
+
     if(
       sm->any.type == sm_sysinfo &&
       sm->sysinfo.manuf &&
@@ -1069,6 +1073,10 @@ void int_system(hd_data_t *hd_data)
   if(is.notebook && is.vendor) {
     hd_sys->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0xf001);
     hd_sys->compat_device.id = MAKE_ID(TAG_SPECIAL, is.vendor);
+  }
+  else if(is.acpi_mods) {
+    hd_sys->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0xf001);
+    hd_sys->compat_device.id = MAKE_ID(TAG_SPECIAL, 4);
   }
 }
 

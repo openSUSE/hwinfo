@@ -4263,6 +4263,13 @@ int is_modem(hd_data_t *hd_data, hd_t *hd)
 
 int is_audio(hd_data_t *hd_data, hd_t *hd)
 {
+  /* ISA-PnP sound cards: just one entry per card */
+  if(
+    hd->bus.id == bus_isa &&
+    hd->is.isapnp &&
+    hd->func
+  ) return 0;
+
   if(
     hd->base_class.id == bc_multimedia &&
     (
@@ -4509,15 +4516,6 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           hd->sub_class.id == sc_ser_fiber
         )
       ) {
-
-        /* ISA-PnP sound cards: just one entry per card */
-        if(
-          item == hw_sound &&
-          hd->bus.id == bus_isa &&
-          hd->is.isapnp &&
-          hd->func
-        ) continue;
-
         hd->hw_class = item;
         break;
       }

@@ -43,7 +43,7 @@ void hd_scan_net(hd_data_t *hd_data)
 {
   unsigned u;
   int if_type;
-  hd_t *hd, *hd2, *hd_card;
+  hd_t *hd, *hd_card;
   char *s, *hw_addr;
   hd_res_t *res, *res1;
   uint64_t ul0;
@@ -73,6 +73,8 @@ void hd_scan_net(hd_data_t *hd_data)
 
   sf_cdev_list = sysfs_get_class_devices(sf_class);
   if(sf_cdev_list) dlist_for_each_data(sf_cdev_list, sf_cdev, struct sysfs_class_device) {
+    hd_card = NULL;
+
     ADD2LOG(
       "  net interface: name = %s, classname = %s, path = %s\n",
       sf_cdev->name,
@@ -133,17 +135,17 @@ void hd_scan_net(hd_data_t *hd_data)
     if(sf_dev) {
       hd->sysfs_device_link = new_str(hd_sysfs_id(sf_dev->path)); 
 
-      hd2 = hd_find_sysfs_id(hd_data, hd_sysfs_id(sf_dev->path));
-      if(hd2) {
-        hd->attached_to = hd2->idx;
+      hd_card = hd_find_sysfs_id(hd_data, hd_sysfs_id(sf_dev->path));
+      if(hd_card) {
+        hd->attached_to = hd_card->idx;
 
         /* for cards with strange pci classes */
-        hd_set_hw_class(hd2, hw_network_ctrl);
+        hd_set_hw_class(hd_card, hw_network_ctrl);
 
         /* add hw addr to network card */
         if(res1) {
           u = 0;
-          for(res = hd2->res; res; res = res->next) {
+          for(res = hd_card->res; res; res = res->next) {
             if(
               res->any.type == res_hwaddr &&
               !strcmp(res->hwaddr.addr, res1->hwaddr.addr)
@@ -156,16 +158,16 @@ void hd_scan_net(hd_data_t *hd_data)
             res = new_mem(sizeof *res);
             res->hwaddr.type = res_hwaddr;
             res->hwaddr.addr = new_str(res1->hwaddr.addr);
-            add_res_entry(&hd2->res, res);
+            add_res_entry(&hd_card->res, res);
           }
         }
         /* add interface names */
         if(hd->unix_dev_name) {
-          if(!search_str_list(hd2->unix_dev_names, hd->unix_dev_name)) {
-            add_str_list(&hd2->unix_dev_names, hd->unix_dev_name);
+          if(!search_str_list(hd_card->unix_dev_names, hd->unix_dev_name)) {
+            add_str_list(&hd_card->unix_dev_names, hd->unix_dev_name);
           }
-          if(!hd2->unix_dev_name) {
-            hd2->unix_dev_name = new_str(hd->unix_dev_name);
+          if(!hd_card->unix_dev_name) {
+            hd_card->unix_dev_name = new_str(hd->unix_dev_name);
           }
         }
       }
@@ -263,6 +265,26 @@ void hd_scan_net(hd_data_t *hd_data)
     /* ##### add more interface names here */
 
     hd->bus.id = bus_none;
+
+    /* fix card type */
+    if(hd_card) {
+      if(
+        (hd_card->base_class.id == 0 && hd_card->sub_class.id == 0) ||
+        (hd_card->base_class.id == bc_network && hd_card->sub_class.id == 0x80)
+      ) {
+        switch(hd->sub_class.id) {
+          case sc_nif_ethernet:
+            hd_card->base_class.id = bc_network;
+            hd_card->sub_class.id = 0;
+            break;
+
+          case sc_nif_usb:
+            hd_card->base_class.id = bc_network;
+            hd_card->sub_class.id = 0x91;
+            break;
+        }
+      }
+    }
   }
 
   sysfs_close_class(sf_class);

@@ -1309,6 +1309,21 @@ void do_test(hd_data_t *hd_data)
 #endif
 
 #endif
+
+#if 0
+  hd_t *hd;
+  driver_info_t *di;
+  str_list_t *sl;
+
+  hd = hd_list(hd_data, hw_sys, 1, NULL);
+
+  for(di = hd->driver_info; di; di = di->next) {
+    if(di->any.type == di_module) {
+      for(sl = di->module.names; sl; sl = sl->next) printf("%s\n", sl->str);
+    }
+  }
+
+#endif
 }
 
 

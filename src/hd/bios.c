@@ -25,7 +25,6 @@
 
 #if defined(__i386__) || defined (__x86_64__) || defined (__ia64__)
 
-#ifndef LIBHD_TINY
 static struct {
   int width;
   int height;
@@ -57,7 +56,6 @@ static struct {
   { 1600, 1200, "Dell Computer Corporation", "Inspiron 8200", NULL },
   { 1600, 1200, "Dell Computer Corporation", "Latitude C840", NULL }
 };
-#endif
 
 #define BIOS_TEST
 
@@ -66,7 +64,6 @@ typedef struct {
 } bios32_regs_t;
 
 static void read_memory(hd_data_t *hd_data, memory_range_t *mem);
-#ifndef LIBHD_TINY
 static void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *label);
 static void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt);
 static void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt);
@@ -77,7 +74,6 @@ static unsigned char crc(unsigned char *mem, unsigned len);
 static int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
 static void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
 static int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios32);
-#endif
 
 int detect_smp_bios(hd_data_t *hd_data)
 {
@@ -128,12 +124,12 @@ void hd_scan_bios(hd_data_t *hd_data)
 {
   hd_t *hd;
   bios_info_t *bt;
-#ifndef LIBHD_TINY
   char *s;
   unsigned char *bios_ram;
   unsigned u, u1;
   memory_range_t mem;
   unsigned smp_ok;
+#ifndef LIBHD_TINY
   vbe_info_t *vbe;
   vbe_mode_info_t *mi;
   hd_res_t *res;
@@ -158,8 +154,6 @@ void hd_scan_bios(hd_data_t *hd_data)
   hd->detail = new_mem(sizeof *hd->detail);
   hd->detail->type = hd_detail_bios;
   hd->detail->bios.data = bt = new_mem(sizeof *bt);
-
-#ifndef LIBHD_TINY
 
   /*
    * first, look for APM support
@@ -216,8 +210,6 @@ void hd_scan_bios(hd_data_t *hd_data)
     free_str_list(sl0);
   }
 
-#endif		/* !defined(LIBHD_TINY) */
-
   /*
    * get the i/o ports for the parallel & serial interfaces from the BIOS
    * memory area starting at 0x40:0
@@ -231,8 +223,6 @@ void hd_scan_bios(hd_data_t *hd_data)
   hd_data->bios_rom.start = BIOS_ROM_START;
   hd_data->bios_rom.size = BIOS_ROM_SIZE;
   read_memory(hd_data, &hd_data->bios_rom);
-
-#ifndef LIBHD_TINY
 
   if(hd_data->bios_ram.data) {
     bios_ram = hd_data->bios_ram.data;
@@ -401,6 +391,7 @@ void hd_scan_bios(hd_data_t *hd_data)
     }
   }
 
+#ifndef LIBHD_TINY
   if(hd_probe_feature(hd_data, pr_bios_vesa)) {
     PROGRESS(4, 0, "vbe");
 
@@ -486,6 +477,7 @@ void hd_scan_bios(hd_data_t *hd_data)
 
     }
   }
+#endif	/* LIBHD_TINY */
 
   PROGRESS(5, 0, "32");
 
@@ -509,9 +501,6 @@ void hd_scan_bios(hd_data_t *hd_data)
       ADD2LOG("  bios32: compaq machine\n");
     }
   }
-
-
-#endif		/* !defined(LIBHD_TINY) */
 
 }
 
@@ -566,7 +555,6 @@ void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *labe
 }
 
 
-#ifndef LIBHD_TINY
 void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt)
 {
   int i;
@@ -1015,7 +1003,5 @@ int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios
 }
 
 
-#endif		/* !defined(LIBHD_TINY) */
-
-
 #endif /* defined(__i386__) || defined (__x86_64__) */
+

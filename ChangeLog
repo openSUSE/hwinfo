@@ -1,5 +1,12 @@
-	- detect PCMCIA ISDN cards (#71208)
-        - update ISDN data
+14/3/2005:	v10.9
+	- hardware detection for ISDN PCMCIA cards (#71208)
+	- updated ISDN data
+	- updated X11 data
+	- better network type detection (#70991, #71231, #67325)
+	- load some acpi modules on hp notebook (#72146)
+	- fixed isapnp sound card detection (#67303)
+	- slamr: ttySL0 -> ttyLT0 (#72301)
+
 7/3/2005:	v10.8
 	- updated X11 data
 
