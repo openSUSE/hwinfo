@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-07-27 10:46:16
+#hwinfo data from 2000-07-28 14:59:18
 #
 
 
@@ -69,12 +69,17 @@
 	x	3|SVGA|3d|glx|glx.so||4
 
 
-# Matrox:MGA G200 PCI
+# Matrox:MGA G200 SD PCI
+102B 0520  
+	x	4|mga||||sw_cursor|d
+
+
+# Matrox:MGA G200 SD PCI
 102B 0520  
 	x	3|SVGA|||||
 
 
-# Matrox:MGA G200 PCI
+# Matrox:MGA G200 SD PCI
 102B 0520  
 	x	3|SVGA|3d|glx|glx.so||4
 
@@ -1306,7 +1311,7 @@
 
 # Nvidia:GeForce-2
 10de 0150  
-	x	4|nvidia||nv_glx|||4
+	x	4|nvidia||nv_glx|||
 
 
 # Nvidia:GeForce-2
@@ -1377,11 +1382,6 @@
 # Nvidia:RIVA TNT2 Model 64
 10DE 002D  
 	x	4|nv|||||
-
-
-# Nvidia:RIVA TNT2 Model 64
-10DE 002D  
-	x	4|nvidia|3d|nv_glx|glx||4
 
 
 # Nvidia:RIVA TNT2 Model 64
@@ -1477,6 +1477,21 @@
 # Nvidia:Elsa Erazor 2 (TNT)
 10de 0020 1048 0c1c
 	x	3|SVGA|3d|glx|glx.so||4
+
+
+# Nvidia:Elsa Erazor LT
+10de 002d 1048 0c3a
+	x	4|nv|||||
+
+
+# Nvidia:Elsa Erazor LT
+10de 002d 1048 0c3a
+	x	4|nvidia|3d|nv_glx|glx||4
+
+
+# Nvidia:Elsa Erazor LT
+10de 002d 1048 0c3a
+	x	3|SVGA|||||
 
 
 # Neomagic:MagicMedia 256AV

@@ -1,3 +1,6 @@
+28/7/2000:	v1.27
+	- fixed 'x11' parameter parsing
+
 27/7/2000:	v1.26
 	- added '--special' option to hwinfo (needed for live CD)
 	- updated x11 data

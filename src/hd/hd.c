@@ -1565,7 +1565,7 @@ driver_info_t *monitor_driver(hd_data_t *hd_data, hd_t *hd)
 driver_info_t *reorder_x11(driver_info_t *di0, char *info)
 {
   driver_info_t *di, *di_new, **di_list;
-  int i, dis;
+  int i, dis, found;
 
   for(dis = 0, di = di0; di; di = di->next) dis++;
 
@@ -1576,11 +1576,12 @@ driver_info_t *reorder_x11(driver_info_t *di0, char *info)
   }
 
   di = di_new = NULL;
-  for(i = 0; i < dis; i++) {
+  for(i = found = 0; i < dis; i++) {
     if(
       !strcmp(di_list[i]->x11.xf86_ver, info) ||
       !strcmp(di_list[i]->x11.server, info)
     ) {
+      found = 1;
       if(di) {
         di = di->next = di_list[i];
       }
@@ -1606,6 +1607,14 @@ driver_info_t *reorder_x11(driver_info_t *di0, char *info)
   }
 
   free_mem(di_list);
+
+  if(!found && strlen(info) > 1) {
+    hd_free_driver_info(di_new);
+    di_new = new_mem(sizeof *di_new);
+    di_new->any.type = di_x11;
+    di_new->x11.server = new_str(info);
+    di_new->x11.xf86_ver = new_str(*info >= 'A' && *info <= 'Z' ? "3" : "4");
+  }
 
   return di_new;
 }
