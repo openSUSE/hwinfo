@@ -992,9 +992,6 @@
 +device.name		GD 5465 [Laguna]
 +driver.xfree		4|cirrus
 
- vendor.id		pci 0x1014
-+vendor.name		IBM
-
  vendor.id		pci 0x1023
 +vendor.name		Trident Microsystems Inc.
 
@@ -1107,9 +1104,6 @@
 &device.id		pci 0x9910
 +device.name		9910
 +driver.xfree		4|trident
-
- vendor.id		pci 0x1028
-+vendor.name		ATI Technologies Inc
 
  vendor.id		pci 0x102b
 +vendor.name		Matrox Graphics, Inc.
@@ -1377,9 +1371,6 @@
 &device.id		pci 0x0104
 +device.name		5530 Video [Kahlua]
 +driver.xfree		4|cyrix
-
- vendor.id		pci 0x10b0
-+vendor.name		nVidia Corporation
 
  vendor.id		pci 0x10c8
 +vendor.name		Neomagic Corporation
@@ -2298,12 +2289,6 @@
 +device.name		Riva128
 +driver.xfree		4|nv|||||15,24
 
- vendor.id		pci 0x1462
-+vendor.name		Micro-Star International Co., Ltd.
-
- vendor.id		pci 0x1584
-+vendor.name		Uniwill Computer Corp
-
  vendor.id		pci 0x15ad
 +vendor.name		VMWare Inc
 
@@ -2316,15 +2301,6 @@
 &device.id		pci 0x0710
 +device.name		VMWARE0710
 +driver.xfree		4|vmware
-
- vendor.id		pci 0x174b
-+vendor.name		ATI Technologies Inc
-
- vendor.id		pci 0x17af
-+vendor.name		ATI Technologies Inc
-
- vendor.id		pci 0x270f
-+vendor.name		nVidia Corporation
 
  vendor.id		pci 0x3d3d
 +vendor.name		3DLabs

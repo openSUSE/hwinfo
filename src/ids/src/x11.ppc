@@ -837,9 +837,6 @@
 +driver.xfree		4|fbdev||||dpms,hw_cursor|16,24
 +driver.xfree.config	DacSpeed 200 200 200 200
 
- vendor.id		pci 0x10b0
-+vendor.name		nVidia Corporation
-
  vendor.id		pci 0x10de
 +vendor.name		nVidia Corporation
 
@@ -1464,13 +1461,4 @@
 &device.id		pci 0x0018
 +device.name		Riva128
 +driver.xfree		4|nv|||||15,24
-
- vendor.id		pci 0x174b
-+vendor.name		ATI Technologies Inc
-
- vendor.id		pci 0x17af
-+vendor.name		ATI Technologies Inc
-
- vendor.id		pci 0x270f
-+vendor.name		nVidia Corporation
 
