@@ -20,6 +20,7 @@
 #include <sys/mman.h>
 #include <linux/pci.h>
 #include <linux/hdreg.h>
+#define _LINUX_AUDIT_H_
 #include <linux/fs.h>
 
 #define u64 uint64_t
@@ -109,6 +110,10 @@
 
 #ifdef __x86_64__
 #define HD_ARCH "x86-64"
+#endif
+
+#ifdef __hppa__
+#define HD_ARCH "hppa"
 #endif
 
 typedef struct disk_s {
