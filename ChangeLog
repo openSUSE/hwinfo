@@ -1,3 +1,8 @@
+18/1/2001:	v1.81
+	- fixed ISAPnP device name handling
+	- back to ncr*.o for 53c875 [devid 0xf] (#5816)
+	- added new tulip card
+
 17/1/2001:	v1.80
 	- updated dac960 driver info
 

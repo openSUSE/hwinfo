@@ -131,7 +131,7 @@ void hd_scan_isapnp(hd_data_t *hd_data)
 
       if(
         (ID_VALUE(hd->vend) || ID_VALUE(hd->dev)) &&
-        !hd_device_name(hd_data, hd->vend, hd->dev)
+        !((s = hd_device_name(hd_data, hd->vend, hd->dev)) && *s)
       ) {
         if((r = get_isapnp_res(c, 0, RES_ANSI_NAME))) {
           s = canon_str(r->data, r->len);

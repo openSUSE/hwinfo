@@ -94,12 +94,13 @@
 # scsi/ncr53c8xx.c
 # scsi/sym53c8xx.c
 # which one to prefer???
-1000 000f
 1000 008f
 	i	sym53c8xx
 	i	ncr53c8xx
 
 1000 0001+6
+# 000f: see #5816
+1000 000f
 1000 000a+4
 1000 0012
 	i	ncr53c8xx
