@@ -17,7 +17,9 @@
 #include "init_message.h"
 
 #define TIMEOUT 2
+#define LONG_TIMEOUT 20
 #define BUFFERS 1024
+
 
 int main( int argc, char **argv )
 {
@@ -30,11 +32,18 @@ int main( int argc, char **argv )
 	int block, usb, firewire, pci;
 	int dev_last_state[BUFFERS];
 	int dev_counter[BUFFERS];
+	char * command_device[NR_COMMANDS][BUFFERS];
+	time_t command_device_last[NR_COMMANDS][BUFFERS];
 	time_t last;
 	char **commands;
 	char **devices;
 	char buffer[32];
 	message m;
+
+	for ( i=0; i<NR_COMMANDS; i++ ){
+		command_device[i][0] = 0;
+		command_device_last[i][0] = 1;
+	}
 
 	last=block=usb=firewire=pci=0;
 	commands = (char**) malloc( BUFFERS * sizeof(char*) );
@@ -57,20 +66,38 @@ int main( int argc, char **argv )
 		msgid = msgget(key, 0);
 		if( (msgid >= 0) && msgrcv(msgid, &m, MESSAGE_BUFFER, 1, mode) >= 0 ){
 			char *p = m.mtext;
+
 			if ( p == 0 ){
 				fprintf( stderr, "hwscand: error, zero sized message\n" );
 			}else{
-				if ( p[0] == 'S' && strlen(p) == 5 ){	
-					last = time(0L);
+				if ( p[0] == 'S' && strlen(p) > 1 ){
 					// scan calls
-					if ( p[1] == 'X' )
-						block = 1;
-					if ( p[2] == 'X' )
-						usb = 1;
-					if ( p[3] == 'X' )
-						firewire = 1;
-					if ( p[4] == 'X' )
-						pci = 1;
+					char z[2];
+					int c;
+					z[0] = *(p+1);
+					z[1] = '\0';
+					c = atoi(z);
+					if ( c < NR_COMMANDS ){
+						if ( ! command_with_device[c] ){
+							last = time(0L);
+							if ( LONG_TIMEOUT+command_device_last[c][0] < time(0L) )
+								command_device_last[c][0] = 0;
+						}else
+						for ( i=0; i<BUFFERS; i++ ){
+							if ( !command_device[c][i] ){
+								last = time(0L);
+								command_device[c][i] = strdup(p+2);
+								command_device[c][i+1] = 0;
+								command_device_last[c][i] = 0;
+								break;
+							}else if ( !strcmp(command_device[c][i], p+2) ){
+								last = time(0L);
+								if ( LONG_TIMEOUT+command_device_last[c][i] < time(0L) )
+									command_device_last[c][i] = 0;
+								break;
+							}
+						}
+					}
 				}
 				if ( p[0] == 'C' && lines < BUFFERS ){
 					last = time(0L);
@@ -109,22 +136,19 @@ int main( int argc, char **argv )
 				dev_counter[i]++;
 				if ( dev_counter[i] > 5 ){
 					int fd;
+					char buf[MESSAGE_BUFFER];
 					dev_counter[i] = 0;
 					fd = open( devices[i], O_RDONLY );
+					strcpy( buf, "/usr/sbin/hwscan --partition --only=");
+					strcat( buf, devices[i] );
 					if ( fd < 0 ){
 						if ( dev_last_state[i] )
-							system("/usr/sbin/hwscan --partition");
+							system(buf);
 						dev_last_state[i] = 0;
 					}else{
-						char c;
-						if ( read(fd, &c, 1)>0 ){
-							if ( dev_last_state[i] == 0)
-								system("/usr/sbin/hwscan --partition");
-
-							dev_last_state[i] = 1;
-						}else{
-							dev_last_state[i] = 0;
-						}
+						if ( dev_last_state[i] == 0)
+							system(buf);
+						dev_last_state[i] = 1;
 						close(fd);
 					}
 				}
@@ -132,22 +156,41 @@ int main( int argc, char **argv )
 		}
 		
 		if ( last && (last+TIMEOUT < time(0L)) ){
-			if ( block||usb||firewire||pci ){
+			for ( i=0; i<NR_COMMANDS; i++ ){
+				int j;
+				int run_really = 0;
 				char buf[MESSAGE_BUFFER];
-				strcpy( buf, "/usr/sbin/hwscan --fast --boot --silent " );
-				if ( block )
-					strcat( buf, "--block " );
-				if ( usb )
-					strcat( buf, "--usb " );
-				if ( firewire )
-					strcat( buf, "--firewire " );
-				if ( pci )
-					strcat( buf, "--pci " );
-				system(buf);
-				block=usb=firewire=pci=0;
+
+				strcpy( buf, "/usr/sbin/hwscan --fast --boot --silent --" );
+				strcat( buf, command_args[i] );
+				if ( command_with_device[i] == 0 &&
+				     command_device_last[i][0] == 0 ){
+					command_device_last[i][0] = time(0L);
+				 	run_really = 1;
+				}else
+				for ( j=0; j<BUFFERS; j++ ){
+					if ( !command_device[i][j] )
+						break;
+					if ( command_device_last[i][j] == 0 ){
+						strcat( buf, " --only=" );
+						strcat( buf, command_device[i][j] );
+						command_device_last[i][j] = time(0L);
+				 		run_really = 1;
+					}
+				}
+
+				if ( run_really ){
+#if DEBUG
+					printf("RUN %s\n", buf);
+#endif
+					system(buf);
+				}
 			}
 			if ( lines ){
 				for (i=0; i<lines; i++){
+#if DEBUG
+				printf("CALL DIRECT %s\n", commands[i]);
+#endif
 					system(commands[i]);
 					free(commands[i]);
 				}

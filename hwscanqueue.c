@@ -18,24 +18,28 @@
 int main( int argc, char **argv )
 {
 	int ret;
+	unsigned short i;
         key_t key = KEY;
         int msgid;
 	message m;
+	char *device = argv[2];
 
 	if ( argc < 2 ){
 		fprintf( stderr, "help: hwscanqueue hwscan-commands\n" );
+		fprintf( stderr, "help: commands:\n" );
+		for ( i=0; i<NR_COMMANDS; i++ ){
+			fprintf( stderr, "      --%s", command_args[i]  );
+			if ( command_with_device[i] )
+				fprintf( stderr, " device" );
+			fprintf( stderr, "\n");
+		}
+		fprintf( stderr, "      --avail=yes/no id\n" );
+		fprintf( stderr, "      --scan=device\n" );
+		fprintf( stderr, "      --stop=device\n" );
 		exit(1);
 	}
 
-	if ( !strcmp("--block", argv[1]) )
-		strncpy( m.mtext, "SX   ", MESSAGE_BUFFER );
-	else if ( !strcmp("--usb", argv[1]) )
-		strncpy( m.mtext, "S X  ", MESSAGE_BUFFER );
-	else if ( !strcmp("--firewire", argv[1]) )
-		strncpy( m.mtext, "S  X ", MESSAGE_BUFFER );
-	else if ( !strcmp("--pci", argv[1]) )
-		strncpy( m.mtext, "S   X", MESSAGE_BUFFER );
-	else if ( !strncmp("--cfg=", argv[1], 6) && argc>2 )
+	if ( !strncmp("--cfg=", argv[1], 6) && argc>2 )
 		snprintf( m.mtext, MESSAGE_BUFFER, "C/usr/sbin/hwscan %s %s", argv[1], argv[2]  );
 	else if ( !strncmp("--avail=", argv[1], 8) && argc>2 )
 		snprintf( m.mtext, MESSAGE_BUFFER, "C/usr/sbin/hwscan %s %s", argv[1], argv[2]  );
@@ -43,7 +47,28 @@ int main( int argc, char **argv )
 		snprintf( m.mtext, MESSAGE_BUFFER, "A%s", argv[1]+7 );
 	else if ( !strncmp("--stop=", argv[1], 7) )
 		snprintf( m.mtext, MESSAGE_BUFFER, "R%s", argv[1]+7 );
-	else
+	else if ( !strncmp("--", argv[1], 2) ){
+		for ( i=0; i<NR_COMMANDS; i++ ){
+			if ( !strcmp(argv[1]+2,command_args[i]) ){
+#if DEBUG
+				printf("COMMAND %s\n", command_args[i] );
+#endif
+				snprintf( m.mtext, MESSAGE_BUFFER, "S%d", i );
+				if (command_with_device[i]){
+					if ( !device ){
+						fprintf(stderr, "need a device for this command\n");
+						exit(1);
+					}
+					strncat( m.mtext, device, MESSAGE_BUFFER-3 );
+				}
+				break;
+			}
+		}
+		if ( i>=NR_COMMANDS ){
+			fprintf(stderr, "need a device for this command\n");
+			exit(1);
+		}
+	}else
 		exit(1);
 
         if ( (msgid = msgget(key, IPC_CREAT | 0600)) < 0 ){
@@ -52,6 +77,9 @@ int main( int argc, char **argv )
         }
 	m.mtype = 1;
 	ret = msgsnd( msgid, &m, MESSAGE_BUFFER, IPC_NOWAIT);
+#if DEBUG
+	printf("SEND %s, return %d\n", m.mtext, ret );
+#endif
 
 	if ( ret < 0 )
 		perror("message send failed");
