@@ -10,6 +10,10 @@
 #include <sys/time.h>
 #include <sys/ioctl.h>
 
+#ifdef __PPC__
+#include <linux/serial.h>
+#endif
+
 #ifdef __sparc__
 
 struct serial_struct {
@@ -54,7 +58,15 @@ void hd_scan_kbd(hd_data_t *hd_data)
   unsigned keyb_idx, u, kid;
   char *s;
   hd_t *hd;
+#ifdef __PPC__
+  hd_t *hd1;
+  hd_res_t *res;
+  int fd;
+#endif
   str_list_t *sl;
+#ifdef __PPC__
+  struct serial_struct ser_info;
+#endif
 
   if(!hd_probe_feature(hd_data, pr_kbd)) return;
 
@@ -85,6 +97,43 @@ void hd_scan_kbd(hd_data_t *hd_data)
   }
 
 #ifdef __PPC__
+  PROGRESS(2, 0, "serial console");
+
+  if((fd = open(DEV_CONSOLE, O_RDWR | O_NONBLOCK | O_NOCTTY)) >= 0) {
+    if(!ioctl(fd, TIOCGSERIAL, &ser_info)) {
+      ADD2LOG("serial console at line %d\n", ser_info.line);
+
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class = bc_keyboard;
+      hd->sub_class = sc_keyboard_console;
+      hd->bus = bus_serial;
+      hd->dev_name = new_str("serial console");
+      str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%d", ser_info.line);
+      u = 9600;
+      for(hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
+        if(
+          hd1->base_class == bc_comm &&
+          hd1->sub_class == sc_com_ser &&
+          hd1->unix_dev_name &&
+          !strcmp(hd1->unix_dev_name, hd->unix_dev_name)
+        ) {
+          hd->attached_to = hd1->idx;
+          for(res = hd1->res; res; res = res->next) {
+            if(res->any.type == res_baud) {
+              u = res->baud.speed;
+              break;
+            }
+          }
+          break;
+        }
+      }
+      res = add_res_entry(&hd->res, new_mem(sizeof *res));
+      res->baud.type = res_baud;
+      res->baud.speed = u;
+    }
+    close(fd);
+  }
+
   if(!j) return;
 #endif
 

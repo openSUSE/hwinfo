@@ -136,7 +136,10 @@ void hd_scan_scsi(hd_data_t *hd_data)
     if(
       scsi->type != sc_sdev_other &&
       scsi->guessed_dev_name &&
-      strstr(scsi->dev_name, "/sg")
+      (
+        !scsi->dev_name ||
+        strstr(scsi->dev_name, "/sg")
+      )
     ) {
       free_mem(scsi->dev_name);
       scsi->dev_name = new_str(scsi->guessed_dev_name);

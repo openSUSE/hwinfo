@@ -1,4 +1,10 @@
+	- serial console detection for ppc
+
+13/9/2000:	v1.39
 	- ppc x11 driver info
+	- ppc serial console
+	- braille only on ia32
+	- fixed scsi segfault bug
 
 8/9/2000:	v1.38
 	- updated device ids
