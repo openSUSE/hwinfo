@@ -1,3 +1,8 @@
+6/2/2002:	v4.05
+	- make hd_list() work properly if LIBHD_TINY is defined
+	- added new braille display
+	- hwinfo accepts '--netcard' as alias to '--network_ctrl'
+
 4/2/2002:	v4.04
 	- store a config string along with the config status
 

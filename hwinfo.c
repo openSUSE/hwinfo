@@ -68,6 +68,7 @@ struct option options[] = {
   { "isdn", 0, NULL, 1000 + hw_isdn },
   { "modem", 0, NULL, 1000 + hw_modem },
   { "storage_ctrl", 0, NULL, 1000 + hw_storage_ctrl },
+  { "netcards", 0, NULL, 1000 + hw_network_ctrl },
   { "network_ctrl", 0, NULL, 1000 + hw_network_ctrl },
   { "printer", 0, NULL, 1000 + hw_printer },
   { "tv", 0, NULL, 1000 + hw_tv },
@@ -302,6 +303,7 @@ int main(int argc, char **argv)
     if(!strcmp(list, "modem")) i = hw_modem;
     if(!strcmp(list, "storage_ctrl")) i = hw_storage_ctrl;
     if(!strcmp(list, "network_ctrl")) i = hw_network_ctrl;
+    if(!strcmp(list, "netcards")) i = hw_network_ctrl;
     if(!strcmp(list, "printer")) i = hw_printer;
     if(!strcmp(list, "tv")) i = hw_tv;
     if(!strcmp(list, "scanner")) i = hw_scanner;
@@ -467,6 +469,19 @@ void *free_mem(void *);
 
 void do_test(hd_data_t *hd_data)
 {
+  hd_t *hd;
+  hd_t *hd0 = NULL;
+
+  for(hd = hd_list(hd_data, hw_cdrom, 1, hd0); hd; hd = hd->next) {
+    fprintf(stderr, "cdrom: %s, %s\n", hd->unix_dev_name, hd->model);
+  }
+
+  for(hd = hd_list(hd_data, hw_cdrom, 1, hd0); hd; hd = hd->next) {
+    fprintf(stderr, "cdrom: %s, %s\n", hd->unix_dev_name, hd->model);
+  }
+
+
+#if 0
   int i;
 
   hd_set_probe_feature(hd_data, pr_pci);
@@ -491,6 +506,7 @@ void do_test(hd_data_t *hd_data)
 
   i = hd_usb_support(hd_data);
   fprintf(stderr, "usb support: %d\n",i);
+#endif
 
 #if 0
   hd_t *hd, *hd0;
@@ -518,7 +534,7 @@ void help()
     "usage: hwinfo [--short] [--log log_file] [--debug debug_level] [--<hardware_item1> --<hardware_item2> ...]\n"
     "  <hardware_item> is one of:\n"
     "    cdrom, floppy, disk, network, display, monitor, mouse, keyboard,\n"
-    "    sound, isdn, modem, storage_ctrl, network_ctrl, printer, tv,\n"
+    "    sound, isdn, modem, storage_ctrl, netcards, printer, tv,\n"
     "    scanner, braille, sys, cpu, smp, usb, pci, isapnp, ide, scsi,\n"
     "    all, reallyall\n\n"
     "  Note: debug info is shown only in the log file. (If you specify a\n"

@@ -3549,12 +3549,15 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
         hd->hw_class == item ||
         hd->hw_class2 == item ||
         item == hw_manual
-      ) &&
-      (
+      )
+#ifndef LIBHD_TINY
+/* with LIBHD_TINY hd->status is not maintained (cf. manual.c) */
+      && (
         hd->status.available == status_yes ||
         hd->status.available == status_unknown ||
         item == hw_manual
       )
+#endif
     ) {
       /* don't report old entries again */
       for(hd1 = hd_old; hd1; hd1 = hd1->next) {

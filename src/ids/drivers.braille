@@ -37,6 +37,8 @@ s5003 0009
 	a	brlwave
 s5003 0044
 	a	vario40-ht
+s5003 0074
+	a	brlstar40
 s5003 0080
 	a	ht20
 s5003 0084
