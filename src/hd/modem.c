@@ -105,7 +105,7 @@ void get_serial_modem(hd_data_t *hd_data)
     sm->buf_len = 0;		/* clear buffer */
   }
 
-#if 0
+#if 11
   // just for testing
 
   {
