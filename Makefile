@@ -5,7 +5,7 @@ CLEANFILES	= hwinfo hwinfo.static
 
 include Makefile.common
 
-OBJS_NO_TINY	= names.o cpu.o memory.o monitor.o bios.o parallel.o modem.o
+OBJS_NO_TINY	= names.o parallel.o modem.o
 
 .PNONY:	static tiny
 

@@ -625,7 +625,6 @@ void hd_scan(hd_data_t *hd_data)
   /* get basic system info */
   hd_scan_misc(hd_data);
 
-#ifndef LIBHD_TINY
   /* start the detection  */
   hd_scan_cpu(hd_data);
   hd_scan_memory(hd_data);
@@ -637,7 +636,6 @@ void hd_scan(hd_data_t *hd_data)
 #if defined(__PPC__)
   hd_scan_prom(hd_data);
 #endif
-#endif	/* LIBHD_TINY */
 
   hd_scan_sys(hd_data);
 

@@ -1,6 +1,7 @@
 20/7/2000:	v1.24
 	- fixed Vaio detection
 	- updated special ide chipset list
+	- included more functions in LIBHD_TINY
 	- updated x11 data
 
 19/7/2000:	v1.23
