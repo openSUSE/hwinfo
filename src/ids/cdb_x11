@@ -118,7 +118,7 @@ foreach $arch_name (@arch_names) {
                                     vendor.longname,vendorclass.class,
                                     bus.name,subclass.name FROM product
                                LEFT JOIN product_area ON product.id=product_area.product_id
-                               LEFT JOIN groups ON product_area.area_id=groups.id
+                               LEFT JOIN groups ON product_area.group_id=groups.id
                                LEFT JOIN vendor ON product.vendor_id=vendor.id
                                LEFT JOIN vendorclass ON product.vendorclass_id=vendorclass.id
                                LEFT JOIN bus ON product.bus_id=bus.id
