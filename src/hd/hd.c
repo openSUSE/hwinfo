@@ -5376,6 +5376,13 @@ void read_udevinfo(hd_data_t *hd_data)
 
       continue;
     }
+
+    if(sscanf(sl->str, "T: %255s", buf) == 1) {
+      ui->type = *buf;
+
+      continue;
+    }
+
     if(sscanf(sl->str, "N: %255s", buf) == 1) {
       free_mem(ui->name);
       ui->name = new_str(buf);

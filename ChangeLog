@@ -1,3 +1,6 @@
+13/10/2004:	v9.32
+	- report network interfaces correctly even though udev lists them
+
 12/10/2004:	v9.31
 	- report usb host-to-host links as network devs (#22739)
 

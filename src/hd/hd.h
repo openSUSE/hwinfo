@@ -928,6 +928,7 @@ typedef struct s_udevinfo_t {
   char *sysfs;
   char *name;
   str_list_t *links;
+  int type;
 } hd_udevinfo_t;
 
 
