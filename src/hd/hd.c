@@ -2997,7 +2997,7 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
       )
 #endif
     ) {
-      if(hd->is.softraiddisk) continue;		/* don't report them */
+//      if(hd->is.softraiddisk) continue;		/* don't report them */
 
       /* don't report old entries again */
       for(hd1 = hd_old; hd1; hd1 = hd1->next) {
@@ -3123,7 +3123,7 @@ hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan)
       )
 #endif
     ) {
-      if(hd->is.softraiddisk) continue;		/* don't report them */
+//      if(hd->is.softraiddisk) continue;		/* don't report them */
 
       /* don't report old entries again */
       hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));

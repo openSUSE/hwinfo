@@ -1,6 +1,8 @@
+31/3/2004:	v8.28
 	- rewrote input device handling
 	- load ide-cd, sd_mod, sr_mod before looking for block devs (#37558)
 	- fixed usb printer detection
+	- run 'raiddetect' to tag ide soft raid devices
 
 30/3/2004:	v8.27
 	- changed bios probing to do less things --> MKINITRD!!!

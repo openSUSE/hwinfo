@@ -34,6 +34,7 @@ static void int_modem(hd_data_t *hd_data);
 static void int_wlan(hd_data_t *hd_data);
 static void int_udev(hd_data_t *hd_data);
 static void int_devicenames(hd_data_t *hd_data);
+static void int_softraid(hd_data_t *hd_data);
 
 void hd_scan_int(hd_data_t *hd_data)
 {
@@ -85,6 +86,9 @@ void hd_scan_int(hd_data_t *hd_data)
 
   PROGRESS(13, 0, "device names");
   int_devicenames(hd_data);
+
+  PROGRESS(14, 0, "soft raid");
+  int_softraid(hd_data);
 }
 
 /*
@@ -923,4 +927,43 @@ void int_devicenames(hd_data_t *hd_data)
     }
   }
 }
+
+
+/*
+ * Tag ide soft raid disks.
+ */
+void int_softraid(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  str_list_t *raid, *sl, *raid_sysfs = NULL, *sl1;
+  size_t len;
+  char *s;
+  
+  raid = read_file("| /sbin/raiddetect -s 2>/dev/null", 0, 0);
+
+  for(sl = raid; sl; sl = sl->next) {
+    s = hd_sysfs_id(sl->str);
+    sl1 = add_str_list(&raid_sysfs, s);
+    len = strlen(sl1->str);
+    if(len) sl1->str[len - 1] = 0;
+  }
+
+  free_str_list(raid);
+
+  ADD2LOG("----- soft raid devices -----\n");
+  for(sl = raid_sysfs; sl; sl = sl->next) {
+    ADD2LOG("  %s\n", sl->str);
+  }
+  ADD2LOG("----- soft raid devices end -----\n");
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(search_str_list(raid_sysfs, hd->sysfs_id)) {
+      hd->is.softraiddisk = 1;
+    }
+  }
+
+  free_str_list(raid_sysfs);
+
+}
+
 
