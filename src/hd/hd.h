@@ -345,6 +345,7 @@ typedef struct {
 typedef struct {
   char *system_type;
   char *vendor;
+  char *model;
   char *serial;
   char *lang;
 } sys_info_t;

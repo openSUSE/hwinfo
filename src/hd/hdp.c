@@ -681,6 +681,9 @@ void dump_sys(hd_data_t *hd_data, hd_t *hd, FILE *f)
   if(st->vendor) {
     dump_line("Vendor: \"%s\"\n", st->vendor);
   }
+  if(st->model) {
+    dump_line("Model: \"%s\"\n", st->model);
+  }
   if(st->serial) {
     dump_line("Serial ID: \"%s\"\n", st->serial);
   }

@@ -76,15 +76,17 @@ void int_bios(hd_data_t *hd_data)
 
   if(strstr(hd_boot->unix_dev_name, "/dev/sd") == hd_boot->unix_dev_name) {
     ide_1st = 0;
-    start = hd_boot->unix_dev_name[sizeof "/dev/sd"] - 'a';
+    start = hd_boot->unix_dev_name[sizeof "/dev/sd" - 1] - 'a';
   }
   else if(strstr(hd_boot->unix_dev_name, "/dev/hd") == hd_boot->unix_dev_name) {
     ide_1st = 1;
-    start = hd_boot->unix_dev_name[sizeof "/dev/hd"] - 'a';
+    start = hd_boot->unix_dev_name[sizeof "/dev/hd" - 1] - 'a';
   }
   else {
     return;
   }
+
+  if(start < 0) return;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(

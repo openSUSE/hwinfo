@@ -63,6 +63,12 @@ void hd_scan_sys(hd_data_t *hd_data)
       else if(strstr(buf0, "CHRP")) {
         st->system_type = new_str("CHRP");
       }
+      if(strstr(buf0, "PowerBook2,")) {
+        st->model = new_str("iBook");
+      }
+      else if(strstr(buf0, "PowerBook")) {
+        st->model = new_str("PowerBook");
+      }
     }
   }
 #endif	/* __PPC__ */
@@ -135,7 +141,7 @@ int chk_vaio(hd_data_t *hd_data, sys_info_t *st)
   if(!(s = memmem(s, 0x1000, "PCG-", sizeof "PCG-" - 1))) return 0;
 
   if((i = txt_len(s))) {
-    st->system_type = canon_str(s, i);
+    st->model = canon_str(s, i);
   }
   s += i;
 
@@ -146,20 +152,20 @@ int chk_vaio(hd_data_t *hd_data, sys_info_t *st)
     }
   }
 
-  if(st->system_type) {
-    s0 = strrchr(st->system_type, '(');
-    s1 = strrchr(st->system_type, ')');
+  if(st->model) {
+    s0 = strrchr(st->model, '(');
+    s1 = strrchr(st->model, ')');
 
     if(s0 && s1 && s1 - s0 >= 3 && s1[1] == 0) {
       st->lang = canon_str(s0 + 1, s1 - s0 - 1);
       for(s = st->lang; *s; s++) {
         if(*s >= 'A' && *s <= 'Z') *s += 'a' - 'A';
       }
-      *s0 = 0;	/* cut the system_type entry */
+      *s0 = 0;	/* cut the model entry */
     }
   }
 
-  return st->system_type ? 1 : 0;
+  return st->model ? 1 : 0;
 }
 
 #endif	/* __i386__ */
