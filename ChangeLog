@@ -1,3 +1,6 @@
+10/10/2002:	v5.39
+	- updated tg3/bcm5700 driver info (#19913)
+
 7/10/2002:	v5.38
 	- added aacraid driver info (#20592)
 	- don't run yast if no keyboard is attached (#19768)
