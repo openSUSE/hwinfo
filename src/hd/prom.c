@@ -504,6 +504,11 @@ void add_devices(hd_data_t *hd_data)
           hd->rev == dt->revision_id
         ) break;
       }
+
+#if 0
+/*
+ * no longer needed, the kernel does it
+ */
       if(!hd) {
         /* no appropriate pci entry; create one */
 
@@ -545,12 +550,15 @@ void add_devices(hd_data_t *hd_data)
           res->irq.base = dt->interrupt;
         }
       }
+#endif
 
-      hd->rom_id = new_str(dt->path);
-      hd->detail = new_mem(sizeof *hd->detail);
-      hd->detail->type = hd_detail_devtree;
-      hd->detail->devtree.data = dt;
-      add_pci_prom_devices(hd_data, hd, dt);
+      if(hd) {
+        hd->rom_id = new_str(dt->path);
+        hd->detail = new_mem(sizeof *hd->detail);
+        hd->detail->type = hd_detail_devtree;
+        hd->detail->devtree.data = dt;
+        add_pci_prom_devices(hd_data, hd, dt);
+      }
     }
     else {
       add_legacy_prom_devices(hd_data, dt);
