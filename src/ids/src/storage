@@ -355,8 +355,10 @@
 &device.id		pci 0x0391
 +driver.module.modprobe	dc395x
 
-# scsi/aic7xxx.c
+# scsi/aic7xxx/{aic7xxx_pci.c,aic79xx_pci.c}
  vendor.id		pci 0x9004
+&device.id		pci 0x0078
+|vendor.id		pci 0x9004
 &device.id		pci 0x1078
 |vendor.id		pci 0x9004
 &device.id		pci 0x2178
@@ -378,12 +380,34 @@
 &device.id		pci 0x7078
 |vendor.id		pci 0x9004
 &device.id		pci 0x7178
+&subvendor.id		pci 0x0000
+&subdevice.id		pci 0x0000
 |vendor.id		pci 0x9004
 &device.id		pci 0x7278
+&subvendor.id		pci 0x0000
+&subdevice.id		pci 0x0000
 |vendor.id		pci 0x9004
 &device.id		pci 0x7378
+&subvendor.id		pci 0x0000
+&subdevice.id		pci 0x0000
 |vendor.id		pci 0x9004
 &device.id		pci 0x7478
+&subvendor.id		pci 0x0000
+&subdevice.id		pci 0x0000
+|vendor.id		pci 0x9004
+&device.id		pci 0x7578
+&subvendor.id		pci 0x0000
+&subdevice.id		pci 0x0000
+|vendor.id		pci 0x9004
+&device.id		pci 0x7678
+&subvendor.id		pci 0x0000
+&subdevice.id		pci 0x0000
+|vendor.id		pci 0x9004
+&device.id		pci 0x7815
+|vendor.id		pci 0x9004
+&device.id		pci 0x7890+0x0010
+&subvendor.id		pci 0x9004
+&subdevice.id		pci 0x7893
 |vendor.id		pci 0x9004
 &device.id		pci 0x7895
 |vendor.id		pci 0x9004
@@ -405,29 +429,22 @@
 |vendor.id		pci 0x9004
 &device.id		pci 0x8878
 |vendor.id		pci 0x9005
-&device.id		pci 0x0010+0x0002
+&device.id		pci 0x0010+0x0010
 |vendor.id		pci 0x9005
-&device.id		pci 0x0013
+&device.id		pci 0x0050+0x0010
 |vendor.id		pci 0x9005
-&device.id		pci 0x001f
+&device.id		pci 0x0080+0x0010
 |vendor.id		pci 0x9005
-&device.id		pci 0x0050+0x0002
-|vendor.id		pci 0x9005
-&device.id		pci 0x005f
-|vendor.id		pci 0x9005
-&device.id		pci 0x0080+0x0002
-|vendor.id		pci 0x9005
-&device.id		pci 0x0083
-|vendor.id		pci 0x9005
-&device.id		pci 0x008f
-|vendor.id		pci 0x9005
-&device.id		pci 0x00c0+0x0002
-|vendor.id		pci 0x9005
-&device.id		pci 0x00c3
-|vendor.id		pci 0x9005
-&device.id		pci 0x00cf
+&device.id		pci 0x00c0+0x0010
 +driver.module.modprobe	aic7xxx
-+driver.module.modprobe	aic7xxx_old
+
+ vendor.id		pci 0x9005
+&device.id		pci 0x8000
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0060
+|vendor.id		pci 0x9005
+&device.id		pci 0x800f+0x0011
++driver.module.modprobe	aix79xx
 
 # scsi/aha152x.c
  vendor.id		ADP
