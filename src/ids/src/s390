@@ -9,6 +9,7 @@
 +device.name		OSA Express Ethernet card
 +baseclass.id		2
 +subclass.id		0
++driver.module.modprobe	qeth_mod
 
  vendor.id		special 0x6001
 &device.id		special 0x1731
@@ -17,6 +18,7 @@
 +device.name		zFCP controller
 +baseclass.id		1
 +subclass.id		0
++driver.module.modprobe zfcp
 
  vendor.id		special 0x6001
 &device.id		special 0x1731
@@ -25,6 +27,7 @@
 +device.name		Hipersocket
 +baseclass.id		2
 +subclass.id		0
++driver.module.modprobe qeth_mod
 
  vendor.id		special 0x6001
 &device.id		special 0x2701
@@ -99,24 +102,28 @@
 +device.name		3420 Tape Drive
 +baseclass.id		0x106
 +subclass.id		1
++driver.module.modprobe tape_34xx
  
  vendor.id		special 0x6001
 &device.id		special 0x3422
 +device.name		3422 Tape Drive
 +baseclass.id		0x106
 +subclass.id		1
++driver.module.modprobe tape_34xx
  
  vendor.id		special 0x6001
 &device.id		special 0x3480
 +device.name		3480 Tape Drive
 +baseclass.id		0x106
 +subclass.id		1
++driver.module.modprobe tape_34xx
  
  vendor.id		special 0x6001
 &device.id		special 0x3490
 +device.name		3490 Tape Drive
 +baseclass.id		0x106
 +subclass.id		1
++driver.module.modprobe tape_34xx
 
  vendor.id		special 0x6001
 &device.id		special 0x3505
@@ -155,6 +162,7 @@
 +device.name		parallel CTC Adapter
 +baseclass.id		2
 +subclass.id		0
++driver.module.modprobe ctc
 
  vendor.id		special 0x6001
 &device.id		special 0x3088
@@ -183,6 +191,7 @@
 +device.name		OSA2 Adapter
 +baseclass.id		2
 +subclass.id		0
++driver.module.modprobe lcs
 
  vendor.id		special 0x6001
 &device.id		special 0x0005
