@@ -1,4 +1,4 @@
-23/7/2001:	v2.23
+23/7/2001:	v3.00
 	- SMP code can now handle empty MP tables
 	- support module lists in driver info
 	- new 'manual' flag indicating hardware that was not
