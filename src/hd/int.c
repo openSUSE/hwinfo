@@ -378,7 +378,9 @@ void int_mouse(hd_data_t *hd_data)
     if(
       hd->base_class == bc_mouse &&
       hd->sub_class == sc_mou_ps2 &&
-      hd->bus == bt->mouse.bus
+      hd->bus == bt->mouse.bus &&
+      hd->vend == MAKE_ID(TAG_SPECIAL, 0x0200) &&
+      hd->dev == MAKE_ID(TAG_SPECIAL, 0x0002)
     ) {
       hd->vend_name = free_mem(hd->vend_name);
       hd->dev_name = free_mem(hd->dev_name);

@@ -1,8 +1,9 @@
+14/3/2002:	v4.17
 	- udated mptbase driver info (#14732)
 	- better handling of usb-storage devices
 	- add mouse info we got from smbios
 	- use info from modules.pcimap
-	- detect memory size > 4GB
+	- detect memory size > 4GB (#14287)
 
 9/3/2002:	v4.16
 	- made hwbootscan an init script again, started after hotplug.
