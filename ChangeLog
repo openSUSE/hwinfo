@@ -1,5 +1,5 @@
 5/4/2004:	v6.34
-	- disable --only usage in hwscand (#38265)
+	- make --only accept device names, too (#38265)
 	- check return value from hd_sysfs_id() (#38266)
 
 2/4/2004:	v8.33

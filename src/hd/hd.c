@@ -5444,7 +5444,9 @@ int hd_report_this(hd_data_t *hd_data, hd_t *hd)
 {
   if(!hd_data->only) return 1;
 
-  return search_str_list(hd_data->only, hd->sysfs_id) ? 1 : 0;
+  if(search_str_list(hd_data->only, hd->sysfs_id)) return 1;
+
+  return search_str_list(hd_data->only, hd->unix_dev_name) ? 1 : 0;
 }
 
 
