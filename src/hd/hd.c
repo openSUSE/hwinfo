@@ -35,6 +35,7 @@
 #include "parallel.h"
 #include "isa.h"
 #include "dac960.h"
+#include "smart.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -96,7 +97,8 @@ static struct s_mod_names {
   { mod_modem, "modem"},
   { mod_parallel, "parallel" },
   { mod_isa, "isa" },
-  { mod_dac960, "dac960" }
+  { mod_dac960, "dac960" },
+  { mod_smart, "smart" }
 };
 
 /*
@@ -137,7 +139,8 @@ static struct s_pr_flags {
   { pr_parallel, "parallel" },
   { pr_isa, "isa" },
   { pr_isa_isdn, "isa.isdn" },
-  { pr_dac960, "dac960" }
+  { pr_dac960, "dac960" },
+  { pr_smart, "smart" }
 };
 
 #define PR_OFS			2		/* skip 0, default */
@@ -448,8 +451,8 @@ void hd_scan(hd_data_t *hd_data)
   /* log the debug & probe flags */
   if(hd_data->debug) {
     ADD2LOG(
-      "libhd version %s (%s)\ndebug = 0x%x\nprobe = 0x%x (",
-      HD_VERSION, HD_ARCH, hd_data->debug, hd_data->probe
+      "libhd version %s%s (%s)\ndebug = 0x%x\nprobe = 0x%x (",
+      HD_VERSION, getuid() ? "u" : "", HD_ARCH, hd_data->debug, hd_data->probe
     );
 
     for(j = PR_OFS, i = 0; j < pr_all; j++) {
@@ -501,6 +504,7 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_ide(hd_data);
   hd_scan_scsi(hd_data);
   hd_scan_dac960(hd_data);
+  hd_scan_smart(hd_data);
   hd_scan_usb(hd_data);
 #if defined(__PPC__)
   hd_scan_adb(hd_data);

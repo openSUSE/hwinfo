@@ -236,6 +236,7 @@ void get_serial_mouse(hd_data_t *hd_data)
   struct timeval to;
   char buf[4];
   ser_mouse_t *sm;
+  struct termios tio;
 
   FD_ZERO(&set);
 
@@ -248,9 +249,11 @@ void get_serial_mouse(hd_data_t *hd_data)
       else
 #endif
       if((fd = open(hd->unix_dev_name, O_RDWR | O_NONBLOCK)) >= 0) {
+        if(tcgetattr(fd, &tio)) continue;
         sm = add_ser_mouse_entry(&hd_data->ser_mouse, new_mem(sizeof *sm));
         sm->dev_name = new_str(hd->unix_dev_name);
         sm->fd = fd;
+        sm->tio = tio;
         sm->hd_idx = hd->idx;
         if(fd > fd_max) fd_max = fd;
         FD_SET(fd, &set);
@@ -299,6 +302,8 @@ void get_serial_mouse(hd_data_t *hd_data)
 
   for(sm = hd_data->ser_mouse; sm; sm = sm->next) {
     chk4id(sm);
+    /* reset serial lines */
+    tcsetattr(sm->fd, TCSAFLUSH, &sm->tio);
     close(sm->fd);
 
     if(sm->is_mouse) {

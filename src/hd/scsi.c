@@ -7,8 +7,8 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <scsi/scsi.h>
-#include <linux/hdreg.h>               
-#include "scsi_ioctl.h"		// is missing(?!) on SuSE systems; taken from Debian
+#include <linux/hdreg.h>
+#include <linux/fs.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -26,9 +26,10 @@ void hd_scan_scsi(hd_data_t *hd_data)
 {
 
   hd_t *hd;
-//  unsigned char scsi_cmd_buf[256];
+  unsigned char scsi_cmd_buf[0x400];
   unsigned u0, u1, u2;
-  int fd, host_line, prog_cnt = 0;
+  unsigned long secs;
+  int i, fd, host_line, prog_cnt = 0;
   char scsi_vend[20], scsi_model[40], scsi_rev[20], scsi_type[30];
   char *s0, *s1, *s2;
   unsigned sd_cnt = 0, sr_cnt = 0, st_cnt = 0, sg_cnt = 0;
@@ -119,41 +120,69 @@ void hd_scan_scsi(hd_data_t *hd_data)
         if(*scsi_model) hd->dev_name = canon_str(scsi_model, strlen(scsi_model));
         if(*scsi_rev) hd->rev_name = canon_str(scsi_rev, strlen(scsi_rev));
 
-        PROGRESS(2, ++prog_cnt, "get geo");  
+        PROGRESS(3, ++prog_cnt, "get geo");  
 
         fd = -1;
         if(
           hd->sub_class == sc_sdev_disk &&
           hd->unix_dev_name &&
-          (fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK)) >= 0 &&
-          !ioctl(fd, HDIO_GETGEO, &geo)
+          (fd = open(hd->unix_dev_name, O_RDONLY)) >= 0
         ) {
-          res = add_res_entry(&hd->res, new_mem(sizeof *res));
-          res->disk_geo.type = res_disk_geo;
-          res->disk_geo.cyls = geo.cylinders;
-          res->disk_geo.heads = geo.heads;
-          res->disk_geo.sectors = geo.sectors;
-          res->disk_geo.logical = 1;
+          secs = 0; u0 = 0;
 
-          res = add_res_entry(&hd->res, new_mem(sizeof *res));
-          res->size.type = res_size;
-          res->size.unit = size_unit_sectors;
-          res->size.val1 = geo.cylinders * geo.heads * geo.sectors;
-          res->size.val2 = 512;
-
-#if 0
-          memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
-          scsi_cmd_buf[8 + 0] = INQUIRY;	// command
-          scsi_cmd_buf[8 + 4] = 0x60;	// INQUIRY_REPLY_LEN
-          if(
-            !ioctl(fd, SCSI_IOCTL_SEND_COMMAND, scsi_cmd_buf)
-          ) {
-            fprintf(stderr, "0x%02x\n", scsi_cmd_buf[8]);
+          if(!ioctl(fd, BLKGETSIZE, &secs)) {
+            ADD2LOG("scsi ioctl(secs) ok\n");
           }
-#endif
 
-          if(fd >= 0) close(fd);
+          if(!ioctl(fd, HDIO_GETGEO, &geo)) {
+            u0 = 1;
+            ADD2LOG("scsi ioctl(geo) ok\n");
+            res = add_res_entry(&hd->res, new_mem(sizeof *res));
+            res->disk_geo.type = res_disk_geo;
+            res->disk_geo.cyls = geo.cylinders;
+            res->disk_geo.heads = geo.heads;
+            res->disk_geo.sectors = geo.sectors;
+            res->disk_geo.logical = 1;
+          }
+
+          if(secs || u0) {
+            res = add_res_entry(&hd->res, new_mem(sizeof *res));
+            res->size.type = res_size;
+            res->size.unit = size_unit_sectors;
+            res->size.val1 = secs ? secs : geo.cylinders * geo.heads * geo.sectors;
+            res->size.val2 = 512;
+          }
         }
+
+        if(fd >= 0) close(fd);
+
+        fd = -1;
+        if(
+          hd->sub_class == sc_sdev_disk &&
+          hd->unix_dev_name &&
+          (fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK)) >= 0
+        ) {
+
+          PROGRESS(3, prog_cnt, "scsi cmd");  
+
+          memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
+          *((unsigned *) (scsi_cmd_buf + 4)) = sizeof scsi_cmd_buf - 0x100;
+          scsi_cmd_buf[8 + 0] = 0x12;
+          scsi_cmd_buf[8 + 1] = 0x01;
+          scsi_cmd_buf[8 + 2] = 0x80;
+          scsi_cmd_buf[8 + 4] = 0xff;
+
+          i = ioctl(fd, 1 /* SCSI_IOCTL_SEND_COMMAND */, scsi_cmd_buf);
+
+          if(i) {
+            ADD2LOG("%s: scsi status %d\n", hd->unix_dev_name, i);
+          }
+          else {
+            hd->serial = canon_str(scsi_cmd_buf + 8 + 4, scsi_cmd_buf[8 + 3]);
+          }
+        }
+
+        if(fd >= 0) close(fd);
 
         host_line = 0;
       }

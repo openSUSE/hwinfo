@@ -1,5 +1,11 @@
-	- changed mylex code: dropped HDIO_GETGEO ioctl
+18/2/2000:	v0.69
+	- mouse code now resets serial lines
+
+18/2/2000:	v0.68
 	- new try at AGP detection
+	- improved mylex code
+	- added compaq smart raid detection
+	- improved scsi code
 
 17/2/2000:	v0.67
 	- improved CPU code on axp & ppc
