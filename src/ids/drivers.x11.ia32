@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-07-17 19:26:41
+#hwinfo data from 2000-07-18 17:39:49
 #
 
 
@@ -1362,11 +1362,6 @@
 # Nvidia:GEFORCE256
 10de 0100  
 	x	4|nv||||sw_cursor|
-
-
-# Nvidia:GEFORCE256
-10de 0100  
-	x	4|nvidia|3d|nv_glx|glx|sw_cursor|4
 
 
 # Nvidia:GEFORCE256
