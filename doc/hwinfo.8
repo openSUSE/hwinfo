@@ -1,0 +1,88 @@
+.\" Michal Svec <msvec@suse.cz>
+.\"
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.\"
+.TH HWINFO 8 "January 2003" "hwinfo" "System configuration"
+.\"
+.\"
+.SH NAME
+hwinfo \- probe for hardware
+.\"
+.\"
+.SH SYNOPSIS
+.B hwinfo [
+.I options
+.B ]
+.\"
+.\"
+.SH DESCRIPTION
+.B hwinfo
+is used to probe for the hardware present in the system. It can be used
+to generate a system overview log which can be later used for support.
+.\"
+.\"
+.SH OPTIONS
+.\"
+.TP
+.BI --debug " " level
+Set debug
+.B level.
+The debug info is shown only in the log file. If you specify a log file,
+the debug level is implicitly set to a reasonable value.
+.\"
+.TP
+.BI --dump-db " " n
+Dump hardware data base,
+.B n
+is either
+.B 0
+for the external data base, or
+.B 1
+for the internal data base.
+.\"
+.TP
+.BI --help
+Print a usage and exit.
+.\"
+.TP
+.BI --log " " logfile
+Write info to
+.B logfile.
+.\"
+.TP
+.BI --short
+Just a short listing.
+.\"
+.TP
+.BI --<hwitem>
+Probe for the particular hardware item. Available hardware items are:
+.B cdrom, floppy, disk, network, gfxcard, framebuffer, monitor, camera,
+.B mouse, joystick, keyboard, chipcard, sound, isdn, modem, storage-ctrl,
+.B netcard, printer, tv, dvb, scanner, braille, sys, bios, cpu, partition,
+.B usb-ctrl, usb, pci, isapnp, ide, scsi, bridge, hub, memory, smp,
+.B all
+and
+.B reallyall.
+.\"
+.\"
+.SH FILES
+.B /var/lib/hardware/*
+.\"
+.\"
+.SH BUGS
+Not all hardware can be detected.
+.\"
+.\"
+.SH AUTHOR
+.nf
+Steffen Winterfeldt <snwint@suse.de> - hwinfo
+Michal Svec <msvec@suse.cz> - manual page
+.fi
+.\"
+.\"
+.SH "SEE ALSO"
+Documentation in the /usr/share/doc/packages/hwinfo.
+.\"
+.\" EOF

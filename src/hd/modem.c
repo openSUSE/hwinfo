@@ -566,6 +566,24 @@ void guess_modem_name(hd_data_t *hd_data, ser_device_t *modem)
 
       return;
     }
+
+    if(strstr(sl->str, "FM560 VER 3.01 V.90")) {
+      /* looks like a Microcom DeskPorte 56K Voice ... */
+
+      sm->vend = new_str("Microcom");
+      sm->user_name = new_str("TravelCard 56K");
+
+      return;
+    }
+
+    if(strstr(sl->str, "Compaq Microcom 550 56K Modem")) {
+      /* looks like a Microcom DeskPorte Pocket ... */
+
+      sm->vend = new_str("Compaq");
+      sm->user_name = new_str("Microcom 550 56K Modem");
+
+      return;
+    }
   }
 
   /* ATI0 command */
