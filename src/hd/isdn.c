@@ -291,9 +291,9 @@ cdb_isdn_card *get_dsl_info(hd_t *hd)
       hd->sub_class.id = sc_dsl_unknown;
       civ = hd_cdbisdn_get_vario(cic->vario);
       if (civ && civ->interface) {
-        if (!strcmp(civ->interface, "CAPI20")) {
+        if (0 == strncmp(civ->interface, "CAPI20", 6)) {
           hd->sub_class.id = sc_dsl_capi;
-        } else if (!strcmp(civ->interface, "pppoe")) {
+        } else if (0 == strncmp(civ->interface, "pppoe", 5)) {
           hd->sub_class.id = sc_dsl_pppoe;
         }
       }
