@@ -1,3 +1,6 @@
+	- do not delete the reconfig.needed files, but set configured=no
+	  and needed=no to avoid problems with unsupported graphic cards.
+
 4/3/2002:	v4.15
 	- new isdn data
 	- look at /proc/apm, too
