@@ -1,5 +1,6 @@
-29/10/2004:	v9.30
+30/11/2004:	v9.30
 	- fixed some dvb card entries (#47057)
+	- avoid libsysfs accidentally reading pci config space (#48582)
 
 7/10/2004:	v9.29
 	- fixed segfault with large /proc/interrupt entries (e.g. 512 cpus) (#46582)

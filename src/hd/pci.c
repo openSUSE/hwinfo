@@ -34,6 +34,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+static struct sysfs_attribute *hd_read_single_sysfs_attribute(char *path, char *name);
 static void get_pci_data(hd_data_t *hd_data);
 static void add_pci_data(hd_data_t *hd_data);
 static void add_driver_info(hd_data_t *hd_data);
@@ -65,6 +66,27 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
 
 
 /*
+ * sysfs_get_device_attr() reads *all* device attributes, then returns the
+ * requested one.
+ *
+ * This leads to problems where some attribute *must not* be read.
+ */
+struct sysfs_attribute *hd_read_single_sysfs_attribute(char *path, char *name)
+{
+  char *attr_path = NULL;
+  struct sysfs_attribute *attr;
+
+  str_printf(&attr_path, 0, "%s/%s", path, name);
+  attr = sysfs_open_attribute(attr_path);
+  free_mem(attr_path);
+
+  sysfs_read_attribute(attr);
+
+  return attr;
+}
+
+
+/*
  * Get the (raw) PCI data, taken from /sys/bus/pci/.
  *
  * Note: non-root users can only read the first 64 bytes (of 256)
@@ -83,6 +105,7 @@ void get_pci_data(hd_data_t *hd_data)
   struct sysfs_bus *sf_bus;
   struct dlist *sf_dev_list;
   struct sysfs_device *sf_dev;
+  struct sysfs_attribute *attr;
 
   sf_bus = sysfs_open_bus("pci");
 
@@ -112,39 +135,45 @@ void get_pci_data(hd_data_t *hd_data)
     pci->slot = u2;
     pci->func = u3;
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "class"), &ul0, 0)) {
+    if(hd_attr_uint(attr = hd_read_single_sysfs_attribute(sf_dev->path, "class"), &ul0, 0)) {
       ADD2LOG("    class = 0x%x\n", (unsigned) ul0);
       pci->prog_if = ul0 & 0xff;
       pci->sub_class = (ul0 >> 8) & 0xff;
       pci->base_class = (ul0 >> 16) & 0xff;
     }
+    sysfs_close_attribute(attr);
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "vendor"), &ul0, 0)) {
+    if(hd_attr_uint(attr = hd_read_single_sysfs_attribute(sf_dev->path, "vendor"), &ul0, 0)) {
       ADD2LOG("    vendor = 0x%x\n", (unsigned) ul0);
       pci->vend = ul0 & 0xffff;
     }
+    sysfs_close_attribute(attr);
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "device"), &ul0, 0)) {
+    if(hd_attr_uint(attr = hd_read_single_sysfs_attribute(sf_dev->path, "device"), &ul0, 0)) {
       ADD2LOG("    device = 0x%x\n", (unsigned) ul0);
       pci->dev = ul0 & 0xffff;
     }
+    sysfs_close_attribute(attr);
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "subsystem_vendor"), &ul0, 0)) {
+    if(hd_attr_uint(attr = hd_read_single_sysfs_attribute(sf_dev->path, "subsystem_vendor"), &ul0, 0)) {
       ADD2LOG("    subvendor = 0x%x\n", (unsigned) ul0);
       pci->sub_vend = ul0 & 0xffff;
     }
+    sysfs_close_attribute(attr);
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "subsystem_device"), &ul0, 0)) {
+    if(hd_attr_uint(attr = hd_read_single_sysfs_attribute(sf_dev->path, "subsystem_device"), &ul0, 0)) {
       ADD2LOG("    subdevice = 0x%x\n", (unsigned) ul0);
       pci->sub_dev = ul0 & 0xffff;
     }
+    sysfs_close_attribute(attr);
 
-    if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "irq"), &ul0, 0)) {
+    if(hd_attr_uint(attr = hd_read_single_sysfs_attribute(sf_dev->path, "irq"), &ul0, 0)) {
       ADD2LOG("    irq = %d\n", (unsigned) ul0);
       pci->irq = ul0;
     }
+    sysfs_close_attribute(attr);
 
-    sl = hd_attr_list(sysfs_get_device_attr(sf_dev, "resource"));
+    sl = hd_attr_list(attr = hd_read_single_sysfs_attribute(sf_dev->path, "resource"));
     for(u = 0; sl; sl = sl->next, u++) {
       if(
         sscanf(sl->str, "0x%"SCNx64" 0x%"SCNx64" 0x%"SCNx64, &ul0, &ul1, &ul2) == 3 &&
@@ -157,6 +186,7 @@ void get_pci_data(hd_data_t *hd_data)
         pci->addr_flags[u] = ul2;
       }
     }
+    sysfs_close_attribute(attr);
 
     s = NULL;
     str_printf(&s, 0, "%s/config", sf_dev->path);
