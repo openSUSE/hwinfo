@@ -1,3 +1,7 @@
+27/11/2002:	v5.45
+	- changed tg3/bcm* on ia64 (#21984)
+	- one ncr53c8xx vs. sym53c8xx issue (#21984)
+
 19/11/2002:	v5.44
 	- use eepro100 instead of e100 on ia64 (#21055)
 
