@@ -21,6 +21,7 @@
 #define BIOS_TEST
 
 static void read_memory(memory_range_t *mem);
+#ifndef LIBHD_TINY
 static void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *label);
 static void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt);
 static void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt);
@@ -32,6 +33,7 @@ static void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt);
 static unsigned char crc(unsigned char *mem, unsigned len);
 static int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
 static void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
+#endif
 
 int detect_smp(hd_data_t *hd_data)
 {
@@ -66,8 +68,9 @@ int detect_smp(hd_data_t *hd_data)
 void hd_scan_bios(hd_data_t *hd_data)
 {
   hd_t *hd;
-  char *s;
   bios_info_t *bt;
+#ifndef LIBHD_TINY
+  char *s;
   unsigned char *bios_ram;
   unsigned u, u1;
   memory_range_t mem;
@@ -75,6 +78,7 @@ void hd_scan_bios(hd_data_t *hd_data)
   vbe_info_t *vbe;
   vbe_mode_info_t *mi;
   hd_res_t *res;
+#endif
 
   if(!hd_probe_feature(hd_data, pr_bios)) return;
 
@@ -434,6 +438,7 @@ void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *labe
 }
 
 
+#ifndef LIBHD_TINY
 void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt)
 {
   int i;
@@ -455,7 +460,6 @@ void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt)
     }
   }
 }
-
 
 unsigned char crc(unsigned char *mem, unsigned len)
 {
@@ -1027,6 +1031,7 @@ void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
 
 
 }
+#endif		/* !defined(LIBHD_TINY) */
 
 
 #endif /* defined(__i386__) || defined (__x86_64__) */
