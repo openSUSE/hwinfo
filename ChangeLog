@@ -1,5 +1,6 @@
 	- fix smp detection on ia32e (#34742)
 	- store some new fields in unique-id files
+	- better error logging for vbios init
 
 24/2/2004:	v8.13
 	- include x86emu into libhd.so
