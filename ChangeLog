@@ -3,6 +3,7 @@
 	- fixed memory size detection
 	- added 'generation' to system entry (for ppc)
 	- new scsi detection code
+	- kukuk: PS/2 keyboard detection on UltraSPARC
 
 28/7/2000:	v1.27
 	- fixed 'x11' parameter parsing

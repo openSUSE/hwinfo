@@ -1254,9 +1254,11 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
   switch(arch) {
     case arch_intel:
     case arch_alpha:
+      ki->XkbRules = new_str("xfree86");
       ki->XkbModel = new_str("pc104");
       break;
     case arch_ppc:
+      ki->XkbRules = new_str("xfree86");
       ki->XkbModel = new_str("macintosh");
       for(hd_tmp = hd_data->hd; hd_tmp; hd_tmp = hd_tmp->next) {
         if(hd_tmp->base_class == bc_internal && hd_tmp->sub_class == sc_int_cpu) {
@@ -1270,6 +1272,7 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
     case arch_sparc:
     case arch_sparc64:
       if(hd->vend == MAKE_ID(TAG_SPECIAL, 0x0202)) {
+        ki->XkbRules = new_str("sun");
         u = ID_VALUE(hd->dev);
         if(u == 4) ki->XkbModel = new_str("type4");
         if(u == 5) {
@@ -1371,6 +1374,11 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
         ki->XkbLayout = new_str(s1);
         ki->keymap = new_str(s2);
       }
+      else
+	{
+	  ki->XkbRules = new_str ("xfree86");
+	  ki->XkbModel = new_str ("pc104");
+	}
       break;
   }
 
@@ -3349,4 +3357,3 @@ unsigned has_something_attached(hd_data_t *hd_data, hd_t *hd)
 
   return 0;
 }
-

@@ -131,88 +131,113 @@ void hd_scan_kbd(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
 
+  PROGRESS(1, 0, "sun serial console");
+
+  if((fd = open(DEV_CONSOLE, O_RDWR | O_NONBLOCK | O_NOCTTY)) >= 0)
+    {
+      if(ioctl(fd, TIOCGSERIAL, &ser_info))
+	{
+	  ser_cons = -1;
+	}
+      else
+	{
+	  ser_cons = ser_info.line;
+	  ADD2LOG("serial console at line %d\n", ser_cons);
+	}
+      close(fd);
+
+      if(ser_cons >= 0 && (fd = open(DEV_OPENPROM, O_RDWR | O_NONBLOCK)) >= 0)
+	{
+	  sprintf(opio->oprom_array, "tty%c-mode", (ser_cons & 1) + 'a');
+	  opio->oprom_size = sizeof buf - 0x100;
+	  if(!ioctl(fd, OPROMGETOPT, opio))
+	    {
+	      if(opio->oprom_size < 0x100)
+		{
+		  opio->oprom_array[opio->oprom_size] = 0;
+		  ADD2LOG(
+			  "prom(tty%c-mode) = \"%s\" (%d bytes)\n",
+			  (ser_cons & 1) + 'a', opio->oprom_array,
+			  opio->oprom_size
+			  );
+		  hd = add_hd_entry(hd_data, __LINE__, 0);
+		  hd->base_class = bc_keyboard;
+		  hd->sub_class = sc_keyboard_console;
+		  hd->bus = bus_serial;
+		  hd->vend = MAKE_ID(TAG_SPECIAL, 0x0203);
+		  hd->dev = MAKE_ID(TAG_SPECIAL, 0x0000);
+		  str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%d", ser_cons);
+		  if((i = sscanf(opio->oprom_array, "%u,%u,%c,%u,%c",
+				 &u, &u1, &c1, &u2, &c2)) >= 1)
+		    {
+		      res = add_res_entry(&hd->res, new_mem(sizeof *res));
+		      res->baud.type = res_baud;
+		      res->baud.speed = u;
+		      if(i >= 2) res->baud.bits = u1;
+		      if(i >= 3) res->baud.parity = c1;
+		      if(i >= 4) res->baud.stopbits = u2;
+		      if(i >= 5) res->baud.handshake = c2;
+		    }
+		}
+	    }
+	  close(fd);
+	  /* We have a serial console, so don't test for keyboard. Else
+	     we will always find a PS/2 keyboard */
+	  return;
+	}
+    }
+
   PROGRESS(1, 0, "sun kbd");
 
-  if((fd = open(DEV_KBD, O_RDWR | O_NONBLOCK | O_NOCTTY)) >= 0) {
-    if(ioctl(fd, KIOCTYPE, &kid)) kid = -1;
-    if(ioctl(fd, KIOCLAYOUT, &klay)) klay = -1;
-    close(fd);
+  if((fd = open(DEV_KBD, O_RDWR | O_NONBLOCK | O_NOCTTY)) >= 0)
+    {
+      if(ioctl(fd, KIOCTYPE, &kid)) kid = -1;
+      if(ioctl(fd, KIOCLAYOUT, &klay)) klay = -1;
+      close(fd);
 
-    if(kid != -1) {
-      ADD2LOG("sun keyboard: type %d, layout %d\n", kid, klay);
+      if(kid != -1)
+	{
+	  ADD2LOG("sun keyboard: type %d, layout %d\n", kid, klay);
 
+	  hd = add_hd_entry(hd_data, __LINE__, 0);
+	  hd->base_class = bc_keyboard;
+	  hd->sub_class = sc_keyboard_kbd;
+	  hd->bus = bus_serial;
+	  if(kid == 4 && klay >= 0)
+	    hd->prog_if = klay;
+
+	  hd->vend = MAKE_ID(TAG_SPECIAL, 0x0202);
+	  kid2 = kid;
+	  if(kid == 4 && klay > 0x20)
+	    kid2 = 5;
+	  hd->dev = MAKE_ID(TAG_SPECIAL, kid2);
+	  if(kid2 == 5) {
+	    if(klay == 0x22 || klay == 0x51)
+	      {
+		hd->sub_vend = MAKE_ID(TAG_SPECIAL, 0x0202);
+		hd->sub_dev = MAKE_ID(TAG_SPECIAL, 0x0001);
+	      }
+	    else if(!(
+		      klay == 0x21 || (klay >= 0x2f && klay <= 0x31) ||
+		      klay == 0x50 || (klay >= 0x5e && klay <= 0x60)
+		      ))
+	      {
+		hd->sub_vend = MAKE_ID(TAG_SPECIAL, 0x0202);
+		hd->sub_dev = MAKE_ID(TAG_SPECIAL, 0x0002);
+	      }
+	  }
+	}
+    }
+  else
+    {
+      /* We must have a PS/2 Keyboard */
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class = bc_keyboard;
       hd->sub_class = sc_keyboard_kbd;
-      hd->bus = bus_serial;
-      if(kid == 4 && klay >= 0) hd->prog_if = klay;
-
-      hd->vend = MAKE_ID(TAG_SPECIAL, 0x0202);
-      kid2 = kid;
-      if(kid == 4 && klay > 0x20) kid2 = 5;
-      hd->dev = MAKE_ID(TAG_SPECIAL, kid2);
-      if(kid2 == 5) {
-        if(klay == 0x22 || klay == 0x51) {
-          hd->sub_vend = MAKE_ID(TAG_SPECIAL, 0x0202);
-          hd->sub_dev = MAKE_ID(TAG_SPECIAL, 0x0001);
-        }
-        else if(!(
-          klay == 0x21 || (klay >= 0x2f && klay <= 0x31) ||
-          klay == 0x50 || (klay >= 0x5e && klay <= 0x60)
-        )) {
-          hd->sub_vend = MAKE_ID(TAG_SPECIAL, 0x0202);
-          hd->sub_dev = MAKE_ID(TAG_SPECIAL, 0x0002);
-        }
-      }
+      hd->bus = bus_ps2;
+      hd->vend = MAKE_ID(TAG_SPECIAL, 0x0201);
+      hd->dev = MAKE_ID(TAG_SPECIAL, 1);
     }
-  }
-
-
-  if((fd = open(DEV_CONSOLE, O_RDWR | O_NONBLOCK | O_NOCTTY)) >= 0) {
-    if(ioctl(fd, TIOCGSERIAL, &ser_info)) {
-      ser_cons = -1;
-    }
-    else {
-      ser_cons = ser_info.line;
-      ADD2LOG("serial console at line %d\n", ser_cons);
-    }
-    close(fd);
-
-    if(ser_cons >= 0 && (fd = open(DEV_OPENPROM, O_RDWR | O_NONBLOCK)) >= 0) {
-      sprintf(opio->oprom_array, "tty%c-mode", (ser_cons & 1) + 'a');
-      opio->oprom_size = sizeof buf - 0x100;
-      if(!ioctl(fd, OPROMGETOPT, opio)) {
-        if(opio->oprom_size < 0x100) {
-          opio->oprom_array[opio->oprom_size] = 0;
-          ADD2LOG(
-            "prom(tty%c-mode) = \"%s\" (%d bytes)\n",
-            (ser_cons & 1) + 'a', opio->oprom_array,
-            opio->oprom_size
-          );
-          hd = add_hd_entry(hd_data, __LINE__, 0);
-          hd->base_class = bc_keyboard;
-          hd->sub_class = sc_keyboard_console;
-          hd->bus = bus_serial;
-          hd->vend = MAKE_ID(TAG_SPECIAL, 0x0203);
-          hd->dev = MAKE_ID(TAG_SPECIAL, 0x0000);
-          str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%d", ser_cons);
-          if((i = sscanf(opio->oprom_array, "%u,%u,%c,%u,%c", &u, &u1, &c1, &u2, &c2)) >= 1) {
-            res = add_res_entry(&hd->res, new_mem(sizeof *res));
-            res->baud.type = res_baud;
-            res->baud.speed = u;
-            if(i >= 2) res->baud.bits = u1;
-            if(i >= 3) res->baud.parity = c1;
-            if(i >= 4) res->baud.stopbits = u2;
-            if(i >= 5) res->baud.handshake = c2;
-          }
-        }
-      }
-      close(fd);
-    }
-
-  }
-
 }
 
 #endif	/* __sparc__ */
-
