@@ -255,11 +255,7 @@ void read_cpuinfo(hd_data_t *hd_data)
         ct->model = model;
         ct->stepping = stepping;
         ct->cache = cache;
-#ifdef __i386__
 	hd_data->boot = boot_grub;
-#else	/* __x86_64__ */
-	hd_data->boot = boot_lilo;
-#endif
 
         /* round clock to typical values */
         if(mhz >= 38 && mhz <= 42)
@@ -459,7 +455,7 @@ void read_cpuinfo(hd_data_t *hd_data)
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(
-      sscanf(sl->str, "processor %u : version = %u , identification = %u , machine = %u", &u0, &u1, &u2, &u3) == 4
+      sscanf(sl->str, "processor %u : version = %x , identification = %x , machine = %x", &u0, &u1, &u2, &u3) == 4
     ) {
       ct = new_mem(sizeof *ct);
       ct->architecture = arch_s390;

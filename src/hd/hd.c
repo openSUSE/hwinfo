@@ -2666,8 +2666,12 @@ int hd_smp_support(hd_data_t *hd_data)
   int is_smp = 0;
   unsigned u;
   hd_t *hd, *hd0;
+#if !defined(LIBHD_TINY) && (defined(__i386__) || defined (__x86_64__))
   cpu_info_t *ct;
+#endif
+#if defined(__i386__)
   unsigned cpu_threads = 0;
+#endif
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -2698,8 +2702,7 @@ int hd_smp_support(hd_data_t *hd_data)
 
   hd = hd_free_hd_list(hd);
 
-#ifndef LIBHD_TINY
-#if defined(__i386__) || defined (__x86_64__)
+#if !defined(LIBHD_TINY) && (defined(__i386__) || defined (__x86_64__))
   if(is_smp < 2) {
     if(!hd_data->bios_ram.data) {
       hd_free_hd_list(hd_list(hd_data, hw_sys, 1, NULL));
@@ -2709,7 +2712,6 @@ int hd_smp_support(hd_data_t *hd_data)
     if(is_smp < 2) is_smp = 0;
     if(!is_smp && cpu_threads > 1) is_smp = 2;
   }
-#endif
 #endif
 
 #ifdef __PPC__

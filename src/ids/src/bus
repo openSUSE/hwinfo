@@ -67,3 +67,6 @@
  bus.id			0x8a
 +bus.name		I2O
 
+ bus.id			0x8b
++bus.name		Virtual IO
+

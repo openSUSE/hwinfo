@@ -46,7 +46,7 @@ void hd_scan_dasd(hd_data_t *hd_data)
     if(sscanf(sl->str, "%x%*s at (%*u:%*u) is dasd%c:active at blocksize: %u, %u blocks", &u0, &c, &u2, &u3) == 4) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class.id = bc_storage_device;
-      hd->bus.id = bus_none;
+      hd->bus.id = bus_vio;
       hd->slot = (u0 >> 8) & 0xff;
       hd->func = u0 & 0xff;
 

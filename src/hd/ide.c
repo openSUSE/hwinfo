@@ -273,7 +273,7 @@ void scan_ide2(hd_data_t *hd_data)
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class.id = bc_storage_device;
       hd->sub_class.id = sc_sdev_disk;
-      hd->bus.id = bus_none;
+      hd->bus.id = bus_vio;
       hd->slot = i;
 
       hd->unix_dev_name = new_str(s);

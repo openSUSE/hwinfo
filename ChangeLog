@@ -1,5 +1,8 @@
 22/8/2002:	v5.15
 	- check cpuid for hyperthreading (#13532)
+	- add new bus id 'Virtual IO' for DASD (#18202)
+	- use grub on x86_64
+	- fixed s390 cpu detection
 
 20/8/2002:	v5.14
 	- mls: x86 emu for BIOS calls on ia64
