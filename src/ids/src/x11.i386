@@ -686,6 +686,11 @@
 +driver.xfree		3|SVGA
 
  vendor.id		pci 0x1013
+&device.id		pci 0x00b8
++device.name		GD 5446
++driver.xfree		4|cirrus
+
+ vendor.id		pci 0x1013
 &device.id		pci 0x00bc
 +device.name		GD 5480
 +driver.xfree		4|cirrus
@@ -983,6 +988,11 @@
 &device.id		pci 0x9685
 +device.name		ProVIDIA 9685
 +driver.xfree		3|SVGA
+
+ vendor.id		pci 0x1023
+&device.id		pci 0x9750
++device.name		3DIm`age 975
++driver.xfree		4|trident|||||8,15,16,24
 
  vendor.id		pci 0x1023
 &device.id		pci 0x9753
