@@ -37,11 +37,11 @@
 
 # ATI Technologies Inc:fgl8x00
 1002 5148
-	x	4|fglr200|||||c|||
+	x	4|fglr200||xfglr200|||8|||
 
 # ATI Technologies Inc:fgl8x00
 1002 5148
-	x	4|fglr200|3d|xf86_glx|glx,dri||c||switch2xf86_glx|
+	x	4|fglr200|3d|xfglr200,xf86_glx|glx,dri||8||switch2xf86_glx|
 
 # S3 Inc.:86c795 [Savage 3D/MV]
 5333 8a21
@@ -114,6 +114,14 @@
 # nVidia Corporation:Quadro4 700XGL
 10de 025B
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+# Matrox Graphics, Inc.:G400 DH
+102b 0525 102b 2179
+	x	4|mga||||||||
+
+# Matrox Graphics, Inc.:G400 DH
+102b 0525 102b 2179
+	x	4|mga|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 # nVidia Corporation:Aladdin TNT2
 10de 00a0
@@ -469,7 +477,7 @@
 
 # Silicon Integrated Systems [SiS]:SiS630 GUI Accelerator+3D
 1039 6300
-	x	4|fbdev||||||||
+	x	4|sis||||||||
 
 # Texas Instruments:TVP4020 [Permedia 2]
 104c 3d07
@@ -1121,6 +1129,10 @@ edd8 a099
 # nVidia Corporation:GeForce4 Ti 4600
 10de 0250
 	x	4|nvidia|3d|NVIDIA_GLX,NVIDIA_kernel|glx||4||switch2nvidia_glx|
+
+# nVidia Corporation:GeForce2 Integrated GPU
+10de 01a0
+	x	4|fbdev||||||||
 
 # nVidia Corporation:Quadro4 500 GoGL
 10de 017c

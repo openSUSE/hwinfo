@@ -128,7 +128,6 @@ scan_pci(void)
     CARD8 func;
     int idx;
     
-    int i;
     PciStructPtr pci1;
     PciBusPtr pci_b1,pci_b2;
     
@@ -167,17 +166,27 @@ scan_pci(void)
 				func = 0;
 				do {
 					/* loop over the different functions, if present */
-					if (!checkSlotCfg1(busidx,cardnum,func))
-						break;
+				    if (!checkSlotCfg1(busidx,cardnum,func)) {
+						if (!func)
+							break;
+						else {
+							func++;
+							continue;
+						}
+				    }
 					readConfigSpaceCfg1(busidx,cardnum,func,reg);
 		    
 					func = interpretConfigSpace(reg,busidx,
 												cardnum,func);
 		    
-					if (idx++ > MAX_PCI_DEVICES)
-						continue;
+					if (++idx >= MAX_PCI_DEVICES)
+						break;
 				} while (func < 8);
+				if (idx >= MAX_PCI_DEVICES)
+				    break;
 			}
+			if (idx >= MAX_PCI_DEVICES)
+			    break;
 		} while (++busidx < PCI_MAXBUS);
 #if defined(__alpha__) || defined(__powerpc__) || defined(__sparc__) || defined(__ia64__)
 		/* don't use outl()  ;-) */
@@ -191,16 +200,18 @@ scan_pci(void)
 		numbus = 1;
 		idx = 0;
 		do {
-			for (slot=0xc0; slot<0xd0; i++) {
+			for (slot=0xc0; slot<0xd0; slot++) {
 				if (!checkSlotCfg2(busidx,slot))
 					break;
 				readConfigSpaceCfg2(busidx,slot,reg);
 		
 				interpretConfigSpace(reg,busidx,
 									 slot,0);
-				if (idx++ > MAX_PCI_DEVICES)
-					continue;
+				if (++idx >= MAX_PCI_DEVICES)
+					break;
 			}
+			if (idx >= MAX_PCI_DEVICES)
+			    break;
 		}  while (++busidx < PCI_MAXBUS);
     }
     

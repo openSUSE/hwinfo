@@ -1,5 +1,7 @@
 #!/bin/sh
 
+rm -f /var/lib/hardware/LOCK
+
 neededchanged=`/usr/sbin/hwscan --mouse`
 if [ -n "$neededchanged" ] ; then
 	for i in $neededchanged ; do

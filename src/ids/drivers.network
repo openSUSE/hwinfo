@@ -321,8 +321,10 @@ PNP 80f7+2
 # net/bcm/b57um.c
 14e4 1644+2
 14e4 1647
+	i	tg3
 	i	bcm5700
 
 # net/dl2k.c
 1186 4000
 	i	dl2k
+

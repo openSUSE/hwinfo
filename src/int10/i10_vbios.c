@@ -88,7 +88,7 @@ InitInt10()
       return -1;
     }
   setup_io();
-#if 0
+#if 1
   iopl(3);
   scan_pci();
   for (; CurrentPci; CurrentPci = CurrentPci->next)

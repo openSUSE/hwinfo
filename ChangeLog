@@ -1,3 +1,9 @@
+21/3/2002:	v4.20
+	- remove /var/lib/hardware/LOCK in hwbootscan (#15217)
+	- updated X11 data
+	- prefer tg3 over bcm5700
+	- fixed broken framebuffer detection: reenabled & fixed pci setup code
+
 18/3/2002:	v4.19
 	- fixed segfault in ide code
 
