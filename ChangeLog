@@ -1,3 +1,9 @@
+9/2/2004:	v8.05
+	- nvnet -> forcedeth (#25531)
+	- sata module data updated
+	- moved psaux mice to input/mice
+	- make convert_hd understand modules.alias files
+
 6/2/2004:	v8.04
 	- sysfs includes moved
 	- usb modules renamed

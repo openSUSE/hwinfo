@@ -422,33 +422,6 @@
 &device.id		special 0x0040
 +driver.module.modprobe	swim3
 
-# ide/hpt3*.c
- vendor.id		pci 0x1103
-&device.id		pci 0x0003+0x0006
-+driver.module.insmod	ataraid|hptraid
-
-# promise ide raid
- vendor.id		pci 0x105a
-&device.id		pci 0x6268+2
-|vendor.id		pci 0x105a
-&device.id		pci 0x4d68+2
-|vendor.id		pci 0x105a
-&device.id		pci 0x1275
-|vendor.id		pci 0x105a
-&device.id		pci 0x5275
-|vendor.id		pci 0x105a
-&device.id		pci 0x7275
-|baseclass.id		0x001
-&subclass.id		0x04
-&vendor.id		pci 0x105a
-+driver.module.insmod	ataraid|pdcraid
-
- vendor.id		pci 0x1095
-&device.id		pci 0x0680
-|vendor.id		pci 0x1095
-&device.id		pci 0x3112
-+driver.module.insmod	ataraid|silraid
-
  baseclass.id		0x00e
 &subclass.id		0x00+2
 +driver.module.insmod	i2o_pci|i2o_core|i2o_config|i2o_block
@@ -528,21 +501,65 @@
 &subdevice.id		pci 0x10c2
 +driver.module.modprobe	aacraid
 
-#pcimap
+# modules.alias
+ vendor.id		pci 0x1166
+&device.id		pci 0x0240
++driver.module.modprobe	sata_svw
+
+# modules.alias
  vendor.id		pci 0x1106
 &device.id		pci 0x3149
-+driver.module.modprobe	ata_via
++driver.module.modprobe	sata_via
 
-# pcimap
+# modules.alias
  vendor.id		pci 0x105a
-&device.id		pci 0x3318
+&device.id		pci 0x3318+0x0002
+|vendor.id		pci 0x105a
+&device.id		pci 0x3371
 |vendor.id		pci 0x105a
 &device.id		pci 0x3373
 |vendor.id		pci 0x105a
-&device.id		pci 0x3375
+&device.id		pci 0x3375+0x0002
 |vendor.id		pci 0x105a
-&device.id		pci 0x6626
-+driver.module.modprobe	pdc-ultra
+&device.id		pci 0x6622
++driver.module.modprobe	sata_promise
+
+# modules.alias
+ vendor.id		pci 0x1095
+&device.id		pci 0x0240
+|vendor.id		pci 0x1095
+&device.id		pci 0x3112
+|vendor.id		pci 0x1095
+&device.id		pci 0x3114
+|vendor.id		pci 0x1095
+&device.id		pci 0x3512
++driver.module.modprobe	sata_sil
+
+# ide/hpt3*.c
+ vendor.id		pci 0x1103
+&device.id		pci 0x0003+0x0006
++driver.module.insmod	ataraid|hptraid
+
+# promise ide raid
+ vendor.id		pci 0x105a
+&device.id		pci 0x6268+2
+|vendor.id		pci 0x105a
+&device.id		pci 0x4d68+2
+|vendor.id		pci 0x105a
+&device.id		pci 0x1275
+|vendor.id		pci 0x105a
+&device.id		pci 0x5275
+|vendor.id		pci 0x105a
+&device.id		pci 0x7275
+|baseclass.id		0x001
+&subclass.id		0x04
+&vendor.id		pci 0x105a
++driver.module.insmod	ataraid|pdcraid
+
+# ???
+ vendor.id		pci 0x1095
+&device.id		pci 0x0680
++driver.module.insmod	ataraid|silraid
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

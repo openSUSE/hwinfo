@@ -290,7 +290,7 @@ static void get_ps2_mouse(hd_data_t *hd_data)
         hd->base_class.id = bc_mouse;
         hd->sub_class.id = sc_mou_ps2;
         hd->bus.id = bus_ps2;
-        hd->unix_dev_name = new_str(DEV_PSAUX);
+        hd->unix_dev_name = new_str(DEV_MICE);
         hd->attached_to = hd1->idx;
 
         hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0200);

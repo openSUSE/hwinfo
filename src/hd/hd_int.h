@@ -18,7 +18,8 @@
 #define PROC_PARPORT_22		"/proc/parport/"			/* Final '/' is essential! */
 #define PROC_PARPORT_24		"/proc/sys/dev/parport/parport"
 #define PROC_KCORE		"/proc/kcore"
-#define PROC_USB_DEVICES	"/proc/bus/usb/devices"
+// #define PROC_USB_DEVICES	"/proc/bus/usb/devices"
+#define PROC_USB_DEVICES	"/proc/bus/usb/devices_please-use-sysfs-instead"
 #define PROC_DAC960		"/proc/rd"
 #define PROC_SMART_22		"/proc/array"
 #define PROC_SMART_24		"/proc/driver/array"

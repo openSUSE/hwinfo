@@ -11,7 +11,7 @@
 &device.id		pci 0x00d6
 |vendor.id		pci 0x10de
 &device.id		pci 0x01c3
-+driver.module.modprobe	nvnet
++driver.module.modprobe	forcedeth
 
 # net/r8169.c
  vendor.id		pci 0x10ec

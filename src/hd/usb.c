@@ -89,10 +89,10 @@ void hd_scan_usb(hd_data_t *hd_data)
     if(hd2 && hd2->prog_if.id == pif_usb_ohci) s = "usb-ohci";
     if(hd2 && hd2->prog_if.id == pif_usb_ehci) s = "usb-ehci";
     load_module(hd_data, s);
-    load_module(hd_data, "input");
+//    load_module(hd_data, "input");
     load_module(hd_data, "hid");
-    load_module(hd_data, "keybdev");
-    load_module(hd_data, "mousedev");
+//    load_module(hd_data, "keybdev");
+//    load_module(hd_data, "mousedev");
     load_module(hd_data, "printer");
     load_module(hd_data, "acm");
   }
