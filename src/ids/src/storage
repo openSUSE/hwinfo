@@ -134,21 +134,20 @@
 &device.id		pci 0x1020
 +driver.module.insmod	qlogicisp
 
-# scsi/qla2100.c
 # scsi/qlogicfc.c
  vendor.id		pci 0x1077
 &device.id		pci 0x2100
-+driver.module.insmod	qla2x00
 +driver.module.insmod	qlogicfc
 
  vendor.id		pci 0x1077
 &device.id		pci 0x2200
 +driver.module.insmod	qla2200
-+driver.module.insmod	qla2x00
 +driver.module.insmod	qlogicfc
 
  vendor.id		pci 0x1077
 &device.id		pci 0x2300
+|vendor.id		pci 0x1077
+&device.id		pci 0x2312
 +driver.module.insmod	qla2300
 
 # scsi/advansys.c
