@@ -31,7 +31,7 @@ void hd_scan_net(hd_data_t *hd_data)
   hd_t *hd;
   str_list_t *sl;
 
-  if(!(hd_data->probe & (1 << pr_net))) return;
+  if(!hd_probe_feature(hd_data, pr_net)) return;
 
   hd_data->module = mod_net;
 

@@ -28,12 +28,19 @@ void hd_scan_cpu(hd_data_t *hd_data)
   char model_id[80], vendor_id[80];
   unsigned bogo, mhz, cache, family, model, stepping;
 #endif
+
 #ifdef __alpha__
+  char model_id[80], system_id[80], serial_number[80];
+  unsigned cpu_variation, cpu_revision, u;
+  cpu_info_t *ct1;
+#endif
+
+#ifdef __PPC__
   char model_id[80], system_id[80], serial_number[80];
   unsigned cpu_variation, cpu_revision;
 #endif
 
-  if(!(hd_data->probe & (1 << pr_cpu))) return;
+  if(!hd_probe_feature(hd_data, pr_cpu)) return;
 
   hd_data->module = mod_cpu;
 
@@ -77,16 +84,24 @@ void hd_scan_cpu(hd_data_t *hd_data)
     ct->cache = 0;
     ct->clock = 0;
 
-    hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_internal;
-    hd->sub_class = sc_int_cpu;
-    hd->slot = cpus;
-    hd->detail = new_mem(sizeof *hd->detail);
-    hd->detail->type = hd_detail_cpu;
-    hd->detail->cpu.data = ct;
+    for(u = 0; u < cpus; u++) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class = bc_internal;
+      hd->sub_class = sc_int_cpu;
+      hd->slot = u;
+      hd->detail = new_mem(sizeof *hd->detail);
+      hd->detail->type = hd_detail_cpu;
+      if(u) {
+        hd->detail->cpu.data = ct1 = new_mem(sizeof *ct);
+        *ct1 = *ct;
+        ct1->model_name = new_str(ct1->model_name);
+        ct1->vend_name = new_str(ct1->vend_name);
+      }
+      else {
+        hd->detail->cpu.data = ct;
+      }
+    }
 
-    *model_id = *system_id = *serial_number = 0;
-    cpu_variation = cpu_revision = 0;
   }
 #endif
 
@@ -168,6 +183,50 @@ void hd_scan_cpu(hd_data_t *hd_data)
     }
   }
 #endif /* __i386__  */
+
+#ifdef __PPC__
+  *model_id = *vendor_id = 0;
+  bogo = mhz = cache = family = model= 0;
+
+  for(sl = hd_data->cpu; sl; sl = sl->next) {
+    if(sscanf(sl->str, "cpu : %79[^\n]", model_id) == 1) continue;
+//    if(sscanf(sl->str, "vendor_id : %79[^\n]", vendor_id) == 1) continue;
+    if(sscanf(sl->str, "bogomips : %u", &bogo) == 1) continue;
+    if(sscanf(sl->str, "clock : %u", &mhz) == 1) continue;
+    if(sscanf(sl->str, "L2 cache : %u KB", &cache) == 1) continue;
+
+//    if(sscanf(sl->str, "cpu family : %u", &family) == 1) continue;
+//    if(sscanf(sl->str, "model : %u", &model) == 1) continue;
+//    if(sscanf(sl->str, "stepping : %u", &stepping) == 1) continue;
+
+    if(strstr(sl->str, "processor") == sl->str || !sl->next) {		/* EOF */
+      if(*model_id || *vendor_id) {	/* at least one of those */
+        ct = new_mem(sizeof *ct);
+	ct->architecture = arch_ppc;
+        if(model_id) ct->model_name = new_str(model_id);
+        if(vendor_id) ct->vend_name = new_str(vendor_id);
+        ct->family = family;
+        ct->model = model;
+        ct->stepping = stepping;
+        ct->cache = cache;
+	ct->boot = boot_unknown;
+        ct->clock = mhz;
+
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+        hd->base_class = bc_internal;
+        hd->sub_class = sc_int_cpu;
+        hd->slot = cpus;
+        hd->detail = new_mem(sizeof *hd->detail);
+        hd->detail->type = hd_detail_cpu;
+        hd->detail->cpu.data = ct;
+        
+        *model_id = *vendor_id = 0;
+        bogo = mhz = cache = family = model= 0;
+        cpus++;
+      }
+    }
+  }
+#endif /* __PPC__  */
 
 }
 

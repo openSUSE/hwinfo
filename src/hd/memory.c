@@ -21,7 +21,7 @@ void hd_scan_memory(hd_data_t *hd_data)
   struct stat sb;
   hd_res_t *res;
 
-  if(!(hd_data->probe & (1 << pr_memory))) return;
+  if(!hd_probe_feature(hd_data, pr_memory)) return;
 
   hd_data->module = mod_memory;
 

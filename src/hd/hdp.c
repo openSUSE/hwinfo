@@ -6,11 +6,10 @@
 #include "hd_int.h"
 #include "hdp.h"
 #include "hdx.h"
-#include "util.h"
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * This module provides a function that prints a hardware entry to stdout. 
+ * This module provides a function that prints a hardware entry. 
  * This is useful for debugging or to provide the user with some fancy info.
  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -51,16 +50,15 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
 
   if(h->detail && h->detail->type == hd_detail_isapnp) s = "(PnP)";
 
-  a0 = bus_name(h->bus);
-  a1 = sub_class_name(h->base_class, h->sub_class);
+  a0 = hd_bus_name(h->bus);
+  a1 = hd_sub_class_name(h->base_class, h->sub_class);
   dump_line(
     "%02d: %s%s %02x.%x: %02x%02x %s\n",
     h->idx, a0 ? a0 : "?", s, h->slot, h->func,
     h->base_class, h->sub_class, a1 ? a1 : "?"
   );
 
-//  if(h->bus == bus_pci && (h->ext_flags & (1 << pci_flag_pm))) dump_line0(", supports PM");
-//  dump_line0("\n");
+//  pci_flag_pm: dump_line0(", supports PM");
 
   ind += 2;
 
@@ -85,7 +83,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     h->attached_to &&
     (hd_tmp = get_device_by_idx(hd_data, h->attached_to))
   ) {
-    s = sub_class_name(hd_tmp->base_class, hd_tmp->sub_class);
+    s = hd_sub_class_name(hd_tmp->base_class, hd_tmp->sub_class);
     s = s ? s : "?";
     dump_line("Attached to: #%u (%s)\n", h->attached_to, s);
   }
@@ -149,7 +147,7 @@ void dump_normal(hd_t *h, unsigned debug, FILE *f)
     dump_line("Serial ID: \"%s\"\n", h->serial);
 
   if(h->compat_vend || h->compat_dev) {
-    a0 = device_name(h->compat_vend, h->compat_dev);
+    a0 = hd_device_name(h->compat_vend, h->compat_dev);
     if(IS_EISA_ID(h->vend)) {
       dump_line(
         "Comaptible to: %s%04x \"%s\"\n",
@@ -166,21 +164,21 @@ void dump_normal(hd_t *h, unsigned debug, FILE *f)
 
   if((debug & HD_DEB_DRIVER_INFO)) {
     if(h->vend || h->dev) {
-      a0 = device_drv_name(h->vend, h->dev);
+      a0 = hd_device_drv_name(h->vend, h->dev);
       if(a0) {
         dump_line("Device Driver Info: \"%s\"\n", a0);
       }
     }
 
     if(h->sub_vend || h->sub_dev) {
-      a0 = sub_device_drv_name(h->vend, h->dev, h->sub_vend, h->sub_dev);
+      a0 = hd_sub_device_drv_name(h->vend, h->dev, h->sub_vend, h->sub_dev);
       if(a0) {
         dump_line("SubDevice Driver Info: \"%s\"\n", a0);
       }
     }
   }
 
-  if((mi = get_driver_info(h))) {
+  if((mi = hd_driver_info(h))) {
     switch(mi->type) {
       case di_module:
         dump_line(
@@ -233,6 +231,8 @@ void dump_normal(hd_t *h, unsigned debug, FILE *f)
       default:
         dump_line_str("Driver Status: cannot handle driver info\n");
     }
+
+    mi = hd_free_driver_info(mi);
   }
 
 
@@ -494,7 +494,7 @@ char *make_device_name_str(hd_t *h, char *buf, int buf_size)
     snprintf(buf, buf_size - 1, "\"%s\"", h->dev_name);
   }
   else {
-    s = device_name(h->vend, h->dev);
+    s = hd_device_name(h->vend, h->dev);
     snprintf(buf, buf_size - 1, "%04x \"%s\"", ID_VALUE(h->dev), s ? s : "?");
   }
 
@@ -510,7 +510,7 @@ char *make_sub_device_name_str(hd_t *h, char *buf, int buf_size)
     snprintf(buf, buf_size - 1, "\"%s\"", h->sub_dev_name);
   }
   else {
-    s = sub_device_name(h->vend, h->dev, h->sub_vend, h->sub_dev);
+    s = hd_sub_device_name(h->vend, h->dev, h->sub_vend, h->sub_dev);
     snprintf(buf, buf_size - 1, "%04x \"%s\"", ID_VALUE(h->sub_dev), s ? s : "?");
   }
 
@@ -526,7 +526,7 @@ char *make_vend_name_str(hd_t *h, char *buf, int buf_size)
     snprintf(buf, buf_size - 1, "\"%s\"", h->vend_name);
   }
   else {
-    s = vendor_name(h->vend);
+    s = hd_vendor_name(h->vend);
     if(IS_EISA_ID(h->vend)) {
       snprintf(buf, buf_size - 1, "%s \"%s\"", eisa_vendor_str(h->vend), s ? s : "?");
     }
@@ -547,7 +547,7 @@ char *make_sub_vend_name_str(hd_t *h, char *buf, int buf_size)
     snprintf(buf, buf_size - 1, "\"%s\"", h->sub_vend_name);
   }
   else {
-    s = vendor_name(h->sub_vend);
+    s = hd_vendor_name(h->sub_vend);
     if(IS_EISA_ID(h->sub_vend)) {
       snprintf(buf, buf_size - 1, "%s \"%s\"", eisa_vendor_str(h->sub_vend), s ? s : "?");
     }

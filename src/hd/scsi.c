@@ -40,7 +40,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
   str_list_t *sl;
   hd_res_t *res;
 
-  if(!(hd_data->probe & (1 << pr_scsi))) return;
+  if(!hd_probe_feature(hd_data, pr_scsi)) return;
 
   hd_data->module = mod_scsi;
 
@@ -88,7 +88,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
           str_printf(&hd->unix_dev_name, 0, "%s%c", sd_dev, sd_cnt + 'a');
           sd_cnt++;
         }
-        else if(!strstr(sl->str, "Optical Device")) {
+        else if(strstr(sl->str, "Optical Device")) {
           hd->sub_class = sc_sdev_disk;
           str_printf(&hd->unix_dev_name, 0, "%s%c", sd_dev, sd_cnt + 'a');
           sd_cnt++;

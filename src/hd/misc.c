@@ -40,7 +40,7 @@ void hd_scan_misc(hd_data_t *hd_data)
   char *s, buf[1];
   int fd_ser0, fd_ser1;
 
-  if(!(hd_data->probe & (1 << pr_misc))) return;
+  if(!hd_probe_feature(hd_data, pr_misc)) return;
 
   hd_data->module = mod_misc;
 
@@ -53,7 +53,7 @@ void hd_scan_misc(hd_data_t *hd_data)
 
   /* this is enough to load the module */
   fd_ser0 = fd_ser1 = -1;
-  if((hd_data->probe & (1 << pr_misc_serial))) {
+  if(hd_probe_feature(hd_data, pr_misc_serial)) {
     PROGRESS(1, 1, "open serial");
     fd_ser0 = open("/dev/ttyS0", O_RDONLY | O_NONBLOCK);
     fd_ser1 = open("/dev/ttyS1", O_RDONLY | O_NONBLOCK);
@@ -61,7 +61,7 @@ void hd_scan_misc(hd_data_t *hd_data)
   }
 
   /* this is enough to load the module */
-  if((hd_data->probe & (1 << pr_misc_par))) {
+  if(hd_probe_feature(hd_data, pr_misc_par)) {
     PROGRESS(1, 2, "open parallel");
     fd = open("/dev/lp0", O_RDONLY | O_NONBLOCK);
     if(fd >= 0) close(fd);
@@ -71,7 +71,7 @@ void hd_scan_misc(hd_data_t *hd_data)
    * floppy driver resources are allocated only temporarily,
    * so we access it just before we read the resources
    */
-  if((hd_data->probe & (1 << pr_misc_floppy))) {
+  if(hd_probe_feature(hd_data, pr_misc_floppy)) {
     /* look for a floppy *device* entry... */
     for(hd = hd_data->hd; hd; hd = hd->next) {
       if(hd->base_class == bc_storage_device && hd->sub_class == sc_sdev_floppy) {
@@ -234,7 +234,7 @@ void hd_scan_misc2(hd_data_t *hd_data)
   hd_res_t *res, *res1, *res2;
   int i;
 
-  if(!(hd_data->probe & (1 << pr_misc))) return;
+  if(!hd_probe_feature(hd_data, pr_misc)) return;
 
   hd_data->module = mod_misc;
 

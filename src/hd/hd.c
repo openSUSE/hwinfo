@@ -4,8 +4,10 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <sys/stat.h>
+#include <linux/pci.h>
 
 #include "hd.h"
+#include "hdx.h"
 #include "hd_int.h"
 #include "memory.h"
 #include "isapnp.h"
@@ -23,6 +25,13 @@
 #include "net.h"
 #include "version.h"
 
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * various functions commmon to all probing modules
+ *
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ */
+
+
 #ifdef __i386__
 #define HD_ARCH "ix86"
 #endif
@@ -35,6 +44,13 @@
 #define HD_ARCH "ppc"
 #endif
 
+#define MOD_INFO_SEP		'|'
+#define MOD_INFO_SEP_STR	"|"
+
+static hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd);
+static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
+static char *module_cmd(hd_t *, char *);
+static int module_is_active(char *mod);
 
 /*
  * Names of the probing modules.
@@ -71,6 +87,8 @@ static struct s_pr_flags {
   unsigned val;
   char *name;
 } pr_flags[] = {
+  { pr_default, "default"},			/* magic */
+  { pr_all, "all" },				/* magic */
   { pr_memory, "memory" },
   { pr_pci, "pci" },
   { pr_pci_range, "pci.range" },
@@ -93,10 +111,70 @@ static struct s_pr_flags {
   { pr_scsi, "scsi" }
 };
 
+#define PR_OFS			2		/* skip 0, default */
+#define ALL_PR_FEATURE		((1 << (pr_all - PR_OFS)) - 1)
+#define DEFAULT_PR_FEATURE	(ALL_PR_FEATURE - (1 << (pr_pci_range - PR_OFS)))
+
+void hd_set_probe_feature(hd_data_t *hd_data, int feature)
+{
+  if(feature == pr_all)
+    hd_data->probe |= ALL_PR_FEATURE;
+  else if(feature == pr_default)
+    hd_data->probe |= DEFAULT_PR_FEATURE;
+  else if((feature -= PR_OFS) >= 0)	/* skip 0, default, all */
+    hd_data->probe |= (1 << feature);
+}
+
+void hd_clear_probe_feature(hd_data_t *hd_data, int feature)
+{
+  if(feature == pr_all)
+    hd_data->probe &= ~ALL_PR_FEATURE;
+  else if(feature == pr_default)
+    hd_data->probe &= ~DEFAULT_PR_FEATURE;
+  else if((feature -= PR_OFS) >= 0)	/* skip 0, default, all */
+    hd_data->probe &= ~(1 << feature);
+}
+
+int hd_probe_feature(hd_data_t *hd_data, int feature)
+{
+  feature -= PR_OFS;			/* skip 0, default, all */
+
+  return feature >= 0 && (hd_data->probe & (1 << feature)) ? 1 : 0;
+}
+
 
 /*
- * we need a functon to *delete* hw entries!!!
+ * Free all data associated with a hd_data_t struct. Even the struct itself.
  */
+hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
+{
+
+  return free_mem(hd_data);
+}
+
+
+/*
+ * Free all data associated with a driver_info_t struct. Even the struct itself.
+ */
+driver_info_t *hd_free_driver_info(driver_info_t *di)
+{
+
+  return NULL;
+}
+
+
+/*
+ * Free a hd_t list. *Not* the data referred to by the hd_t structs.
+ */
+hd_t *hd_free_hd_list(hd_t *hd)
+{
+  hd_t *h;
+
+  for(; hd; hd = (h = hd)->next, free_mem(h));
+
+  return NULL;
+}
+
 
 void *new_mem(size_t size)
 {
@@ -307,26 +385,31 @@ hd_res_t *add_res_entry(hd_res_t **res, hd_res_t *new_res)
 
 hd_t *add_hd_entry(hd_data_t *hd_data, unsigned line, unsigned count)
 {
-  hd_t **hd = &hd_data->hd;
+  hd_t *hd;
 
+  hd = add_hd_entry2(&hd_data->hd, new_mem(sizeof *hd));
+
+  hd->idx = ++(hd_data->last_idx);
+  hd->module = hd_data->module;
+  hd->line = line;
+  hd->count = count;
+
+  return hd;
+}
+
+
+hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd)
+{
   while(*hd) hd = &(*hd)->next;
 
-  *hd = new_mem(sizeof **hd);
-
-  (*hd)->idx = ++(hd_data->last_idx);
-  (*hd)->module = hd_data->module;
-  (*hd)->line = line;
-  (*hd)->count = count;
-
-  return *hd;
+  return *hd = new_hd;
 }
 
 
 void hd_scan(hd_data_t *hd_data)
 {
   char *s;
-  int i;
-  unsigned u;
+  int i, j;
 
   /* log the debug & probe flags */
   if(hd_data->debug) {
@@ -335,9 +418,9 @@ void hd_scan(hd_data_t *hd_data)
       HD_VERSION, HD_ARCH, hd_data->debug, hd_data->probe
     );
 
-    for(u = 0, i = 0; u < 8 * sizeof hd_data->probe; u++) {
-      if((s = probe_flag2str(u))) {
-        ADD2LOG("%s%c%s", i++ ? " " : "", hd_data->probe & (1 << u) ? '+' : '-', s);
+    for(j = PR_OFS, i = 0; j < pr_all; j++) {
+      if((s = hd_probe_feature_by_value(j))) {
+        ADD2LOG("%s%c%s", i++ ? " " : "", hd_probe_feature(hd_data, j) ? '+' : '-', s);
       }
     }
 
@@ -707,19 +790,16 @@ void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg)
 
 
 /*
- * Returns a bitmask suitable for (hd_data_t).probe. If name is not a valid
- * probe feature, 0 is returned.
+ * Returns a probe feature suitable for hd_*probe_feature().
+ * If name is not a valid probe feature, 0 is returned.
  *
- * 'all' stands magically for 'all features'.
  */
-unsigned str2probe_flag(char *name)
+int hd_probe_feature_by_name(char *name)
 {
-  unsigned u;
-
-  if(!strcmp(name, "all")) return -1;
+  int u;
 
   for(u = 0; u < sizeof pr_flags / sizeof *pr_flags; u++)
-    if(!strcmp(name, pr_flags[u].name)) return 1 << pr_flags[u].val;
+    if(!strcmp(name, pr_flags[u].name)) return pr_flags[u].val;
 
   return 0;
 }
@@ -727,15 +807,14 @@ unsigned str2probe_flag(char *name)
 
 /*
  * Coverts a enum probe_feature to a string.
- * Note: flag is *not* a bitmask, so this function is *not* the inverse of
- * str2probe_flag()!
+ * If it fails, NULL is returned.
  */
-char *probe_flag2str(unsigned flag)
+char *hd_probe_feature_by_value(int feature)
 {
-  unsigned u;
+  int u;
 
   for(u = 0; u < sizeof pr_flags / sizeof *pr_flags; u++)
-    if(flag == pr_flags[u].val) return pr_flags[u].name;
+    if(feature == pr_flags[u].val) return pr_flags[u].name;
 
   return NULL;
 }
@@ -767,3 +846,460 @@ void remove_hd_entries(hd_data_t *hd_data)
   }
 }
 
+
+
+
+/*
+ * Scan the hardware list for CD-ROMs with a given volume_id. Start
+ * searching at the start'th entry.
+ *
+ * Returns a pointer to a hardware entry (hw_t *) or NULL on failure.
+ */
+
+// ####### replace or fix this!!!
+
+#if 0
+hw_t *find_cdrom_volume(const char *volume_id, int *start)
+{
+  int i;
+  cdrom_info_t *ci;
+  hw_t *h;
+
+  for(i = *start; i < hw_len; i++) {
+    h = hw + i;
+    if(
+      h->base_class == bc_storage_device &&
+      h->sub_class == sc_sdev_cdrom /* &&
+      (h->ext_flags & (1 << cdrom_flag_media_probed)) */
+    ) {
+      /* ok, found a CDROM device... */
+      ci = h->ext;
+      /* ... now compare the volume id */
+      if(
+        ci &&
+        (!volume_id || !strncmp(ci->volume, volume_id, strlen(volume_id)))
+      ) {
+        *start = i + 1;
+        return h;
+      }
+    }
+  }
+
+
+
+  return NULL;	/* CD not found :-( */
+}
+#endif
+
+
+/*
+ * Reads the driver info.
+ *
+ * If the driver is a module, checks if the module is already loaded.
+ *
+ * If the command line returned is the empty string (""), we could not
+ * figure out what to do.
+ */
+driver_info_t *hd_driver_info(hd_t *hd)
+{
+  char *s = NULL, *s1, *t, *s0 = NULL;
+  char cmd[256], *cmd_ptr;
+  driver_info_t *mi = new_mem(sizeof *mi);
+  char *fields[32];
+  int i;
+  unsigned u1, u2;
+
+  if(hd->sub_vend || hd->sub_dev) {
+    s = hd_sub_device_drv_name(hd->vend, hd->dev, hd->sub_vend, hd->sub_dev);
+  }
+
+  if(!s && (hd->vend || hd->dev)) {
+    s = hd_device_drv_name(hd->vend, hd->dev);
+  }
+
+  if(!s) return free_mem(mi);
+
+  s0 = new_str(s);
+  s = s0;
+
+  /* ok, there is a module entry */
+  *(cmd_ptr = cmd) = 0;
+
+  t = "";
+  if(*s && s[1] == MOD_INFO_SEP) {
+    switch(*s) {
+      case 'i':
+        t = "insmod";
+        mi->type = di_module;
+        break;		/* insmod */
+
+      case 'M':		/* conf.modules entry */
+        mi->module.autoload = 1;
+      case 'm':
+        s1 = s + 2;
+        if(strsep(&s1, MOD_INFO_SEP_STR) && s1 && *s1) {
+          i = 0; t = s1;
+          while(t[i]) {
+            if(t[i] == '\\') {
+              switch(t[i + 1]) {
+                case 'n':
+                  *t = '\n'; i++;
+                  break;
+
+                case 't':
+                  *t = '\t'; i++;
+                  break;
+
+                case '\\':
+                  *t = '\\'; i++;
+                  break;
+
+                default:
+                  *t = t[i];
+              }
+            }
+            else {
+              *t = t[i];
+            }
+            t++;
+          }
+          *t = 0;
+          mi->module.conf = new_str(s1);
+        }
+        t = "modprobe";
+        mi->type = di_module;
+        break;
+
+      case 'p':		/* for mouse driver info */
+        mi->type = di_mouse;
+        break;
+
+      case 'x':		/* for X servers */
+        mi->type = di_x11;
+        break;
+
+      case 'd':		/* for displays */
+        mi->type = di_display;
+        break;
+
+      default:
+        s0 = free_mem(s0);
+        return free_mem(mi);
+    }
+    s += s[1] == MOD_INFO_SEP ? 2 : 1;
+  }
+  else {
+    s0 = free_mem(s0);
+    return free_mem(mi);
+  }
+
+  memset(fields, 0, sizeof fields);
+  /* split the fields */
+  for(i = 1, *fields = s1 = s; i < sizeof fields / sizeof *fields - 1; i++) {
+    if(strsep(&s1, MOD_INFO_SEP_STR) && s1 && *s1) {
+      fields[i] = s1;
+    }
+    else {
+      break;
+    }
+  }
+
+  if(mi->type == di_module) {
+    // ##### s1 may be NULL !!!!   #####
+    snprintf(cmd, sizeof cmd, "%s %s", t, s1 = module_cmd(hd, s));
+    if(s1) mi->module.load_cmd = new_str(cmd);
+    s1 = s; strsep(&s1, " \t");
+    mi->module.name = new_str(s);
+    mi->module.is_active = module_is_active(mi->module.name);
+  }
+
+  if(mi->type == di_mouse) {
+    if(fields[0] && *fields[0]) mi->mouse.xf86 = new_str(fields[0]);
+    if(fields[1] && *fields[1]) mi->mouse.gpm = new_str(fields[1]);
+  }
+
+  if(mi->type == di_x11) {
+    if(fields[0] && *fields[0]) mi->x11.server = new_str(fields[0]);
+    if(fields[1] && *fields[1]) mi->x11.x3d = new_str(fields[1]);
+
+    if(fields[2] && *fields[2]) {
+      mi->x11.colors.all = strtol(fields[2], NULL, 16);
+      if(mi->x11.colors.all & (1 << 0)) mi->x11.colors.c8 = 1;
+      if(mi->x11.colors.all & (1 << 1)) mi->x11.colors.c15 = 1;
+      if(mi->x11.colors.all & (1 << 2)) mi->x11.colors.c16 = 1;
+      if(mi->x11.colors.all & (1 << 3)) mi->x11.colors.c24 = 1;
+      if(mi->x11.colors.all & (1 << 4)) mi->x11.colors.c32 = 1;
+    }
+    if(fields[3] && *fields[3]) mi->x11.dacspeed = strtol(fields[3], NULL, 10);
+  }
+
+  if(mi->type == di_display) {
+    if(fields[0] && *fields[0] && sscanf(fields[0], "%ux%u", &u1, &u2) == 2) {
+      mi->display.width = u1;
+      mi->display.height = u2;
+    }
+
+    if(fields[1] && *fields[1]  && sscanf(fields[1], "%u-%u", &u1, &u2) == 2) {
+      mi->display.min_vsync = u1;
+      mi->display.max_vsync = u2;
+    }
+
+    if(fields[2] && *fields[2]  && sscanf(fields[2], "%u-%u", &u1, &u2) == 2) {
+      mi->display.min_hsync = u1;
+      mi->display.max_hsync = u2;
+    }
+
+    if(fields[3] && *fields[3]  && sscanf(fields[3], "%u", &u1) == 1) {
+      mi->display.bandwidth = u1;
+    }
+  }
+
+  s0 = free_mem(s0);
+  return mi;
+}
+
+
+int module_is_active(char *mod)
+{
+  FILE *f;
+  char buf[256], *s;
+
+  if(!(f = fopen(PROC_MODULES, "r"))) return 0;
+
+  while(fgets(buf, sizeof buf, f)) {
+    s = buf;
+    strsep(&s, " \t");
+    if(!strcmp(mod, buf)) {
+      fclose(f);
+      return 1;
+    }
+  }
+
+  fclose(f);
+
+  return 0;
+}
+
+hd_res_t *get_res(hd_t *hd, enum resource_types t, unsigned index)
+{
+  hd_res_t *res;
+
+  for(res = hd->res; res; res = res->next) {
+    if(res->any.type == t) {
+      if(!index) return res;
+      index--;
+    }
+  }
+
+  return NULL;
+}
+
+
+char *module_cmd(hd_t *hd, char *cmd)
+{
+  static char buf[256];
+  char *s = buf;
+  int idx, ofs;
+  hd_res_t *res;
+
+  // skip inactive PnP cards
+  // ##### Really necessary here?
+  if(
+    hd->detail &&
+    hd->detail->type == hd_detail_isapnp &&
+    !(hd->detail->isapnp.data->flags & (1 << isapnp_flag_act))
+  ) return NULL;
+
+  *buf = 0;
+  while(*cmd) {
+    if(sscanf(cmd, "<io%u>%n", &idx, &ofs) >= 1) {
+      if((res = get_res(hd, res_io, idx))) {
+        s += sprintf(s, "0x%02"HD_LL"x", res->io.base);
+        cmd += ofs;
+      }
+      else {
+        return NULL;
+      }
+    }
+    else if(sscanf(cmd, "<irq%u>%n", &idx, &ofs) >= 1) {
+      if((res = get_res(hd, res_irq, idx))) {
+        s += sprintf(s, "%u", res->irq.base);
+        cmd += ofs;
+      }
+      else {
+        return NULL;
+      }
+    }
+    else {
+      *s++ = *cmd++;
+    }
+
+    if(s - buf > sizeof buf - 20) return NULL;
+  }
+
+  *s = 0;
+  return buf;
+}
+
+
+/*
+ * cf. /usr/src/linux/drivers/block/ide-pci.c
+ */
+int hd_has_special_eide(hd_data_t *hd_data)
+{
+  int i;
+  hd_t *hd;
+  static unsigned ids[][2] = {
+    { PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_82C561 },
+    { PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_82C586_1 },
+    { PCI_VENDOR_ID_PROMISE, PCI_DEVICE_ID_PROMISE_20246 },
+    { PCI_VENDOR_ID_PROMISE, 0x4d38 },		// PCI_DEVICE_ID_PROMISE_20262
+    { PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_5513 },
+    { PCI_VENDOR_ID_OPTI, PCI_DEVICE_ID_OPTI_82C621 },
+    { PCI_VENDOR_ID_OPTI, PCI_DEVICE_ID_OPTI_82C558 },
+    { PCI_VENDOR_ID_OPTI, PCI_DEVICE_ID_OPTI_82C825 },
+    { PCI_VENDOR_ID_TEKRAM, PCI_DEVICE_ID_TEKRAM_DC290 },
+    { PCI_VENDOR_ID_NS, PCI_DEVICE_ID_NS_87410 },
+    { PCI_VENDOR_ID_NS, PCI_DEVICE_ID_NS_87415 }
+  };
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->bus == bus_pci) {
+      for(i = 0; i < sizeof ids / sizeof *ids; i++) {
+        if(hd->vend == ids[i][0] && hd->dev == ids[i][1]) return 1;
+      }
+    }
+  }
+
+  return 0;
+}
+
+/*
+ * cf. pcmcia-cs-3.1.1:cardmgr/probe.c
+ */
+int hd_has_pcmcia(hd_data_t *hd_data)
+{
+  int i;
+  hd_t *hd;
+  static unsigned ids[][2] = {
+    { 0x1013, 0x1100 },
+    { 0x1013, 0x1110 },
+    { 0x10b3, 0xb106 },
+    { 0x1180, 0x0465 },
+    { 0x1180, 0x0466 },
+    { 0x1180, 0x0475 },
+    { 0x1180, 0x0476 },
+    { 0x1180, 0x0478 },
+    { 0x104c, 0xac12 },
+    { 0x104c, 0xac13 },
+    { 0x104c, 0xac15 },
+    { 0x104c, 0xac16 },
+    { 0x104c, 0xac17 },
+    { 0x104c, 0xac19 },
+    { 0x104c, 0xac1a },
+    { 0x104c, 0xac1d },
+    { 0x104c, 0xac1f },
+    { 0x104c, 0xac1b },
+    { 0x104c, 0xac1c },
+    { 0x104c, 0xac1e },
+    { 0x104c, 0xac51 },
+    { 0x1217, 0x6729 },
+    { 0x1217, 0x673a },
+    { 0x1217, 0x6832 },
+    { 0x1217, 0x6836 },
+    { 0x1179, 0x0603 },
+    { 0x1179, 0x060a },
+    { 0x1179, 0x060f },
+    { 0x119b, 0x1221 },
+    { 0x8086, 0x1221 }
+  };
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->bus == bus_pci) {
+      for(i = 0; i < sizeof ids / sizeof *ids; i++) {
+        if(hd->vend == ids[i][0] && hd->dev == ids[i][1]) return 1;
+      }
+    }
+  }
+
+  return 0;
+}
+
+
+hd_t *hd_cd_list(hd_data_t *hd_data, int rescan)
+{
+  hd_t *hd, *hd1, *hd_list = NULL;
+  unsigned probe_save;
+
+  if(rescan) {
+    probe_save = hd_data->probe;
+    hd_clear_probe_feature(hd_data, pr_all);
+    hd_set_probe_feature(hd_data, pr_cdrom);
+    hd_set_probe_feature(hd_data, pr_cdrom_info);
+    hd_scan(hd_data);
+    hd_data->probe = probe_save;
+  }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_storage_device && hd->sub_class == sc_sdev_cdrom) {
+      hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+      *hd1 = *hd;
+      hd1->next = NULL;
+    }
+  }
+
+  return hd_list;
+}
+
+
+hd_t *hd_disk_list(hd_data_t *hd_data, int rescan)
+{
+  hd_t *hd, *hd1, *hd_list = NULL;
+  unsigned probe_save;
+
+  if(rescan) {
+    probe_save = hd_data->probe;
+    hd_clear_probe_feature(hd_data, pr_all);
+    hd_set_probe_feature(hd_data, pr_ide);
+    hd_set_probe_feature(hd_data, pr_scsi);
+    hd_scan(hd_data);
+    hd_data->probe = probe_save;
+  }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_storage_device && hd->sub_class == sc_sdev_disk) {
+      hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+      *hd1 = *hd;
+      hd1->next = NULL;
+    }
+  }
+
+  return hd_list;
+}
+
+
+hd_t *hd_net_list(hd_data_t *hd_data, int rescan)
+{
+  hd_t *hd, *hd1, *hd_list = NULL;
+  unsigned probe_save;
+
+  if(rescan) {
+    probe_save = hd_data->probe;
+    hd_clear_probe_feature(hd_data, pr_all);
+    hd_set_probe_feature(hd_data, pr_net);
+    hd_scan(hd_data);
+    hd_data->probe = probe_save;
+  }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->base_class == bc_network_interface) {
+      hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
+      *hd1 = *hd;
+      hd1->next = NULL;
+    }
+  }
+
+  return hd_list;
+}
+
+   

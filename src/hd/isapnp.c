@@ -37,7 +37,7 @@ void hd_scan_isapnp(hd_data_t *hd_data)
   isapnp_dev_t *dev;
   hd_res_t *res;
   
-  if(!(hd_data->probe & (1 << pr_isapnp))) return;
+  if(!hd_probe_feature(hd_data, pr_isapnp)) return;
 
   hd_data->module = mod_isapnp;
 
@@ -116,7 +116,7 @@ void hd_scan_isapnp(hd_data_t *hd_data)
 
       if(
         (ID_VALUE(hd->vend) || ID_VALUE(hd->dev)) &&
-        !device_name(hd->vend, hd->dev)
+        !hd_device_name(hd->vend, hd->dev)
       ) {
         if((r = get_isapnp_res(c, 0, RES_ANSI_NAME))) {
           s = canon_str(r->data, r->len);
@@ -151,7 +151,7 @@ void hd_scan_isapnp(hd_data_t *hd_data)
 
         if(
           (ID_VALUE(hd->sub_vend) || ID_VALUE(hd->sub_dev)) &&
-          !sub_device_name(hd->vend, hd->dev, hd->sub_vend, hd->sub_dev)
+          !hd_sub_device_name(hd->vend, hd->dev, hd->sub_vend, hd->sub_dev)
         ) {
           if((r = get_isapnp_res(c, j + 1, RES_ANSI_NAME))) {
             s = canon_str(r->data, r->len);

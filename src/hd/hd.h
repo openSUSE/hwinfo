@@ -39,9 +39,11 @@ extern "C" {
  * change the definition of hd_data_t.probe
  */
 enum probe_feature {
-  pr_memory, pr_pci, pr_pci_range, pr_isapnp, pr_cdrom, pr_cdrom_info,
-  pr_net, pr_floppy, pr_misc, pr_misc_serial, pr_misc_par, pr_misc_floppy,
-  pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide, pr_scsi
+  pr_default = 1, pr_memory, pr_pci, pr_pci_range, pr_isapnp, pr_cdrom,
+  pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial, pr_misc_par,
+  pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide,
+  pr_scsi,
+  pr_all	/* pr_all must be the last */
 };
 
 
@@ -606,40 +608,51 @@ typedef union {
 /* the actual hardware scan */
 void hd_scan(hd_data_t *hd_data);
 
-unsigned str2probe_flag(char *name);
-char *probe_flag2str(unsigned flag);
+hd_data_t *hd_free_hd_data(hd_data_t *hd_data);
+hd_t *hd_free_hd_list(hd_t *hd);
+driver_info_t *hd_free_driver_info(driver_info_t *di);
+
+void hd_set_probe_feature(hd_data_t *hd_data, int feature);
+void hd_clear_probe_feature(hd_data_t *hd_data, int feature);
+int hd_probe_feature(hd_data_t *hd_data, int feature);
+
+int hd_probe_feature_by_name(char *name);
+char *hd_probe_feature_by_value(int feature);
+
+driver_info_t *hd_driver_info(hd_t *hd);
+
+hd_t *hd_cd_list(hd_data_t *hd_data, int rescan);
+hd_t *hd_disk_list(hd_data_t *hd_data, int rescan);
+hd_t *hd_net_list(hd_data_t *hd_data, int rescan);
+
+int hd_has_special_eide(hd_data_t *hd_data);
+int hd_has_pcmcia(hd_data_t *hd_data);
 
 
 /* implemented in hdx.c */
 
-char *bus_name(unsigned bus);
-char *base_class_name(unsigned base_class);
-char *sub_class_name(unsigned base_class, unsigned sub_class);
-char *vendor_name(unsigned vendor_id);
-char *device_name(unsigned vendor_id, unsigned device_id);
-char *sub_device_name(unsigned vendor_id, unsigned device_id, unsigned subvendor_id, unsigned subdevice_id);
+char *hd_bus_name(unsigned bus);
+char *hd_base_class_name(unsigned base_class);
+char *hd_sub_class_name(unsigned base_class, unsigned sub_class);
+char *hd_vendor_name(unsigned vendor_id);
+char *hd_device_name(unsigned vendor_id, unsigned device_id);
+char *hd_sub_device_name(unsigned vendor_id, unsigned device_id, unsigned subvendor_id, unsigned subdevice_id);
 
-int bus_number(char *bus_name);
-int base_class_number(char *base_class_name);
+int hd_bus_number(char *bus_name);
+int hd_base_class_number(char *base_class_name);
 
-char *device_drv_name(unsigned vendor_id, unsigned device_id);
-char *sub_device_drv_name(unsigned vendor_id, unsigned device_id, unsigned subvendor_id, unsigned subdevice_id);
+char *hd_device_drv_name(unsigned vendor_id, unsigned device_id);
+char *hd_sub_device_drv_name(unsigned vendor_id, unsigned device_id, unsigned subvendor_id, unsigned subdevice_id);
+
 
 /* implemented in hdp.c */
 
 void hd_dump_entry(hd_data_t *hd_data, hd_t *hd, FILE *f);
 
 
-/* implemented in util.c */
-
-driver_info_t *get_driver_info(hd_t *h);
-int needs_eide_kernel(void);
-int has_pcmcia_support(void);
-
-
 /* implemented in cdrom.c */
 
-cdrom_info_t *hd_read_cdrom_info(hd_t *h);
+cdrom_info_t *hd_read_cdrom_info(hd_t *hd);
 
 #ifdef __cplusplus
 }

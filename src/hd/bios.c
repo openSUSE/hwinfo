@@ -37,7 +37,7 @@ void hd_scan_bios(hd_data_t *hd_data)
   bios_info_t *bt;
   str_list_t *sl;
 
-  if(!(hd_data->probe & (1 << pr_bios))) return;
+  if(!hd_probe_feature(hd_data, pr_bios)) return;
 
   hd_data->module = mod_bios;
 

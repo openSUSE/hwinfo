@@ -23,7 +23,7 @@ int main(int argc, char **argv)
   FILE *f = NULL;
   long l = 0;
   int i;
-  unsigned def_probe = -1;
+  unsigned first_probe = 1;
 
   argc--; argv++;
 
@@ -31,8 +31,13 @@ int main(int argc, char **argv)
   hd_data->progress = progress;
 
   do {
-    hd_data->probe = def_probe;
-    def_probe = 0;			/* only for the 1st probing */
+    if(first_probe)				/* only for the 1st probing */
+      hd_set_probe_feature(hd_data, pr_all);
+    else
+      hd_clear_probe_feature(hd_data, pr_all);
+
+    first_probe = 0;
+
     if((i = get_probe_flags(argc, argv, hd_data)) < 0) return 1;
     deb = hd_data->debug;
     argc -= i; argv += i;
@@ -56,21 +61,18 @@ int main(int argc, char **argv)
   if((hd = hd_data->hd))
     while(hd_dump_entry(hd_data, hd, f ? f : stdout), (hd = hd->next));
 
+  fprintf(f ? f : stdout, "--------\n");
+
+  if((hd = hd_disk_list(hd_data, 1)))
+    while(hd_dump_entry(hd_data, hd, f ? f : stdout), (hd = hd->next));
+
   if(f) {
     fseek(f, l, SEEK_SET);
     while((i = fgetc(f)) != EOF) putchar(i);
     fclose(f);
   }
 
-#if 00
-  if(needs_eide_kernel() && pt.debug >= 5) {
-    printf("has special ide chipset\n");
-  }
-
-  if(has_pcmcia_support() && pt.debug >= 5) {
-    printf("has pcmcia support\n");
-  }
-#endif
+  hd_free_hd_data(hd_data);
 
   return 0;
 }
@@ -107,11 +109,11 @@ int get_probe_flags(int argc, char **argv, hd_data_t *hd_data)
     else if(*s == '-')
       k = 0, s++;
 
-    if((j = str2probe_flag(s))) {
+    if((j = hd_probe_feature_by_name(s))) {
       if(k)
-        hd_data->probe |= j;
+        hd_set_probe_feature(hd_data, j);
       else
-        hd_data->probe &= ~j;
+        hd_clear_probe_feature(hd_data, j);
       continue;
     }
 

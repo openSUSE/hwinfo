@@ -41,7 +41,7 @@ void hd_scan_cdrom(hd_data_t *hd_data)
   hd_t *hd;
   str_list_t *sl, **prev;
 
-  if(!(hd_data->probe & (1 << pr_cdrom))) return;
+  if(!hd_probe_feature(hd_data, pr_cdrom)) return;
 
   hd_data->module = mod_cdrom;
 
@@ -95,7 +95,7 @@ void hd_scan_cdrom(hd_data_t *hd_data)
   /*
    * look for a CD and get some info
    */
-  if(!(hd_data->probe & (1 << pr_cdrom_info))) return;
+  if(!hd_probe_feature(hd_data, pr_cdrom_info)) return;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(

@@ -63,7 +63,7 @@ static void init_hdx(void);
 
 static char *next_line(char *buf, int buf_size, FILE *f, int line);
 
-char *bus_name(unsigned bus)
+char *hd_bus_name(unsigned bus)
 {
   int i;
 
@@ -76,7 +76,7 @@ char *bus_name(unsigned bus)
   return NULL;
 }
 
-int bus_number(char *bus_name)
+int hd_bus_number(char *bus_name)
 {
   int i;
 
@@ -89,7 +89,7 @@ int bus_number(char *bus_name)
   return -1;
 }
 
-char *base_class_name(unsigned bc)
+char *hd_base_class_name(unsigned bc)
 {
   int i;
 
@@ -102,7 +102,7 @@ char *base_class_name(unsigned bc)
   return NULL;
 }
 
-int base_class_number(char *bc_name)
+int hd_base_class_number(char *bc_name)
 {
   int i;
 
@@ -115,7 +115,7 @@ int base_class_number(char *bc_name)
   return -1;
 }
 
-char *sub_class_name(unsigned bc, unsigned sc)
+char *hd_sub_class_name(unsigned bc, unsigned sc)
 {
   int i;
 
@@ -128,10 +128,10 @@ char *sub_class_name(unsigned bc, unsigned sc)
     ) return sub_class_name_lst[i].name;
   }
 
-  return base_class_name(bc);
+  return hd_base_class_name(bc);
 }
 
-char *vendor_name(unsigned v)
+char *hd_vendor_name(unsigned v)
 {
   int i;
 
@@ -144,7 +144,7 @@ char *vendor_name(unsigned v)
   return NULL;
 }
 
-char *device_name(unsigned v, unsigned d)
+char *hd_device_name(unsigned v, unsigned d)
 {
   int i;
 
@@ -176,7 +176,7 @@ unsigned device_class(unsigned v, unsigned d)
   return 0;
 }
 
-char *device_drv_name(unsigned v, unsigned d)
+char *hd_device_drv_name(unsigned v, unsigned d)
 {
   int i;
 
@@ -192,7 +192,7 @@ char *device_drv_name(unsigned v, unsigned d)
   return NULL;
 }
 
-char *sub_device_name(unsigned v, unsigned d, unsigned sv, unsigned sd)
+char *hd_sub_device_name(unsigned v, unsigned d, unsigned sv, unsigned sd)
 {
   int i;
 
@@ -252,7 +252,7 @@ unsigned sub_device_class(unsigned v, unsigned d, unsigned sv, unsigned sd)
   return 0;
 }
 
-char *sub_device_drv_name(unsigned v, unsigned d, unsigned sv, unsigned sd)
+char *hd_sub_device_drv_name(unsigned v, unsigned d, unsigned sv, unsigned sd)
 {
   int i;
 
@@ -509,7 +509,7 @@ void add_sub_class_name(unsigned c, unsigned sc, char *s)
 void add_vendor_name(unsigned v, char *s)
 {
   // always block duplicate entries
-  if(vendor_name(v)) return;
+  if(hd_vendor_name(v)) return;
 
   vendor_name_lst = add_mem(vendor_name_lst, sizeof *vendor_name_lst, vendor_names);
   vendor_name_lst[vendor_names].val0 = v;

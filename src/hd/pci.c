@@ -34,7 +34,7 @@ void hd_scan_pci(hd_data_t *hd_data)
   int j;
   unsigned long ul;
 
-  if(!(hd_data->probe & (1 << pr_pci))) return;
+  if(!hd_probe_feature(hd_data, pr_pci)) return;
 
   hd_data->module = mod_pci;
 
@@ -300,7 +300,7 @@ unsigned get_pci_addr_range(hd_data_t *hd_data, pci_t *pci, int fd, unsigned add
   int err = 0;
 
   /* it's easier to do the check *here* */
-  if(!(hd_data->probe & (1 << pr_pci_range))) return 0;
+  if(!hd_probe_feature(hd_data, pr_pci_range)) return 0;
 
   /* PCI_COMMAND is a 16 bit value */
   if(f_read(fd, PCI_COMMAND, &cmd, 2) != 2) return 0;

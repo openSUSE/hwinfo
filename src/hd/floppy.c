@@ -34,7 +34,7 @@ void hd_scan_floppy(hd_data_t *hd_data)
   str_list_t *sl;
   hd_res_t *res;
 
-  if(!(hd_data->probe & (1 << pr_floppy))) return;
+  if(!hd_probe_feature(hd_data, pr_floppy)) return;
 
   hd_data->module = mod_floppy;
 

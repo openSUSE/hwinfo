@@ -33,7 +33,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
   str_list_t *sl;
   hd_res_t *res;
 
-  if(!(hd_data->probe & (1 << pr_monitor))) return;
+  if(!hd_probe_feature(hd_data, pr_monitor)) return;
 
   hd_data->module = mod_monitor;
 

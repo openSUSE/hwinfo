@@ -33,7 +33,7 @@ static void dump_ser_mouse_data(hd_data_t *hd_data);
 
 void hd_scan_mouse(hd_data_t *hd_data)
 {
-  if(!(hd_data->probe & (1 << pr_mouse))) return;
+  if(!hd_probe_feature(hd_data, pr_mouse)) return;
 
   hd_data->module = mod_mouse;
 
