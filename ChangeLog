@@ -1,3 +1,6 @@
+12/8/2003:	v7.08
+	- better internal hwclass handling
+
 11/8/2003:	v7.07
 	- define HARDWARE_DIR in hd.h
 

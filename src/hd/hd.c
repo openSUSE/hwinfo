@@ -584,6 +584,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_network_ctrl:
       hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_pci);
+      hd_set_probe_feature(hd_data, pr_pcmcia);
       hd_set_probe_feature(hd_data, pr_isapnp);
       hd_set_probe_feature(hd_data, pr_isapnp_mod);
       hd_set_probe_feature(hd_data, pr_sbus);
@@ -605,9 +606,10 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_usb);
       break;
 
+    case hw_wlan:
+      hd_set_probe_feature(hd_data, pr_pcmcia);
     case hw_tv:
     case hw_dvb:
-    case hw_wlan:
       hd_set_probe_feature(hd_data, pr_pci);
       break;
 
@@ -3026,10 +3028,7 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
       (
-        hd->hw_class == item ||
-        hd->hw_class2 == item ||
-        hd->hw_class3 == item ||
-        item == hw_manual
+        item == hw_manual || hd_is_hw_class(hd, item)
       )
 #ifndef LIBHD_TINY
 /* with LIBHD_TINY hd->status is not maintained (cf. manual.c) */
@@ -3085,7 +3084,7 @@ hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t sta
   memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->hw_class == item || hd->hw_class2 == item || hd->hw_class3 == item) {
+    if(hd_is_hw_class(hd, item)) {
       if(
         (status.configured == 0 || status.configured == hd->status.configured) &&
         (status.available == 0 || status.available == hd->status.available) &&
@@ -4084,6 +4083,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 
   if(!hd) return;
 
+  // ###### FIXME: maybe just return here?
   if(!hd->hw_class) {		/* skip if we've already done it */
     for(item = 1; item < hw_all; item++) {
 
@@ -4315,39 +4315,38 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
     if(!hd->hw_class) hd->hw_class = hw_unknown;
   }
 
-  if(!hd->hw_class2) {
-    if(hd->bus.id == bus_usb) {
-      hd->hw_class2 = hw_usb;
-    }
-    else if(hd->bus.id == bus_pci) {
-      hd->hw_class2 = hw_pci;
-    }
-    else if(hd->bus.id == bus_scsi) {
-      hd->hw_class2 = hw_scsi;
-    }
-    else if(hd->bus.id == bus_ide) {
-      hd->hw_class2 = hw_ide;
-    }
-    else if(hd->bus.id == bus_isa && hd->is.isapnp) {
-      hd->hw_class2 = hw_isapnp;
-    }
-    else if(hd->hw_class == hw_network && hd->is.pppoe) {
-      hd->hw_class2 = hw_pppoe;
-    }
+  hd_set_hw_class(hd, hd->hw_class);
+
+  if(hd->bus.id == bus_usb) {
+    hd_set_hw_class(hd, hw_usb);
+  }
+  else if(hd->bus.id == bus_pci) {
+    hd_set_hw_class(hd, hw_pci);
+  }
+  else if(hd->bus.id == bus_scsi) {
+    hd_set_hw_class(hd, hw_scsi);
+  }
+  else if(hd->bus.id == bus_ide) {
+    hd_set_hw_class(hd, hw_ide);
+  }
+  else if(hd->bus.id == bus_isa && hd->is.isapnp) {
+    hd_set_hw_class(hd, hw_isapnp);
   }
 
-  if(!hd->hw_class3) {
-    if(hd->usb_guid) {
-      if(hd->bus.id == bus_scsi) {
-        hd->hw_class3 = hw_usb;
-      }
-    }
-    else if(hd->hotplug == hp_pcmcia || hd->hotplug == hp_cardbus) {
-      hd->hw_class3 = hw_pcmcia;
-    }
-    else if(hd->is.wlan) {
-      hd->hw_class3 = hw_wlan;
-    }
+  if(hd->hw_class == hw_network && hd->is.pppoe) {
+    hd_set_hw_class(hd, hw_pppoe);
+  }
+
+  if(hd->usb_guid) {
+    hd_set_hw_class(hd, hw_usb);	// ###### maybe only if(hd->bus.id == bus_scsi)?
+  }
+
+  if(hd->hotplug == hp_pcmcia || hd->hotplug == hp_cardbus) {
+    hd_set_hw_class(hd, hw_pcmcia);
+  }
+
+  if(hd->is.wlan) {
+    hd_set_hw_class(hd, hw_wlan);
   }
 }
 
@@ -4750,6 +4749,33 @@ int is_pcmcia_ctrl(hd_data_t *hd_data, hd_t *hd)
         ID_VALUE(hd->device.id) == ids[i][1]
       ) return 1;
     }
+  }
+
+  return 0;
+}
+
+void hd_set_hw_class(hd_t *hd, hd_hw_item_t hw_class)
+{
+  unsigned ofs, bit;
+
+  ofs = (unsigned) hw_class >> 3;
+  bit = (unsigned) hw_class & 7;
+
+  if(ofs < sizeof hd->hw_class_list / sizeof *hd->hw_class_list) {
+    hd->hw_class_list[ofs] |= 1 << bit;
+  }
+}
+
+
+int hd_is_hw_class(hd_t *hd, hd_hw_item_t hw_class)
+{
+  unsigned ofs, bit;
+
+  ofs = (unsigned) hw_class >> 3;
+  bit = (unsigned) hw_class & 7;
+
+  if(ofs < sizeof hd->hw_class_list / sizeof *hd->hw_class_list) {
+    return hd->hw_class_list[ofs] & (1 << bit) ? 1 : 0;
   }
 
   return 0;

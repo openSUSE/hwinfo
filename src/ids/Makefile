@@ -11,7 +11,7 @@ endif
 
 IDFILES	+= src/bus src/class src/extra src/special src/scanner src/network \
 	  src/usb src/usb2 src/isapnp src/monitor src/camera src/tv src/dvb \
-	  src/chipcard src/modem
+	  src/chipcard src/modem src/pcmcia
 
 ifeq "$(ARCH)" "i386"
 IDFILES += src/x11.i386

@@ -43,7 +43,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
   char *s, *a0, *a1, *a2, *s1, *s2;
   char buf1[32], buf2[32];
   hd_t *hd_tmp;
-  int i;
+  int i, j;
   str_list_t *sl;
 
 #ifdef LIBHD_MEMCHECK
@@ -110,6 +110,21 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
 
   if(h->hw_class && (s = hd_hw_item_name(h->hw_class))) {
     dump_line("Hardware Class: %s\n", s);
+  }
+
+  if(hd_data->debug == -1u) {
+    for(i = j = 0; i < (int) hw_all; i++) {
+      if(i != hw_unknown && hd_is_hw_class(h, i) && (s = hd_hw_item_name(i))) {
+        if(!j) {
+          dump_line("HW Class List: %s", s);
+        }
+        else {
+          dump_line0(", %s", s);
+        }
+        j = 1;
+      }
+    }
+    if(j) dump_line0("\n");
   }
 
   if(h->base_class.id == bc_internal && h->sub_class.id == sc_int_cpu)

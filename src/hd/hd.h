@@ -124,7 +124,7 @@ typedef enum hw_item {
   hw_manual, hw_usb_ctrl, hw_usb, hw_bios, hw_pci, hw_isapnp, hw_bridge,
   hw_hub, hw_scsi, hw_ide, hw_memory, hw_dvb, hw_pcmcia, hw_pcmcia_ctrl,
   hw_ieee1394, hw_ieee1394_ctrl, hw_hotplug, hw_hotplug_ctrl, hw_zip, hw_pppoe,
-  hw_wlan,
+  hw_wlan,	/* append new entries here */
   hw_unknown, hw_all					/* hw_all must be last */
 } hd_hw_item_t;
 
@@ -1524,18 +1524,10 @@ typedef struct s_hd_t {
   hd_hw_item_t hw_class;
 
   /**
-   * Alternative hardware class.
-   * A hardware item my belong to more than one class (e.g. mouse vs. usb).
-   * Still not to confuse with \ref base_class!
+   * Hardware class list.
+   * A device may belong to more than one hardware class.
    */
-  hd_hw_item_t hw_class2;
-
-  /**
-   * Second alternative hardware class.
-   * A hardware item my belong to more than one class (e.g. mouse vs. usb).
-   * Still not to confuse with \ref base_class!
-   */
-  hd_hw_item_t hw_class3;
+  unsigned char hw_class_list[(hw_all + 7) / 8];	/**< (Internal) bitmask of hw classes. */
 
   /**
    * Model name.
@@ -1869,6 +1861,9 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data);
 enum boot_arch hd_boot_arch(hd_data_t *hd_data);
 
 hd_t *hd_get_device_by_idx(hd_data_t *hd_data, unsigned idx);
+
+void hd_set_hw_class(hd_t *hd, hd_hw_item_t hw_class);
+int hd_is_hw_class(hd_t *hd, hd_hw_item_t hw_class);
 
 /* implemented in hddb.c */
 

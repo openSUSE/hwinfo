@@ -37,37 +37,50 @@ static hash_t status_names[] = {
 
 /* corresponds to hd_hw_item_t */
 static hash_t hw_items[] = {
-  { hw_cdrom,         "cdrom"               },
-  { hw_floppy,        "floppy"              },
-  { hw_disk,          "disk"                },
-  { hw_network,       "network interface"   },
-  { hw_display,       "graphics card"       },
-  { hw_monitor,       "monitor"             },
-  { hw_framebuffer,   "framebuffer"         },
-  { hw_camera,        "camera"              },
+  { hw_sys,           "system"              },
+  { hw_cpu,           "cpu"                 },
+  { hw_keyboard,      "keyboard"            },
+  { hw_braille,       "braille"             },
   { hw_mouse,         "mouse"               },
   { hw_joystick,      "joystick"            },
-  { hw_keyboard,      "keyboard"            },
+  { hw_printer,       "printer"             },
+  { hw_scanner,       "scanner"             },
   { hw_chipcard,      "chipcard"            },
+  { hw_monitor,       "monitor"             },
+  { hw_tv,            "tv card"             },
+  { hw_display,       "graphics card"       },
+  { hw_framebuffer,   "framebuffer"         },
+  { hw_camera,        "camera"              },
   { hw_sound,         "sound"               },
-  { hw_isdn,          "isdn adapter"        },
-  { hw_modem,         "modem"               },
   { hw_storage_ctrl,  "storage"             },
   { hw_network_ctrl,  "network"             },
-  { hw_printer,       "printer"             },
-  { hw_tv,            "tv card"             },
-  { hw_scanner,       "scanner"             },
-  { hw_braille,       "braille"             },
-  { hw_sys,           "system"              },
-  { hw_bios,          "bios"                },
-  { hw_cpu,           "cpu"                 },
+  { hw_isdn,          "isdn adapter"        },
+  { hw_modem,         "modem"               },
+  { hw_network,       "network interface"   },
+  { hw_disk,          "disk"                },
   { hw_partition,     "partition"           },
+  { hw_cdrom,         "cdrom"               },
+  { hw_floppy,        "floppy"              },
+  { hw_manual,        "manual"              },
   { hw_usb_ctrl,      "usb controller"      },
+  { hw_usb,           "usb"                 },
+  { hw_bios,          "bios"                },
+  { hw_pci,           "pci"                 },
+  { hw_isapnp,        "isapnp"              },
   { hw_bridge,        "bridge"              },
   { hw_hub,           "hub"                 },
+  { hw_scsi,          "scsi"                },
+  { hw_ide,           "ide"                 },
   { hw_memory,        "memory"              },
   { hw_dvb,           "dvb card"            },
+  { hw_pcmcia,        "pcmcia"              },
+  { hw_pcmcia_ctrl,   "pcmcia controller"   },
+  { hw_ieee1394,      "firewire"            },
   { hw_ieee1394_ctrl, "firewire controller" },
+  { hw_hotplug,       "hotplug"             },
+  { hw_hotplug_ctrl,  "hotplug controller"  },
+  { hw_zip,           "zip"                 },
+  { hw_pppoe,         "pppoe"               },
   { hw_wlan,          "wlan card"           },
   { hw_unknown,       "unknown"             },
   { 0,                NULL                  }
@@ -107,7 +120,7 @@ typedef enum {
   hwdi_unix_dev_name, hwdi_rom_id, hwdi_broken, hwdi_usb_guid, hwdi_res_mem,
   hwdi_res_phys_mem, hwdi_res_io, hwdi_res_irq, hwdi_res_dma, hwdi_res_size,
   hwdi_res_baud, hwdi_res_cache, hwdi_res_disk_geo, hwdi_res_monitor,
-  hwdi_res_framebuffer, hwdi_features, hwdi_hotplug
+  hwdi_res_framebuffer, hwdi_features, hwdi_hotplug, hwdi_class_list
 } hw_hd_items_t;
 
 static hash_t hw_ids_hd_items[] = {
@@ -147,6 +160,7 @@ static hash_t hw_ids_hd_items[] = {
   { hwdi_res_framebuffer, "Res.Framebuffer"  },
   { hwdi_features,        "Features"         },
   { hwdi_hotplug,         "Hotplug"          },
+  { hwdi_class_list,      "HWClassList"      },
   { 0,                    NULL               }
 };
 
@@ -725,6 +739,8 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
   unsigned tag, u0, u1, u2, u3, u4;
   hd_res_t *res;
   uint64_t u64_0, u64_1;
+  char *s;
+  int i;
 
   if(!hd || !entry) return;
 
@@ -837,6 +853,22 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
 
       case hwdi_hotplug:
         hd->hotplug = strtol(sl2->str, NULL, 0);
+        break;
+
+      case hwdi_class_list:
+        for(
+          u0 = 0, s = sl2->str;
+          u0 < sizeof hd->hw_class_list / sizeof *hd->hw_class_list;
+          u0++
+        ) {
+          if(*s && s[1] && (i = hex(s, 2)) >= 0) {
+            hd->hw_class_list[u0] = i;
+            s += 2;
+          }
+          else {
+            break;
+          }
+        }
         break;
 
       case hwdi_res_mem:
@@ -1176,6 +1208,13 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
     str_printf(&s, 0, "%d", hd->hotplug);
     add_str_list(&entry->value, s);
   }
+
+  s = free_mem(s);
+  for(u = 0; u < sizeof hd->hw_class_list / sizeof *hd->hw_class_list; u++) {
+    str_printf(&s, -1, "%02x", hd->hw_class_list[u]);
+  }
+  add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_class_list));
+  add_str_list(&entry->value, s);
 
   u = 0;
   if(hd->is.agp)          u |= 1 << 0;
