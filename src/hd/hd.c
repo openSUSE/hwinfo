@@ -132,6 +132,7 @@ static hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd);
 static void timeout_alarm_handler(int signal);
 static void get_probe_env(hd_data_t *hd_data);
 static void hd_scan_xtra(hd_data_t *hd_data);
+static hd_t *hd_get_device_by_id(hd_data_t *hd_data, char *id);
 
 static void test_read_block0_open(void *arg);
 static void get_kernel_version(hd_data_t *hd_data);
@@ -1786,6 +1787,12 @@ void hd_scan(hd_data_t *hd_data)
       free_mem(hd->parent_id);
       hd->parent_id = new_str(hd2->unique_id);
     }
+    else if((hd2 = hd_get_device_by_id(hd_data, hd->parent_id))) {
+      hd->attached_to = hd2->idx;
+    }
+    else {
+      hd->attached_to = 0;
+    }
   }
 
   /* assign a hw_class & build a useful model string */
@@ -2019,6 +2026,23 @@ hd_t *hd_get_device_by_idx(hd_data_t *hd_data, unsigned idx)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->idx == idx) return hd;
+  }
+
+  return NULL;
+}
+
+
+/*
+ * find hardware entry with given unique id
+ */
+hd_t *hd_get_device_by_id(hd_data_t *hd_data, char *id)
+{
+  hd_t *hd;
+
+  if(!id) return NULL;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->unique_id && !strcmp(hd->unique_id, id)) return hd;
   }
 
   return NULL;
