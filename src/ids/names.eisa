@@ -179,6 +179,8 @@ PNP	PnP
 	0f0e	Generic PS/2 Mouse
 
 	80d6.00200	NE2000 Compatible
+	80f7.00200	3Com EtherLink III
+	80f8.00200	3Com Generic Etherlink PnP Device
 
 	b006	MPU401 compatible
 	b02f	Joystick/Game port
@@ -199,6 +201,13 @@ STB
 	011a.00401
 
 SVE	SVEC
+
+TCM	3Com
+	5090.00200
+	5091.00200
+	5094.00200
+	5095.00200
+	5098.00200
 
 TER	Terratec
 	1411.00401	Soundsystem Base 1

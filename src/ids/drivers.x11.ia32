@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2001-05-07 17:54:51
+#hwinfo data from 2001-05-11 17:10:18
 #
 
 
@@ -7,13 +7,11 @@
 # Matrox:MGA G200 AGP
 102b 0521
 	x	4|mga|||||d|||
-		VideoRam 8192
 
 
 # Matrox:MGA G200 AGP
 102b 0521
 	x	4|mga|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
-		VideoRam 8192
 
 
 # Matrox:MGA G200 AGP
@@ -84,11 +82,6 @@
 # Matrox:MGA G200 SD PCI
 102B 0520
 	x	4|mga|||||d|||
-
-
-# Matrox:MGA G200 SD PCI
-102B 0520
-	x	4|mga|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 
 # Matrox:MGA G200 SD PCI
@@ -436,11 +429,6 @@
 # ATI:Rage 128 RL
 1002 524C
 	x	4|r128|||||f|||
-
-
-# ATI:Rage 128 RL
-1002 524C
-	x	4|r128|3d|xf86_glx|dri,glx||4||switch2xf86_glx|
 
 
 # ATI:Rage 128 RL
@@ -1679,7 +1667,7 @@
 
 # 3DLabs:Oxygen II
 3d3d 000a
-	x	4|glint|||||11|||
+	x	4|glint|||||9|||
 
 
 # Rendition:Verite 2x00
@@ -2185,16 +2173,6 @@
 
 # SiS:SIS540
 1039 5300
-	x	3|SVGA||||||||
-
-
-# SiS:SIS630
-1039 6300
-	x	4|sis||||||||
-
-
-# SiS:SIS630
-1039 6300
 	x	3|SVGA||||||||
 
 

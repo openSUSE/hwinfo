@@ -3417,6 +3417,11 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         hd->base_class == bc_multimedia &&
         hd->sub_class == sc_multi_video
       )
+      ||
+      ( /* make i2o controllers appear in the storage_ctrl list */
+        items == hw_storage_ctrl &&
+        hd->base_class == bc_i2o
+      )
     ) {
       /* ##### fix? card bus magic: don't list card bus devices */
       if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
