@@ -458,8 +458,6 @@ void get_smbios_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
     dump_memory(hd_data, &memory, 0, "SMBIOS Structure Table");
   }
 
-  ADD2LOG("s: %d\n", structs);
-
   for(u = 0, ofs = 0; u < structs && ofs + 3 < len; u++) {
     type = memory.data[ofs];
     slen = memory.data[ofs + 1];
