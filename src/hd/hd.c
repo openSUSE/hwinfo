@@ -136,6 +136,9 @@ static void short_vendor(char *vendor);
 static void create_model_name(hd_data_t *hd_data, hd_t *hd);
 #endif
 
+static int is_pcmcia_ctrl(hd_data_t *hd_data, hd_t *hd);
+
+
 /*
  * Names of the probing modules.
  * Cf. enum mod_idx in hd_int.h.
@@ -617,6 +620,9 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_usb_ctrl:
+    case hw_pcmcia_ctrl:
+    case hw_ieee1394_ctrl:
+    case hw_hotplug_ctrl:
       hd_set_probe_feature(hd_data, pr_pci);
       break;
 
@@ -669,6 +675,10 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_all:
     case hw_unknown:
     case hw_partition:
+    case hw_pcmcia:
+    case hw_ieee1394:
+    case hw_hotplug:
+    case hw_zip:
       break;
   }
 }
@@ -2539,70 +2549,13 @@ int hd_has_special_eide(hd_data_t *hd_data)
   return 0;
 }
 
-/*
- * cf. pcmcia-cs-*:cardmgr/probe.c
- */
+
 int hd_has_pcmcia(hd_data_t *hd_data)
 {
-  int i;
   hd_t *hd;
-  static unsigned ids[][2] = {
-    { 0x1013, 0x1100 },
-    { 0x1013, 0x1110 },
-    { 0x10b3, 0xb106 },
-    { 0x1180, 0x0465 },
-    { 0x1180, 0x0466 },
-    { 0x1180, 0x0475 },
-    { 0x1180, 0x0476 },
-    { 0x1180, 0x0478 },
-    { 0x104c, 0xac12 },
-    { 0x104c, 0xac13 },
-    { 0x104c, 0xac15 },
-    { 0x104c, 0xac16 },
-    { 0x104c, 0xac17 },
-    { 0x104c, 0xac19 },
-    { 0x104c, 0xac1a },
-    { 0x104c, 0xac1d },
-    { 0x104c, 0xac1f },
-    { 0x104c, 0xac1b },
-    { 0x104c, 0xac1c },
-    { 0x104c, 0xac1e },
-    { 0x104c, 0xac51 },
-    { 0x1217, 0x6729 },
-    { 0x1217, 0x673a },
-    { 0x1217, 0x6832 },
-    { 0x1217, 0x6836 },
-    { 0x1217, 0x6872 },
-    { 0x1179, 0x0603 },
-    { 0x1179, 0x060a },
-    { 0x1179, 0x060f },
-    { 0x1179, 0x0617 },
-    { 0x119b, 0x1221 },
-    { 0x8086, 0x1221 }
-  };
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_has_pcmcia, hd_data), hd_data);
-  }
-#endif
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(
-       hd->base_class.id == bc_bridge &&
-      (hd->sub_class.id == sc_bridge_pcmcia || hd->sub_class.id == sc_bridge_cardbus)
-    ) return 1;
-
-    /* just in case... */
-    if(hd->bus.id == bus_pci) {
-      for(i = 0; i < sizeof ids / sizeof *ids; i++) {
-        if(
-          ID_VALUE(hd->vendor.id) == ids[i][0] &&
-          ID_VALUE(hd->device.id) == ids[i][1]
-        ) return 1;
-      }
-    }
+    if(is_pcmcia_ctrl(hd_data, hd)) return 1;
   }
 
   return 0;
@@ -4014,6 +3967,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
   int sc;		/* compare sub_class too */
   unsigned base_class, sub_class;
   hd_hw_item_t item;
+  int (*test_func)(hd_data_t *, hd_t *) = NULL;
 
   if(!hd) return;
 
@@ -4023,6 +3977,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
       sc = 0;
       sub_class = 0;
 
+      base_class = -1;
       switch(item) {
         case hw_cdrom:
           base_class = bc_storage_device;
@@ -4158,11 +4113,42 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           sc = 1;
           break;
 
-        default:
-          base_class = -1;
+        case hw_ieee1394_ctrl:
+          base_class = bc_serial;
+          sub_class = sc_ser_fire;
+          sc = 1;
+          break;
+
+        case hw_pcmcia_ctrl:
+          test_func = is_pcmcia_ctrl;
+          break;
+
+        case hw_unknown:
+        case hw_all:
+        case hw_manual:		/* special */
+
+        /* bus types */
+        case hw_usb:
+        case hw_pci:
+        case hw_isapnp:
+        case hw_scsi:
+        case hw_ide:
+
+        case hw_pcmcia:		/* not handled */
+        case hw_ieee1394:	/* not handled */
+        case hw_hotplug:	/* not handled */
+        case hw_hotplug_ctrl:	/* not handled */
+        case hw_zip:		/* not handled */
+        case hw_partition:	/* not handled */
       }
 
-      if(
+      if(test_func) {
+        if(test_func(hd_data, hd)) {
+          hd->hw_class = item;
+          break;
+        }
+      }
+      else if(
         (
           hd->base_class.id == base_class &&
           (sc == 0 || hd->sub_class.id == sub_class)
@@ -4510,5 +4496,67 @@ str_list_t *hd_split(char del, char *str)
   free_mem(str);
 
   return sl;
+}
+
+
+/*
+ * cf. pcmcia-cs-*:cardmgr/probe.c
+ */
+int is_pcmcia_ctrl(hd_data_t *hd_data, hd_t *hd)
+{
+  int i;
+  static unsigned ids[][2] = {
+    { 0x1013, 0x1100 },
+    { 0x1013, 0x1110 },
+    { 0x10b3, 0xb106 },
+    { 0x1180, 0x0465 },
+    { 0x1180, 0x0466 },
+    { 0x1180, 0x0475 },
+    { 0x1180, 0x0476 },
+    { 0x1180, 0x0478 },
+    { 0x104c, 0xac12 },
+    { 0x104c, 0xac13 },
+    { 0x104c, 0xac15 },
+    { 0x104c, 0xac16 },
+    { 0x104c, 0xac17 },
+    { 0x104c, 0xac19 },
+    { 0x104c, 0xac1a },
+    { 0x104c, 0xac1d },
+    { 0x104c, 0xac1f },
+    { 0x104c, 0xac1b },
+    { 0x104c, 0xac1c },
+    { 0x104c, 0xac1e },
+    { 0x104c, 0xac51 },
+    { 0x1217, 0x6729 },
+    { 0x1217, 0x673a },
+    { 0x1217, 0x6832 },
+    { 0x1217, 0x6836 },
+    { 0x1217, 0x6872 },
+    { 0x1179, 0x0603 },
+    { 0x1179, 0x060a },
+    { 0x1179, 0x060f },
+    { 0x1179, 0x0617 },
+    { 0x119b, 0x1221 },
+    { 0x8086, 0x1221 }
+  };
+
+  if(!hd) return 0;
+
+  if(
+     hd->base_class.id == bc_bridge &&
+    (hd->sub_class.id == sc_bridge_pcmcia || hd->sub_class.id == sc_bridge_cardbus)
+  ) return 1;
+
+  /* just in case... */
+  if(hd->bus.id == bus_pci) {
+    for(i = 0; i < sizeof ids / sizeof *ids; i++) {
+      if(
+        ID_VALUE(hd->vendor.id) == ids[i][0] &&
+        ID_VALUE(hd->device.id) == ids[i][1]
+      ) return 1;
+    }
+  }
+
+  return 0;
 }
 

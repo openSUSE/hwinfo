@@ -20,7 +20,7 @@
  */
 
 
-// static void add_driver_info(hd_data_t *hd_data);
+static void add_driver_info(hd_data_t *hd_data);
 static unsigned char pci_cfg_byte(pci_t *pci, int fd, unsigned idx);
 static void get_pci_data(hd_data_t *hd_data);
 static void dump_pci_data(hd_data_t *hd_data);
@@ -159,11 +159,10 @@ void hd_scan_pci(hd_data_t *hd_data)
     }
   }
 
-//  add_driver_info(hd_data);
+  add_driver_info(hd_data);
 }
 
 
-#if 0
 /*
  * Add driver info in some special cases.
  */
@@ -174,36 +173,26 @@ void add_driver_info(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->bus.id != bus_pci) continue;
-    if(hd->drv_vend || hd->drv_dev) continue;
 
-    if(hd->base_class.id == bc_serial && hd->sub_class.id == sc_ser_usb) {
-      hd->drv_vend = MAKE_ID(TAG_SPECIAL, 0x7001);
-      hd->drv_dev = MAKE_ID(TAG_SPECIAL, 0x0000 + hd->prog_if.id);
+    if(
+      (
+        hd->base_class.id == bc_serial &&
+        hd->sub_class.id == sc_ser_fire
+      ) ||
+      (
+        hd->base_class.id == bc_serial &&
+        hd->sub_class.id == sc_ser_usb
+      )
+    ) {
       for(res = hd->res; res; res = res->next) {
         if(res->any.type == res_irq) break;
       }
       if(!res) hd->is.notready = 1;
       continue;
     }
-
-    if(hd->base_class.id == bc_i2o) {
-      hd->drv_vend = MAKE_ID(TAG_SPECIAL, 0x7002);
-      hd->drv_dev = MAKE_ID(TAG_SPECIAL, 0x0000);
-      continue;
-    }
-
-    if(
-      hd->base_class.id == bc_storage &&
-      hd->sub_class.id == sc_sto_raid &&
-      hd->vendor.id == MAKE_ID(TAG_PCI, 0x105a)
-    ) {
-      hd->drv_vend = MAKE_ID(TAG_PCI, 0x105a);
-      hd->drv_dev = MAKE_ID(TAG_PCI, 0x6268);
-      continue;
-    }
   }
 }
-#endif
+
 
 /*
  * get a byte from pci config space

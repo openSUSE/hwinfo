@@ -260,6 +260,7 @@ void int_floppy(hd_data_t *hd_data)
         )
       ) {
         hd->sub_class.id = sc_sdev_floppy;
+        hd->is.zip = 1;
         new_id(hd_data, hd);
       }
     }

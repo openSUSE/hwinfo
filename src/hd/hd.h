@@ -115,7 +115,8 @@ typedef enum hw_item {
   hw_framebuffer, hw_camera, hw_sound, hw_storage_ctrl, hw_network_ctrl,
   hw_isdn, hw_modem, hw_network, hw_disk, hw_partition, hw_cdrom, hw_floppy,
   hw_manual, hw_usb_ctrl, hw_usb, hw_bios, hw_pci, hw_isapnp, hw_bridge,
-  hw_hub, hw_scsi, hw_ide, hw_memory, hw_dvb,
+  hw_hub, hw_scsi, hw_ide, hw_memory, hw_dvb, hw_pcmcia, hw_pcmcia_ctrl,
+  hw_ieee1394, hw_ieee1394_ctrl, hw_hotplug, hw_hotplug_ctrl, hw_zip,
   hw_unknown, hw_all					/* hw_all must be last */
 } hd_hw_item_t;
 
@@ -1613,6 +1614,7 @@ typedef struct s_hd_t {
     unsigned notready:1;	/* block devices: no medium, other: device not configured */
     unsigned manual:1;		/* undetectable, manually configured hardware */
     unsigned softraiddisk:1;	/* disk belongs to some soft raid array */
+    unsigned zip:1;		/* zip floppy */
   } is;
 
   struct tag_s {		/* this struct is for internal purposes only */
