@@ -1,6 +1,6 @@
 TOPDIR		= $(CURDIR)
 SUBDIRS		= src
-TARGETS		= hwinfo hwscan
+TARGETS		= hwinfo hwscan hwscand hwscanqueue
 CLEANFILES	= hwinfo hwinfo.static hwscan hwscan.static doc/libhd doc/*~
 LIBDIR		= /usr/lib
 LIBS		= -lhd
@@ -18,6 +18,12 @@ hwscan: hwscan.o $(LIBHD)
 
 hwinfo: hwinfo.o $(LIBHD)
 	$(CC) hwinfo.o $(LDFLAGS) $(LIBS) -o $@
+
+hwscand: hwscand.o
+	$(CC) $< $(LDFLAGS) -o $@
+
+hwscanqueue: hwscanqueue.o
+	$(CC) $< $(LDFLAGS) -o $@
 
 # kept for compatibility
 shared:
@@ -53,8 +59,7 @@ doc:
 install:
 	install -d -m 755 $(DESTDIR)/usr/sbin $(DESTDIR)$(LIBDIR) \
 		$(DESTDIR)/usr/include $(DESTDIR)/etc/init.d
-	install -m 755 -s hwinfo $(DESTDIR)/usr/sbin
-	install -m 755 -s hwscan $(DESTDIR)/usr/sbin
+	install -m 755 $(TARGETS) $(DESTDIR)/usr/sbin
 	install -m 755 -s src/ids/check_hd $(DESTDIR)/usr/sbin
 	install -m 755 src/ids/convert_hd $(DESTDIR)/usr/sbin
 	if [ -f $(LIBHD_SO) ] ; then \

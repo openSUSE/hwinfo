@@ -86,7 +86,8 @@ void get_usb_devs(hd_data_t *hd_data)
     if(
       hd_attr_uint(sysfs_get_device_attr(sf_dev, "bInterfaceNumber"), &ul0, 16) &&
       hd_attr_uint(sysfs_get_device_attr(sf_dev, "bAlternateSetting"), &ul1, 0) &&
-      ul1 == 0
+//      ul1 == 0
+      1
     ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
 
