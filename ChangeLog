@@ -1,3 +1,5 @@
+	- s390: added two missing DASD device types
+
 9/3/2004:	v8.17
 	- udevinfo moved to /usr/bin
 

@@ -90,12 +90,14 @@
  vendor.id		special 0x6001
 &device.id		special 0x3990
 &subdevice.id		special 0x3390
+|subdevice.id		special 0x3380
+|subdevice.id		special 0x9345
 |subdevice.id		special 0x3350
 |subdevice.id		special 0x3330
 |subdevice.id		special 0x3375
-|subdevice.id		special 0x3380
 |subdevice.id		special 0x3851
-|subdevice.id		special 0x9345
+|subdevice.id		special 0x9336
+|subdevice.id		special 0x3370
 +device.name		DASD
 +baseclass.id		0x106
 +subclass.id		0
