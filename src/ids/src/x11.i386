@@ -1876,6 +1876,8 @@
 &device.id		pci 0x01a0
 +device.name		GeForce2 Integrated GPU
 +driver.xfree		4|nv
++driver.xfree		4|nvidia|3d||glx||16||switch2nvidia_glx
++requires		NVIDIA_GLX|NVIDIA_kernel
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0200

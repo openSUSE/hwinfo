@@ -1,3 +1,7 @@
+19/8/2002:	v5.13
+	- mls: x86 emu for BIOS calls on x86_64
+	- updated x11 data
+
 16/8/2002:	v5.12
 	- changes in libhd interface
 

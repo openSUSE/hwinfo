@@ -7,7 +7,7 @@ CLEANFILES	= $(LIBHD) $(LIBHD_D) $(LIBHD_SO) libhd.so*
 
 include $(TOPDIR)/Makefile.common
 
-ifeq "$(ARCH)" "i386"
+ifneq "$(findstring $(ARCH), i386 x86_64)" ""
 SUBDIRS	+= int10
 endif
 

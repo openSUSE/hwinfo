@@ -25,7 +25,11 @@
 #include <asm/unistd.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef __i386__
 #include <sys/vm86.h>
+#else
+#include "vm86_struct.h"
+#endif
 #include <signal.h>
 #include "v86bios.h"
 #include "AsmMacros.h"
@@ -138,7 +142,11 @@ do_vm86(void)
 //    retval = SYS_vm86old(&vm86s);
 //    retval = syscall(SYS_vm86old,&vm86s);
 
+#ifdef __i386__
 	retval = vm86_rep(&vm86s);
+#else
+	retval = emu_vm86(&vm86s);
+#endif
 
 	switch (VM86_TYPE(retval)) {
 	case VM86_UNKNOWN:
@@ -479,6 +487,8 @@ vm86_rep(struct vm86_struct *ptr)
 			return __res;
 }
 
+#ifdef __i386__
+
 #define pushw(base, ptr, val) \
 __asm__ __volatile__( \
 		"decw %w0\n\t" \
@@ -487,6 +497,17 @@ __asm__ __volatile__( \
 		"movb %b2,(%1,%0)" \
 		: "=r" (ptr) \
 		: "r" (base), "q" (val), "0" (ptr))
+
+#else
+
+#define pushw(base, ptr, val) {					\
+	ptr = (ptr) - 1 & 0xffff;				\
+	*((unsigned char *)(base) + (ptr)) = (val) >> 8;	\
+	ptr = (ptr) - 1 & 0xffff;				\
+	*((unsigned char *)(base) + (ptr)) = (val);		\
+	}
+
+#endif
 
 int
 run_bios_int(int num, struct regs86 *regs)
