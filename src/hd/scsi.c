@@ -68,7 +68,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
   str_list_t *sl;
   int i, j;
   unsigned found, found_a;
-  driver_info_t *di, *di0;
+  driver_info_t *di;
   struct {
     char *driver;
     unsigned hd_idx;
@@ -184,8 +184,8 @@ void hd_scan_scsi(hd_data_t *hd_data)
       }
       if(j < sizeof scsi_ctrl / sizeof *scsi_ctrl) continue;
 
-      di0 = hd_driver_info(hd_data, hd);
-      for(di = di0; di; di = di->next) {
+      if(!hd->driver_info) hddb_add_info(hd_data, hd);
+      for(di = hd->driver_info; di; di = di->next) {
         if(
           di->any.type == di_module &&
           di->module.names
@@ -199,7 +199,6 @@ void hd_scan_scsi(hd_data_t *hd_data)
           }
         }
       }
-      di0 = hd_free_driver_info(di0);
 
       if(found_a) break;
     }

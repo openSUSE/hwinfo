@@ -7,6 +7,7 @@
 #include "hd.h"
 #include "hd_int.h"
 #include "hddb.h"
+#include "isdn.h"
 
 extern hddb2_data_t hddb_internal;
 
@@ -101,6 +102,7 @@ typedef struct {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 static void hddb_init_pci(hd_data_t *hd_data);
+static driver_info_t *hd_pcidb(hd_data_t *hd_data, hd_t *hd);
 static void hddb_init_external(hd_data_t *hd_data);
 
 static line_t *parse_line(char *str);
@@ -118,7 +120,19 @@ static int hddb_search(hd_data_t *hd_data, hddb_search_t *hs);
 static void test_db(hd_data_t *hd_data);
 #endif
 static driver_info_t *hddb_to_device_driver(hd_data_t *hd_data, hddb_search_t *hs);
+static driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd);
+static driver_info_t *monitor_driver(hd_data_t *hd_data, hd_t *hd);
 
+#if WITH_ISDN
+static int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len);
+static isdn_parm_t *new_isdn_parm(isdn_parm_t **ip);
+static driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici);
+#endif
+
+static hd_res_t *get_res(hd_t *h, enum resource_types t, unsigned index);
+static driver_info_t *reorder_x11(driver_info_t *di0, char *info);
+static void expand_driver_info(hd_data_t *hd_data, hd_t *hd);
+static char *module_cmd(hd_t *hd, char *cmd);
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 void hddb_init_pci(hd_data_t *hd_data)
@@ -1580,9 +1594,14 @@ unsigned sub_device_class(hd_data_t *hd_data, unsigned vendor, unsigned device, 
 }
 
 
-driver_info_t *device_driver(hd_data_t *hd_data, hd_t *hd)
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
 {
   hddb_search_t hs = {};
+  driver_info_t *new_driver_info = NULL;
+#if WITH_ISDN
+  ihw_card_info *ici;
+#endif
 
   if(hd->vend) {
     hs.vendor.id = hd->vend;
@@ -1611,11 +1630,20 @@ driver_info_t *device_driver(hd_data_t *hd_data, hd_t *hd)
     hd->requires = hd_split('|', hs.requires);
   }
 
-  if((hs.value & (1 << he_driver))) {
-    return hddb_to_device_driver(hd_data, &hs);
+  /* get driver info */
+
+#if WITH_ISDN
+  if((ici = get_isdn_info(hd))) {
+    new_driver_info = isdn_driver(hd_data, hd, ici);
+    free_mem(ici);
+  }
+#endif
+
+  if(!new_driver_info && (hs.value & (1 << he_driver))) {
+    new_driver_info = hddb_to_device_driver(hd_data, &hs);
   }
 
-  if(hd->compat_vend || hd->compat_dev) {
+  if(!new_driver_info && (hd->compat_vend || hd->compat_dev)) {
     memset(&hs, 0, sizeof hs);
 
     if(hd->compat_vend) {
@@ -1630,11 +1658,11 @@ driver_info_t *device_driver(hd_data_t *hd_data, hd_t *hd)
     hddb_search(hd_data, &hs);
 
     if((hs.value & (1 << he_driver))) {
-      return hddb_to_device_driver(hd_data, &hs);
+      new_driver_info =  hddb_to_device_driver(hd_data, &hs);
     }
   }
 
-  if(hd->drv_vend || hd->drv_dev) {
+  if(!new_driver_info && (hd->drv_vend || hd->drv_dev)) {
     memset(&hs, 0, sizeof hs);
 
     if(hd->drv_vend) {
@@ -1649,14 +1677,33 @@ driver_info_t *device_driver(hd_data_t *hd_data, hd_t *hd)
     hddb_search(hd_data, &hs);
 
     if((hs.value & (1 << he_driver))) {
-      return hddb_to_device_driver(hd_data, &hs);
+      new_driver_info = hddb_to_device_driver(hd_data, &hs);
     }
   }
 
-  return NULL;
+  if(!new_driver_info && hd->base_class == bc_keyboard) {
+    new_driver_info = kbd_driver(hd_data, hd);
+  }
+
+  if(!new_driver_info && hd->base_class == bc_monitor) {
+    new_driver_info = monitor_driver(hd_data, hd);
+  }
+
+  if(!new_driver_info) {
+    new_driver_info = hd_pcidb(hd_data, hd);
+  }
+
+  if(new_driver_info) {
+    if(!hd->ref) {
+      hd->driver_info = hd_free_driver_info(hd->driver_info);
+    }
+    hd->driver_info = new_driver_info;
+    expand_driver_info(hd_data, hd);
+  }
 }
 
 
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 driver_info_t *hddb_to_device_driver(hd_data_t *hd_data, hddb_search_t *hs)
 {
   char *s, *t, *t0;
@@ -1710,85 +1757,764 @@ driver_info_t *hddb_to_device_driver(hd_data_t *hd_data, hddb_search_t *hs)
 }
 
 
-void hdb_add_info(hd_data_t *hd_data, hd_t *hd)
+driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
 {
-  hddb_search_t hs = {};
-  int new_driver_info = 0;
+  driver_info_t *di;
+  driver_info_kbd_t *ki;
+  int arch = hd_cpu_arch(hd_data);
+  unsigned u;
+  char *s1, *s2;
+  hd_t *hd_tmp;
+  usb_t *usb;
 
-  if(hd->vend) {
-    hs.vendor.id = hd->vend;
-    hs.key |= 1 << he_vendor_id;
+  /* country codes
+     1 Arabic
+     2 Belgian
+     3 Canadian-Bilingual
+     4 Canadian-French
+     5 Czech Republic
+     6 Danish
+     7 Finnish
+     8 French
+     9 German
+    10 Greek
+    11 Hebrew
+    12 Hungary
+    13 International (ISO)
+    14 Italian
+    15 Japan (Katakana)
+    16 Korean
+    17 Latin American
+    18 Netherlands/Dutch
+    19 Norwegian
+    20 Persian (Farsi)
+    21 Poland
+    22 Portuguese
+    23 Russia
+    24 Slovakia
+    25 Spanish
+    26 Swedish 
+    27 Swiss/French
+    28 Swiss/German
+    29 Switzerland
+    30 Taiwan
+    31 Turkish
+    32 UK
+    33 US
+    34 Yugoslavia
+  */
+  static struct {
+    unsigned country;
+    char *layout;
+    char *keymap;
+  } country_code[] = {
+    {  5, "cs", "cz-us-qwertz" },
+    {  8, "fr", "fr-latin1" },
+    {  9, "de", "de-latin1-nodeadkeys" },
+    { 10, "gr", "gr" },
+    { 14, "it", "it" },
+    { 18, "nl", "us" },
+    { 23, "ru", "ru1" },
+    { 25, "es", "es" },
+    { 32, "uk", "uk" },
+    { 33, "us", "us" }
+  };
+
+  if(hd->sub_class == sc_keyboard_console) return NULL;
+
+  di = new_mem(sizeof *di);
+  di->kbd.type = di_kbd;
+  ki = &(di->kbd);
+
+  switch(arch) {
+    case arch_intel:
+    case arch_x86_64:
+    case arch_alpha:
+      ki->XkbRules = new_str("xfree86");
+      ki->XkbModel = new_str("pc104");
+      break;
+
+    case arch_ppc:
+    case arch_ppc64:
+      ki->XkbRules = new_str("xfree86");
+      ki->XkbModel = new_str("macintosh");
+      for(hd_tmp = hd_data->hd; hd_tmp; hd_tmp = hd_tmp->next) {
+        if(
+          hd_tmp->base_class == bc_internal &&
+          hd_tmp->sub_class == sc_int_cpu &&
+          hd_tmp->detail &&
+          hd_tmp->detail->type == hd_detail_cpu &&
+          hd_tmp->detail->cpu.data
+        ) {
+          s1 = hd_tmp->detail->cpu.data->vend_name;
+          if(s1 && (strstr(s1, "CHRP ") == s1 || strstr(s1, "PReP ") == s1)) {
+            free_mem(ki->XkbModel);
+            ki->XkbModel = new_str("pc104");
+          }
+        }
+      }
+      break;
+
+    case arch_sparc:
+    case arch_sparc64:
+      if(hd->vend == MAKE_ID(TAG_SPECIAL, 0x0202)) {
+        ki->XkbRules = new_str("sun");
+        u = ID_VALUE(hd->dev);
+        if(u == 4) ki->XkbModel = new_str("type4");
+        if(u == 5) {
+          ki->XkbModel = new_str(ID_VALUE(hd->sub_dev) == 2 ? "type5_euro" : "type5");
+        }
+        s1 = s2 = NULL;
+
+        switch(hd->prog_if) {
+          case  0: case  1: case 33: case 34: case 80: case 81:
+          default:
+            s1 = "us"; s2 = "sunkeymap";
+            break;
+
+          case  2:
+            s1 = "fr"; s2 = "sunt5-fr-latin1"; // fr_BE?
+            break;
+
+          case  3:
+            s1 = "ca";
+            break;
+
+          case  4: case 36: case 83:
+            s1 = "dk";
+            break;
+
+          case  5: case 37: case 84:
+            s1 = "de"; s2 = "sunt5-de-latin1";
+            break;
+
+          case  6: case 38: case 85:
+            s1 = "it";
+            break;
+
+          case  7: case 39: case 86:
+            s1 = "nl";
+            break;
+
+          case  8: case 40: case 87:
+            s1 = "no";
+            if(u == 4) s2 = "sunt4-no-latin1";
+            break;
+
+          case  9: case 41: case 88:
+            s1 = "pt";
+            break;
+
+          case 10: case 42: case 89:
+            s1 = "es";
+            s2 = u == 4 ? "sunt4-es" : "sunt5-es";
+            break;
+
+          case 11: case 43: case 90:
+            s1 = "se"; s2 = "sunt5-fi-latin1";	// se is swedish, not fi
+            break;
+
+          case 12: case 44: case 91:
+            s1 = "fr"; s2 = "sunt5-fr-latin1"; // fr_CH
+            break;
+
+          case 13: case 45: case 92:
+            s1 = "de"; s2 = "sunt5-de-latin1";  // de_CH
+            break;
+
+          case 14: case 46: case 93:
+            s1 = "gb"; s2 = "sunt5-uk";
+            break;
+
+          case 16: case 47: case 94:
+            s1 = "ko";
+            break;
+
+          case 17: case 48: case 95:
+            s1 = "tw";
+            break;
+
+          case 32: case 49: case 96:
+            s1 = "jp";
+            break;
+
+          case 50: case 97:
+            s1 = "fr"; s2 = "sunt5-fr-latin1"; // fr_CA
+            break;
+
+          case 51:
+            s1 = "hu";
+            break;
+
+          case 52:
+            s1 = "pl"; s2 = "sun-pl";
+            break;
+
+          case 53:
+            s1 = "cs";
+            break;
+
+          case 54:
+            s1 = "ru"; s2 = "sunt5-ru";
+            break;
+        }
+        ki->XkbLayout = new_str(s1);
+        ki->keymap = new_str(s2);
+      }
+      else {
+        ki->XkbRules = new_str("xfree86");
+        ki->XkbModel = new_str("pc104");
+      }
+      break;
+
+    default:
+      ki->XkbRules = new_str("xfree86");
   }
 
-  if(hd->dev) {
-    hs.device.id = hd->dev;
-    hs.key |= 1 << he_device_id;
-  }
-
-  if(hd->sub_vend) {
-    hs.sub_vendor.id = hd->sub_vend;
-    hs.key |= 1 << he_subvendor_id;
-  }
-
-  if(hd->sub_dev) {
-    hs.sub_device.id = hd->sub_dev;
-    hs.key |= 1 << he_subdevice_id;
-  }
-
-  hddb_search(hd_data, &hs);
-
-  if((hs.value & (1 << he_requires))) {
-    hd->requires = free_str_list(hd->requires);
-    hd->requires = hd_split('|', hs.requires);
-  }
-
-  if((hs.value & (1 << he_driver))) {
-    hd->driver_info = hd_free_driver_info(hd->driver_info);
-    hd->driver_info = hddb_to_device_driver(hd_data, &hs);
-    new_driver_info = 1;
-  }
-
-  if(!hd->driver_info && (hd->compat_vend || hd->compat_dev)) {
-    memset(&hs, 0, sizeof hs);
-
-    if(hd->compat_vend) {
-      hs.vendor.id = hd->compat_vend;
-      hs.key |= 1 << he_vendor_id;
+  if(
+    hd->bus == bus_usb &&
+    hd->detail &&
+    hd->detail->type == hd_detail_usb &&
+    (usb = hd->detail->usb.data) &&
+    usb->country
+  ) {
+    for(u = 0; u < sizeof country_code / sizeof *country_code; u++) {
+      if(country_code[u].country == usb->country) {
+        if(!ki->XkbLayout) ki->XkbLayout = new_str(country_code[u].layout);
+        if(!ki->keymap) ki->keymap = new_str(country_code[u].keymap);
+        break;
+      }
     }
-    if(hd->compat_dev) {
-      hs.device.id = hd->compat_dev;
-      hs.key |= 1 << he_device_id;
+  }
+
+  return di;
+}
+
+
+driver_info_t *monitor_driver(hd_data_t *hd_data, hd_t *hd)
+{
+  driver_info_t *di = NULL;
+  driver_info_display_t *ddi;
+  monitor_info_t *mi;
+  hd_res_t *res;
+  unsigned width = 640, height = 480;
+
+  if(
+    hd->detail &&
+    hd->detail->type == hd_detail_monitor &&
+    (mi = hd->detail->monitor.data) &&
+    mi->min_hsync
+  ) {
+    di = new_mem(sizeof *di);
+    di->display.type = di_display;
+    ddi = &(di->display);
+
+    ddi->min_vsync = mi->min_vsync;
+    ddi->max_vsync = mi->max_vsync;
+    ddi->min_hsync = mi->min_hsync;
+    ddi->max_hsync = mi->max_hsync;
+
+    for(res = hd->res; res; res = res->next) {
+      if(res->any.type == res_monitor) {
+        if(res->monitor.width * res->monitor.height > width * height ) {
+          width = res->monitor.width;
+          height = res->monitor.height;
+        }
+      }
     }
 
-    hddb_search(hd_data, &hs);
+    ddi->width = width;
+    ddi->height = height;
+  }
 
-    if((hs.value & (1 << he_driver))) {
-      hd->driver_info =  hddb_to_device_driver(hd_data, &hs);
-      new_driver_info = 1;
+  return di;
+}
+
+
+#if WITH_ISDN
+
+int chk_free_biosmem(hd_data_t *hd_data, unsigned addr, unsigned len)
+{
+  unsigned u;
+  unsigned char c;
+
+  addr -= hd_data->bios_rom.start;
+  if(
+    !hd_data->bios_rom.data ||
+    addr >= hd_data->bios_rom.size ||
+    addr + len > hd_data->bios_rom.size
+  ) return 0;
+
+  for(c = 0xff, u = addr; u < addr + len; u++) {
+    c &= hd_data->bios_rom.data[u];
+  }
+
+  return c == 0xff ? 1 : 0;
+}
+
+
+isdn_parm_t *new_isdn_parm(isdn_parm_t **ip)
+{
+  while(*ip) ip = &(*ip)->next;
+
+  return *ip = new_mem(sizeof **ip);
+}
+
+
+driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
+{
+  driver_info_t *di0, *di;
+  ihw_para_info *ipi;
+  ihw_driver_info *idi;
+  isdn_parm_t *ip;
+  hd_res_t *res;
+  uint64_t irqs, irqs2;
+  int i, irq_val, drv, pnr;
+  str_list_t *sl, *sl0;
+
+  if(!ici) return NULL;
+
+  di0 = new_mem(sizeof *di0);
+
+  drv = ici->driver;
+  di = NULL;
+
+  while((idi = hd_ihw_get_driver(drv))) {
+    drv = idi->next_drv;
+    if (di) {
+      di->next = new_mem(sizeof *di);
+      di = di->next;
+    } else {
+      di = di0;
+    }
+    di->isdn.type = di_isdn;
+    di->isdn.i4l_type = idi->typ;
+    di->isdn.i4l_subtype = idi->subtyp;
+    di->isdn.i4l_name = new_str(ici->name);
+
+    if(hd->bus == bus_pci) continue;
+
+    pnr = 1;
+    while((ipi = hd_ihw_get_parameter(ici->handle, pnr++))) {
+      ip = new_isdn_parm(&di->isdn.params);
+      ip->name = new_str(ipi->name);
+      ip->type = ipi->type & P_TYPE_MASK;
+      ip->flags = ipi->flags & P_PROPERTY_MASK;
+      ip->def_value = ipi->def_value;
+      if(ipi->list) ip->alt_values = *ipi->list;
+      ip->alt_value = new_mem(ip->alt_values * sizeof *ip->alt_value);
+      for(i = 0; i < ip->alt_values; i++) {
+        ip->alt_value[i] = ipi->list[i + 1];
+      }
+      ip->valid = 1;
+
+      if((ip->flags & P_SOFTSET)) {
+        switch(ip->type) {
+          case P_IRQ:
+            update_irq_usage(hd_data);
+            irqs = 0;
+            for(i = 0; i < ip->alt_values; i++) {
+              irqs |= 1ull << ip->alt_value[i];
+            }
+            irqs &= ~(hd_data->used_irqs | hd_data->assigned_irqs);
+#ifdef __i386__
+            irqs &= 0xffffull;	/* max. 16 on intel */
+            /*
+             * The point is, that this is relevant for isa boards only
+             * and those have irq values < 16 anyway. So it really
+             * doesn't matter if we mask with 0xffff or not.
+             */
+#endif
+            if(!irqs) {
+              ip->conflict = 1;
+              ip->valid = 0;
+            }
+            else {
+              irqs2 = irqs & ~0xc018ull;
+              /* see if we can avoid irqs 3,4,14,15 */
+              if(irqs2) irqs = irqs2;
+              irq_val = -1;
+              /* try default value first */
+              if(ip->def_value && (irqs & (1ull << ip->def_value))) {
+                irq_val = ip->def_value;
+              }
+              else {
+                for(i = 0; i < 64 && irqs; i++, irqs >>= 1) {
+                  if((irqs & 1)) irq_val = i;
+                }
+              }
+              if(irq_val >= 0) {
+                ip->value = irq_val;
+                hd_data->assigned_irqs |= 1ull << irq_val;
+              }
+              else {
+                ip->valid = 0;
+              }
+            }
+            break;
+          case P_MEM:
+            if(!hd_data->bios_rom.data) {
+              if(ip->def_value) {
+                ip->value = ip->def_value;
+              }
+            }
+            else {
+              /* ###### 0x2000 is just guessing -> should be provided by libihw */
+              if(ip->def_value && chk_free_biosmem(hd_data, ip->def_value, 0x2000)) {
+                ip->value = ip->def_value;
+              }
+              else {
+                for(i = ip->alt_values - 1; i >= 0; i--) {
+                  if(chk_free_biosmem(hd_data, ip->alt_value[i], 0x2000)) {
+                    ip->value = ip->alt_value[i];
+                    break;
+                  }
+                }
+              }
+            }
+            if(!ip->value) ip->conflict = 1;
+            break;
+          default:
+            ip->valid = 0;
+        }
+      }
+      else if((ip->flags & P_DEFINE)) {
+        res = NULL;
+        switch(ip->type) {
+          case P_IRQ:
+            res = get_res(hd, res_irq, 0);
+            if(res) ip->value = res->irq.base;
+            break;
+          case P_MEM:
+            res = get_res(hd, res_mem, 0);
+            if(res) ip->value = res->mem.base;
+            break;
+          case P_IO:
+            res = get_res(hd, res_io, 0);
+            if(res) ip->value = res->io.base;
+            break;
+          case P_IO0:
+          case P_IO1:
+          case P_IO2:
+            res = get_res(hd, res_io, ip->type - P_IO0);
+            if(res) ip->value = res->io.base;
+            break;
+          // ##### might break for 64bit pci entries?
+          case P_BASE0:
+          case P_BASE1:
+          case P_BASE2:
+          case P_BASE3:
+          case P_BASE4:
+          case P_BASE5:
+            res = get_res(hd, res_mem, ip->type - P_BASE0);
+            if(res) ip->value = res->mem.base;
+            break;
+          default:
+            ip->valid = 0;
+        }
+        if(!res) ip->valid = 0;
+      }
     }
   }
 
-  if(!hd->driver_info && (hd->drv_vend || hd->drv_dev)) {
-    memset(&hs, 0, sizeof hs);
+  if(!di) di0 = free_mem(di0);
 
-    if(hd->drv_vend) {
-      hs.vendor.id = hd->drv_vend;
-      hs.key |= 1 << he_vendor_id;
-    }
-    if(hd->drv_dev) {
-      hs.device.id = hd->drv_dev;
-      hs.key |= 1 << he_device_id;
-    }
+  return di0;
+}
 
-    hddb_search(hd_data, &hs);
+#endif		/* WITH_ISDN */
 
-    if((hs.value & (1 << he_driver))) {
-      hd->driver_info = hddb_to_device_driver(hd_data, &hs);
-      new_driver_info = 1;
+
+hd_res_t *get_res(hd_t *hd, enum resource_types t, unsigned index)
+{
+  hd_res_t *res;
+
+  for(res = hd->res; res; res = res->next) {
+    if(res->any.type == t) {
+      if(!index) return res;
+      index--;
     }
   }
 
-  if(new_driver_info) expand_driver_info(hd_data, hd);
+  return NULL;
+}
+
+
+driver_info_t *reorder_x11(driver_info_t *di0, char *info)
+{
+  driver_info_t *di, *di_new, **di_list;
+  int i, dis, found;
+
+  for(dis = 0, di = di0; di; di = di->next) dis++;
+
+  di_list = new_mem(dis * sizeof *di_list);
+
+  for(i = 0, di = di0; di; di = di->next) {
+    di_list[i++] = di;
+  }
+
+  di = di_new = NULL;
+  for(i = found = 0; i < dis; i++) {
+    if(
+      !strcmp(di_list[i]->x11.xf86_ver, info) ||
+      !strcmp(di_list[i]->x11.server, info)
+    ) {
+      found = 1;
+      if(di) {
+        di = di->next = di_list[i];
+      }
+      else {
+        di = di_new = di_list[i];
+      }
+      di->next = NULL;
+      di_list[i] = NULL;
+    }
+  }
+
+  for(i = 0; i < dis; i++) {
+    if(di_list[i]) {
+      if(di) {
+        di = di->next = di_list[i];
+      }
+      else {
+        di = di_new = di_list[i];
+      }
+      di->next = NULL;
+      di_list[i] = NULL;
+    }
+  }
+
+  free_mem(di_list);
+
+  if(!found && strlen(info) > 1) {
+    hd_free_driver_info(di_new);
+    di_new = new_mem(sizeof *di_new);
+    di_new->any.type = di_x11;
+    di_new->x11.server = new_str(info);
+    di_new->x11.xf86_ver = new_str(*info >= 'A' && *info <= 'Z' ? "3" : "4");
+  }
+
+  return di_new;
+}
+
+
+void expand_driver_info(hd_data_t *hd_data, hd_t *hd)
+{
+  int i;
+  unsigned u1, u2;
+  char *s, *t, *t0;
+  driver_info_t *di;
+  str_list_t *sl, *sl1, *sl2;
+
+  if(!hd || !hd->driver_info) return;
+
+  for(di = hd->driver_info; di; di = di->next) {
+    switch(di->any.type) {
+      case di_display:
+        for(i = 0, sl = di->display.hddb0; sl; sl = sl->next, i++) {
+          if(i == 0 && sscanf(sl->str, "%ux%u", &u1, &u2) == 2) {
+            di->display.width = u1;
+            di->display.height = u2;
+          }
+          else if(i == 1 && sscanf(sl->str, "%u-%u", &u1, &u2) == 2) {
+            di->display.min_vsync = u1;
+            di->display.max_vsync = u2;
+          }
+          else if(i == 2 && sscanf(sl->str, "%u-%u", &u1, &u2) == 2) {
+            di->display.min_hsync = u1;
+            di->display.max_hsync = u2;
+          }
+          else if(i == 3 && sscanf(sl->str, "%u", &u1) == 1) {
+            di->display.bandwidth = u1;
+          }
+        }
+        break;
+
+      case di_module:
+        for(di->module.active = 1, sl = di->module.hddb0; sl; sl = sl->next) {
+          t0 = s = new_str(sl->str);
+
+          t = strsep(&t0, " ");
+
+          add_str_list(&di->module.names, t);
+          di->module.active &= hd_module_is_active(hd_data, t);
+
+          if(t0) {
+            add_str_list(&di->module.mod_args, module_cmd(hd, t0));
+          }
+          else {
+            add_str_list(&di->module.mod_args, NULL);
+          }
+
+          free_mem(s);
+        }
+        for(sl = di->module.hddb1; sl; sl = sl->next) {
+          s = module_cmd(hd, sl->str);
+          if(s) str_printf(&di->module.conf, -1, "%s\n", s);
+        }
+        break;
+
+      case di_mouse:
+        di->mouse.buttons = di->mouse.wheels = -1;
+        for(i = 0, sl = di->mouse.hddb0; sl; sl = sl->next, i++) {
+          if(i == 0) {
+            di->mouse.xf86 = new_str(sl->str);
+          }
+          else if(i == 1) {
+            di->mouse.gpm = new_str(sl->str);
+          }
+          else if(i == 2 && *sl->str) {
+            di->mouse.buttons = strtol(sl->str, NULL, 10);
+          }
+          else if(i == 3 && *sl->str) {
+            di->mouse.wheels = strtol(sl->str, NULL, 10);
+          }
+        }
+        break;
+
+      case di_x11:
+        for(i = 0, sl = di->x11.hddb0; sl; sl = sl->next, i++) {
+          if(i == 0) {
+            di->x11.xf86_ver = new_str(sl->str);
+          }
+          else if(i == 1) {
+            di->x11.server = new_str(sl->str);
+          }
+          else if(i == 2) {
+            if(!strcmp(sl->str, "3d")) di->x11.x3d = 1;
+          }
+#if 0
+          else if(i == 3) {
+            s = new_str(sl->str);
+            for(t0 = s; (t = strsep(&t0, ",")); ) {
+              add_str_list(&di->x11.packages, t);
+            }
+            free_mem(s);
+          }
+#endif
+          else if(i == 4) {
+            s = new_str(sl->str);
+            for(t0 = s; (t = strsep(&t0, ",")); ) {
+              add_str_list(&di->x11.extensions, t);
+            }
+            free_mem(s);
+          }
+          else if(i == 5) {
+            s = new_str(sl->str);
+            for(t0 = s; (t = strsep(&t0, ",")); ) {
+              add_str_list(&di->x11.options, t);
+            }
+            free_mem(s);
+          }
+          else if(i == 6) {
+            for(sl2 = sl1 = hd_split(',', sl->str); sl2; sl2 = sl2->next) {
+              u1 = strtoul(sl2->str, NULL, 0);
+              switch(u1) {
+                case 8:
+                  di->x11.colors.c8 = 1;
+                  di->x11.colors.all |= (1 << 0);
+                  break;
+
+                case 15:
+                  di->x11.colors.c15 = 1;
+                  di->x11.colors.all |= (1 << 1);
+                  break;
+
+                case 16:
+                  di->x11.colors.c16 = 1;
+                  di->x11.colors.all |= (1 << 2);
+                  break;
+
+                case 24:
+                  di->x11.colors.c24 = 1;
+                  di->x11.colors.all |= (1 << 3);
+                  break;
+
+                case 32:
+                  di->x11.colors.c32 = 1;
+                  di->x11.colors.all |= (1 << 4);
+                  break;
+              }
+            }
+            free_str_list(sl1);
+          }
+          else if(i == 7) {
+            di->x11.dacspeed = strtol(sl->str, NULL, 10);
+          }
+          else if(i == 8) {
+            di->x11.script = new_str(sl->str);
+          }
+        }
+        for(i = 0, sl = di->x11.hddb1; sl; sl = sl->next, i++) {
+          add_str_list(&di->x11.raw, sl->str);
+        }
+        // ######## for compatibility
+        for(sl = hd->requires; sl; sl = sl->next) {
+          add_str_list(&di->x11.packages, sl->str);
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  di = hd->driver_info;
+  if(di && di->any.type == di_x11 && !hd_probe_feature(hd_data, pr_ignx11)) {
+    s = get_cmdline(hd_data, "x11");
+    if(s && *s) {
+      di = reorder_x11(di, s);
+    }
+    free_mem(s);
+  }
+}
+
+
+char *module_cmd(hd_t *hd, char *cmd)
+{
+  static char buf[256];
+  char *s = buf;
+  int idx, ofs;
+  hd_res_t *res;
+
+  // skip inactive PnP cards
+  // ##### Really necessary here?
+  if(
+    hd->is.isapnp &&
+    hd->detail &&
+    hd->detail->isapnp.data &&
+    !(hd->detail->isapnp.data->flags & (1 << isapnp_flag_act))
+  ) return NULL;
+
+  *buf = 0;
+  while(*cmd) {
+    if(sscanf(cmd, "<io%u>%n", &idx, &ofs) >= 1) {
+      if((res = get_res(hd, res_io, idx))) {
+        s += sprintf(s, "0x%02"PRIx64, res->io.base);
+        cmd += ofs;
+      }
+      else {
+        return NULL;
+      }
+    }
+    else if(sscanf(cmd, "<irq%u>%n", &idx, &ofs) >= 1) {
+      if((res = get_res(hd, res_irq, idx))) {
+        s += sprintf(s, "%u", res->irq.base);
+        cmd += ofs;
+      }
+      else {
+        return NULL;
+      }
+    }
+    else {
+      *s++ = *cmd++;
+    }
+
+    if(s - buf > sizeof buf - 20) return NULL;
+  }
+
+  *s = 0;
+  return buf;
 }
 
 

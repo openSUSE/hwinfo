@@ -59,6 +59,12 @@
 #define KERNEL_22		0x020200
 #define KERNEL_24		0x020400
 
+#if defined(__s390__) || defined(__s390x__) || defined(__alpha__) || defined(LIBHD_TINY)
+#define WITH_ISDN	0
+#else
+#define WITH_ISDN	1
+#endif
+
 #define PROGRESS(a, b, c) progress(hd_data, a, b, c)
 #define ADD2LOG(a...) str_printf(&hd_data->log, -2, a)
 
@@ -146,6 +152,8 @@ void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg);
 void remove_hd_entries(hd_data_t *hd_data);
 void remove_tagged_hd_entries(hd_data_t *hd_data);
 
+driver_info_t *hd_free_driver_info(driver_info_t *di);
+
 int str2float(char *s, int n);
 char *float2str(int i, int n);
 
@@ -195,10 +203,7 @@ void hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_re
 
 str_list_t *hd_split(char del, char *str);
 
-driver_info_t *hd_pcidb(hd_data_t *hd_data, hd_t *hd);
-
-void hdb_add_info(hd_data_t *hd_data, hd_t *hd);
-void expand_driver_info(hd_data_t *hd_data, hd_t *hd);
+void hddb_add_info(hd_data_t *hd_data, hd_t *hd);
 
 #ifdef __cplusplus
 }

@@ -1450,7 +1450,6 @@ void hd_scan(hd_data_t *hd_data);
 
 hd_data_t *hd_free_hd_data(hd_data_t *hd_data);
 hd_t *hd_free_hd_list(hd_t *hd);
-driver_info_t *hd_free_driver_info(driver_info_t *di);
 
 void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature);
 void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature);
@@ -1460,7 +1459,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item);
 enum probe_feature hd_probe_feature_by_name(char *name);
 char *hd_probe_feature_by_value(enum probe_feature feature);
 
-driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd);
 int hd_module_is_active(hd_data_t *hd_data, char *mod);
 
 hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class);

@@ -17,7 +17,7 @@
 void hd_scan_ataraid(hd_data_t *hd_data)
 {
   hd_t *hd;
-  driver_info_t *di0, *di;
+  driver_info_t *di;
   str_list_t *sl;
   int found, ok, i;
   hd_t *raid_ctrl[16];
@@ -37,10 +37,10 @@ void hd_scan_ataraid(hd_data_t *hd_data)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
       hd->base_class == bc_storage &&
-      hd->sub_class == sc_sto_raid &&
-      (di0 = hd_driver_info(hd_data, hd))
+      hd->sub_class == sc_sto_raid
     ) {
-      for(di = di0; di; di = di->next) {
+      if(hd->driver_info) hddb_add_info(hd_data, hd);
+      for(di = hd->driver_info; di; di = di->next) {
         if(
           di->any.type == di_module &&
           di->module.names
@@ -61,7 +61,6 @@ void hd_scan_ataraid(hd_data_t *hd_data)
           }
         }
       }
-      di0 = hd_free_driver_info(di0);
     }
   }
 

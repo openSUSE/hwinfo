@@ -65,7 +65,7 @@ void hd_scan_int(hd_data_t *hd_data)
 
   PROGRESS(10, 0, "hdb");
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    hdb_add_info(hd_data, hd);
+    hddb_add_info(hd_data, hd);
   }
 }
 

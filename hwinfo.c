@@ -864,7 +864,7 @@ void do_test(hd_data_t *hd_data)
 #if 1
   hd_t *hd, *hd0;
   hd_res_t *res;
-  driver_info_t *di, *di0;
+  driver_info_t *di;
   FILE *f;
   int i, wheels, buttons;
   unsigned u;
@@ -944,10 +944,9 @@ void do_test(hd_data_t *hd_data)
       case hw_display:
         fprintf(f, "GFX Card\n");
         for(hd = hd0; hd; hd = hd->next) {
-          di0 = hd_driver_info(hd_data, hd);
           u = 0;
           s1 = NULL;
-          for(di = di0; di; di = di->next) {
+          for(di = hd->driver_info; di; di = di->next) {
             if(di->any.type == di_x11) {
               if(!s1) s1 = di->x11.server;
               if(di->x11.x3d && !u) {
@@ -964,7 +963,6 @@ void do_test(hd_data_t *hd_data)
           if(u) fprintf(f, ", 3D support");
           fprintf(f, ")");
           fprintf(f, "\n");
-          di0 = hd_free_driver_info(di0);
         }
         fprintf(f, "\n");
         break;
@@ -972,10 +970,9 @@ void do_test(hd_data_t *hd_data)
       case hw_mouse:
         fprintf(f, "Mouse\n");
         for(hd = hd0; hd; hd = hd->next) {
-          di0 = hd_driver_info(hd_data, hd);
           buttons = wheels = -1;	// make gcc happy
           s = NULL;
-          for(di = di0; di; di = di->next) {
+          for(di = hd->driver_info; di; di = di->next) {
             if(di->any.type == di_mouse) {
               buttons = di->mouse.buttons;
               wheels = di->mouse.wheels;
@@ -992,7 +989,6 @@ void do_test(hd_data_t *hd_data)
           if(wheels >= 0) fprintf(f, ", %d wheels", wheels);
           fprintf(f, ")");
           fprintf(f, "\n");
-          di0 = hd_free_driver_info(di0);
         }
         fprintf(f, "\n");
         break;
@@ -1000,9 +996,8 @@ void do_test(hd_data_t *hd_data)
       case hw_tv:
         fprintf(f, "TV Card\n");
         for(hd = hd0; hd; hd = hd->next) {
-          di0 = hd_driver_info(hd_data, hd);
           s = NULL;
-          for(di = di0; di; di = di->next) {
+          for(di = hd->driver_info; di; di = di->next) {
             if(
               (di->any.type == di_any || di->any.type == di_module) &&
               di->any.hddb0 &&
@@ -1016,7 +1011,6 @@ void do_test(hd_data_t *hd_data)
             s = "not supported";
           }
           fprintf(f, "  %s (%s)\n", hd->model, s);
-          di0 = hd_free_driver_info(di0);
         }
         fprintf(f, "\n");
         break;
@@ -1024,9 +1018,8 @@ void do_test(hd_data_t *hd_data)
       case hw_sound:
         fprintf(f, "Sound Card\n");
         for(hd = hd0; hd; hd = hd->next) {
-          di0 = hd_driver_info(hd_data, hd);
           s = NULL;
-          for(di = di0; di; di = di->next) {
+          for(di = hd->driver_info; di; di = di->next) {
             if(
               (di->any.type == di_any || di->any.type == di_module) &&
               di->any.hddb0 &&
@@ -1040,7 +1033,6 @@ void do_test(hd_data_t *hd_data)
             s = "not supported";
           }
           fprintf(f, "  %s (%s)\n", hd->model, s);
-          di0 = hd_free_driver_info(di0);
         }
         fprintf(f, "\n");
         break;
@@ -1072,9 +1064,7 @@ void do_test(hd_data_t *hd_data)
       case hw_isdn:
         fprintf(f, "ISDN\n");
         for(hd = hd0; hd; hd = hd->next) {
-          di0 = hd_driver_info(hd_data, hd);
-          fprintf(f, "  %s (%ssupported)\n", hd->model, di0 ? "" : "not ");
-          di0 = hd_free_driver_info(di0);
+          fprintf(f, "  %s (%ssupported)\n", hd->model, hd->driver_info ? "" : "not ");
         }
         fprintf(f, "\n");
         break;
@@ -1411,11 +1401,9 @@ char *get_xserver(hd_data_t *hd_data, char **version, char **busid, driver_info_
   static char xf86_ver[2];
   static char id[32];
   char c, *x11i = get_x11i();
-  static driver_info_t *di0 = NULL;
   driver_info_t *di;
   hd_t *hd;
 
-  di0 = hd_free_driver_info(di0);
   *x11_driver = NULL;
 
   *display = *xf86_ver = *id = c = 0;
@@ -1448,8 +1436,7 @@ char *get_xserver(hd_data_t *hd_data, char **version, char **busid, driver_info_
 
   if(*display) return display;
 
-  di0 = hd_driver_info(hd_data, hd);
-  for(di = di0; di; di = di->next) {
+  for(di = hd->driver_info; di; di = di->next) {
     if(di->any.type == di_x11 && di->x11.server && di->x11.xf86_ver && !di->x11.x3d) {
       if(c == 0 || c == di->x11.xf86_ver[0]) {
         xf86_ver[0] = di->x11.xf86_ver[0];
@@ -1500,7 +1487,7 @@ int x11_install_info(hd_data_t *hd_data)
 
   for(hd = hd_list(hd_data, hw_keyboard, 1, NULL); hd; hd = hd->next) {
     kbd_ok = 1;
-    di = hd_driver_info(hd_data, hd);
+    di = hd->driver_info;
     if(di && di->any.type == di_kbd) {
       xkbrules = di->kbd.XkbRules;
       xkbmodel = di->kbd.XkbModel;
@@ -1660,7 +1647,7 @@ int oem_install_info(hd_data_t *hd_data)
   pcmcia = hd_has_pcmcia(hd_data);
 
   for(hd = hd_list(hd_data, hw_display, 1, NULL); hd; hd = hd->next) {
-    drvinfo = (driver_info_x11_t *)hd_driver_info(hd_data, hd);
+    drvinfo = (driver_info_x11_t *) hd->driver_info;
     for (di = drvinfo; di; di = (driver_info_x11_t *)di->next) {
       if (di->type != di_x11)
 	continue;
@@ -1679,7 +1666,6 @@ int oem_install_info(hd_data_t *hd_data)
 	if (str->str && *str->str && !search_str_list(x11packs, str->str))
 	  add_str_list(&x11packs, new_str(str->str));
     }
-    hd_free_driver_info((driver_info_t *)drvinfo);
   }
 
   if(hd_data->progress) {
