@@ -964,6 +964,16 @@ void int_softraid(hd_data_t *hd_data)
   char *s;
 
   if(hd_data->flags.fast) return;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class.id == bc_storage_device &&
+      hd->status.available != status_no
+    ) break;
+  }
+
+  /* no disks -> no check necessary */
+  if(!hd) return;
   
   raid = read_file("| /sbin/raiddetect -s 2>/dev/null", 0, 0);
 
