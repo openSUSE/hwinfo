@@ -1,3 +1,6 @@
+29/9/2004:	v9.25
+	- removed obsolete module info; reworked pcmcia info
+
 29/9/2004:	v9.24
 	- updated pcmcia & usb network data (#33647)
 	- updated pci device names

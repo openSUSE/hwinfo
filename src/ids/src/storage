@@ -4,40 +4,19 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # scsi controller
 
-# scsi/53c7,8xx.c
-# scsi/ncr53c8xx.c
-# scsi/sym53c8xx.c
+# modinfo
  vendor.id		pci 0x1000
-&device.id		pci 0x0001+0x0004
-+driver.module.modprobe	sym53c8xx
-+driver.module.modprobe	ncr53c8xx
-+driver.module.modprobe	53c7,8xx
-
- vendor.id		pci 0x1000
-&device.id		pci 0x0006
+&device.id		pci 0x0001+0x0006
 |vendor.id		pci 0x1000
-&device.id		pci 0x000a
+&device.id		pci 0x000a+0x0004
 |vendor.id		pci 0x1000
-&device.id		pci 0x000c+0x0002
-# 0x000f: see #5816
+&device.id		pci 0x000f+0x0002
 |vendor.id		pci 0x1000
-&device.id		pci 0x000f
-+driver.module.modprobe	ncr53c8xx
-+driver.module.modprobe	sym53c8xx
-
- vendor.id		pci 0x1000
-&device.id		pci 0x0012
+&device.id		pci 0x0012+0x0002
+|vendor.id		pci 0x1000
+&device.id		pci 0x0020+0x0002
 |vendor.id		pci 0x1000
 &device.id		pci 0x008f
-# #21984
-|vendor.id		pci 0x1000
-&device.id		pci 0x000b
-+driver.module.modprobe	sym53c8xx
-+driver.module.modprobe	ncr53c8xx
-
-# sym* only
- vendor.id		pci 0x1000
-&device.id		pci 0x0020+0x0002
 +driver.module.modprobe	sym53c8xx
 
 # message/fusion/
@@ -204,12 +183,10 @@
 &subdevice.id		pci 0x8471
 +driver.module.modprobe	megaraid
 
-# scsi/tmscsim.c
-# scsi/AM53C974.c
+# modinfo
  vendor.id		pci 0x1022
 &device.id		pci 0x2020
 +driver.module.modprobe	tmscsim
-+driver.module.modprobe	AM53C974
 
 # scsi/fdomain.c
  vendor.id		pci 0x1036
@@ -274,19 +251,6 @@
 |vendor.id		pci 0x1077
 &device.id		pci 0x2312
 +driver.module.modprobe	qla2300
-
-# scsi/advansys.c
- vendor.id		pci 0x10cd
-&device.id		pci 0x1100
-|vendor.id		pci 0x10cd
-&device.id		pci 0x1200
-|vendor.id		pci 0x10cd
-&device.id		pci 0x1300
-|vendor.id		pci 0x10cd
-&device.id		pci 0x2300
-|vendor.id		pci 0x10cd
-&device.id		pci 0x2500
-+driver.module.modprobe	advansys
 
 # scsi/inia100.c
  vendor.id		pci 0x1101
