@@ -5,622 +5,8 @@
 
  vendor.id		usb 0x03f0
 &device.id		usb 0x0101
-+baseclass.id		0x10c
-+subclass.id		0x00
 +device.name		4100C
 
- vendor.id		usb 0x03f0
-&device.id		usb 0x0102
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		PhotoSmart S20
-
- vendor.id		usb 0x03f0
-&device.id		usb 0x0105
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		4200C
-
- vendor.id		usb 0x03f0
-&device.id		usb 0x0201
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		6200C
-
- vendor.id		usb 0x03f0
-&device.id		usb 0x0205
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		3300C
-
- vendor.id		usb 0x03f0
-&device.id		usb 0x0305
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		4300C
-
- vendor.id		usb 0x03f0
-&device.id		usb 0x0401
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		5200C
-
- vendor.id		usb 0x03f0
-&device.id		usb 0x0405
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		3400C
-
- vendor.id		usb 0x03f0
-&device.id		usb 0x0601
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		6300C
-
- vendor.id		usb 0x03f0
-&device.id		usb 0x0605
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		2200C
-
- vendor.id		usb 0x0400
-+vendor.name		National Semiconductor
-
- vendor.id		usb 0x0400
-&device.id		usb 0x1000
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		BearPaw 1200
-
- vendor.id		usb 0x0400
-&device.id		usb 0x1001
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		BearPaw 2400
-
- vendor.id		usb 0x0458
-+vendor.name		KYE Systems
-
- vendor.id		usb 0x0458
-&device.id		usb 0x2001
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Genius ColorPage-Vivid Pro
-
- vendor.id		usb 0x0458
-&device.id		usb 0x2007
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		ColorPage HR6 V2
-
- vendor.id		usb 0x0458
-&device.id		usb 0x2008
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Unknown 2008
-
- vendor.id		usb 0x0458
-&device.id		usb 0x2009
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Unknown 2009
-
- vendor.id		usb 0x0458
-&device.id		usb 0x2013
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Unknown 2013
-
- vendor.id		usb 0x0458
-&device.id		usb 0x2015
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Unknown 2015
-
- vendor.id		usb 0x0458
-&device.id		usb 0x2016
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Unknown 2016
-
- vendor.id		usb 0x0461
-+vendor.name		Colorado
-
- vendor.id		usb 0x0461
-&device.id		usb 0x0034
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		USB 9600
-
- vendor.id		usb 0x0461
-&device.id		usb 0x0300
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		G2-300
-
- vendor.id		usb 0x0461
-&device.id		usb 0x0301
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		G2E-300
-
- vendor.id		usb 0x0461
-&device.id		usb 0x0302
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		G2-300
-
- vendor.id		usb 0x0461
-&device.id		usb 0x0303
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		G2E-300
-
- vendor.id		usb 0x0461
-&device.id		usb 0x0341
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		600U
-
- vendor.id		usb 0x0461
-&device.id		usb 0x0346
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		6136u
-
- vendor.id		usb 0x0461
-&device.id		usb 0x0361
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		1200U
-
- vendor.id		usb 0x0461
-&device.id		usb 0x0380
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		G2-600
-
- vendor.id		usb 0x0461
-&device.id		usb 0x0381
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		ReadyScan 636i
-
- vendor.id		usb 0x0461
-&device.id		usb 0x0382
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		G2-600
-
- vendor.id		usb 0x0461
-&device.id		usb 0x0383
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		G2E-600
-
- vendor.id		usb 0x04a5
-+vendor.name		Acer
-
- vendor.id		usb 0x04a5
-&device.id		usb 0x1a20
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Prisa Acerscan 310U
-
- vendor.id		usb 0x04a5
-&device.id		usb 0x1a2a
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Prisa Acerscan 620U
-
- vendor.id		usb 0x04a5
-&device.id		usb 0x2022
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Vuego Scan Brisa 340U
-
- vendor.id		usb 0x04a5
-&device.id		usb 0x2040
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Prisa Acerscan 620U
-
- vendor.id		usb 0x04a5
-&device.id		usb 0x2060
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Prisa Acerscan 620U
-
- vendor.id		usb 0x04a5
-&device.id		usb 0x207e
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Prisa Acerscan 640BU
-
- vendor.id		usb 0x04a5
-&device.id		usb 0x20b0
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		S2W 3300U/4300U
-
- vendor.id		usb 0x04a5
-&device.id		usb 0x20be
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Prisa Acerscan 640BT
-
- vendor.id		usb 0x04a5
-&device.id		usb 0x20c0
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Prisa Acerscan 1240UT
-
- vendor.id		usb 0x04a5
-&device.id		usb 0x20de
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		S2W 3300U
-
- vendor.id		usb 0x04a7
-+vendor.name		Visioneer
-
- vendor.id		usb 0x04a7
-&device.id		usb 0x0211
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		OneTouch 7600 USB
-
- vendor.id		usb 0x04a7
-&device.id		usb 0x0221
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		OneTouch 5300 USB
-
- vendor.id		usb 0x04a7
-&device.id		usb 0x0231
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		6100 USB
-
- vendor.id		usb 0x04a7
-&device.id		usb 0x0311
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		6200 EPP/USB
-
- vendor.id		usb 0x04a7
-&device.id		usb 0x0321
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		OneTouch 8100 EPP/USB
-
- vendor.id		usb 0x04a7
-&device.id		usb 0x0331
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		OneTouch 8600 EPP/USB
-
- vendor.id		usb 0x04a9
-+vendor.name		Canon
-
- vendor.id		usb 0x04a9
-&device.id		usb 0x2202
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		FB620U
-
- vendor.id		usb 0x04a9
-&device.id		usb 0x2207
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		1220U
-
- vendor.id		usb 0x04a9
-&device.id		usb 0x220b
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		D646U
-
- vendor.id		usb 0x04b0
-+vendor.name		Nikon
-
- vendor.id		usb 0x04b0
-&device.id		usb 0x4000
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Coolscan IV
-
- vendor.id		usb 0x04b8
-+vendor.name		Epson
-
- vendor.id		usb 0x04b8
-&device.id		usb 0x0101
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Perfection 636U
-
- vendor.id		usb 0x04b8
-&device.id		usb 0x0103
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Perfection 610
-
- vendor.id		usb 0x04b8
-&device.id		usb 0x0104
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Perfection 1200U
-
- vendor.id		usb 0x04b8
-&device.id		usb 0x0106
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Stylus Scan 2500
-
- vendor.id		usb 0x04b8
-&device.id		usb 0x0107
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Expression 1600
-
- vendor.id		usb 0x04b8
-&device.id		usb 0x010a
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Perfection 1640SU
-
- vendor.id		usb 0x04b8
-&device.id		usb 0x010b
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Perfection 1240U
-
- vendor.id		usb 0x04b8
-&device.id		usb 0x010c
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Perfection 640
-
- vendor.id		usb 0x04b8
-&device.id		usb 0x010e
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Expression 1680
-
- vendor.id		usb 0x04b8
-&device.id		usb 0x0110
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Perfection 1650
-
- vendor.id		usb 0x04b8
-&device.id		usb 0x0112
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Perfection 2450
-
- vendor.id		usb 0x04ce
-+vendor.name		ScanLogic
-
- vendor.id		usb 0x04ce
-&device.id		usb 0x0300
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Phantom 336CX
-
- vendor.id		usb 0x055f
-+vendor.name		Mustek
-
- vendor.id		usb 0x055f
-&device.id		usb 0x0001
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		1200 CU
-
- vendor.id		usb 0x055f
-&device.id		usb 0x0002
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		600 CU
-
- vendor.id		usb 0x055f
-&device.id		usb 0x0003
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		1200 USB
-
- vendor.id		usb 0x055f
-&device.id		usb 0x0006
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		1200 UB
-
- vendor.id		usb 0x055f
-&device.id		usb 0x0008
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		1200 CU Plus
-
- vendor.id		usb 0x055f
-&device.id		usb 0x0873
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		600 USB
-
- vendor.id		usb 0x05d8
-+vendor.name		Lifetec
-
- vendor.id		usb 0x05d8
-&device.id		usb 0x4002
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		LT9385
-
- vendor.id		usb 0x05da
-+vendor.name		Microtek
-
- vendor.id		usb 0x05da
-&device.id		usb 0x0094
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Phantom 336CX
-
- vendor.id		usb 0x05da
-&device.id		usb 0x0099
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		ScanMaker X6
-
- vendor.id		usb 0x05da
-&device.id		usb 0x009a
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Phantom C6
-
- vendor.id		usb 0x05da
-&device.id		usb 0x00a0
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Phantom 336CX
-
- vendor.id		usb 0x05da
-&device.id		usb 0x00a3
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		ScanMaker V6USL
-
- vendor.id		usb 0x05da
-&device.id		usb 0x80a3
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		ScanMaker V6USL
-
- vendor.id		usb 0x05da
-&device.id		usb 0x80ac
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		ScanMaker V6UL
-
- vendor.id		usb 0x0638
-+vendor.name		iVina
-
- vendor.id		usb 0x0638
-&device.id		usb 0x0268
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		1200U
-
- vendor.id		usb 0x06bd
-+vendor.name		Agfa
-
- vendor.id		usb 0x06bd
-&device.id		usb 0x0001
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		SnapScan 1212U
-
- vendor.id		usb 0x06bd
-&device.id		usb 0x0002
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		SnapScan 1236U
-
- vendor.id		usb 0x06bd
-&device.id		usb 0x0100
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		SnapScan Touch
-
- vendor.id		usb 0x06bd
-&device.id		usb 0x2061
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		SnapScan 1212U?
-
- vendor.id		usb 0x06bd
-&device.id		usb 0x208d
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		SnapScan e40
-
- vendor.id		usb 0x06bd
-&device.id		usb 0x2091
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		SnapScan e20
-
- vendor.id		usb 0x06bd
-&device.id		usb 0x2095
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		SnapScan e25
-
- vendor.id		usb 0x06bd
-&device.id		usb 0x2097
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		SnapScan e26
-
- vendor.id		usb 0x07b3
-+vendor.name		Plustek
-
- vendor.id		usb 0x07b3
-&device.id		usb 0x0011
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		OpticPro UT24
-
- vendor.id		usb 0x07b3
-&device.id		usb 0x0017
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		OpticPro UT12
-
- vendor.id		usb 0x0ff5
-+vendor.name		Mustek?
-
- vendor.id		usb 0x0ff5
-&device.id		usb 0x0010
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		BearPaw 1200F
-
- vendor.id		usb 0x1606
-+vendor.name		UMAX
-
- vendor.id		usb 0x1606
-&device.id		usb 0x0002
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Astra 1236U
-
- vendor.id		usb 0x1606
-&device.id		usb 0x0010
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Astra 1220U
-
- vendor.id		usb 0x1606
-&device.id		usb 0x0030
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Astra 2000U
-
- vendor.id		usb 0x1606
-&device.id		usb 0x0130
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Astra 2100U
-
- vendor.id		usb 0x1606
-&device.id		usb 0x0230
-+baseclass.id		0x10c
-+subclass.id		0x00
-+device.name		Astra 2200U
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# usbmap: scanner.o
  vendor.id		usb 0x03f0
 &device.id		usb 0x0101+0x0002
 |vendor.id		usb 0x03f0
@@ -642,9 +28,17 @@
 |vendor.id		usb 0x03f0
 &device.id		usb 0x0605
 |vendor.id		usb 0x03f0
+&device.id		usb 0x0701
+|vendor.id		usb 0x03f0
 &device.id		usb 0x0705
 |vendor.id		usb 0x03f0
+&device.id		usb 0x0801
+|vendor.id		usb 0x03f0
+&device.id		usb 0x0805
+|vendor.id		usb 0x03f0
 &device.id		usb 0x0901
+|vendor.id		usb 0x03f0
+&device.id		usb 0x0a01
 |vendor.id		usb 0x03f0
 &device.id		usb 0x1005
 |vendor.id		usb 0x03f0
@@ -679,6 +73,8 @@
 &device.id		usb 0x2015+0x0002
 |vendor.id		usb 0x0458
 &device.id		usb 0x2018
+|vendor.id		usb 0x0458
+&device.id		usb 0x201b
 |vendor.id		usb 0x0461
 &device.id		usb 0x0300+0x0004
 |vendor.id		usb 0x0461
@@ -734,6 +130,10 @@
 |vendor.id		usb 0x04a7
 &device.id		usb 0x0226
 |vendor.id		usb 0x04a7
+&device.id		usb 0x0229
+|vendor.id		usb 0x04a7
+&device.id		usb 0x022c
+|vendor.id		usb 0x04a7
 &device.id		usb 0x0231
 |vendor.id		usb 0x04a7
 &device.id		usb 0x0311
@@ -746,9 +146,11 @@
 |vendor.id		usb 0x04a9
 &device.id		usb 0x2204+0x0005
 |vendor.id		usb 0x04a9
-&device.id		usb 0x220a+0x0006
+&device.id		usb 0x220a+0x0007
 |vendor.id		usb 0x04a9
-&device.id		usb 0x2213
+&device.id		usb 0x2212+0x0002
+|vendor.id		usb 0x04a9
+&device.id		usb 0x2215
 |vendor.id		usb 0x04a9
 &device.id		usb 0x3042
 |vendor.id		usb 0x04b0
@@ -764,7 +166,7 @@
 |vendor.id		usb 0x04b8
 &device.id		usb 0x0114
 |vendor.id		usb 0x04b8
-&device.id		usb 0x011b+0x0004
+&device.id		usb 0x011b+0x0005
 |vendor.id		usb 0x04b8
 &device.id		usb 0x0801+0x0002
 |vendor.id		usb 0x04c5
@@ -790,6 +192,8 @@
 |vendor.id		usb 0x055f
 &device.id		usb 0x0400+0x0002
 |vendor.id		usb 0x055f
+&device.id		usb 0x0409
+|vendor.id		usb 0x055f
 &device.id		usb 0x0873
 |vendor.id		usb 0x055f
 &device.id		usb 0x1000
@@ -802,15 +206,53 @@
 |vendor.id		usb 0x05d8
 &device.id		usb 0x4009
 |vendor.id		usb 0x05da
+&device.id		usb 0x0099+0x0002
+|vendor.id		usb 0x05da
+&device.id		usb 0x00b6
+|vendor.id		usb 0x05da
+&device.id		usb 0x20a7
+|vendor.id		usb 0x05da
 &device.id		usb 0x20c9
 |vendor.id		usb 0x05da
 &device.id		usb 0x30ce+0x0002
+|vendor.id		usb 0x05da
+&device.id		usb 0x30d4
+|vendor.id		usb 0x05da
+&device.id		usb 0x30d8
+|vendor.id		usb 0x05da
+&device.id		usb 0x40b3
+|vendor.id		usb 0x05da
+&device.id		usb 0x40b8
+|vendor.id		usb 0x05da
+&device.id		usb 0x40ca+0x0002
+|vendor.id		usb 0x05da
+&device.id		usb 0x40dd
+|vendor.id		usb 0x05da
+&device.id		usb 0x40ff
 |vendor.id		usb 0x05e3
 &device.id		usb 0x0120
 |vendor.id		usb 0x0638
+&device.id		usb 0x0268
+|vendor.id		usb 0x0638
+&device.id		usb 0x026a
+|vendor.id		usb 0x0638
 &device.id		usb 0x0a10
 |vendor.id		usb 0x0638
+&device.id		usb 0x0a13
+|vendor.id		usb 0x0638
+&device.id		usb 0x0a16
+|vendor.id		usb 0x0638
+&device.id		usb 0x0a18
+|vendor.id		usb 0x0638
 &device.id		usb 0x0a20
+|vendor.id		usb 0x0638
+&device.id		usb 0x0a23+0x0002
+|vendor.id		usb 0x0681
+&device.id		usb 0x0005
+|vendor.id		usb 0x0681
+&device.id		usb 0x0010
+|vendor.id		usb 0x0686
+&device.id		usb 0x4004
 |vendor.id		usb 0x0686
 &device.id		usb 0x400d
 |vendor.id		usb 0x06bd
@@ -849,6 +291,8 @@
 &device.id		usb 0x0400+0x0002
 |vendor.id		usb 0x07b3
 &device.id		usb 0x0403
+|vendor.id		usb 0x07b3
+&device.id		usb 0x0413
 |vendor.id		usb 0x0a82
 &device.id		usb 0x4600
 |vendor.id		usb 0x1606
@@ -858,6 +302,8 @@
 |vendor.id		usb 0x1606
 &device.id		usb 0x0060
 |vendor.id		usb 0x1606
+&device.id		usb 0x0070
+|vendor.id		usb 0x1606
 &device.id		usb 0x0130
 |vendor.id		usb 0x1606
 &device.id		usb 0x0160
@@ -866,51 +312,426 @@
 +baseclass.id		0x10c
 +subclass.id		0x00
 
-# usbmap: hpusbscsi.o
  vendor.id		usb 0x03f0
-&device.id		usb 0x0701
-|vendor.id		usb 0x03f0
-&device.id		usb 0x0801
-|vendor.id		usb 0x0638
-&device.id		usb 0x026a
-|vendor.id		usb 0x0638
-&device.id		usb 0x0a13
-|vendor.id		usb 0x0638
-&device.id		usb 0x0a16
-|vendor.id		usb 0x0638
-&device.id		usb 0x0a18
-|vendor.id		usb 0x0638
-&device.id		usb 0x0a23+0x0002
-|vendor.id		usb 0x0686
-&device.id		usb 0x4004
+&device.id		usb 0x0102
++device.name		PhotoSmart S20
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x0105
++device.name		4200C
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x0201
++device.name		6200C
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x0205
++device.name		3300C
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x0305
++device.name		4300C
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x0401
++device.name		5200C
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x0405
++device.name		3400C
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x0601
++device.name		6300C
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x0605
++device.name		2200C
+
+ vendor.id		usb 0x0400
++vendor.name		National Semiconductor
+
+ vendor.id		usb 0x0400
+&device.id		usb 0x1000
++device.name		BearPaw 1200
+
+ vendor.id		usb 0x0400
+&device.id		usb 0x1001
++device.name		BearPaw 2400
+
+ vendor.id		usb 0x0458
++vendor.name		KYE Systems
+
+ vendor.id		usb 0x0458
+&device.id		usb 0x2001
++device.name		Genius ColorPage-Vivid Pro
+
+ vendor.id		usb 0x0458
+&device.id		usb 0x2007
++device.name		ColorPage HR6 V2
+
+ vendor.id		usb 0x0458
+&device.id		usb 0x2008
++device.name		Unknown 2008
+
+ vendor.id		usb 0x0458
+&device.id		usb 0x2009
++device.name		Unknown 2009
+
+ vendor.id		usb 0x0458
+&device.id		usb 0x2013
++device.name		Unknown 2013
+
+ vendor.id		usb 0x0458
+&device.id		usb 0x2015
++device.name		Unknown 2015
+
+ vendor.id		usb 0x0458
+&device.id		usb 0x2016
++device.name		Unknown 2016
+
+ vendor.id		usb 0x0461
++vendor.name		Colorado
+
+ vendor.id		usb 0x0461
+&device.id		usb 0x0034
 +baseclass.id		0x10c
 +subclass.id		0x00
++device.name		USB 9600
 
-# usbmap: microtek.o
+ vendor.id		usb 0x0461
+&device.id		usb 0x0300
+|vendor.id		usb 0x0461
+&device.id		usb 0x0302
++device.name		G2-300
+
+ vendor.id		usb 0x0461
+&device.id		usb 0x0301
+|vendor.id		usb 0x0461
+&device.id		usb 0x0303
++device.name		G2E-300
+
+ vendor.id		usb 0x0461
+&device.id		usb 0x0341
++device.name		600U
+
+ vendor.id		usb 0x0461
+&device.id		usb 0x0346
++device.name		6136u
+
+ vendor.id		usb 0x0461
+&device.id		usb 0x0361
+|vendor.id		usb 0x0638
+&device.id		usb 0x0268
++device.name		1200U
+
+ vendor.id		usb 0x0461
+&device.id		usb 0x0380
+|vendor.id		usb 0x0461
+&device.id		usb 0x0382
++device.name		G2-600
+
+ vendor.id		usb 0x0461
+&device.id		usb 0x0381
++device.name		ReadyScan 636i
+
+ vendor.id		usb 0x0461
+&device.id		usb 0x0383
++device.name		G2E-600
+
+ vendor.id		usb 0x04a5
++vendor.name		Acer
+
+ vendor.id		usb 0x04a5
+&device.id		usb 0x1a20
++device.name		Prisa Acerscan 310U
+
+ vendor.id		usb 0x04a5
+&device.id		usb 0x1a2a
+|vendor.id		usb 0x04a5
+&device.id		usb 0x2040
+|vendor.id		usb 0x04a5
+&device.id		usb 0x2060
++device.name		Prisa Acerscan 620U
+
+ vendor.id		usb 0x04a5
+&device.id		usb 0x2022
++device.name		Vuego Scan Brisa 340U
+
+ vendor.id		usb 0x04a5
+&device.id		usb 0x207e
++device.name		Prisa Acerscan 640BU
+
+ vendor.id		usb 0x04a5
+&device.id		usb 0x20b0
++device.name		S2W 3300U/4300U
+
+ vendor.id		usb 0x04a5
+&device.id		usb 0x20be
++device.name		Prisa Acerscan 640BT
+
+ vendor.id		usb 0x04a5
+&device.id		usb 0x20c0
++device.name		Prisa Acerscan 1240UT
+
+ vendor.id		usb 0x04a5
+&device.id		usb 0x20de
++device.name		S2W 3300U
+
+ vendor.id		usb 0x04a7
++vendor.name		Visioneer
+
+ vendor.id		usb 0x04a7
+&device.id		usb 0x0211
++device.name		OneTouch 7600 USB
+
+ vendor.id		usb 0x04a7
+&device.id		usb 0x0221
++device.name		OneTouch 5300 USB
+
+ vendor.id		usb 0x04a7
+&device.id		usb 0x0231
++device.name		6100 USB
+
+ vendor.id		usb 0x04a7
+&device.id		usb 0x0311
++device.name		6200 EPP/USB
+
+ vendor.id		usb 0x04a7
+&device.id		usb 0x0321
++device.name		OneTouch 8100 EPP/USB
+
+ vendor.id		usb 0x04a7
+&device.id		usb 0x0331
++device.name		OneTouch 8600 EPP/USB
+
+ vendor.id		usb 0x04a9
++vendor.name		Canon
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x2202
++device.name		FB620U
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x2207
++device.name		1220U
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x220b
++device.name		D646U
+
+ vendor.id		usb 0x04b0
++vendor.name		Nikon
+
+ vendor.id		usb 0x04b0
+&device.id		usb 0x4000
++device.name		Coolscan IV
+
+ vendor.id		usb 0x04b8
++vendor.name		Epson
+
+ vendor.id		usb 0x04b8
+&device.id		usb 0x0101
++device.name		Perfection 636U
+
+ vendor.id		usb 0x04b8
+&device.id		usb 0x0103
++device.name		Perfection 610
+
+ vendor.id		usb 0x04b8
+&device.id		usb 0x0104
++device.name		Perfection 1200U
+
+ vendor.id		usb 0x04b8
+&device.id		usb 0x0106
++device.name		Stylus Scan 2500
+
+ vendor.id		usb 0x04b8
+&device.id		usb 0x0107
++device.name		Expression 1600
+
+ vendor.id		usb 0x04b8
+&device.id		usb 0x010a
++device.name		Perfection 1640SU
+
+ vendor.id		usb 0x04b8
+&device.id		usb 0x010b
++device.name		Perfection 1240U
+
+ vendor.id		usb 0x04b8
+&device.id		usb 0x010c
++device.name		Perfection 640
+
+ vendor.id		usb 0x04b8
+&device.id		usb 0x010e
++device.name		Expression 1680
+
+ vendor.id		usb 0x04b8
+&device.id		usb 0x0110
++device.name		Perfection 1650
+
+ vendor.id		usb 0x04b8
+&device.id		usb 0x0112
++device.name		Perfection 2450
+
+ vendor.id		usb 0x04b8
+&device.id		usb 0x011f
++device.name		Perfection 1670
+
+ vendor.id		usb 0x04ce
++vendor.name		ScanLogic
+
  vendor.id		usb 0x04ce
 &device.id		usb 0x0300
 |vendor.id		usb 0x05da
 &device.id		usb 0x0094
 |vendor.id		usb 0x05da
-&device.id		usb 0x0099+0x0002
-|vendor.id		usb 0x05da
 &device.id		usb 0x00a0
-|vendor.id		usb 0x05da
++baseclass.id		0x10c
++subclass.id		0x00
++device.name		Phantom 336CX
+
+ vendor.id		usb 0x055f
++vendor.name		Mustek
+
+ vendor.id		usb 0x055f
+&device.id		usb 0x0001
++device.name		1200 CU
+
+ vendor.id		usb 0x055f
+&device.id		usb 0x0002
++device.name		600 CU
+
+ vendor.id		usb 0x055f
+&device.id		usb 0x0003
++device.name		1200 USB
+
+ vendor.id		usb 0x055f
+&device.id		usb 0x0006
++device.name		1200 UB
+
+ vendor.id		usb 0x055f
+&device.id		usb 0x0008
++device.name		1200 CU Plus
+
+ vendor.id		usb 0x055f
+&device.id		usb 0x0873
++device.name		600 USB
+
+ vendor.id		usb 0x05d8
++vendor.name		Lifetec
+
+ vendor.id		usb 0x05d8
+&device.id		usb 0x4002
++device.name		LT9385
+
+ vendor.id		usb 0x05da
++vendor.name		Microtek
+
+ vendor.id		usb 0x05da
+&device.id		usb 0x0099
++device.name		ScanMaker X6
+
+ vendor.id		usb 0x05da
+&device.id		usb 0x009a
++device.name		Phantom C6
+
+ vendor.id		usb 0x05da
 &device.id		usb 0x00a3
 |vendor.id		usb 0x05da
-&device.id		usb 0x00b6
-|vendor.id		usb 0x05da
 &device.id		usb 0x80a3
-|vendor.id		usb 0x05da
++baseclass.id		0x10c
++subclass.id		0x00
++device.name		ScanMaker V6USL
+
+ vendor.id		usb 0x05da
 &device.id		usb 0x80ac
 +baseclass.id		0x10c
 +subclass.id		0x00
++device.name		ScanMaker V6UL
 
-# usbmap: hpusbscsi.o, scanner.o
  vendor.id		usb 0x0638
-&device.id		usb 0x0268
++vendor.name		iVina
+
+ vendor.id		usb 0x06bd
++vendor.name		Agfa
+
+ vendor.id		usb 0x06bd
+&device.id		usb 0x0001
++device.name		SnapScan 1212U
+
+ vendor.id		usb 0x06bd
+&device.id		usb 0x0002
++device.name		SnapScan 1236U
+
+ vendor.id		usb 0x06bd
+&device.id		usb 0x0100
++device.name		SnapScan Touch
+
+ vendor.id		usb 0x06bd
+&device.id		usb 0x2061
++device.name		SnapScan 1212U?
+
+ vendor.id		usb 0x06bd
+&device.id		usb 0x208d
++device.name		SnapScan e40
+
+ vendor.id		usb 0x06bd
+&device.id		usb 0x2091
++device.name		SnapScan e20
+
+ vendor.id		usb 0x06bd
+&device.id		usb 0x2095
++device.name		SnapScan e25
+
+ vendor.id		usb 0x06bd
+&device.id		usb 0x2097
++device.name		SnapScan e26
+
+ vendor.id		usb 0x07b3
++vendor.name		Plustek
+
+ vendor.id		usb 0x07b3
+&device.id		usb 0x0011
++device.name		OpticPro UT24
+
+ vendor.id		usb 0x07b3
+&device.id		usb 0x0017
++device.name		OpticPro UT12
+
+ vendor.id		usb 0x0ff5
++vendor.name		Mustek?
+
+ vendor.id		usb 0x0ff5
+&device.id		usb 0x0010
 +baseclass.id		0x10c
 +subclass.id		0x00
++device.name		BearPaw 1200F
+
+ vendor.id		usb 0x1606
++vendor.name		UMAX
+
+ vendor.id		usb 0x1606
+&device.id		usb 0x0002
++baseclass.id		0x10c
++subclass.id		0x00
++device.name		Astra 1236U
+
+ vendor.id		usb 0x1606
+&device.id		usb 0x0010
++device.name		Astra 1220U
+
+ vendor.id		usb 0x1606
+&device.id		usb 0x0030
++device.name		Astra 2000U
+
+ vendor.id		usb 0x1606
+&device.id		usb 0x0130
++device.name		Astra 2100U
+
+ vendor.id		usb 0x1606
+&device.id		usb 0x0230
++device.name		Astra 2200U
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
