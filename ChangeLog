@@ -1,3 +1,7 @@
+12/3/2003:	v6.15
+	- limit the maximum amount of data we expect looking
+	  for serial mice (#25153) 
+
 11/3/2003:	v6.14
 	- updated ide raid info (#25010)
 
