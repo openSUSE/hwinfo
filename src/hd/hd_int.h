@@ -114,7 +114,7 @@ enum mod_idx {
   mod_isa, mod_dac960, mod_smart, mod_isdn, mod_kbd, mod_prom, mod_sbus,
   mod_int, mod_braille, mod_xtra, mod_sys, mod_dasd, mod_i2o, mod_cciss,
   mod_manual, mod_fb, mod_veth, mod_partition, mod_disk, mod_ataraid, mod_pppoe,
-  mod_pcmcia
+  mod_pcmcia, mod_s390
 };
 
 void *new_mem(size_t size);

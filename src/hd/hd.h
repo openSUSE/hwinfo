@@ -104,7 +104,7 @@ typedef enum probe_feature {
   pr_braille_ht, pr_ignx11, pr_sys, pr_dasd, pr_i2o, pr_cciss, pr_bios_vbe,
   pr_isapnp_old, pr_isapnp_new, pr_isapnp_mod, pr_braille_baum, pr_manual,
   pr_fb, pr_bios_vbe2, pr_veth, pr_partition, pr_disk, pr_ataraid, pr_pppoe,
-  pr_scan, pr_partition_add, pr_pcmcia, pr_fork, pr_parallel_imm,
+  pr_scan, pr_partition_add, pr_pcmcia, pr_fork, pr_parallel_imm, pr_s390,
   /* pr_bios_32, */
   pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;

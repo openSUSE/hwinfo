@@ -1,0 +1,54 @@
+# special s390 hardware
+ vendor.id		special 0x6001
++vendor.name		IBM
+
+ vendor.id		special 0x6001
+&device.id		special 0x3215
++device.name		3215 Terminal
++baseclass.id		0x108
++subclass.id		1
+
+ vendor.id		special 0x6001
+&device.id		special 0x3990
+&subdevice.id		special 0x3390
++device.name		DASD
++baseclass.id		0x106
++subclass.id		0
+
+ vendor.id		special 0x6001
+&device.id		special 0x1731
+&subdevice.id		special 0x1732
++device.name		OSA Express Ethernet card
++baseclass.id		2
++subclass.id		0
+
+ vendor.id		special 0x6001
+&device.id		special 0x0001
++device.name		Token ring card
+
+ vendor.id		special 0x6001
+&device.id		special 0x3088
++device.name		CTC Adapter
++baseclass.id		7
++subclass.id		0
+
+ vendor.id		special 0x6001
+&device.id		special 0x0005
++device.name		IUCV
+
+ vendor.id		special 0x6001
+&device.id		special 0x0006
++device.name		HSI
+
+ vendor.id		special 0x6001
+&device.id		special 0x0007
++device.name		QETH
+
+ vendor.id		special 0x6001
+&device.id		special 0x0008
++device.name		ESCON
+
+ vendor.id		special 0x6001
+&device.id		special 0x0080
++device.name		Network card
+
