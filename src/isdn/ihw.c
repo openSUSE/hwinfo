@@ -41,7 +41,7 @@ ihw_card_info      *hd_ihw_get_card(int handle)
 {
 	if (handle<0)
 		return(NULL);
-	if (handle>=IHW_card_cnt)
+	if ((unsigned) handle>=IHW_card_cnt)
 		return(NULL);
 	return(&isdncard_info[handle]);
 }
@@ -60,7 +60,7 @@ ihw_driver_info *hd_ihw_get_driver_from_type(int typ, int subtyp)
 	debprintf("ret idx %d\n", *ret);
 	if (*ret <0)
 		return(NULL);
-	if (*ret >= IHW_driver_cnt)
+	if ((unsigned) *ret >= IHW_driver_cnt)
 		return(NULL);
 	return(&driver_info[*ret]);
 }
@@ -99,7 +99,7 @@ ihw_card_info	*hd_ihw_get_card_from_id(	int vendor, int device,
 	debprintf("ret idx %d\n", *ret);
 	if (*ret <0)
 		return(NULL);
-	if (*ret >= IHW_card_cnt)
+	if ((unsigned) *ret >= IHW_card_cnt)
 		return(NULL);
 	return(&isdncard_info[*ret]);
 }
@@ -108,7 +108,7 @@ ihw_para_info	*hd_ihw_get_parameter(int card_handle, int pnr)
 {
 	int	pi;
 	
-	if ((card_handle<0) || (card_handle >= IHW_card_cnt)) {
+	if ((card_handle<0) || ((unsigned) card_handle >= IHW_card_cnt)) {
 		return(NULL);
 	}
 	if (!isdncard_info[card_handle].paracnt)
@@ -120,7 +120,7 @@ ihw_para_info	*hd_ihw_get_parameter(int card_handle, int pnr)
 	pi = isdncard_info[card_handle].para + pnr -1;
 	if (pi < 0)
 		return(NULL);
-	if (pi >= IHW_para_cnt)
+	if ((unsigned) pi >= IHW_para_cnt)
 		return(NULL);
 	if (!parameter_info[pi].type)
 		return(NULL);
@@ -131,7 +131,7 @@ ihw_driver_info *hd_ihw_get_driver(int handle)
 {
 	if (handle<0)
 		return(NULL);
-	if (handle >= IHW_driver_cnt)
+	if ((unsigned) handle >= IHW_driver_cnt)
 		return(NULL);
 	return(&driver_info[handle]);
 }

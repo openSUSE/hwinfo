@@ -60,7 +60,7 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
     memcpy(vbe->ddc, vbeinfo, sizeof vbe->ddc);
 
     ADD2LOG("edid record:\n");
-    for(i = 0; i < sizeof vbe->ddc; i += 0x10) {
+    for(i = 0; (unsigned) i < sizeof vbe->ddc; i += 0x10) {
       ADD2LOG("  ");
       hexdump(&hd_data->log, 1, 0x10, vbe->ddc + i);
       ADD2LOG("\n");
@@ -244,7 +244,7 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v)
 
     mi->pixel_size = bpp;
 
-    if(bpp == -1) {
+    if(bpp == -1u) {
       ADD2LOG("  0x%04x[%02x]: %ux%u, text\n", mi->number, mi->attributes, mi->width, mi->height);
     }
     else {

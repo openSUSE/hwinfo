@@ -173,17 +173,17 @@ void hd_scan_scsi(hd_data_t *hd_data)
     }
   }
 
-  for(i = 0; i < sizeof scsi_ctrl / sizeof *scsi_ctrl; i++) {
+  for(i = 0; (unsigned) i < sizeof scsi_ctrl / sizeof *scsi_ctrl; i++) {
     if(!scsi_ctrl[i].driver) continue;
 
     /* look for a matching scsi card */
     found = found_a = 0;
     for(hd = hd_data->hd; hd; hd = hd->next) {
       /* skip cards we already dealt with */
-      for(j = 0; j < sizeof scsi_ctrl / sizeof *scsi_ctrl; j++) {
+      for(j = 0; (unsigned) j < sizeof scsi_ctrl / sizeof *scsi_ctrl; j++) {
         if(hd->idx == scsi_ctrl[j].hd_idx) break;
       }
-      if(j < sizeof scsi_ctrl / sizeof *scsi_ctrl) continue;
+      if((unsigned) j < sizeof scsi_ctrl / sizeof *scsi_ctrl) continue;
 
       if(!hd->driver_info) hddb_add_info(hd_data, hd);
       for(di = hd->driver_info; di; di = di->next) {
@@ -207,7 +207,7 @@ void hd_scan_scsi(hd_data_t *hd_data)
   }
 
   if((hd_data->debug & HD_DEB_SCSI)) {
-    for(i = 0; i < sizeof scsi_ctrl / sizeof *scsi_ctrl; i++) {
+    for(i = 0; (unsigned) i < sizeof scsi_ctrl / sizeof *scsi_ctrl; i++) {
       if(scsi_ctrl[i].driver)
         ADD2LOG("  %2d: %10s %2u\n", i, scsi_ctrl[i].driver, scsi_ctrl[i].hd_idx);
     }
@@ -391,7 +391,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
 
   PROGRESS(2, 0, "ioctl");  
 
-  for(i = 0; i < sizeof sdevs / sizeof *sdevs; i++) {
+  for(i = 0; (unsigned) i < sizeof sdevs / sizeof *sdevs; i++) {
     for(j = 0; j < 256; j++) {
       str_printf(&dev_name, 0, "/dev/s%s%d", sdevs[i], j);
       fd = open(dev_name, O_RDONLY | O_NONBLOCK);
@@ -658,7 +658,7 @@ scsi_t *get_ioctl_scsi(hd_data_t *hd_data)
   /* map /proc/scsi/xyz --> module name */
   for(scsi = ioctl_scsi; scsi; scsi = scsi->next) {
     if(scsi->proc_dir) {
-      for(i = 0; i < sizeof exlist / sizeof *exlist; i++) {
+      for(i = 0; (unsigned) i < sizeof exlist / sizeof *exlist; i++) {
         if(!strcmp(scsi->proc_dir, exlist[i][0])) {
           scsi->driver = new_str(exlist[i][1]);
           break;

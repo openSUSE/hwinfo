@@ -13,7 +13,7 @@ extern "C" {
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#define HD_VERSION	5
+#define HD_VERSION	6
 
 /*
  * debug flags
@@ -1843,7 +1843,7 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches);
 enum cpu_arch hd_cpu_arch(hd_data_t *hd_data);
 enum boot_arch hd_boot_arch(hd_data_t *hd_data);
 
-hd_t *hd_get_device_by_idx(hd_data_t *hd_data, int idx);
+hd_t *hd_get_device_by_idx(hd_data_t *hd_data, unsigned idx);
 
 /* implemented in hddb.c */
 

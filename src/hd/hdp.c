@@ -100,7 +100,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("Unique ID: %s\n", h->unique_id);
   }
 
-  if((hd_data->debug == -1) && h->old_unique_id) {
+  if((hd_data->debug == -1u) && h->old_unique_id) {
     dump_line("Old Unique ID: %s\n", h->old_unique_id);
   }
 
@@ -184,7 +184,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line0("\n");
   }
 
-  if(hd_data->debug == -1 && h->config_string) {
+  if(hd_data->debug == -1u && h->config_string) {
     dump_line("Configured as: \"%s\"\n", h->config_string);
   }
 
@@ -1102,7 +1102,7 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
 
       case sm_onboard:
         fprintf(f, "  On Board Devices:\n");
-        for(i = 0; i < sizeof sm->onboard.descr / sizeof *sm->onboard.descr; i++) {
+        for(i = 0; (unsigned) i < sizeof sm->onboard.descr / sizeof *sm->onboard.descr; i++) {
           if(sm->onboard.descr[i]) {
             u = sm->onboard.dtype[i] & 0x7f;
             s = onboards[u < sizeof onboards / sizeof *onboards ? u : 0];

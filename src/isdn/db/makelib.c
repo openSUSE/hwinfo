@@ -539,7 +539,7 @@ char *argv[];
 		if (parameter_info[i].list) {
 			fprintf(f,"const long ihw_plist_%04x[] = ", i);
 			fprintf(f,"{%ld", parameter_info[i].list[0]);
-			for (j=1; j<=parameter_info[i].list[0]; j++) {
+			for (j=1; (unsigned) j<=parameter_info[i].list[0]; j++) {
 				fprintf(f,",%ld", parameter_info[i].list[j]);
 			}
 			fprintf(f,"};\n");

@@ -213,7 +213,7 @@ int main(int argc, char **argv)
           break;
 
         case 1000 ... 1100:
-          if(hw_items < sizeof hw_item / sizeof *hw_item)
+          if((unsigned) hw_items < sizeof hw_item / sizeof *hw_item)
             hw_item[hw_items++] = i - 1000;
           break;
 
@@ -221,7 +221,7 @@ int main(int argc, char **argv)
         case 2001:
         case 2002:
         case 2003:
-          if(hw_items < sizeof hw_item / sizeof *hw_item)
+          if((unsigned) hw_items < sizeof hw_item / sizeof *hw_item)
             hw_item[hw_items++] = i;
           break;
 
@@ -857,7 +857,7 @@ static char *scanner_info(hd_t *hd)
 
   if(!hd->vendor.name || !hd->device.name) return NULL;
 
-  for(i = 0; i < sizeof scanner_data / sizeof *scanner_data; i++) {
+  for(i = 0; (unsigned) i < sizeof scanner_data / sizeof *scanner_data; i++) {
     if(
       !strcasecmp(scanner_data[i].vendor, hd->vendor.name) &&
       !strcasecmp(scanner_data[i].model, hd->device.name)
@@ -892,7 +892,7 @@ void do_test(hd_data_t *hd_data)
 
   f = fopen("/tmp/hw_overview.log", "w");
 
-  for(i = 0; i < sizeof items / sizeof *items; i++) {
+  for(i = 0; (unsigned) i < sizeof items / sizeof *items; i++) {
     item = items[i];
     hd0 = hd_list(hd_data, item, 0, NULL);
 

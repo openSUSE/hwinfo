@@ -388,7 +388,7 @@ void hd_scan_bios(hd_data_t *hd_data)
           if(
             (mi->attributes & 1) &&	/* mode supported */
             mi->fb_start &&
-            mi->pixel_size != -1	/* text mode */
+            mi->pixel_size != -1u	/* text mode */
           ) {
             res = add_res_entry(&hd->res, new_mem(sizeof *res));
             res->framebuffer.type = res_framebuffer;
@@ -477,7 +477,7 @@ void read_memory(memory_range_t *mem)
       (fd = open(DEV_MEM, O_RDONLY)) >= 0 &&
 #endif
       lseek(fd, mem->start, SEEK_SET) >= 0 &&
-      read(fd, mem->data, mem->size) == mem->size
+      (unsigned) read(fd, mem->data, mem->size) == mem->size
     )
   ) {
     mem->data = free_mem(mem->data);
@@ -526,7 +526,7 @@ void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt)
 
   if(!mem->data) return;
 
-  for(i = 0xf0000 - mem->start; i < mem->size; i += 0x10) {
+  for(i = 0xf0000 - mem->start; (unsigned) i < mem->size; i += 0x10) {
     t = mem->data + i;
     if(t[0] == pnp[0] && t[1] == pnp[1] && t[2] == pnp[2] && t[3] == pnp[3]) {
       for(l = cs = 0; l < t[5]; l++) { cs += t[l]; }

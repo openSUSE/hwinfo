@@ -190,7 +190,7 @@ void hd_scan_usb(hd_data_t *hd_data)
           hd->attached_to = usb->hd_idx;
         }
       }
-      else if(hd->base_class.id == bc_hub && hd_usb->bus < usb_ctrl_idx) {
+      else if(hd->base_class.id == bc_hub && (unsigned) hd_usb->bus < usb_ctrl_idx) {
         /* root hub */
         hd->attached_to = usb_ctrl[hd_usb->bus];
 

@@ -480,7 +480,7 @@ void hd_scan_misc2(hd_data_t *hd_data)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     for(res = hd->res; res; res = res->next) {
       if(res->irq.type == res_irq) {
-        for(i = 0; i < m->irq_len; i++) {
+        for(i = 0; (unsigned) i < m->irq_len; i++) {
           if(res->irq.base == m->irq[i].irq) {
             res->irq.triggered = m->irq[i].events;
             break;
@@ -495,7 +495,7 @@ void hd_scan_misc2(hd_data_t *hd_data)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     for(res = hd->res; res; res = res->next) {
       if(res->io.type == res_io) {
-        for(i = 0; i < m->io_len; i++) {
+        for(i = 0; (unsigned) i < m->io_len; i++) {
           if(res->io.base == m->io[i].addr && res->io.range < m->io[i].size) {
             res->io.range = m->io[i].size;
             break;
@@ -591,7 +591,7 @@ void read_irqs(misc_t *m)
     v = 0;
     j = i;
     /* add up all event counters */
-    while(j < strlen(sl->str) && sscanf(sl->str + j, " %u %n", &k, &i) >= 1) {
+    while(j < (int) strlen(sl->str) && sscanf(sl->str + j, " %u %n", &k, &i) >= 1) {
       if(!i) break;
       v += k;
       j += i;
@@ -636,7 +636,7 @@ void gather_resources(misc_t *m, hd_res_t **r, char *name, unsigned which)
 
   if(!which) which = W_IO | W_DMA | W_IRQ;
 
-  if((which & W_IO)) for(i = 0; i < m->io_len; i++) {
+  if((which & W_IO)) for(i = 0; (unsigned) i < m->io_len; i++) {
     if(!strcmp(name, m->io[i].dev)) {
       res = add_res_entry(r, new_mem(sizeof **r));
       res->io.type = res_io;
@@ -648,7 +648,7 @@ void gather_resources(misc_t *m, hd_res_t **r, char *name, unsigned which)
     }
   }
 
-  if((which & W_DMA)) for(i = 0; i < m->dma_len; i++) {
+  if((which & W_DMA)) for(i = 0; (unsigned) i < m->dma_len; i++) {
     if(!strcmp(name, m->dma[i].dev)) {
       res = add_res_entry(r, new_mem(sizeof **r));
       res->dma.type = res_dma;
@@ -658,7 +658,7 @@ void gather_resources(misc_t *m, hd_res_t **r, char *name, unsigned which)
     }
   }
 
-  if((which & W_IRQ)) for(i = 0; i < m->irq_len; i++) {
+  if((which & W_IRQ)) for(i = 0; (unsigned) i < m->irq_len; i++) {
     for(j = 0; j <  m->irq[i].devs; j++) {
       if(!strcmp(name, m->irq[i].dev[j])) {
         res = add_res_entry(r, new_mem(sizeof **r));
@@ -728,7 +728,7 @@ void dump_misc_data(hd_data_t *hd_data)
 
   ADD2LOG("----- misc resources -----\n");
 
-  for(i = 0; i < m->io_len; i++) {
+  for(i = 0; (unsigned) i < m->io_len; i++) {
     ADD2LOG(
       "i/o:%u 0x%04"PRIx64" - 0x%04"PRIx64" (0x%02"PRIx64") \"%s\"\n",
       m->io[i].tag,
@@ -737,7 +737,7 @@ void dump_misc_data(hd_data_t *hd_data)
     );
   }
 
-  for(i = 0; i < m->irq_len; i++) {
+  for(i = 0; (unsigned) i < m->irq_len; i++) {
     ADD2LOG(
       "irq:%u %2u (%9u)",
       m->irq[i].tag, m->irq[i].irq, m->irq[i].events
@@ -748,7 +748,7 @@ void dump_misc_data(hd_data_t *hd_data)
     ADD2LOG("\n");
   }
 
-  for(i = 0; i < m->dma_len; i++) {
+  for(i = 0; (unsigned) i < m->dma_len; i++) {
     ADD2LOG(
       "dma:%u %u \"%s\"\n",
       m->dma[i].tag, m->dma[i].channel, m->dma[i].dev

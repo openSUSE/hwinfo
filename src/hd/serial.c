@@ -46,7 +46,7 @@ void hd_scan_serial(hd_data_t *hd_data)
   get_serial_info(hd_data);
   if((hd_data->debug & HD_DEB_SERIAL)) dump_serial_data(hd_data);
 
-  for(i = 0; i < sizeof skip_dev / sizeof *skip_dev; i++) {
+  for(i = 0; (unsigned) i < sizeof skip_dev / sizeof *skip_dev; i++) {
     s = get_cmdline(hd_data, i == 0 ? "yast2ser" : "console");
     if(
       s && *s &&
@@ -70,13 +70,13 @@ void hd_scan_serial(hd_data_t *hd_data)
     hd->base_class.id = bc_comm;
     hd->sub_class.id = sc_com_ser;
     hd->prog_if.id = 0x80;
-    for(i = 0; i < sizeof ser_names / sizeof *ser_names; i++) {
+    for(i = 0; (unsigned) i < sizeof ser_names / sizeof *ser_names; i++) {
       if(strstr(ser->name, ser_names[i])) hd->prog_if.id = i;
     }
     hd->device.name = new_str(ser->name);
     hd->func = ser->line;
     str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%u", ser->line);
-    for(i = 0; i < sizeof skip_dev / sizeof *skip_dev; i++) {
+    for(i = 0; (unsigned) i < sizeof skip_dev / sizeof *skip_dev; i++) {
       if(skip_dev[i] && !strcmp(skip_dev[i], hd->unix_dev_name)) {
         hd->tag.ser_skip = 1;
         break;

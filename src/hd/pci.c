@@ -150,7 +150,7 @@ void hd_scan_pci(hd_data_t *hd_data)
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->bus.id == bus_pci) {
       bus = hd->slot >> 8;
-      for(j = 0; j < bridges; j++) {
+      for(j = 0; (unsigned) j < bridges; j++) {
         if(bridge[j].bus == bus) {
           hd->attached_to = bridge[j].hd_idx;
           break;
@@ -204,7 +204,7 @@ unsigned char pci_cfg_byte(pci_t *pci, int fd, unsigned idx)
   if(idx >= sizeof pci->data) return 0;
   if(idx < pci->data_len) return pci->data[idx];
   if(idx < pci->data_ext_len && pci->data[idx]) return pci->data[idx];
-  if(lseek(fd, idx, SEEK_SET) != idx) return 0;
+  if(lseek(fd, idx, SEEK_SET) != (off_t) idx) return 0;
   if(read(fd, &uc, 1) != 1) return 0;
   pci->data[idx] = uc;
 
@@ -526,7 +526,7 @@ void dump_pci_data(hd_data_t *hd_data)
 
     if(p->log) ADD2LOG("%s", p->log);
 
-    for(i = 0; i < p->data_ext_len; i += 0x10) {
+    for(i = 0; (unsigned) i < p->data_ext_len; i += 0x10) {
       ADD2LOG("  %02x: ", i);
       j = p->data_ext_len - i;
       hexdump(&hd_data->log, 1, j > 0x10 ? 0x10 : j, p->data + i);

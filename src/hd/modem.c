@@ -217,7 +217,7 @@ void get_serial_modem(hd_data_t *hd_data)
   PROGRESS(4, 0, "init string");
 
   command = NULL;
-  for(i = 0; i < MAX_INIT_STRING; i++) {
+  for(i = 0; (unsigned) i < MAX_INIT_STRING; i++) {
     str_printf(&command, 0, "AT %s\r", init_strings[i]);
     at_cmd(hd_data, command, 1, 1);
 
@@ -251,7 +251,7 @@ void get_serial_modem(hd_data_t *hd_data)
 	responces[j++] = str_list_dup(sm->at_resp);
     }
 
-    for(i = 0; i < sizeof cmds / sizeof *cmds; i++) {
+    for(i = 0; (unsigned) i < sizeof cmds / sizeof *cmds; i++) {
       int atx = cmds[i];
       sprintf(at, "ATI%d\r", atx);
       at_cmd(hd_data, at, 0, 1);
@@ -385,7 +385,7 @@ void get_serial_modem(hd_data_t *hd_data)
     PROGRESS(8, 0, "testing");
 
     at_cmd(hd_data, "ATI\r", 0, 1);
-    for(i = 0; i < sizeof cmds / sizeof *cmds; i++) {
+    for(i = 0; (unsigned) i < sizeof cmds / sizeof *cmds; i++) {
       sprintf(at, "ATI%d\r", cmds[i]);
       at_cmd(hd_data, at, 0, 1);
     }
@@ -765,7 +765,7 @@ int set_modem_speed(ser_device_t *sm, unsigned baud)
   speed_t st;
   struct termios tio;
 
-  for(i = 0; i < MAX_SPEED; i++) if(speeds[i].baud == baud) break;
+  for(i = 0; (unsigned) i < MAX_SPEED; i++) if(speeds[i].baud == baud) break;
 
   if(i == MAX_SPEED) return 1;
 
@@ -782,7 +782,7 @@ int set_modem_speed(ser_device_t *sm, unsigned baud)
 
   st = cfgetospeed(&tio);
 
-  for(i = 0; i < MAX_SPEED; i++) if(speeds[i].mask == st) break;
+  for(i = 0; (unsigned) i < MAX_SPEED; i++) if(speeds[i].mask == st) break;
 
   if(i == MAX_SPEED) return 2;
 

@@ -54,7 +54,7 @@ void hd_scan_ataraid(hd_data_t *hd_data)
             }
           }
           if(found && ok) {
-            if(raid_cnt < sizeof raid_ctrl / sizeof *raid_ctrl) {
+            if((unsigned) raid_cnt < sizeof raid_ctrl / sizeof *raid_ctrl) {
               raid_ctrl[raid_cnt++] = hd;
             }
             break;
@@ -71,7 +71,7 @@ void hd_scan_ataraid(hd_data_t *hd_data)
       hd->unix_dev_name
     ) {
       if(strstr(hd->unix_dev_name, "/dev/ataraid") == hd->unix_dev_name) {
-        if(raid_array_cnt < sizeof raid_array / sizeof *raid_array) {
+        if((unsigned) raid_array_cnt < sizeof raid_array / sizeof *raid_array) {
           raid_array[raid_array_cnt++] = hd;
         }
       }

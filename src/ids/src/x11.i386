@@ -3015,6 +3015,20 @@
 +driver.xfree		4|savage||||ShadowFB
 
  vendor.id		pci 0x5333
+&device.id		pci 0x8c2e
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x01fc
++subdevice.name		IBM SuperSavage/IXC 64 SDR
++driver.xfree		4|fbdev
+
+ vendor.id		pci 0x5333
+&device.id		pci 0x8c2e
+&subvendor.id		pci 0x1179
+&subdevice.id		pci 0x0001
++subdevice.name		Toshiba America Info SuperSavage/IXC 64 SDR
++driver.xfree		4|fbdev
+
+ vendor.id		pci 0x5333
 &device.id		pci 0x8c2f
 +device.name		SuperSavage/IXC 64 DDR
 +driver.xfree		4|savage

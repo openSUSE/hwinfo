@@ -244,7 +244,7 @@ struct option options[] = {
 list_t hd;
 
 char *item_ind = NULL;
-FILE *log = NULL;
+FILE *logfh = NULL;
 
 struct {
   int debug;
@@ -362,15 +362,15 @@ int main(int argc, char **argv)
   }
 
   if(opt.logfile && strcmp(opt.logfile, "-")) {
-    log = fopen(opt.logfile, "w");
-    if(!log) {
+    logfh = fopen(opt.logfile, "w");
+    if(!logfh) {
       perror(opt.logfile);
       return 3;
     }
     close_log = 1;
   }
   else {
-    log = stdout;
+    logfh = stdout;
   }
 
   for(argv += optind; *argv; argv++) {
@@ -379,37 +379,37 @@ int main(int argc, char **argv)
 
   for(item = hd.first; item; item = item->next) stats.items_in++;
 
-  fprintf(log, "- removing useless entries\n");
-  fflush(log);
+  fprintf(logfh, "- removing useless entries\n");
+  fflush(logfh);
   remove_nops(&hd);
 
   if(opt.mini) {
-    fprintf(log, "- building mini version\n");
-    fflush(log);
+    fprintf(logfh, "- building mini version\n");
+    fflush(logfh);
     remove_unimportant_items(&hd);
   }
 
   if(opt.check || opt.split) {
-    fprintf(log, "- splitting entries\n");
-    fflush(log);
+    fprintf(logfh, "- splitting entries\n");
+    fflush(logfh);
     split_items(&hd);
   }
 
   if(opt.check) {
-    fprintf(log, "- combining driver info\n");
-    fflush(log);
+    fprintf(logfh, "- combining driver info\n");
+    fflush(logfh);
     combine_driver(&hd);
 
-    fprintf(log, "- combining requires info\n");
-    fflush(log);
+    fprintf(logfh, "- combining requires info\n");
+    fflush(logfh);
     combine_requires(&hd);
 
-    fprintf(log, "- checking for consistency\n");
-    fflush(log);
+    fprintf(logfh, "- checking for consistency\n");
+    fflush(logfh);
     check_items(&hd);
 
-    fprintf(log, "- join items\n");
-    fflush(log);
+    fprintf(logfh, "- join items\n");
+    fflush(logfh);
     if(opt.join_keys_first) {
       join_items_by_key(&hd);
       join_items_by_value(&hd);
@@ -423,8 +423,8 @@ int main(int argc, char **argv)
   }
 
   if(opt.sort) {
-    fprintf(log, "- sorting\n");
-    fflush(log);
+    fprintf(logfh, "- sorting\n");
+    fflush(logfh);
     sort_list(&hd, cmp_item_s);
   }
 
@@ -452,9 +452,9 @@ int main(int argc, char **argv)
     if(close_cfile) fclose(cfile);
   }
 
-  fprintf(log, "- statistics\n");
-  write_stats(log);
-  if(log != stdout) {
+  fprintf(logfh, "- statistics\n");
+  write_stats(logfh);
+  if(logfh != stdout) {
     if(opt.outfile && strcmp(opt.outfile, "-")) {
       fprintf(stderr, "data written to \"%s\"\n", opt.outfile);
     }
@@ -467,7 +467,7 @@ int main(int argc, char **argv)
 
   free_item(hd.first, 1);
 
-  if(close_log) fclose(log);
+  if(close_log) fclose(logfh);
 
   return 0;
 }
@@ -754,14 +754,14 @@ line_t *parse_line(char *str)
   if(*str) *str++ = 0;
   while(isspace(*str)) str++;
 
-  for(i = 0; i < sizeof entry_strings / sizeof *entry_strings; i++) {
+  for(i = 0; (unsigned) i < sizeof entry_strings / sizeof *entry_strings; i++) {
     if(!strcmp(s, entry_strings[i])) {
       l.key = i;
       break;
     }
   }
 
-  if(i >= sizeof entry_strings / sizeof *entry_strings) return NULL;
+  if((unsigned) i >= sizeof entry_strings / sizeof *entry_strings) return NULL;
 
   l.value = str;
 
@@ -859,13 +859,13 @@ entry_mask_t add_entry(skey_t *skey, entry_t idx, char *val)
   hid_t *hid;
   str_t *str;
 
-  for(i = 0; i < sizeof entry_is_numeric / sizeof *entry_is_numeric; i++) {
+  for(i = 0; (unsigned) i < sizeof entry_is_numeric / sizeof *entry_is_numeric; i++) {
     if(idx == entry_is_numeric[i]) break;
   }
 
   // printf("i = %d, idx = %d, val = >%s<\n", i, idx, val);
 
-  if(i < sizeof entry_is_numeric / sizeof *entry_is_numeric) {
+  if((unsigned) i < sizeof entry_is_numeric / sizeof *entry_is_numeric) {
     /* numeric id */
     e_mask |= 1 << idx;
 
@@ -1058,7 +1058,7 @@ void write_skey(FILE *f, prefix_t pre, skey_t *skey)
 
   if(!skey) return;
 
-  for(i = 0; i < sizeof skey->hid / sizeof *skey->hid; i++) {
+  for(i = 0; (unsigned) i < sizeof skey->hid / sizeof *skey->hid; i++) {
     if(skey->hid[i]) {
       if(i != he_driver) {
         write_ent_name(f, skey->hid[i], pref_char[pre], i);
@@ -1114,7 +1114,7 @@ void write_id(FILE *f, entry_t ent, hid_t *hid)
   switch(hid->any.flag) {
     case FLAG_ID:
       tag = hid->num.tag;
-      if(tag >= sizeof tag_name / sizeof *tag_name) {
+      if((unsigned) tag >= sizeof tag_name / sizeof *tag_name) {
         fprintf(stderr, "internal oops\n");
         exit(2);
       }
@@ -1266,7 +1266,7 @@ int count_common_hids(skey_t *skey0, skey_t *skey1)
 
   if(!skey0 || !skey1) return 0;
 
-  for(i = 0; i < sizeof skey0->hid / sizeof *skey0->hid; i++) {
+  for(i = 0; (unsigned) i < sizeof skey0->hid / sizeof *skey0->hid; i++) {
     if(skey0->hid[i] && skey1->hid[i]) cnt++;
   }
 
@@ -1292,7 +1292,7 @@ int strip_skey(skey_t *skey0, skey_t *skey1, int do_it)
 {
   int i, cnt;
 
-  for(i = cnt = 0; i < sizeof skey0->hid / sizeof *skey0->hid; i++) {
+  for(i = cnt = 0; (unsigned) i < sizeof skey0->hid / sizeof *skey0->hid; i++) {
     if(!skey0->hid[i] || !skey1->hid[i]) continue;
     if(cmp_hid(skey0->hid[i], skey1->hid[i])) {
       cnt += 1 << 8;
@@ -1318,7 +1318,7 @@ void remove_deleted_hids(skey_t *skey)
 {
   int i;
 
-  for(i = 0; i < sizeof skey->hid / sizeof *skey->hid; i++) {
+  for(i = 0; (unsigned) i < sizeof skey->hid / sizeof *skey->hid; i++) {
     if(skey->hid[i] && skey->hid[i]->any.remove) {
       skey->hid[i] = free_hid(skey->hid[i]);
     }
@@ -1333,7 +1333,7 @@ void undelete_hids(skey_t *skey)
 {
   int i;
 
-  for(i = 0; i < sizeof skey->hid / sizeof *skey->hid; i++) {
+  for(i = 0; (unsigned) i < sizeof skey->hid / sizeof *skey->hid; i++) {
     if(skey->hid[i]) skey->hid[i]->any.remove = 0;
   }
 }
@@ -1521,7 +1521,7 @@ int cmp_skey(skey_t *skey0, skey_t *skey1)
   if(!skey0) return -1;
   if(!skey1) return 1;
 
-  for(i = len0 = len1 = 0; i < sizeof skey0->hid / sizeof *skey0->hid; i++) {
+  for(i = len0 = len1 = 0; (unsigned) i < sizeof skey0->hid / sizeof *skey0->hid; i++) {
     if(skey0->hid[i]) len0 = i;
     if(skey1->hid[i]) len1 = i;
   }
@@ -1704,7 +1704,7 @@ int match_hid(hid_t *hid0, hid_t *hid1, match_t match)
               hid0->num.id >= hid1->num.id &&
                hid0->num.id + hid0->num.range <= hid1->num.id + hid1->num.range
             ) ? 1 : 0;
-//          fprintf(log, "id0 = 0x%x, id1 = 0x%x, m = %d\n", hid0->num.id, hid1->num.id, m);
+//          fprintf(logfh, "id0 = 0x%x, id1 = 0x%x, m = %d\n", hid0->num.id, hid1->num.id, m);
         }
         else if(hid1->num.has.mask) {
 
@@ -1755,7 +1755,7 @@ int match_skey(skey_t *skey0, skey_t *skey1, match_t match)
 {
   int i, k, m = 1;
 
-  for(i = k = 0; i < sizeof skey0->hid / sizeof *skey0->hid; i++) {
+  for(i = k = 0; (unsigned) i < sizeof skey0->hid / sizeof *skey0->hid; i++) {
     k = match_hid(skey0->hid[i], skey1->hid[i], match);
     if(k > 0) continue;
     if(!k) return 0;
@@ -1797,7 +1797,7 @@ int combine_keys(skey_t *skey0, skey_t *skey1)
   unsigned r0, r1;
   hid_t *hid0, *hid1;
 
-  for(ind = -1, i = 0; i < sizeof skey0->hid / sizeof *skey0->hid; i++) {
+  for(ind = -1, i = 0; (unsigned) i < sizeof skey0->hid / sizeof *skey0->hid; i++) {
     if(!skey0->hid[i] && !skey1->hid[i]) continue;
     if(!skey0->hid[i] || !skey1->hid[i]) return 0;
     if(!cmp_hid(skey0->hid[i], skey1->hid[i])) continue;
@@ -1823,7 +1823,7 @@ int combine_keys(skey_t *skey0, skey_t *skey1)
 
   if(hid1->num.id >= hid0->num.id && hid1->num.id <= hid0->num.id + r0) {
     i = hid1->num.id + r1 - hid0->num.id;
-    if(i < r0) i = r0;
+    if((unsigned) i < r0) i = r0;
     if(i != 1) {
       hid0->num.range = i;
       hid0->num.has.range = 1;
@@ -1886,7 +1886,7 @@ skey_t *clone_skey(skey_t *skey)
 
   new_skey = new_mem(sizeof *new_skey);
 
-  for(i = 0; i < sizeof skey->hid / sizeof *skey->hid; i++) {
+  for(i = 0; (unsigned) i < sizeof skey->hid / sizeof *skey->hid; i++) {
     new_skey->hid[i] = clone_hid(skey->hid[i]);
   }
 
@@ -1954,7 +1954,7 @@ skey_t *free_skey(skey_t *skey, int follow_next)
   for(; skey; skey = next) {
     next = skey->next;
 
-    for(i = 0; i < sizeof skey->hid / sizeof *skey->hid; i++) {
+    for(i = 0; (unsigned) i < sizeof skey->hid / sizeof *skey->hid; i++) {
       free_hid(skey->hid[i]);
     }
 
@@ -2135,7 +2135,7 @@ void check_items(list_t *hd)
       if(m) {
 #if 0
         fprintf(
-          log, "a = %s, b = %s, m = %d, mr = %d, m_all = %d, mr_all = %d\n",
+          logfh, "a = %s, b = %s, m = %d, mr = %d, m_all = %d, mr_all = %d\n",
           item_a->pos, item_b->pos,
           m, mr, m_all, mr_all
         );
@@ -2150,7 +2150,7 @@ void check_items(list_t *hd)
           i = cmp_item(item_a, item_b);		/* just informational */
           if(!i) {
             /* identical keys and values */
-            fprintf(log,
+            fprintf(logfh,
               "%s: duplicate of %s, item removed\n",
               item_a->pos, item_b->pos
             );
@@ -2175,18 +2175,18 @@ void check_items(list_t *hd)
                 c_ident = j & 0xff;
                 c_diff = (j >> 8) & 0xff;
                 if(c_diff && c_ident) {
-                  fprintf(log,
+                  fprintf(logfh,
                     "%s: some info identical to %s, identical info removed\n",
                     item_a->pos, item_b->pos
                   );
-                  log_items(log, item_a, item_b);
+                  log_items(logfh, item_a, item_b);
                 }
                 else if(!c_diff) {
-                  fprintf(log,
+                  fprintf(logfh,
                     "%s: info is identical to %s, info removed\n",
                     item_a->pos, item_b->pos
                   );
-                  log_items(log, item_a, item_b);
+                  log_items(logfh, item_a, item_b);
                 }
                 remove_deleted_hids(item_a->value);
               }
@@ -2211,25 +2211,25 @@ void check_items(list_t *hd)
                  */
                 if(c_diff && !c_ident) {
                   (*stat_cnt)++;
-                  fprintf(log,
+                  fprintf(logfh,
                     "%s: info %s %s, info removed\n",
                     item_a->pos, s, item_b->pos
                   );
                 }
                 else if(c_diff && c_ident) {
                   (*stat_cnt)++;
-                  fprintf(log,
+                  fprintf(logfh,
                     "%s: info %s/is identical to %s, info removed\n",
                     item_a->pos, s, item_b->pos
                   );
                 }
                 else {
-                  fprintf(log,
+                  fprintf(logfh,
                     "%s: info is identical to %s, info removed\n",
                     item_a->pos, item_b->pos
                   );
                 }
-                log_items(log, item_a, item_b);
+                log_items(logfh, item_a, item_b);
                 remove_deleted_hids(item_a->value);
               }
             }
@@ -2237,7 +2237,7 @@ void check_items(list_t *hd)
             if(!count_common_hids(item_a->value, item_a->value)) {
               /* remove if no values left */
               item_a->remove = 1;
-              fprintf(log, "%s: no info left, item removed\n", item_a->pos);
+              fprintf(logfh, "%s: no info left, item removed\n", item_a->pos);
             }
 
           }
@@ -2252,11 +2252,11 @@ void check_items(list_t *hd)
             if(c_diff) {
               /* different keys, conflicting values --> error */
               stats.errors++;
-              fprintf(log,
+              fprintf(logfh,
                 "%s: info conflicts with %s\n",
                 item_b->pos, item_a->pos
               );
-              log_items(log, item_b, item_a);
+              log_items(logfh, item_b, item_a);
             }
             undelete_hids(item_b->value);
           }
@@ -2312,11 +2312,11 @@ void combine_driver(list_t *hd)
        * allow only (x11 + x11) & (!any + any)
        */
       if(((type0 & type1) & 5) || ((type0 | type1) & 6) == 6) {
-        fprintf(log,
+        fprintf(logfh,
           "%s: can't combine driver info with %s %d %d\n",
           item0->pos, item1->pos, type0, type1
         );
-        log_items(log, item0, item1);
+        log_items(logfh, item0, item1);
         continue;
       }
 
@@ -2332,8 +2332,8 @@ void combine_driver(list_t *hd)
         hid_b = hid0;
       }
 
-      fprintf(log, "%s: combine with %s\n", item_a->pos, item_b->pos);
-      log_items(log, item_a, item_b);
+      fprintf(logfh, "%s: combine with %s\n", item_a->pos, item_b->pos);
+      log_items(logfh, item_a, item_b);
 
       new_hid = clone_hid(hid_a);
 
@@ -2363,13 +2363,13 @@ void combine_driver(list_t *hd)
       item_a->value->hid[he_driver] = new_hid;
       item_b->value->hid[he_driver] = free_hid(item_b->value->hid[he_driver]);
 
-      fprintf(log, "  --\n");
-      log_items(log, item_a, item_b);
+      fprintf(logfh, "  --\n");
+      log_items(logfh, item_a, item_b);
 
       if(!count_common_hids(item_b->value, item_b->value)) {
         /* remove if no values left */
         item_b->remove = 1;
-        fprintf(log, "%s: no info left, item removed\n", item_b->pos);
+        fprintf(logfh, "%s: no info left, item removed\n", item_b->pos);
       }
 
     }
@@ -2415,11 +2415,11 @@ void combine_requires(list_t *hd)
 
       if(!cmp_hid(hid0, hid1)) {
         hid1->any.remove = 1;
-        fprintf(log,
+        fprintf(logfh,
           "%s: info is identical to %s, info removed\n",
           item1->pos, item0->pos
         );
-        log_items(log, item1, item0);
+        log_items(logfh, item1, item0);
         item1->value->hid[he_requires] = free_hid(item1->value->hid[he_requires]);
       }
       else {
@@ -2450,18 +2450,18 @@ void combine_requires(list_t *hd)
 
         hid1->any.remove = 1;
         
-        fprintf(log,
+        fprintf(logfh,
           "%s: combine with %s, info removed\n",
           item1->pos, item0->pos
         );
-        log_items(log, item1, item0);
+        log_items(logfh, item1, item0);
         item1->value->hid[he_requires] = free_hid(item1->value->hid[he_requires]);
       }
 
       if(!count_common_hids(item1->value, item1->value)) {
         /* remove if no values left */
         item1->remove = 1;
-        fprintf(log, "%s: no info left, item removed\n", item1->pos);
+        fprintf(logfh, "%s: no info left, item removed\n", item1->pos);
       }
     }
   }
@@ -2488,7 +2488,7 @@ void join_items_by_value(list_t *hd)
         }
         memset(&item1->key, 0, sizeof item1->key);
         item1->remove = 1;
-        fprintf(log, "%s: info added to %s, item removed\n", item1->pos, item0->pos);
+        fprintf(logfh, "%s: info added to %s, item removed\n", item1->pos, item0->pos);
       }
     }
   }
@@ -2537,14 +2537,14 @@ void join_items_by_key(list_t *hd)
         if(!count_common_hids(val0, val1)) {
           /* move everything from item1 to item0 */
           
-          for(i = 0; i < sizeof val1->hid / sizeof *val1->hid; i++) {
+          for(i = 0; (unsigned) i < sizeof val1->hid / sizeof *val1->hid; i++) {
             if(val1->hid[i]) {
               val0->hid[i] = val1->hid[i];
               val1->hid[i] = NULL;
             }
           }
           item1->remove = 1;
-          fprintf(log, "%s: info added to %s, item removed\n", item1->pos, item0->pos);
+          fprintf(logfh, "%s: info added to %s, item removed\n", item1->pos, item0->pos);
         }
       }
     }
@@ -2565,7 +2565,7 @@ void remove_unimportant_items(list_t *hd)
     val = item->value;
     cnt = 0;
     if(val) {
-      for(i = 0; i < sizeof val->hid / sizeof *val->hid; i++) {
+      for(i = 0; (unsigned) i < sizeof val->hid / sizeof *val->hid; i++) {
         if(i == he_driver && val->hid[i]) {
           if(!(
             val->hid[i]->any.flag == FLAG_STRING &&
@@ -2688,7 +2688,7 @@ unsigned hddb_store_hid(hddb_data_t *hddb, hid_t *hid, entry_t entry)
       idx = hddb_store_value(hddb, MAKE_DATA(FLAG_MASK, hid->num.mask) | (1 << 31));
     }
     u = hddb_store_value(hddb, MAKE_DATA(FLAG_ID, hid->num.id + (hid->num.tag << 16)));
-    if(idx == -1) idx = u;
+    if(idx == -1u) idx = u;
   }
   else if(hid->any.flag == FLAG_STRING) {
     if(entry == he_driver ) {
@@ -2698,7 +2698,7 @@ unsigned hddb_store_hid(hddb_data_t *hddb, hid_t *hid, entry_t entry)
           u = hddb_store_string(hddb, str1->str);
           if(str->next || str1->next) u |= 1 << 31;
           u = hddb_store_value(hddb, MAKE_DATA(FLAG_STRING, u));
-          if(idx == -1) idx = u;
+          if(idx == -1u) idx = u;
         }
         free_str(str0, 1);
       }
@@ -2724,7 +2724,7 @@ void hddb_store_skey(hddb_data_t *hddb, skey_t *skey, unsigned *mask, unsigned *
 
   if(!skey) return;
 
-  for(i = 0; i < sizeof skey->hid / sizeof *skey->hid; i++) {
+  for(i = 0; (unsigned) i < sizeof skey->hid / sizeof *skey->hid; i++) {
     if(skey->hid[i]) {
       ent = hddb_store_hid(hddb, skey->hid[i], i);
       if(!*mask) *idx = ent;
@@ -2823,12 +2823,12 @@ void write_cfile(FILE *f, list_t *hd)
   char *qstr;
   unsigned u, qstr_len, len;
 
-  fprintf(log, "- building C version\n");
-  fflush(log);
+  fprintf(logfh, "- building C version\n");
+  fflush(logfh);
 
   hddb_init(&hddb, hd);
 
-  fprintf(log, "  db size: %u bytes\n",
+  fprintf(logfh, "  db size: %u bytes\n",
     (unsigned) (sizeof hddb +
     hddb.strings_len +
     hddb.ids_len * sizeof *hddb.ids +

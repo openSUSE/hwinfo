@@ -284,7 +284,7 @@ void hddb_init_external(hd_data_t *hd_data)
         }
         if(state == 2 && entry_mask) {
           ent = store_entry(hddb2, tmp_entry);
-          if(ent == -1) {
+          if(ent == -1u) {
             fprintf(stderr, "hd.ids line %d: internal hddb oops 1\n", l_nr);
             state = 4;
             break;
@@ -318,7 +318,7 @@ void hddb_init_external(hd_data_t *hd_data)
           break;
         }
         ent = store_entry(hddb2, tmp_entry);
-        if(ent == -1) {
+        if(ent == -1u) {
           fprintf(stderr, "hd.ids line %d: internal hddb oops 2\n", l_nr);
           state = 4;
           break;
@@ -344,7 +344,7 @@ void hddb_init_external(hd_data_t *hd_data)
         }
         if(state == 1 && l_end > l_start) {
           ent = store_entry(hddb2, tmp_entry);
-          if(ent == -1) {
+          if(ent == -1u) {
             fprintf(stderr, "hd.ids line %d: internal hddb oops 3\n", l_nr);
             state = 4;
             break;
@@ -383,7 +383,7 @@ void hddb_init_external(hd_data_t *hd_data)
   /* finalize last item */
   if(state == 2 && entry_mask) {
     ent = store_entry(hddb2, tmp_entry);
-    if(ent == -1) {
+    if(ent == -1u) {
       fprintf(stderr, "hd.ids line %d: internal hddb oops 4\n", l_nr);
       state = 4;
     }
@@ -450,14 +450,14 @@ line_t *parse_line(char *str)
   if(*str) *str++ = 0;
   while(isspace(*str)) str++;
 
-  for(i = 0; i < sizeof hddb_entry_strings / sizeof *hddb_entry_strings; i++) {
+  for(i = 0; (unsigned) i < sizeof hddb_entry_strings / sizeof *hddb_entry_strings; i++) {
     if(!strcmp(s, hddb_entry_strings[i])) {
       l.key = i;
       break;
     }
   }
 
-  if(i >= sizeof hddb_entry_strings / sizeof *hddb_entry_strings) return NULL;
+  if((unsigned) i >= sizeof hddb_entry_strings / sizeof *hddb_entry_strings) return NULL;
 
   l.value = str;
 
@@ -545,7 +545,7 @@ unsigned store_entry(hddb2_data_t *x, tmp_entry_t *te)
         v = te[i].val[j] | (1 << 31);
         if(j == te[i].len - 1) v &= ~(1 << 31);
         u = store_value(x, v);
-        if(ent == -1) ent = u;
+        if(ent == -1u) ent = u;
       }
     }
   }
@@ -563,7 +563,7 @@ void add_value(tmp_entry_t *te, hddb_entry_t idx, unsigned val)
   if(idx >= he_nomask) return;
   te += idx;
 
-  if(te->len >= sizeof te->val / sizeof *te->val) return;
+  if((unsigned) te->len >= sizeof te->val / sizeof *te->val) return;
 
   te->val[te->len++] = val;
 }
@@ -639,11 +639,11 @@ hddb_entry_mask_t add_entry(hddb2_data_t *hddb2, tmp_entry_t *te, hddb_entry_t i
   unsigned u, u0, u1, u2;
   char *s, c;
 
-  for(i = 0; i < sizeof hddb_is_numeric / sizeof *hddb_is_numeric; i++) {
+  for(i = 0; (unsigned) i < sizeof hddb_is_numeric / sizeof *hddb_is_numeric; i++) {
     if(idx == hddb_is_numeric[i]) break;
   }
 
-  if(i < sizeof hddb_is_numeric / sizeof *hddb_is_numeric) {
+  if((unsigned) i < sizeof hddb_is_numeric / sizeof *hddb_is_numeric) {
     /* numeric id */
     mask |= 1 << idx;
 
@@ -1403,7 +1403,7 @@ int hddb_search(hd_data_t *hd_data, hddb_search_t *hs, int max_recursions)
   if(!max_recursions) max_recursions = 2;
 
   while(max_recursions--) {
-    for(db_idx = 0; db_idx < sizeof hd_data->hddb2 / sizeof *hd_data->hddb2; db_idx++) {
+    for(db_idx = 0; (unsigned) db_idx < sizeof hd_data->hddb2 / sizeof *hd_data->hddb2; db_idx++) {
       if(!(hddb = hd_data->hddb2[db_idx])) continue;
 
       for(u = 0; u < hddb->list_len; u++) {
@@ -2550,7 +2550,7 @@ char *module_cmd(hd_t *hd, char *cmd)
       *s++ = *cmd++;
     }
 
-    if(s - buf > sizeof buf - 20) return NULL;
+    if(s - buf > (int) sizeof buf - 20) return NULL;
   }
 
   *s = 0;
@@ -2561,11 +2561,11 @@ char *module_cmd(hd_t *hd, char *cmd)
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 char *hid_tag_name(int tag)
 {
-  return tag < sizeof hid_tag_names / sizeof *hid_tag_names ? hid_tag_names[tag] : "";
+  return (unsigned) tag < sizeof hid_tag_names / sizeof *hid_tag_names ? hid_tag_names[tag] : "";
 }
 
 char *hid_tag_name2(int tag)
 {
-  return tag < sizeof hid_tag_names2 / sizeof *hid_tag_names2 ? hid_tag_names2[tag] : "";
+  return (unsigned) tag < sizeof hid_tag_names2 / sizeof *hid_tag_names2 ? hid_tag_names2[tag] : "";
 }
 

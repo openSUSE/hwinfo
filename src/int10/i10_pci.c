@@ -849,7 +849,7 @@ findPciByIDs(int bus, int dev, int func)
   PciStructPtr pciP = PciList;
   
   while (pciP) {
-    if (pciP->bus == bus && pciP->dev == dev && pciP->func == func)
+    if (pciP->bus == (unsigned) bus && pciP->dev == (unsigned) dev && pciP->func == (unsigned) func)
       return pciP;
     pciP = pciP->next;
   }

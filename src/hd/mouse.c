@@ -80,7 +80,7 @@ unsigned read_data(hd_data_t *hd_data, int fd, unsigned char *buf, unsigned buf_
   unsigned char *bp;
 
   while(
-    len < buf_size &&
+    (unsigned) len < buf_size &&
     (k = read(fd, buf + len, buf_size - len)) >= 0
   ) len += k;
 
@@ -213,7 +213,7 @@ static void get_ps2_mouse(hd_data_t *hd_data)
                * Assume a mouse to be attached if at least 2 bytes are
                * returned.
                */
-              if(mouse_id == -1 && buf_len >= 2) mouse_id = 0;
+              if(mouse_id == -1u && buf_len >= 2) mouse_id = 0;
             }
           }
 
@@ -251,7 +251,7 @@ static void get_ps2_mouse(hd_data_t *hd_data)
         ADD2LOG("open(" DEV_PSAUX "): %s\n", fd == -1 ? strerror(errno) : "timeout");
       }
 
-      if(mouse_id == -1) {
+      if(mouse_id == -1u) {
 
         /*
          * Assume a PS/2 mouse is attached if the ps/2 controller has
@@ -269,7 +269,7 @@ static void get_ps2_mouse(hd_data_t *hd_data)
         }
       }
 
-      if(mouse_id != -1) {
+      if(mouse_id != -1u) {
         PROGRESS(1, 14, "ps/2");
 
         hd = add_hd_entry(hd_data, __LINE__, 0);

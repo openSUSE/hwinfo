@@ -172,7 +172,7 @@ int bios_ctrl_order(hd_data_t *hd_data, unsigned *sctrl, int sctrl_len)
 
   sctrl2 = new_mem((sizeof bt->bios32.cpq_ctrl / sizeof *bt->bios32.cpq_ctrl) * sizeof *sctrl2);
 
-  for(i = 0; i < sizeof bt->bios32.cpq_ctrl / sizeof *bt->bios32.cpq_ctrl; i++) {
+  for(i = 0; (unsigned) i < sizeof bt->bios32.cpq_ctrl / sizeof *bt->bios32.cpq_ctrl; i++) {
     if(
       bt->bios32.cpq_ctrl[i].id &&
       !(bt->bios32.cpq_ctrl[i].misc & 0x40)	/* bios support ??????? */

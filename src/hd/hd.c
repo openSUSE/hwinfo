@@ -286,7 +286,7 @@ struct s_pr_flags *get_pr_flags(enum probe_feature feature)
 {
   int i;
 
-  for(i = 0; i < sizeof pr_flags / sizeof *pr_flags; i++) {
+  for(i = 0; (unsigned) i < sizeof pr_flags / sizeof *pr_flags; i++) {
     if(feature == pr_flags[i].val) return pr_flags + i;
   }
 
@@ -297,7 +297,7 @@ void fix_probe_features(hd_data_t *hd_data)
 {
   int i;
 
-  for(i = 0; i < sizeof hd_data->probe; i++) {
+  for(i = 0; (unsigned) i < sizeof hd_data->probe; i++) {
     hd_data->probe[i] |= hd_data->probe_set[i];
     hd_data->probe[i] &= ~hd_data->probe_clr[i];
   }
@@ -311,10 +311,10 @@ void set_probe_feature(hd_data_t *hd_data, enum probe_feature feature, unsigned 
 
   if(!(pr = get_pr_flags(feature))) return;
 
-  if(pr->parent == -1) {
+  if(pr->parent == -1u) {
     mask = pr->mask;
-    for(i = 0; i < sizeof pr_flags / sizeof *pr_flags; i++) {
-      if(pr_flags[i].parent != -1 && (pr_flags[i].mask & mask))
+    for(i = 0; (unsigned) i < sizeof pr_flags / sizeof *pr_flags; i++) {
+      if(pr_flags[i].parent != -1u && (pr_flags[i].mask & mask))
         set_probe_feature(hd_data, pr_flags[i].val, val);
     }
   }
@@ -351,10 +351,10 @@ void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 
   if(!(pr = get_pr_flags(feature))) return;
 
-  if(pr->parent == -1) {
+  if(pr->parent == -1u) {
     mask = pr->mask;
-    for(i = 0; i < sizeof pr_flags / sizeof *pr_flags; i++) {
-      if(pr_flags[i].parent != -1 && (pr_flags[i].mask & mask))
+    for(i = 0; (unsigned) i < sizeof pr_flags / sizeof *pr_flags; i++) {
+      if(pr_flags[i].parent != -1u && (pr_flags[i].mask & mask))
         hd_set_probe_feature(hd_data, pr_flags[i].val);
     }
   }
@@ -383,10 +383,10 @@ void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 
   if(!(pr = get_pr_flags(feature))) return;
 
-  if(pr->parent == -1) {
+  if(pr->parent == -1u) {
     mask = pr->mask;
-    for(i = 0; i < sizeof pr_flags / sizeof *pr_flags; i++) {
-      if(pr_flags[i].parent != -1 && (pr_flags[i].mask & mask))
+    for(i = 0; (unsigned) i < sizeof pr_flags / sizeof *pr_flags; i++) {
+      if(pr_flags[i].parent != -1u && (pr_flags[i].mask & mask))
         hd_clear_probe_feature(hd_data, pr_flags[i].val);
     }
   }
@@ -1093,17 +1093,17 @@ misc_t *free_misc(misc_t *m)
 
   if(!m) return NULL;
 
-  for(i = 0; i < m->io_len; i++) {
+  for(i = 0; (unsigned) i < m->io_len; i++) {
     free_mem(m->io[i].dev);
   }
   free_mem(m->io);
 
-  for(i = 0; i < m->dma_len; i++) {
+  for(i = 0; (unsigned) i < m->dma_len; i++) {
     free_mem(m->dma[i].dev);
   }
   free_mem(m->dma);
 
-  for(i = 0; i < m->irq_len; i++) {
+  for(i = 0; (unsigned) i < m->irq_len; i++) {
     for(j = 0; j < m->irq[i].devs; j++) {
       free_mem(m->irq[i].dev[j]);
     }
@@ -1514,7 +1514,7 @@ hd_smbios_t *free_smbios_list(hd_smbios_t *sm)
         break;
 
       case sm_onboard:
-        for(i = 0; i < sizeof sm->onboard.descr / sizeof *sm->onboard.descr; i++) {
+        for(i = 0; (unsigned) i < sizeof sm->onboard.descr / sizeof *sm->onboard.descr; i++) {
           free_mem(sm->onboard.descr[i]);
         }
         break;
@@ -1968,7 +1968,7 @@ char *float2str(int f, int n)
 /*
  * find hardware entry with given index
  */
-hd_t *hd_get_device_by_idx(hd_data_t *hd_data, int idx)
+hd_t *hd_get_device_by_idx(hd_data_t *hd_data, unsigned idx)
 {
   hd_t *hd;
 
@@ -2276,7 +2276,7 @@ char *hd_read_symlink(char *link_name)
 
   i = readlink(link_name, buf, sizeof buf);
   buf[sizeof buf - 1] = 0;
-  if(i >= 0 && i < sizeof buf) buf[i] = 0;
+  if(i >= 0 && (unsigned) i < sizeof buf) buf[i] = 0;
   if(i < 0) *buf = 0;
 
   return buf;
@@ -2313,7 +2313,7 @@ void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg)
  */
 enum probe_feature hd_probe_feature_by_name(char *name)
 {
-  int u;
+  unsigned u;
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -2335,7 +2335,7 @@ enum probe_feature hd_probe_feature_by_name(char *name)
  */
 char *hd_probe_feature_by_value(enum probe_feature feature)
 {
-  int u;
+  unsigned u;
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -2577,7 +2577,7 @@ int hd_has_special_eide(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->bus.id == bus_pci) {
-      for(i = 0; i < sizeof ids / sizeof *ids; i++) {
+      for(i = 0; (unsigned) i < sizeof ids / sizeof *ids; i++) {
         if(hd->vendor.id == ids[i][0] && hd->device.id == ids[i][1]) return 1;
       }
     }
@@ -3679,7 +3679,7 @@ void hd_scan_xtra(hd_data_t *hd_data)
         else {
           for(hd = hd_data->hd; hd; hd = hd->next) {
             if(
-                (u0 == -1 || (
+                (u0 == -1u || (
                   hd->base_class.id == (u0 >> 8) &&
                   hd->sub_class.id == (u0 & 0xff)
                 )) &&
@@ -3742,7 +3742,7 @@ char *numid2str(uint64_t id, int len)
   unsigned char u;
 
   memset(buf, 0, sizeof buf);
-  for(i = 0; len > 0 && i < sizeof buf - 1; i++, len -= 6, id >>= 6) {
+  for(i = 0; len > 0 && i < (int) sizeof buf - 1; i++, len -= 6, id >>= 6) {
     u = id & 0x3f;
     if(u < 10) {
       u += '0';			/* 0..9 */
@@ -4294,7 +4294,7 @@ void short_vendor(char *vendor)
 
   do {
     len = len2;
-    for(i = 0; i < sizeof remove / sizeof *remove; i++) {
+    for(i = 0; (unsigned) i < sizeof remove / sizeof *remove; i++) {
       len1 = strlen(remove[i]);
       if(len > len1 && !strcasecmp(vendor + len - len1, remove[i])) {
         vendor[j = len - len1] = 0;
@@ -4632,7 +4632,7 @@ int is_pcmcia_ctrl(hd_data_t *hd_data, hd_t *hd)
 
   /* just in case... */
   if(hd->bus.id == bus_pci) {
-    for(i = 0; i < sizeof ids / sizeof *ids; i++) {
+    for(i = 0; (unsigned) i < sizeof ids / sizeof *ids; i++) {
       if(
         ID_VALUE(hd->vendor.id) == ids[i][0] &&
         ID_VALUE(hd->device.id) == ids[i][1]

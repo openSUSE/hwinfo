@@ -305,7 +305,7 @@ int copy_vbios()
 	}
 	size = *(tmp+2) * 512;
 
-	if (read(mem_fd, (char *)V_BIOS, (size_t) size) != (size_t) size) {
+	if ((size_t) read(mem_fd, (char *)V_BIOS, (size_t) size) != (size_t) size) {
  	        fprintf(stderr,"Cannot read\n");
 		goto Error;
 	}

@@ -87,7 +87,7 @@ void read_klog(hd_data_t *hd_data)
     return;
   }
 
-  if(n > sizeof buf - 1) n = sizeof buf - 1;
+  if(n > (int) sizeof buf - 1) n = sizeof buf - 1;
   buf[n] = 0;
   for(i = j = 0; i < n; i++) {
     if(buf[i] == '\n') {

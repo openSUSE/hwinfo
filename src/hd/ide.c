@@ -30,8 +30,8 @@ void hd_scan_ide(hd_data_t *hd_data)
   hd_t *hd;
   char *fname = NULL, buf[256], *s, *t;
   FILE *f;
-  unsigned u0, u1, u2, u3;
-  int i, j, ide_ifs = 0, found = 0;
+  unsigned u0, u1, u2, u3, ide_ifs = 0;
+  int i, j, found = 0;
   str_list_t *sl, *sl0, *sl_hd;
   hd_res_t *res;
   unsigned vend, dev, slot, func;
@@ -59,7 +59,7 @@ void hd_scan_ide(hd_data_t *hd_data)
   if(ide_ifs) if_table = new_mem(ide_ifs * sizeof *if_table);
 
   s = t = NULL;
-  for(i = 0; i < ide_ifs; i++) {
+  for(i = 0; (unsigned) i < ide_ifs; i++) {
     str_printf(&s, 0, PROC_IDE "/ide%u/config", i);
     str_printf(&t, 0, "ide%u", i);
     sl0 = read_file(s, 0, 1);
@@ -204,7 +204,7 @@ void hd_scan_ide(hd_data_t *hd_data)
       if((f = fopen(fname, "r"))) {
         j = 0;
         memset(buf, sizeof buf, 0);
-        while(j < sizeof buf - 1 && fscanf(f, "%x", &u0) == 1) {
+        while(j < (int) sizeof buf - 1 && fscanf(f, "%x", &u0) == 1) {
           buf[j++] = u0 >> 8; buf[j++] = u0;
         }
         fclose(f);

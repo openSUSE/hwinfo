@@ -323,7 +323,7 @@ cdrom_info_t *hd_read_cdrom_info(hd_data_t *hd_data, hd_t *hd)
             u0 = sector[0x13] + (sector[0x14] << 8);	/* partition size */
             u1 = sector[0x18] + (sector[0x19] << 8);	/* sectors per track */
             u2 = sector[0x1a] + (sector[0x1b] << 8);	/* heads */
-            u0 = u0 ? u0 : sector[0x20] + (sector[0x21] << 8) + (sector[0x22] << 16) + (sector[0x23] << 24);
+            u0 = u0 ? u0 : sector[0x20] + (sector[0x21] << 8) + (sector[0x22] << 16) + ((unsigned) sector[0x23] << 24);
             if(sector[0x26] == 0x29) {
               s = canon_str(sector + 0x2b, 11);
               if(!*s) s = free_mem(s);
