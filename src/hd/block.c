@@ -377,43 +377,43 @@ void add_cdrom_info(hd_data_t *hd_data, hd_t *hd)
     }
   }
 
-  ci = hd->detail->cdrom.data;
-
-  /* update prog_if: cdr, cdrw, ... */
-  if(
-    /* ###### FIXME: dosn't work anyway: ide-scsi doesn't support sysfs */
-    hd->bus.id == bus_scsi &&
-    !search_str_list(hd->drivers, "ide-scsi")		/* could be ide, though */
-  ) {
-    /* scsi devs lie */
-    if(ci->dvd && (ci->cdrw || ci->dvdr || ci->dvdram)) {
-      ci->dvd = ci->dvdr = ci->dvdram = 0;
+  if((ci = hd->detail->cdrom.data)) {
+    /* update prog_if: cdr, cdrw, ... */
+    if(
+      /* ###### FIXME: dosn't work anyway: ide-scsi doesn't support sysfs */
+      hd->bus.id == bus_scsi &&
+      !search_str_list(hd->drivers, "ide-scsi")		/* could be ide, though */
+    ) {
+      /* scsi devs lie */
+      if(ci->dvd && (ci->cdrw || ci->dvdr || ci->dvdram)) {
+        ci->dvd = ci->dvdr = ci->dvdram = 0;
+      }
+      ci->dvdr = ci->dvdram = 0;
+      ci->cdr = ci->cdrw = 0;
+      if(hd->prog_if.id == pif_cdr) ci->cdr = 1;
     }
-    ci->dvdr = ci->dvdram = 0;
-    ci->cdr = ci->cdrw = 0;
-    if(hd->prog_if.id == pif_cdr) ci->cdr = 1;
-  }
 
-  /* trust ide info */
-  if(ci->dvd) {
-    hd->is.dvd = 1;
-    hd->prog_if.id = pif_dvd;
-  }
-  if(ci->cdr) {
-    hd->is.cdr = 1;
-    hd->prog_if.id = pif_cdr;
-  }
-  if(ci->cdrw) {
-    hd->is.cdrw = 1;
-    hd->prog_if.id = pif_cdrw;
-  }
-  if(ci->dvdr) {
-    hd->is.dvdr = 1;
-    hd->prog_if.id = pif_dvdr;
-  }
-  if(ci->dvdram) {
-    hd->is.dvdram = 1;
-    hd->prog_if.id = pif_dvdram;
+    /* trust ide info */
+    if(ci->dvd) {
+      hd->is.dvd = 1;
+      hd->prog_if.id = pif_dvd;
+    }
+    if(ci->cdr) {
+      hd->is.cdr = 1;
+      hd->prog_if.id = pif_cdr;
+    }
+    if(ci->cdrw) {
+      hd->is.cdrw = 1;
+      hd->prog_if.id = pif_cdrw;
+    }
+    if(ci->dvdr) {
+      hd->is.dvdr = 1;
+      hd->prog_if.id = pif_dvdr;
+    }
+    if(ci->dvdram) {
+      hd->is.dvdram = 1;
+      hd->prog_if.id = pif_dvdram;
+    }
   }
 
   if(
@@ -481,7 +481,10 @@ void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_
       str_printf(&pr_str, 0, "%s geo", hd->unix_dev_name);
       PROGRESS(5, 1, pr_str);
 
-      hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size);
+      if(hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size) == 1)
+        /* (low-level) unformatted disk */
+        hd->is.notready=1;
+      	
       if(geo) add_res_entry(&hd->res, geo);
       if(size) add_res_entry(&hd->res, size);
 
@@ -501,6 +504,8 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_de
   str_list_t *sl, *sl0;
   hd_res_t *res;
   FILE *f;
+
+  if(!hd_report_this(hd_data, hd)) return;
 
   if(hd->sysfs_bus_id && sscanf(hd->sysfs_bus_id, "%u.%u", &u0, &u1) == 2) {
     /* host.master/slave */
@@ -639,6 +644,8 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
   scsi_t *scsi;
   hd_res_t *geo, *size;
   uint64_t ul0;
+
+  if(!hd_report_this(hd_data, hd)) return;
 
   hd->detail = new_mem(sizeof *hd->detail);
   hd->detail->type = hd_detail_scsi;
@@ -786,7 +793,8 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
   if(
     hd_report_this(hd_data, hd) &&
     hd->unix_dev_name &&
-    hd->sub_class.id == sc_sdev_disk
+    hd->sub_class.id == sc_sdev_disk &&
+    !hd_probe_feature(hd_data, pr_scsi_noserial)
   ) {
     PROGRESS(5, 0, hd->unix_dev_name);
     fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK);
@@ -795,7 +803,10 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
       str_printf(&pr_str, 0, "%s geo", hd->unix_dev_name);
       PROGRESS(5, 1, pr_str);
 
-      hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size);
+      if(hd_getdisksize(hd_data, hd->unix_dev_name, fd, &geo, &size) == 1)
+        /* (low-level) unformatted disk */
+        hd->is.notready=1;
+      
       if(geo) add_res_entry(&hd->res, geo);
       if(size) add_res_entry(&hd->res, size);
 
@@ -1218,11 +1229,15 @@ void hd_scan_sysfs_scsi(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
 
-  PROGRESS(1, 0, "scsi tape");
+  PROGRESS(1, 0, "scsi modules");
+
+  load_module(hd_data, "sg");
+
+  PROGRESS(2, 0, "scsi tape");
 
   get_scsi_tape(hd_data);
 
-  PROGRESS(2, 0, "scsi generic");
+  PROGRESS(3, 0, "scsi generic");
 
   get_generic_scsi_devs(hd_data);
 }

@@ -262,7 +262,8 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     h->base_class.id == bc_storage_device &&
     h->sub_class.id == sc_sdev_cdrom &&
     h->detail &&
-    h->detail->type == hd_detail_cdrom
+    h->detail->type == hd_detail_cdrom &&
+    h->detail->cdrom.data
   ) {
     cdrom_info_t *ci = h->detail->cdrom.data;
 
@@ -488,7 +489,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("PROM id: %s\n", h->rom_id);
 #endif
 #if defined(__s390__) || defined(__s390x__)
-    dump_line("Chp id: %s\n", h->rom_id);
+    dump_line("IUCV user: %s\n", h->rom_id);
 #endif
   }
 

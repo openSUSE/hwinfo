@@ -19,8 +19,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#ifndef LIBHD_TINY
-
 typedef struct {
   int key;
   char *value;
@@ -94,6 +92,8 @@ typedef enum {
   hw_id_unique = 1, hw_id_parent, hw_id_child, hw_id_hwclass, hw_id_model,
   hw_id_configured, hw_id_available, hw_id_needed, hw_id_cfgstring, hw_id_active
 } hw_id_t;
+
+#ifndef LIBHD_TINY
 
 #define MAN_SECT_GENERAL	"General"
 #define MAN_SECT_STATUS		"Status"
@@ -177,8 +177,12 @@ static hash_t hw_ids_hd_items[] = {
   { hwdi_sysfs_link,      "SysfsLink"        },
   { 0,                    NULL               }
 };
+#endif
 
 static char *key2value(hash_t *hash, int id);
+
+#ifndef LIBHD_TINY
+
 static int value2key(hash_t *hash, char *str);
 static void dump_manual(hd_data_t *hd_data);
 static unsigned str2id(char *str);
@@ -330,6 +334,8 @@ int value2key(hash_t *hash, char *str)
   return hash->key;
 }
 
+#endif
+
 char *key2value(hash_t *hash, int id)
 {
   for(; hash->value; hash++) {
@@ -344,6 +350,8 @@ char *hd_hw_item_name(hd_hw_item_t item)
   return key2value(hw_items, item);
 }
 
+
+#ifndef LIBHD_TINY
 
 char *hd_status_value_name(hd_status_value_t status)
 {
