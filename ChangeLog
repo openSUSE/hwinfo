@@ -1,3 +1,5 @@
+	- updated X11 data
+
 14/12/2004:	v9.34
 	- fixed access to undefined memory (#39238)
 	- fix segfault when using 'x11=foo' boot option (#46367)

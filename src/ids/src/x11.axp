@@ -608,7 +608,7 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0028
-+device.name		RIVA TNT2
++device.name		RIVA TNT2/TNT2 Pro
 +driver.xfree		4|nv|||||8,15,16,24
 +driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
@@ -622,14 +622,14 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x002c
-+device.name		Vanta
++device.name		Vanta/Vanta LT
 +driver.xfree		4|nv|||||8,16,24
 +driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
 
  vendor.id		pci 0x10de
 &device.id		pci 0x002d
-+device.name		RIVA TNT2 Model 64
++device.name		RIVA TNT2 Model 64/Model 64 Pro
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
@@ -692,7 +692,7 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0150
-+device.name		GeForce2 GTS
++device.name		GeForce2 GTS/GeForce2 Pro
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d||||16||switch2nvidia_glx
 +requires		NVIDIA_GLX|NVIDIA_kernel
