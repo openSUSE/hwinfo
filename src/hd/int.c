@@ -76,9 +76,11 @@ void hd_scan_int(hd_data_t *hd_data)
 #endif
 
   PROGRESS(7, 0, "hdb");
+  hd_data->flags.keep_kmods = 1;
   for(hd = hd_data->hd; hd; hd = hd->next) {
     hddb_add_info(hd_data, hd);
   }
+  hd_data->flags.keep_kmods = 0;
 
   PROGRESS(8, 0, "usbscsi");
   int_fix_usb_scsi(hd_data);
@@ -728,6 +730,7 @@ void int_modem(hd_data_t *hd_data)
   hd_t *hd;
   char *s;
   hd_dev_num_t dev_num = { type: 'c', range: 1 };
+  unsigned cnt4 = 0;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
@@ -746,10 +749,16 @@ void int_modem(hd_data_t *hd_data)
           dev_num.minor = 1;
           break;
         case sc_mod_win3:
-        case sc_mod_win4:
           s = new_str("/dev/ttyLT0");
           dev_num.major = 62;
           dev_num.minor = 64;
+          break;
+        case sc_mod_win4:
+          if(cnt4 < 4) {
+            str_printf(&s, 0, "/dev/ttySL%u", cnt4);
+            dev_num.major = 212;
+            dev_num.minor = cnt4++;
+          }
           break;
       }
       if(s) {

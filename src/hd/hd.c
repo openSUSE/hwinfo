@@ -3398,13 +3398,14 @@ str_list_t *read_kmods(hd_data_t *hd_data)
   str_list_t *sl, *sl0, *sl1 = NULL;
   char *s;
 
-  hd_data->kmods = free_str_list(hd_data->kmods);
+  if(!hd_data->kmods || hd_data->flags.keep_kmods != 2) {
+    hd_data->kmods = free_str_list(hd_data->kmods);
+    if(!(sl0 = read_file(PROC_MODULES, 0, 0))) return NULL;
+    hd_data->kmods = sl0;
+    if(hd_data->flags.keep_kmods == 1) hd_data->flags.keep_kmods = 2;
+  }
 
-  if(!(sl0 = read_file(PROC_MODULES, 0, 0))) return NULL;
-
-  hd_data->kmods = sl0;
-
-  for(sl = sl0; sl; sl = sl->next) {
+  for(sl = hd_data->kmods; sl; sl = sl->next) {
     s = sl->str;
     add_str_list(&sl1, strsep(&s, " \t"));
   }

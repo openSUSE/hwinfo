@@ -259,6 +259,7 @@ void hd_scan_manual(hd_data_t *hd_data)
     }
   }
 
+  hd_data->flags.keep_kmods = 1;
   for(entry = hd_data->manual; entry; entry = entry->next) {
 
     for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -290,6 +291,7 @@ void hd_scan_manual(hd_data_t *hd_data)
       }
     }
   }
+  hd_data->flags.keep_kmods = 0;
 
 }
 

@@ -5,43 +5,36 @@
 +driver.module.modprobe	fmvj18x_cs
 
  vendor.id		pcmcia 0x000b
-&device.id		pcmcia 0x7300
-|vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x7100
+|vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x0777
+|vendor.id		pcmcia 0x0126
+&device.id		pcmcia 0x8000
+|vendor.id		pcmcia 0x0250
+&device.id		pcmcia 0x0002
+|vendor.id		pcmcia 0x0274
+&device.id		pcmcia 0x1612
+|vendor.id		pcmcia 0x02d2
 &device.id		pcmcia 0x0001
+|vendor.id		pcmcia 0x50c2
+&device.id		pcmcia 0x0001
+|vendor.id		pcmcia 0xc00f
+&device.id		pcmcia 0x0000
++driver.module.modprobe	hostap_cs
+
+ vendor.id		pcmcia 0x000b
+&device.id		pcmcia 0x7300
 |vendor.id		pcmcia 0x0138
 &device.id		pcmcia 0x0002
 |vendor.id		pcmcia 0x0156
 &device.id		pcmcia 0x0002
-|vendor.id		pcmcia 0x01eb
-&device.id		pcmcia 0x080a
-|vendor.id		pcmcia 0x0261
-&device.id		pcmcia 0x0002
-|vendor.id		pcmcia 0x0268
-&device.id		pcmcia 0x0001
-|vendor.id		pcmcia 0x026f
-&device.id		pcmcia 0x0305
 |vendor.id		pcmcia 0x0274
 &device.id		pcmcia 0x1613
 |vendor.id		pcmcia 0x028a
 &device.id		pcmcia 0x0002
-|vendor.id		pcmcia 0x028a
-&device.id		pcmcia 0x0673
-|vendor.id		pcmcia 0x02aa
-&device.id		pcmcia 0x0002
-|vendor.id		pcmcia 0x02ac
-&device.id		pcmcia 0x0002
-|vendor.id		pcmcia 0x14ea
-&device.id		pcmcia 0xb001
-|vendor.id		pcmcia 0x50c2
-&device.id		pcmcia 0x7300
-|vendor.id		pcmcia 0x9005
-&device.id		pcmcia 0x0021
 |vendor.id		pcmcia 0xc250
 &device.id		pcmcia 0x0002
-|vendor.id		pcmcia 0xd601
-&device.id		pcmcia 0x0002
-|vendor.id		pcmcia 0xd601
-&device.id		pcmcia 0x0005
++driver.module.modprobe	hostap_cs
 +driver.module.modprobe	orinoco_cs
 
  vendor.id		pcmcia 0x0032
@@ -74,8 +67,6 @@
 &device.id		pcmcia 0x8041
 |vendor.id		pcmcia 0x0213
 &device.id		pcmcia 0x2452
-|vendor.id		pcmcia 0x021b
-&device.id		pcmcia 0x0202
 |vendor.id		pcmcia 0x026f
 &device.id		pcmcia 0x0300
 |vendor.id		pcmcia 0x026f
@@ -91,6 +82,30 @@
 +baseclass.id		0x002
 +subclass.id		0x00
 +driver.module.modprobe	pcnet_cs
+
+ vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x0001
+|vendor.id		pcmcia 0x01eb
+&device.id		pcmcia 0x080a
+|vendor.id		pcmcia 0x0261
+&device.id		pcmcia 0x0002
+|vendor.id		pcmcia 0x0268
+&device.id		pcmcia 0x0001
+|vendor.id		pcmcia 0x026f
+&device.id		pcmcia 0x0305
+|vendor.id		pcmcia 0x028a
+&device.id		pcmcia 0x0673
+|vendor.id		pcmcia 0x02aa
+&device.id		pcmcia 0x0002
+|vendor.id		pcmcia 0x02ac
+&device.id		pcmcia 0x0002
+|vendor.id		pcmcia 0x14ea
+&device.id		pcmcia 0xb001
+|vendor.id		pcmcia 0x50c2
+&device.id		pcmcia 0x7300
+|vendor.id		pcmcia 0x9005
+&device.id		pcmcia 0x0021
++driver.module.modprobe	orinoco_cs
 
 # tulip_cb
  vendor.id		pcmcia 0x0089
@@ -164,6 +179,8 @@
 &device.id		pcmcia 0x0045
 |vendor.id		pcmcia 0x0137
 &device.id		pcmcia 0x0052
+|vendor.id		pcmcia 0x018a
+&device.id		pcmcia 0x0001
 +baseclass.id		0x002
 +subclass.id		0x00
 +driver.module.modprobe	serial_cs
@@ -189,14 +206,12 @@
 +baseclass.id		0x002
 +subclass.id		0x00
 +driver.module.modprobe	3c589_cs
-+driver.module.modprobe	serial_cs
 
  vendor.id		pcmcia 0x0101
 &device.id		pcmcia 0x0556
 +baseclass.id		0x002
 +subclass.id		0x00
 +driver.module.modprobe	3c574_cs
-+driver.module.modprobe	serial_cs
 
  vendor.id		pcmcia 0x0101
 &device.id		pcmcia 0x0574
@@ -210,8 +225,22 @@
 +subclass.id		0x00
 +driver.module.modprobe	3c589_cs
 
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x0620
+|vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x0696
+|vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x3302
+|vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0xb301
+|vendor.id		pcmcia 0xd601
+&device.id		pcmcia 0x0007
++driver.module.modprobe	atmel_cs
+
  vendor.id		pcmcia 0x0104
 &device.id		pcmcia 0x0070
++baseclass.id		0x002
++subclass.id		0x00
 +driver.module.modprobe	serial_cs
 
  vendor.id		pcmcia 0x0105
@@ -256,7 +285,6 @@
 +baseclass.id		0x002
 +subclass.id		0x00
 +driver.module.modprobe	smc91c92_cs
-+driver.module.modprobe	serial_cs
 
  vendor.id		pcmcia 0x016c
 &device.id		pcmcia 0x0023
@@ -271,7 +299,6 @@
 +baseclass.id		0x002
 +subclass.id		0x00
 +driver.module.modprobe	pcnet_cs
-+driver.module.modprobe	serial_cs
 
  vendor.id		pcmcia 0x018a
 &device.id		pcmcia 0x0301
@@ -298,4 +325,22 @@
 +baseclass.id		0x002
 +subclass.id		0x00
 +driver.module.modprobe	xirc2ps_cs
+
+ vendor.id		pcmcia 0x020c
+&device.id		pcmcia 0x0103
++driver.module.modprobe	sedl_cs
+
+ vendor.id		pcmcia 0x021b
+&device.id		pcmcia 0x0202
++baseclass.id		0x002
++subclass.id		0x00
++driver.module.modprobe	pcnet_cs
++driver.module.modprobe	axnet_cs
+
+ vendor.id		pcmcia 0xd601
+&device.id		pcmcia 0x0002
+|vendor.id		pcmcia 0xd601
+&device.id		pcmcia 0x0005
++driver.module.modprobe	hostap_cs
++driver.module.modprobe	orinoco_cs
 

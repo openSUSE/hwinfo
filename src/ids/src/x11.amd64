@@ -1824,6 +1824,13 @@
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
+&device.id		pci 0x00f3
++device.name		GeForce 6200 (AGP)
++driver.xfree		4|nv
++driver.xfree.config	Option "noaccel"
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x00f8
 +device.name		Quadro FX 3400
 +driver.xfree		4|nv
@@ -1928,6 +1935,15 @@
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
+&device.id		pci 0x0141
+&subvendor.id		pci 0x1458
+&subdevice.id		pci 0x3124
++subdevice.name		GeForce 6600 (Gigabyte)
++driver.xfree		4|nv
++driver.xfree.config	Option "noaccel"
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x0142
 +device.name		0x0142
 +driver.xfree		4|nv
@@ -2003,6 +2019,7 @@
 &device.id		pci 0x014f
 +device.name		GeForce 6200
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoScreenToScreenCopy"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -2039,6 +2056,15 @@
 &device.id		pci 0x0161
 +device.name		GeForce 6200 TurboCache(TM)
 +driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0161
+&subvendor.id		pci 0x10de
+&subdevice.id		pci 0x025c
++subdevice.name		GeForce 6200 TurboCache(TM) (10de:025c)
++driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoScreenToScreenCopy"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de

@@ -2238,6 +2238,7 @@ typedef struct {
     unsigned cpuemu:1;		/**< use CPU emulation to run BIOS code (i386 only) */
     unsigned udev:1;		/**< return first udev symlink as device name */
     unsigned edd_used:1;	/**< internal: edd info has been used  */
+    unsigned keep_kmods:2;	/**< internal: don't reread kmods */
   } flags;
 
 

@@ -403,11 +403,7 @@
 +driver.module.modprobe	aic7xxx
 
  vendor.id		pci 0x9005
-&device.id		pci 0x8000
-&subvendor.id		pci 0x9005
-&subdevice.id		pci 0x0060
-|vendor.id		pci 0x9005
-&device.id		pci 0x800f+0x0011
+&device.id		pci 0x8000+0x0020
 +driver.module.modprobe	aic79xx
 
 # scsi/aha152x.c

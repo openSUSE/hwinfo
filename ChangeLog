@@ -1,4 +1,13 @@
+18/3/2005:	v10.12
+	- updated nongpl info
+	- reverting slamr patch (#72301)
+	- pcmcia info updated (#73057)
+	- pci dev names updated
+	- read /proc/modules less often
+	- updated X11 data
+	- aic7xxx/aic79xx driver info update
 	- fix Fritz!Box Fon entry in database
+
 17/3/2005:	v10.11
 	- another notebook (#67412)
 	- do wlan detection for --netcard (#73077)
