@@ -3581,8 +3581,11 @@ int probe_module(hd_data_t *hd_data, char *module)
 {
   char *cmd = NULL;
   int i;
+  struct stat sbuf;
 
   if(hd_module_is_active(hd_data, module)) return 0;
+
+  if(stat(PROG_MODPROBE, &sbuf)) return 127;
 
   str_printf(&cmd, 0, PROG_MODPROBE " %s", module);
 
@@ -3597,8 +3600,11 @@ int load_module_with_params(hd_data_t *hd_data, char *module, char *params)
 {
   char *cmd = NULL;
   int i;
+  struct stat sbuf;
 
   if(hd_module_is_active(hd_data, module)) return 0;
+
+  if(stat(PROG_MODPROBE, &sbuf)) return 127;
 
   str_printf(&cmd, 0, PROG_MODPROBE " %s %s", module, params ? params : "");
 

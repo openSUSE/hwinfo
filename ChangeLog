@@ -1,3 +1,6 @@
+29/3/2004:	v8.26
+	- don't run modprobe if it doesn't exist
+
 29/3/2004:	v8.25
 	- add edd support
 
