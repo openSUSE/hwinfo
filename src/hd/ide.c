@@ -31,17 +31,12 @@ void hd_scan_ide(hd_data_t *hd_data)
   char *fname = NULL, buf[256], *s, *t;
   FILE *f;
   unsigned u0, u1, u2, u3;
-  int i, j;
-  str_list_t *sl, *sl0, *sl_if, *sl_hd;
+  int i, j, ide_ifs = 0, found = 0;
+  str_list_t *sl, *sl0, *sl_hd;
   hd_res_t *res;
-  int found = 0;
   unsigned vend, dev, slot, func;
   unsigned parent;
-  struct {
-    char *name;
-    unsigned idx;
-  } *if_table = NULL;
-  int if_table_len = 0;
+  unsigned *if_table = NULL;
   char hd_buf[] = "hda";
   
   if(!hd_probe_feature(hd_data, pr_ide)) return;
@@ -53,22 +48,20 @@ void hd_scan_ide(hd_data_t *hd_data)
 
   sl0 = read_dir(PROC_IDE, 'd');
 
-  for(sl_if = NULL, sl = sl0; sl; sl = sl->next) {
-    if(strstr(sl->str, "ide") == sl->str) {
-      add_str_list(&sl_if, sl->str);
-      if_table_len++;
+  for(sl = sl0; sl; sl = sl->next) {
+    if(sscanf(sl->str, "ide%u", &u0) == 1) {
+      if(u0 >= ide_ifs) ide_ifs = u0 + 1;
     }
   }
 
   free_str_list(sl0);
 
-  if(if_table_len) if_table = new_mem(if_table_len * sizeof *if_table);
-  if_table_len = 0;
+  if(ide_ifs) if_table = new_mem(ide_ifs * sizeof *if_table);
 
-  s = NULL;
-  for(sl = sl_if; sl; sl = sl->next) {
-    // ADD2LOG("ide: %s\n", sl->str);
-    str_printf(&s, 0, PROC_IDE "/%s/config", sl->str);
+  s = t = NULL;
+  for(i = 0; i < ide_ifs; i++) {
+    str_printf(&s, 0, PROC_IDE "/ide%u/config", i);
+    str_printf(&t, 0, "ide%u", i);
     sl0 = read_file(s, 0, 1);
     if(sl0 && sl0->str) {
       if(sscanf(sl0->str, "pci bus %x device %x vid %x did %x", &u0, &u1, &u2, &u3) == 4) {
@@ -78,10 +71,9 @@ void hd_scan_ide(hd_data_t *hd_data)
         dev = MAKE_ID(TAG_PCI, u3);
         for(hd = hd_data->hd; hd; hd = hd->next) {
           if(hd->slot == slot && hd->func == func && hd->vend == vend && hd->dev == dev) {
-            if_table[if_table_len].name = sl->str;
-            if_table[if_table_len++].idx = hd->idx;
-            if(!search_str_list(hd->extra_info, sl->str)) {
-              add_str_list(&hd->extra_info, sl->str);
+            if_table[i] = hd->idx;
+            if(!search_str_list(hd->extra_info, t)) {
+              add_str_list(&hd->extra_info, t);
             }
           }
         }
@@ -89,7 +81,9 @@ void hd_scan_ide(hd_data_t *hd_data)
     }
     free_str_list(sl0);
   }
+
   free_mem(s);
+  free_mem(t);
 
   sl0 = read_dir(PROC_IDE, 'l');
 
@@ -116,11 +110,8 @@ void hd_scan_ide(hd_data_t *hd_data)
     s = hd_read_symlink(fname);
     if(s && (t = strchr(s, '/'))) {
       *t = 0;
-      for(j = 0; j < if_table_len; j++) {
-        if(!strcmp(if_table[j].name, s)) {
-          parent = if_table[j].idx;
-          break;
-        }
+      if(sscanf(s, "ide%u", &u0) == 1 && u0 < ide_ifs && if_table[u0]) {
+        parent = if_table[u0];
       }
     }
 
@@ -231,7 +222,6 @@ void hd_scan_ide(hd_data_t *hd_data)
   }
 
   free_mem(if_table);
-  free_str_list(sl_if);
   free_str_list(sl_hd);
 
 #if defined(__PPC__)
