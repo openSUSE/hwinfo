@@ -311,7 +311,7 @@ void add_xpnet(hd_data_t *hd_data)
 
   hd_card = add_hd_entry(hd_data, __LINE__, 0);
   hd_card->base_class.id = bc_network;
-  hd_card->sub_class.id = 0x80;
+  hd_card->sub_class.id = 0x83;
 
   hd_card->vendor.id = MAKE_ID(TAG_SPECIAL, 0x4002);
   hd_card->device.id = MAKE_ID(TAG_SPECIAL, 1);

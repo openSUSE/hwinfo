@@ -53,10 +53,48 @@ typedef unsigned int u_int;
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-#if !defined(__sparc__)
+#ifdef __sparc__
+static void add_sun_console(hd_data_t *hd_data);
+#else
+static void add_serial_console(hd_data_t *hd_data);
+#endif
 
 
 void hd_scan_kbd(hd_data_t *hd_data)
+{
+  hd_t *hd;
+
+  if(!hd_probe_feature(hd_data, pr_kbd)) return;
+
+  hd_data->module = mod_kbd;
+
+  /* some clean-up */
+  remove_hd_entries(hd_data);
+
+  PROGRESS(2, 0, "uml");
+
+  if(hd_is_uml(hd_data)) {
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->base_class.id = bc_keyboard;
+    hd->sub_class.id = sc_keyboard_kbd;
+    hd->bus.id = bus_none;
+    hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0201);
+    hd->device.id = MAKE_ID(TAG_SPECIAL, 2);
+  }
+
+  PROGRESS(3, 0, "serial console");
+
+#ifdef __sparc__
+  add_sun_console(hd_data);
+#else
+  add_serial_console(hd_data);
+#endif
+}
+
+
+#ifndef __sparc__
+
+void add_serial_console(hd_data_t *hd_data)
 {
   hd_t *hd;
   hd_res_t *res = NULL;
@@ -66,15 +104,6 @@ void hd_scan_kbd(hd_data_t *hd_data)
   struct serial_struct ser_info;
   unsigned tty_major = 0, tty_minor;
   char c, *dev = NULL, *s;
-
-  if(!hd_probe_feature(hd_data, pr_kbd)) return;
-
-  hd_data->module = mod_kbd;
-
-  /* some clean-up */
-  remove_hd_entries(hd_data);
-
-  PROGRESS(2, 0, "serial console");
 
   /* first, try console= option */
   cmd = get_cmdline(hd_data, "console");
@@ -133,14 +162,13 @@ void hd_scan_kbd(hd_data_t *hd_data)
   }
 
   free_str_list(cmd);
-
 }
 
 
 #else	/* defined(__sparc__) */
 
 
-void hd_scan_kbd(hd_data_t *hd_data)
+void add_sun_console(hd_data_t *hd_data)
 {
   int fd, kid, kid2, klay, ser_cons, i;
   unsigned u, u1, u2;
@@ -150,15 +178,6 @@ void hd_scan_kbd(hd_data_t *hd_data)
   struct openpromio *opio = (struct openpromio *) buf;
   hd_t *hd;
   hd_res_t *res;
-
-  if(!hd_probe_feature(hd_data, pr_kbd)) return;
-
-  hd_data->module = mod_kbd;
-
-  /* some clean-up */
-  remove_hd_entries(hd_data);
-
-  PROGRESS(1, 0, "sun serial console");
 
   if((fd = open(DEV_CONSOLE, O_RDWR | O_NONBLOCK | O_NOCTTY)) >= 0)
     {

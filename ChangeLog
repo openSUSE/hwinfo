@@ -1,7 +1,9 @@
 22/4/2004:	v8.42
 	- s390: set is.notready flag on unformatted DASDs (bug #39174)
-	- rewrote serial console handling
+	- rewrote serial console handling (#39029, #23322, #35824)
 	- updated X11 data (#39282)
+	- subclass 0x83 for xpnet card (#35867)
+	- add UML keyboard (#38922)
 
 20/4/2004:	v8.41
 	- s390: add bus id bus_ccw

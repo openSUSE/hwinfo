@@ -67,6 +67,10 @@
 +device.name		PS/2 Keyboard
 
  vendor.id		special 0x0201
+&device.id		special 0x0002
++device.name		UML Keyboard
+
+ vendor.id		special 0x0201
 &device.id		special 0x41ab
 +device.name		MF2 Keyboard
 
