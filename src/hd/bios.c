@@ -380,7 +380,7 @@ void hd_scan_bios(hd_data_t *hd_data)
     }
   }
 
-  if(hd_probe_feature(hd_data, pr_bios_vbe)) {
+  if(hd_probe_feature(hd_data, pr_bios_vesa)) {
     PROGRESS(4, 0, "vbe");
 
     vbe = &bt->vbe;

@@ -64,6 +64,7 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
     if(i != 0x4f) {
       ADD2LOG("Error (0x4f15): 0x%04x\n", i);
     } else {
+      vbe->ok = 1;
       memcpy(vbe->ddc, vbeinfo, sizeof vbe->ddc);
 
       ADD2LOG("edid record:\n");
@@ -85,6 +86,7 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
       ADD2LOG("Error (0x4f03): 0x%04x\n", i);
     } else {
       vbe->current_mode = bx;
+      vbe->ok = 1;
     }
   }
 
