@@ -25131,19 +25131,19 @@
 &device.id		pci 0x1000
 &subvendor.id		pci 0x0e11
 &subdevice.id		pci 0xb0df
-+subdevice.name		NC1632 Gigabit Ethernet Adapter (1000-SX)
++subdevice.name		NC6132 Gigabit Ethernet Adapter (1000-SX)
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1000
 &subvendor.id		pci 0x0e11
 &subdevice.id		pci 0xb0e0
-+subdevice.name		NC1633 Gigabit Ethernet Adapter (1000-LX)
++subdevice.name		NC6133 Gigabit Ethernet Adapter (1000-LX)
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1000
 &subvendor.id		pci 0x0e11
 &subdevice.id		pci 0xb123
-+subdevice.name		NC1634 Gigabit Ethernet Adapter (1000-SX)
++subdevice.name		NC6134 Gigabit Ethernet Adapter (1000-SX)
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1000
