@@ -1,5 +1,8 @@
+19/3/2005:	v10.13
 	- fix wrong entry for Fritz!Card DSL SL USB and
 	  make ppp mode detection safer (#71995)
+	- adjusted ltmodem info (#71979)
+
 18/3/2005:	v10.12
 	- updated nongpl info
 	- reverting slamr patch (#72301)

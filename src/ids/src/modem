@@ -7,8 +7,6 @@
  vendor.id		pci 0x115d
 &device.id		pci 0x0101
 |vendor.id		pci 0x115d
-&device.id		pci 0x0103
-|vendor.id		pci 0x115d
 &device.id		pci 0x0440+0x001d
 |vendor.id		pci 0x11c1
 &device.id		pci 0x0440+0x001d
