@@ -1,3 +1,6 @@
+17/1/2001:	v1.80
+	- updated dac960 driver info
+
 17/1/2001:	v1.79
 	- new x11 data
 	- added '--help' option to hwinfo
