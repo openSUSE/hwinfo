@@ -1,3 +1,7 @@
+18/10/2001:	v3.31
+	- gmac controllers are powered off when unconfigured, so
+	  we have to provide the class id ourself (#11733)
+
 15/10/2001:	v3.30
 	- don't load parport modules on pmac (#11743)
 	- provide monitor sync data if they are missing
