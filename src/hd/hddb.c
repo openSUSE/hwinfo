@@ -7,7 +7,7 @@
 #include "hddb.h"
 
 /* activate special data base debug code */
-#define DEBUG_HDDB
+#undef DEBUG_HDDB
 
 #ifdef LIBHD_TINY
 #define HDDB_DEV	hddb_dev_s
