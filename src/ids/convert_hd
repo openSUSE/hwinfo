@@ -15,7 +15,6 @@ sub read_pcimap_file;
 sub eisa_id;
 sub eisa_str;
 
-
 sub remove_nops;
 sub remove_duplicates;
 sub fix_driver_info;
