@@ -1,4 +1,4 @@
-#hwinfo names data from 2001-01-15 11:14:11
+#hwinfo names data from 2001-01-17 15:21:12
 #
 
 
@@ -701,6 +701,10 @@
 
 5333
 	8c13	S3 Savage IX
+
+5333
+	8c12
+		1179 0001	S3 Savage IX8 Toshiba Notebook
 
 3D3D
 	0009	3DLabs Permedia2V 2D+3D

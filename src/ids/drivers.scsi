@@ -124,7 +124,7 @@
 
 # scsi/dc395x_trm.c
 1de1 0391
-	i dc395x_trm
+	i	dc395x_trm
 
 # scsi/tmscsim.c
 1022 2020

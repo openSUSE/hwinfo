@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2001-01-15 11:11:40
+#hwinfo data from 2001-01-17 15:18:37
 #
 
 
@@ -826,6 +826,16 @@
 # ATI:Radeon QE
 1002 5145
 	x	4|radeon||||||||
+
+
+# ATI:Rage P/M Mobility AGP 2x (HP Omnibook)
+1002 4C4D 103c 000a
+	x	4|ati||||||||
+
+
+# ATI:Rage P/M Mobility AGP 2x (COMPAL Notebook)
+1002 4C4D 14c0 000a
+	x	3|MACH64||||||||
 
 
 # ATI:Rage Mobility M3 AGP 2x
@@ -2356,11 +2366,6 @@
 # Silicon Motion:SMI-712
 126F 0712
 	x	3|SVGA||||||||
-
-
-# Silicon Motion:SMI-720
-126F 0720
-	x	4|siliconmotion|||||d|||
 
 
 # Silicon Motion:SMI-720

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include <getopt.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -20,8 +21,40 @@ static int listplus = 0;
 
 static int test = 0;
 
-static int braille_install_info(hd_data_t *hd_data);
-static int x11_install_info(hd_data_t *hd_data);
+int braille_install_info(hd_data_t *hd_data);
+int x11_install_info(hd_data_t *hd_data);
+
+void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item);
+void help(void);
+
+struct option options[] = {
+  { "special", 1, NULL, 1 },
+//  { "probe", 2, NULL, 1 },
+  { "help", 1, NULL, 'h' },
+  { "debug", 1, NULL, 'd' },
+  { "log", 1, NULL, 'l' },
+  { "cdrom", 0, NULL, 1000 + hw_cdrom },
+  { "floppy", 0, NULL, 1000 + hw_floppy },
+  { "disk", 0, NULL, 1000 + hw_disk },
+  { "network", 0, NULL, 1000 + hw_network },
+  { "display", 0, NULL, 1000 + hw_display },
+  { "monitor", 0, NULL, 1000 + hw_monitor },
+  { "mouse", 0, NULL, 1000 + hw_mouse },
+  { "keyboard", 0, NULL, 1000 + hw_keyboard },
+  { "sound", 0, NULL, 1000 + hw_sound },
+  { "isdn", 0, NULL, 1000 + hw_isdn },
+  { "modem", 0, NULL, 1000 + hw_modem },
+  { "storage_ctrl", 0, NULL, 1000 + hw_storage_ctrl },
+  { "network_ctrl", 0, NULL, 1000 + hw_network_ctrl },
+  { "printer", 0, NULL, 1000 + hw_printer },
+  { "tv", 0, NULL, 1000 + hw_tv },
+  { "scanner", 0, NULL, 1000 + hw_scanner },
+  { "braille", 0, NULL, 1000 + hw_braille },
+  { "sys", 0, NULL, 1000 + hw_sys },
+  { "cpu", 0, NULL, 1000 + hw_cpu },
+  { }
+};
+
 
 /*
  * Just scan the hardware and dump all info.
@@ -35,49 +68,67 @@ int main(int argc, char **argv)
   int i;
   unsigned first_probe = 1;
 
-  argc--; argv++;
-
   hd_data = calloc(1, sizeof *hd_data);
   hd_data->progress = progress;
   hd_data->debug=~(HD_DEB_DRIVER_INFO | HD_DEB_HDDB);
 
-  if(argc == 1 && !strcmp(*argv, "--special=braille")) {
-    return braille_install_info(hd_data);
+  for(i = 0; i < argc; i++) {
+    if(strstr(argv[i], "--") == argv[i]) break;
   }
 
-  if(argc == 1 && !strcmp(*argv, "--special=x11")) {
-    return x11_install_info(hd_data);
+  if(i != argc) {
+    /* new style interface */
+
+    opterr = 0;
+
+    while((i = getopt_long(argc, argv, "hd:l:", options, NULL)) != -1) {
+      switch(i) {
+        case 1:
+          if(!strcmp(optarg, "braille")) {
+            braille_install_info(hd_data);
+          }
+          else if(!strcmp(optarg, "x11")) {
+            x11_install_info(hd_data);
+          }
+          else {
+            help();
+            return 1;
+          }
+          break;
+
+        case 'd':
+          hd_data->debug = strtol(optarg, NULL, 0);
+          break;
+
+        case 'l':
+          log_file = optarg;
+          if(*log_file) f = fopen(log_file, "w+");
+          break;
+
+        case 1000 ... 1100:
+          do_hw(hd_data, f, i - 1000);
+          break;
+
+        default:
+          help();
+          return 0;
+      }
+    }
+
+    if(f) fclose(f);
+
+    hd_free_hd_data(hd_data);
+    free(hd_data);
+
+    return 0;
   }
 
-  if(argc == 1 && !strcmp(*argv, "--test")) {
-    hd_t *hd;
+  /* old style interface */
 
-    hd_data = calloc(1, sizeof *hd_data);
-    hd_data->debug = -1;
-    hd_set_probe_feature(hd_data, pr_pci);
-    hd_set_probe_feature(hd_data, pr_isapnp);
-    hd_set_probe_feature(hd_data, pr_misc);
-    hd_scan(hd_data);
+  argc--; argv++;
 
-    hd_cpu_arch(hd_data);
-    hd_free_hd_data(hd_data);
-
-    fprintf(stderr, "1\n");
-
-    hd_data->debug = -1;
-    hd_cpu_arch(hd_data);
-    hd_free_hd_data(hd_data);
-        
-    fprintf(stderr, "2\n");
-
-    hd_data->debug = -1;
-    hd = hd_list(hd_data, hw_network_ctrl, 1, NULL);
-    hd_free_hd_list(hd);
-    hd_free_hd_data(hd_data);
-    hd_free_hd_data(hd_data);
-
-    fprintf(stderr, "3\n");
-
+  if(argc == 1 && !strcmp(*argv, "-h")) {
+    help();
     return 0;
   }
 
@@ -163,6 +214,52 @@ int main(int argc, char **argv)
 
   return 0;
 }
+
+void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
+{
+  hd_t *hd, *hd0;
+
+  hd0 = hd_list(hd_data, hw_item, 1, NULL);
+  printf("\r%64s\r", "");
+
+  if(f) {
+    if((hd_data->debug & HD_DEB_SHOW_LOG) && hd_data->log) {
+      fprintf(f,
+        "============ start hardware log ============\n"
+      );
+      fprintf(f,
+        "============ start debug info ============\n%s=========== end debug info ============\n",
+        hd_data->log
+      );
+    }
+
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      hd_dump_entry(hd_data, hd, f);
+    }
+
+    fprintf(f,
+      "============ end hardware log ============\n"
+    );
+  }
+
+  for(hd = hd0; hd; hd = hd->next) hd_dump_entry(hd_data, hd, f ? f : stdout);
+  hd_free_hd_list(hd0);
+}
+
+
+void help()
+{
+  fprintf(stderr,
+    "usage: hwinfo [--log log_file] [--debug debug_level] --<hardware_item>\n"
+    "  <hardware_item> is one of:\n"
+    "    cdrom, floppy, disk, network, display, monitor, mouse, keyboard,\n"
+    "    sound, isdn, modem, storage_ctrl, network_ctrl, printer, tv,\n"
+    "    scanner, braille, sys, cpu\n\n"
+    "  Note: debug info is shown only in the log file. (If you specify a\n"
+    "  log file the debug level is implicitly set to a reasonable value.)\n"
+  );
+}
+
 
 /*
  * Parse command line options.

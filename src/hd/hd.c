@@ -179,7 +179,7 @@ static struct s_pr_flags {
   { pr_cdrom_info,   pr_cdrom,    8|4|2|1, "cdrom.info"   },
   { pr_net,          0,           8|4|2|1, "net"          },
   { pr_floppy,       0,           8|4|2|1, "floppy"       },
-  { pr_misc,         0,           8|4|2|1, "misc"         },
+  { pr_misc,         pr_bios,     8|4|2|1, "misc"         },	// ugly hack!
   { pr_misc_serial,  pr_misc,     8|4|2|1, "misc.serial"  },
   { pr_misc_par,     pr_misc,       4|2|1, "misc.par"     },
   { pr_misc_floppy,  pr_misc,     8|4|2|1, "misc.floppy"  },
@@ -3167,6 +3167,7 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         break;
 
       case hw_printer:
+        hd_set_probe_feature(hd_data, pr_bios);
         hd_set_probe_feature(hd_data, pr_misc);
         hd_set_probe_feature(hd_data, pr_parallel_lp);
         hd_set_probe_feature(hd_data, pr_usb);
