@@ -443,6 +443,9 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_partition);
       break;
 
+    case hw_partition:
+      hd_data->flags.add_partitions = 1;
+
     case hw_disk:
       hd_set_probe_feature(hd_data, pr_bios);		// bios disk order
       hd_set_probe_feature(hd_data, pr_pci);		// assign disk -> controller
@@ -708,7 +711,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_all:
     case hw_unknown:
-    case hw_partition:
     case hw_pcmcia:
     case hw_ieee1394:
     case hw_hotplug:
@@ -1744,6 +1746,9 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_disk(hd_data);
   hd_scan_ataraid(hd_data);
 
+  /* after ataraid */
+  hd_scan_partition2(hd_data);
+
   hd_scan_pppoe(hd_data);
 
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd_data, hd);
@@ -1782,6 +1787,8 @@ void hd_scan(hd_data_t *hd_data)
 
   /* we are done... */
   for(hd = hd_data->hd; hd; hd = hd->next) hd->tag.fixed = 1;
+
+  hd_data->flags.add_partitions = 0;
 
   hd_data->module = mod_none;
 
@@ -4181,6 +4188,10 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           base_class = bc_network_interface;
           break;
 
+        case hw_partition:
+          base_class = bc_partition;
+          break;
+
         case hw_wlan:
           break;
 
@@ -4200,7 +4211,6 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         case hw_hotplug:	/* not handled */
         case hw_hotplug_ctrl:	/* not handled */
         case hw_zip:		/* not handled */
-        case hw_partition:	/* not handled */
           break;
       }
 
