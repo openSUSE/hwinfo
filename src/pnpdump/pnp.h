@@ -3,7 +3,7 @@ extern int read_port;
 #define ADDRESS_ADDR 0x0279
 #define WRITEDATA_ADDR 0x0a79
 /* MIN and MAX READ_ADDR must have the bottom two bits set */
-#define MIN_READ_ADDR 0x0203
+#define MIN_READ_ADDR 0x020b
 #define MAX_READ_ADDR 0x03ff
 /* READ_ADDR_STEP must be a multiple of 4 */
 #ifndef READ_ADDR_STEP

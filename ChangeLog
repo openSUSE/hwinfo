@@ -1,3 +1,8 @@
+10/7/2000:	v1.16
+	- pnpdump: start port scanning at port 0x20b, not 0x203
+	  (skips potential game port)
+	- get ids directly from minicdb
+
 7/7/2000:	v1.15
 	- fixed hw_sys/hw_tv probing bug
 

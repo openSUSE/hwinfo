@@ -224,8 +224,8 @@ int pnpdump(hd_data_t *hd_data_loc, int read_boards)
 	boards_found = read_boards;
 
 	/* Read decimal or hex number */
-	read_port = ip->read_port ? ip->read_port | 3 : 0x203;
-	if(read_port < MIN_READ_ADDR || read_port > MAX_READ_ADDR) read_port = 0x203;
+	read_port = ip->read_port ? ip->read_port | 3 : MIN_READ_ADDR;
+	if(read_port < MIN_READ_ADDR || read_port > MAX_READ_ADDR) read_port = MIN_READ_ADDR;
 
 #ifdef __alpha__
 	/* ALPHA only has ioperm, apparently, so cover all with one permission */
