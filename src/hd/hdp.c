@@ -1079,7 +1079,7 @@ void dump_bios(hd_data_t *hd_data, hd_t *hd, FILE *f)
   if(bt->par_port1) dump_line("Parallel Port 1: 0x%x\n", bt->par_port1);
   if(bt->par_port2) dump_line("Parallel Port 2: 0x%x\n", bt->par_port2);
 
-  if(bt->low_mem_size) dump_line("Base Memory: %uk\n", bt->low_mem_size >> 10);
+  if(bt->low_mem_size) dump_line("Base Memory: %u kB\n", bt->low_mem_size >> 10);
 
   if(bt->is_pnp_bios) {
     char *s = isa_id2str(bt->pnp_id);

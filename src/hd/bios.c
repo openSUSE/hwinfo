@@ -292,7 +292,12 @@ void hd_scan_bios(hd_data_t *hd_data)
 
     bt->low_mem_size = ((bios_ram[0x14] << 8) + bios_ram[0x13]) << 10;
 
-    if(bt->low_mem_size >= 768 || bt->low_mem_size < 500) {
+    if(bt->low_mem_size) {
+      ADD2LOG("  bios: %uk low mem\n", bt->low_mem_size >> 10);
+    }
+
+    /* too unusual */
+    if(bt->low_mem_size >= (768 << 10) || bt->low_mem_size < (384 << 10)) {
       bt->low_mem_size = 0;
     }
 
