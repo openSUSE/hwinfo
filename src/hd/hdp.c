@@ -146,16 +146,22 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     if(j) dump_line0("\n");
   }
 
-  if(h->base_class.id == bc_internal && h->sub_class.id == sc_int_cpu)
+  if(h->base_class.id == bc_internal && h->sub_class.id == sc_int_cpu) {
     dump_cpu(hd_data, h, f);
-  else if(h->base_class.id == bc_internal && h->sub_class.id == sc_int_bios)
+  }
+  else if(h->base_class.id == bc_internal && h->sub_class.id == sc_int_bios) {
     dump_bios(hd_data, h, f);
-  else if(h->base_class.id == bc_internal && h->sub_class.id == sc_int_prom)
+  }
+  else if(h->base_class.id == bc_internal && h->sub_class.id == sc_int_prom) {
     dump_prom(hd_data, h, f);
-  else if(h->base_class.id == bc_internal && h->sub_class.id == sc_int_sys)
+  }
+  else if(h->base_class.id == bc_internal && h->sub_class.id == sc_int_sys) {
     dump_sys(hd_data, h, f);
-  else
     dump_normal(hd_data, h, f);
+  }
+  else {
+    dump_normal(hd_data, h, f);
+  }
 
   s1 = s2 = NULL;
   if(h->is.notready) {

@@ -37,6 +37,9 @@ static void int_devicenames(hd_data_t *hd_data);
 #if defined(__i386__) || defined (__x86_64__)
 static void int_softraid(hd_data_t *hd_data);
 #endif
+#if defined(__i386__) || defined (__x86_64__)
+static void int_system(hd_data_t *hd_data);
+#endif
 
 void hd_scan_int(hd_data_t *hd_data)
 {
@@ -66,6 +69,11 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(6, 0, "mouse");
   int_mouse(hd_data);
 
+#if defined(__i386__) || defined (__x86_64__)
+  PROGRESS(15, 0, "system info");
+  int_system(hd_data);
+#endif
+
   PROGRESS(7, 0, "hdb");
   for(hd = hd_data->hd; hd; hd = hd->next) {
     hddb_add_info(hd_data, hd);
@@ -93,6 +101,7 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(14, 0, "soft raid");
   int_softraid(hd_data);
 #endif
+
 }
 
 /*
@@ -1005,5 +1014,99 @@ void int_softraid(hd_data_t *hd_data)
   free_str_list(raid_sysfs);
 
 }
+
+
+/*
+ *
+ */
+void int_system(hd_data_t *hd_data)
+{
+  hd_t *hd_sys;
+  // hd_t *hd_bios;
+  // bios_info_t *bt;
+  hd_smbios_t *sm;
+  struct {
+    unsigned notebook:1;
+    unsigned ibm:1;
+    unsigned toshiba:1;
+  } is = { };
+
+  for(hd_sys = hd_data->hd; hd_sys; hd_sys = hd_sys->next) {
+    if(
+      hd_sys->base_class.id == bc_internal &&
+      hd_sys->sub_class.id == sc_int_sys
+    ) break;
+  }
+
+  if(!hd_sys) return;
+
+  for(sm = hd_data->smbios; sm; sm = sm->next) {
+    if(
+      sm->any.type == sm_sysinfo &&
+      sm->sysinfo.manuf &&
+      !strcasecmp(sm->sysinfo.manuf, "ibm")
+    ) {
+      is.ibm = 1;
+    }
+
+    if(
+      sm->any.type == sm_sysinfo &&
+      sm->sysinfo.manuf &&
+      !strcasecmp(sm->sysinfo.manuf, "toshiba")
+    ) {
+      is.toshiba = 1;
+    }
+
+    if(
+      sm->any.type == sm_chassis &&
+      (
+        (sm->chassis.ch_type.id >= 8 && sm->chassis.ch_type.id <= 11) ||
+        sm->chassis.ch_type.id == 14
+      )
+    ) {
+      is.notebook = 1;
+    }
+  }
+
+#if 0
+  /* doesn't really help, we don't know whether it's a notebook anyway in this case */
+  for(hd_bios = hd_data->hd; hd_bios; hd_bios = hd_bios->next) {
+    if(
+      hd_bios->base_class.id == bc_internal &&
+      hd_bios->sub_class.id == sc_int_bios
+    ) break;
+  }
+
+  if(
+    hd_bios &&
+    hd_bios->detail &&
+    hd_bios->detail->type == hd_detail_bios &&
+    (bt = hd_bios->detail->bios.data) &&
+    bt->is_pnp_bios
+  ) {
+    char *s = isa_id2str(bt->pnp_id);
+    if(!strncmp(s, "TOS", 3)) is.toshiba = 1;
+    free_mem(s);
+  }
 #endif
+
+  ADD2LOG(
+    "  system type:%s%s%s\n",
+    is.ibm ? " ibm" : "",
+    is.toshiba ? " toshiba" : "",
+    is.notebook ? " notebook" : ""
+  );
+
+  if(is.notebook && is.ibm) {
+    hd_sys->vendor.id = MAKE_ID(TAG_SPECIAL, 0xf001);
+    hd_sys->device.id = MAKE_ID(TAG_SPECIAL, 1);
+  }
+
+  if(is.notebook && is.toshiba) {
+    hd_sys->vendor.id = MAKE_ID(TAG_SPECIAL, 0xf001);
+    hd_sys->device.id = MAKE_ID(TAG_SPECIAL, 2);
+  }
+}
+#endif
+
 

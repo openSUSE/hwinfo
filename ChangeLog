@@ -1,3 +1,7 @@
+23/9/2004:	v9.18
+	- added --pcmcia option to hwscanqueue (#44290)
+	- return package info in system entry (#35245)
+
 22/9/2004:	v9.17
 	- updated X11 data
 

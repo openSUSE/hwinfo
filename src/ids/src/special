@@ -646,6 +646,18 @@
 +driver.module.modprobe	microtek
 
 
+# internal: special notebook packages
+ vendor.id		special 0xf001
+&device.id		special 0x0001
++device.name		IBM Notebook
++requires		tpctl|tpconfig|tpb|configure-thinkpad
+
+ vendor.id		special 0xf001
+&device.id		special 0x0002
++device.name		Toshiba Notebook
++requires		toshutils|fnfx
+
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # altix things
 
