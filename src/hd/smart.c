@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <dirent.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -32,6 +33,8 @@ void hd_scan_smart(hd_data_t *hd_data)
   unsigned long secs;
   hd_res_t *res;
   struct hd_geometry geo;
+  char *cpqarray;
+  DIR *dir;
 
   if(!hd_probe_feature(hd_data, pr_smart)) return;
 
@@ -40,13 +43,25 @@ void hd_scan_smart(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
 
+  cpqarray = hd_data->kernel_version == KERNEL_24 ? PROC_SMART_24 : PROC_SMART_22;
+
+  if((dir = opendir(cpqarray))) {
+    closedir(dir);
+  }
+  else {
+    cpqarray = PROC_SMART_24_NEW;
+    if((dir = opendir(cpqarray))) {
+      closedir(dir);
+    }
+    else {
+      return;
+    }
+  }
+
   for(i = 0; i < 8; i++) {
     PROGRESS(1, 1 + i, "read info");
 
-    str_printf(&fname, 0, "%s/ida%i",
-      hd_data->kernel_version == KERNEL_24 ? PROC_SMART_24 : PROC_SMART_22,
-      i
-    );
+    str_printf(&fname, 0, "%s/ida%i", cpqarray, i);
     if(!(sl0 = read_file(fname, 0, 0))) continue;
 
     if(hd_data->debug) dump_smart_data(hd_data, fname, sl0);

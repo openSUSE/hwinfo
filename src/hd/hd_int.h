@@ -23,6 +23,7 @@
 #define PROC_DAC960		"/proc/rd"
 #define PROC_SMART_22		"/proc/array"
 #define PROC_SMART_24		"/proc/driver/array"
+#define PROC_SMART_24_NEW	"/proc/driver/cpqarray"
 #define PROC_PROM		"/proc/device-tree"
 #define PROC_MEMINFO		"/proc/meminfo"
 #define PROC_DASD		"/proc/dasd"
