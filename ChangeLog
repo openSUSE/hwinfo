@@ -1,3 +1,6 @@
+12/2/2001:	v1.90
+	- changed display adapter detection code to prefer sbus cards
+
 9/2/2001:	v1.89
 	- kkaempf: "ld -shared" is forbidden, changed to "gcc"
 

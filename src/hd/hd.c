@@ -2918,7 +2918,8 @@ unsigned hd_display_adapter(hd_data_t *hd_data)
 {
   hd_t *hd;
   driver_info_t *di;
-  unsigned u = 0;
+  unsigned disp, disp_sbus, disp_pci, disp_any, disp_di;
+  unsigned disp_cnt, disp_any_cnt;
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -2927,30 +2928,55 @@ unsigned hd_display_adapter(hd_data_t *hd_data)
   }
 #endif
 
+  /* if we know exactly where our primary display is, return it */
   if(hd_get_device_by_idx(hd_data, hd_data->display)) return hd_data->display;
 
-  /* guess: 1st vga card */
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_display && hd->sub_class == sc_dis_vga) return hd->idx;
-  }
+  disp = disp_sbus = disp_pci = disp_any = disp_di = 0;
+  disp_cnt = disp_any_cnt = 0;
 
-  /* guess: 1st display adapter *with* driver info */
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class == bc_display) {
-      di = hd_driver_info(hd_data, hd);
-      if(di && di->any.type == di_x11 && di->x11.server) {
-        u = hd->idx;
+      disp_any_cnt++;
+      if(!disp_any) disp_any = hd->idx;
+      if(hd->sub_class == sc_dis_vga) {
+        disp_cnt++;
+        if(!disp) disp = hd->idx;
+        if(hd->bus == bus_pci && !disp_pci) disp_pci = hd->idx;
+        if(hd->bus == bus_sbus && !disp_sbus) disp_sbus = hd->idx;
       }
-      hd_free_driver_info(di);
-      if(u) return u;
+      if(!disp_di) {
+        di = hd_driver_info(hd_data, hd);
+        if(di && di->any.type == di_x11 && di->x11.server) {
+          disp_di = hd->idx;
+        }
+        hd_free_driver_info(di);
+      }
     }
   }
 
-  /* last try: 1st display adapter */
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_display) return hd->idx;
-  }
+  /* if there's only one display adapter, return it */
+  if(disp_any_cnt == 1) return disp_any;
 
+  /* if there's only one vga compatible adapter, return it */
+  if(disp_cnt == 1) return disp;
+
+  /* return 1st (vga compatible) sbus card */
+  /* note: the sbus code enters display cards as 'vga compatible' */
+  if(disp_sbus) return disp_sbus;
+
+  /* return 1st display adapter that has some x11 info */
+  if(disp_di) return disp_di;
+
+  /* return 1st vga compatible pci card */
+  if(disp_pci) return disp_pci;
+
+  /* return 1st vga compatible card */
+  if(disp) return disp;
+
+  /* return 1st display adapter */
+  if(disp_any) return disp_any;
+
+  /* there were none... */
   return 0;
 }
 

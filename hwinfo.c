@@ -256,6 +256,11 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
   }
 
   for(hd = hd0; hd; hd = hd->next) hd_dump_entry(hd_data, hd, f ? f : stdout);
+
+  if(hw_item == hw_display && hd0) {
+    fprintf(f ? f : stdout, "\nPrimary display adapter: #%u\n", hd_display_adapter(hd_data));
+  }
+
   hd_free_hd_list(hd0);
 }
 
