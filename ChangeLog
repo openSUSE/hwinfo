@@ -1,3 +1,6 @@
+	- s390: added new prog_if ID pif_dasd_fba to identify FBA DASDs
+	  (reqd. by fehr)
+
 13/10/2004:	v9.32
 	- report network interfaces correctly even though udev lists them
 

@@ -267,7 +267,7 @@ typedef enum pif_cdrom {
 
 /* S/390 disk prog_if values */
 typedef enum pif_s390disk {
-  pif_scsi, pif_dasd
+  pif_scsi, pif_dasd, pif_dasd_fba
 } hd_pif_s390disk_t;
 
 /* bus type values similar to PCI bridge subclasses */

@@ -126,7 +126,7 @@
 +device.name		DASD
 +baseclass.id		0x106
 +subclass.id		0
-+progif.id		1
++progif.id		2
 +driver.module.modprobe dasd_fba_mod
 
  vendor.id		special 0x6001
@@ -144,7 +144,7 @@
 +device.name		DASD
 +baseclass.id		0x106
 +subclass.id		0
-+progif.id		1
++progif.id		2
 +driver.module.modprobe dasd_fba_mod
 
  vendor.id		special 0x6001
