@@ -8,7 +8,7 @@
 
 Author: Steffen Winterfeldt <a href="wfeldt@suse.de">wfeldt@suse.de</a><p>
 
-Current version (2 Feb 2000): 0.56<p>
+Current version (3 Feb 2000): 0.57<p>
 
 <h2>Simple Expample</h2>
 
@@ -165,13 +165,16 @@ The returned strings are valid only til the next call to
 
 <code><strong>char *hd_class_name(<a href="#hd_data_t">hd_data_t</a> *hd_data, int level, unsigned base_class, unsigned sub_class, unsigned prog_if)</strong></code><p>
 
-Look up a class name. This function can return a class name (<code>level =
-1</code>), a sub class name (<code>level = 2</code>) or a programming
-interface name (<code>level = 3</code>).<p>
+Look up a class name. <code>level</code> specifies the amount of valid arguments:
+<ul>
+1 - only <code>base_class</code><br>
+2 - <code>base_class &amp; sub_class</code><br>
+3 - <code>base_class &amp; sub_class & prog_if</code>.<br>
+</ul>
+<p>
 
-If a name was not found, the function will automatically do a new search with
-a decreased level. For example, if a sub class 0x5 of class 0x21 was not found,
-it returns the name of class 0x5.<p>
+If no name was found, <code>NULL</code> is returned. (Note: Typically used with
+<code>level = 3</code>).<p>
 
 <code><strong>void hd_dump_entry(<a href="#hd_data_t">hd_data_t</a> *hd_data, <a href="#hd_t">hd_t</a> *hd, FILE *f)</strong></code><p>
 

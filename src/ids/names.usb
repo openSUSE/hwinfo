@@ -1,3 +1,458 @@
 u05ac	Apple Computer, Inc.
 	0202	USB Keyboard
 	0301	USB Mouse
+
+u0506 3Com Corporation
+u059C A-Trend Technology Co., Ltd.
+u04E4 ACC Microelectronics
+u0460 Ace Cad Enterprise Co., Ltd.
+u049C Acer Advanced Labs, Inc.
+u0402 Acer Labs Inc.
+u04A5 Acer Peripheral Inc.
+u042E Acer, Inc.
+u0502 Acer, Inc.
+u0515 ACTC
+u03F3 Adaptec, Inc.
+u0422 ADI Systems
+u0459 Adobe Systems, Inc.
+u0522 Advanced Connectek USA Inc.
+u0428 Advanced Gravis Computer Tech. Ltd.
+u059D Advanced Input Devices
+u0438 Advanced Micro Devices
+u0479 Advanced Peripheral Laboratories
+u0476 AESP
+u0521 Airborn Connectors
+u0533 Alcatel Mobile Phones
+u058F Alcor Micro, Inc.
+u044E Alps Electric Co.
+u0433 Alps Electric Inc.
+u048C Alps Electric Ireland Ltd.
+u04D2 Altec Lansing Technologies
+u0527 ALTRA
+u0587 America Kotobuki Electronics Ind.
+u046B American Megatrends
+u0530 American Microsystems Inc.
+u051D American Power Conversion
+u0464 AMP Incorporated
+u0456 Analog Devices, Inc.
+u0555 ANAM S&T Co., Ltd.
+u0547 Anchor Chips Inc.
+u04ED Annabooks
+u03E8 AOX Inc.
+u05AC Apple Computer
+u0556 Asahi Kasei Microsystems Co., Ltd
+u0418 AST Research
+u0486 ASUS Computers Inc.
+u0467 AT&T Paradyne
+u0523 ATEN GMBH
+u0557 ATEN International Co. ltd.
+u0528 ATI Technologies, Inc.
+u03EB Atmel Corporation
+u052D Avid Electronics Corp.
+u057C AVM Gmbh
+u0412 Award Software International
+u0509 Aztech Systems Ltd
+u0576 BAFO/Quality Computer Accessories
+u046E Behavior Tech. Computer
+u050D Belkin Components
+u0514 Berg Electronics, Inc.
+u04FB Biostar Microtech Int'l Corp.
+u05A7 Bose Corporation
+u0599 Brilliance Semiconductor Inc.
+u04EA Brooktree Corporation
+u04F9 Brother International Corp.
+u0517 Butterfly Communications
+u050B Cable System International
+u0559 Cadence Design Systems
+u04D6 CAE Technology
+u04A9 Canon Inc.
+u052C Canon Information System
+u0491 Capetronic
+u0498 Capetronic (Kaohsiung) Corp.
+u044C CCL/ITRI
+u05C5 Central Data Corporation
+u05C8 Cheng Uei Precision Industry Co., Ltd
+u046A Cherry Mikroschalter GMBH
+u04F2 Chicony Electronics Co., Ltd.
+u0564 Chinon Industries, Inc.
+u0420 Chips and Technologies
+u04AB Chromatic Research
+u0698 Chuntex (CTX)
+u050A Cinch Connectors
+u0488 Cirque Corp.
+u0429 Cirrus Logic
+u05A6 Cisco Systems
+u0574 City University of Hong Kong
+u0508 Clarion Co., Ltd.
+u0453 CMD Technology
+u04B7 Compal Electronics, Inc.
+u049F Compaq Computers
+u0423 Computer Access Technology Corp.
+u0551 CompuTrend Systems, Inc.
+u0478 Connectix Corp.
+u041E Creative Labs
+u052A Crescent Heart Software
+u0544 Cristie Electronics Ltd.
+u046F Crystal Semiconductor
+u055E CTX Opto-Electronics Corp.
+u04B4 Cypress Semiconductor
+u041B d'TV
+u04F0 Daewoo Electronics Co., Ltd.
+u04AA DaeWoo Telecom, Ltd.
+u04FA Dallas Semiconductor
+u03EA Data Broadcasting Corp.
+u0501 DDK Electronics, Inc.
+u056B Decicon Incorporated
+u047C Dell Computer Corp.
+u0580 Denron Inc.
+u0450 DFI Inc.
+u05B5 Dialogic Corp
+u045A Diamond Multimedia Systems
+u0554 Dictaphone Corp.
+u03F4 Diebold, Inc.
+u04D0 Digi International
+u04A0 Digital Equipment Corp.
+u05BA Digital Persona
+u0513 digital-X, Inc.
+u04AD Dooin Electronics
+u04FF E-CMOS Corp.
+u056C e-TEK Labs
+u040A Eastman Kodak Co.
+u040F Echo Speech Corporation
+u0572 EEH Datalink Gmbh
+u048F Eicon Tech.
+u04F3 Elan Microelectronics Corportation
+u056E Elecom Co., Ltd.
+u053E Electronic Accessory Specialists Int.
+u059F Electronique D2
+u051F Elite Electronics, Inc.
+u03FC Elitegroup Computer Systems
+u04E7 ELO TouchSystems
+u0577 ELSA
+u05CC ELSA Gmbh
+u0570 Epson America
+u03F8 Epson Research Center
+u042A Ericsson Austrian, AG
+u0442 Ericsson Inc.
+u0495 ESS Technology, Inc.
+u04E2 Exar Corporation
+u0592 Exide Electronics
+u0518 EzKEY Corp.
+u03FE Farallon
+u0529 Fast Security AG
+u04A2 FirePower Systems
+u05B1 First International Computer, Inc
+u0585 FlashPoint Technology, Inc.
+u04D5 Forte Technologies, Inc.
+u05B0 Fountain Technologies, Inc
+u0489 Foxconn / Hon Hai
+u0437 Framatome Connectors USA
+u05A2 Fuji Film Microdevices Co. Ltd.
+u04CB Fuji Photo Film Co., Ltd.
+u0550 Fuji Xerox Co., Ltd.
+u04C5 Fujitsu Limited
+u04C5 Fujitsu Ltd.
+u054A Fujitsu Microelectronics, Inc.,
+u0407 Fujitsu Personal Systems, Inc.
+u0430 Fujitsu Takamisawa America
+u0406 Fujitsu-ICL Computers
+u04F5 Fujitsu-ICL Systems, Inc.
+u0403 Future Technology Devices
+u04F8 FuturePlus Systems
+u049A Gandalf Technologies Ltd.
+u0443 Gateway 2000
+u03F1 Genoa Technology
+u0414 Giga-Byte Technology Co., Ltd.
+u053B Global Village Communication
+u05BA Grey Cell Systems
+u0579 GVC Corporation
+u04F4 Harting Elektronik Inc.
+u0504 Hayes Microcomputer Products
+u03F0 Hewlett Packard
+u04B6 Hint Corporation
+u0503 Hitachi America Ltd.
+u045B Hitachi, Ltd
+u04A4 Hitachi, Ltd.
+u051C Holco Enterprise Co., Ltd./Shuttle Computer
+u04D9 Holtek Microelectronics Inc.
+u0507 Hosiden Corporation
+u0512 Hualon Microelectronics Corp.
+u04DC Huan Hsin C., SDN.BHD
+u04DB Hypertec Pty Ltd.
+u0435 Hyundai Electronics America
+u04BB I-O Data Device, Inc.
+u04B3 IBM Corp.
+u04E1 Iiyama North America Inc.
+u0563 Immersion Corporation
+u058C In Focus Systems
+u05AB In-System Design
+u0593 Incite
+u050C InnoMedia, Inc.
+u042C Innovative Semiconductors, Inc.
+u053C Institut of Microelectronic & Mechatronic Systems
+u0426 Integrated Device Technology
+u048D Integrated Technology Express
+u8086 Intel Corporation
+u042B Intel Corporation
+u059E Intelligent Instrumentation
+u0571 Interex, Inc.
+u0560 Interface Co., Ltd.
+u04DF Interlink Electronics
+u0578 Intrinsix Corp.
+u0537 Inventec Corporation
+u059B Iomega Corporation
+u0431 Itac Systems, Inc.
+u04D1 ITT Canon
+u03EC Iwatsu America Inc.
+u05AF Jing-Mold Enterprise Co., Ltd.
+u05C1 Kawasaki Steel
+u050F Kawatsu Semiconductor, Inc.
+uC251 Keil Software
+u047D Kensington
+u055A Kenwood USA
+u03F9 KeyTronic Corp.
+u055B KnowledgeTek, Inc.
+u04C8 Konica Corporation
+u056F Korea Data Systems Co., Ltd.
+u0458 KYE Systems Corp.
+	0002	Genius NetMouse Pro
+u0482 Kyocera Electronics, Inc.
+u041F LCS Telegraphics
+u0413 Leadtek Research Inc.
+u043D Lexmark International Inc.
+u043E LG Electronics USA Inc.
+u05B4 LG Semicon Co., Ltd.
+u0535 LIH TZU Electric Co., Ltd.
+u04CA Lite-On Technology Corp.
+u04C4 Lockheed Martin Energy Research
+u046D Logitech Inc.
+u0516 Longwell Electronics
+u04D4 LSI Logic Corporation
+u047E Lucent Microelectronics Technologies
+u0445 Lucent Technologies
+u0445 Lucent Technologies IS
+u05D0 Lunar Corporation
+u0493 MAG Technology Co., Ltd.
+u04C3 Maxi Switch, Inc.
+u040E MCCI
+u05B7 Medianix Semiconductor, Inc.
+u05C2 Mediaphonics S.A.
+u0411 Melco, Inc.
+u04C2 Methode Electronics Far East Pte Ltd.
+u0463 MGE UPS Systems
+u058D Micrel Semiconductor
+u04AC Micro Audiometrics Corp.
+u04D8 Micro Chip Technology, Inc.
+u0524 Micro Devices Technology
+u04C7 Micro Macro Technologies
+u0496 Micron Electronics
+u042D Micronics
+u045E Microsoft
+u0596 Microtouch Systems
+u04DE MindShare, Inc.
+u03ED Mitel Corporation
+u0452 Mitsubishi Electronics America, Inc.
+u03EE Mitsumi
+u042F Molex, Inc.
+u0447 Momentum Microsystems
+u0534 Motorola
+u0427 Motorola Electronics Taiwan Ltd.
+u0425 Motorola Semiconductors HK, Ltd.
+u04A8 Multivideo Labs, Inc.
+u055F Mustek Systems Inc.
+u04CF Myson Technology Inc.
+u0511 N'ABLE Technologies, Inc (Data Book)
+u0440 NANAO Corporation
+u0401 National Registry Inc.
+u0400 National Semiconductor
+u0404 NCR Corporation
+u0409 NEC
+u050E Neon Technology, Inc.
+u0525 Net Chip Technology, Inc.
+u054B New Media Corporation
+u04F7 Newnex Technology Corp.
+u0598 Nigata Canotec Co., Inc.
+u04B0 Nikon Corporation
+u057E Nintendo Co.,
+u0446 NMB Technologies, Inc.
+u0573 Nogatech Ltd.
+u058A Nohau Corporation
+u04A6 Nokia Display Products (Salcomp Oy)
+u0421 Nokia Mobile Phones
+u0485 Nokia Monitors
+u04F6 Norand Corporation
+u045D Northern Telecom
+u04EB Northstar Systems, Inc
+u03F2 Oak Technology, Inc
+u0561 Oasis Design, Inc.
+u04D7 Oki Semiconductor
+u05A9 OmniVision Technologies, Inc.
+u0590 OMRON Corporation
+u03FB OPTi Inc.
+u05A4 Ortek Technology, Inc.
+u04EF Pacific Electronic International, Inc.
+u0583 Padix Co. Ltd.
+u04B1 Pan International
+u04DA Panasonic (Matsushita)
+u04E9 PC-Tel Inc.
+u0565 Peracom Networks, Inc.
+u04FE PFU Limited
+u0471 Philips
+u0552 Philips Monitors
+u05B9 Philips Research Laboratories
+u04CC Philips Semiconductors
+u041A Phoenix Technologies, Ltd.
+u0549 Pixera Corporation
+u047F Plantronics, Inc.
+u0546 Polaroid Corporation
+u05CB Powerchip Semiconductor Co.
+u053A Preh Werke Gmbh & Co. KG
+u0461 Primax Electronics
+u0594 Princeton Graphic Systems
+u04E5 Promise Technology
+u054E Proside Corporation
+u055C Proton Electronic Ind.
+u05B6 Proxima Corporation
+u05C7 Qtronix Corp
+u05C6 Qualcomm, Inc
+u0408 Quanta Computer Inc.
+u0568 Quartz Ingenierie
+u0591 Questra Consulting
+u057F Quickshot Technology Inc.
+u0581 Racal Data Group
+u043F RadiSys Corporation
+u04B9 Rainbow Technologies, Inc.
+u0584 RATOC System Inc.
+u05BE Raychem Corporation
+u0475 Relisys/TECO Information System
+u05CA Ricoh Company Ltd.
+u0572 Rockwell Semiconductor Systems
+u04B5 ROHM LSI Systems, Inc.
+u0582 Roland Corporation
+u05BF S & S Research
+u048A S-MOS Systems, Inc.
+u041D S3, Inc.
+u05A5 Sampo Technology Corp.
+u055D Samsung Electro-Mechanics Co.
+u057A Samsung Electronics America
+u04E8 Samsung Electronics Co., Ltd.
+u0419 Samsung Info. Systems America Inc.
+u0434 Samsung Info. Systems America Inc.
+u0492 Samsung SemiConductor, Inc.
+u0405 Sand Microelectronics Inc.
+u0538 Santa Cruz Operation
+u0474 Sanyo Electric Co. Ltd.
+u0473 Sanyo Information Business Co., Ltd.
+u0588 Sapien Design
+u04CE ScanLogic Corporation
+u051E Scientific Atlanta
+u0477 Seagate Technology
+u0569 SegaSoft
+u04B8 Seiko Epson Corp.
+u0510 Sejin Electron Inc.
+u05C9 Semtech Corporation
+u0483 SGS Thomson Microelectronics
+u044A Shamrock Tech. Co., Ltd
+u057D Shark Multimedia Inc.
+u04DD Sharp Corporation
+u04E6 Shuttle Technology
+u0539 Shyh Shiun Terminals Co. LTD
+u0500 Siam United Hi-Tech
+u05CE SICAN Gmbh
+u03F5 Siemens Electromechanical
+u044D Siemens Nixdorf
+u058B Siemens Semiconductor
+u05CD Silicom LTD.
+u053D Silicon Architect
+u051B Silicon Graphics
+u0457 Silicon Integrated Systems Corp.
+u047B Silitek Corp.
+u04EA Sipex Corporation
+u0541 Sirf Technology, Inc
+u0497 Smile International
+u04FD Soliton Systems, K.K.
+u054C Sony Corporation
+u05A8 Spacetec IMC Corporation
+u0484 Specialix
+u059A Spectrum Signal Processing Inc.
+u0424 Standard Microsystems Corp.
+u052E Standard Microsystems Corp.
+u0519 Star Micronics America, Inc.
+u0487 Stewart Connector
+u0472 Sun Microsystems
+u05CF Sung Forn Co. LTD.
+u04FC Sunplus Technology Co.
+u0575 Swets & Zeitlinger BV
+u0417 Symbios Logic
+u053F Synopsys
+u05AE Synopsys, Inc.
+u0532 Systech Corporation
+u049B System Connection
+u04A1 SystemSoft Corporation
+u0520 Taiwan Semiconductor Manufacturing Co.
+u04CD Tatung Co. Of America
+u0436 Taugagreining HF
+u04BF TDK USA Corporation
+u052B Tekom Development
+u0455 Telematics International, Inc.
+u0562 Telex Communications Inc.
+u04BE Telia Research AB
+u0526 Temic Matra.mhs
+u0451 Texas Instruments
+u03E9 Thesys Microelectronics
+u044F ThrustMaster, Inc.
+u04EC Tokyo Electron Limited
+u046C Toshiba
+u04C6 Toshiba America Electronic Components
+u0480 Toshiba America Info. Systems, Inc.
+u04BD Toshiba Electronics Taiwan Corp.
+u04BA Toucan Systems Ltd.
+u04A3 Trident Microsystems Inc.
+u058E Tripath Technology Inc.
+u0597 Trisignal Communications
+u0558 Truevision, Inc.
+u054D Try Corporation
+u0EF7 Tulip Computers International
+u0548 Tyan Computer Corp.
+u04C1 U.S. Robotics
+u052F Unicore Software, Inc.
+u0432 Unisys Corp.
+u0490 United Microelectronics Corp.
+u0540 Universal Access
+u047A USAR Systems
+u05A1 USC Corporation
+u05AA Utilux South China Ltd.
+u05A3 VAutomation Inc.
+u05A0 Vetronix Corporation
+u040D VIA Technologies, Inc.
+u04F1 Victor Company of Japan
+u0589 Victron
+u04D3 VidUS, Inc.
+u0543 View Sonic Corporation
+u04A7 Visioneer
+u049D VLSI Technology
+u0553 VLSI Vision Ltd.
+u0454 Vobis Microcomputer AG
+u0439 Voice Technologies Group
+u040C VTech Computers Ltd
+u056A WACOM Co., Ltd.
+u0531 Wacom Technology Corp.
+u0536 Welch Allyn Inc.
+u040B Weltrend Semiconductor
+u0468 Wieson Electronic Co., Ltd.
+u0416 Winbond Electronics Corp.
+u0441 Winbond Systems Lab.
+u04AF Winnov L.P.
+u044B WSI
+u051A WYSE Technology
+u054F WYSE Technology Taiwan
+u03FD Xilinx Inc.
+u0545 Xirlink, Inc.
+u0567 Xyratex Int'l Ltd.
+u057B Y-E Data, Inc.
+u05AD Y.C.Cable U.S.A., Inc
+u0499 Yamaha Corporation
+u0481 Zenith Data Systems
+u04E3 Zilog
+u0595 Zoran Microelectronics Ltd.
+u0586 ZyXEL Communications Corp.

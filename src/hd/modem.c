@@ -48,6 +48,7 @@ static struct speeds_s {
 #define MAX_SPEED	(sizeof speeds / sizeof *speeds)
 
 static void get_serial_modem(hd_data_t* hd_data);
+static int dev_name_duplicate(hd_data_t *hd_data, char *dev_name);
 static void guess_modem_name(hd_data_t *hd_data, ser_modem_t *sm);
 static void at_cmd(hd_data_t *hd_data, char *at, int raw, int log_it);
 static void write_modem(hd_data_t *hd_data, char *msg);
@@ -84,10 +85,18 @@ void get_serial_modem(hd_data_t *hd_data)
   char buf[4];
   ser_modem_t *sm;
   hd_res_t *res;
+  int chk_usb = hd_probe_feature(hd_data, pr_modem_usb);
 
+  /* serial modems & usb modems */
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->base_class == bc_comm && hd->sub_class == sc_com_ser && hd->unix_dev_name) {
+    if(
+      (
+        (hd->base_class == bc_comm && hd->sub_class == sc_com_ser) ||
+        (chk_usb && hd->bus == bus_usb && hd->base_class == bc_modem)
+      ) && hd->unix_dev_name
+    ) {
       if((fd = open(hd->unix_dev_name, O_RDWR)) >= 0) {
+        if(dev_name_duplicate(hd_data, hd->unix_dev_name)) continue;
         sm = add_ser_modem_entry(&hd_data->ser_modem, new_mem(sizeof *sm));
         sm->dev_name = new_str(hd->unix_dev_name);
         sm->fd = fd;
@@ -209,33 +218,50 @@ void get_serial_modem(hd_data_t *hd_data)
 
     if(!sm->is_modem) continue;
 
-    hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->base_class = bc_modem;
-    hd->bus = bus_serial;
-    hd->unix_dev_name = new_str(sm->dev_name);
-    hd->attached_to = sm->hd_idx;
-    res = add_res_entry(&hd->res, new_mem(sizeof *res));
-    res->baud.type = res_baud;
-    res->baud.speed = sm->max_baud;
-    if(*sm->pnp_id) {
-      strncpy(buf, sm->pnp_id, 3);
-      buf[3] = 0;
-      hd->vend = name2eisa_id(buf);
-      hd->dev = MAKE_ID(TAG_EISA, strtol(sm->pnp_id + 3, NULL, 16));
+    hd = hd_get_device_by_idx(hd_data, sm->hd_idx);
+    if(hd && hd->base_class == bc_modem) {
+      /* just *add* info */
+
     }
-    hd->serial = new_str(sm->serial);
-    if(sm->user_name && hd->dev) {
-      add_device_name(hd_data, hd->vend, hd->dev, sm->user_name);
-    }
-    else if(sm->user_name && sm->vend) {
-      if(!hd_find_device_by_name(hd_data, hd->base_class, sm->vend, sm->user_name, &hd->vend, &hd->dev)) {
-        hd->dev_name = new_str(sm->user_name);
-        hd->vend_name = new_str(sm->vend);
+    else {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class = bc_modem;
+      hd->bus = bus_serial;
+      hd->unix_dev_name = new_str(sm->dev_name);
+      hd->attached_to = sm->hd_idx;
+      res = add_res_entry(&hd->res, new_mem(sizeof *res));
+      res->baud.type = res_baud;
+      res->baud.speed = sm->max_baud;
+      if(*sm->pnp_id) {
+        strncpy(buf, sm->pnp_id, 3);
+        buf[3] = 0;
+        hd->vend = name2eisa_id(buf);
+        hd->dev = MAKE_ID(TAG_EISA, strtol(sm->pnp_id + 3, NULL, 16));
+      }
+      hd->serial = new_str(sm->serial);
+      if(sm->user_name && hd->dev) {
+        add_device_name(hd_data, hd->vend, hd->dev, sm->user_name);
+      }
+      else if(sm->user_name && sm->vend) {
+        if(!hd_find_device_by_name(hd_data, hd->base_class, sm->vend, sm->user_name, &hd->vend, &hd->dev)) {
+          hd->dev_name = new_str(sm->user_name);
+          hd->vend_name = new_str(sm->vend);
+        }
       }
     }
-    
   }
 
+}
+
+int dev_name_duplicate(hd_data_t *hd_data, char *dev_name)
+{
+  ser_modem_t *sm;
+
+  for(sm = hd_data->ser_modem; sm; sm = sm->next) {
+    if(!strcmp(sm->dev_name, dev_name)) return 1;
+  }
+
+  return 0;
 }
 
 void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
@@ -311,7 +337,7 @@ void at_cmd(hd_data_t *hd_data, char *at, int raw, int log_it)
       if(sm->buf_len == 0 || raw) continue;
       s0 = sm->buf;
       while((s = strsep(&s0, "\r\n"))) {
-        if(*s) add_str_list(&sm->at_resp, new_str(s));
+        if(*s) add_str_list(&sm->at_resp, s);
       }
     }
   }

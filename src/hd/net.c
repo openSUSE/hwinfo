@@ -120,7 +120,7 @@ void read_net_ifs(hd_data_t *hd_data)
 
   for(sl = sl0; sl; sl = sl->next) {
     if(sscanf(sl->str, " %15[^:]:", buf) == 1) {
-      add_str_list(&hd_data->net, new_str(buf));
+      add_str_list(&hd_data->net, buf);
     }
   }
 

@@ -128,12 +128,17 @@ static struct s_pr_flags {
   { pr_usb, "usb" },
   { pr_adb, "adb" },
   { pr_modem, "modem" },
+  { pr_modem_usb, "modem.usb" },
   { pr_parallel, "parallel" }
 };
 
 #define PR_OFS			2		/* skip 0, default */
 #define ALL_PR_FEATURE		((1 << (pr_all - PR_OFS)) - 1)
-#define DEFAULT_PR_FEATURE	(ALL_PR_FEATURE - (1 << (pr_pci_range - PR_OFS)) - (1 << (pr_pci_ext - PR_OFS)))
+#define DEFAULT_PR_FEATURE	(\
+                                  ALL_PR_FEATURE\
+                                  - (1 << (pr_pci_range - PR_OFS))\
+                                  - (1 << (pr_pci_ext - PR_OFS))\
+                                )
 
 void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
@@ -479,15 +484,17 @@ void hd_scan(hd_data_t *hd_data)
 
 #ifndef LIBHD_TINY
   hd_scan_parallel(hd_data);	/* after hd_scan_misc*() */
-  hd_scan_modem(hd_data);	/* do it before hd_scan_mouse() */
 #endif
-  hd_scan_mouse(hd_data);
   hd_scan_ide(hd_data);
   hd_scan_scsi(hd_data);
   hd_scan_usb(hd_data);
 #if defined(__PPC__)
   hd_scan_adb(hd_data);
 #endif
+#ifndef LIBHD_TINY
+  hd_scan_modem(hd_data);	/* do it before hd_scan_mouse() */
+#endif
+  hd_scan_mouse(hd_data);
 
   /* keep these at the end of the list */
   hd_scan_cdrom(hd_data);
@@ -802,13 +809,15 @@ str_list_t *search_str_list(str_list_t *sl, char *str)
 
 /*
  * Add a string to a string list; just for convenience.
+ *
+ * The new string (str) will be *copied*!
  */
 str_list_t *add_str_list(str_list_t **sl, char *str)
 {
   while(*sl) sl = &(*sl)->next;
 
   *sl = new_mem(sizeof **sl);
-  (*sl)->str = str;
+  (*sl)->str = new_str(str);
 
   return *sl;
 }
@@ -1028,6 +1037,10 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 
   if(!di0 && (hd->vend || hd->dev)) {
     di0 = device_driver(hd_data, hd->vend, hd->dev);
+  }
+
+  if(!di0 && (hd->compat_vend || hd->compat_dev)) {
+    di0 = device_driver(hd_data, hd->compat_vend, hd->compat_dev);
   }
 
   if(!di0) return hd_free_driver_info(di0);
@@ -1508,7 +1521,7 @@ str_list_t *read_kmods(hd_data_t *hd_data)
   if(!(sl0 = read_file(PROC_MODULES, 0, 0))) return NULL;
 
   for(sl = sl0; sl; sl = sl->next) {
-    add_str_list(&sl1, new_str(strsep(&sl->str, " \t")));
+    add_str_list(&sl1, strsep(&sl->str, " \t"));
   }
 
   return sl1;

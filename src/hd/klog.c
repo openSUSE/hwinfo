@@ -95,6 +95,7 @@ void read_klog(hd_data_t *hd_data)
       s = new_mem(len + 1);
       memcpy(s, buf + j, len);
       add_str_list(&sl2, s);
+      s = free_mem(s);
       j = i + 1;
     }
   }

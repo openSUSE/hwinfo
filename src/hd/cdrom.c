@@ -198,6 +198,7 @@ void read_cdroms(hd_data_t *hd_data)
         v = new_mem(sizeof "/dev/" + strlen(t));
         strcat(strcpy(v, "/dev/"), t);
         add_str_list(&hd_data->cdrom, v);
+        v = free_mem(v);
       }
       break;
     }  

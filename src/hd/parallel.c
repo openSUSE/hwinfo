@@ -57,10 +57,10 @@ void hd_scan_parallel(hd_data_t *hd_data)
     sl0 = read_file(pp, 0, 0);
     if(!sl0) continue;		/* file doesn't exist -> no parport entry */
     str_printf(&s, 0, "%s\n", pp);
-    add_str_list(&log, new_str(s));
+    add_str_list(&log, s);
     for(sl = sl0; sl; sl = sl->next) {
       str_printf(&s, 0, "  %s", sl->str);
-      add_str_list(&log, new_str(s));
+      add_str_list(&log, s);
       if(sscanf(sl->str, "base: %i", &j) == 1) port = j;
     }
     free_str_list(sl0);
@@ -68,11 +68,11 @@ void hd_scan_parallel(hd_data_t *hd_data)
     str_printf(&pp, 0, "%s/%d/autoprobe", PROC_PARPORT, i);
     sl0 = read_file(pp, 0, 0);
     str_printf(&s, 0, "%s\n", pp);
-    add_str_list(&log, new_str(s));
+    add_str_list(&log, s);
     base_class = device = vendor = cmd_set = NULL;
     for(sl = sl0; sl; sl = sl->next) {
       str_printf(&s, 0, "  %s", sl->str);
-      add_str_list(&log, new_str(s));
+      add_str_list(&log, s);
 //      fprintf(stderr, "str = \"%s\"\n", sl->str);
       if(sscanf(sl->str, "CLASS: %255[^\n;]", buf) == 1) base_class = new_str(buf);
       if(sscanf(sl->str, "MODEL: %255[^\n;]", buf) == 1) device = new_str(buf);

@@ -355,7 +355,8 @@ PNP 0f0c
 PNP 0f0e
 	p	ps/2|ps2
 
-u05ac 0301
+# USB mice
+s0200 0001
 	p	imps/2|ps2
 
 s0100 0302

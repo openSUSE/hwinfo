@@ -112,3 +112,5 @@ C 107	Network Interface
 	80	Network Interface
 C 108	Keyboard
 C 109	Printer
+C 10a	Hub
+	01	USB Hub

@@ -1,3 +1,11 @@
+3/2/2000:	v0.57
+	- added lp-devices to mk_floppy
+	- added usb vendor list
+	- NOTE: hd_class_list() interface slightly changed!!!
+	- USB support complete rewritten
+	- modem fix: aviod selecting a device twice!
+	- driver info: take compatible devices into account
+
 2/2/2000:	v0.56
 	- more driver info
 	- added hd_smp_support()

@@ -51,7 +51,8 @@ typedef enum probe_feature {
   pr_default = 1, pr_memory, pr_pci, pr_pci_range, pr_pci_ext, pr_isapnp,
   pr_cdrom, pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial,
   pr_misc_par, pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor,
-  pr_mouse, pr_ide, pr_scsi, pr_usb, pr_adb, pr_modem, pr_parallel,
+  pr_mouse, pr_ide, pr_scsi, pr_usb, pr_adb, pr_modem, pr_modem_usb,
+  pr_parallel,
   pr_all		/* pr_all must be the last */
 } hd_probe_feature_t;
 
@@ -70,7 +71,8 @@ typedef enum base_classes {
 
   // add our own classes here (starting at 0x100 as PCI values are 8 bit)
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,
-  bc_storage_device, bc_network_interface, bc_keyboard, bc_printer
+  bc_storage_device, bc_network_interface, bc_keyboard, bc_printer,
+  bc_hub
 } hd_base_classes_t;
 
 /* subclass values of bc_storage */
@@ -99,6 +101,12 @@ typedef enum sc_input {
   sc_inp_keyb, sc_inp_digit, sc_inp_mouse, sc_inp_other = 0x80
 } hd_sc_input_t;
 
+/* subclass values of bc_serial */
+typedef enum sc_serial {
+  sc_ser_fire, sc_ser_access, sc_ser_ssa, sc_ser_usb, sc_ser_fiber,
+  sc_ser_smbus, sc_ser_other = 0x80
+} hd_sc_serial_t;
+
 /* internal sub class values */
 typedef enum sc_internal {
   sc_int_none, sc_int_isapnp_if, sc_int_main_mem, sc_int_cpu, sc_int_fpu, sc_int_bios
@@ -124,6 +132,11 @@ typedef enum sc_net_if {
 typedef enum sc_multimedia {
   sc_multi_video, sc_multi_audio, sc_multi_other
 } hd_sc_multimedia_t;
+
+/* subclass values of bc_hub */
+typedef enum sc_hub {
+  sc_hub_other, sc_hub_usb
+} hd_sc_hub_t;
 
 /* bus type values similar to PCI bridge subclasses */
 typedef enum bus_types {
@@ -171,6 +184,27 @@ typedef struct s_pci_t {
 typedef enum pci_flags {
   pci_flag_ok, pci_flag_pm, pci_flag_agp
 } hd_pci_flags_t;
+
+
+/*
+ * raw USB data
+ */
+typedef struct usb_s {
+  struct usb_s *next;
+  unsigned hd_idx;
+  str_list_t *b, *c, *ci, *d, *e, *i, *p, *s, *t;
+  /*
+   * see Linux USB docu for the meaning of the above;
+   * c: active config, ci: other configs
+   */
+  int bus, dev_nr, lev, parent, port, count, conns, used_conns;
+  unsigned speed;
+  unsigned vendor, device, rev;
+  char *manufact, *product, *serial;
+  char *driver;
+  int d_cls, d_sub, d_prot;
+  int i_cls, i_sub, i_prot;
+} usb_t;
 
 
 /*
@@ -483,14 +517,19 @@ typedef struct s_ser_modem_t {
  * stuff is stored in hd_detail_t.
  */
 typedef enum hd_detail_type {
-  hd_detail_pci, hd_detail_isapnp, hd_detail_cdrom, hd_detail_floppy,
-  hd_detail_bios, hd_detail_cpu
+  hd_detail_pci, hd_detail_usb, hd_detail_isapnp, hd_detail_cdrom,
+  hd_detail_floppy, hd_detail_bios, hd_detail_cpu
 } hd_detail_type_t;
 
 typedef struct {
   enum hd_detail_type type;
   pci_t *data;
 } hd_detail_pci_t;
+
+typedef struct {
+  enum hd_detail_type type;
+  usb_t *data;
+} hd_detail_usb_t;
 
 typedef struct {
   enum hd_detail_type type;
@@ -520,6 +559,7 @@ typedef struct {
 typedef union {
   enum hd_detail_type type;
   hd_detail_pci_t pci;
+  hd_detail_usb_t usb;
   hd_detail_isapnp_t isapnp;
   hd_detail_cdrom_t cdrom;
   hd_detail_floppy_t floppy;
@@ -586,7 +626,8 @@ typedef struct {
   ser_modem_t *ser_modem;	/* info about serial modems */
   str_list_t *cpu;		/* /proc/cpuinfo */
   str_list_t *klog;		/* kernel log */
-  str_list_t *usb;		/* usb info */
+  str_list_t *proc_usb;		/* proc usb info */
+  usb_t *usb;			/* usb info */
   hddb_data_t *hddb_dev;	/* device name database */
   hddb_data_t *hddb_drv;	/* driver info database */
   str_list_t *kmods;		/* list of active kernel modules */

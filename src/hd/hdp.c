@@ -52,7 +52,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
   if(h->detail && h->detail->type == hd_detail_isapnp) s = "(PnP)";
 
   a0 = hd_bus_name(hd_data, h->bus);
-  a1 = hd_class_name(hd_data, 2, h->base_class, h->sub_class, 0);
+  a1 = hd_class_name(hd_data, 3, h->base_class, h->sub_class, h->prog_if);
   dump_line(
     "%02d: %s%s %02x.%x: %02x%02x %s\n",
     h->idx, a0 ? a0 : "?", s, h->slot, h->func,
@@ -84,7 +84,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     h->attached_to &&
     (hd_tmp = hd_get_device_by_idx(hd_data, h->attached_to))
   ) {
-    s = hd_class_name(hd_data, 2, hd_tmp->base_class, hd_tmp->sub_class, 0);
+    s = hd_class_name(hd_data, 3, hd_tmp->base_class, hd_tmp->sub_class, hd_tmp->prog_if);
     s = s ? s : "?";
     dump_line("Attached to: #%u (%s)\n", h->attached_to, s);
   }
@@ -170,6 +170,19 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
       "Comaptible to: %s %04x \"%s\"\n",
       vend_id2str(h->compat_vend), ID_VALUE(h->compat_dev), a0 ? a0 : "?"
     );
+  }
+
+  if(
+    h->bus == bus_usb &&
+    h->detail &&
+    h->detail->type == hd_detail_usb
+  ) {
+    usb_t *usb = h->detail->usb.data;
+
+    if(usb && usb->driver)
+      dump_line("USB Device status: driver active (\"%s\")\n", usb->driver);
+    else
+      dump_line_str("USB Device status: no driver loaded\n");
   }
 
   if(h->broken) {
@@ -311,7 +324,15 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
         break;
 
       case res_baud:
-        dump_line("Speed: %u baud\n", res->baud.speed);
+        if(res->baud.speed == 0 || res->baud.speed % 100) {
+          dump_line("Speed: %u bps\n", res->baud.speed);
+        }
+        else if(res->baud.speed % 100000) {
+          dump_line("Speed: %s kbps\n", float2str(res->baud.speed, 3));
+        }
+        else {
+          dump_line("Speed: %s Mbps\n", float2str(res->baud.speed, 6));
+        }
         break;
 
       default:

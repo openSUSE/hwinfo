@@ -4,15 +4,20 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-1000	
+1000
+	0001.00100	53c810
 	000a	53C1510D
-1011	
+
+1011
 	1065	DAC960
-1039	
+
+1039
 	7016	SiS 7016 (RealTek RTL8139) Fast Ethernet
-1050	
+
+1050
 	5a5a	Winbond
-10b7	
+
+10b7
 	5055	3c555 Laptop Hurricane
 	6560	3CCFE656 Cyclone CardBus
 	7646	3cSOHO100-TX Hurricane

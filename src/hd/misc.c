@@ -396,6 +396,7 @@ void hd_scan_misc2(hd_data_t *hd_data)
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class = bc_comm;
       hd->sub_class = sc_com_ser;
+      hd->prog_if = 0x80;
       for(; res2; res2 = res2->next) {
         if(res2->any.type != res_any) {
           res1 = add_res_entry(&hd->res, new_mem(sizeof *res));

@@ -17,6 +17,10 @@
  */
 
 
+static char *ser_names[] = {
+  "8250", "16450", "16550", "16650", "16750", "16850", "16950"
+};
+
 static void get_serial_info(hd_data_t *hd_data);
 static serial_t *add_serial_entry(serial_t **ser, serial_t *new_ser);
 static void dump_serial_data(hd_data_t *hd_data);
@@ -26,6 +30,7 @@ void hd_scan_serial(hd_data_t *hd_data)
   hd_t *hd;
   serial_t *ser;
   hd_res_t *res;
+  int i;
 
   if(!hd_probe_feature(hd_data, pr_serial)) return;
 
@@ -46,6 +51,10 @@ void hd_scan_serial(hd_data_t *hd_data)
     hd = add_hd_entry(hd_data, __LINE__, 0);
     hd->base_class = bc_comm;
     hd->sub_class = sc_com_ser;
+    hd->prog_if = 0x80;
+    for(i = 0; i < sizeof ser_names / sizeof *ser_names; i++) {
+      if(strstr(ser->name, ser_names[i])) hd->prog_if = i;
+    }
     hd->dev_name = new_str(ser->name);
     hd->func = ser->line;
     str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%u", ser->line);

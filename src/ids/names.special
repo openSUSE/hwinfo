@@ -4,6 +4,10 @@ s0100	Apple Computer, Inc.
 	0203	ADB Keyboard 3
 	0302	ADB Mouse
 
+# generic USB mouse
+s0200
+	0001	Generic USB Mouse
+
 # printer
 s1001	Minolta Co., Ltd.
 s1001	MINOLTA

@@ -269,7 +269,7 @@ driver_info_t *device_driver_ind(hddb_data_t *x, unsigned ind)
 
     s = new_str(x->names + u3);
     for(t0 = s; (t = strsep(&t0, "|")); ) {
-      add_str_list(&di->any.hddb0, new_str(t));
+      add_str_list(&di->any.hddb0, t);
     }
     free_mem(s);
 
@@ -277,7 +277,7 @@ driver_info_t *device_driver_ind(hddb_data_t *x, unsigned ind)
       u0 = DATA_FLAG(x->data[ind]);
       u1 = DATA_VALUE(x->data[ind]);
       if(u0 != FL_VAL0) break;
-      add_str_list(&di->any.hddb1, new_str(x->names + u1));
+      add_str_list(&di->any.hddb1, x->names + u1);
     }
   }
 }
@@ -298,19 +298,36 @@ char *hd_bus_name(hd_data_t *hd_data, unsigned bus)
  */
 char *hd_class_name(hd_data_t *hd_data, int level, unsigned base_class, unsigned sub_class, unsigned prog_if)
 {
+  static char *name = NULL;
   hddb_data_t *x = hd_data->hddb_dev;
   unsigned u;
   unsigned ids[4] = { MAKE_ID(TAG_CLASS, ID_VALUE(base_class)), 0, 0, 0 };
+  char *s = NULL, *t;
+
+  if(name) name = free_mem(name);
 
   if(level > 1) ids[1] = MAKE_ID(TAG_CLASS, ID_VALUE(sub_class));
   if(level > 2) ids[2] = MAKE_ID(TAG_CLASS, ID_VALUE(prog_if));
+
+  if(level == 3) {
+    u = find_entry(&x, 0, --level, ids);
+    if(u) s = name_ind(x, u);
+    x = hd_data->hddb_dev;
+  }
 
   do {
     u = find_entry(&x, 0, --level, ids);
   }
   while(u == 0 && level > 0);
 
-  return name_ind(x, u);
+  t = name_ind(x, u);
+
+  if(s && t && *t) {
+    str_printf(&name, 0, "%s (%s)", t, s);
+    t = name;
+  }
+
+  return t;
 }
 
 char *hd_vendor_name(hd_data_t *hd_data, unsigned vendor)
