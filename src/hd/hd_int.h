@@ -144,6 +144,7 @@ int detectSMP(void);
 
 void update_irq_usage(hd_data_t *hd_data);
 int run_cmd(hd_data_t *hd_data, char *cmd);
+int load_module_with_params(hd_data_t *hd_data, char *module, char *params);
 int load_module(hd_data_t *hd_data, char *module);
 int unload_module(hd_data_t *hd_data, char *module);
 

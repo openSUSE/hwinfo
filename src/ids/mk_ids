@@ -167,7 +167,7 @@ for $f (@ARGV) {
 
           $id1->[2] = 0x10000 - $id1->[1] if $id1->[1] + $id1->[2] > 0x10000;
 
-          die "invalid line: $f($l)\n" unless defined($val->[0]) || defined($val->[1]);
+#          die "invalid line: $f($l)\n" unless defined($val->[0]) || defined($val->[1]);
 
           add_name $val, $id0, $id1;
         }

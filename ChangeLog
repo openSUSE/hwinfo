@@ -1,3 +1,13 @@
+8/1/2001:	v1.0.67
+	- fixed color depth handling
+	- fixed multi-soundcard bug
+	- new x11 data
+
+7/1/2001:	v1.0.66
+	- kendy@suse.cz: use BIOS port info for parport
+	- new x11 data for all archs
+	- 8139too instead of rtl8139 whenever possible
+
 20/12/2000:	v1.0.65
 	- added modem init string patch from smid@suse.cz
 

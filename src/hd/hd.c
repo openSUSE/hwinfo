@@ -1126,6 +1126,14 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_floppy(hd_data);
 #endif
 
+  /*
+   * to be able to read the right parport io,
+   * we have to do this before scan_misc()
+   */
+#if defined(__i386__)
+  hd_scan_bios(hd_data);
+#endif
+  
   /* get basic system info */
   hd_scan_misc(hd_data);
 
@@ -1135,9 +1143,7 @@ void hd_scan(hd_data_t *hd_data)
 
   hd_scan_pci(hd_data);
 
-#if defined(__i386__)
-  hd_scan_bios(hd_data);
-#endif
+  /* do it _after_ hd_scan_pci() */
 #if defined(__PPC__)
   hd_scan_prom(hd_data);
 #endif
@@ -3310,6 +3316,14 @@ hd_t *hd_list(hd_data_t *hd_data, enum hw_item items, int rescan, hd_t *hd_old)
         ) continue;
       }
 
+      /* ISA-PnP sound cards: just one entry per card */
+      if(
+        items == hw_sound &&
+        hd->bus == bus_isa &&
+        hd->is.isapnp &&
+        hd->func
+      ) continue;
+
       ok = 0;
       switch(xtra) {
         case 1:		/* tv cards */
@@ -3793,20 +3807,25 @@ int run_cmd(hd_data_t *hd_data, char *cmd)
   return 0;
 }
 
-int load_module(hd_data_t *hd_data, char *module)
+int load_module_with_params(hd_data_t *hd_data, char *module, char *params)
 {
   char *cmd = NULL;
   int i;
 
   if(hd_module_is_active(hd_data, module)) return 0;
 
-  str_printf(&cmd, 0, "/sbin/insmod %s", module);
+  str_printf(&cmd, 0, "/sbin/insmod %s %s", module, params ? params : "");
 
   i = run_cmd(hd_data, cmd);
 
   free_mem(cmd);
 
   return i;
+}
+
+int load_module(hd_data_t *hd_data, char *module)
+{
+  return load_module_with_params(hd_data, module, NULL);
 }
 
 int unload_module(hd_data_t *hd_data, char *module)

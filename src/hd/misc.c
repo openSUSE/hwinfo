@@ -40,7 +40,8 @@ void hd_scan_misc(hd_data_t *hd_data)
   hd_t *hd;
   hd_res_t *res;
   int fd, i;
-  char *s;
+  char *s = NULL;
+  bios_info_t *bt = NULL;
   char par[] = "parport0";
   floppy_info_t *fi;
   int fd_ser0, fd_ser1;
@@ -76,6 +77,36 @@ void hd_scan_misc(hd_data_t *hd_data)
   /* this is enough to load the module */
   if(hd_probe_feature(hd_data, pr_misc_par)) {
     PROGRESS(1, 2, "open parallel");
+    /* what can the BIOS tell us? */
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      if(
+        hd->base_class == bc_internal &&
+        hd->sub_class == sc_int_bios &&
+        hd->detail &&
+        hd->detail->type == hd_detail_bios
+      ) break;
+    }
+    if(hd) {
+      bt = hd->detail->bios.data;
+      if(bt->par_port0) {
+        str_printf(&s, 0, "io=0x%x", bt->par_port0);
+        if(bt->par_port1) {
+          str_printf(&s, -1, ",0x%x", bt->par_port1);
+          if(bt->par_port2) str_printf(&s, -1, ",0x%x", bt->par_port2);
+        }
+	str_printf(&s, -1, " irq=none,none,none");
+      }
+      unload_module(hd_data, "parport_probe");
+      unload_module(hd_data, "lp");
+      unload_module(hd_data, "parport_pc");
+      unload_module(hd_data, "parport");
+
+      /* now load it with the right io */
+      load_module(hd_data, "parport");
+      load_module_with_params(hd_data, "parport_pc", s);
+      free_mem(s);
+    }
+    /* now load the rest of the modules */
     fd = open("/dev/lp0", O_RDONLY | O_NONBLOCK);
     if(fd >= 0) close(fd);
   }

@@ -15,7 +15,7 @@ sub getit
   $arch = shift;
 
   if($arch ne 'susedb') {
-    system "~adrian/bin/x11DB $arch 7.1 tmp beta";
+    system "~adrian/bin/x11DB $arch 7.1 tmp";
     system "rm -f tmp.sax1 tmp.sax2";
     system "mv tmp.names names.x11.$arch";
     die "oops" unless open F, "tmp.hwinfo";
@@ -30,7 +30,7 @@ sub getit
   for (@f) {
     s/^(\tx\t.*?)XF86_([^|]+)/$1\U$2/;
     if(/^\tx\t/) {
-      s/(?<=\|)([0-9,]+)$/cbits $1/e;
+      s/^(([^|]*\|){6})([0-9,]+)/$1 . cbits($3)/e;
     }
   }
 
