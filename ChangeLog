@@ -1,3 +1,6 @@
+27/8/2002:	v5.17
+	- msvec: detect some microcom modems (#15359)
+
 26/8/2002:	v5.16
 	- use "reprobe" as yast2 argument, not (.reprobe)
 	- added some new hardware types

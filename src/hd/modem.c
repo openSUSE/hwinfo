@@ -524,6 +524,7 @@ void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
 
 #endif
   
+  /* ATI3 command */
   at_cmd(hd_data, "ATI3\r", 0, 1);
   sl = sm->at_resp;
   if(sl && !strcmp(sl->str, "ATI3")) sl = sl->next;	/* skip AT cmd echo */
@@ -559,6 +560,39 @@ void guess_modem_name(hd_data_t *hd_data, ser_modem_t *modem)
     }
   }
 
+  /* ATI0 command */
+  at_cmd(hd_data, "ATI0\r", 0, 1);
+  sl = sm->at_resp;
+  if(sl && !strcmp(sl->str, "ATI0")) sl = sl->next;	/* skip AT cmd echo */
+
+  if(sl) {
+    if(strstr(sl->str, "DP Pocket")) {
+      /* looks like a Microcom DeskPorte Pocket ... */
+
+      sm->vend = new_str("Microcom");
+      sm->user_name = new_str("DeskPorte Pocket");
+
+      return;
+    }
+  }
+
+  /* ATI6 command */
+  at_cmd(hd_data, "ATI6\r", 0, 1);
+  sl = sm->at_resp;
+  if(sl && !strcmp(sl->str, "ATI6")) sl = sl->next;	/* skip AT cmd echo */
+
+  if(sl) {
+    if(strstr(sl->str, "RCV56DPF-PLL L8571A")) {
+      /* looks like a Microcom DeskPorte 56K Voice ... */
+
+      sm->vend = new_str("Microcom");
+      sm->user_name = new_str("DeskPorte 56K Voice");
+
+      return;
+    }
+  }
+
+  /* ATI2 command */
   at_cmd(hd_data, "ATI2\r", 0, 1);
   sl = sm->at_resp;
   if(sl && !strcmp(sl->str, "ATI2")) sl = sl->next;	/* skip AT cmd echo */
