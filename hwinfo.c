@@ -467,6 +467,33 @@ void *free_mem(void *);
 
 void do_test(hd_data_t *hd_data)
 {
+  int i;
+  hd_t *hd;
+
+  hd_set_probe_feature(hd_data, pr_pci);
+  hd_scan(hd_data);
+
+  i = hd_usb_support(hd_data);
+  fprintf(stderr, "\nusb support: %d\n",i);
+
+  hd_free_hd_data(hd_data);
+//  memset(hd_data, 0, sizeof *hd_data);
+  hd_scan(hd_data);
+
+#if 0
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    hd_dump_entry(hd_data, hd, stdout);
+  }
+
+  printf("%s\n", hd_data->log);
+#endif
+
+  printf(">%s< >%s<\n", getenv("hwprobe"), hd_data->cmd_line);
+
+  i = hd_usb_support(hd_data);
+  fprintf(stderr, "usb support: %d\n",i);
+
+#if 0
   hd_t *hd, *hd0;
 
   hd0 = hd_list(hd_data, hw_sound, 1, NULL);
@@ -480,6 +507,8 @@ void do_test(hd_data_t *hd_data)
   hd_data->log = free_mem(hd_data->log);
   dump_hddb_data(hd_data, hd_data->hddb_dev, "hddb_dev, final");  
   if(hd_data->log) printf("%s", hd_data->log);
+#endif
+
 #endif
 }
 

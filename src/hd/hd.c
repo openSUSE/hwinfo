@@ -653,6 +653,8 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->devtree = free_devtree(hd_data);
   hd_data->manual = hd_free_manual(hd_data->manual);
 
+  hd_data->last_idx = 0;
+
   return NULL;
 }
 
