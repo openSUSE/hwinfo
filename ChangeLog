@@ -1,3 +1,9 @@
+	- fixed XkbModel typo on intel/axp
+
+31/3/2000:	v0.89
+	- changed XkbModel to "powerpcps2" on chrp machines
+	- more iMac colors
+
 24/3/2000:	v0.88
 	- read color code on macs
 

@@ -122,15 +122,15 @@ void hd_scan_cpu(hd_data_t *hd_data)
   bogo = mhz = cache = family = model = stepping = 0;
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
-    if(sscanf(sl->str, "model name : %79[^\n]", model_id) == 1) continue;
-    if(sscanf(sl->str, "vendor_id : %79[^\n]", vendor_id) == 1) continue;
-    if(sscanf(sl->str, "bogomips : %u", &bogo) == 1) continue;
-    if(sscanf(sl->str, "cpu MHz : %u", &mhz) == 1) continue;
-    if(sscanf(sl->str, "cache size : %u KB", &cache) == 1) continue;
+    if(sscanf(sl->str, "model name : %79[^\n]", model_id) == 1);
+    if(sscanf(sl->str, "vendor_id : %79[^\n]", vendor_id) == 1);
+    if(sscanf(sl->str, "bogomips : %u", &bogo) == 1);
+    if(sscanf(sl->str, "cpu MHz : %u", &mhz) == 1);
+    if(sscanf(sl->str, "cache size : %u KB", &cache) == 1);
 
-    if(sscanf(sl->str, "cpu family : %u", &family) == 1) continue;
-    if(sscanf(sl->str, "model : %u", &model) == 1) continue;
-    if(sscanf(sl->str, "stepping : %u", &stepping) == 1) continue;
+    if(sscanf(sl->str, "cpu family : %u", &family) == 1);
+    if(sscanf(sl->str, "model : %u", &model) == 1);
+    if(sscanf(sl->str, "stepping : %u", &stepping) == 1);
 
     if(strstr(sl->str, "processor") == sl->str || !sl->next) {		/* EOF */
       if(*model_id || *vendor_id) {	/* at least one of those */
@@ -195,12 +195,12 @@ void hd_scan_cpu(hd_data_t *hd_data)
   bogo = mhz = cache = family = model = stepping = 0;
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
-    if(sscanf(sl->str, "cpu : %79[^\n]", model_id) == 1) continue;
-    if(sscanf(sl->str, "machine : %79[^\n]", vendor_id) == 1) continue;
-    if(sscanf(sl->str, "motherboard : %79[^\n]", motherboard) == 1) continue;
-    if(sscanf(sl->str, "bogomips : %u", &bogo) == 1) continue;
-    if(sscanf(sl->str, "clock : %u", &mhz) == 1) continue;
-    if(sscanf(sl->str, "L2 cache : %u KB", &cache) == 1) continue;
+    if(sscanf(sl->str, "cpu : %79[^\n]", model_id) == 1);
+    if(sscanf(sl->str, "machine : %79[^\n]", vendor_id) == 1);
+    if(sscanf(sl->str, "motherboard : %79[^\n]", motherboard) == 1);
+    if(sscanf(sl->str, "bogomips : %u", &bogo) == 1);
+    if(sscanf(sl->str, "clock : %u", &mhz) == 1);
+    if(sscanf(sl->str, "L2 cache : %u KB", &cache) == 1);
 
     if(strstr(sl->str, "processor") == sl->str || !sl->next) {		/* EOF */
       if(*model_id || *vendor_id) {	/* at least one of those */

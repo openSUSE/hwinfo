@@ -1122,6 +1122,7 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
   int arch = hd_cpu_arch(hd_data);
   unsigned u;
   char *s1, *s2;
+  hd_t *hd_tmp;
 
   if(hd->sub_class == sc_keyboard_console) return NULL;
 
@@ -1135,8 +1136,17 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
     case arch_intel:
     case arch_alpha:
       ki->XkbModel = new_str("pc104");
+      break;
     case arch_ppc:
-      ki->XkbModel = new_str(hd->bus == bus_ps2 ? "pc104" : "macintosh");
+      ki->XkbModel = new_str("macintosh");
+      for(hd_tmp = hd_data->hd; hd_tmp; hd_tmp = hd_tmp->next) {
+        if(hd_tmp->base_class == bc_internal && hd_tmp->sub_class == sc_int_cpu) {
+          s1 = hd_tmp->detail->cpu.data->vend_name;
+          if(s1 && (strstr(s1, "CHRP ") == s1 || strstr(s1, "PReP ") == s1)) {
+            ki->XkbModel = new_str("powerpcps2");
+          }
+        }
+      }
       break;
     case arch_sparc:
     case arch_sparc64:
