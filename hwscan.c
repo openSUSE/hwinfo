@@ -305,6 +305,9 @@ int do_list(hd_hw_item_t item)
       if(!s) s = "???";
 
       printf("%s: %-32s %-16s %s\n", hd->unique_id, status, s, hd->model);
+      if(hd->config_string) {
+        printf("   configured as: \"%s\"\n", hd->config_string);
+      }
     }
   }
 

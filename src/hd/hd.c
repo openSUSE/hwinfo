@@ -940,6 +940,7 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->block0);
   free_mem(hd->driver);
   free_mem(hd->parent_id);
+  free_mem(hd->config_string);
 
   free_res_list(hd->res);
 
@@ -1027,6 +1028,8 @@ hd_manual_t *hd_free_manual(hd_manual_t *manual)
     free_mem(manual->unique_id);
     free_mem(manual->parent_id);
     free_mem(manual->model);
+
+    free_mem(manual->config_string);
 
     free_str_list(manual->key);
     free_str_list(manual->value);
@@ -3542,9 +3545,16 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->hw_class == item ||
-      hd->hw_class2 == item ||
-      item == hw_manual
+      (
+        hd->hw_class == item ||
+        hd->hw_class2 == item ||
+        item == hw_manual
+      ) &&
+      (
+        hd->status.available == status_yes ||
+        hd->status.available == status_unknown ||
+        item == hw_manual
+      )
     ) {
       /* don't report old entries again */
       for(hd1 = hd_old; hd1; hd1 = hd1->next) {
@@ -4921,7 +4931,7 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
 }
 
 
-int hd_change_status(const char *id, hd_status_t status)
+int hd_change_status(const char *id, hd_status_t status, const char *config_string)
 {
   hd_data_t *hd_data;
   hd_manual_t *entry;
@@ -4937,6 +4947,11 @@ int hd_change_status(const char *id, hd_status_t status)
   if(status.available) entry->status.available = status.available;
   if(status.needed) entry->status.needed = status.needed;
   entry->status.invalid = status.invalid;
+
+  if(config_string) {
+    free_mem(entry->config_string);
+    entry->config_string = new_str(config_string);
+  }
 
   i = hd_manual_write_entry(hd_data, entry);
   

@@ -158,6 +158,10 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line0("\n");
   }
 
+  if(hd_data->debug == -1 && h->config_string) {
+    dump_line("Configured as: \"%s\"\n", h->config_string);
+  }
+
   if(
     h->attached_to &&
     (hd_tmp = hd_get_device_by_idx(hd_data, h->attached_to))

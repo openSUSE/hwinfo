@@ -66,7 +66,7 @@ static hash_t hw_items[] = {
 
 typedef enum {
   hw_id_unique = 1, hw_id_parent, hw_id_hwclass, hw_id_model,
-  hw_id_configured, hw_id_available, hw_id_needed
+  hw_id_configured, hw_id_available, hw_id_needed, hw_id_cfgstring
 } hw_id_t;
 
 #define MAN_SECT_GENERAL	"General"
@@ -82,10 +82,11 @@ static hash_t hw_ids_general[] = {
 };
 
 static hash_t hw_ids_status[] = {
-  { hw_id_configured, "Configured" },
-  { hw_id_available,  "Available"  },
-  { hw_id_needed,     "Needed"     },
-  { 0,                NULL         }
+  { hw_id_configured, "Configured"   },
+  { hw_id_available,  "Available"    },
+  { hw_id_needed,     "Needed"       },
+  { hw_id_cfgstring,  "ConfigString" },
+  { 0,                NULL           }
 };
 
 /* structure elements from hd_t */
@@ -189,6 +190,8 @@ void hd_scan_manual(hd_data_t *hd_data)
       /* just update config status */
       hd->status = entry->status;
       hd->status.available = status_yes;
+
+      hd->config_string = new_str(entry->config_string);
     }
     else {
       /* add new entry */
@@ -378,6 +381,11 @@ hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
           if(!j) err = 1;
           break;
 
+        case hw_id_cfgstring:
+          entry->config_string = s;
+          s = NULL;
+          break;
+
         default:
           err = 1;
       }
@@ -536,6 +544,14 @@ int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
     )
   ) error = 4;
 
+  if(
+    entry->config_string &&
+    !fprintf(f, "%s=%s\n",
+      key2value(hw_ids_status, hw_id_cfgstring),
+      entry->config_string
+    )
+  ) error = 4;
+
   fprintf(f, "\n[%s]\n", MAN_SECT_HARDWARE);
 
   for(
@@ -596,6 +612,11 @@ void dump_manual(hd_data_t *hd_data)
       key2value(hw_ids_status, hw_id_needed),
       key2value(status_names, entry->status.needed)
     );
+    if(entry->config_string)
+      ADD2LOG("    %s=%s\n",
+        key2value(hw_ids_status, hw_id_cfgstring),
+        entry->config_string
+      );
     for(
       sl1 = entry->key, sl2 = entry->value;
       sl1 && sl2;
@@ -651,6 +672,8 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
   hd->parent_id = new_str(entry->parent_id);
   hd->model = new_str(entry->model);
   hd->hw_class = entry->hw_class;
+
+  hd->config_string = new_str(entry->config_string);
 
   hd->status = entry->status;
 
@@ -797,6 +820,7 @@ void manual2hd(hd_manual_t *entry, hd_t *hd)
       default:
     }
   }
+
 }
 
 
@@ -810,6 +834,8 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
   entry->parent_id = new_str(hd->parent_id);
   entry->model = new_str(hd->model);
   entry->hw_class = hd->hw_class;
+
+  entry->config_string = new_str(hd->config_string);
 
   entry->status = hd->status;
 

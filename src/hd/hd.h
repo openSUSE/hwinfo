@@ -1034,6 +1034,7 @@ typedef struct hd_manual_s {
   char *model;
 
   hd_status_t status;
+  char *config_string;
 
   /* More or less free-form key, value pairs.
    * key should not contain '=', however.
@@ -1073,6 +1074,7 @@ typedef struct s_hd_t {
   hd_detail_t *detail;
 
   hd_status_t status;		/* hardware config status (if available) */
+  char *config_string;		/* tag used to indicate how the device has been configured */
 
   struct {
     unsigned agp:1;		/* AGP device */
@@ -1241,7 +1243,7 @@ hd_t *hd_read_config(hd_data_t *hd_data, const char *id);
 int hd_write_config(hd_data_t *hd_data, hd_t *hd);
 char *hd_hw_item_name(hd_hw_item_t item);
 char *hd_status_value_name(hd_status_value_t status);
-int hd_change_status(const char *id, hd_status_t status);
+int hd_change_status(const char *id, hd_status_t status, const char *config_string);
 
 #ifdef __cplusplus
 }
