@@ -802,6 +802,48 @@ static char *smbios_ch_sec_states[] = {
 };
 
 
+static char *smbios_upgrades[] = {
+  NULL, "Other", "Unknown", "Daughter Board",
+  "ZIF Socket", "Replaceable Piggy Back", "None", "LIF Socket",
+  "Slot 1", "Slot 2", "370-Pin Socket", "Slot A",
+  "Slot M", "Socket 423", "Socket A (Socket 462)", "Socket 478",
+  "Socket 754", "Socket 940"
+};
+
+
+static char *smbios_cpu_status[8] = {
+  "Unknown", "Enabled", "Disabled by User", "Disabled by BIOS",
+  "Idle", "Reserved", "Reserved", "Other"
+};
+
+
+static char *smbios_proc_types[] = {
+  NULL, "Other", "Unknown", "CPU",
+  "Math", "DSP", "Video"
+};
+
+
+static char *smbios_proc_families[] = {
+  NULL, "Other", "Unknown", "8086",
+  "80286", "Intel386", "Intel486", "8087",
+  "80287", "80387", "80487", "Pentium",
+  "Pentium Pro", "Pentium II", "Pentium MMX", "Celeron",
+  "Pentium II Xeon", "Pentium III",  "M1", "M2",
+  /* 0x14 */
+  [0x18] = "Duron", "K5", "K6", "K6-2",
+  "K6-3", "Athlon", "AMD2900", "K6-2+",
+  /* 0x20 */
+  [0x78] = "Crusoe TM5000", "Crusoe TM3000",
+  /* 0x7a */
+  [0x82] = "Itanium", "Athlon 64", "Opteron Processor",
+  /* 0x85 */
+  [ 0xb0] = "Pentium III Xeon", "Pentium III with SpeedStep", "Pentium 4", "Xeon",
+  "AS400", "Xeon MP", "Athlon XP", "Athlon MP",
+  "Itanium 2",
+  /* 0xb9 */
+};
+
+
 #define SMBIOS_ID2NAME(list, id, default) new_str(list[id < sizeof list / sizeof *list ? id : default])
 
 void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
@@ -918,7 +960,7 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
         break;
 
       case sm_processor:
-        if(data_len >= 0x20) {
+        if(data_len >= 0x1a) {
           sm->processor.socket = get_string(sl, sm_data[4]);
           sm->processor.manuf = get_string(sl, sm_data[7]);
           sm->processor.version = get_string(sl, sm_data[0x10]);
@@ -941,11 +983,50 @@ void parse_smbios(hd_data_t *hd_data, bios_info_t *bt)
                 sm->processor.voltage = 0;
             }
           }
+          sm->processor.pr_type.id = sm_data[5];
+          sm->processor.family.id = sm_data[6];
+          sm->processor.cpu_id = *(uint64_t *) (sm_data + 8);
           sm->processor.ext_clock = *(uint16_t *) (sm_data + 0x12);
           sm->processor.max_speed = *(uint16_t *) (sm_data + 0x14);
           sm->processor.current_speed = *(uint16_t *) (sm_data + 0x16);
-          sm->processor.status = sm_data[0x18];
-          sm->processor.upgrade = sm_data[0x19];
+          sm->processor.sock_status = (sm_data[0x18] >> 6) & 1;
+          sm->processor.cpu_status.id = sm_data[0x18] & 7;
+          sm->processor.upgrade.id = sm_data[0x19];
+          sm->processor.pr_type.name = SMBIOS_ID2NAME(smbios_proc_types, sm->processor.pr_type.id, 1);
+          sm->processor.family.name = SMBIOS_ID2NAME(smbios_proc_families, sm->processor.family.id, 1);
+          if(!sm->processor.family.name && sm->processor.family.id) sm->processor.family.name = new_str("Other");
+          sm->processor.cpu_status.name = SMBIOS_ID2NAME(smbios_cpu_status, sm->processor.cpu_status.id, 0);
+          sm->processor.upgrade.name = SMBIOS_ID2NAME(smbios_upgrades, sm->processor.upgrade.id, 1);
+        }
+        if(data_len >= 0x20) {
+          sm->processor.l1_cache = *(uint16_t *) (sm_data + 0x1a);
+          sm->processor.l2_cache = *(uint16_t *) (sm_data + 0x1c);
+          sm->processor.l3_cache = *(uint16_t *) (sm_data + 0x1e);
+          if(sm->processor.l1_cache == 0xffff) sm->processor.l1_cache = 0;
+          if(sm->processor.l2_cache == 0xffff) sm->processor.l2_cache = 0;
+          if(sm->processor.l3_cache == 0xffff) sm->processor.l3_cache = 0;
+        }
+        if(data_len >= 0x21) {
+          sm->processor.serial = get_string(sl, sm_data[0x20]);
+        }
+        if(data_len >= 0x22) {
+          sm->processor.asset = get_string(sl, sm_data[0x21]);
+          sm->processor.part = get_string(sl, sm_data[0x22]);
+        }
+        break;
+
+      case sm_cache:
+        if(data_len >= 0x0f) {
+          sm->cache.socket = get_string(sl, sm_data[4]);
+          u = *(uint16_t *) (sm_data + 7);
+          if((u & 0x8000)) u = (u & 0x7fff) << 6;
+          sm->cache.max_size = u;
+          u = *(uint16_t *) (sm_data + 9);
+          if((u & 0x8000)) u = (u & 0x7fff) << 6;
+          sm->cache.current_size = u;
+        }
+        if(data_len >= 0x13) {
+          sm->cache.speed = sm_data[0x0f];
         }
         break;
 

@@ -537,6 +537,8 @@ typedef struct {
   int *objects;			/* array of object handles */
 } smbios_boardinfo_t;
 
+
+/* chassis information */
 typedef struct {
   union u_hd_smbios_t *next;
   hd_smbios_type_t type;
@@ -557,6 +559,8 @@ typedef struct {
   unsigned oem;			/* OEM-specific information */
 } smbios_chassis_t;
 
+
+/* processor information */
 typedef struct {
   union u_hd_smbios_t *next;
   hd_smbios_type_t type;
@@ -564,16 +568,42 @@ typedef struct {
   unsigned char *data;
   str_list_t *strings;
   int handle;
-  char *socket;
-  char *manuf;
-  char *version;
+  char *socket;			/* socket */
+  hd_id_t upgrade;		/* socket type */
+  char *manuf;			/* manufacturer */
+  char *version;		/* version */
+  char *serial;			/* serial number */
+  char *asset;			/* asset tag */
+  char *part;			/* part number */
+  hd_id_t pr_type;		/* processor type */
+  hd_id_t family;		/* processor family */
+  uint64_t cpu_id;		/* processor id */
   unsigned voltage;		/* in 0.1 V */
   unsigned ext_clock;		/* MHz */
   unsigned max_speed;		/* MHz */
   unsigned current_speed;	/* MHz */
-  unsigned status;
-  unsigned upgrade;
+  unsigned sock_status;		/* socket status (1: populated, 0: empty */
+  hd_id_t cpu_status;		/* cpu status */
+  int l1_cache;			/* handle of L1 cache */
+  int l2_cache;			/* handle of L2 cache */
+  int l3_cache;			/* handle of L3 cache */
 } smbios_processor_t;
+
+
+/* cache information */
+typedef struct {
+  union u_hd_smbios_t *next;
+  hd_smbios_type_t type;
+  int data_len;
+  unsigned char *data;
+  str_list_t *strings;
+  int handle;
+  char *socket;			/* socket designation */
+  unsigned max_size;		/* max cache size in kbytes */
+  unsigned current_size;	/* current size in kbytes */
+  unsigned speed;		/* cache speed in nanoseconds */
+} smbios_cache_t;
+
 
 typedef struct {
   union u_hd_smbios_t *next;
@@ -645,6 +675,7 @@ typedef union u_hd_smbios_t {
   smbios_boardinfo_t boardinfo;
   smbios_chassis_t chassis;
   smbios_processor_t processor;
+  smbios_cache_t cache;
   smbios_lang_t lang;
   smbios_memarray_t memarray;
   smbios_memdevice_t memdevice;

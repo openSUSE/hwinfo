@@ -1576,6 +1576,17 @@ hd_smbios_t *free_smbios_list(hd_smbios_t *sm)
         free_mem(sm->processor.socket);
         free_mem(sm->processor.manuf);
         free_mem(sm->processor.version);
+        free_mem(sm->processor.serial);
+        free_mem(sm->processor.asset);
+        free_mem(sm->processor.part);
+        free_mem(sm->processor.upgrade.name);
+        free_mem(sm->processor.pr_type.name);
+        free_mem(sm->processor.family.name);
+        free_mem(sm->processor.cpu_status.name);
+        break;
+
+      case sm_cache:
+        free_mem(sm->cache.socket);
         break;
 
       case sm_onboard:

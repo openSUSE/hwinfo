@@ -1016,6 +1016,9 @@ void dump_bios(hd_data_t *hd_data, hd_t *hd, FILE *f)
 }
 
 
+#define SMBIOS_PRINT_ID(a, b) if(sm->a.name) fprintf(f, "    " b ": 0x%02x (%s)\n", sm->a.id, sm->a.name)
+#define SMBIOS_PRINT_STR(a, b) if(sm->a) fprintf(f, "    " b ": \"%s\"\n", sm->a)
+
 /*
  * print SMBIOS entries
  */
@@ -1026,15 +1029,6 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
   char c, *s, *t;
   unsigned u;
   int i;
-  static char *cpustatus[8] = {
-    "Unknown Status", "CPU Enabled", "CPU Disabled by User", "CPU Disabled by BIOS",
-    "CPU Idle", "Reserved", "Reserved", "Other"
-  };
-  static char *upgrades[] = {
-    NULL, NULL, NULL, "Daughter Board",
-    "ZIF Socket", "Replaceable Piggy Back", NULL, "LIF Socket",
-    "Slot 1", "Slot 2"
-  };
   static char *eccs[5] = {
     "No Error Correction", "Parity", "Single-bit ECC", "Multi-bit ECC", "CRC"
   };
@@ -1138,47 +1132,49 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
         if(sm->chassis.version) fprintf(f, "    Version: \"%s\"\n", sm->chassis.version);
         if(sm->chassis.serial) fprintf(f, "    Serial: \"%s\"\n", sm->chassis.serial);
         if(sm->chassis.asset) fprintf(f, "    Asset Tag: \"%s\"\n", sm->chassis.asset);
-        if(sm->chassis.ch_type.id) {
-          fprintf(f, "    Type: 0x%02x (%s)\n", sm->chassis.ch_type.id, sm->chassis.ch_type.name);
-        }
+        SMBIOS_PRINT_ID(chassis.ch_type, "Type");
         if(sm->chassis.lock) fprintf(f, "    Lock: present\n");
-        if(sm->chassis.bootup.id) {
-          fprintf(f, "    Bootup State: 0x%02x (%s)\n", sm->chassis.bootup.id, sm->chassis.bootup.name);
-        }
-        if(sm->chassis.power.id) {
-          fprintf(f, "    Power Supply State: 0x%02x (%s)\n", sm->chassis.power.id, sm->chassis.power.name);
-        }
-        if(sm->chassis.thermal.id) {
-          fprintf(f, "    Thermal State: 0x%02x (%s)\n", sm->chassis.thermal.id, sm->chassis.thermal.name);
-        }
-        if(sm->chassis.security.id) {
-          fprintf(f, "    Security Status: 0x%02x (%s)\n", sm->chassis.security.id, sm->chassis.security.name);
-        }
+        SMBIOS_PRINT_ID(chassis.bootup, "Bootup State");
+        SMBIOS_PRINT_ID(chassis.power, "Power Supply State");
+        SMBIOS_PRINT_ID(chassis.thermal, "Thermal State");
+        SMBIOS_PRINT_ID(chassis.security, "Security Status");
         if(sm->chassis.oem) fprintf(f, "    OEM Info: 0x%08x\n", sm->chassis.oem);
         break;
 
       case sm_processor:
         fprintf(f, "  Processor Info: #%d\n", sm->any.handle);
-        if(sm->processor.socket) {
-          fprintf(f, "    Processor Socket: \"%s\"", sm->processor.socket);
-          s = NULL;
-          if(sm->processor.upgrade < sizeof upgrades / sizeof *upgrades) s = upgrades[sm->processor.upgrade];
-          if(s) fprintf(f, " (%s)", s);
-          fprintf(f, "\n");
+        SMBIOS_PRINT_STR(processor.socket, "Socket");
+        SMBIOS_PRINT_ID(processor.upgrade, "Socket Type");
+        fprintf(f, "    Socket Status: %s\n", sm->processor.sock_status ? "Populated" : "Empty");
+        SMBIOS_PRINT_ID(processor.pr_type, "Type");
+        SMBIOS_PRINT_ID(processor.family, "Family");
+        SMBIOS_PRINT_STR(processor.manuf, "Manufacturer");
+        SMBIOS_PRINT_STR(processor.version, "Version");
+        SMBIOS_PRINT_STR(processor.serial, "Serial");
+        SMBIOS_PRINT_STR(processor.asset, "Asset Tag");
+        SMBIOS_PRINT_STR(processor.part, "Part Number");
+        if(sm->processor.cpu_id) {
+          fprintf(f, "    Processor ID: 0x%016"PRIx64"\n", sm->processor.cpu_id);
         }
-        if(sm->processor.manuf) fprintf(f, "    Processor Manufacturer: \"%s\"\n", sm->processor.manuf);
-        if(sm->processor.version) fprintf(f, "    Processor Version: \"%s\"\n", sm->processor.version);
+        SMBIOS_PRINT_ID(processor.cpu_status, "Status");
         if(sm->processor.voltage) {
           fprintf(f, "    Voltage: %u.%u V\n", sm->processor.voltage / 10, sm->processor.voltage % 10);
         }
-        if(sm->processor.ext_clock) fprintf(f, "    External Clock: %u\n", sm->processor.ext_clock);
-        if(sm->processor.max_speed) fprintf(f, "    Max. Speed: %u\n", sm->processor.max_speed);
-        if(sm->processor.current_speed) fprintf(f, "    Current Speed: %u\n", sm->processor.current_speed);
-        fprintf(f, "    Status: 0x%02x (Socket %s, %s)\n",
-          sm->processor.status,
-          (sm->processor.status & 0x40) ? "Populated" : "Empty",
-          cpustatus[sm->processor.status & 7]
-        );
+        if(sm->processor.ext_clock) fprintf(f, "    External Clock: %u MHz\n", sm->processor.ext_clock);
+        if(sm->processor.max_speed) fprintf(f, "    Max. Speed: %u MHz\n", sm->processor.max_speed);
+        if(sm->processor.current_speed) fprintf(f, "    Current Speed: %u MHz\n", sm->processor.current_speed);
+
+        if(sm->processor.l1_cache) fprintf(f, "    L1 Cache: #%d\n", sm->processor.l1_cache);
+        if(sm->processor.l2_cache) fprintf(f, "    L2 Cache: #%d\n", sm->processor.l2_cache);
+        if(sm->processor.l3_cache) fprintf(f, "    L3 Cache: #%d\n", sm->processor.l3_cache);
+        break;
+
+      case sm_cache:
+        fprintf(f, "  Cache Info: #%d\n", sm->any.handle);
+        SMBIOS_PRINT_STR(cache.socket, "Designation");
+        if(sm->cache.max_size) fprintf(f, "    Max. Size: %u kB\n", sm->cache.max_size);
+        if(sm->cache.current_size) fprintf(f, "    Current Size: %u kB\n", sm->cache.current_size);
+        if(sm->cache.speed) fprintf(f, "    Speed: %u ns\n", sm->cache.speed);
         break;
 
       case sm_onboard:
@@ -1303,6 +1299,9 @@ void dump_smbios(hd_data_t *hd_data, FILE *f)
 
 
 }
+
+#undef SMBIOS_PRINT_ID
+#undef SMBIOS_PRINT_STR
 
 
 /*
