@@ -8,7 +8,7 @@
 &detail.ccw.data.cu_model 1
 +device.name		OSA Express Ethernet card
 +baseclass.id		2
-+subclass.id		0
++subclass.id		0x86
 +driver.module.modprobe	qeth
 
  vendor.id		special 0x6001
