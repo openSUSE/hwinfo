@@ -90,7 +90,8 @@ C 0104	PS/2 Controller
 C 0105	Mouse
 	00	PS/2 Mouse
 	01	Serial Mouse
-	02	Busmouse
+	02	Bus Mouse
+	03	USB Mouse
 C 0106  Mass Storage Device
 	00	Disk
 	01	Tape
@@ -103,5 +104,5 @@ C 0107  Network Interface
 	02	Tokenring
 	03	FDDI
 	80	Network Interface
-
+C 0108	Keyboard
 

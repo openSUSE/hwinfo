@@ -23,14 +23,18 @@
 
 static void get_ps2_mouse(hd_data_t *hd_data);
 static void test_ps2_open(void *arg);
-static void get_serial_mouse(hd_data_t* hd_data);
 
+static void get_serial_mouse(hd_data_t* hd_data);
 static int _setspeed(int fd, int old, int new, int needtowrite, unsigned short flags);
 static void setspeed(int fd, int new, int needtowrite, unsigned short flags);
 static int is_pnpinfo(ser_mouse_t *mi, int ofs);
 static unsigned chk4id(ser_mouse_t *mi);
 static ser_mouse_t *add_ser_mouse_entry(ser_mouse_t **sm, ser_mouse_t *new_sm);
 static void dump_ser_mouse_data(hd_data_t *hd_data);
+
+#ifdef __PPC__
+static void get_adb_mouse(hd_data_t *hd_data);
+#endif
 
 void hd_scan_mouse(hd_data_t *hd_data)
 {
@@ -50,6 +54,12 @@ void hd_scan_mouse(hd_data_t *hd_data)
 
   get_serial_mouse(hd_data);
   if((hd_data->debug & HD_DEB_MOUSE)) dump_ser_mouse_data(hd_data);
+
+#ifdef __PPC__
+  PROGRESS(3, 0, "adb");
+
+  get_adb_mouse(hd_data);
+#endif
 }
 
 /*
@@ -105,7 +115,7 @@ void get_ps2_mouse(hd_data_t *hd_data)
         hd->attached_to = hd1->idx;
 
         hd->vend = name2eisa_id("PNP");
-        hd->dev = MAKE_EISA_ID(0x0f0e);
+        hd->dev = MAKE_ID(ID_EISA, 0x0f0e);
       }
       else {	/* if the mouse has not been used so far... */
         PROGRESS(1, 2, "ps/2");
@@ -167,7 +177,7 @@ void get_ps2_mouse(hd_data_t *hd_data)
               hd->attached_to = hd1->idx;
 
               hd->vend = name2eisa_id("PNP");
-              hd->dev = MAKE_EISA_ID(0x0f0e);
+              hd->dev = MAKE_ID(ID_EISA, 0x0f0e);
             }
 
           }
@@ -249,14 +259,17 @@ void get_serial_mouse(hd_data_t *hd_data)
 
   if(!hd_data->ser_mouse) return;
 
-  usleep(200000);		/* PnP protocol */
+  /*
+   * 200 ms seems to be too fast for some mice...
+   */
+  usleep(300000);		/* PnP protocol */
   
   for(sm = hd_data->ser_mouse; sm; sm = sm->next) {
     modem_info = TIOCM_DTR | TIOCM_RTS;
     ioctl(sm->fd, TIOCMBIS, &modem_info);
   }
 
-  to.tv_sec = 0; to.tv_usec = 200000;
+  to.tv_sec = 0; to.tv_usec = 300000;
 
   set0 = set;
   for(;;) {
@@ -290,11 +303,11 @@ void get_serial_mouse(hd_data_t *hd_data)
         strncpy(buf, sm->pnp_id, 3);
         buf[3] = 0;
         hd->vend = name2eisa_id(buf);
-        hd->dev = MAKE_EISA_ID(strtol(sm->pnp_id + 3, NULL, 16));
+        hd->dev = MAKE_ID(ID_EISA, strtol(sm->pnp_id + 3, NULL, 16));
       }
       else {
         hd->vend = name2eisa_id("PNP");
-        hd->dev = MAKE_EISA_ID(0x0f0c);
+        hd->dev = MAKE_ID(ID_EISA, 0x0f0c);
       }
     }
   }
@@ -443,6 +456,17 @@ int is_pnpinfo(ser_mouse_t *mi, int ofs)
     }
   }
 
+  /*
+   * some mice have problems providing the extended info -> return ok in
+   * these cases too
+   */
+  if(
+    (mi->bits == 6 && s[10] == 0x3c) ||
+    (mi->bits == 7 && s[10] == 0x5c)
+  ) {
+    return 11;
+  }
+
   /* no end token... */
 
   return 0;
@@ -538,3 +562,30 @@ void dump_ser_mouse_data(hd_data_t *hd_data)
   ADD2LOG("----- serial mice end -----\n");
 }
 
+#ifdef __PPC__
+void get_adb_mouse(hd_data_t *hd_data)
+{
+  unsigned u, adr = 0;
+  hd_t *hd;
+  str_list_t *sl;
+
+  for(sl = hd_data->klog; sl; sl = sl->next) {
+    if(sscanf(sl->str, "<4>ADB mouse at %u", &u) == 1 && u < 32) {	/* max 15 actually, but who cares... */
+      if(!(adr & (1 << u))) {
+        adr |= 1 << u;
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+        hd->base_class = bc_mouse;
+        hd->sub_class = sc_mou_bus;
+        hd->bus = bus_adb;
+        hd->slot = u;
+        hd->unix_dev_name = new_str(DEV_ADBMOUSE);
+
+        hd->vend = name2eisa_id("PNP");
+        hd->dev = MAKE_ID(ID_EISA, 0x0f90);
+      }
+      break;
+    }
+  }
+}
+
+#endif	/* __PPC__ */

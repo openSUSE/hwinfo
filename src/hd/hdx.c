@@ -326,7 +326,7 @@ void init_hdx()
           sscanf(buf, " %3s%x.%x %200[^\n]", buf3, &u, &u2, buf2) == 4
         ) {
           u3 = name2eisa_id(buf3);
-          add_sub_device_name(cur_ent_val, cur_ent_val1, u3, MAKE_EISA_ID(u), u2, buf2);
+          add_sub_device_name(cur_ent_val, cur_ent_val1, u3, MAKE_ID(ID_EISA, u), u2, buf2);
           continue;
         }
 
@@ -336,7 +336,7 @@ void init_hdx()
           sscanf(buf, " %3s%x %200[^\n]", buf3, &u, buf2) == 3
         ) {
           u3 = name2eisa_id(buf3);
-          add_sub_device_name(cur_ent_val, cur_ent_val1, u3, MAKE_EISA_ID(u), 0, buf2);
+          add_sub_device_name(cur_ent_val, cur_ent_val1, u3, MAKE_ID(ID_EISA, u), 0, buf2);
           continue;
         }
 
@@ -354,14 +354,14 @@ void init_hdx()
 
       // EISA device entries with class & subclass value
       if(cur_ent_type == 'v' && sscanf(buf, " %x.%x %200[^\n]", &u, &u2, buf2) == 3) {
-        cur_ent_val1 = MAKE_EISA_ID(u);
+        cur_ent_val1 = MAKE_ID(ID_EISA, u);
         add_device_name(cur_ent_val, cur_ent_val1, u2, buf2);
         continue;
       }
 
       // EISA dedicated subdevice entries with class & subclass value
       if(cur_ent_type == 's' && sscanf(buf, " %x.%x %200[^\n]", &u, &u2, buf2) == 3) {
-        add_sub_device_name(0, 0, cur_ent_val, MAKE_EISA_ID(u), u2, buf2);
+        add_sub_device_name(0, 0, cur_ent_val, MAKE_ID(ID_EISA, u), u2, buf2);
         continue;
       }
 
@@ -382,12 +382,12 @@ void init_hdx()
             break;
 
           case 'v':
-            cur_ent_val1 = MAKE_EISA_ID(u);
+            cur_ent_val1 = MAKE_ID(ID_EISA, u);
             add_device_name(cur_ent_val, cur_ent_val1, 0, buf2);
             break;
 
           case 's':
-            add_sub_device_name(0, 0, cur_ent_val, MAKE_EISA_ID(u), 0, buf2);
+            add_sub_device_name(0, 0, cur_ent_val, MAKE_ID(ID_EISA, u), 0, buf2);
             break;
 
           default:

@@ -296,7 +296,7 @@ statuswait(void)
 {
 #ifdef REALTIME
 #define TIMEOUTLOOPS 100
-        static int cnt = 0;
+//        static int cnt = 0;
 	int to;												   /* For timeout */
 	/*
 	 * Try for up to 1ms

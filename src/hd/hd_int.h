@@ -15,19 +15,27 @@
 #define PROC_DRIVER_SERIAL	"/proc/tty/driver/serial"
 #define PROC_PARPORT		"/proc/parport"
 #define PROC_KCORE		"/proc/kcore"
+#define PROC_USB_DEVICES	"/proc/bus/usb/devices"
 
 #define DEV_NVRAM		"/dev/nvram"
 #define DEV_PSAUX		"/dev/psaux"
+#define DEV_ADBMOUSE		"/dev/adbmouse"
 #define DEV_MEM			"/dev/mem"
 
+#define KLOG_BOOT		"/var/log/boot.msg"
 #define ISAPNP_CONF		"/etc/isapnp.conf"
 
 #define ID_LIST_NAME		"/lib/YaST2/id_list"
 #define ID_LIST_NAME_FALLBACK	"id_list"
 
-#define MAKE_EISA_ID(a)	((a) | 0x10000)
-#define IS_EISA_ID(a)	((a) & 0x10000)
+/* some  macros to handle internal id numbers */
+#define ID_PCI		0
+#define ID_EISA		1
+#define ID_USB		2
+
 #define ID_VALUE(a)	((a) & 0xffff)
+#define ID_CLASS(a)	(((a) >> 16) & 0xf)
+#define MAKE_ID(a, b)	((a << 16) | (b))
 
 #define PROGRESS(a, b, c) progress(hd_data, a, b, c)
 #define ADD2LOG(a...) str_printf(&hd_data->log, -2, a)
@@ -38,7 +46,7 @@
 enum mod_idx {
   mod_none, mod_memory, mod_pci, mod_isapnp, mod_pnpdump, mod_cdrom,
   mod_net, mod_floppy, mod_misc, mod_bios, mod_cpu, mod_monitor, mod_mouse,
-  mod_ide, mod_scsi, mod_serial
+  mod_ide, mod_scsi, mod_serial, mod_usb
 };
 
 void *new_mem(size_t size);

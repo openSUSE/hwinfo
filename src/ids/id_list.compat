@@ -13,5 +13,8 @@ PNP	PnP
 	0f0a	[p|microsoft|ms] Microsoft Mouse
 	0f0c	[p|microsoft|ms] MS-Compatible Serial Mouse
 	0f0e	[p|ps/2|ps2] Generic PS/2 Mouse
+# 0f90... is SuSE-specific
+	0f90	[p|busmouse|bm] Bus Mouse
+
 	0500	Standard PC COM port
 	0501	16550A-compatible COM port

@@ -30,6 +30,7 @@ extern "C" {
 #define HD_DEB_MOUSE		(1 << 14)
 #define HD_DEB_IDE		(1 << 15)
 #define HD_DEB_SCSI		(1 << 16)
+#define HD_DEB_USB		(1 << 17)
 
 
 /*
@@ -42,7 +43,7 @@ enum probe_feature {
   pr_default = 1, pr_memory, pr_pci, pr_pci_range, pr_isapnp, pr_cdrom,
   pr_cdrom_info, pr_net, pr_floppy, pr_misc, pr_misc_serial, pr_misc_par,
   pr_misc_floppy, pr_serial, pr_cpu, pr_bios, pr_monitor, pr_mouse, pr_ide,
-  pr_scsi,
+  pr_scsi, pr_usb,
   pr_all	/* pr_all must be the last */
 };
 
@@ -75,7 +76,7 @@ enum base_classes {
 
   // add our own classes here (starting at 0x100 as PCI values are 8 bit)
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,
-  bc_storage_device, bc_network_interface
+  bc_storage_device, bc_network_interface, bc_keyboard
 };
 
 /* subclass values of bc_storage */
@@ -111,7 +112,7 @@ enum sc_internal {
 
 /* subclass values of bc_mouse */
 enum sc_mouse {
-  sc_mou_ps2, sc_mou_ser, sc_mou_bus
+  sc_mou_ps2, sc_mou_ser, sc_mou_bus, sc_mou_usb
 };
 
 /* subclass values of bc_storage_device */
@@ -131,7 +132,8 @@ enum bus_types {
   bus_cardbus, bus_other,
 
   /* outside the range of the PCI values */
-  bus_ps2 = 0x80, bus_serial, bus_parallel, bus_floppy, bus_scsi, bus_ide
+  bus_ps2 = 0x80, bus_serial, bus_parallel, bus_floppy, bus_scsi, bus_ide, bus_usb,
+  bus_adb
 };
 
 /*
@@ -553,6 +555,8 @@ typedef struct {
   str_list_t *scsi;		/* /proc/scsi/scsi */
   ser_mouse_t *ser_mouse;	/* info about serial mice */
   str_list_t *cpu;		/* /proc/cpuinfo */
+  str_list_t *klog;		/* kernel log */
+  str_list_t *usb;		/* usb info */
 } hd_data_t;
 
 

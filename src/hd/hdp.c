@@ -31,6 +31,7 @@ static char *make_sub_device_name_str(hd_t *h, char *buf, int buf_size);
 static char *make_vend_name_str(hd_t *h, char *buf, int buf_size);
 static char *make_sub_vend_name_str(hd_t *h, char *buf, int buf_size);
 
+static char *vend_id2str(unsigned vend);
 
 /*
  * Dump a hardware entry to FILE *f.
@@ -164,18 +165,10 @@ void dump_normal(hd_t *h, unsigned debug, FILE *f)
 
   if(h->compat_vend || h->compat_dev) {
     a0 = hd_device_name(h->compat_vend, h->compat_dev);
-    if(IS_EISA_ID(h->vend)) {
-      dump_line(
-        "Comaptible to: %s%04x \"%s\"\n",
-        eisa_vendor_str(h->compat_vend), ID_VALUE(h->compat_dev), a0 ? a0 : "?"
-      );
-    }
-    else {
-      dump_line(
-        "Comaptible to: %04x %04x \"%s\"\n",
-        h->compat_vend, ID_VALUE(h->compat_dev), a0 ? a0 : "?"
-      );
-    }
+    dump_line(
+      "Comaptible to: %s %04x \"%s\"\n",
+      vend_id2str(h->compat_vend), ID_VALUE(h->compat_dev), a0 ? a0 : "?"
+    );
   }
 
   if(h->broken) {
@@ -528,12 +521,7 @@ char *make_vend_name_str(hd_t *h, char *buf, int buf_size)
   }
   else {
     s = hd_vendor_name(h->vend);
-    if(IS_EISA_ID(h->vend)) {
-      snprintf(buf, buf_size - 1, "%s \"%s\"", eisa_vendor_str(h->vend), s ? s : "?");
-    }
-    else {
-      snprintf(buf, buf_size - 1, "%04x \"%s\"", h->vend, s ? s : "?");
-    }
+    snprintf(buf, buf_size - 1, "%s \"%s\"", vend_id2str(h->vend), s ? s : "?");
   }
 
   return buf;
@@ -549,15 +537,28 @@ char *make_sub_vend_name_str(hd_t *h, char *buf, int buf_size)
   }
   else {
     s = hd_vendor_name(h->sub_vend);
-    if(IS_EISA_ID(h->sub_vend)) {
-      snprintf(buf, buf_size - 1, "%s \"%s\"", eisa_vendor_str(h->sub_vend), s ? s : "?");
-    }
-    else {
-      snprintf(buf, buf_size - 1, "%04x \"%s\"", h->sub_vend, s ? s : "?");
-    }
+    snprintf(buf, buf_size - 1, "%s \"%s\"", vend_id2str(h->sub_vend), s ? s : "?");
   }
 
   return buf;
 }
 
+
+char *vend_id2str(unsigned vend)
+{
+  static char buf[32];
+  char *s;
+
+  *(s = buf) = 0;
+
+  if(ID_CLASS(vend) == ID_EISA) {
+    strcpy(s, eisa_vendor_str(vend));
+  }
+  else {
+    if(ID_CLASS(vend) == ID_USB) *s++ = 'u', *s = 0;
+    sprintf(s, "%04x", ID_VALUE(vend));
+  }
+
+  return buf;
+}
 

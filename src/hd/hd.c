@@ -28,6 +28,7 @@
 #include "serial.h"
 #include "net.h"
 #include "version.h"
+#include "usb.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -84,7 +85,8 @@ static struct s_mod_names {
   { mod_serial, "serial"},
   { mod_mouse, "mouse"},
   { mod_ide, "ide"},
-  { mod_scsi, "scsi"}
+  { mod_scsi, "scsi"},
+  { mod_usb, "usb"}
 };
 
 /*
@@ -116,7 +118,8 @@ static struct s_pr_flags {
   { pr_serial, "serial" },
   { pr_mouse, "mouse" },
   { pr_ide, "ide" },
-  { pr_scsi, "scsi" }
+  { pr_scsi, "scsi" },
+  { pr_usb, "usb" }
 };
 
 #define PR_OFS			2		/* skip 0, default */
@@ -463,6 +466,7 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_mouse(hd_data);
   hd_scan_ide(hd_data);
   hd_scan_scsi(hd_data);
+  hd_scan_usb(hd_data);
 
   /* keep these at the end of the list */
   hd_scan_cdrom(hd_data);
@@ -538,11 +542,11 @@ unsigned name2eisa_id(char *s)
 
   for(i = 0; i < 3; i++) {
     u <<= 5;
-    if(s[i] < 'A' - 1 || s[i] > 'A' - 1 + 0x1f) return MAKE_EISA_ID(0);
+    if(s[i] < 'A' - 1 || s[i] > 'A' - 1 + 0x1f) return MAKE_ID(ID_EISA, 0);
     u += s[i] - 'A' + 1;
   }
 
-  return MAKE_EISA_ID(u);
+  return MAKE_ID(ID_EISA, u);
 }
 
 
