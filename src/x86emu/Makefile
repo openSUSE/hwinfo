@@ -73,6 +73,8 @@ CDEBUGFLAGS = -DDEBUG
 .cpp.o:
 	gcc -c $(CFLAGS) $(INCS) $*.cpp
 
+install: all
+
 distclean: clean
 	@rm -f *~
 

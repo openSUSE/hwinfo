@@ -1,3 +1,6 @@
+23/2/2004:	v8.12
+	- fixed Makefile
+
 23/2/2004:	v8.11
 	- added '--version' (#31925)
 
