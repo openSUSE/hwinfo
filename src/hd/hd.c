@@ -5032,9 +5032,12 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           hd->sub_class == sc_multi_video
         )
         ||
-        ( /* make i2o controllers a storage controller */
+        ( /* make i2o & fibre channel controllers storage controllers */
           item == hw_storage_ctrl &&
-          hd->base_class == bc_i2o
+          (
+            hd->base_class == bc_i2o ||
+            (hd->base_class == bc_serial && hd->sub_class == sc_ser_fiber)
+          )
         )
       ) {
         /* ##### fix? card bus magic: don't list card bus devices */

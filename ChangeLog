@@ -1,3 +1,6 @@
+25/3/2002:	v4.22
+	- recognize fibre channel controllers as storage controllers
+
 24/3/2002:	v4.21
 	- read bios data in libhd_tiny (to allow vaio handling in linuxrc, #12075)
 	- read /etc/module.pcimap, too (it's there during installation)
