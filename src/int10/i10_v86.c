@@ -179,6 +179,7 @@ do_x86(unsigned long bios_start, i86biosRegsPtr regs, int cpuemu)
 #define LIN_PREF_SI  ((pref_seg << 4) + CPU_REG_LW(esi))
 
 #define LWECX       (prefix66 ^ prefix67 ? CPU_REG(ecx) : CPU_REG_LW(ecx))
+#define SET_LWECX_ZERO (prefix66 ^ prefix67 ? (CPU_REG(ecx) = 0) : (CPU_REG_LW(ecx) = 0))
 
 static int
 vm86_GP_fault(void)
@@ -230,7 +231,7 @@ vm86_GP_fault(void)
 										SEG_ADR((CARD8 *),es,di),
 										CPU_REG_LW(eflags)&DF,
 										(is_rep? LWECX:1));
-		if (is_rep) LWECX = 0;
+		if (is_rep) SET_LWECX_ZERO;
 		CPU_REG_LW(eip)++;
 		break;
 
@@ -249,7 +250,7 @@ vm86_GP_fault(void)
 											CPU_REG_LW(eflags)&DF,
 											(is_rep? LWECX:1));
 		}
-		if (is_rep) LWECX = 0;
+		if (is_rep) SET_LWECX_ZERO;
 		CPU_REG_LW(eip)++;
 		break;
 
@@ -259,7 +260,7 @@ vm86_GP_fault(void)
 		CPU_REG_LW(esi) += port_rep_outb(CPU_REG_LW(edx),(CARD8*)INT2PTR(LIN_PREF_SI),
 										 CPU_REG_LW(eflags)&DF,
 										 (is_rep? LWECX:1));
-		if (is_rep) LWECX = 0;
+		if (is_rep) SET_LWECX_ZERO;
 		CPU_REG_LW(eip)++;
 		break;
 
@@ -278,7 +279,7 @@ vm86_GP_fault(void)
 											 CPU_REG_LW(eflags)&DF,
 											 (is_rep? LWECX:1));
 		} 
-		if (is_rep) LWECX = 0;
+		if (is_rep) SET_LWECX_ZERO;
 		CPU_REG_LW(eip)++;
 		break;
 

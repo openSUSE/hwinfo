@@ -1,5 +1,6 @@
 1/4/2005:	v11.0
 	- removed hwscan*
+	- make it build with gcc4
 
 22/3/2005:	v10.16
 	- updated X11 data (#74130)
