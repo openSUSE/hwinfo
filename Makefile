@@ -43,7 +43,7 @@ static:
 fullstatic: static
 	$(CC) -static hwinfo.o $(LDFLAGS) -lhd -lsysfs -o hwinfo.static
 	$(CC) -static hwscan.o $(LDFLAGS) -lhd -lsysfs -o hwscan.static
-	strip -R .note -R .comment hwinfo.static
+#	strip -R .note -R .comment hwinfo.static
 	strip -R .note -R .comment hwscan.static
 
 doc:

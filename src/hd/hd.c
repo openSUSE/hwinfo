@@ -156,6 +156,8 @@ static volatile pid_t child;
 static char *hd_shm_add_str(hd_data_t *hd_data, char *str);
 static str_list_t *hd_shm_add_str_list(hd_data_t *hd_data, str_list_t *sl);
 
+static hd_udevinfo_t *hd_free_udevinfo(hd_udevinfo_t *ui);
+
 
 /*
  * Names of the probing modules.
@@ -812,6 +814,8 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->partitions = free_str_list(hd_data->partitions);
 
   hd_data->smbios = smbios_free(hd_data->smbios);
+
+  hd_data->udevinfo = hd_free_udevinfo(hd_data->udevinfo);
 
   hd_data->last_idx = 0;
 
@@ -5214,5 +5218,87 @@ void hd_move_to_shm(hd_data_t *hd_data)
     }
   }
 
+}
+
+
+hd_udevinfo_t *hd_free_udevinfo(hd_udevinfo_t *ui)
+{
+  hd_udevinfo_t *next;
+
+  for(; ui; ui = next) {
+    next = ui->next;
+
+    free_mem(ui->sysfs);
+    free_mem(ui->name);
+    free_str_list(ui->links);
+
+    free_mem(ui);
+  }
+
+  return NULL;
+}
+
+
+void read_udevinfo(hd_data_t *hd_data)
+{
+  str_list_t *sl, *udevinfo, *sl0, *sl1;
+  hd_udevinfo_t **uip, *ui;
+  char *s, buf[256];
+  int l;
+
+  udevinfo = read_file("| " PROG_UDEVINFO " -d 2>/dev/null", 0, 0);
+
+  ADD2LOG("-----  udevinfo -----\n");
+  for(sl = udevinfo; sl; sl = sl->next) {
+    ADD2LOG("  %s", sl->str);
+  }
+  ADD2LOG("-----  udevinfo end -----\n");
+
+  hd_data->udevinfo = hd_free_udevinfo(hd_data->udevinfo);
+
+  uip = &hd_data->udevinfo;
+
+  for(ui = NULL, sl = udevinfo; sl; sl = sl->next) {
+    if(sscanf(sl->str, "P: %255s", buf) == 1) {
+      ui = *uip = new_mem(sizeof **uip);
+      uip = &(*uip)->next;
+      ui->sysfs = new_str(buf);
+
+      continue;
+    }
+    if(sscanf(sl->str, "N: %255s", buf) == 1) {
+      free_mem(ui->name);
+      ui->name = new_str(buf);
+
+      continue;
+    }
+
+    if(!strncmp(sl->str, "S: ", 3)) {
+      s = sl->str + 3;
+      l = strlen(s);
+      while(l > 0 && isspace(s[l-1])) s[--l] = 0;
+      if(*s) {
+        sl0 = hd_split(' ', s);
+        for(sl1 = sl0; sl1; sl1 = sl1->next) {
+          add_str_list(&ui->links, sl1->str);
+        }
+        free_str_list(sl0);
+      }
+
+      continue;
+    }
+  }
+
+  for(ui = hd_data->udevinfo; ui; ui = ui->next) {
+    ADD2LOG("%s\n", ui->sysfs);
+    if(ui->name) ADD2LOG("  name: %s\n", ui->name);
+    if(ui->links) {
+      s = hd_join(", ", ui->links);
+      ADD2LOG("  links: %s\n", s);
+      free_mem(s);
+    }
+  }
+
+  free_str_list(udevinfo);
 }
 

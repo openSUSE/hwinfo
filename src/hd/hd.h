@@ -913,6 +913,28 @@ typedef union u_hd_smbios_t {
 
 
 /*
+ * udev database info
+ */
+typedef struct s_udevinfo_t {
+  struct s_udevinfo_t *next;
+  char *sysfs;
+  char *name;
+  str_list_t *links;
+} hd_udevinfo_t;
+
+
+/*
+ * device number; type is either 0 or 'b' or 'c'.
+ *
+ * range: number of nodes
+ */
+typedef struct {
+  int type;
+  unsigned major, minor, range;
+} hd_dev_num_t;
+
+
+/*
  * structure holding the (raw) PCI data
  */
 typedef struct s_pci_t {
@@ -1853,11 +1875,24 @@ typedef struct s_hd_t {
   unsigned attached_to;
 
   /**
+   * sysfs entry for this hardware, if any.
+   */
+  char *sysfs_id;
+
+  /**
    * Special %device file.
    * Device file name to acces this hardware. Normally something below /dev.
    * For network interfaces this is the interface name.
    */
   char *unix_dev_name;
+
+  /**
+   * List of %device names.
+   * Device file names to acces this hardware. Normally something below /dev.
+   * They should be all equivalent. The preferred name however is
+   * \ref hd_t::unix_dev_name.
+   */
+  str_list_t *unix_dev_names;
 
   /**
    * Special %device file.
@@ -1866,6 +1901,11 @@ typedef struct s_hd_t {
    * there's an alternative name.
    */
   char *unix_dev_name2;
+
+  /**
+   * Device type & number according to sysfs.
+   */
+  hd_dev_num_t unix_dev_num;
 
   /**
    * BIOS/PROM id.
@@ -2138,6 +2178,7 @@ typedef struct {
     int updated;
   } shm;			/**< (Internal) our shm segment */
   unsigned pci_config_type;	/**< (Internal) PCI config type (1 or 2), 0: unknown */
+  hd_udevinfo_t *udevinfo;	/**< (Internal) udev info */
 } hd_data_t;
 
 

@@ -1,5 +1,7 @@
+6/2/2004:	v8.04
 	- sysfs includes moved
 	- usb modules renamed
+	- really basic udev & sysfs support for block devs
 
 4/12/2003:	v8.03
 	- proper multichannel device detection (finally...)

@@ -114,6 +114,10 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     s = free_mem(s);
   }
 
+  if(h->sysfs_id) {
+    dump_line("SysFS ID: %s\n", h->sysfs_id);
+  }
+
   if(h->hw_class && (s = hd_hw_item_name(h->hw_class))) {
     dump_line("Hardware Class: %s\n", s);
   }
@@ -443,6 +447,27 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
       dump_line0("\n");
     }
 
+  }
+
+  /* only if there are more than one */
+  if(h->unix_dev_names && h->unix_dev_names->next) {
+    s = hd_join(", ", h->unix_dev_names);
+    dump_line("Device Files: %s\n", s);
+    s = free_mem(s);
+  }
+
+  if(h->unix_dev_num.type) {
+    dump_line("Device Number: %s %u:%u",
+      h->unix_dev_num.type == 'b' ? "block" : "char",
+      h->unix_dev_num.major, h->unix_dev_num.minor
+    );
+    if(h->unix_dev_num.range > 1) {
+      dump_line0(
+        "-%u:%u",
+        h->unix_dev_num.major, h->unix_dev_num.minor + h->unix_dev_num.range - 1
+      );
+    }
+    dump_line0("\n");
   }
 
   if(h->rom_id) {

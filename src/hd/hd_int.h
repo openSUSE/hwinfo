@@ -52,6 +52,7 @@
 #define PROG_MODPROBE		"/sbin/modprobe"
 #define PROG_RMMOD		"/sbin/rmmod"
 #define PROG_CARDCTL		"/sbin/cardctl"
+#define PROG_UDEVINFO		"/sbin/udevinfo"
 
 #define KLOG_BOOT		"/var/log/boot.msg"
 #define ISAPNP_CONF		"/etc/isapnp.conf"
@@ -221,6 +222,8 @@ void hd_shm_done(hd_data_t *hd_data);
 void *hd_shm_add(hd_data_t *hd_data, void *ptr, unsigned len);
 int hd_is_shm_ptr(hd_data_t *hd_data, void *ptr);
 void hd_move_to_shm(hd_data_t *hd_data);
+
+void read_udevinfo(hd_data_t *hd_data);
 
 #ifdef __cplusplus
 }

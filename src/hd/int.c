@@ -3,6 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/pci.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -31,6 +33,7 @@ static void int_mouse(hd_data_t *hd_data);
 static void new_id(hd_data_t *hd_data, hd_t *hd);
 static void int_modem(hd_data_t *hd_data);
 static void int_wlan(hd_data_t *hd_data);
+static void int_udev(hd_data_t *hd_data);
 
 void hd_scan_int(hd_data_t *hd_data)
 {
@@ -79,6 +82,9 @@ void hd_scan_int(hd_data_t *hd_data)
 
   PROGRESS(11, 0, "wlan");
   int_wlan(hd_data);
+
+  PROGRESS(12, 0, "udev");
+  int_udev(hd_data);
 }
 
 /*
@@ -855,5 +861,87 @@ void int_wlan(hd_data_t *hd_data)
       hddb_add_info(hd_data, hd);
     }
   }
+}
+
+
+/*
+ * Add udev info.
+ */
+void int_udev(hd_data_t *hd_data)
+{
+  hd_udevinfo_t *ui;
+  hd_t *hd;
+  char *s = NULL;
+  struct stat sbuf;
+  str_list_t *sl;
+  unsigned u1, u2;
+
+  if(!hd_data->udevinfo) read_udevinfo(hd_data);
+
+  if(!hd_data->udevinfo) return;
+
+  /* ######### FIXME: evil fake! */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(!hd->sysfs_id && hd->unix_dev_name && !strncmp(hd->unix_dev_name, "/dev/", 5)) {
+      str_printf(&s, 0, "/sys/block%s", hd->unix_dev_name + 4);
+      if(!stat(s, &sbuf)) {
+        if(S_ISDIR(sbuf.st_mode)) {
+          hd->sysfs_id = new_str(s + 4);
+
+          str_printf(&s, 0, "/sys%s/dev", hd->sysfs_id);
+          sl = read_file(s, 0, 1);
+          if(sl) {
+            if(sscanf(sl->str, "%u:%u", &u1, &u2) == 2) {
+              hd->unix_dev_num.type = 'b';
+              hd->unix_dev_num.major = u1;
+              hd->unix_dev_num.minor = u2;
+              hd->unix_dev_num.range = 1;
+            }
+          }
+          free_str_list(sl);
+
+          str_printf(&s, 0, "/sys%s/range", hd->sysfs_id);
+          sl = read_file(s, 0, 1);
+          if(sl) {
+            if(sscanf(sl->str, "%u", &u1) == 1) {
+              hd->unix_dev_num.range = u1;
+            }
+          }
+          free_str_list(sl);
+
+        }
+      }
+      s = free_mem(s);
+    }
+  }
+  /* fake end */
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(!hd->sysfs_id) continue;
+
+    for(ui = hd_data->udevinfo; ui; ui = ui->next) {
+      if(ui->name && !strcmp(ui->sysfs, hd->sysfs_id)) {
+        hd->unix_dev_names = free_str_list(hd->unix_dev_names);
+        hd->unix_dev_name = free_mem(hd->unix_dev_name);
+        str_printf(&s, 0, "/dev/%s", ui->name);
+        add_str_list(&hd->unix_dev_names, s);
+        for(sl = ui->links; sl; sl = sl->next) {
+          str_printf(&s, 0, "/dev/%s", sl->str);
+          add_str_list(&hd->unix_dev_names, s);
+        }
+        s = free_mem(s);
+
+        sl = hd->unix_dev_names;
+        /* use first links as canonical device name */
+        if(ui->links) sl = sl->next;
+
+        hd->unix_dev_name = new_str(sl->str);
+
+        break;
+      }
+    }
+  }
+
+
 }
 
