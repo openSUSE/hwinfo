@@ -806,7 +806,7 @@
 
  vendor.id		pci 0x1002
 &device.id		pci 0x515e
-+device.name		ES1000 (1002:515E)
++device.name		RN50 515E
 +driver.xfree		4|radeon
 +driver.xfree.config	ChipID 0x5969
 
@@ -1040,7 +1040,7 @@
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5969
-+device.name		ES1000 (PCI)
++device.name		RN50 5969
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002

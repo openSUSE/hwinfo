@@ -1,6 +1,6 @@
 TOPDIR		= $(CURDIR)
 SUBDIRS		= src
-TARGETS		= hwinfo hwscan hwscand hwscanqueue
+TARGETS		= hwinfo
 CLEANFILES	= hwinfo hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~
 LIBDIR		= /lib
 ULIBDIR		= /usr$(LIBDIR)

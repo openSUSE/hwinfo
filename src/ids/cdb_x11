@@ -227,7 +227,7 @@ while ($result = $query[0]->fetchrow_array) {
   push(@arch_names,$result);
 }
 
-# Für jede Architektur wird eine eigene Datei geschrieben
+# FÃ¼r jede Architektur wird eine eigene Datei geschrieben
 foreach $arch_name (@arch_names) {
   $filename = "$opt_dir/x11.hwinfo.$arch_name";
   open(FH,"> $filename") or die "Can\'t open $filename";
@@ -265,17 +265,17 @@ foreach $arch_name (@arch_names) {
     $svId = "" if $svId eq "----";
     $sdId = "" if $sdId eq "----";
 
-    # Step 1: Erzeuge Zeilen für XFree 3 ohne 3D
-    get_info $arch_name, "XFree3";
+    # Step 1: Erzeuge Zeilen fÃ¼r XFree 3 ohne 3D
+    # get_info $arch_name, "XFree3";
 
-    # Step 2: Erzeuge Zeilen für XFree 3 mit 3D
-    get_info $arch_name, "XFree3 with 3D";
+    # Step 2: Erzeuge Zeilen fÃ¼r XFree 3 mit 3D
+    # get_info $arch_name, "XFree3 with 3D";
 
-    # Step 2: Erzeuge Zeilen für XFree 4 ohne 3D
-    get_info $arch_name, "XFree4";
+    # Step 2: Erzeuge Zeilen fÃ¼r XFree 4 ohne 3D
+    get_info $arch_name, "Xorg";
 
-    # Step 2: Erzeuge Zeilen für XFree 4 mit 3D
-    get_info $arch_name, "XFree4 with 3D";
+    # Step 2: Erzeuge Zeilen fÃ¼r XFree 4 mit 3D
+    get_info $arch_name, "Xorg with 3D";
 
   } # Ende der Produktschleife
   close(FH);
