@@ -2,6 +2,7 @@
 	- added Sony Vaio detection
 	- changed lance driver entry
 	- fixed isdn/network card bug
+	- updated id data
 
 10/7/2000:	v1.16
 	- pnpdump: start port scanning at port 0x20b, not 0x203

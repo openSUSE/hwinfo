@@ -1,5 +1,5 @@
 #x11DB
-#hwinfo data from 2000-07-10 18:56:08
+#hwinfo data from 2000-07-12 12:17:46
 #
 
 
@@ -16,7 +16,7 @@
 
 # Matrox:MGA G200 AGP
 102b 0521  
-	x	3|SVGA|3d|glx,mesa|glx.so||
+	x	3|SVGA|3d|glx|glx.so||
 
 
 # Matrox:Marvel G200 SD
@@ -71,7 +71,7 @@
 
 # Matrox:MGA G400
 102B 0525  
-	x	3|SVGA|3d|glx,mesa|glx.so||4
+	x	3|SVGA|3d|glx|glx.so||4
 
 
 # Matrox:MGA G200 PCI
@@ -81,7 +81,7 @@
 
 # Matrox:MGA G200 PCI
 102B 0520  
-	x	3|SVGA|3d|glx,mesa|glx.so||4
+	x	3|SVGA|3d|glx|glx.so||4
 
 
 # Matrox:Millennium II (AGP)
@@ -97,6 +97,11 @@
 # Matrox:Mystique 220 (AGP)
 102B 051E  
 	x	3|SVGA|||||
+
+
+# Matrox:MGA 2164W
+102B 051b  
+	x	4|mga|||||d
 
 
 # Matrox:MGA 2164W
@@ -171,12 +176,12 @@
 
 # Diamond:Viper 550
 1092 0550  
-	x	3|SVGA|||||1f
+	x	3|SVGA|||||f
 
 
 # Diamond:Viper 550
 1092 0550  
-	x	3|SVGA|3d|glx,mesa|glx.so||4
+	x	3|SVGA|3d|glx|glx.so||4
 
 
 # Elsa:Gloria Synergy
@@ -192,6 +197,11 @@
 # ATI:Mach64 VT3
 1002 5655  
 	x	3|MACH64|||||
+
+
+# ATI:Mach64 VT
+1002 5654  
+	x	4|ati|||||
 
 
 # ATI:Mach64 VT
@@ -441,7 +451,7 @@
 
 # ATI:Rage 3D LT Pro AGP
 1002 4C42  
-	x	3|MACH64|3d|glx,mesa|glx.so||4
+	x	3|MACH64|3d|glx|glx.so||4
 
 
 # ATI:Rage 3D IIC AGP
@@ -501,7 +511,7 @@
 
 # ATI:Rage 3D Pro PCI
 1002 4751  
-	x	3|MACH64|3d|glx,mesa|glx.so||4
+	x	3|MACH64|3d|glx|glx.so||4
 
 
 # ATI:Rage 3D Pro PCI
@@ -511,7 +521,7 @@
 
 # ATI:Rage 3D Pro PCI
 1002 4750  
-	x	3|MACH64|3d|glx,mesa|glx.so||4
+	x	3|MACH64|3d|glx|glx.so||4
 
 
 # ATI:Rage XL PCI-66
@@ -546,7 +556,7 @@
 
 # ATI:Rage 3D Pro PCI
 1002 4749  
-	x	3|MACH64|3d|glx,mesa|glx.so||4
+	x	3|MACH64|3d|glx|glx.so||4
 
 
 # ATI:Rage 3D Pro
@@ -561,7 +571,7 @@
 
 # ATI:Rage3D III
 1002 4744  
-	x	3|MACH64|3d|glx,mesa|glx.so||4
+	x	3|MACH64|3d|glx|glx.so||4
 
 
 # ATI:Rage 3D Pro AGP
@@ -576,7 +586,7 @@
 
 # ATI:Rage 3D Pro AGP
 1002 4742  
-	x	3|MACH64|3d|glx,mesa|glx.so||4
+	x	3|MACH64|3d|glx|glx.so||4
 
 
 # ATI:Mach64 VT
@@ -841,12 +851,12 @@
 
 # 3Dfx:3Dfx Voodoo2
 121A 0002  
-	x	4||3d|glide_v2,mesa,mesa3dfx,dev3dfx|||4
+	x	4||3d|glide_v2,mesa3dfx,dev3dfx|||4
 
 
 # 3Dfx:3Dfx Voodoo2
 121A 0002  
-	x	3||3d|mesa,glide_v2,mesa3dfx,dev3dfx|||4
+	x	3||3d|glide_v2,mesa3dfx,dev3dfx|||4
 
 
 # 3Dfx:3Dfx Voodoo
@@ -856,12 +866,12 @@
 
 # 3Dfx:3Dfx Voodoo
 121A 0001  
-	x	4||3d|mesa,mesa3dfx,dev3dfx,glide_vg|||4
+	x	4||3d|mesa3dfx,dev3dfx,glide_vg|||4
 
 
 # 3Dfx:3Dfx Voodoo
 121A 0001  
-	x	3||3d|mesa,mesa3dfx,dev3dfx,glide_vg|||4
+	x	3||3d|mesa3dfx,dev3dfx,glide_vg|||4
 
 
 # Intel:I810_E
@@ -927,6 +937,11 @@
 # S3:Savage3D (86E391)
 5333 8A20  
 	x	3|SVGA|||||
+
+
+# S3:ViRGE/GX2
+5333 8a10  
+	x	4|s3virge|||||
 
 
 # S3:ViRGE/GX2
@@ -1316,7 +1331,7 @@
 
 # Nvidia:Quadro
 10de 0103  
-	x	4|nvidia|||||4
+	x	4|nvidia||nv_glx|||4
 
 
 # Nvidia:Quadro
@@ -1336,7 +1351,7 @@
 
 # Nvidia:GEFORCEDDR
 10de 0101  
-	x	4|nvidia|3d|nv_glx,mesa|glx||
+	x	4|nvidia|3d|nv_glx|glx||
 
 
 # Nvidia:GEFORCEDDR
@@ -1346,12 +1361,12 @@
 
 # Nvidia:GEFORCE256
 10de 0100  
-	x	4|nv||nv_glx|glx||
+	x	4|nv|||||
 
 
 # Nvidia:GEFORCE256
 10de 0100  
-	x	4|nvidia|3d|nv_glx,mesa|glx||4
+	x	4|nvidia|3d|nv_glx|glx||4
 
 
 # Nvidia:GEFORCE256
@@ -1391,7 +1406,7 @@
 
 # Nvidia:Riva Vanta TNT2
 10DE 002C  
-	x	4|nvidia|3d|nv_glx,mesa|glx,dri||4
+	x	4|nvidia|3d|nv_glx|glx||4
 
 
 # Nvidia:Riva Vanta TNT2
@@ -1406,12 +1421,12 @@
 
 # Nvidia:Riva TNT2
 10DE 0028  
-	x	4|nvidia||||sw_cursor|1f
+	x	4|nvidia||nv_glx||sw_cursor|1f
 
 
 # Nvidia:Riva TNT2
 10DE 0028  
-	x	4|nvidia|3d|nv_glx,mesa|glx,dri||4
+	x	4|nvidia|3d|nv_glx|glx||4
 
 
 # Nvidia:Riva TNT2
@@ -1421,12 +1436,12 @@
 
 # Nvidia:Riva TNT2
 10DE 0028  
-	x	3|SVGA|3d|glx,mesa|glx.so||4
+	x	3|SVGA|3d|glx|glx.so||4
 
 
 # Nvidia:Riva TNT
 10DE 0020  
-	x	4|nvidia|||||1f
+	x	4|nvidia||nv_glx|||f
 
 
 # Nvidia:Riva TNT
@@ -1436,12 +1451,12 @@
 
 # Nvidia:Riva TNT
 10DE 0020  
-	x	3|SVGA|||||1f
+	x	3|SVGA|||||f
 
 
 # Nvidia:Riva TNT
 10DE 0020  
-	x	3|SVGA|3d|glx,mesa|glx.so||4
+	x	3|SVGA|3d|glx|glx.so||4
 
 
 # Nvidia:DAC64
