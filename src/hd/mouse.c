@@ -303,6 +303,7 @@ void get_serial_mouse(hd_data_t *hd_data)
   for(sm = hd_data->ser_mouse; sm; sm = sm->next) {
     chk4id(sm);
     /* reset serial lines */
+    tcflush(sm->fd, TCIOFLUSH);
     tcsetattr(sm->fd, TCSAFLUSH, &sm->tio);
     close(sm->fd);
 

@@ -35,7 +35,7 @@ void hd_scan_isdn(hd_data_t *hd_data)
     hd = add_hd_entry(hd_data, __LINE__, 0);
     hd->bus = bus_isa;
     hd->base_class = bc_isdn;
-    hd->vend = MAKE_ID(TAG_SPECIAL, 0x3000);
+    hd->vend = MAKE_ID(TAG_SPECIAL, 0x3005);
     hd->dev = MAKE_ID(TAG_SPECIAL, 0x0500);	// type, subtype
     res = add_res_entry(&hd->res, new_mem(sizeof *res));
     res->io.type = res_io;
@@ -92,7 +92,7 @@ void hd_scan_isdn(hd_data_t *hd_data)
     hd = add_hd_entry(hd_data, __LINE__, 0);
     hd->bus = bus_isa;
     hd->base_class = bc_isdn;
-    hd->vend = MAKE_ID(TAG_SPECIAL, 0x3000);
+    hd->vend = MAKE_ID(TAG_SPECIAL, 0x3001);
     hd->dev = MAKE_ID(TAG_SPECIAL, 0x0100);	// type, subtype
     res = add_res_entry(&hd->res, new_mem(sizeof *res));
     res->io.type = res_io;
@@ -139,9 +139,11 @@ ihw_card_info *get_isdn_info(hd_t *hd)
   if(hd->bus == bus_pci || hd->bus == bus_isa) {
     ici0 = new_mem(sizeof *ici0);
     ici = NULL;
+    u0 = ID_VALUE(hd->vend);
     if(
       hd->bus == bus_isa &&
-      hd->vend == MAKE_ID(TAG_SPECIAL, 0x3000) &&
+      ID_TAG(hd->vend) == TAG_SPECIAL &&
+      u0 >= 0x3000 && u0 <= 0x3006 &&
       ID_TAG(hd->dev) == TAG_SPECIAL
     ) {
       u0 = ID_VALUE(hd->dev);

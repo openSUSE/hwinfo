@@ -562,9 +562,7 @@ void hd_scan(hd_data_t *hd_data)
 #if defined(__PPC__)
   hd_scan_adb(hd_data);
 #endif
-#if defined(__i386__) || defined(__PPC__) || defined(__alpha__)
   hd_scan_kbd(hd_data);
-#endif
 #ifndef LIBHD_TINY
   hd_scan_modem(hd_data);	/* do it before hd_scan_mouse() */
 #endif
@@ -1111,6 +1109,140 @@ isdn_parm_t *new_isdn_parm(isdn_parm_t **ip)
   return *ip = new_mem(sizeof **ip);
 }
 
+driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
+{
+  driver_info_t *di;
+  driver_info_kbd_t *ki;
+  int arch = hd_cpu_arch(hd_data);
+  unsigned u;
+  char *s1, *s2;
+
+  if(hd->sub_class == sc_keyboard_console) return NULL;
+
+  di = new_mem(sizeof *di);
+  di->kbd.type = di_kbd;
+  ki = &(di->kbd);
+
+  ki->XkbRules = new_str(arch == arch_sparc || arch == arch_sparc64 ? "sun" : "xfree86");
+
+  switch(arch) {
+    case arch_intel:
+    case arch_alpha:
+      ki->XkbModel = new_str("pc104");
+    case arch_ppc:
+      ki->XkbModel = new_str(hd->bus == bus_ps2 ? "pc104" : "macintosh");
+      break;
+    case arch_sparc:
+    case arch_sparc64:
+      if(hd->vend == MAKE_ID(TAG_SPECIAL, 0x0202)) {
+        u = ID_VALUE(hd->dev);
+        if(u == 4) ki->XkbModel = new_str("type4");
+        if(u == 5) {
+          ki->XkbModel = new_str(ID_VALUE(hd->sub_dev) == 2 ? "type5_euro" : "type5");
+        }
+        s1 = s2 = NULL;
+        switch(hd->prog_if) {
+          case  2:
+            s1 = "fr"; s2 = "sunt5-fr-latin1";		// fr_BE?
+            break;
+
+          case  3:
+            s1 = "ca";
+            break;
+
+          case  4: case 36: case 83:
+            s1 = "dk";
+            break;
+
+          case  5: case 37: case 84:
+            s1 = "de"; s2 = "sunt5-de-latin1";
+            break;
+
+          case  6: case 38: case 85:
+            s1 = "it";
+            break;
+
+          case  7: case 39: case 86:
+            s1 = "nl";
+            break;
+
+          case  8: case 40: case 87:
+            s1 = "no";
+            if(u == 4) s2 = "sunt4-no-latin1";
+            break;
+
+          case  9: case 41: case 88:
+            s1 = "pt";
+            break;
+
+          case 10: case 42: case 89:
+            s1 = "es";
+            s2 = u == 4 ? "sunt4-es" : "sunt5-es";
+            break;
+
+          case 11: case 43: case 90:
+            s1 = "se"; s2 = "sunt5-fi-latin1";		// se == fi???
+            break;
+
+          case 12: case 44: case 91:
+            s1 = "fr"; s2 = "sunt5-fr-latin1";		// fr_CH
+            break;
+
+          case 13: case 45: case 92:
+            s1 = "de"; s2 = "sunt5-de-latin1";		// de_CH
+            break;
+
+          case 14: case 46: case 93:
+            s1 = "us"; s2 = "sunkeymap";		// en_US
+            break;
+
+          case 16: case 47: case 94:
+            // korea???
+            break;
+
+          case 17: case 48: case 95:
+            s1 = "tw";
+            break;
+
+          case 32: case 49: case 96:
+            s1 = "jp";
+            break;
+
+          case 50: case 97:
+            s1 = "fr"; s2 = "sunt5-fr-latin1";		// fr_CA
+            break;
+
+          case 51:
+            s1 = "hu";
+            break;
+
+          case 52:
+            s1 = "pl"; s2 = "sun-pl";
+            break;
+
+          case 53:
+            s1 = "cs";
+            break;
+
+          case 54:
+            s1 = "ru"; s2 = "sunt5-ru";
+            break;
+
+          case  0: case  1: case 33: case 34:
+          default:
+            s1 = "us"; s2 = "sunkeymap";
+            break;
+        }
+        ki->XkbLayout = new_str(s1);
+        ki->keymap = new_str(s2);
+      }
+      break;
+  }
+
+  return di;
+}
+
+
 driver_info_t *isdn_driver(hd_data_t *hd_data, hd_t *hd, ihw_card_info *ici)
 {
   driver_info_t *di;
@@ -1297,6 +1429,11 @@ driver_info_t *hd_driver_info(hd_data_t *hd_data, hd_t *hd)
 
   if((ici = get_isdn_info(hd))) {
     di0 = isdn_driver(hd_data, hd, ici);
+    if(di0) return di0;
+  }
+
+  if(hd->base_class == bc_keyboard) {
+    di0 = kbd_driver(hd_data, hd);
     if(di0) return di0;
   }
 
@@ -1631,7 +1768,23 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
     }
   }
 
+#ifdef __i386_
+  return arch_intel;
+#else
+#ifdef __alpha__
+  return arch_alpha;
+#else
+#ifdef __PPC__
+  return arch_ppc
+#else
+#ifdef __sparc__
+  return arch_sparc;
+#else
   return arch_unknown;
+#endif
+#endif
+#endif
+#endif
 }
 
 

@@ -341,6 +341,7 @@ void set_class_entries(hd_t *hd, usb_t *usb)
     case 3:
       if(sub == 1 && prot == 1) {
         hd->base_class = bc_keyboard;
+        hd->sub_class = sc_keyboard_kbd;
         break;
       }
       if(sub == 1 && prot == 2) {

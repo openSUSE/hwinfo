@@ -159,6 +159,11 @@ typedef enum sc_multimedia {
   sc_multi_video, sc_multi_audio, sc_multi_other
 } hd_sc_multimedia_t;
 
+/* subclass values of bc_keyboard */
+typedef enum sc_keyboard {
+  sc_keyboard_kbd, sc_keyboard_console
+} hd_sc_keyboard_t;
+
 /* subclass values of bc_hub */
 typedef enum sc_hub {
   sc_hub_other, sc_hub_usb
@@ -564,7 +569,7 @@ typedef struct isdn_parm_s {
 
 /* device driver info types */
 typedef enum driver_info_type {
-  di_any, di_display, di_module, di_mouse, di_x11, di_isdn
+  di_any, di_display, di_module, di_mouse, di_x11, di_isdn, di_kbd
 } hd_driver_info_t;
 
 /* unspecific info */
@@ -630,6 +635,17 @@ typedef struct {
   isdn_parm_t *params;			/* isdn parameters */
 } driver_info_isdn_t;
 
+/* keyboard info */
+typedef struct {
+  union driver_info_u *next;
+  enum driver_info_type type;		/* driver info type */
+  str_list_t *hddb0, *hddb1;		/* the actual driver database entries */
+  char *XkbRules;			/* XF86Config entries */
+  char *XkbModel;
+  char *XkbLayout;
+  char *keymap;				/* console keymap */
+} driver_info_kbd_t;
+
 /*
  * holds device driver info
  */
@@ -641,6 +657,7 @@ typedef union driver_info_u {
   driver_info_x11_t x11;
   driver_info_display_t display;
   driver_info_isdn_t isdn;
+  driver_info_kbd_t kbd;
 } driver_info_t;
 
 

@@ -216,6 +216,7 @@ void get_serial_modem(hd_data_t *hd_data)
     }
 
     /* reset serial lines */
+    tcflush(sm->fd, TCIOFLUSH);
     tcsetattr(sm->fd, TCSAFLUSH, &sm->tio);
     close(sm->fd);
 

@@ -113,6 +113,8 @@ C 107	Network Interface
 	03	FDDI
 	80	Network Interface
 C 108	Keyboard
+	00	Keyboard
+	01	Console
 C 109	Printer
 C 10a	Hub
 	01	USB Hub

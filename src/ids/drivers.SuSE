@@ -24,7 +24,6 @@
 # net/3c59x.c && net/3c90x.c
 # there seem to be some problems with the 3c59x?
 # cf. Michael Kleinhenz <kleinhen@linuxtag.de> on suse-beta; 10 Feb 2000
-10b7 9005
 10b7 900a
 10b7 9055
 10b7 9058
@@ -33,6 +32,10 @@
 10b7 9800
 	i	3c90x
 	i	3c59x
+# cf. bugzilla #2567
+10b7 9005
+	i	3c59x
+	i	3c90x
 
 # net/3c90x.c
 10b7 9004
@@ -407,6 +410,10 @@ ADP 1505
 # vmware's emulated card
 15ad 0710
 	x	VMWARE
+
+# netfinity's card is other as other cards...
+5333 8904 1014 00db
+	x	VGA16
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #

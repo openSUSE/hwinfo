@@ -16,7 +16,15 @@ s0201	Unknown
 	0000	PC Keyboard
 	0001	PS/2 Keyboard
 	41ab	MF2 Keyboard
-
+s0202	Sun Microsystems
+	0002	Type-2 Keyboard
+	0003	Type-3 Keyboard
+	0004	Type-4 Keyboard
+	0005	Type-5 Keyboard
+		0202 0001	Type-5 Unix Keyboard
+		0202 0002	Type-5 Euro Keyboard
+s0203	Unknown
+	0000	Serial Console
 # printer
 s1001	Minolta Co., Ltd.
 s1001	MINOLTA
@@ -53,11 +61,15 @@ s2004	Zoom Telephonics, Inc.
 
 # isa isdn cards
 s3000	Unknown
+s3001	Teles
 	0100	Teles 16.0
 	0101	Teles 16.0 AB
-	0200	Teles 16.3
-	0201	Teles 16.3 AB Video
+s3003	Teles
+	0300	Teles 16.3
+	0301	Teles 16.3 AB Video
+s3005	AVM
 	0500	AVM A1 or Fritz!Classic
+s3006	Elsa
 	0601	Elsa ML PC
 	0602	Elsa ML PCC-8
 	0603	Elsa ML PCC-16

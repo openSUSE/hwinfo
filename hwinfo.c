@@ -74,7 +74,7 @@ int main(int argc, char **argv)
   }
 
 #if 0
-  printf("-- display cards --\n");
+  printf("-- list --\n");
 
   hd = hd_base_class_list(hd_data, bc_display); printf("\n");
   for(; hd; hd = hd->next) hd_dump_entry(hd_data, hd, stdout);

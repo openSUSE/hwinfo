@@ -26,6 +26,9 @@
 #define DEV_MEM			"/dev/mem"
 #define DEV_DAC960		"/dev/rd"
 #define DEV_SMART		"/dev/ida"
+#define DEV_KBD			"/dev/kbd"
+#define DEV_CONSOLE		"/dev/console"
+#define DEV_OPENPROM		"/dev/openprom"
 
 #define KLOG_BOOT		"/var/log/boot.msg"
 #define ISAPNP_CONF		"/etc/isapnp.conf"

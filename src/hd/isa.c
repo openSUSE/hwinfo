@@ -53,7 +53,7 @@ void scan_isa_isdn(hd_data_t *hd_data)
     hd = add_hd_entry(hd_data, __LINE__, 0);
     hd->bus = bus_isa;
     hd->base_class = bc_isdn;
-    hd->vend = MAKE_ID(TAG_SPECIAL, 0x3000);
+    hd->vend = MAKE_ID(TAG_SPECIAL, 0x3000 + ii->type);
     hd->dev = MAKE_ID(TAG_SPECIAL, ((ii->type << 8) + (ii->subtype & 0xff)) & 0xffff);
 
     if(ii->has_io) {
