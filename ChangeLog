@@ -1,3 +1,5 @@
+	- add bus.name for bus.id == bus_ccw
+
 27/4/2004:	v8.43
 	- 'hwinfo --map' returns mapping new -> old block
 	  device names (#39437)
