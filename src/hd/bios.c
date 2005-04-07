@@ -713,7 +713,7 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
       len = *(unsigned short *) (mem->data + u + 0x16);
       structs = *(unsigned short *) (mem->data + u + 0x1c);
       if(hlen < 0x1e) continue;
-      ok = crc(mem->data + u, hlen) == 0 && addr < (1 << 20) && len;
+      ok = crc(mem->data + u, hlen) == 0 && len;
       if(ok) break;
     }
   }
