@@ -478,7 +478,7 @@ void get_input_devs(hd_data_t *hd_data)
 {
   hd_t *hd;
   char *s, *t;
-  hd_dev_num_t dev_num;
+  hd_dev_num_t dev_num = { };
   unsigned u1, u2;
 
   struct sysfs_class *sf_class;
@@ -559,7 +559,7 @@ void get_printer_devs(hd_data_t *hd_data)
 {
   hd_t *hd;
   char *s, *t;
-  hd_dev_num_t dev_num;
+  hd_dev_num_t dev_num = { };
   unsigned u1, u2;
 
   struct sysfs_class *sf_class;
@@ -704,7 +704,7 @@ void get_serial_devs(hd_data_t *hd_data)
 {
   hd_t *hd;
   char *s, *t;
-  hd_dev_num_t dev_num;
+  hd_dev_num_t dev_num = { };
   unsigned u1, u2;
 
   struct sysfs_class *sf_class;

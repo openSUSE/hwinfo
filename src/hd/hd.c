@@ -21,6 +21,7 @@
 #include <linux/pci.h>
 #include <linux/hdreg.h>
 #define _LINUX_AUDIT_H_
+#define _LINUX_PRIO_TREE_H
 #include <linux/fs.h>
 
 #define u64 uint64_t
