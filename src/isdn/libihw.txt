@@ -1,0 +1,61 @@
+1.
+ihw_card_info   *ihw_get_card(int handle);
+
+"ihw_card_info" is a struct, which hold all info about the card (see ihw.h)
+The parameter is a internal used index for the database (range 0 ... max)
+To get all records use the following code as example:
+
+        ihw_card_info *icp;
+        handle = 0;
+	while ((icp =ihw_get_card(handle++))) {
+		...
+	}
+
+If here are no entries left, you get NULL as return value.
+
+2.
+ihw_card_info	*ihw_get_device_from_type(int typ, int subtyp);
+
+Get card informations  for the card with TYPE and SUBTYPE .
+Returns NULL if no card match.
+This function is useful to get the card informations, if you have type and
+subtype from a rc.config, or from hardware probe.
+
+3.
+extern ihw_card_info    *ihw_get_card_from_id(int vendor, int device,
+                                        int subvendor, int subdevice);
+
+Get card informations  for the card with VENDOR,DEVICE,SUBVENDOR and
+SUBDEVICE for PCI and ISAPNP cards (set SUBVENDOR and SUBDEVICE 
+to 0xffff for ISAPNP cards). Returns NULL if no card found.
+
+This function will be useful for hardware probe.
+
+
+4. 
+ihw_para_info	*ihw_get_parameter(int card_handle, int pnr);
+
+This function provides parameter info for a card (which was given by one of
+the first 3 functions). "card_handle" is the "ihw_card_info->handle" of
+the given card, pnr is the number of the requested parameter (1,2, ...).
+For the first parameter, set pnr to 1, for next increment pnr, until
+NULL is returned.
+
+For examples see at demo/demo.c
+
+Specials:
+
+To make it easy to decide, if an parameter has to be set in a rc.config
+a flag P_DEFINE is set in ihw_para_info->flags, which is set for all
+parameter which have to go into rc.config (for yast1 this parameter has to be
+setable).
+
+Other flags (may be useful for autodetection):
+
+P_HARDSET  - parameter depends on a jumper or switch.
+P_SOFTSET  - parameter is written into a config register (not for PnP/PCI)
+P_READABLE - parameter can be read from a config register (not for PnP/PCI)
+P_ISAPNP   - parameter is set via ISA PnP setup
+P_PCI      - parameter is a PCI one
+
+Karsten

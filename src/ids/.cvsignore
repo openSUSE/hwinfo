@@ -1,0 +1,11 @@
+.depend
+check_hd
+drivers.network.usb
+hd.ids
+hd.log
+hd0.ids
+hd0.log
+hd_ids.h
+hd_ids_tiny.h
+hd_tiny.ids
+hd_tiny.log

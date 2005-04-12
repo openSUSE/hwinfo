@@ -1,0 +1,690 @@
+# storage controller
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# scsi controller
+
+# scsi/53c7,8xx.c
+# scsi/ncr53c8xx.c
+# scsi/sym53c8xx.c
+ vendor.id		pci 0x1000
+&device.id		pci 0x0001+0x0004
++driver.module.modprobe	sym53c8xx
++driver.module.modprobe	ncr53c8xx
++driver.module.modprobe	53c7,8xx
+
+ vendor.id		pci 0x1000
+&device.id		pci 0x0006
+|vendor.id		pci 0x1000
+&device.id		pci 0x000a
+|vendor.id		pci 0x1000
+&device.id		pci 0x000c+0x0002
+# 0x000f: see #5816
+|vendor.id		pci 0x1000
+&device.id		pci 0x000f
++driver.module.modprobe	ncr53c8xx
++driver.module.modprobe	sym53c8xx
+
+ vendor.id		pci 0x1000
+&device.id		pci 0x0012
+|vendor.id		pci 0x1000
+&device.id		pci 0x008f
+# #21984
+|vendor.id		pci 0x1000
+&device.id		pci 0x000b
++driver.module.modprobe	sym53c8xx
++driver.module.modprobe	ncr53c8xx
+
+# sym* only
+ vendor.id		pci 0x1000
+&device.id		pci 0x0020+0x0002
++driver.module.modprobe	sym53c8xx
+
+# message/fusion/
+ vendor.id		pci 0x1000
+&device.id		pci 0x0030
+|vendor.id		pci 0x1000
+&device.id		pci 0x0621+0x0002
+|vendor.id		pci 0x1000
+&device.id		pci 0x0624
+|vendor.id		pci 0x1000
+&device.id		pci 0x0626
+|vendor.id		pci 0x1000
+&device.id		pci 0x0628
++driver.module.modprobe	mptscsih
+
+ vendor.id		pci 0x1014
+&device.id		pci 0x0096
++driver.module.modprobe	ibmsis
+
+# scsi/tmscsim.c
+# scsi/AM53C974.c
+ vendor.id		pci 0x1022
+&device.id		pci 0x2020
++driver.module.modprobe	tmscsim
++driver.module.modprobe	AM53C974
+
+# scsi/fdomain.c
+ vendor.id		pci 0x1036
+&device.id		pci 0x0000
++driver.module.modprobe	fdomain
+
+# scsi/eata_dma.c
+ vendor.id		pci 0x1044
+&device.id		pci 0xa400
++driver.module.modprobe	eata
+
+# scsi/dpti.c
+ baseclass.id           0x00e
+&subclass.id            0x00
+&vendor.id		pci 0x1044
+&device.id		pci 0xa501
+|baseclass.id           0x00e
+&subclass.id            0x00
+&vendor.id		pci 0x1044
+&device.id		pci 0xa511
++driver.module.modprobe	dpt_i2o
+
+# scsi/BusLogic.c
+ vendor.id		pci 0x104b
+&device.id		pci 0x0140
+|vendor.id		pci 0x104b
+&device.id		pci 0x1040
+|vendor.id		pci 0x104b
+&device.id		pci 0x8130
++driver.module.modprobe	BusLogic
+
+# scsi/qla1280.c
+ vendor.id		pci 0x1077
+&device.id		pci 0x1016
+|vendor.id		pci 0x1077
+&device.id		pci 0x1080
+|vendor.id		pci 0x1077
+&device.id		pci 0x1216
+|vendor.id		pci 0x1077
+&device.id		pci 0x1240
+|vendor.id		pci 0x1077
+&device.id		pci 0x1280
++driver.module.modprobe	qla1280
+
+# scsi/qlogicisp.c
+ vendor.id		pci 0x1077
+&device.id		pci 0x1020
++driver.module.modprobe	qlogicisp
+
+# scsi/qlogicfc.c
+ vendor.id		pci 0x1077
+&device.id		pci 0x2100
++driver.module.modprobe	qlogicfc
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x2200
++driver.module.modprobe	qla2200
++driver.module.modprobe	qlogicfc
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x2300
+|vendor.id		pci 0x1077
+&device.id		pci 0x2312
++driver.module.modprobe	qla2300
+
+# scsi/advansys.c
+ vendor.id		pci 0x10cd
+&device.id		pci 0x1100
+|vendor.id		pci 0x10cd
+&device.id		pci 0x1200
+|vendor.id		pci 0x10cd
+&device.id		pci 0x1300
+|vendor.id		pci 0x10cd
+&device.id		pci 0x2300
+|vendor.id		pci 0x10cd
+&device.id		pci 0x2500
++driver.module.modprobe	advansys
+
+# scsi/inia100.c
+ vendor.id		pci 0x1101
+&device.id		pci 0x0002
+|vendor.id		pci 0x1101
+&device.id		pci 0x1060
++driver.module.modprobe	a100u2w
+
+# scsi/ini9100u.c
+ vendor.id		pci 0x1101
+&device.id		pci 0x9400+0x0002
+|vendor.id		pci 0x1101
+&device.id		pci 0x9500
+|vendor.id		pci 0x134a
+&device.id		pci 0x0002
++driver.module.modprobe	initio
+
+# scsi/gdth.c
+ vendor.id		pci 0x1119
+&device.id		pci 0x0000+0x000e
+|vendor.id		pci 0x1119
+&device.id		pci 0x0100+0x0300
+|vendor.id		pci 0x8086
+&device.id		pci 0x0600
++driver.module.modprobe	gdth
+
+# scsi/atp870u.c
+ vendor.id		pci 0x1191
+&device.id		pci 0x8002
+|vendor.id		pci 0x1191
+&device.id		pci 0x8010
+|vendor.id		pci 0x1191
+&device.id		pci 0x8020
+|vendor.id		pci 0x1191
+&device.id		pci 0x8030
+|vendor.id		pci 0x1191
+&device.id		pci 0x8040
+|vendor.id		pci 0x1191
+&device.id		pci 0x8050
+|vendor.id		pci 0x1191
+&device.id		pci 0x8060
++driver.module.modprobe	atp870u
+
+# scsi/pci2220i.c
+ vendor.id		pci 0x1256
+&device.id		pci 0x4401
++driver.module.modprobe	pci2220i
+
+# scsi/pci2000.c
+ vendor.id		pci 0x1256
+&device.id		pci 0x5201
++driver.module.modprobe	pci2000
+
+# scsi/dmx3191d.c
+ vendor.id		pci 0x134a
+&device.id		pci 0x0001
++driver.module.modprobe	dmx3191d
+
+# scsi/3w-xxxx.c
+ vendor.id		pci 0x13c1
+&device.id		pci 0x1000+0x0002
++driver.module.modprobe	3w-xxxx
+
+# modules.alias
+ vendor.id		pci 0x1de1
+&device.id		pci 0x0391
++driver.module.modprobe	dc395x
+
+# modinfo
+ vendor.id		pci 0x1000
+&device.id		pci 0x0407
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+|vendor.id		pci 0x101e
+&device.id		pci 0x1960
+|vendor.id		pci 0x101e
+&device.id		pci 0x9010
+|vendor.id		pci 0x101e
+&device.id		pci 0x9060
+|vendor.id		pci 0x1028
+&device.id		pci 0x000e+0x0002
+|vendor.id		pci 0x8086
+&device.id		pci 0x1960
++driver.module.modprobe	megaraid
+
+# modinfo
+ vendor.id		pci 0x1000
+&device.id		pci 0x0407
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x0530+0x0003
+|vendor.id		pci 0x1000
+&device.id		pci 0x0407
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0531
+|vendor.id		pci 0x1000
+&device.id		pci 0x0407
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x0530
+|vendor.id		pci 0x1000
+&device.id		pci 0x0407
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x0532
+|vendor.id		pci 0x1000
+&device.id		pci 0x0408
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x0001+0x0002
+|vendor.id		pci 0x1000
+&device.id		pci 0x0408
+&subvendor.id		pci 0x1025
+&subdevice.id		pci 0x004d
+|vendor.id		pci 0x1000
+&device.id		pci 0x0408
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0001+0x0002
+|vendor.id		pci 0x1000
+&device.id		pci 0x0408
+&subvendor.id		pci 0x1734
+&subdevice.id		pci 0x1065
+|vendor.id		pci 0x1000
+&device.id		pci 0x0408
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x0002
+|vendor.id		pci 0x1000
+&device.id		pci 0x0408
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x3431
+|vendor.id		pci 0x1000
+&device.id		pci 0x0408
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x3499
+|vendor.id		pci 0x1000
+&device.id		pci 0x0409
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x3004
+|vendor.id		pci 0x1000
+&device.id		pci 0x0409
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x3008
+|vendor.id		pci 0x1000
+&device.id		pci 0x0409
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x3008
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x0518
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x0520
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x0522+0x0002
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0x4523
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1000
+&subdevice.id		pci 0xa520
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0518
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0520
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x0520
+|vendor.id		pci 0x1000
+&device.id		pci 0x1960
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x0523
+|vendor.id		pci 0x101e
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0471
+|vendor.id		pci 0x101e
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0475
+|vendor.id		pci 0x101e
+&device.id		pci 0x1960
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0493
+|vendor.id		pci 0x1028
+&device.id		pci 0x000e
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0123
+|vendor.id		pci 0x1028
+&device.id		pci 0x000f
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x014a
+|vendor.id		pci 0x1028
+&device.id		pci 0x0013
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x016c+0x0005
++driver.module.modprobe	megaraid_mbox
+
+# scsi/aic7xxx/{aic7xxx_pci.c,aic79xx_pci.c}
+ vendor.id		pci 0x9004
+&device.id		pci 0x0078
+|vendor.id		pci 0x9004
+&device.id		pci 0x1078
+|vendor.id		pci 0x9004
+&device.id		pci 0x2178
+|vendor.id		pci 0x9004
+&device.id		pci 0x3860
+|vendor.id		pci 0x9004
+&device.id		pci 0x5078
+|vendor.id		pci 0x9004
+&device.id		pci 0x5578
+|vendor.id		pci 0x9004
+&device.id		pci 0x6038
+|vendor.id		pci 0x9004
+&device.id		pci 0x6075
+|vendor.id		pci 0x9004
+&device.id		pci 0x6078
+|vendor.id		pci 0x9004
+&device.id		pci 0x6178
+|vendor.id		pci 0x9004
+&device.id		pci 0x7078
+|vendor.id		pci 0x9004
+&device.id		pci 0x7178
+&subvendor.id		pci 0x0000
+&subdevice.id		pci 0x0000
+|vendor.id		pci 0x9004
+&device.id		pci 0x7278
+&subvendor.id		pci 0x0000
+&subdevice.id		pci 0x0000
+|vendor.id		pci 0x9004
+&device.id		pci 0x7378
+&subvendor.id		pci 0x0000
+&subdevice.id		pci 0x0000
+|vendor.id		pci 0x9004
+&device.id		pci 0x7478
+&subvendor.id		pci 0x0000
+&subdevice.id		pci 0x0000
+|vendor.id		pci 0x9004
+&device.id		pci 0x7578
+&subvendor.id		pci 0x0000
+&subdevice.id		pci 0x0000
+|vendor.id		pci 0x9004
+&device.id		pci 0x7678
+&subvendor.id		pci 0x0000
+&subdevice.id		pci 0x0000
+|vendor.id		pci 0x9004
+&device.id		pci 0x7815
+|vendor.id		pci 0x9004
+&device.id		pci 0x7890+0x0010
+&subvendor.id		pci 0x9004
+&subdevice.id		pci 0x7893
+|vendor.id		pci 0x9004
+&device.id		pci 0x7895
+|vendor.id		pci 0x9004
+&device.id		pci 0x8078
+|vendor.id		pci 0x9004
+&device.id		pci 0x8178
+|vendor.id		pci 0x9004
+&device.id		pci 0x8278
+|vendor.id		pci 0x9004
+&device.id		pci 0x8378
+|vendor.id		pci 0x9004
+&device.id		pci 0x8478
+|vendor.id		pci 0x9004
+&device.id		pci 0x8578
+|vendor.id		pci 0x9004
+&device.id		pci 0x8678
+|vendor.id		pci 0x9004
+&device.id		pci 0x8778
+|vendor.id		pci 0x9004
+&device.id		pci 0x8878
+|vendor.id		pci 0x9005
+&device.id		pci 0x0010+0x0010
+|vendor.id		pci 0x9005
+&device.id		pci 0x0050+0x0010
+|vendor.id		pci 0x9005
+&device.id		pci 0x0080+0x0010
+|vendor.id		pci 0x9005
+&device.id		pci 0x00c0+0x0010
++driver.module.modprobe	aic7xxx
+
+ vendor.id		pci 0x9005
+&device.id		pci 0x8000+0x0020
+|vendor.id		pci 0x9005
+&device.id		pci 0x8080+0x0020
++driver.module.modprobe	aic79xx
+
+# scsi/aha152x.c
+ vendor.id		ADP
+&device.id		eisa 0x1505
++driver.module.modprobe	aha152x
++driver.module.config	options aha152x		aha152x=<io0>,<irq0>
++driver.module.insmod	aha152x aha152x=<io0>,<irq0>
+
+# scsi/mesh.c
+ vendor.id		special 0x0401
+&device.id		special 0x0030
++driver.module.modprobe	mesh
+
+# scsi/mac53c94.c
+ vendor.id		special 0x0401
+&device.id		special 0x0031
++driver.module.modprobe	mac53c94
+
+# iomega zip
+ vendor.id		special 0x1800
+&device.id		special 0x0001
++driver.module.modprobe	imm
+
+# iomega zip
+ vendor.id		special 0x1800
+&device.id		special 0x0002
++driver.module.modprobe	ppa
+
+# scsi/qlogicpti.c
+ vendor.id		special 0x4001
+&device.id		special 0x1003+0x0002
++driver.module.modprobe	qlogicpti
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# block devices (RAID, ...)
+
+# modules.alias
+ vendor.id		pci 0x1011
+&device.id		pci 0x1065
+&subvendor.id		pci 0x1069
+&subdevice.id		pci 0x0020
+|vendor.id		pci 0x1069
+&device.id		pci 0x0001+0x0002
+|vendor.id		pci 0x1069
+&device.id		pci 0x0010
+|vendor.id		pci 0x1069
+&device.id		pci 0x0050
+|vendor.id		pci 0x1069
+&device.id		pci 0xba56
++driver.module.modprobe	DAC960
++baseclass.id		0x001
++subclass.id		0x04
+
+# pcimap
+ vendor.id		pci 0x0e11
+&device.id		pci 0xae10
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4030+0x0005
+|vendor.id		pci 0x1000
+&device.id		pci 0x0010
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4040
+|vendor.id		pci 0x1000
+&device.id		pci 0x0010
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4048
+|vendor.id		pci 0x1011
+&device.id		pci 0x0046
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4050+0x0002
+|vendor.id		pci 0x1011
+&device.id		pci 0x0046
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4058
++driver.module.modprobe	cpqarray
+
+# pcimap
+ vendor.id		pci 0x0e11
+&device.id		pci 0x0046
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x409a+0x0004
+|vendor.id		pci 0x0e11
+&device.id		pci 0xb060
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4070
+|vendor.id		pci 0x0e11
+&device.id		pci 0xb178
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4080
+|vendor.id		pci 0x0e11
+&device.id		pci 0xb178
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x4082+0x0002
++driver.module.modprobe	cciss
+
+# block/swim3.c
+ vendor.id		special 0x0401
+&device.id		special 0x0040
++driver.module.modprobe	swim3
+
+# scsi/aacraid/linit.c
+ vendor.id		pci 0x1028
+&device.id		pci 0x0001
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0001
+|vendor.id		pci 0x1028
+&device.id		pci 0x0002
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0002
+|vendor.id		pci 0x1028
+&device.id		pci 0x0003
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0003
+|vendor.id		pci 0x1028
+&device.id		pci 0x0004
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x00d0
+|vendor.id		pci 0x1028
+&device.id		pci 0x0002
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x00d1
+|vendor.id		pci 0x1028
+&device.id		pci 0x0002
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x00d9
+|vendor.id		pci 0x1028
+&device.id		pci 0x000a
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0106
+|vendor.id		pci 0x1028
+&device.id		pci 0x000a
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x011b
+|vendor.id		pci 0x1028
+&device.id		pci 0x000a
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0121
+|vendor.id		pci 0x9005
+&device.id		pci 0x0283
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0283
+|vendor.id		pci 0x9005
+&device.id		pci 0x0284
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0284
+|vendor.id		pci 0x9005
+&device.id		pci 0x0285
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0286
+|vendor.id		pci 0x9005
+&device.id		pci 0x0285
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0285
+|vendor.id		pci 0x9005
+&device.id		pci 0x0285
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0287
+|vendor.id		pci 0x9005
+&device.id		pci 0x0285
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0287
+|vendor.id		pci 0x1011
+&device.id		pci 0x0046
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x0364+2
+|vendor.id		pci 0x1011
+&device.id		pci 0x0046
+&subvendor.id		pci 0x9005
+&subdevice.id		pci 0x1364
+|vendor.id		pci 0x1011
+&device.id		pci 0x0046
+&subvendor.id		pci 0x103c
+&subdevice.id		pci 0x10c2
++driver.module.modprobe	aacraid
+
+# modules.alias
+ vendor.id		pci 0x1166
+&device.id		pci 0x0240
++driver.module.modprobe	sata_svw
+
+# modules.alias
+ vendor.id		pci 0x1106
+&device.id		pci 0x3149
++driver.module.modprobe	sata_via
+
+# modules.alias
+ vendor.id		pci 0x105a
+&device.id		pci 0x3318+0x0002
+|vendor.id		pci 0x105a
+&device.id		pci 0x3371
+|vendor.id		pci 0x105a
+&device.id		pci 0x3373
+|vendor.id		pci 0x105a
+&device.id		pci 0x3375+0x0002
+|vendor.id		pci 0x105a
+&device.id		pci 0x6622
++driver.module.modprobe	sata_promise
+
+# modules.alias
+ vendor.id		pci 0x1095
+&device.id		pci 0x0240
+|vendor.id		pci 0x1095
+&device.id		pci 0x3112
+|vendor.id		pci 0x1095
+&device.id		pci 0x3114
+|vendor.id		pci 0x1095
+&device.id		pci 0x3512
++driver.module.modprobe	sata_sil
+
+
+# modules.alias, #38628
+ baseclass.id		0x00b
+&subclass.id		0x40
+&progif.id		0x00
+&vendor.id		pci 0x10a9
+&device.id		pci 0x100a
++driver.module.modprobe	sgiioc4
++baseclass.id		0x001
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# usb controller
+
+ baseclass.id		0x00c
+&subclass.id		0x03
+&progif.id		0x00
++driver.module.modprobe	uhci-hcd
+
+ baseclass.id		0x00c
+&subclass.id		0x03
+&progif.id		0x10
++driver.module.modprobe	ohci-hcd
+
+ baseclass.id		0x00c
+&subclass.id		0x03
+&progif.id		0x20
++driver.module.modprobe	ehci-hcd
+
+ baseclass.id		0x00c
+&subclass.id		0x00
+&progif.id		0x10
++driver.module.modprobe	ohci1394
+
+ vendor.id		pci 0x104c
+&device.id		pci 0x8000
++driver.module.modprobe	pcilynx
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Compaq Virtual Management Device
+
+# make it a floppy
+ baseclass.id		0x106
+&vendor.id		usb 0x049f
+&device.id		usb 0x0040
++subclass.id		0x03

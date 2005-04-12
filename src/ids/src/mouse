@@ -1,0 +1,137 @@
+# mice
+
+
+# KYE: protocol info not verified
+ vendor.id		KYE
+&device.id		eisa 0x0001
+|vendor.id		LGI
+&device.id		eisa 0x8001
++driver.mouse		microsoft|ms|3|0
+
+ vendor.id		LGI
+&device.id		eisa 0x800b+0x0002
++driver.mouse		mouseman|mman|3|0
+
+ vendor.id		PNP
+&device.id		eisa 0x0f04
+|vendor.id		PNP
+&device.id		eisa 0x0f05
++driver.mouse		mousesystems|msc|3|0
+
+ vendor.id		PNP
+&device.id		eisa 0x0f01
+|vendor.id		PNP
+&device.id		eisa 0x0f02
+|vendor.id		PNP
+&device.id		eisa 0x0f0a
+|vendor.id		PNP
+&device.id		eisa 0x0f0b
+|vendor.id		PNP
+&device.id		eisa 0x0f0c
+|vendor.id		PNP
+&device.id		eisa 0x0f0d
+|vendor.id		special 0x0200
+&device.id		special 0x0003
++driver.mouse		microsoft|ms
+
+ vendor.id		PNP
+&device.id		eisa 0x0f0e
++driver.mouse		ps/2|ps2||0
+
+ vendor.id		special 0x0200
+&device.id		special 0x0002
++driver.mouse		explorerps/2|exps2||0
+
+# genius usb netmouse pro
+ vendor.id		usb 0x0458
+&device.id		usb 0x0002
++driver.mouse		explorerps/2|exps2|4|0
+
+# MS IntelliMouse Explorer
+ vendor.id		usb 0x045e
+&device.id		usb 0x001e
+# Logitech Wheelmouse Model M-BB48
+|vendor.id		usb 0x046d
+&device.id		usb 0xc001
+# Optical(?) Logitech Wheel Mouse
+|vendor.id		usb 0x046d
+&device.id		usb 0xc00c
+# Optical Logitech Wheel Mouse (#16003)
+|vendor.id		usb 0x046d
+&device.id		usb 0xc00e
+# Optical Logitech Wheel Mouse (#22797)
+|vendor.id		usb 0x046d
+&device.id		usb 0xc030
+# some mouse (#29468)
+|vendor.id		usb 0x046d
+&device.id		usb 0xc404
+# some mouse (#29719)
+|vendor.id		usb 0x0461
+&device.id		usb 0x4d03
++driver.mouse		explorerps/2|exps2|3|1
+
+# MouseMan Dual Optical (#18296)
+# http://www.logitech.com/index.cfm?page=products/details&CRID=3&CONTENTID=4984&countryid=7&languageid=4
+ vendor.id		usb 0x046d
+&device.id		usb 0xc012
++driver.mouse		explorerps/2|exps2|4|1
+
+ vendor.id		usb 0x05fe
+&device.id		usb 0x0005
++driver.mouse		explorerps/2|exps2|3|1
+
+# apple/logitech usb mouse
+ vendor.id		usb 0x05ac
+&device.id		usb 0x0301
++driver.mouse		explorerps/2|exps2|1|0
+
+# Razer Boomslang USB Mouse
+ vendor.id		usb 0x05e3
+&device.id		usb 0x000b
++driver.mouse		explorerps/2|exps2|5|1
+
+# ADB mice
+ vendor.id		special 0x0100
+&device.id		special 0x0300+0x0100
++driver.mouse		explorerps/2|exps2|1|0
+
+# general USB mice
+ vendor.id		special 0x0200
+&device.id		special 0x0001
++driver.mouse		explorerps/2|exps2
+
+ vendor.id		special 0x0200
+&device.id		special 0x0004
++driver.mouse		explorerps/2|exps2|3|1
+
+ vendor.id		special 0x0200
+&device.id		special 0x0005
++driver.mouse		explorerps/2|exps2|5|1
+
+ vendor.id		special 0x0200
+&device.id		special 0x0006
++driver.mouse		ps/2|ps2|2|0
+
+ vendor.id		special 0x0200
+&device.id		special 0x0007
++driver.mouse		ps/2|ps2|3|0
+
+# Sun Mouse (/dev/sunmouse)
+ vendor.id		special 0x0202
+&device.id		special 0x0000
++driver.mouse		mousesystems|sun|3|0
+
+# very special
+ vendor.id		special 0x0210
+&device.id		special 0x0000+0x0100
++driver.mouse		explorerps/2|exps2
+
+# A4Tech 4D++ super whatever mouse (#24137)
+ vendor.name		A4W
++vendor.name		A4Tech
+
+ device.id		eisa 0x0005
+&vendor.name		A4Tech
++device.name		Serial Wheel Mouse
++driver.mouse		intellimouse|ms3|3|2
+

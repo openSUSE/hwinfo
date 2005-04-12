@@ -1,0 +1,5378 @@
+# monitors, LCDs
+
+
+ vendor.id		AOC
++vendor.name		AOC
+
+ vendor.id		AOC
+&device.id		eisa 0xa566
++device.name		SPECTRUM 5NLR
++driver.display		1280x1024|30-64|50-100|85
+
+ vendor.id		AOC
+&device.id		eisa 0xa782
++device.name		SPECTRUM 7NLR
++driver.display		|50-110|30-82
+
+ vendor.id		AOC
+&device.id		eisa 0xd350
++device.name		4VA
+
+ vendor.id		AOC
+&device.id		eisa 0xd566
++device.name		SPECTRUM 5VLR & 5VLRA
++driver.display		|50-100|30-66
+
+ vendor.id		AOC
+&device.id		eisa 0xe570
++device.name		SPECTRUM 5GLR
++driver.display		|50-120|30-64
+
+ vendor.id		AOC
+&device.id		eisa 0xe750
++device.name		SPECTRUM 7DLRA
++driver.display		|50-120|30-68
+
+ vendor.id		API
++vendor.name		ACER
+
+ vendor.id		API
+&device.id		eisa 0x0037
++device.name		ACERVIEW 55
++driver.display		|55-90|31-70
+
+ vendor.id		API
+&device.id		eisa 0x424c
++device.name		ACERVIEW 76IE
++driver.display		|50-110|30-69
+
+ vendor.id		API
+&device.id		eisa 0x440b
++device.name		ACERVIEW 11D
++driver.display		|55-90|31-40
+
+ vendor.id		API
+&device.id		eisa 0x4421
++device.name		ACERVIEW 33D
++driver.display		|55-90|31-40
+
+ vendor.id		API
+&device.id		eisa 0x4522
++device.name		ACERVIEW 7134E
++driver.display		|55-90|31-60
+
+ vendor.id		API
+&device.id		eisa 0x4536
++device.name		ACERVIEW 7154E
++driver.display		|55-90|31-60
+
+ vendor.id		API
+&device.id		eisa 0x4538
++device.name		ACERVIEW 7156E
++driver.display		|55-90|31-70
+
+ vendor.id		API
+&device.id		eisa 0x454c
++device.name		ACERVIEW 7176IE
++driver.display		|55-90|31-70
+
+ vendor.id		API
+&device.id		eisa 0x454e
++device.name		ACERVIEW 7178IE
++driver.display		|55-90|31-90
+
+ vendor.id		API
+&device.id		eisa 0x4938
++device.name		ACERVIEW 7156I
++driver.display		|55-90|31-70
+
+ vendor.id		API
+&device.id		eisa 0x494c
++device.name		ACERVIEW 76I
++driver.display		|55-90|31-70
+
+ vendor.id		API
+&device.id		eisa 0x494e
++device.name		ACERVIEW 78I
++driver.display		|55-90|31-90
+
+ vendor.id		API
+&device.id		eisa 0x4962
++device.name		ACERVIEW 98I
++driver.display		|55-90|31-90
+
+ vendor.id		API
+&device.id		eisa 0x4c21
++device.name		ACERVIEW 33DL
++driver.display		|55-90|31-40
+
+ vendor.id		API
+&device.id		eisa 0x4c22
++device.name		ACERVIEW 34TL
++driver.display		|55-90|31-50
+
+ vendor.id		API
+&device.id		eisa 0x4c37
++device.name		ACERVIEW 55L
++driver.display		|55-90|31-70
+
+ vendor.id		API
+&device.id		eisa 0x4c38
++device.name		ACERVIEW 56L
++driver.display		|55-90|31-70
+
+ vendor.id		API
+&device.id		eisa 0x4e4c
++device.name		ACERVIEW 76N
++driver.display		|55-90|31-70
+
+ vendor.id		API
+&device.id		eisa 0x5321
++device.name		ACERVIEW 7133S
++driver.display		|55-90|31-40
+
+ vendor.id		API
+&device.id		eisa 0x5322
++device.name		ACERVIEW 7134S
++driver.display		|55-90|31-60
+
+ vendor.id		API
+&device.id		eisa 0x5336
++device.name		ACERVIEW 7154S
++driver.display		|55-90|31-60
+
+ vendor.id		API
+&device.id		eisa 0x5338
++device.name		ACERVIEW 7156IS
++driver.display		|55-90|31-70
+
+ vendor.id		API
+&device.id		eisa 0x534c
++device.name		ACERVIEW 7176IS
++driver.display		|55-90|31-70
+
+ vendor.id		API
+&device.id		eisa 0x5422
++device.name		ACERVIEW 34T
++driver.display		|55-90|31-50
+
+ vendor.id		APP
++vendor.name		Apple
+
+ vendor.id		APP
+&device.id		eisa 0x0352
++device.name		AppleVision 850
+
+ vendor.id		APP
+&device.id		eisa 0x9214
++driver.display		|50-78|31-65
+
+ vendor.id		APP
+&device.id		eisa 0x9d03
++driver.display		|58-75|31-60
+
+ vendor.id		AST
++vendor.name		AST
+
+ vendor.id		AST
+&device.id		eisa 0x8001
++device.name		4V
+
+ vendor.id		AST
+&device.id		eisa 0x8002
++device.name		4I
++driver.display		|50-90|30-38
+
+ vendor.id		AST
+&device.id		eisa 0x8003
++device.name		4N
++driver.display		|50-90|30-64
+
+ vendor.id		AST
+&device.id		eisa 0x8004
++device.name		ASTVISION 4L
++driver.display		|50-90|30-64
+
+ vendor.id		AST
+&device.id		eisa 0x8005
++device.name		ASTVISION 5L
++driver.display		|50-90|30-64
+
+ vendor.id		AST
+&device.id		eisa 0x8006
++device.name		ASTVISION 7L
++driver.display		|50-90|30-64
+
+ vendor.id		AST
+&device.id		eisa 0x8007
++device.name		ASTVISION 7H
++driver.display		|50-90|30-82
+
+ vendor.id		AST
+&device.id		eisa 0x8008
++device.name		ASTVISION 20H
++driver.display		|50-150|29-82
+
+ vendor.id		AST
+&device.id		eisa 0x8009
++device.name		SABRE
++driver.display		|50-90|30-64
+
+ vendor.id		AST
+&device.id		eisa 0x800a
++device.name		ASTVISION 5V
++driver.display		|50-120|30-50
+
+ vendor.id		BRG
++vendor.name		BRIDGE
+
+ vendor.id		BRG
+&device.id		eisa 0x00ab
++device.name		BM17C
++driver.display		|50-160|30-70
+
+ vendor.id		CPL
++vendor.name		Alpha
+
+ vendor.id		CPL
+&device.id		eisa 0x096b
++device.name		TH-450
+
+ vendor.id		CPQ
++vendor.name		COMPAQ
+
+ vendor.id		CPQ
+&device.id		eisa 0x0011+0x0006
++device.name		COMPAQ 1024
+
+ vendor.id		CPQ
+&device.id		eisa 0x0017+0x0004
++device.name		COMPAQ PRB
+
+ vendor.id		CPQ
+&device.id		eisa 0x0020+0x0002
++device.name		COMPAQ PRB
+
+ vendor.id		CPQ
+&device.id		eisa 0x0022+0x0007
++device.name		151FS
+
+ vendor.id		CPQ
+&device.id		eisa 0x0029+0x0004
++device.name		COMPAQ PRB
+
+ vendor.id		CPQ
+&device.id		eisa 0x002d+0x0007
++device.name		171FS
+
+ vendor.id		CPQ
+&device.id		eisa 0x0040+0x0002
++device.name		QVISION 200
+
+ vendor.id		CPQ
+&device.id		eisa 0x0042
++device.name		QVISION 172
+
+ vendor.id		CPQ
+&device.id		eisa 0x0043+0x0006
++device.name		QVISION 200
+
+ vendor.id		CPQ
+&device.id		eisa 0x0049
++device.name		QVISION 210
+
+ vendor.id		CPQ
+&device.id		eisa 0x0100
++device.name		COMPAQ 1024
+
+ vendor.id		CPQ
+&device.id		eisa 0x0146
++device.name		COMPAQ 1024
+
+ vendor.id		CPQ
+&device.id		eisa 0x0147
++device.name		1024
+
+ vendor.id		CPQ
+&device.id		eisa 0x0346+0x0006
++device.name		151FS
+
+ vendor.id		CPQ
+&device.id		eisa 0x0546+0x0004
++device.name		171FS
+
+ vendor.id		CPQ
+&device.id		eisa 0x0746+0x0002
++device.name		COMPAQ PRB
+
+ vendor.id		CPQ
+&device.id		eisa 0x0846+0x0007
++device.name		COMPAQ PRA
+
+ vendor.id		CPQ
+&device.id		eisa 0x084d
++device.name		PRESARIO 140
++driver.display		|48-80|31-49
+
+ vendor.id		CPQ
+&device.id		eisa 0x0946+0x0004
++device.name		COMPAQ PRB
+
+ vendor.id		CPQ
+&device.id		eisa 0x0a46+0x0007
++device.name		COMPAQ PRA
+
+ vendor.id		CPQ
+&device.id		eisa 0x0a4d
++device.name		PRESARIO 150
++driver.display		|48-80|31-49
+
+ vendor.id		CPQ
+&device.id		eisa 0x0d46+0x0007
++device.name		COMPAQ 140
+
+ vendor.id		CPQ
+&device.id		eisa 0x0d4d
++device.name		140
++driver.display		|48-80|31-49
+
+ vendor.id		CPQ
+&device.id		eisa 0x0f46+0x0007
++device.name		COMPAQ 150
+
+ vendor.id		CPQ
+&device.id		eisa 0x0f4d
++device.name		150
++driver.display		|48-80|31-49
+
+ vendor.id		CPQ
+&device.id		eisa 0x1320
++device.name		P70
++driver.display		|48-150|30-92
+
+ vendor.id		CPQ
+&device.id		eisa 0x1321
++device.name		P110
++driver.display		|48-160|30-107
+
+ vendor.id		CPQ
+&device.id		eisa 0x1322
++device.name		V50
++driver.display		|50-125|30-60
+
+ vendor.id		CPQ
+&device.id		eisa 0x1324
++device.name		TFT500
++driver.display		|57-85|32-60
+
+ vendor.id		CPQ
+&device.id		eisa 0x1325
++device.name		V900-
++driver.display		|48-160|30-96
+
+ vendor.id		CPQ
+&device.id		eisa 0x1327
++device.name		P1610
++driver.display		|48-160|30-96
+
+ vendor.id		CPQ
+&device.id		eisa 0x1329
++device.name		TFT8000-
++driver.display		|58-85|31-80
+
+ vendor.id		CPQ
+&device.id		eisa 0x1330
++device.name		P75
++driver.display		|50-150|30-85
+
+ vendor.id		CPQ
+&device.id		eisa 0x1331
++device.name		V55
++driver.display		|48-125|30-60
+
+ vendor.id		CPQ
+&device.id		eisa 0x1332
++device.name		V75
++driver.display		|48-125|30-69
+
+ vendor.id		CPQ
+&device.id		eisa 0x1333
++device.name		TFT450
++driver.display		|57-85|32-60
+
+ vendor.id		CPQ
+&device.id		eisa 0x1334
++device.name		V40
++driver.display		|50-100|31-48
+
+ vendor.id		CPQ
+&device.id		eisa 0x1338
++device.name		V45
++driver.display		|50-100|31-48
+
+ vendor.id		CPQ
+&device.id		eisa 0x1349
++device.name		S700-
++driver.display		|50-160|30-70
+
+ vendor.id		CPQ
+&device.id		eisa 0x1350
++device.name		S900-
++driver.display		|50-160|30-95
+
+ vendor.id		CPQ
+&device.id		eisa 0x170a
++device.name		V70
++driver.display		|50-125|30-69
+
+ vendor.id		CPQ
+&device.id		eisa 0x1730
++device.name		V90
++driver.display		|48-160|30-94
+
+ vendor.id		CPQ
+&device.id		eisa 0x3012
++device.name		PRESARIO MV500-
++driver.display		|50-90|31-54
+
+ vendor.id		CPQ
+&device.id		eisa 0x3013
++device.name		PRESARIO MV700-
++driver.display		|50-100|30-70
+
+ vendor.id		CPQ
+&device.id		eisa 0x3014
++device.name		PRESARIO MV400-
++driver.display		|50-90|31-50
+
+ vendor.id		CTX
++vendor.name		CTX
+
+ vendor.id		CTX
+&device.id		eisa 0x0150
++device.name		1569
++driver.display		|50-130|30-70
+
+ vendor.id		CTX
+&device.id		eisa 0x1451
++device.name		1451
++driver.display		|45-90|30-50
+
+ vendor.id		CTX
+&device.id		eisa 0x1551
++device.name		1551
++driver.display		|45-90|30-50
+
+ vendor.id		CTX
+&device.id		eisa 0x1562
++device.name		1562
++driver.display		|45-90|30-62
+
+ vendor.id		CTX
+&device.id		eisa 0x1565
++device.name		1565
++driver.display		|45-90|30-65
+
+ vendor.id		CTX
+&device.id		eisa 0x1569
++device.name		CTX 1569S 15-inch
+
+ vendor.id		CTX
+&device.id		eisa 0x1765
++device.name		1765
++driver.display		|45-110|30-65
+
+ vendor.id		CTX
+&device.id		eisa 0x1785
++device.name		1785
++driver.display		|45-110|30-85
+
+ vendor.id		CTX
+&device.id		eisa 0x2085
++device.name		2085
++driver.display		|45-110|30-85
+
+ vendor.id		CTX
+&device.id		eisa 0x2185
++device.name		2185
++driver.display		|45-110|30-85
+
+ vendor.id		CTX
+&device.id		eisa 0x3621
++device.name		VL700
++driver.display		|50-120|30-70
+
+ vendor.id		DEC
++vendor.name		DIGITAL
+
+ vendor.id		DEC
+&device.id		eisa 0x043a
++device.name		(FR-PCXAV-AZ) (24 ZOLL)
++driver.display		|50-160|30-96
+
+ vendor.id		DEC
+&device.id		eisa 0x0479
++device.name		19 ZOLL  (FR-PCXAV-CY)
++driver.display		|48-160|30-95
+
+ vendor.id		DEC
+&device.id		eisa 0x047a
++device.name		19 ZOLL  (FR-PCXAV-CZ)
++driver.display		|48-160|30-95
+
+ vendor.id		DEC
+&device.id		eisa 0x06fa
++device.name		21 ZOLL  (FR-PCXAV-WZ)
++driver.display		|50-152|30-95
+
+ vendor.id		DEC
+&device.id		eisa 0x073a
++device.name		17 ZOLL  (FR-PCXAV-YZ)
++driver.display		|48-150|30-85
+
+ vendor.id		DEC
+&device.id		eisa 0x770c
++device.name		14 ZOLL  (FR-PCXCV-C*)
++driver.display		|50-90|30-54
+
+ vendor.id		DEC
+&device.id		eisa 0x970c
++device.name		15 ZOLL  (FR-PCXCV-D*)
++driver.display		|50-90|30-54
+
+ vendor.id		DEC
+&device.id		eisa 0x9a06
++device.name		(FR-PCXAV-TZ) (19 ZOLL)
++driver.display		|50-160|30-96
+
+ vendor.id		DEC
+&device.id		eisa 0xba08
++device.name		15 ZOLL  (FR-PCXBV-E*)
++driver.display		|50-110|30-69
+
+ vendor.id		DEC
+&device.id		eisa 0xda08
++device.name		17 ZOLL  (FR-PCXBV-F*)
++driver.display		|50-120|30-69
+
+ vendor.id		DEL
++vendor.name		DELL
+
+ vendor.id		DEL
+&device.id		eisa 0x139a+0x0003
++device.name		Dell Ultrascan 14XE
+
+ vendor.id		DEL
+&device.id		eisa 0x139d
++device.name		ULTRASCAN 14XE
++driver.display		|50-120|30-62
+
+ vendor.id		DEL
+&device.id		eisa 0x1569
++device.name		1569
++driver.display		|50-110|30-69
+
+ vendor.id		DEL
+&device.id		eisa 0x2210+0x0003
++device.name		Dell Ultrascan V17X
+
+ vendor.id		DEL
+&device.id		eisa 0x2213
++device.name		ULTRASCAN V17X
++driver.display		|50-130|30-85
+
+ vendor.id		DEL
+&device.id		eisa 0x2214+0x0003
++device.name		Dell Ultrascan 21TE
+
+ vendor.id		DEL
+&device.id		eisa 0x2217
++device.name		ULTRASCAN 21TE
++driver.display		|50-152|30-93
+
+ vendor.id		DEL
+&device.id		eisa 0x3024+0x0003
++device.name		Dell VS17X
+
+ vendor.id		DEL
+&device.id		eisa 0x3027
++device.name		VS17X
++driver.display		|50-120|30-65
+
+ vendor.id		DEL
+&device.id		eisa 0x3276
++device.name		D1428L
++driver.display		|43-75|31-48
+
+ vendor.id		DEL
+&device.id		eisa 0x32fe
++device.name		D828L
++driver.display		|50-120|31-54
+
+ vendor.id		DEL
+&device.id		eisa 0x3319
++device.name		828FI
++driver.display		|50-120|31-70
+
+ vendor.id		DEL
+&device.id		eisa 0x4273
++device.name		V15X
++driver.display		|55-90|47-64
+
+ vendor.id		DEL
+&device.id		eisa 0x5033
++device.name		D825HT
++driver.display		|50-120|31-70
+
+ vendor.id		DEL
+&device.id		eisa 0x5062
++device.name		D1025HTX
++driver.display		|50-120|31-70
+
+ vendor.id		DEL
+&device.id		eisa 0x50dd
++device.name		P990
++driver.display		|48-120|30-96
+
+ vendor.id		DEL
+&device.id		eisa 0x512c
++device.name		D825TM
++driver.display		|50-120|30-70
+
+ vendor.id		DEL
+&device.id		eisa 0x5155
++device.name		D1025TM
++driver.display		|50-160|31-85
+
+ vendor.id		DEL
+&device.id		eisa 0x515b
++device.name		D1626HT
++driver.display		|50-160|31-107
+
+ vendor.id		DEL
+&device.id		eisa 0x5314
++device.name		D2026T
++driver.display		|50-100|31-96
+
+ vendor.id		DEL
+&device.id		eisa 0x5319
++device.name		1726T-HS/D1025HT
++driver.display		|50-100|31-85
+
+ vendor.id		DEL
+&device.id		eisa 0x5697
++device.name		800M
++driver.display		|50-120|30-70
+
+ vendor.id		DEL
+&device.id		eisa 0x602f
++device.name		D2128-TCO
++driver.display		|50-150|31-102
+
+ vendor.id		DEL
+&device.id		eisa 0x6124
++device.name		D1025HE
++driver.display		|50-120|31-92
+
+ vendor.id		DEL
+&device.id		eisa 0x62ff
++device.name		D825HR
++driver.display		|50-120|31-70
+
+ vendor.id		DEL
+&device.id		eisa 0x635e
++device.name		ES-17
++driver.display		|50-100|31-85
+
+ vendor.id		DEL
+&device.id		eisa 0x7077
++device.name		D1226H
++driver.display		|50-160|30-95
+
+ vendor.id		DEL
+&device.id		eisa 0x715d
++device.name		1500FP
++driver.display		|56-75|30-61
+
+ vendor.id		DEL
+&device.id		eisa 0x71a5
++device.name		M770
++driver.display		|48-160|30-69
+
+ vendor.id		DEL
+&device.id		eisa 0x730b
++device.name		D1028L
++driver.display		|50-120|31-70
+
+ vendor.id		DEL
+&device.id		eisa 0x8162
++device.name		TFT 1400FP
++driver.display		|55-86|31-60
+
+ vendor.id		DEL
+&device.id		eisa 0x93d5
++device.name		M1110
++driver.display		|50-160|30-107
+
+ vendor.id		DPC
++vendor.name		DELTA
+
+ vendor.id		DPC
+&device.id		eisa 0x0456
++device.name		Delta DA-456
+
+ vendor.id		DPC
+&device.id		eisa 0x0570
++device.name		DA-570
++driver.display		|50-100|30-70
+
+ vendor.id		DPC
+&device.id		eisa 0x0770
++device.name		DB-770
++driver.display		|50-100|30-70
+
+ vendor.id		DPC
+&device.id		eisa 0x0995
++device.name		DA-995
++driver.display		|50-180|30-95
+
+ vendor.id		DPC
+&device.id		eisa 0x1565
++device.name		DA-1565
++driver.display		|50-100|30-65
+
+ vendor.id		DPC
+&device.id		eisa 0x1765
++device.name		DB-1765
++driver.display		|50-100|30-65
+
+ vendor.id		DPC
+&device.id		eisa 0x1770
++device.name		DC-770
++driver.display		|50-120|30-70
+
+ vendor.id		DPC
+&device.id		eisa 0x4570
++device.name		DE-570
++driver.display		|50-120|30-70
+
+ vendor.id		DWE
++vendor.name		DAEWOO
+
+ vendor.id		DWE
+&device.id		eisa 0x1423
++device.name		CMC-1423B1
++driver.display		|50-120|30-64
+
+ vendor.id		DWE
+&device.id		eisa 0x1427
++device.name		CMC-1427X1
++driver.display		|50-100|30-48
+
+ vendor.id		DWE
+&device.id		eisa 0x1502
++device.name		CMC-1502B1
++driver.display		|50-120|30-64
+
+ vendor.id		DWE
+&device.id		eisa 0x1505
++device.name		CMC-1505X
++driver.display		|50-100|30-50
+
+ vendor.id		DWE
+&device.id		eisa 0x1507
++device.name		CMC-1507X1
++driver.display		|50-100|30-48
+
+ vendor.id		DWE
+&device.id		eisa 0x1703
++device.name		CMC-1703B
++driver.display		|50-120|30-64
+
+ vendor.id		DWE
+&device.id		eisa 0x4312
++device.name		431X
++driver.display		|50-120|30-54
+
+ vendor.id		DWE
+&device.id		eisa 0x5093
++device.name		1509B
++driver.display		|50-120|30-69
+
+ vendor.id		DWE
+&device.id		eisa 0x5113
++device.name		511B
++driver.display		|50-120|30-69
+
+ vendor.id		DWE
+&device.id		eisa 0x5123
++device.name		512B
++driver.display		|50-120|30-69
+
+ vendor.id		DWE
+&device.id		eisa 0x5133
++device.name		Daewoo CMC-1511B
+
+ vendor.id		DWE
+&device.id		eisa 0x5182
++device.name		518X
++driver.display		|50-120|30-54
+
+ vendor.id		DWE
+&device.id		eisa 0x5183
++device.name		518B
++driver.display		|50-120|30-69
+
+ vendor.id		DWE
+&device.id		eisa 0x5193
++device.name		519B
++driver.display		|50-120|30-69
+
+ vendor.id		DWE
+&device.id		eisa 0x7044
++device.name		CMC-1704C
++driver.display		|50-150|24-86
+
+ vendor.id		DWE
+&device.id		eisa 0x7053
++device.name		1705B
++driver.display		|50-120|30-69
+
+ vendor.id		DWE
+&device.id		eisa 0x7073
++device.name		707B
++driver.display		|50-120|30-69
+
+ vendor.id		DWE
+&device.id		eisa 0x7103
++device.name		710B
++driver.display		|50-160|30-69
+
+ vendor.id		DWE
+&device.id		eisa 0x7104
++device.name		710C
++driver.display		|50-160|30-86
+
+ vendor.id		DWE
+&device.id		eisa 0x9015
++device.name		901D
++driver.display		|50-160|30-95
+
+ vendor.id		ECS
++vendor.name		ECS
+
+ vendor.id		ECS
+&device.id		eisa 0x0001
++device.name		VERTOS 1401
++driver.display		|50-100|30-50
+
+ vendor.id		ECS
+&device.id		eisa 0x0002
++device.name		VERTOS 1501
++driver.display		|50-100|24-64
+
+ vendor.id		ECS
+&device.id		eisa 0x0003
++device.name		VERTOS 1502
++driver.display		|50-100|24-64
+
+ vendor.id		ECS
+&device.id		eisa 0x0004
++device.name		VERTOS 1503
++driver.display		|50-100|24-64
+
+ vendor.id		ECS
+&device.id		eisa 0x0005
++device.name		VERTOS 1700
++driver.display		|50-100|24-64
+
+ vendor.id		ECS
+&device.id		eisa 0x0006
++device.name		VERTOS 1701
++driver.display		|50-100|24-82
+
+ vendor.id		ECS
+&device.id		eisa 0x0007
++device.name		VERTOS 1702
++driver.display		|50-100|24-64
+
+ vendor.id		ECS
+&device.id		eisa 0x0008
++device.name		VERTOS 2101
++driver.display		|50-100|24-90
+
+ vendor.id		ECS
+&device.id		eisa 0x0009
++device.name		VERTOS 2102
++driver.display		|50-100|24-90
+
+ vendor.id		EIZ
++vendor.name		EIZO
+
+ vendor.id		EIZ
+&device.id		eisa 0x0200
++device.name		FLEXSCAN F351
+
+ vendor.id		EIZ
+&device.id		eisa 0x0201
++device.name		FLEXSCAN F553
+
+ vendor.id		EIZ
+&device.id		eisa 0x0202
++device.name		FLEXSCAN F563
+
+ vendor.id		EIZ
+&device.id		eisa 0x0203
++device.name		FLEXSCAN F764
++driver.display		|55-160|30-90
+
+ vendor.id		EIZ
+&device.id		eisa 0x0204
++device.name		FLEXSCAN F784
+
+ vendor.id		EIZ
+&device.id		eisa 0x0206
++device.name		FLEXSCAN 6600
++driver.display		|70-90|56-110
+
+ vendor.id		EIZ
+&device.id		eisa 0x0300
++device.name		FLEXSCAN 6500
++driver.display		|55-90|56-80
+
+ vendor.id		EIZ
+&device.id		eisa 0x0302
++device.name		9060S
+
+ vendor.id		EIZ
+&device.id		eisa 0x0303
++device.name		9065S
++driver.display		|50-90|30-50
+
+ vendor.id		EIZ
+&device.id		eisa 0x0305
++device.name		FLEXSCAN T563
+
+ vendor.id		EIZ
+&device.id		eisa 0x0306
++device.name		9070S
++driver.display		|50-90|20-50
+
+ vendor.id		EIZ
+&device.id		eisa 0x0307
++device.name		9080I
++driver.display		|55-90|30-64
+
+ vendor.id		EIZ
+&device.id		eisa 0x0308
++device.name		9400I
++driver.display		|55-90|30-65
+
+ vendor.id		EIZ
+&device.id		eisa 0x0309
++device.name		9500
++driver.display		|55-90|30-78
+
+ vendor.id		EIZ
+&device.id		eisa 0x030a
++device.name		FLEXSCAN F340IW
+
+ vendor.id		EIZ
+&device.id		eisa 0x030c
++device.name		FLEXSCAN F552
+
+ vendor.id		EIZ
+&device.id		eisa 0x030d
++device.name		FLEXSCAN F560IW
++driver.display		|55-90|30-82
+
+ vendor.id		EIZ
+&device.id		eisa 0x030e
++device.name		FLEXSCAN F750I
++driver.display		|55-90|30-80
+
+ vendor.id		EIZ
+&device.id		eisa 0x030f
++device.name		FLEXSCAN F760IW
++driver.display		|55-90|30-78
+
+ vendor.id		EIZ
+&device.id		eisa 0x0310
++device.name		FLEXSCAN F780IW
++driver.display		|55-120|45-100
+
+ vendor.id		EIZ
+&device.id		eisa 0x0311
++device.name		FLEXSCAN T560I
++driver.display		|55-90|30-82
+
+ vendor.id		EIZ
+&device.id		eisa 0x0312
++device.name		FLEXSCAN T660I
++driver.display		|55-90|30-78
+
+ vendor.id		EIZ
+&device.id		eisa 0x0313
++device.name		FLEXSCAN T562
++driver.display		|55-90|30-82
+
+ vendor.id		EIZ
+&device.id		eisa 0x0314
++device.name		FLEXSCAN T662
++driver.display		|55-160|30-85
+
+ vendor.id		EIZ
+&device.id		eisa 0x038c
++device.name		FLEXSCAN F550IW
++driver.display		|55-90|30-65
+
+ vendor.id		EIZ
+&device.id		eisa 0x1012
++device.name		FLEXSCAN L34
++driver.display		|50-85|24-61
+
+ vendor.id		EIZ
+&device.id		eisa 0x1018
++device.name		FLEXSCAN F77S
++driver.display		|50-160|30-110
+
+ vendor.id		EIZ
+&device.id		eisa 0x1020
++device.name		FLEXSCAN F57
++driver.display		|50-160|30-96
+
+ vendor.id		EIZ
+&device.id		eisa 0x1418
++device.name		NANAO FLEXSCAN FX-E7S
++driver.display		|50-160|30-110
+
+ vendor.id		EIZ
+&device.id		eisa 0x1420
++device.name		NANAO FLEXSCAN FX-C7
++driver.display		|50-160|30-96
+
+ vendor.id		ELS
++vendor.name		ELSA
+
+ vendor.id		ELS
+&device.id		eisa 0x4160
++device.name		ECOMO OFFICE
++driver.display		|50-130|30-86
+
+ vendor.id		ELS
+&device.id		eisa 0x7617
++device.name		ECOMO 22H99
++driver.display		|50-160|31-121
+
+ vendor.id		FCM
++vendor.name		FUNAI
+
+ vendor.id		FCM
+&device.id		eisa 0x3313
++device.name		17GD
++driver.display		|50-120|30-70
+
+ vendor.id		FPA
++vendor.name		FUJITSU
+
+ vendor.id		FPA
+&device.id		eisa 0x0612
++device.name		1554G+
++driver.display		|50-120|30-54
+
+ vendor.id		FPA
+&device.id		eisa 0x2d30
++device.name		1568G1
++driver.display		|50-120|30-69
+
+ vendor.id		FPA
+&device.id		eisa 0x2df9
++device.name		1769G
++driver.display		|50-120|30-69
+
+ vendor.id		FUJ
++vendor.name		FUJITSU
+
+ vendor.id		FUJ
+&device.id		eisa 0x0119
++device.name		X150F
++driver.display		|56-75|31-60
+
+ vendor.id		FUJ
+&device.id		eisa 0x2118
++device.name		X176
++driver.display		|50-200|30-100
+
+ vendor.id		FUJ
+&device.id		eisa 0x2218
++device.name		X177
++driver.display		|50-150|30-92
+
+ vendor.id		FUJ
+&device.id		eisa 0x2318
++device.name		X177A
++driver.display		|50-150|30-92
+
+ vendor.id		FUJ
+&device.id		eisa 0x3118
++device.name		E155
++driver.display		|50-100|30-54
+
+ vendor.id		FUJ
+&device.id		eisa 0x5110
++device.name		FMV-DP98X1
++driver.display		|50-180|30-95
+
+ vendor.id		FUJ
+&device.id		eisa 0x6110
++device.name		FMV-DP97X4
++driver.display		|50-120|30-92
+
+ vendor.id		FUJ
+&device.id		eisa 0x6210
++device.name		FMVDP97X5(G)/FMVDP97X6
++driver.display		|50-150|30-92
+
+ vendor.id		FUJ
+&device.id		eisa 0x7110
++device.name		FMV-DP84X2
++driver.display		|50-100|30-70
+
+ vendor.id		FUJ
+&device.id		eisa 0x7210
++device.name		FMV-DP84X3(G)
++driver.display		|50-120|30-70
+
+ vendor.id		FUJ
+&device.id		eisa 0x8111
++device.name		VL-15TX1(G)
+
+ vendor.id		FUJ
+&device.id		eisa 0x9111
++device.name		VL-14TX1
+
+ vendor.id		FUJ
+&device.id		eisa 0xa901
++device.name		FMV-DP97X2
++driver.display		|50-120|30-92
+
+ vendor.id		FUJ
+&device.id		eisa 0xaa01
++device.name		FMV-DP97X3
++driver.display		|50-150|30-70
+
+ vendor.id		FUJ
+&device.id		eisa 0xb801
++device.name		FMV-DP84X1
++driver.display		|50-100|30-70
+
+ vendor.id		GSM
++vendor.name		LG ELECTRONICS
+
+ vendor.id		GSM
+&device.id		eisa 0x36b4
++device.name		STUDIOWORKS 44M
++driver.display		|50-90|30-50
+
+ vendor.id		GSM
+&device.id		eisa 0x36b9
++device.name		STUDIOWORKS 44I
++driver.display		|50-89|30-50
+
+ vendor.id		GSM
+&device.id		eisa 0x36bb
++device.name		STUDIOWORKS 45I
++driver.display		|50-90|30-54
+
+ vendor.id		GSM
+&device.id		eisa 0x3aa0
++device.name		1505S
++driver.display		|50-90|30-50
+
+ vendor.id		GSM
+&device.id		eisa 0x3aa2
++device.name		STUDIOWORKS 56M
++driver.display		|50-110|30-65
+
+ vendor.id		GSM
+&device.id		eisa 0x3aa8
++device.name		STUDIOWORKS 56I
++driver.display		|50-120|30-65
+
+ vendor.id		GSM
+&device.id		eisa 0x3aaf
++device.name		STUDIOWORKS 56T
++driver.display		|50-120|30-65
+
+ vendor.id		GSM
+&device.id		eisa 0x3ab0
++device.name		LG StudioWorks 5D
+
+ vendor.id		GSM
+&device.id		eisa 0x3ab6
++device.name		STUDIOWORKS 5D
++driver.display		|50-120|30-65
+
+ vendor.id		GSM
+&device.id		eisa 0x3abd
++device.name		STUDIOWORKS 55I
++driver.display		|50-90|30-54
+
+ vendor.id		GSM
+&device.id		eisa 0x426c
++device.name		STUDIOWORKS 78I
+
+ vendor.id		GSM
+&device.id		eisa 0x426d
++device.name		STUDIOWORKS 78T
++driver.display		|50-120|30-85
+
+ vendor.id		GSM
+&device.id		eisa 0x426e
++device.name		STUDIOWORKS 76I
++driver.display		|50-110|30-65
+
+ vendor.id		GSM
+&device.id		eisa 0x4273
++device.name		LG StudioWorks 76m
+
+ vendor.id		GSM
+&device.id		eisa 0x4274
++device.name		LG StudioWorks 78m
+
+ vendor.id		GSM
+&device.id		eisa 0x4277
++device.name		LG StudioWorks 74m
+
+ vendor.id		GSM
+&device.id		eisa 0x4278
++device.name		LG StudioWorks 74i
+
+ vendor.id		GSM
+&device.id		eisa 0x427e
++device.name		STUDIOWORKS 7D
++driver.display		|50-120|30-65
+
+ vendor.id		GSM
+&device.id		eisa 0x427f
++device.name		STUDIOWORKS 78D
++driver.display		|50-120|30-85
+
+ vendor.id		GSM
+&device.id		eisa 0x4280
++device.name		LG StudioWorks 78DT
+
+ vendor.id		GSM
+&device.id		eisa 0x4281
++device.name		LG StudioWorks 7DT
+
+ vendor.id		GSM
+&device.id		eisa 0x4284
++device.name		LG StudioWorks 76T
+
+ vendor.id		GSM
+&device.id		eisa 0x42cf
++device.name		1725S
++driver.display		|50-120|30-65
+
+ vendor.id		GSM
+&device.id		eisa 0x4e21
++device.name		STUDIOWORKS 20I
++driver.display		|50-120|30-85
+
+ vendor.id		GWY
++vendor.name		GATEWAY
+
+ vendor.id		GWY
+&device.id		eisa 0x00c0
++device.name		VX900T
++driver.display		|48-120|30-96
+
+ vendor.id		GWY
+&device.id		eisa 0x044d
++device.name		VX700
++driver.display		|50-130|30-86
+
+ vendor.id		GWY
+&device.id		eisa 0x0454
++device.name		VX1100
++driver.display		|50-152|30-108
+
+ vendor.id		GWY
+&device.id		eisa 0x0a8d
++device.name		DESTINATION DL27
++driver.display		|50-90|24-40
+
+ vendor.id		GWY
+&device.id		eisa 0x0e11
++device.name		DESTINATION DL36
++driver.display		|50-90|24-40
+
+ vendor.id		GWY
+&device.id		eisa 0x138a
++device.name		EV500
++driver.display		|50-110|30-70
+
+ vendor.id		GWY
+&device.id		eisa 0x1b5c
++device.name		EV700
++driver.display		|50-120|30-70
+
+ vendor.id		GWY
+&device.id		eisa 0x7659
++device.name		EV700-H
++driver.display		|50-120|30-70
+
+ vendor.id		GWY
+&device.id		eisa 0x8883
++device.name		EV900
++driver.display		|50-160|30-95
+
+ vendor.id		GWY
+&device.id		eisa 0x9095
++device.name		VX900
++driver.display		|50-160|30-95
+
+ vendor.id		HEI
++vendor.name		HYUNDAI
+
+ vendor.id		HEI
+&device.id		eisa 0x0b42
++device.name		DELUXSCAN 21
++driver.display		|45-100|30-82
+
+ vendor.id		HEI
+&device.id		eisa 0x12f0
++device.name		DELUXSCAN 14S
++driver.display		|50-120|30-48
+
+ vendor.id		HEI
+&device.id		eisa 0x16d8
++device.name		DELUXSCAN 15B
++driver.display		|50-120|30-48
+
+ vendor.id		HEI
+&device.id		eisa 0x16e8
++device.name		DELUXSCAN 15G
++driver.display		|50-90|30-64
+
+ vendor.id		HEI
+&device.id		eisa 0x16ee
++device.name		DELUXSCAN 15G+
++driver.display		|50-120|30-70
+
+ vendor.id		HEI
+&device.id		eisa 0x1e02
++device.name		DELUXSCAN 17 PRO
++driver.display		|45-100|30-82
+
+ vendor.id		HEI
+&device.id		eisa 0x1eb8
++device.name		DELUXSCAN 17B
++driver.display		|50-100|30-64
+
+ vendor.id		HEI
+&device.id		eisa 0x1ebe
++device.name		DELUXSCAN 17B+
++driver.display		|50-120|30-70
+
+ vendor.id		HEI
+&device.id		eisa 0x5864
++device.name		DELUXSCAN 15 PRO
++driver.display		|50-120|30-64
+
+ vendor.id		HEI
+&device.id		eisa 0x768b
++device.name		7687
++driver.display		|50-150|30-87
+
+ vendor.id		HEI
+&device.id		eisa 0xb81e
++device.name		DELUXSCAN 17
++driver.display		|50-90|30-64
+
+ vendor.id		HIG
++vendor.name		HIGHSCREEN
+
+ vendor.id		HIG
+&device.id		eisa 0x5620
++device.name		DX1595
++driver.display		|50-120|30-65
+
+ vendor.id		HIG
+&device.id		eisa 0x5624
++device.name		DX15T
++driver.display		|50-100|30-64
+
+ vendor.id		HIG
+&device.id		eisa 0x5626
++device.name		DX1795
++driver.display		|50-120|30-65
+
+ vendor.id		HIT
++vendor.name		HITACHI
+
+ vendor.id		HIT
+&device.id		eisa 0x1717
++device.name		ACCUVUE GX17L
++driver.display		|50-100|30-64
+
+ vendor.id		HIT
+&device.id		eisa 0x1727
++device.name		HM1764
++driver.display		|50-100|30-64
+
+ vendor.id		HIT
+&device.id		eisa 0x1827
++device.name		HM1782
++driver.display		|50-100|30-82
+
+ vendor.id		HIT
+&device.id		eisa 0x2147
++device.name		HM4721
++driver.display		|50-152|30-95
+
+ vendor.id		HIT
+&device.id		eisa 0x2149
++device.name		HM4921
++driver.display		|50-152|30-107
+
+ vendor.id		HIT
+&device.id		eisa 0x4020
++device.name		HM4020
++driver.display		|60-120|60-85
+
+ vendor.id		HIT
+&device.id		eisa 0x4021
++device.name		HM4021
++driver.display		|60-120|60-85
+
+ vendor.id		HIT
+&device.id		eisa 0x4711
++device.name		ACCUVUE UX4721
++driver.display		|50-152|30-95
+
+ vendor.id		HIT
+&device.id		eisa 0x4810
++device.name		ACCUVUE GX20
++driver.display		|50-152|28-90
+
+ vendor.id		HIT
+&device.id		eisa 0x4811
++device.name		ACCUVUE GX21
++driver.display		|50-152|28-90
+
+ vendor.id		HIT
+&device.id		eisa 0x4820
++device.name		HM4820
++driver.display		|50-152|28-90
+
+ vendor.id		HIT
+&device.id		eisa 0x4821
++device.name		HM4821
++driver.display		|50-152|28-90
+
+ vendor.id		HIT
+&device.id		eisa 0x4830
++device.name		ACCUVUE GX20H
++driver.display		|50-152|28-90
+
+ vendor.id		HIT
+&device.id		eisa 0x4911
++device.name		ACCUVUE UX4921
++driver.display		|50-152|30-107
+
+ vendor.id		HIT
+&device.id		eisa 0x6421
++device.name		HM6421
++driver.display		|72-77|100-102
+
+ vendor.id		HIT
+&device.id		eisa 0x6811
++device.name		ACCUVUE UX6821
++driver.display		|50-152|30-107
+
+ vendor.id		HIT
+&device.id		eisa 0x6821
++device.name		HM6821
++driver.display		|50-152|30-107
+
+ vendor.id		HSL
++vendor.name		HANSOL
+
+ vendor.id		HSL
+&device.id		eisa 0x0579
++device.name		ELECTRONICS MAZELLAN14PX
++driver.display		|50-120|30-54
+
+ vendor.id		HSL
+&device.id		eisa 0x057a
++device.name		ELECTRONICS MAZELLAN400A
++driver.display		|50-120|30-50
+
+ vendor.id		HSL
+&device.id		eisa 0x05dd
++device.name		ELECTRONICS MAZELLAN15AX
++driver.display		|50-120|30-54
+
+ vendor.id		HSL
+&device.id		eisa 0x05de
++device.name		ELECTRONICS MAZELLAN500P
++driver.display		|50-120|30-69
+
+ vendor.id		HSL
+&device.id		eisa 0x06a5
++device.name		ELECTRONICS MAZELLAN700P
++driver.display		|50-120|30-85
+
+ vendor.id		HSL
+&device.id		eisa 0x06a6
++device.name		ELECTRONICS MAZELLAN700A
++driver.display		|50-120|30-69
+
+ vendor.id		HSL
+&device.id		eisa 0xa605
++device.name		ELECTRONICS MAZELLAN17PX
++driver.display		|50-120|30-85
+
+ vendor.id		HTC
++vendor.name		HITACHI
+
+ vendor.id		HTC
+&device.id		eisa 0xab6f
++device.name		LTD CM-1711M
+
+ vendor.id		HTC
+&device.id		eisa 0xabc2
++device.name		LTD CM-2112M
++driver.display		|50-160|31-107
+
+ vendor.id		HTC
+&device.id		eisa 0xabc7
++device.name		LTD CM-2111M
++driver.display		|50-160|31-95
+
+ vendor.id		HTC
+&device.id		eisa 0xabcc
++device.name		LTD CM-2110M
++driver.display		|50-160|31-85
+
+ vendor.id		HTC
+&device.id		eisa 0xabe0
++device.name		LTD CM802
++driver.display		|50-160|31-100
+
+ vendor.id		HTC
+&device.id		eisa 0xabe2
++device.name		LTD CM801
++driver.display		|50-160|31-96
+
+ vendor.id		HTC
+&device.id		eisa 0xabe3
++device.name		LTD CM800
++driver.display		|50-160|31-89
+
+ vendor.id		HTC
+&device.id		eisa 0xabea
++device.name		LTD CM803
++driver.display		|50-160|31-115
+
+ vendor.id		HTC
+&device.id		eisa 0xabf4
++device.name		LTD CM701
++driver.display		|50-160|31-96
+
+ vendor.id		HTC
+&device.id		eisa 0xac13
++device.name		CM751
++driver.display		|50-160|30-94
+
+ vendor.id		HTC
+&device.id		eisa 0xac15
++device.name		CM752
++driver.display		|50-160|31-101
+
+ vendor.id		HTC
+&device.id		eisa 0xac22
++device.name		CM753
++driver.display		|50-160|31-107
+
+ vendor.id		HTC
+&device.id		eisa 0xac46
++device.name		CM811
++driver.display		|50-160|31-96
+
+ vendor.id		HTC
+&device.id		eisa 0xac47
++device.name		CM812
++driver.display		|50-160|31-107
+
+ vendor.id		HTC
+&device.id		eisa 0xac48
++device.name		CM813
++driver.display		|50-160|31-115
+
+ vendor.id		HTC
+&device.id		eisa 0xac49
++device.name		CM814
++driver.display		|50-160|31-125
+
+ vendor.id		HTC
+&device.id		eisa 0xafc8
++device.name		LTD CM500
++driver.display		|50-100|30-69
+
+ vendor.id		HTC
+&device.id		eisa 0xafce
++device.name		CM500E
++driver.display		|50-100|30-69
+
+ vendor.id		HTC
+&device.id		eisa 0xafd2
++device.name		LTD CM600
++driver.display		|47-104|30-64
+
+ vendor.id		HTC
+&device.id		eisa 0xafd7
++device.name		LTD CM611
++driver.display		1152x870|50-120|31-92
+
+ vendor.id		HTC
+&device.id		eisa 0xafdd
++device.name		CM620
++driver.display		|47-130|31-69
+
+ vendor.id		HTC
+&device.id		eisa 0xafe2
++device.name		CM630
++driver.display		|47-130|31-86
+
+ vendor.id		HTC
+&device.id		eisa 0xafec
++device.name		CM641
++driver.display		|50-130|31-95
+
+ vendor.id		HWP
++vendor.name		HP
+
+ vendor.id		HWP
+&device.id		eisa 0x0af0
++device.name		D2800A 21
++driver.display		|50-160|30-82
+
+ vendor.id		HWP
+&device.id		eisa 0x0af6
++device.name		D2806A 15
++driver.display		|50-100|30-64
+
+ vendor.id		HWP
+&device.id		eisa 0x0af8
++device.name		HP D2808 1024 Low Emission
+
+ vendor.id		HWP
+&device.id		eisa 0x0aff
++device.name		D1815A  14 1024
+
+ vendor.id		HWP
+&device.id		eisa 0x0b0a
++device.name		D2826-MONITOR (15 ZOLL)
++driver.display		|50-120|31-54
+
+ vendor.id		HWP
+&device.id		eisa 0x0b10
++device.name		D2832A
++driver.display		|50-120|30-70
+
+ vendor.id		HWP
+&device.id		eisa 0x0b13
++device.name		D2835
++driver.display		|50-160|30-69
+
+ vendor.id		HWP
+&device.id		eisa 0x0b16
++device.name		HP D2838 M700 17"
++driver.display		|50-160|30-86
+
+ vendor.id		HWP
+&device.id		eisa 0x0b18
++device.name		D2840 ERGO 1280
++driver.display		|50-150|31-92
+
+ vendor.id		HWP
+&device.id		eisa 0x0b1d
++device.name		D2845 ERGO 1600
+
+ vendor.id		HWP
+&device.id		eisa 0x0b1e
++device.name		HP D2846 21
++driver.display		1600x1200|50-160|30-107|230
+
+ vendor.id		HWP
+&device.id		eisa 0x0f11
++device.name		D3857A 15
+
+ vendor.id		HWP
+&device.id		eisa 0x0f12
++device.name		D3858A 14
+
+ vendor.id		IBM
++vendor.name		IBM
+
+ vendor.id		IBM
+&device.id		eisa 0x0844
++device.name		2116 MM55 MULTIMEDIA
++driver.display		|50-120|30-69
+
+ vendor.id		IBM
+&device.id		eisa 0x0850
++device.name		2128 MM75 MULTIMEDIA
++driver.display		|50-160|30-69
+
+ vendor.id		IBM
+&device.id		eisa 0x08bb
++device.name		2235 C50
++driver.display		|50-120|30-54
+
+ vendor.id		IBM
+&device.id		eisa 0x08bd
++device.name		2237 C71
++driver.display		|50-120|30-69
+
+ vendor.id		IBM
+&device.id		eisa 0x0a2e
++device.name		THINKPAD TFT
++driver.display		|50-65|40-60
+
+ vendor.id		IBM
+&device.id		eisa 0x0a41
++device.name		THINKPAD DSTN
++driver.display		|50-65|40-60
+
+ vendor.id		IBM
+&device.id		eisa 0x0a4b
++device.name		THINKPAD TFT
++driver.display		|50-65|40-60
+
+ vendor.id		IBM
+&device.id		eisa 0x0a50
++device.name		THINKPAD DSTN
++driver.display		|50-65|40-60
+
+ vendor.id		IBM
+&device.id		eisa 0x0a55
++device.name		THINKPAD TFT
++driver.display		|50-65|40-60
+
+ vendor.id		IBM
+&device.id		eisa 0x198c
++device.name		6540 G42
++driver.display		|55-100|30-50
+
+ vendor.id		IBM
+&device.id		eisa 0x198d
++device.name		6541 G51
++driver.display		|55-100|30-54
+
+ vendor.id		IBM
+&device.id		eisa 0x198e
++device.name		G41
+
+ vendor.id		IBM
+&device.id		eisa 0x198f
++device.name		G50
+
+ vendor.id		IBM
+&device.id		eisa 0x1990
++device.name		G70
++driver.display		|50-105|31-64
+
+ vendor.id		IBM
+&device.id		eisa 0x1991
++device.name		G200
++driver.display		|50-120|31-82
+
+ vendor.id		IBM
+&device.id		eisa 0x1992
++device.name		6546 G52
++driver.display		|50-120|30-69
+
+ vendor.id		IBM
+&device.id		eisa 0x1993
++device.name		6547 G72
++driver.display		|50-120|30-69
+
+ vendor.id		IBM
+&device.id		eisa 0x1995
++device.name		6549 G94
++driver.display		|50-160|30-95
+
+ vendor.id		IBM
+&device.id		eisa 0x1999
++device.name		P50
++driver.display		|50-120|30-69
+
+ vendor.id		IBM
+&device.id		eisa 0x199a
++device.name		P70
++driver.display		|50-120|29-82
+
+ vendor.id		IBM
+&device.id		eisa 0x199b
++device.name		P200
++driver.display		|50-120|29-90
+
+ vendor.id		IBM
+&device.id		eisa 0x199c
++device.name		6556 P72
++driver.display		|50-150|30-85
+
+ vendor.id		IBM
+&device.id		eisa 0x199d
++device.name		6557 P92
++driver.display		|50-160|30-94
+
+ vendor.id		IBM
+&device.id		eisa 0x199e
++device.name		6558 P202
++driver.display		|50-160|30-107
+
+ vendor.id		IBM
+&device.id		eisa 0x1bb7
++device.name		7095
++driver.display		|50-120|30-69
+
+ vendor.id		IBM
+&device.id		eisa 0x1bb9
++device.name		7097
++driver.display		|50-120|30-69
+
+ vendor.id		IBM
+&device.id		eisa 0x2112
++device.name		2112
++driver.display		|50-80|31-38
+
+ vendor.id		IBM
+&device.id		eisa 0x2113
++device.name		2113
++driver.display		|50-80|31-38
+
+ vendor.id		IBM
+&device.id		eisa 0x2114
++device.name		2114
++driver.display		|50-120|31-62
+
+ vendor.id		IBM
+&device.id		eisa 0x2115
++device.name		2115
++driver.display		|50-120|31-62
+
+ vendor.id		IBM
+&device.id		eisa 0x2117
++device.name		2117
++driver.display		|50-120|31-65
+
+ vendor.id		IBM
+&device.id		eisa 0x2215
++device.name		2215
++driver.display		|50-120|31-64
+
+ vendor.id		IBM
+&device.id		eisa 0x2221
++device.name		2122
++driver.display		|50-120|30-54
+
+ vendor.id		IBM
+&device.id		eisa 0x2236
++device.name		2236
++driver.display		|50-120|30-70
+
+ vendor.id		IBM
+&device.id		eisa 0x2238
++device.name		2238
++driver.display		|50-80|31-38
+
+ vendor.id		IBM
+&device.id		eisa 0x2248
++device.name		2248
++driver.display		|50-100|31-48
+
+ vendor.id		IBM
+&device.id		eisa 0x2264
++device.name		2264
++driver.display		|50-120|31-64
+
+ vendor.id		IBM
+&device.id		eisa 0x2421
++device.name		2124
++driver.display		|50-120|30-54
+
+ vendor.id		IBM
+&device.id		eisa 0x2529
++device.name		9513 T55A TFT-MONITOR
++driver.display		|56-75|30-61
+
+ vendor.id		IBM
+&device.id		eisa 0x252a
++device.name		9514-B TFT
++driver.display		|55-75|31-65
+
+ vendor.id		IBM
+&device.id		eisa 0x2535
++device.name		9525-0X1
++driver.display		|50-110|30-64
+
+ vendor.id		IBM
+&device.id		eisa 0x254a
++device.name		THINKPAD LCD
++driver.display		|50-65|40-60
+
+ vendor.id		IBM
+&device.id		eisa 0x254c
++device.name		THINKPAD TFT
++driver.display		|50-65|40-60
+
+ vendor.id		IBM
+&device.id		eisa 0x2621
++device.name		2126
++driver.display		|50-110|30-69
+
+ vendor.id		IBM
+&device.id		eisa 0x26ac
++device.name		APTIVA 9900
++driver.display		|50-120|30-54
+
+ vendor.id		IBM
+&device.id		eisa 0x2721
++device.name		2127
++driver.display		|50-120|30-72
+
+ vendor.id		IBM
+&device.id		eisa 0x27ad
++device.name		APTIVA 9901
++driver.display		|50-120|30-54
+
+ vendor.id		IBM
+&device.id		eisa 0x3121
++device.name		2131
++driver.display		|50-120|30-69
+
+ vendor.id		IBM
+&device.id		eisa 0x3221
++device.name		2132
++driver.display		|50-120|30-72
+
+ vendor.id		IBM
+&device.id		eisa 0x6312
++device.name		6312
++driver.display		|47-100|31-50
+
+ vendor.id		IBM
+&device.id		eisa 0x6314
++device.name		6314
++driver.display		|50-120|30-60
+
+ vendor.id		IBM
+&device.id		eisa 0x6315
++device.name		6315
+
+ vendor.id		IBM
+&device.id		eisa 0x6317
++device.name		6317
++driver.display		|50-110|30-64
+
+ vendor.id		IBM
+&device.id		eisa 0x6319
++device.name		6319
++driver.display		|50-120|30-60
+
+ vendor.id		IBM
+&device.id		eisa 0x6321
++device.name		6321
+
+ vendor.id		IBM
+&device.id		eisa 0x6322
++device.name		6322
+
+ vendor.id		IBM
+&device.id		eisa 0x6324
++device.name		6324
++driver.display		|50-110|30-64
+
+ vendor.id		IBM
+&device.id		eisa 0x6325
++device.name		6325
++driver.display		|50-110|30-64
+
+ vendor.id		IBM
+&device.id		eisa 0x6327
++device.name		6327
++driver.display		|50-130|30-64
+
+ vendor.id		IBM
+&device.id		eisa 0x7234
++device.name		2122-XXL
++driver.display		|50-110|30-54
+
+ vendor.id		IBM
+&device.id		eisa 0x7254
++device.name		2124-XXL
++driver.display		|50-110|30-54
+
+ vendor.id		IBM
+&device.id		eisa 0x8504
++device.name		8504
+
+ vendor.id		IBM
+&device.id		eisa 0x8511
++device.name		8511
+
+ vendor.id		IBM
+&device.id		eisa 0x8512
++device.name		8512
+
+ vendor.id		IBM
+&device.id		eisa 0x8513
++device.name		8513
+
+ vendor.id		IBM
+&device.id		eisa 0x8514
++device.name		8514
+
+ vendor.id		IBM
+&device.id		eisa 0x8515
++device.name		8515
+
+ vendor.id		IBM
+&device.id		eisa 0x8517
++device.name		8517
+
+ vendor.id		IBM
+&device.id		eisa 0x8518
++device.name		8518
+
+ vendor.id		IBM
+&device.id		eisa 0x9504
++device.name		9504
+
+ vendor.id		IBM
+&device.id		eisa 0x9515
++device.name		9515
+
+ vendor.id		IBM
+&device.id		eisa 0x9517
++device.name		9517
++driver.display		|50-90|27-59
+
+ vendor.id		IBM
+&device.id		eisa 0x9518
++device.name		9518
+
+ vendor.id		IBM
+&device.id		eisa 0x9521
++device.name		9521
++driver.display		|50-110|30-82
+
+ vendor.id		IBM
+&device.id		eisa 0x9524
++device.name		9524
++driver.display		|50-110|30-64
+
+ vendor.id		IBM
+&device.id		eisa 0x9525
++device.name		9525
++driver.display		|50-110|30-64
+
+ vendor.id		IBM
+&device.id		eisa 0x9527
++device.name		9527
++driver.display		|50-110|30-82
+
+ vendor.id		ICL
++vendor.name		FUJITSU
+
+ vendor.id		ICL
+&device.id		eisa 0x0100
++device.name		ICL ERGOPRO 211V
++driver.display		|50-120|24-82
+
+ vendor.id		ICL
+&device.id		eisa 0x0200
++device.name		ICL ERGOPRO 171P
++driver.display		|50-110|30-82
+
+ vendor.id		ICL
+&device.id		eisa 0x0400
++device.name		ICL ERGOPRO 171V
++driver.display		|50-100|30-64
+
+ vendor.id		ICL
+&device.id		eisa 0x0700
++device.name		ICL ERGOPRO 151P
++driver.display		|48-100|30-64
+
+ vendor.id		ICL
+&device.id		eisa 0x0800
++device.name		ICL ERGOPRO 151P AUTOBRITE
++driver.display		|48-100|30-64
+
+ vendor.id		ICL
+&device.id		eisa 0x0a00
++device.name		ICL ERGOPRO 151V
++driver.display		|50-100|30-64
+
+ vendor.id		ICL
+&device.id		eisa 0x0b00
++device.name		ICL ERGOPRO 141V
+
+ vendor.id		ICL
+&device.id		eisa 0x0d00
++device.name		ICL ERGOPRO 141P
+
+ vendor.id		ICL
+&device.id		eisa 0x0f00
++device.name		ICL ERGOPRO 152V
++driver.display		|50-100|30-64
+
+ vendor.id		ICL
+&device.id		eisa 0x1400
++device.name		ICL ERGOPRO 142V
+
+ vendor.id		ICL
+&device.id		eisa 0x1600
++device.name		ICL ERGOPRO E153
++driver.display		|50-100|30-66
+
+ vendor.id		ICL
+&device.id		eisa 0x1900
++device.name		ICL ERGOPRO X173
++driver.display		|48-100|31-85
+
+ vendor.id		ICL
+&device.id		eisa 0x1a00
++device.name		ICL ERGOPRO X173A
++driver.display		|48-100|31-85
+
+ vendor.id		ICL
+&device.id		eisa 0x1c00
++device.name		ICL ERGOPRO X152
++driver.display		|50-100|30-65
+
+ vendor.id		ICL
+&device.id		eisa 0x1d00
++device.name		ICL ERGOPRO E173
++driver.display		|50-120|30-65
+
+ vendor.id		ICL
+&device.id		eisa 0x2100
++device.name		ERGOPRO X153
++driver.display		|50-160|30-69
+
+ vendor.id		ICL
+&device.id		eisa 0x2200
++device.name		ERGOPRO E154
++driver.display		|50-100|30-54
+
+ vendor.id		ICL
+&device.id		eisa 0x2300
++device.name		ERGOPRO E174
++driver.display		|50-160|30-69
+
+ vendor.id		ICL
+&device.id		eisa 0x2400
++device.name		ERGOPRO X174
++driver.display		|50-150|30-92
+
+ vendor.id		ICL
+&device.id		eisa 0x2500
++device.name		E175
++driver.display		|50-120|30-85
+
+ vendor.id		ICL
+&device.id		eisa 0x2700
++device.name		E213
++driver.display		|50-150|30-107
+
+ vendor.id		ICL
+&device.id		eisa 0x2800
++device.name		X191
++driver.display		|50-160|30-96
+
+ vendor.id		ICL
+&device.id		eisa 0x2900
++device.name		X154
++driver.display		|50-120|30-70
+
+ vendor.id		ICL
+&device.id		eisa 0x2a00
++device.name		E176
++driver.display		|50-120|30-70
+
+ vendor.id		IVM
++vendor.name		IIYAMA
+
+ vendor.id		IVM
+&device.id		eisa 0x1501
++device.name		VISION MASTER
++driver.display		|50-160|27-69
+
+ vendor.id		IVM
+&device.id		eisa 0x1700
++device.name		VISION MASTER (1700)
++driver.display		|50-160|27-86
+
+ vendor.id		IVM
+&device.id		eisa 0x1701
++device.name		VISION MASTER (1701)
++driver.display		|50-160|27-86
+
+ vendor.id		IVM
+&device.id		eisa 0x1702
++device.name		VISION MASTER 400 (2)
++driver.display		|50-160|27-96
+
+ vendor.id		IVM
+&device.id		eisa 0x1703
++device.name		VISION MASTER 400
++driver.display		|50-160|27-96
+
+ vendor.id		IVM
+&device.id		eisa 0x1711
++device.name		VISION MASTER PRO 400
++driver.display		|50-160|27-96
+
+ vendor.id		IVM
+&device.id		eisa 0x1740
++device.name		VISION MASTER PRO 410
++driver.display		|50-160|27-96
+
+ vendor.id		IVM
+&device.id		eisa 0x17a8
++device.name		S700JT1
++driver.display		|50-100|27-90
+
+ vendor.id		IVM
+&device.id		eisa 0x1900
++device.name		VISION MASTER 450
++driver.display		|50-160|27-102
+
+ vendor.id		IVM
+&device.id		eisa 0x1901
++device.name		VISION MASTER PRO 450
++driver.display		1600x1200|50-160|25-115|230
+
+ vendor.id		IVM
+&device.id		eisa 0x1918
++device.name		VISION MASTER PRO 451
++driver.display		|50-160|27-110
+
+ vendor.id		IVM
+&device.id		eisa 0x2110
++device.name		VISION MASTER 501
++driver.display		|50-160|27-96
+
+ vendor.id		IVM
+&device.id		eisa 0x2118
++device.name		VISION MASTER PRO 501
++driver.display		|50-160|27-96
+
+ vendor.id		IVM
+&device.id		eisa 0x2120
++device.name		VISION MASTER 502
++driver.display		|50-160|27-110
+
+ vendor.id		IVM
+&device.id		eisa 0x2128
++device.name		VISION MASTER PRO 502
++driver.display		|50-160|27-110
+
+ vendor.id		IVM
+&device.id		eisa 0x2130
++device.name		VISION MASTER PRO
++driver.display		|50-160|24-94
+
+ vendor.id		IVM
+&device.id		eisa 0x3601
++device.name		PROLITE36 (3601)
+
+ vendor.id		IVM
+&device.id		eisa 0x3602
++device.name		PROLITE36
+
+ vendor.id		IVM
+&device.id		eisa 0x3801
++device.name		PROLITE38
+
+ vendor.id		IVM
+&device.id		eisa 0x3808
++device.name		PROLITE38C
+
+ vendor.id		IVM
+&device.id		eisa 0x3900
++device.name		PROLITE39
+
+ vendor.id		IVM
+&device.id		eisa 0x4600
++device.name		PROLITE46
+
+ vendor.id		KDS
++vendor.name		KOREA
+
+ vendor.id		KDS
+&device.id		eisa 0x05ac
++device.name		DATA SYSTEMS VISUAL SENSATION VS-4(KD-1452)
++driver.display		|40-120|28-50
+
+ vendor.id		KDS
+&device.id		eisa 0x05af
++device.name		DATA SYSTEMS VISUAL SENSATION VS-4D
++driver.display		|40-120|28-55
+
+ vendor.id		KDS
+&device.id		eisa 0x05e6
++device.name		DATA SYSTEMS VISUAL SENSATION VS-5/VS-51/VSX-5
++driver.display		|50-120|30-70
+
+ vendor.id		KDS
+&device.id		eisa 0x05f5
++device.name		DATA SYSTEMS VISUAL SENSATION VS-55
++driver.display		|40-120|28-55
+
+ vendor.id		KDS
+&device.id		eisa 0x06c2
++device.name		DATA SYSTEMS VISUAL SENSATION VS-7/VSX-7
++driver.display		|50-120|30-70
+
+ vendor.id		KDS
+&device.id		eisa 0x06d6
++device.name		DATA SYSTEMS VISUAL SENSATION VS-9
++driver.display		|50-120|31-95
+
+ vendor.id		KDS
+&device.id		eisa 0x07d0
++device.name		DATA SYSTEMS VISUAL SENSATION VS-19
++driver.display		|50-120|31-95
+
+ vendor.id		KDS
+&device.id		eisa 0x0834
++device.name		DATA SYSTEMS VISUAL SENSATION VS-21
++driver.display		|50-160|30-117
+
+ vendor.id		KDS
+&device.id		eisa 0x1540
++device.name		DATA SYSTEMS AVITRON AV-5T
++driver.display		|50-120|30-70
+
+ vendor.id		KDS
+&device.id		eisa 0x1740
++device.name		DATA SYSTEMS AVITRON AV-7T
++driver.display		|50-120|30-70
+
+ vendor.id		KDS
+&device.id		eisa 0x1980
++device.name		DATA SYSTEMS VISUAL SENSATION VS-195
++driver.display		|50-120|30-95
+
+ vendor.id		KDS
+&device.id		eisa 0x1981
++device.name		DATA SYSTEMS VISUAL SENSATION VS-19SN
++driver.display		|50-120|30-95
+
+ vendor.id		LKM
++vendor.name		AZALEA
+
+ vendor.id		LNK
++vendor.name		LINK Technologies, Inc.
+
+ vendor.id		MAG
++vendor.name		MAGIC
+
+ vendor.id		MAG
+&device.id		eisa 0x4577
++device.name		D410
++driver.display		|50-100|30-54
+
+ vendor.id		MAG
+&device.id		eisa 0x5620
++device.name		DX-1595
++driver.display		|50-120|30-64
+
+ vendor.id		MAG
+&device.id		eisa 0x5624
++device.name		DX-15T
++driver.display		|50-120|30-64
+
+ vendor.id		MAG
+&device.id		eisa 0x5626
++device.name		DX1795
+
+ vendor.id		MAG
+&device.id		eisa 0x5775
++device.name		DJ530
++driver.display		|50-120|30-70
+
+ vendor.id		MAG
+&device.id		eisa 0x5776
++device.name		XJ530
++driver.display		|50-120|30-70
+
+ vendor.id		MAG
+&device.id		eisa 0x5779
++device.name		XJ500T
++driver.display		|50-120|30-70
+
+ vendor.id		MAG
+&device.id		eisa 0x5781
++device.name		DX500T
++driver.display		|50-120|30-70
+
+ vendor.id		MAG
+&device.id		eisa 0x5801
++device.name		XJ500
++driver.display		|50-120|30-70
+
+ vendor.id		MAG
+&device.id		eisa 0x7626
++device.name		DX-1795
++driver.display		|50-120|30-64
+
+ vendor.id		MAG
+&device.id		eisa 0x7740
++device.name		DX-700T
++driver.display		|50-120|30-70
+
+ vendor.id		MAG
+&device.id		eisa 0x7752
++device.name		DJ707
++driver.display		|50-120|30-70
+
+ vendor.id		MAG
+&device.id		eisa 0x7771
++device.name		XJ700
++driver.display		|50-120|30-70
+
+ vendor.id		MAG
+&device.id		eisa 0x7772
++device.name		XJ707
++driver.display		|50-120|30-70
+
+ vendor.id		MAG
+&device.id		eisa 0x7780
++device.name		XJ700T
++driver.display		|50-120|30-70
+
+ vendor.id		MAG
+&device.id		eisa 0x7842
++device.name		DX715T
++driver.display		|50-120|30-86
+
+ vendor.id		MAG
+&device.id		eisa 0x7854
++device.name		DJ717
++driver.display		|50-160|30-86
+
+ vendor.id		MAG
+&device.id		eisa 0x7874
++device.name		XJ717
++driver.display		|50-160|30-86
+
+ vendor.id		MAG
+&device.id		eisa 0x8997
++device.name		XJ810
++driver.display		|50-160|30-95
+
+ vendor.id		MAX
++vendor.name		BELINEA
+
+ vendor.id		MAX
+&device.id		eisa 0x0582
++device.name		101410
++driver.display		|50-77|24-61
+
+ vendor.id		MAX
+&device.id		eisa 0x05e6
++device.name		101510
++driver.display		|50-77|30-61
+
+ vendor.id		MAX
+&device.id		eisa 0x05f0
++device.name		101520
+
+ vendor.id		MAX
+&device.id		eisa 0x05fa
++device.name		101530
++driver.display		|50-85|30-70
+
+ vendor.id		MAX
+&device.id		eisa 0x060e
++device.name		101550
++driver.display		|50-85|30-70
+
+ vendor.id		MAX
+&device.id		eisa 0x0712
++device.name		101810
++driver.display		|50-85|31-80
+
+ vendor.id		MAX
+&device.id		eisa 0x07e4
++device.name		102020
++driver.display		1152x864|50-120|30-70|86
+
+ vendor.id		MAX
+&device.id		eisa 0x07ee
++device.name		102030
++driver.display		|50-120|30-70
+
+ vendor.id		MAX
+&device.id		eisa 0x07fa
++device.name		102010
++driver.display		|50-120|30-54
+
+ vendor.id		MAX
+&device.id		eisa 0x0bc2
++device.name		103010
++driver.display		|50-120|30-70
+
+ vendor.id		MAX
+&device.id		eisa 0x0bc7
++device.name		103015
++driver.display		|50-120|30-70
+
+ vendor.id		MAX
+&device.id		eisa 0x0bcc
++device.name		103020
++driver.display		|50-120|30-70
+
+ vendor.id		MAX
+&device.id		eisa 0x0bd6
++device.name		103030
++driver.display		|50-150|30-70
+
+ vendor.id		MAX
+&device.id		eisa 0x0be0
++device.name		103040
++driver.display		|50-150|30-86
+
+ vendor.id		MAX
+&device.id		eisa 0x0bea
++device.name		103050
++driver.display		1280x1024|50-160|30-95
+
+ vendor.id		MAX
+&device.id		eisa 0x0bf4
++device.name		103060
++driver.display		|50-150|30-95
+
+ vendor.id		MAX
+&device.id		eisa 0x0bfe
++device.name		103070
++driver.display		|50-160|30-95
+
+ vendor.id		MAX
+&device.id		eisa 0x0faa
++device.name		104010
++driver.display		|50-120|30-54
+
+ vendor.id		MAX
+&device.id		eisa 0x0fc8
++device.name		104040
++driver.display		|50-90|30-38
+
+ vendor.id		MAX
+&device.id		eisa 0x0fe1
++device.name		104065
++driver.display		|50-120|30-50
+
+ vendor.id		MAX
+&device.id		eisa 0x13a6
++device.name		105030
++driver.display		|50-100|30-64
+
+ vendor.id		MAX
+&device.id		eisa 0x13ab
++device.name		105035
++driver.display		1024x768|50-120|30-69
+
+ vendor.id		MAX
+&device.id		eisa 0x13b5
++device.name		105045
++driver.display		|50-120|30-70
+
+ vendor.id		MAX
+&device.id		eisa 0x13b6
++device.name		105046
++driver.display		|50-120|30-70
+
+ vendor.id		MAX
+&device.id		eisa 0x13ba
++device.name		105050
++driver.display		|50-100|30-64
+
+ vendor.id		MAX
+&device.id		eisa 0x13d3
++device.name		105075
++driver.display		|50-120|30-69
+
+ vendor.id		MAX
+&device.id		eisa 0x13d4
++device.name		105076
++driver.display		|50-120|30-69
+
+ vendor.id		MAX
+&device.id		eisa 0x13d8
++device.name		105080
++driver.display		|50-120|30-70
+
+ vendor.id		MAX
+&device.id		eisa 0x15ae
++device.name		105550
++driver.display		|50-120|24-69
+
+ vendor.id		MAX
+&device.id		eisa 0x15c2
++device.name		105570
++driver.display		|50-120|30-69
+
+ vendor.id		MAX
+&device.id		eisa 0x15c7
++device.name		105575
++driver.display		|50-120|30-69
+
+ vendor.id		MAX
+&device.id		eisa 0x15c8
++device.name		105576
++driver.display		|50-120|30-69
+
+ vendor.id		MAX
+&device.id		eisa 0x15d2
++device.name		105586
++driver.display		|50-120|30-69
+
+ vendor.id		MAX
+&device.id		eisa 0x15d6
++device.name		105590
++driver.display		|50-120|30-85
+
+ vendor.id		MAX
+&device.id		eisa 0x15db
++device.name		105595
++driver.display		|50-120|30-85
+
+ vendor.id		MAX
+&device.id		eisa 0x15dc
++device.name		105596
++driver.display		|50-120|30-85
+
+ vendor.id		MAX
+&device.id		eisa 0x1784
++device.name		106020
++driver.display		|50-150|30-95
+
+ vendor.id		MAX
+&device.id		eisa 0x17a2
++device.name		106050
++driver.display		|50-120|30-85
+
+ vendor.id		MAX
+&device.id		eisa 0x17ac
++device.name		106060
++driver.display		|50-160|30-95
+
+ vendor.id		MAX
+&device.id		eisa 0x17b6
++device.name		106070
++driver.display		|50-180|30-95
+
+ vendor.id		MAX
+&device.id		eisa 0x17ca
++device.name		106090
++driver.display		|50-150|30-95
+
+ vendor.id		MAX
+&device.id		eisa 0x1b62
++device.name		107010
++driver.display		|50-160|30-69
+
+ vendor.id		MAX
+&device.id		eisa 0x1b67
++device.name		107015
++driver.display		|50-160|30-70
+
+ vendor.id		MAX
+&device.id		eisa 0x1b6c
++device.name		107020
++driver.display		|50-120|30-70
+
+ vendor.id		MAX
+&device.id		eisa 0x1b71
++device.name		107025
++driver.display		|50-180|30-70
+
+ vendor.id		MAX
+&device.id		eisa 0x1b76
++device.name		107030
++driver.display		|50-160|30-86
+
+ vendor.id		MAX
+&device.id		eisa 0x1b7b
++device.name		107035
++driver.display		|50-180|30-95
+
+ vendor.id		MAX
+&device.id		eisa 0x1b80
++device.name		107040
++driver.display		|50-120|30-85
+
+ vendor.id		MAX
+&device.id		eisa 0x1b8a
++device.name		107050
++driver.display		|50-160|30-95
+
+ vendor.id		MAX
+&device.id		eisa 0x1b94
++device.name		107060
++driver.display		|50-120|30-70
+
+ vendor.id		MAX
+&device.id		eisa 0x1b99
++device.name		107065
++driver.display		|50-160|30-95
+
+ vendor.id		MAX
+&device.id		eisa 0x1f4a
++device.name		108010
++driver.display		|50-160|30-115
+
+ vendor.id		MAX
+&device.id		eisa 0x1f4f
++device.name		108015
++driver.display		|50-160|30-115
+
+ vendor.id		MAX
+&device.id		eisa 0x1f54
++device.name		108020
++driver.display		|50-160|30-107
+
+ vendor.id		MAX
+&device.id		eisa 0x1f72
++device.name		108050
++driver.display		|50-160|30-95
+
+ vendor.id		MAX
+&device.id		eisa 0x1f7c
++device.name		108060
++driver.display		|50-160|30-115
+
+ vendor.id		MAX
+&device.id		eisa 0x1f9a
++device.name		108090
++driver.display		|50-160|30-95
+
+ vendor.id		MAX
+&device.id		eisa 0x1f9f
++device.name		108095
++driver.display		|50-160|30-95
+
+ vendor.id		MAX
+&device.id		eisa 0x3430
++device.name		105540
++driver.display		|50-90|30-64
+
+ vendor.id		MAX
+&device.id		eisa 0x3539
++device.name		105095
++driver.display		|55-90|30-64
+
+ vendor.id		MAX
+&device.id		eisa 0x4065
++device.name		10 40 65
++driver.display		|50-120|30-50
+
+ vendor.id		MAX
+&device.id		eisa 0x5620
++device.name		105065
++driver.display		|50-100|30-64
+
+ vendor.id		MAX
+&device.id		eisa 0x5624
++device.name		105066
++driver.display		|50-120|30-64
+
+ vendor.id		MAX
+&device.id		eisa 0x7555
++device.name		10 55 75
++driver.display		|50-120|30-69
+
+ vendor.id		MEI
++vendor.name		PANASONIC
+
+ vendor.id		MEI
+&device.id		eisa 0x0c81
++device.name		P70
++driver.display		|50-180|30-95
+
+ vendor.id		MEI
+&device.id		eisa 0x0c96
++device.name		SL70I(TX-D7S36)
++driver.display		|50-180|30-70
+
+ vendor.id		MEI
+&device.id		eisa 0x0c9b
++device.name		PL70I(TX-D7S55)
++driver.display		|50-180|30-97
+
+ vendor.id		MEI
+&device.id		eisa 0x1007
++device.name		PF70
++driver.display		|50-160|30-86
+
+ vendor.id		MEI
+&device.id		eisa 0x120d
++device.name		SL90 (TX-D9S54)
++driver.display		|50-180|30-95
+
+ vendor.id		MEI
+&device.id		eisa 0x1604
++device.name		TX-D2151W-ES
++driver.display		|50-160|30-82
+
+ vendor.id		MEI
+&device.id		eisa 0x1610
++device.name		TX-D2151NM
++driver.display		|50-160|30-82
+
+ vendor.id		MEI
+&device.id		eisa 0x1649
++device.name		S110
++driver.display		|50-180|30-95
+
+ vendor.id		MEI
+&device.id		eisa 0x1e02
++device.name		LC40
++driver.display		|50-77|24-61
+
+ vendor.id		MEI
+&device.id		eisa 0x1e07
++device.name		LC50S (TX-D5L31F)
++driver.display		|50-77|30-61
+
+ vendor.id		MEI
+&device.id		eisa 0x2622
++device.name		S15
++driver.display		|50-120|30-67
+
+ vendor.id		MEI
+&device.id		eisa 0x2632
++device.name		P50
++driver.display		|50-180|30-69
+
+ vendor.id		MEI
+&device.id		eisa 0x2637
++device.name		E50
++driver.display		|50-120|30-61
+
+ vendor.id		MEL
++vendor.name		MITSUBISHI
+
+ vendor.id		MEL
+&device.id		eisa 0x0040
++device.name		DIAMOND PRO 21TX (THN9105)
++driver.display		|50-152|30-93
+
+ vendor.id		MEL
+&device.id		eisa 0x1040
++device.name		RD21G
++driver.display		|50-152|30-93
+
+ vendor.id		MEL
+&device.id		eisa 0x2040
++device.name		DIAMOND PRO 20X (FR8905)
++driver.display		|50-120|30-82
+
+ vendor.id		MEL
+&device.id		eisa 0x4040
++device.name		DIAMOND PRO 17TX (TFG8705)
++driver.display		|50-152|30-86
+
+ vendor.id		MEL
+&device.id		eisa 0x4064
++device.name		DIAMOND PRO 67TXV (TFV6705)
++driver.display		|50-130|30-69
+
+ vendor.id		MEL
+&device.id		eisa 0x4065
++device.name		RD17GR
++driver.display		|55-125|30-69
+
+ vendor.id		MEL
+&device.id		eisa 0x408f
++device.name		DIAMOND SCAN 15VX (SD58XX)
++driver.display		|50-100|30-65
+
+ vendor.id		MEL
+&device.id		eisa 0x409f
++device.name		RD15M
++driver.display		|50-100|30-65
+
+ vendor.id		MEL
+&device.id		eisa 0x40c0
++device.name		DIAMOND PRO 87TXM (TFM8705)
++driver.display		|50-130|30-86
+
+ vendor.id		MEL
+&device.id		eisa 0x40e0
++device.name		DIAMOND PRO 91TXM (TFW9105)
++driver.display		|50-130|30-95
+
+ vendor.id		MEL
+&device.id		eisa 0x40e1
++device.name		DIAMOND PLUS 100 (TFW1105)
++driver.display		|50-152|30-108
+
+ vendor.id		MEL
+&device.id		eisa 0x40f0
++device.name		RD21GII
++driver.display		|50-152|30-95
+
+ vendor.id		MEL
+&device.id		eisa 0x40f1
++device.name		RD21GX
++driver.display		|50-132|30-86
+
+ vendor.id		MEL
+&device.id		eisa 0x4100
++device.name		DIAMOND PRO 1000 (TFX1105)
++driver.display		|50-152|30-115
+
+ vendor.id		MEL
+&device.id		eisa 0x4101
++device.name		DIAMOND PRO 1010 (TUX1107)
++driver.display		|50-152|30-115
+
+ vendor.id		MEL
+&device.id		eisa 0x4120
++device.name		SPECTRAVIEW 1000
++driver.display		|50-130|30-95
+
+ vendor.id		MEL
+&device.id		eisa 0x4140
++device.name		RD21GIII
++driver.display		|50-152|30-115
+
+ vendor.id		MEL
+&device.id		eisa 0x4141
++device.name		RD21GH
++driver.display		|50-152|30-115
+
+ vendor.id		MEL
+&device.id		eisa 0x4150
++device.name		RD17GZ
++driver.display		|50-130|30-86
+
+ vendor.id		MEL
+&device.id		eisa 0x4160
++device.name		DIAMOND PLUS 72 (TFV-8705)
++driver.display		|50-130|30-86
+
+ vendor.id		MEL
+&device.id		eisa 0x4190
++device.name		DIAMOND PLUS 70 (TF-7700P)
++driver.display		|50-180|30-70
+
+ vendor.id		MEL
+&device.id		eisa 0x41b0
++device.name		RDT151
+
+ vendor.id		MEL
+&device.id		eisa 0x41b3
++device.name		TFT MONITOR RDT150S
+
+ vendor.id		MEL
+&device.id		eisa 0x41f0
++device.name		DIAMOND SCAN 50 (SD5904)
++driver.display		|50-100|30-70
+
+ vendor.id		MEL
+&device.id		eisa 0x4210
++device.name		DIAMOND SCAN 70 (SD7704)
++driver.display		|50-100|30-70
+
+ vendor.id		MEL
+&device.id		eisa 0x42d0
++device.name		TFT MONITOR RDT180S
+
+ vendor.id		MEL
+&device.id		eisa 0x5040
++device.name		RD17GII
++driver.display		|50-152|24-86
+
+ vendor.id		MEL
+&device.id		eisa 0x6040
++device.name		RD17F
++driver.display		|50-130|30-82
+
+ vendor.id		MEL
+&device.id		eisa 0x6140
++device.name		DIAMOND SCAN 17HX (FFF8705)
++driver.display		|50-130|30-82
+
+ vendor.id		MEL
+&device.id		eisa 0x8040
++device.name		DIAMOND SCAN 15HX (SD57XXC)
+
+ vendor.id		MEL
+&device.id		eisa 0x9040
++device.name		RD15G
++driver.display		|50-120|30-65
+
+ vendor.id		MIR
++vendor.name		MIRO
+
+ vendor.id		MIR
+&device.id		eisa 0x0721
++device.name		PROOFSCREEN MIROC21107
+
+ vendor.id		MIR
+&device.id		eisa 0x6815
++device.name		miroD1568
+
+ vendor.id		MIR
+&device.id		eisa 0x6817
++device.name		PROOFSCREEN MIROC1768
++driver.display		|50-100|29-68
+
+ vendor.id		MIR
+&device.id		eisa 0x6917
++device.name		miroD1769
+
+ vendor.id		MIR
+&device.id		eisa 0x8217
++device.name		PROOFSCREEN MIROC1782
++driver.display		|50-120|29-82
+
+ vendor.id		MIR
+&device.id		eisa 0x8520
++device.name		PROOFSCREEN MIROC2085 E
++driver.display		|50-160|29-85
+
+ vendor.id		MIR
+&device.id		eisa 0x8521
++device.name		PROOFSCREEN MIROC2185
++driver.display		|50-152|30-85
+
+ vendor.id		MIR
+&device.id		eisa 0x9321
++device.name		PROOFSCREEN MIROC2193
++driver.display		|50-150|30-93
+
+ vendor.id		MIR
+&device.id		eisa 0xa785
++device.name		A1785F
++driver.display		|50-100|30-85
+
+ vendor.id		MTC
++vendor.name		MITAC
+
+ vendor.id		MTC
+&device.id		eisa 0x0001
++device.name		1450FV
++driver.display		|50-90|31-50
+
+ vendor.id		MTC
+&device.id		eisa 0x0002
++device.name		1564FD/1564FS
++driver.display		|50-100|30-66
+
+ vendor.id		MTC
+&device.id		eisa 0x0003
++device.name		1450FD
++driver.display		|50-90|31-50
+
+ vendor.id		NAN
++vendor.name		NANAO
+
+ vendor.id		NAN
+&device.id		eisa 0x0000
++device.name		USA FLEXSCAN T2-20
++driver.display		|55-160|30-85
+
+ vendor.id		NAN
+&device.id		eisa 0x0400
++device.name		USA F2-15
+
+ vendor.id		NAN
+&device.id		eisa 0x0401
++device.name		USA F2-17
+
+ vendor.id		NAN
+&device.id		eisa 0x0402
++device.name		USA F2-17EX
+
+ vendor.id		NAN
+&device.id		eisa 0x0403
++device.name		USA F2-21
+
+ vendor.id		NAN
+&device.id		eisa 0x0404
++device.name		USA FX2-21
+
+ vendor.id		NAN
+&device.id		eisa 0x0405
++device.name		USA FLEXSCAN T2-17TS
+
+ vendor.id		NAN
+&device.id		eisa 0x0406
++device.name		FLEXSCAN 6600
++driver.display		|70-90|56-110
+
+ vendor.id		NAN
+&device.id		eisa 0x0502
++device.name		NANAO 9060S
+
+ vendor.id		NAN
+&device.id		eisa 0x0503
++device.name		9065S
++driver.display		|50-90|30-50
+
+ vendor.id		NAN
+&device.id		eisa 0x0506
++device.name		NANAO 9070U
+
+ vendor.id		NAN
+&device.id		eisa 0x0507
++device.name		NANAO 9080i
+
+ vendor.id		NAN
+&device.id		eisa 0x0508
++device.name		9400I
++driver.display		|55-90|30-65
+
+ vendor.id		NAN
+&device.id		eisa 0x0509
++device.name		9500
++driver.display		|55-90|30-78
+
+ vendor.id		NAN
+&device.id		eisa 0x050a
++device.name		FLEXSCAN F340IW
+
+ vendor.id		NAN
+&device.id		eisa 0x050b
++device.name		NANAO FlexScan F550i
+
+ vendor.id		NAN
+&device.id		eisa 0x050c
++device.name		FLEXSCAN F550IW
++driver.display		|55-90|30-65
+
+ vendor.id		NAN
+&device.id		eisa 0x050d
++device.name		FLEXSCAN F560IW
++driver.display		|55-90|30-82
+
+ vendor.id		NAN
+&device.id		eisa 0x050e
++device.name		FLEXSCAN F750I
++driver.display		|55-90|30-80
+
+ vendor.id		NAN
+&device.id		eisa 0x050f
++device.name		FLEXSCAN F760IW
++driver.display		|55-90|30-78
+
+ vendor.id		NAN
+&device.id		eisa 0x0510
++device.name		FLEXSCAN F780IW
++driver.display		|55-120|45-100
+
+ vendor.id		NAN
+&device.id		eisa 0x0511
++device.name		FLEXSCAN T560I
++driver.display		|55-90|30-82
+
+ vendor.id		NAN
+&device.id		eisa 0x0512
++device.name		FLEXSCAN T660I
++driver.display		|55-90|30-78
+
+ vendor.id		NAN
+&device.id		eisa 0x0513
++device.name		USA FLEXSCAN T2-17
++driver.display		|55-160|30-85
+
+ vendor.id		NAN
+&device.id		eisa 0x0514
++device.name		NANAO USA FlexScan T2-20
+
+ vendor.id		NAN
+&device.id		eisa 0x0580
++device.name		USA FLEXSCAN 6300
++driver.display		|55-90|56-80
+
+ vendor.id		NAN
+&device.id		eisa 0x0800
++device.name		FLEXSCAN 33F
+
+ vendor.id		NAN
+&device.id		eisa 0x0802
++device.name		FLEXSCAN 88F
+
+ vendor.id		NAN
+&device.id		eisa 0x0805
++device.name		FLEXSCAN 54T
+
+ vendor.id		NAN
+&device.id		eisa 0x0882
++device.name		FLEXSCAN 52F
+
+ vendor.id		NAN
+&device.id		eisa 0x0900
++device.name		FLEXSCAN 6500
++driver.display		|55-90|56-80
+
+ vendor.id		NAN
+&device.id		eisa 0x0902
++device.name		9060S
+
+ vendor.id		NAN
+&device.id		eisa 0x0906
++device.name		9070U
++driver.display		|50-90|20-50
+
+ vendor.id		NAN
+&device.id		eisa 0x0907
++device.name		9080I
++driver.display		|55-90|30-64
+
+ vendor.id		NAN
+&device.id		eisa 0x090a
++device.name		FLEXSCAN F347
+
+ vendor.id		NAN
+&device.id		eisa 0x090b
++device.name		FLEXSCAN F550I
++driver.display		|55-90|30-65
+
+ vendor.id		NAN
+&device.id		eisa 0x090c
++device.name		FLEXSCAN F557
+
+ vendor.id		NAN
+&device.id		eisa 0x090f
++device.name		FLEXSCAN 77F
+
+ vendor.id		NAN
+&device.id		eisa 0x0910
++device.name		FLEXSCAN F780IJ
++driver.display		|55-120|45-100
+
+ vendor.id		NAN
+&device.id		eisa 0x0911
++device.name		FLEXSCAN T560IJ
++driver.display		|55-90|30-82
+
+ vendor.id		NAN
+&device.id		eisa 0x0912
++device.name		FLEXSCAN T660IJ
++driver.display		|55-90|30-82
+
+ vendor.id		NAN
+&device.id		eisa 0x0913
++device.name		FLEXSCAN 56T
++driver.display		|55-160|30-85
+
+ vendor.id		NAN
+&device.id		eisa 0x0914
++device.name		FLEXSCAN 68T
++driver.display		|55-160|30-85
+
+ vendor.id		NAN
+&device.id		eisa 0x098a
++device.name		FLEXSCAN F347II
+
+ vendor.id		NAN
+&device.id		eisa 0x098c
++device.name		FLEXSCAN 55F
+
+ vendor.id		NAN
+&device.id		eisa 0x098f
++device.name		FLEXSCAN 76F
++driver.display		|55-90|30-78
+
+ vendor.id		NAN
+&device.id		eisa 0x0991
++device.name		FLEXSCAN T567
++driver.display		|55-90|30-82
+
+ vendor.id		NAN
+&device.id		eisa 0x0993
++device.name		FLEXSCAN 53T
++driver.display		|55-160|30-85
+
+ vendor.id		NAN
+&device.id		eisa 0x1212
++device.name		FLEXSCAN E151L
++driver.display		|50-85|24-61
+
+ vendor.id		NAN
+&device.id		eisa 0x1218
++device.name		FLEXSCAN E76F
++driver.display		|50-160|30-110
+
+ vendor.id		NAN
+&device.id		eisa 0x1220
++device.name		FLEXSCAN E54F
++driver.display		|50-160|30-96
+
+ vendor.id		NEC
++vendor.name		NEC
+
+ vendor.id		NEC
+&device.id		eisa 0x000a
++device.name		INTEGRIERTER PC-9821XC13/S5
++driver.display		|50-63|27-59
+
+ vendor.id		NEC
+&device.id		eisa 0x0014
++device.name		D171
++driver.display		|50-63|27-59
+
+ vendor.id		NEC
+&device.id		eisa 0x001e
++device.name		NEC INTEGRIERTER PC-9821CT16
++driver.display		|50-70|27-59
+
+ vendor.id		NEC
+&device.id		eisa 0x0032
++device.name		D17A1
++driver.display		|50-63|27-59
+
+ vendor.id		NEC
+&device.id		eisa 0x0046
++device.name		D17C2
++driver.display		|50-63|27-59
+
+ vendor.id		NEC
+&device.id		eisa 0x0050
++device.name		D15A1
++driver.display		|50-63|27-59
+
+ vendor.id		NEC
+&device.id		eisa 0x005a
++device.name		D17B1
++driver.display		|50-63|27-59
+
+ vendor.id		NEC
+&device.id		eisa 0x006e
++device.name		DV15A1
++driver.display		|60-75|30-63
+
+ vendor.id		NEC
+&device.id		eisa 0x0078
++device.name		DV17A1
++driver.display		|60-75|30-67
+
+ vendor.id		NEC
+&device.id		eisa 0x0082
++device.name		DV17B1
++driver.display		|60-75|30-67
+
+ vendor.id		NEC
+&device.id		eisa 0x008c
++device.name		DV17C1
++driver.display		|60-75|30-67
+
+ vendor.id		NEC
+&device.id		eisa 0x0096
++device.name		DV17C2
++driver.display		|60-75|30-83
+
+ vendor.id		NEC
+&device.id		eisa 0x00a0
++device.name		F14T1
++driver.display		|60-75|24-63
+
+ vendor.id		NEC
+&device.id		eisa 0x00aa
++device.name		DV15D1
++driver.display		|60-75|30-63
+
+ vendor.id		NEC
+&device.id		eisa 0x00c8
++device.name		PK-DH172
++driver.display		|60-85|30-63
+
+ vendor.id		NEC
+&device.id		eisa 0x00dc
++device.name		F14T2H
++driver.display		|59-76|31-61
+
+ vendor.id		NEC
+&device.id		eisa 0x00e6
++device.name		F14T2L
++driver.display		|59-76|31-61
+
+ vendor.id		NEC
+&device.id		eisa 0x0190
++device.name		D172
++driver.display		|50-63|27-59
+
+ vendor.id		NEC
+&device.id		eisa 0x019a
++device.name		DV15A2
++driver.display		|59-86|30-71
+
+ vendor.id		NEC
+&device.id		eisa 0x01a4
++device.name		DV17C3
++driver.display		|59-86|30-71
+
+ vendor.id		NEC
+&device.id		eisa 0x01ae
++device.name		DV17B2
++driver.display		|59-86|30-71
+
+ vendor.id		NEC
+&device.id		eisa 0x0320
++device.name		MULTISYNC LT80
++driver.display		|50-85|15-60
+
+ vendor.id		NEC
+&device.id		eisa 0x0afa
++device.name		DH28W2
++driver.display		|60-75|30-38
+
+ vendor.id		NEC
+&device.id		eisa 0x0c8a
++device.name		DH32W2
++driver.display		|60-75|30-38
+
+ vendor.id		NEC
+&device.id		eisa 0x1d4d
++device.name		MULTISYNC 50
++driver.display		|55-120|31-69
+
+ vendor.id		NEC
+&device.id		eisa 0x1e15
++device.name		MULTISYNC 70
++driver.display		|55-120|31-69
+
+ vendor.id		NEC
+&device.id		eisa 0x1fa4
++device.name		MULTISYNC MT810
++driver.display		|50-85|15-60
+
+ vendor.id		NEC
+&device.id		eisa 0x2710
++device.name		MULTISYNC MT1000
++driver.display		|50-85|15-80
+
+ vendor.id		NEC
+&device.id		eisa 0x2fb2
++device.name		LCD200
++driver.display		|53-85|24-62
+
+ vendor.id		NEC
+&device.id		eisa 0x3782
++device.name		MULTISYNC LCD400
++driver.display		|55-86|24-60
+
+ vendor.id		NEC
+&device.id		eisa 0x378c
++device.name		MULTISYNC LCD400V
++driver.display		|55-86|24-60
+
+ vendor.id		NEC
+&device.id		eisa 0x37fa
++device.name		NEC MultiSync XV14
+
+ vendor.id		NEC
+&device.id		eisa 0x37fb
++device.name		MULTISYNC XV14
++driver.display		|55-100|30-57
+
+ vendor.id		NEC
+&device.id		eisa 0x3a66
++device.name		MULTISYNC C400
++driver.display		|47-120|30-64
+
+ vendor.id		NEC
+&device.id		eisa 0x3c00
++device.name		NEC MultiSync XE15
+
+ vendor.id		NEC
+&device.id		eisa 0x3c0a
++device.name		MULTISYNC XP15
++driver.display		|55-160|31-65
+
+ vendor.id		NEC
+&device.id		eisa 0x3c14
++device.name		MULTISYNC XV15
++driver.display		|55-100|31-65
+
+ vendor.id		NEC
+&device.id		eisa 0x3c1e
++device.name		MULTISYNC XE15
++driver.display		|55-120|31-65
+
+ vendor.id		NEC
+&device.id		eisa 0x3d5e
++device.name		MULTISYNC XV15+
++driver.display		|55-100|31-65
+
+ vendor.id		NEC
+&device.id		eisa 0x3d68
++device.name		MULTISYNC M500
++driver.display		|55-120|30-69
+
+ vendor.id		NEC
+&device.id		eisa 0x3d7c
++device.name		MULTISYNC V500
++driver.display		|55-100|31-65
+
+ vendor.id		NEC
+&device.id		eisa 0x3d86
++device.name		MULTISYNC E500
++driver.display		|55-120|31-69
+
+ vendor.id		NEC
+&device.id		eisa 0x3d90
++device.name		MULTISYNC A500
++driver.display		|55-120|31-65
+
+ vendor.id		NEC
+&device.id		eisa 0x3e4e
++device.name		MULTISYNC C500
++driver.display		|47-120|30-64
+
+ vendor.id		NEC
+&device.id		eisa 0x3e53
++device.name		CS500-MULTIMEDIAMONITOR
++driver.display		|50-120|30-64
+
+ vendor.id		NEC
+&device.id		eisa 0x43a8
++device.name		NEC MultiSync XE17
+
+ vendor.id		NEC
+&device.id		eisa 0x43b2
++device.name		MULTISYNC XE17
++driver.display		|55-120|31-65
+
+ vendor.id		NEC
+&device.id		eisa 0x43bc
++device.name		MULTISYNC XV17
++driver.display		|55-100|31-65
+
+ vendor.id		NEC
+&device.id		eisa 0x43c6
++device.name		MULTISYNC M700
++driver.display		|55-120|30-69
+
+ vendor.id		NEC
+&device.id		eisa 0x43d0
++device.name		MULTISYNC A700
++driver.display		|55-120|31-65
+
+ vendor.id		NEC
+&device.id		eisa 0x4416
++device.name		MULTISYNC XP17
++driver.display		|55-160|31-82
+
+ vendor.id		NEC
+&device.id		eisa 0x4420
++device.name		MULTISYNC P750
++driver.display		|55-160|31-94
+
+ vendor.id		NEC
+&device.id		eisa 0x442a
++device.name		MULTISYNC XV17+ (-2)
++driver.display		|55-100|31-82
+
+ vendor.id		NEC
+&device.id		eisa 0x4434
++device.name		MULTISYNC E700
++driver.display		|55-120|31-82
+
+ vendor.id		NEC
+&device.id		eisa 0x4bd2
++device.name		MULTISYNC E900
++driver.display		|55-120|31-92
+
+ vendor.id		NEC
+&device.id		eisa 0x4bdc
++device.name		MULTISYNC E900+
++driver.display		|55-160|31-96
+
+ vendor.id		NEC
+&device.id		eisa 0x4be6
++device.name		MULTISYNC A900
++driver.display		|55-160|31-92
+
+ vendor.id		NEC
+&device.id		eisa 0x4bf0
++device.name		MULTISYNC 90
++driver.display		|55-160|31-92
+
+ vendor.id		NEC
+&device.id		eisa 0x4f56
++device.name		MULTISYNC LCD2000
++driver.display		|55-85|24-81
+
+ vendor.id		NEC
+&device.id		eisa 0x4f60
++device.name		MULTISYNC LCD2010
++driver.display		|55-85|24-81
+
+ vendor.id		NEC
+&device.id		eisa 0x533e
++device.name		MULTISYNC XE21
++driver.display		|55-120|31-69
+
+ vendor.id		NEC
+&device.id		eisa 0x53b6
++device.name		MULTISYNC XP21
++driver.display		|55-160|31-89
+
+ vendor.id		NEC
+&device.id		eisa 0x53c0
++device.name		MULTISYNC E1100
++driver.display		|55-120|31-82
+
+ vendor.id		NEC
+&device.id		eisa 0x53ca
++device.name		MULTISYNC P1150
++driver.display		|55-160|31-94
+
+ vendor.id		NEC
+&device.id		eisa 0x53de
++device.name		MULTISYNC E1100+
++driver.display		|55-160|31-96
+
+ vendor.id		NEC
+&device.id		eisa 0x53e8
++device.name		MULTISYNC P1250+
++driver.display		|55-160|31-110
+
+ vendor.id		NEC
+&device.id		eisa 0xea69
++device.name		C900
++driver.display		|50-150|30-95
+
+ vendor.id		NEC
+&device.id		eisa 0xea8b
++device.name		VISTASCAN 7000
++driver.display		|50-120|30-69
+
+ vendor.id		NOK
++vendor.name		NOKIA
+
+ vendor.id		NOK
+&device.id		eisa 0x008d
++device.name		NOKIA 449M
+
+ vendor.id		NOK
+&device.id		eisa 0x0098
++device.name		NOKIA 449X
+
+ vendor.id		NOK
+&device.id		eisa 0x00a3
++device.name		NOKIA 447KC
+
+ vendor.id		NOK
+&device.id		eisa 0x00a9
++device.name		447XI
++driver.display		|45-150|31-92
+
+ vendor.id		NOK
+&device.id		eisa 0x00ab
++device.name		NOKIA 447KA
+
+ vendor.id		NOK
+&device.id		eisa 0x00ad
++device.name		447M
++driver.display		|55-110|31-64
+
+ vendor.id		NOK
+&device.id		eisa 0x00b7
++device.name		447W
++driver.display		|48-100|31-85
+
+ vendor.id		NOK
+&device.id		eisa 0x00b8
++device.name		NOKIA 447X
+
+ vendor.id		NOK
+&device.id		eisa 0x00bb
++device.name		NOKIA 447XAV
+
+ vendor.id		NOK
+&device.id		eisa 0x00bc
++device.name		NOKIA 447K
+
+ vendor.id		NOK
+&device.id		eisa 0x00d2
++device.name		NOKIA 445R
+
+ vendor.id		OQI
++vendor.name		OPTIQUEST
+
+ vendor.id		OQI
+&device.id		eisa 0x3138
++device.name		VA656
++driver.display		|50-120|30-69
+
+ vendor.id		OQI
+&device.id		eisa 0x3141
++device.name		OPTIQUEST 14ES
+
+ vendor.id		OQI
+&device.id		eisa 0x3232
++device.name		1562A-2
+
+ vendor.id		OQI
+&device.id		eisa 0x3233
++device.name		OPTIQUEST 1769DC
+
+ vendor.id		OQI
+&device.id		eisa 0x3234
++device.name		1000S
+
+ vendor.id		OQI
+&device.id		eisa 0x3332
++device.name		V655
++driver.display		|50-100|30-66
+
+ vendor.id		OQI
+&device.id		eisa 0x3333
++device.name		V775
++driver.display		|50-130|30-82
+
+ vendor.id		OQI
+&device.id		eisa 0x3432
++device.name		OPTIQUEST V650
+
+ vendor.id		OQI
+&device.id		eisa 0x3832
++device.name		OPTIQUEST V665
+
+ vendor.id		OQI
+&device.id		eisa 0x4132
++device.name		V641
+
+ vendor.id		OQI
+&device.id		eisa 0x4136
++device.name		Q41
++driver.display		|50-90|30-48
+
+ vendor.id		OQI
+&device.id		eisa 0x4432
++device.name		V655-2
++driver.display		|50-100|30-65
+
+ vendor.id		OQI
+&device.id		eisa 0x4433
++device.name		Q53
++driver.display		|50-100|30-70
+
+ vendor.id		OQI
+&device.id		eisa 0x4434
++device.name		V655-3
++driver.display		|50-100|30-70
+
+ vendor.id		OQI
+&device.id		eisa 0x4435
++device.name		Q51
++driver.display		|50-100|30-54
+
+ vendor.id		OQI
+&device.id		eisa 0x4436
++device.name		V55
++driver.display		|50-160|30-70
+
+ vendor.id		OQI
+&device.id		eisa 0x4637
++device.name		1769DC
++driver.display		|50-120|30-69
+
+ vendor.id		OQI
+&device.id		eisa 0x4732
++device.name		V775-2
++driver.display		|50-120|30-85
+
+ vendor.id		OQI
+&device.id		eisa 0x4733
++device.name		V773
++driver.display		|50-160|30-69
+
+ vendor.id		OQI
+&device.id		eisa 0x4735
++device.name		Q71
++driver.display		|50-120|30-70
+
+ vendor.id		OQI
+&device.id		eisa 0x4736
++device.name		V773-2
++driver.display		|50-180|30-70
+
+ vendor.id		OQI
+&device.id		eisa 0x4738
++device.name		Q71-2
++driver.display		|50-120|30-70
+
+ vendor.id		OQI
+&device.id		eisa 0x4739
++device.name		V75
++driver.display		|50-160|30-96
+
+ vendor.id		OQI
+&device.id		eisa 0x4a31
++device.name		Q100
++driver.display		|50-120|30-86
+
+ vendor.id		OQI
+&device.id		eisa 0x4a32
++device.name		V95
++driver.display		|50-150|30-95
+
+ vendor.id		OQI
+&device.id		eisa 0x4d31
++device.name		V115
++driver.display		|50-160|30-95
+
+ vendor.id		OQI
+&device.id		eisa 0x4d32
++device.name		V115T
++driver.display		|50-150|30-96
+
+ vendor.id		OQI
+&device.id		eisa 0x5634
++device.name		V73
++driver.display		|50-160|30-70
+
+ vendor.id		PBN
++vendor.name		PACKARD
+
+ vendor.id		PBN
+&device.id		eisa 0x4234
++device.name		BELL 1024S
++driver.display		|50-90|30-50
+
+ vendor.id		PBN
+&device.id		eisa 0x4483
++device.name		BELL PLUG & PLAY 4480
++driver.display		|55-75|30-50
+
+ vendor.id		PBN
+&device.id		eisa 0x5234
++device.name		BELL PLUG & PLAY 2024S
++driver.display		|50-90|30-54
+
+ vendor.id		PBN
+&device.id		eisa 0x5483
++device.name		BELL PLUG & PLAY 5480
++driver.display		|50-90|30-69
+
+ vendor.id		PBN
+&device.id		eisa 0x7483
++device.name		BELL PLUG & PLAY 7480
++driver.display		|50-90|30-69
+
+ vendor.id		PGS
++vendor.name		PRINCETON
+
+ vendor.id		PGS
+&device.id		eisa 0x003b
++device.name		GRAPHIC SYSTEMS EO15
++driver.display		|50-120|30-70
+
+ vendor.id		PGS
+&device.id		eisa 0x003c
++device.name		GRAPHIC SYSTEMS EO75
++driver.display		|50-120|30-95
+
+ vendor.id		PGS
+&device.id		eisa 0x003d
++device.name		GRAPHIC SYSTEMS EO17
++driver.display		|50-120|30-70
+
+ vendor.id		PGS
+&device.id		eisa 0x004d
++device.name		GRAPHIC SYSTEMS ULTRA 50
++driver.display		|50-90|30-50
+
+ vendor.id		PGS
+&device.id		eisa 0x004e
++device.name		GRAPHIC SYSTEMS EO40
++driver.display		|50-90|30-50
+
+ vendor.id		PGS
+&device.id		eisa 0x004f
++device.name		GRAPHIC SYSTEMS EO50
++driver.display		|50-120|30-70
+
+ vendor.id		PGS
+&device.id		eisa 0x0050
++device.name		GRAPHIC SYSTEMS EO70
++driver.display		|50-120|30-70
+
+ vendor.id		PGS
+&device.id		eisa 0x0051
++device.name		GRAPHIC SYSTEMS ULTRA 40
++driver.display		|50-90|30-50
+
+ vendor.id		PGS
+&device.id		eisa 0x0052
++device.name		GRAPHIC SYSTEMS EO72
++driver.display		|50-120|30-70
+
+ vendor.id		PGS
+&device.id		eisa 0x008b
++device.name		GRAPHIC SYSTEMS C2001
++driver.display		|50-160|30-107
+
+ vendor.id		PGS
+&device.id		eisa 0x008e
++device.name		GRAPHIC SYSTEMS EO500
++driver.display		|50-120|30-70
+
+ vendor.id		PGS
+&device.id		eisa 0x008f
++device.name		GRAPHIC SYSTEMS EO710
++driver.display		|50-120|30-70
+
+ vendor.id		PGS
+&device.id		eisa 0x009d
++device.name		GRAPHIC SYSTEMS EO400
++driver.display		|50-90|30-54
+
+ vendor.id		PGS
+&device.id		eisa 0x00b6
++device.name		GRAPHIC SYSTEMS EO700
++driver.display		|50-120|30-70
+
+ vendor.id		PGS
+&device.id		eisa 0x00b7
++device.name		GRAPHIC SYSTEMS EO720
++driver.display		|50-120|30-70
+
+ vendor.id		PHL
++vendor.name		PHILIPS
+
+ vendor.id		PHL
+&device.id		eisa 0x0107
++device.name		BRILLIANCE 107 (17 ZOLL/CM8800)
++driver.display		|50-160|30-86
+
+ vendor.id		PHL
+&device.id		eisa 0x0200
++device.name		CM0200 (15C)
++driver.display		|50-100|31-48
+
+ vendor.id		PHL
+&device.id		eisa 0x0201
++device.name		BRILLIANCE 201CS
++driver.display		|50-170|30-107
+
+ vendor.id		PHL
+&device.id		eisa 0x0500
++device.name		CM0500 (20C)
++driver.display		|50-120|31-64
+
+ vendor.id		PHL
+&device.id		eisa 0x0700
++device.name		CM0700 (20T)
++driver.display		|50-160|30-90
+
+ vendor.id		PHL
+&device.id		eisa 0x0800
++device.name		CM0800 (15B)
++driver.display		|50-100|30-58
+
+ vendor.id		PHL
+&device.id		eisa 0x104b
++device.name		104B (14 ZOLL/CM1300)
++driver.display		|50-110|30-54
+
+ vendor.id		PHL
+&device.id		eisa 0x105a
++device.name		BRILLIANCE 105 (15 ZOLL/CM2200)
++driver.display		|50-120|30-69
+
+ vendor.id		PHL
+&device.id		eisa 0x105c
++device.name		105S (15 ZOLL/CM1300)
++driver.display		|50-110|30-54
+
+ vendor.id		PHL
+&device.id		eisa 0x107c
++device.name		107S (17 ZOLL/CM6800)
++driver.display		|50-130|30-66
+
+ vendor.id		PHL
+&device.id		eisa 0x1107
++device.name		BRILLIANCE 107 (PRODUCT ID 17A58...)
++driver.display		|50-160|30-95
+
+ vendor.id		PHL
+&device.id		eisa 0x1109
++device.name		BRILLIANCE 109 (PRODUCT ID 19A58...)
++driver.display		|50-160|30-95
+
+ vendor.id		PHL
+&device.id		eisa 0x1200
++device.name		CM1200 (15A)
++driver.display		|50-110|31-66
+
+ vendor.id		PHL
+&device.id		eisa 0x1800
++device.name		CM1800 (15A)
++driver.display		|50-110|31-66
+
+ vendor.id		PHL
+&device.id		eisa 0x2000
++device.name		CM0200 (14B)
++driver.display		|50-100|31-48
+
+ vendor.id		PHL
+&device.id		eisa 0x200d
++device.name		200T (20 ZOLL/CM0700)
++driver.display		|50-160|30-90
+
+ vendor.id		PHL
+&device.id		eisa 0x201a
++device.name		BRILLIANCE 201 (21 ZOLL/CM1700)
+
+ vendor.id		PHL
+&device.id		eisa 0x201b
++device.name		201B (21 ZOLL/CM0770)
++driver.display		|48-160|30-94
+
+ vendor.id		PHL
+&device.id		eisa 0x2600
++device.name		17TCM26
++driver.display		|50-100|30-66
+
+ vendor.id		PHL
+&device.id		eisa 0x2800
++device.name		17BCM28
++driver.display		|50-130|30-66
+
+ vendor.id		PHL
+&device.id		eisa 0x3109
++device.name		MAGNAVOX 109S
++driver.display		|50-160|30-95
+
+ vendor.id		PHL
+&device.id		eisa 0x3800
++device.name		17ACM38
++driver.display		|50-160|30-82
+
+ vendor.id		PHL
+&device.id		eisa 0x4109
++device.name		109S
++driver.display		|50-160|30-95
+
+ vendor.id		PHL
+&device.id		eisa 0x4500
++device.name		BRILLIANCE AX4500 (14.5 LCD-MONITOR)
++driver.display		|56-75|30-60
+
+ vendor.id		PHL
+&device.id		eisa 0x5600
++device.name		CM5600 (20B)
++driver.display		|50-120|31-82
+
+ vendor.id		PHL
+&device.id		eisa 0x5f1f
++device.name		29PX8031 MONITOR/TV
+
+ vendor.id		PHL
+&device.id		eisa 0x6800
++device.name		107B (17 ZOLL/CM6800)
++driver.display		|50-130|30-69
+
+ vendor.id		PHL
+&device.id		eisa 0x700b
++device.name		CM0700 (21B)
++driver.display		|50-160|30-94
+
+ vendor.id		PHL
+&device.id		eisa 0x8000
++device.name		CM0800 (14A)
++driver.display		|50-100|30-58
+
+ vendor.id		PHL
+&device.id		eisa 0xa15b
++device.name		105B (15 ZOLL/CM1200)
++driver.display		|50-110|30-66
+
+ vendor.id		PHL
+&device.id		eisa 0xa17b
++device.name		MAGNAVOX MB7000 (17 ZOLL/CM6800)
++driver.display		|50-130|30-66
+
+ vendor.id		PHL
+&device.id		eisa 0xa17c
++device.name		107S (17 ZOLL/CM1300)
++driver.display		|50-120|30-69
+
+ vendor.id		PHL
+&device.id		eisa 0xa513
++device.name		PD5029S MONITOR/TV
+
+ vendor.id		PHL
+&device.id		eisa 0xb14b
++device.name		104B (14-ZOLL/CM2300)
++driver.display		|50-120|30-54
+
+ vendor.id		PHL
+&device.id		eisa 0xb15c
++device.name		105S (15 ZOLL/CM2300)
++driver.display		|50-120|30-60
+
+ vendor.id		PLB
++vendor.name		PLB
+
+ vendor.id		PLB
+&device.id		eisa 0x1410
++device.name		1410 MODEL
++driver.display		|50-120|30-54
+
+ vendor.id		PLB
+&device.id		eisa 0x1510
++device.name		1510 MODEL
++driver.display		|50-120|30-69
+
+ vendor.id		PLB
+&device.id		eisa 0x1710
++device.name		1710
++driver.display		|50-120|30-70
+
+ vendor.id		PLB
+&device.id		eisa 0x1910
++device.name		1910
++driver.display		|50-150|30-95
+
+ vendor.id		PTS
++vendor.name		PROVIEW
+
+ vendor.id		PTS
+&device.id		eisa 0x023a
++device.name		570
++driver.display		|50-150|30-70
+
+ vendor.id		PTS
+&device.id		eisa 0x0302
++device.name		770
++driver.display		|50-150|30-76
+
+ vendor.id		PTS
+&device.id		eisa 0x035c
++device.name		860
++driver.display		|50-150|30-54
+
+ vendor.id		REL
++vendor.name		RELISYS
+
+ vendor.id		REL
+&device.id		eisa 0x0451
++device.name		RE451
++driver.display		|50-100|30-54
+
+ vendor.id		REL
+&device.id		eisa 0x0518
++device.name		RE518
++driver.display		|50-100|30-69
+
+ vendor.id		REL
+&device.id		eisa 0x0550
++device.name		RE550
++driver.display		|50-100|30-50
+
+ vendor.id		REL
+&device.id		eisa 0x0551
++device.name		RE551
++driver.display		|50-100|30-54
+
+ vendor.id		REL
+&device.id		eisa 0x0767
++device.name		RE767
++driver.display		|50-100|30-69
+
+ vendor.id		SAM
++vendor.name		SAMSUNG
+
+ vendor.id		SAM
+&device.id		eisa 0x0000
++device.name		SYNCMASTER 3NE
+
+ vendor.id		SAM
+&device.id		eisa 0x0100
++device.name		SYNCMASTER 4S
+
+ vendor.id		SAM
+&device.id		eisa 0x0cf1
++device.name		SYNCMASTER 1000S (CGP1607*)
++driver.display		|50-160|30-96
+
+ vendor.id		SAM
+&device.id		eisa 0x0d65
++device.name		SYNCMASTER 500(M)S PLUS (CKE5507*)
++driver.display		|50-120|30-60
+
+ vendor.id		SAM
+&device.id		eisa 0x0d66
++device.name		SYNCMASTER 500B PLUS (CKF5607*)
++driver.display		|50-160|30-69
+
+ vendor.id		SAM
+&device.id		eisa 0x0d67
++device.name		SYNCMASTER 700(M)S PLUS (CKG7507*)
++driver.display		|50-160|30-69
+
+ vendor.id		SAM
+&device.id		eisa 0x1530
++device.name		15GLSI
++driver.display		|50-100|24-66
+
+ vendor.id		SAM
+&device.id		eisa 0x1c53
++device.name		SYNCMASTER 500B
++driver.display		|50-160|30-69
+
+ vendor.id		SAM
+&device.id		eisa 0x1c54
++device.name		SAMTRON 5(M)B (CGB5617*)
++driver.display		|50-160|30-69
+
+ vendor.id		SAM
+&device.id		eisa 0x1c73
++device.name		SYNCMASTER 500(M)P (CGC5607*)
++driver.display		|50-160|30-69
+
+ vendor.id		SAM
+&device.id		eisa 0x1cb3
++device.name		SYNCMASTER 700(M)S (CGE7507*)
++driver.display		|50-160|30-69
+
+ vendor.id		SAM
+&device.id		eisa 0x1d73
++device.name		SYNCMASTER 500(M)S (CGK5507*)
++driver.display		|50-120|30-54
+
+ vendor.id		SAM
+&device.id		eisa 0x1d74
++device.name		SAMTRON 5(M)E (CGK5517*)
++driver.display		|50-120|30-54
+
+ vendor.id		SAM
+&device.id		eisa 0x1db3
++device.name		SYNCMASTER 700(M)B (CGM7607*)
++driver.display		|50-160|30-69
+
+ vendor.id		SAM
+&device.id		eisa 0x1f13
++device.name		SYNCMASTER 1000P
++driver.display		|50-160|30-107
+
+ vendor.id		SAM
+&device.id		eisa 0x1f14
++device.name		SYNCMASTER 1000B (CGX1607*)
++driver.display		|50-160|30-107
+
+ vendor.id		SAM
+&device.id		eisa 0x202e
++device.name		SAMTRON 40BN
++driver.display		|50-120|30-55
+
+ vendor.id		SAM
+&device.id		eisa 0x2033
++device.name		SYNCMASTER 410B(CHA4217*)
++driver.display		|50-120|30-55
+
+ vendor.id		SAM
+&device.id		eisa 0x2034
++device.name		SAMTRON 40B
++driver.display		|50-120|30-55
+
+ vendor.id		SAM
+&device.id		eisa 0x2035
++device.name		SYNCMASTER 510(M)S (CHA5807*)
++driver.display		|50-120|30-61
+
+ vendor.id		SAM
+&device.id		eisa 0x2036
++device.name		SAMTRON 50(M)E
++driver.display		|50-120|30-61
+
+ vendor.id		SAM
+&device.id		eisa 0x2041
++device.name		SYNCMASTER 610(M)B(CHB6107*)
++driver.display		|50-160|30-70
+
+ vendor.id		SAM
+&device.id		eisa 0x2042
++device.name		SAMTRON 60(M)B
++driver.display		|50-160|30-70
+
+ vendor.id		SAM
+&device.id		eisa 0x2055
++device.name		SYNCMASTER 510B(CHB5707*)
++driver.display		|50-160|30-70
+
+ vendor.id		SAM
+&device.id		eisa 0x2056
++device.name		SAMTRON 50B
++driver.display		|50-160|30-70
+
+ vendor.id		SAM
+&device.id		eisa 0x2057
++device.name		SYNCMASTER 710(M)S (CHB7707*)
++driver.display		|50-160|30-70
+
+ vendor.id		SAM
+&device.id		eisa 0x2058
++device.name		SAMTRON 70(M)E
++driver.display		|50-160|30-70
+
+ vendor.id		SAM
+&device.id		eisa 0x2059
++device.name		SYNCMASTER 710(M)B (CHB7709*)
++driver.display		|50-160|30-70
+
+ vendor.id		SAM
+&device.id		eisa 0x2c33
++device.name		SAMTRON 4BI
++driver.display		|50-120|30-55
+
+ vendor.id		SAM
+&device.id		eisa 0x2c34
++device.name		SYNCMASTER 400B (CKA4217*)
++driver.display		|50-120|30-55
+
+ vendor.id		SAM
+&device.id		eisa 0x2c35
++device.name		SAMTRON 5EI
++driver.display		|50-120|30-55
+
+ vendor.id		SAM
+&device.id		eisa 0x2c36
++device.name		5E (CKA52*)
++driver.display		|50-120|30-55
+
+ vendor.id		SAM
+&device.id		eisa 0x2c55
++device.name		SAMTRON 5BI
++driver.display		|50-120|30-70
+
+ vendor.id		SAM
+&device.id		eisa 0x2c56
++device.name		5B (CKB52*)
++driver.display		|50-120|30-70
+
+ vendor.id		SAM
+&device.id		eisa 0x2c57
++device.name		SAMTRON 7EI
++driver.display		|50-120|30-70
+
+ vendor.id		SAM
+&device.id		eisa 0x2c58
++device.name		7E (CKB72*)
++driver.display		|50-120|30-70
+
+ vendor.id		SAM
+&device.id		eisa 0x2cf8
++device.name		SYNCMASTER 700B PLUS
++driver.display		|50-160|30-70
+
+ vendor.id		SAM
+&device.id		eisa 0x4610
++device.name		SYNCMASTER 21GLS
++driver.display		|50-160|30-85
+
+ vendor.id		SAM
+&device.id		eisa 0x4690
++device.name		SYNCMASTER 20GLSI
++driver.display		|50-120|30-82
+
+ vendor.id		SAM
+&device.id		eisa 0x49d5
++device.name		SYNCMASTER 570 B TFT
++driver.display		|50-75|30-61
+
+ vendor.id		SAM
+&device.id		eisa 0x4d50
++device.name		SYNCMASTER 15GLE
+
+ vendor.id		SAM
+&device.id		eisa 0x4d51
++device.name		SYNCMASTER 15GLI
++driver.display		|50-120|30-65
+
+ vendor.id		SAM
+&device.id		eisa 0x4d52
++device.name		SYNCMASTER 15M
++driver.display		|50-120|30-65
+
+ vendor.id		SAM
+&device.id		eisa 0x4d70
++device.name		SYNCMASTER 17GLI
++driver.display		|50-120|30-65
+
+ vendor.id		SAM
+&device.id		eisa 0x4d71
++device.name		SYNCMASTER 17GLSI
++driver.display		|50-120|30-85
+
+ vendor.id		SAM
+&device.id		eisa 0x4d72
++device.name		SYNCMASTER 6NE
++driver.display		|50-100|30-65
+
+ vendor.id		SAM
+&device.id		eisa 0x4d73
++device.name		17GLI
++driver.display		|50-120|24-65
+
+ vendor.id		SAM
+&device.id		eisa 0x4d74
++device.name		17GLSI
++driver.display		|50-120|24-85
+
+ vendor.id		SAM
+&device.id		eisa 0x4db9
++device.name		SYNCMASTER 900SL (CSM92*)
++driver.display		|50-160|30-96
+
+ vendor.id		SAM
+&device.id		eisa 0x4ee6
++device.name		SYNCMASTER 700P PLUS (CSH7839*)
++driver.display		|50-160|30-96
+
+ vendor.id		SAM
+&device.id		eisa 0x4ee9
++device.name		SYNCMASTER 700IFT (CSH780B*)
++driver.display		|50-160|30-96
+
+ vendor.id		SAM
+&device.id		eisa 0x4f26
++device.name		SYNCMASTER 900P (CSH9839*)
++driver.display		|50-160|30-96
+
+ vendor.id		SAM
+&device.id		eisa 0x4f27
++device.name		SAMTRON 9P
++driver.display		|50-160|30-96
+
+ vendor.id		SAM
+&device.id		eisa 0x4f29
++device.name		SYNCMASTER 900IFT
++driver.display		|50-160|30-96
+
+ vendor.id		SAM
+&device.id		eisa 0x5450
++device.name		SYNCMASTER 15ME
++driver.display		|50-120|30-50
+
+ vendor.id		SAM
+&device.id		eisa 0x6053
++device.name		SYNCMASTER 320TFT (LXB310*)
++driver.display		|50-75|30-61
+
+ vendor.id		SAM
+&device.id		eisa 0x6054
++device.name		SYNCMASTER 330/331TFT (LXB350*)
++driver.display		|50-75|30-61
+
+ vendor.id		SAM
+&device.id		eisa 0x6055
++device.name		SYNCMASTER 520TFT (LXB530*)
++driver.display		|50-75|30-61
+
+ vendor.id		SAM
+&device.id		eisa 0x6056
++device.name		SYNCMASTER 530/531TFT (LXB550*)
++driver.display		|50-75|30-61
+
+ vendor.id		SAM
+&device.id		eisa 0x6d20
++device.name		SYNCMASTER 15GLE
++driver.display		|50-120|30-50
+
+ vendor.id		SDI
++vendor.name		SAMTRON
+
+ vendor.id		SDI
+&device.id		eisa 0x1428
++device.name		428PT/PTL
+
+ vendor.id		SDI
+&device.id		eisa 0x1528
++device.name		SC-528TXL
++driver.display		|50-100|30-48
+
+ vendor.id		SDI
+&device.id		eisa 0x1529
++device.name		SC-528UXL
++driver.display		|50-120|30-65
+
+ vendor.id		SDI
+&device.id		eisa 0x1530
++device.name		SC-528MXLJ
++driver.display		|50-100|24-66
+
+ vendor.id		SDI
+&device.id		eisa 0x4690
++device.name		SC-208DXL+
++driver.display		|50-120|30-82
+
+ vendor.id		SDI
+&device.id		eisa 0x4d70
++device.name		SC-728FXL
++driver.display		|50-120|30-65
+
+ vendor.id		SDI
+&device.id		eisa 0x4d71
++device.name		SC-726GXL
++driver.display		|50-120|30-85
+
+ vendor.id		SDI
+&device.id		eisa 0x4d73
++device.name		SC-728FXLJ
++driver.display		|50-120|24-65
+
+ vendor.id		SDI
+&device.id		eisa 0x5451
++device.name		SC-528MDL
++driver.display		|50-120|30-48
+
+ vendor.id		SML
++vendor.name		SMILE
+
+ vendor.id		SML
+&device.id		eisa 0x6425
++device.name		CA6425DL/CB6425DL
++driver.display		|50-100|30-54
+
+ vendor.id		SML
+&device.id		eisa 0x6525
++device.name		CA6525DL/CB6525DL
++driver.display		|50-100|30-54
+
+ vendor.id		SML
+&device.id		eisa 0x6546
++device.name		CA6546SL/CB6546SL
++driver.display		|50-120|30-69
+
+ vendor.id		SML
+&device.id		eisa 0x6719
++device.name		CA6719SL/CB6719SL
++driver.display		|50-150|30-95
+
+ vendor.id		SML
+&device.id		eisa 0x6738
++device.name		85KHZ-MONITOR
++driver.display		|50-150|30-86
+
+ vendor.id		SML
+&device.id		eisa 0x6746
++device.name		CA6746SL/CB6746SL
++driver.display		|50-120|30-69
+
+ vendor.id		SML
+&device.id		eisa 0x6748
++device.name		CA6748SL/CB6748SL
++driver.display		|50-150|30-86
+
+ vendor.id		SML
+&device.id		eisa 0x6919
++device.name		CA6919SL/CB6919SL
++driver.display		|50-150|30-95
+
+ vendor.id		SNI
++vendor.name		Siemens Nixdorf
+
+ vendor.id		SNY
++vendor.name		SONY
+
+ vendor.id		SNY
+&device.id		eisa 0x0030
++device.name		CPD-L133
++driver.display		|50-65|30-70
+
+ vendor.id		SNY
+&device.id		eisa 0x0071
++device.name		CPD-220GS
++driver.display		|48-120|30-85
+
+ vendor.id		SNY
+&device.id		eisa 0x0090
++device.name		GDM-400PS/400PST/19PS
++driver.display		|48-160|30-95
+
+ vendor.id		SNY
+&device.id		eisa 0x0091
++device.name		CPD-420GS
++driver.display		|48-120|30-96
+
+ vendor.id		SNY
+&device.id		eisa 0x00b0
++device.name		GDM-500PS
++driver.display		|48-160|30-107
+
+ vendor.id		SNY
+&device.id		eisa 0x00e0
++device.name		GDM-W900
++driver.display		|50-160|30-96
+
+ vendor.id		SNY
+&device.id		eisa 0x0150
++device.name		CPD-100SF
++driver.display		|50-120|30-70
+
+ vendor.id		SNY
+&device.id		eisa 0x0170
++device.name		GDM-17SE2T
++driver.display		|48-150|30-85
+
+ vendor.id		SNY
+&device.id		eisa 0x017b
++device.name		CPD-2003GT
++driver.display		|50-120|30-85
+
+ vendor.id		SNY
+&device.id		eisa 0x0270
++device.name		CPD-200SF
++driver.display		|50-120|30-80
+
+ vendor.id		SNY
+&device.id		eisa 0x02b0
++device.name		CPD-520GS/520GST/21GS2
++driver.display		|48-160|30-96
+
+ vendor.id		SNY
+&device.id		eisa 0x0370
++device.name		CPD-200SFT
++driver.display		|50-120|30-80
+
+ vendor.id		SNY
+&device.id		eisa 0x03a0
++device.name		CPD-300SFT
++driver.display		|48-150|30-86
+
+ vendor.id		SNY
+&device.id		eisa 0x0450
++device.name		CPD-100ES
++driver.display		|50-120|30-70
+
+ vendor.id		SNY
+&device.id		eisa 0x0470
++device.name		CPD-17SF9
++driver.display		|50-120|24-80
+
+ vendor.id		SNY
+&device.id		eisa 0x0550
++device.name		CPD-100GS
++driver.display		|50-120|30-70
+
+ vendor.id		SNY
+&device.id		eisa 0x0570
++device.name		CPD-200SX
++driver.display		|50-150|30-70
+
+ vendor.id		SNY
+&device.id		eisa 0x0650
++device.name		CPD-120VS
++driver.display		|50-120|30-70
+
+ vendor.id		SNY
+&device.id		eisa 0x0670
++device.name		CPD-220VS
++driver.display		|50-120|30-70
+
+ vendor.id		SNY
+&device.id		eisa 0x0770
++device.name		CPD-200ES
++driver.display		|50-120|30-70
+
+ vendor.id		SNY
+&device.id		eisa 0x0950
++device.name		CPD-L150
++driver.display		|50-65|30-70
+
+ vendor.id		SNY
+&device.id		eisa 0x0a50
++device.name		CPD-101VS IGPE
++driver.display		|50-120|30-70
+
+ vendor.id		SNY
+&device.id		eisa 0x0a70
++device.name		CPD-200GS
++driver.display		|50-120|30-85
+
+ vendor.id		SNY
+&device.id		eisa 0x0c70
++device.name		GDM-200PS
++driver.display		|48-160|30-92
+
+ vendor.id		SNY
+&device.id		eisa 0x8050
++device.name		CPD-100SX
++driver.display		|50-120|30-65
+
+ vendor.id		STC
++vendor.name		ALPHASCAN
+
+ vendor.id		STC
+&device.id		eisa 0x02c7
++device.name		711
++driver.display		|50-120|30-70
+
+ vendor.id		STC
+&device.id		eisa 0x02c8
++device.name		712
++driver.display		|50-120|30-70
+
+ vendor.id		STC
+&device.id		eisa 0x032b
++device.name		811
++driver.display		|50-150|30-95
+
+ vendor.id		STC
+&device.id		eisa 0x0800
++device.name		800S
++driver.display		|50-150|30-95
+
+ vendor.id		SUN
++vendor.name		Sun
+
+ vendor.id		SUN
+&device.id		eisa 0x0567
++device.name		21" Premium Color Monitor
+
+ vendor.id		TAT
++vendor.name		TATUNG
+
+ vendor.id		TAT
+&device.id		eisa 0x1f65
++device.name		TM651X SERIE
++driver.display		|50-90|31-65
+
+ vendor.id		TAT
+&device.id		eisa 0x1f67
++device.name		TM671X SERIE
++driver.display		|50-110|31-65
+
+ vendor.id		TAT
+&device.id		eisa 0x2f44
++device.name		TM442X SERIE
++driver.display		|50-100|30-50
+
+ vendor.id		TAT
+&device.id		eisa 0x2f45
++device.name		TM452X SERIE
++driver.display		|50-100|30-50
+
+ vendor.id		TAT
+&device.id		eisa 0x3044
++device.name		C5D
++driver.display		|50-100|30-54
+
+ vendor.id		TAT
+&device.id		eisa 0x3054
++device.name		PC DIVISION V70 (XJ63754)
++driver.display		|50-100|30-70
+
+ vendor.id		TAT
+&device.id		eisa 0x434d
++device.name		CM-17MC
+
+ vendor.id		TAT
+&device.id		eisa 0x4855
++device.name		CM-14UH
+
+ vendor.id		TAX
++vendor.name		ERGOVISION
+
+ vendor.id		TAX
+&device.id		eisa 0xe430
++device.name		430LR
++driver.display		|50-110|30-54
+
+ vendor.id		TAX
+&device.id		eisa 0xe550
++device.name		550TCO95/TCO95-S
++driver.display		|55-110|30-69
+
+ vendor.id		TAX
+&device.id		eisa 0xe730
++device.name		730TCO95/TCO95-S
++driver.display		|50-120|30-69
+
+ vendor.id		TAX
+&device.id		eisa 0xe740
++device.name		740TCO95/TCO95-S
++driver.display		|55-120|30-85
+
+ vendor.id		TAX
+&device.id		eisa 0xe750
++device.name		750TCO95
++driver.display		|50-130|30-86
+
+ vendor.id		TAX
+&device.id		eisa 0xe760
++device.name		760TCO95/TCO95-S
++driver.display		|50-120|30-70
+
+ vendor.id		TAX
+&device.id		eisa 0xe975
++device.name		975TCO95
++driver.display		|50-150|30-95
+
+ vendor.id		TOS
++vendor.name		TOSHIBA
+
+ vendor.id		TOS
+&device.id		eisa 0x5000
++device.name		CRT17002
++driver.display		|50-130|30-66
+
+ vendor.id		TOS
+&device.id		eisa 0x5001
++device.name		CRT15003
++driver.display		|50-110|30-66
+
+ vendor.id		TOS
+&device.id		eisa 0x5002
++device.name		CRT21002
++driver.display		|50-152|30-95
+
+ vendor.id		TRL
++vendor.name		TRL/RIC
+
+ vendor.id		TRL
+&device.id		eisa 0x0010
++device.name		RH-1450
++driver.display		|47-90|29-50
+
+ vendor.id		TRL
+&device.id		eisa 0x0110
++device.name		DL-1564M/DL-1564
++driver.display		|47-120|29-64
+
+ vendor.id		TRL
+&device.id		eisa 0x0310
++device.name		DL-1750MU
++driver.display		|47-120|29-70
+
+ vendor.id		TRL
+&device.id		eisa 0x0410
++device.name		DH-1570M/DH-1570
++driver.display		|47-120|29-70
+
+ vendor.id		TRL
+&device.id		eisa 0x0510
++device.name		DH-1764M/DH-1764
++driver.display		|47-120|29-70
+
+ vendor.id		TRL
+&device.id		eisa 0x0610
++device.name		DH-1764UM/DH-1764U
++driver.display		|47-120|29-85
+
+ vendor.id		TRL
+&device.id		eisa 0x061c
++device.name		DL-1564
++driver.display		|47-100|29-64
+
+ vendor.id		TRL
+&device.id		eisa 0x0622
++device.name		DH-1570
++driver.display		|47-120|29-64
+
+ vendor.id		TSB
++vendor.name		TOSHIBA
+
+ vendor.id		TSB
+&device.id		eisa 0x5002
++device.name		EQUIUM 15-ZOLL MONITOR
++driver.display		|50-100|30-66
+
+ vendor.id		TSB
+&device.id		eisa 0x5003
++device.name		EQUIUM 17-ZOLL MONITOR
++driver.display		|50-160|30-82
+
+ vendor.id		TSB
+&device.id		eisa 0x5004
++device.name		DR569M (PV2001U)
++driver.display		|50-110|30-69
+
+ vendor.id		TSB
+&device.id		eisa 0x5005
++device.name		DR769MF (PV2002U)
++driver.display		|50-110|30-69
+
+ vendor.id		TVM
++vendor.name		TVM
+
+ vendor.id		TVM
+&device.id		eisa 0x0487
++device.name		AS4DP/LR4DP-MODELL
++driver.display		|50-120|30-55
+
+ vendor.id		TVM
+&device.id		eisa 0x0588
++device.name		AS5S-MODELL
++driver.display		|50-120|30-69
+
+ vendor.id		TVM
+&device.id		eisa 0x0589
++device.name		TCO5S-MODELL
++driver.display		|50-120|30-69
+
+ vendor.id		TVM
+&device.id		eisa 0x0688
++device.name		TCO6S-MODELL
++driver.display		|50-120|30-69
+
+ vendor.id		UNM
++vendor.name		UNISYS
+
+ vendor.id		UNM
+&device.id		eisa 0x1002
++device.name		EVG1000-E2
++driver.display		|50-65|30-50
+
+ vendor.id		UNM
+&device.id		eisa 0x2001
++device.name		EVG2000-E
++driver.display		|50-130|30-54
+
+ vendor.id		UNM
+&device.id		eisa 0x2002
++device.name		EVG2000-P
++driver.display		|50-150|30-70
+
+ vendor.id		UNM
+&device.id		eisa 0x2014
++device.name		EVG-142-COL
++driver.display		|50-120|30-48
+
+ vendor.id		UNM
+&device.id		eisa 0x2015
++device.name		EVG-152-COL
++driver.display		|50-130|30-48
+
+ vendor.id		UNM
+&device.id		eisa 0x2101
++device.name		EVG2100-E
++driver.display		|50-130|30-54
+
+ vendor.id		UNM
+&device.id		eisa 0x2102
++device.name		EVG2100-P
++driver.display		|50-150|30-70
+
+ vendor.id		UNM
+&device.id		eisa 0x3001
++device.name		EVG3000-E
++driver.display		|50-160|30-69
+
+ vendor.id		UNM
+&device.id		eisa 0x3002
++device.name		EVG3000-P
++driver.display		|50-160|30-95
+
+ vendor.id		UNM
+&device.id		eisa 0x3015
++device.name		EVG-153-COL
++driver.display		|50-120|30-65
+
+ vendor.id		UNM
+&device.id		eisa 0x3101
++device.name		EVG3100-E
++driver.display		|50-75|30-65
+
+ vendor.id		UNM
+&device.id		eisa 0x3102
++device.name		EVG3100-P
++driver.display		|50-160|30-95
+
+ vendor.id		UNM
+&device.id		eisa 0x4002
++device.name		EVG4000-P
++driver.display		|50-160|30-95
+
+ vendor.id		UNM
+&device.id		eisa 0x4017
++device.name		EVG-174-COL
++driver.display		|50-120|30-85
+
+ vendor.id		UNM
+&device.id		eisa 0x5002
++device.name		EVG5000-P
++driver.display		|50-160|30-95
+
+ vendor.id		UNM
+&device.id		eisa 0x5021
++device.name		EVG-215-COL
++driver.display		|50-160|30-95
+
+ vendor.id		VSC
++vendor.name		VIEWSONIC
+
+ vendor.id		VSC
+&device.id		eisa 0x0c00
++device.name		17GS
++driver.display		|50-160|30-69
+
+ vendor.id		VSC
+&device.id		eisa 0x0c0f
++device.name		17PS
++driver.display		|50-160|30-82
+
+ vendor.id		VSC
+&device.id		eisa 0x0c1f
++device.name		17GA
++driver.display		|50-160|30-69
+
+ vendor.id		VSC
+&device.id		eisa 0x1600
++device.name		21PS
++driver.display		|50-160|30-82
+
+ vendor.id		VSC
+&device.id		eisa 0x2600
++device.name		ViewSonic 15GS-2
+
+ vendor.id		VSC
+&device.id		eisa 0x2601
++device.name		ViewSonic 15GS
+
+ vendor.id		VSC
+&device.id		eisa 0x3141
++device.name		14ES
++driver.display		|50-75|31-51
+
+ vendor.id		VSC
+&device.id		eisa 0x3142+0x0002
++device.name		ViewSonic 14ES
+
+ vendor.id		VSC
+&device.id		eisa 0x3145
++device.name		15GS-3
++driver.display		|50-120|30-69
+
+ vendor.id		VSC
+&device.id		eisa 0x3252+0x0002
++device.name		ViewSonic 21PS-2
+
+ vendor.id		VSC
+&device.id		eisa 0x3254
++device.name		PJ800
+
+ vendor.id		VSC
+&device.id		eisa 0x334b+0x0002
++device.name		ViewSonic 17GS-2
+
+ vendor.id		VSC
+&device.id		eisa 0x3351
++device.name		PT810
++driver.display		|50-130|30-86
+
+ vendor.id		VSC
+&device.id		eisa 0x3441
++device.name		E641
++driver.display		|50-100|30-54
+
+ vendor.id		VSC
+&device.id		eisa 0x344b+0x0002
++device.name		ViewSonic 17PS-2
+
+ vendor.id		VSC
+&device.id		eisa 0x3451
++device.name		PT810-2
++driver.display		|50-130|30-95
+
+ vendor.id		VSC
+&device.id		eisa 0x3454
++device.name		PJ1000
++driver.display		|50-85|31-64
+
+ vendor.id		VSC
+&device.id		eisa 0x354d
++device.name		GT800
++driver.display		|50-150|30-85
+
+ vendor.id		VSC
+&device.id		eisa 0x354e
++device.name		ViewSonic GT800
+
+ vendor.id		VSC
+&device.id		eisa 0x3550
++device.name		ViewSonic GT800
+
+ vendor.id		VSC
+&device.id		eisa 0x3551
++device.name		P810
++driver.display		|50-160|30-95
+
+ vendor.id		VSC
+&device.id		eisa 0x3552
++device.name		P810-E
++driver.display		|50-160|30-95
+
+ vendor.id		VSC
+&device.id		eisa 0x3554
++device.name		PJL802
++driver.display		|50-85|31-61
+
+ vendor.id		VSC
+&device.id		eisa 0x3641
++device.name		E641-2
++driver.display		|50-100|30-54
+
+ vendor.id		VSC
+&device.id		eisa 0x3644
++device.name		15GA
++driver.display		|50-160|30-69
+
+ vendor.id		VSC
+&device.id		eisa 0x3645
++device.name		G653
++driver.display		|50-120|30-70
+
+ vendor.id		VSC
+&device.id		eisa 0x3646
++device.name		ViewSonic 15GA
+
+ vendor.id		VSC
+&device.id		eisa 0x3648
++device.name		ViewSonic 15GA
+
+ vendor.id		VSC
+&device.id		eisa 0x364a
++device.name		PT770
++driver.display		|50-130|30-82
+
+ vendor.id		VSC
+&device.id		eisa 0x364b+0x0002
++device.name		ViewSonic PT770
+
+ vendor.id		VSC
+&device.id		eisa 0x3651
++device.name		P815
++driver.display		|50-160|30-115
+
+ vendor.id		VSC
+&device.id		eisa 0x3744
++device.name		15G-2
++driver.display		|50-100|30-66
+
+ vendor.id		VSC
+&device.id		eisa 0x3745
++device.name		E655-2
++driver.display		|50-100|30-70
+
+ vendor.id		VSC
+&device.id		eisa 0x3746
++device.name		ViewSonic 15G-2
+
+ vendor.id		VSC
+&device.id		eisa 0x3748
++device.name		ViewSonic 15G-2
+
+ vendor.id		VSC
+&device.id		eisa 0x374b+0x0002
++device.name		ViewSonic 17GA
+
+ vendor.id		VSC
+&device.id		eisa 0x374d
++device.name		G800
++driver.display		|50-120|30-86
+
+ vendor.id		VSC
+&device.id		eisa 0x3751
++device.name		G810
++driver.display		|50-160|30-89
+
+ vendor.id		VSC
+&device.id		eisa 0x3844
++device.name		15ES-2
++driver.display		|50-100|31-62
+
+ vendor.id		VSC
+&device.id		eisa 0x3845
++device.name		VP150
++driver.display		|50-77|30-61
+
+ vendor.id		VSC
+&device.id		eisa 0x3846
++device.name		ViewSonic 15ES-2
+
+ vendor.id		VSC
+&device.id		eisa 0x3848
++device.name		ViewSonic 15ES-2
+
+ vendor.id		VSC
+&device.id		eisa 0x384a
++device.name		17EA
++driver.display		|50-120|30-65
+
+ vendor.id		VSC
+&device.id		eisa 0x384b+0x0002
++device.name		ViewSonic 17EA
+
+ vendor.id		VSC
+&device.id		eisa 0x384d
++device.name		G790
++driver.display		|50-180|30-95
+
+ vendor.id		VSC
+&device.id		eisa 0x3851
++device.name		PT810-3
++driver.display		|50-160|30-96
+
+ vendor.id		VSC
+&device.id		eisa 0x3854
++device.name		PJ820
++driver.display		|50-85|30-69
+
+ vendor.id		VSC
+&device.id		eisa 0x3944
++device.name		ViewSonic 15GS-2
+
+ vendor.id		VSC
+&device.id		eisa 0x3946
++device.name		ViewSonic 15GS-2
+
+ vendor.id		VSC
+&device.id		eisa 0x3948
++device.name		ViewSonic 15GS-2
+
+ vendor.id		VSC
+&device.id		eisa 0x394a
++device.name		17GS-2
++driver.display		|50-160|30-69
+
+ vendor.id		VSC
+&device.id		eisa 0x394b+0x0002
++device.name		ViewSonic 17GS-2
+
+ vendor.id		VSC
+&device.id		eisa 0x4145
++device.name		GA655
++driver.display		|50-180|30-70
+
+ vendor.id		VSC
+&device.id		eisa 0x4151
++device.name		PT813
++driver.display		|50-160|30-107
+
+ vendor.id		VSC
+&device.id		eisa 0x4244
++device.name		EA771B
++driver.display		|50-120|30-70
+
+ vendor.id		VSC
+&device.id		eisa 0x4245
++device.name		P655
++driver.display		|50-180|30-70
+
+ vendor.id		VSC
+&device.id		eisa 0x424a
++device.name		GT770
++driver.display		|50-120|30-65
+
+ vendor.id		VSC
+&device.id		eisa 0x424b+0x0002
++device.name		ViewSonic GT770
+
+ vendor.id		VSC
+&device.id		eisa 0x434a
++device.name		17PS-2
++driver.display		|50-160|30-86
+
+ vendor.id		VSC
+&device.id		eisa 0x434b+0x0002
++device.name		ViewSonic 17PS-2
+
+ vendor.id		VSC
+&device.id		eisa 0x434d
++device.name		PS790
++driver.display		|50-180|30-95
+
+ vendor.id		VSC
+&device.id		eisa 0x4439
++device.name		ViewSonic 15GS-2
+
+ vendor.id		VSC
+&device.id		eisa 0x444a
++device.name		17GA-2
++driver.display		|50-160|30-69
+
+ vendor.id		VSC
+&device.id		eisa 0x4637
++device.name		ViewSonic 1769DC
+
+ vendor.id		VSC
+&device.id		eisa 0x474a
++device.name		PT775
++driver.display		|50-160|30-96
+
+ vendor.id		VSC
+&device.id		eisa 0x4851
++device.name		P810-3
++driver.display		|50-180|30-95
+
+ vendor.id		VSC
+&device.id		eisa 0x4951
++device.name		G810-2
++driver.display		|50-180|30-92
+
+ vendor.id		VSC
+&device.id		eisa 0x4b4a
++device.name		GT775
++driver.display		|50-160|30-86
+
+ vendor.id		VSC
+&device.id		eisa 0x4c4a
++device.name		G771
++driver.display		|50-180|30-70
+
+ vendor.id		VSC
+&device.id		eisa 0x4d4a
++device.name		EA771
++driver.display		|50-120|30-70
+
+ vendor.id		VSC
+&device.id		eisa 0x504a
++device.name		P775
++driver.display		|50-180|30-95
+
+ vendor.id		VSC
+&device.id		eisa 0x514a
++device.name		GA771
++driver.display		|50-180|30-70
+
+ vendor.id		VSC
+&device.id		eisa 0x524a
++device.name		G773
++driver.display		|50-160|30-70
+
+ vendor.id		VSC
+&device.id		eisa 0x564a
++device.name		E771
++driver.display		|50-120|30-70
+
+ vendor.id		VSC
+&device.id		eisa 0x594a
++device.name		GS771
++driver.display		|50-180|30-70
+
+ vendor.id		VSC
+&device.id		eisa 0x5a4a
++device.name		PT771
++driver.display		|50-160|30-92
+

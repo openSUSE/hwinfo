@@ -1,0 +1,545 @@
+ vendor.id		ACC
++vendor.name		Accton
+
+ vendor.id		ADD
++vendor.name		Addtron
+
+ vendor.id		ADP
++vendor.name		Adaptec
+
+ vendor.id		ADP
+&device.id		eisa 0x1505
++baseclass.id		0x001
++subclass.id		0x00
++device.name		Adaptec AVA-1505AE
+
+ vendor.id		ADS
++vendor.name		Analog Devices
+
+ vendor.id		ADS
+&device.id		eisa 0x7150
+|vendor.id		ADS
+&device.id		eisa 0x7181
+|vendor.id		ADV
+&device.id		eisa 0x550a
+|vendor.id		ADV
+&device.id		eisa 0x55ff
+|vendor.id		ALS
+&device.id		eisa 0x0001
+|vendor.id		ALS
+&device.id		eisa 0x0110
+|vendor.id		ALS
+&device.id		eisa 0x0120
+|vendor.id		ALS
+&device.id		eisa 0x0200
+|vendor.id		AZT
+&device.id		eisa 0x1008
+|vendor.id		AZT
+&device.id		eisa 0x2320
+|vendor.id		AZT
+&device.id		eisa 0x3000
+|vendor.id		AZT
+&device.id		eisa 0x3002
+|vendor.id		AZT
+&device.id		eisa 0x3005
+|vendor.id		AZT
+&device.id		eisa 0x3011
+|vendor.id		CDC
+&device.id		eisa 0x1111
+|vendor.id		CMI
+&device.id		eisa 0x0001
+|vendor.id		CSC
+&device.id		eisa 0x0000
+|vendor.id		CSC
+&device.id		eisa 0x0225
+|vendor.id		CSC
+&device.id		eisa 0x0437
+|vendor.id		CSC
+&device.id		eisa 0x0b35
+|vendor.id		CSC
+&device.id		eisa 0x0d32
+|vendor.id		CSC
+&device.id		eisa 0x1425
+|vendor.id		CSC
+&device.id		eisa 0x1525
+|vendor.id		CSC
+&device.id		eisa 0x1a32
+|vendor.id		CSC
+&device.id		eisa 0x1e37
+|vendor.id		CSC
+&device.id		eisa 0x4232
+|vendor.id		CSC
+&device.id		eisa 0x4236+0x0002
+|vendor.id		CSC
+&device.id		eisa 0x4336
+|vendor.id		CSC
+&device.id		eisa 0x4536
+|vendor.id		CSC
+&device.id		eisa 0x4637
+|vendor.id		CSC
+&device.id		eisa 0x4837
+|vendor.id		CSC
+&device.id		eisa 0x6835+0x0002
+|vendor.id		CSC
+&device.id		eisa 0x7532
+|vendor.id		CSC
+&device.id		eisa 0x7537
+|vendor.id		CSC
+&device.id		eisa 0x7632
+|vendor.id		CSC
+&device.id		eisa 0x8025
+|vendor.id		CSC
+&device.id		eisa 0x8037
+|vendor.id		CSC
+&device.id		eisa 0x9836+0x0002
+|vendor.id		CSC
+&device.id		eisa 0xa836
+|vendor.id		CSC
+&device.id		eisa 0xc835
+|vendor.id		CSC
+&device.id		eisa 0xd925
+|vendor.id		CSC
+&device.id		eisa 0xd937
+|vendor.id		CSC
+&device.id		eisa 0xe825
+|vendor.id		CSC
+&device.id		eisa 0xf032
+|vendor.id		CSC
+&device.id		eisa 0xf235
+|vendor.id		CSC
+&device.id		eisa 0xf238
+|vendor.id		CTL
+&device.id		eisa 0x002a
+|vendor.id		CTL
+&device.id		eisa 0x002c
+|vendor.id		CTL
+&device.id		eisa 0x0035
+|vendor.id		CTL
+&device.id		eisa 0x0045
+|vendor.id		CTL
+&device.id		eisa 0x009a
+|vendor.id		CTL
+&device.id		eisa 0x009f
+|vendor.id		CTL
+&device.id		eisa 0x00ed
+|vendor.id		DXP
+&device.id		eisa 0x3201
+|vendor.id		ESS
+&device.id		eisa 0x0003
+|vendor.id		ESS
+&device.id		eisa 0x0968
+|vendor.id		ESS
+&device.id		eisa 0x1868+0x0002
+|vendor.id		ESS
+&device.id		eisa 0x1878+0x0002
+|vendor.id		LWC
+&device.id		eisa 0x1060+0x0002
+|vendor.id		MDK
+&device.id		eisa 0x1605
+|vendor.id		NMX
+&device.id		eisa 0x2200
+|vendor.id		OPT
+&device.id		eisa 0x0924+0x0002
+|vendor.id		OPT
+&device.id		eisa 0x0931
+|vendor.id		RTL
+&device.id		eisa 0x3000
+|vendor.id		RWB
+&device.id		eisa 0x1688
+|vendor.id		SMM
+&device.id		eisa 0x7180
+|vendor.id		STB
+&device.id		eisa 0x011a
+|vendor.id		YMH
+&device.id		eisa 0x0020
+|vendor.id		YMH
+&device.id		eisa 0x0030
+|vendor.id		YMH
+&device.id		eisa 0x0800
++baseclass.id		0x004
++subclass.id		0x01
+
+ vendor.id		ADV
++vendor.name		Advanced Micro Devices
+
+ vendor.id		ALN
++vendor.name		Acer
+
+ vendor.id		ALS
++vendor.name		Avance Logic, Inc.
+
+ vendor.id		ATI
+|vendor.id		ATK
++vendor.name		Allied Telesyn
+
+ vendor.id		AVM
++vendor.name		AVM
+
+ vendor.id		AVM
+&device.id		eisa 0x0900
++baseclass.id		0x103
++subclass.id		0x00
++device.name		AVM ISDN-Controller FRITZ!Card
+
+ vendor.id		AZT
++vendor.name		Aztech Systems
+
+ vendor.id		BRI
++vendor.name		Boca Research
+
+ vendor.id		CSC
++vendor.name		Crystal Semiconductor
+
+ vendor.id		CTL
++vendor.name		Creative Technology Ltd.
+
+ vendor.id		CTL
+&device.id		eisa 0x0024
+|vendor.id		CTL
+&device.id		eisa 0x0026+0x0004
+|vendor.id		CTL
+&device.id		eisa 0x002b
++baseclass.id		0x004
++subclass.id		0x01
++device.name		Sound Blaster 16
+
+ vendor.id		CTL
+&device.id		eisa 0x0039
+|vendor.id		CTL
+&device.id		eisa 0x0042+0x0003
+|vendor.id		CTL
+&device.id		eisa 0x0047
+|vendor.id		CTL
+&device.id		eisa 0x0054
+|vendor.id		CTL
+&device.id		eisa 0x009c
++baseclass.id		0x004
++subclass.id		0x01
++device.name		Sound Blaster AWE 32
+
+ vendor.id		CTL
+&device.id		eisa 0x0048
++baseclass.id		0x004
++subclass.id		0x01
++device.name		Creative SB32
+
+ vendor.id		CTL
+&device.id		eisa 0x0051
++baseclass.id		0x004
++subclass.id		0x01
++device.name		Sound Blaster Vibra16S
+
+ vendor.id		CTL
+&device.id		eisa 0x0070
++baseclass.id		0x004
++subclass.id		0x01
++device.name		Sound Blaster Vibra16C
+
+ vendor.id		CTL
+&device.id		eisa 0x0080
++baseclass.id		0x004
++subclass.id		0x01
++device.name		Sound Blaster Vibra16CL
+
+ vendor.id		CTL
+&device.id		eisa 0x009d
+|vendor.id		CTL
+&device.id		eisa 0x00c1
+|vendor.id		CTL
+&device.id		eisa 0x00c3
+|vendor.id		CTL
+&device.id		eisa 0x00c5
+|vendor.id		CTL
+&device.id		eisa 0x00c7
+|vendor.id		CTL
+&device.id		eisa 0x00e4
++baseclass.id		0x004
++subclass.id		0x01
++device.name		Sound Blaster AWE 64
+
+ vendor.id		CTL
+&device.id		eisa 0x009e
+|vendor.id		CTL
+&device.id		eisa 0x00b2
++baseclass.id		0x004
++subclass.id		0x01
++device.name		Creative SB AWE64 Gold
+
+ vendor.id		CTL
+&device.id		eisa 0x00f0
++baseclass.id		0x004
++subclass.id		0x01
++device.name		Creative ViBRA16X
+
+ vendor.id		DLK
++vendor.name		D-Link Corporation
+
+ vendor.id		ELS
++vendor.name		ELSA International
+
+ vendor.id		ELS
+&device.id		eisa 0x0133
++baseclass.id		0x103
++subclass.id		0x00
++device.name		ELSA QuickStep 1000
+
+ vendor.id		ELS
+&device.id		eisa 0x0213
++device.name		MicroLink 33.6TQV
+
+ vendor.id		ELS
+&device.id		eisa 0x0754
++device.name		MicroLink 56k basic
+
+ vendor.id		ESS
++vendor.name		ESS Technology, Inc.
+
+ vendor.id		GRV
+&device.id		eisa 0x0001
++baseclass.id		0x004
++subclass.id		0x01
++device.name		Gravis Ultrasound
+
+ vendor.id		GWY
++vendor.name		Gateway
+
+ vendor.id		GWY
+&device.id		eisa 0x001c
++baseclass.id		0x102
++subclass.id		0x01
++device.name		Telepath for Windows with x2
+
+ vendor.id		JQE
++vendor.name		Cnet
+
+ vendor.id		KYE
++vendor.name		Genius
+
+ vendor.id		KYE
+&device.id		eisa 0x0001
++device.name		Genius PnP Mouse
+
+ vendor.id		LGI
++vendor.name		Logitech
+
+ vendor.id		LGI
+&device.id		eisa 0x8001
++device.name		Logitech First/Pilot Mouse
+
+ vendor.id		LGI
+&device.id		eisa 0x800b+0x0002
++device.name		Logitech MouseMan
+
+ vendor.id		MDY
++vendor.name		Microdyne
+
+ vendor.id		NDC
++vendor.name		NDC
+
+ vendor.id		PNP
++vendor.name		PnP
+
+ vendor.id		PNP
+&device.id		eisa 0x0500
++device.name		Standard PC COM port
+
+ vendor.id		PNP
+&device.id		eisa 0x0501
++device.name		16550A-compatible COM port
+
+ vendor.id		PNP
+&device.id		eisa 0x0f00
++device.name		Microsoft Bus Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f01
++device.name		Microsoft Serial Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f02
++device.name		Microsoft InPort Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f03
++device.name		Microsoft PS/2-style Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f04
++device.name		Mouse Systems Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f05
++device.name		Mouse Systems 3-Button Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f06
++device.name		Genius Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f07
++device.name		Genius Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f08
++device.name		Logitech Serial Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f09
++device.name		Microsoft BallPoint Serial Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f0a
++device.name		Microsoft Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f0b
++device.name		Microsoft Plug and Play BallPoint Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f0c
++device.name		MS-compatible Serial Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f0d
++device.name		MS-compatible InPort-compatible Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f0e
++device.name		Generic PS/2 Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f0f
++device.name		MS-compatible Serial BallPoint-compatible Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f10
++device.name		Texas Instruments QuickPort Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f11
++device.name		MS-compatible Bus Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f12
++device.name		Logitech PS/2-style Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f13
++device.name		PS/2 Port for PS/2-style Mice
+
+ vendor.id		PNP
+&device.id		eisa 0x0f14
++device.name		Microsoft Kids Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f15
++device.name		Logitech bus mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f16
++device.name		Logitech SWIFT device
+
+ vendor.id		PNP
+&device.id		eisa 0x0f17
++device.name		Logitech-compatible serial mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f18
++device.name		Logitech-compatible bus mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f19
++device.name		Logitech-compatible PS/2-style Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f1a
++device.name		Logitech-compatible SWIFT Device
+
+ vendor.id		PNP
+&device.id		eisa 0x0f1b
++device.name		HP Omnibook Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f1c
++device.name		Compaq LTE Trackball PS/2-style Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f1d
++device.name		Compaq LTE Trackball Serial Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x0f1e
++device.name		Microsoft Kids Trackball Mouse
+
+ vendor.id		PNP
+&device.id		eisa 0x80d6
++baseclass.id		0x002
++subclass.id		0x00
++device.name		NE2000 Compatible
+
+ vendor.id		PNP
+&device.id		eisa 0x80f7
++baseclass.id		0x002
++subclass.id		0x00
++device.name		3Com EtherLink III
+
+ vendor.id		PNP
+&device.id		eisa 0x80f8
++baseclass.id		0x002
++subclass.id		0x00
++device.name		3Com Generic Etherlink PnP Device
+
+ vendor.id		PNP
+&device.id		eisa 0xb006
++device.name		MPU401 compatible
+
+ vendor.id		PNP
+&device.id		eisa 0xb02f
++device.name		Joystick/Game port
+
+ vendor.id		RPT
++vendor.name		RPTI
+
+ vendor.id		RTL
++vendor.name		Realtek
+
+ vendor.id		SKD
++vendor.name		SysKonnect
+
+ vendor.id		SMC
++vendor.name		SMC
+
+ vendor.id		SVE
++vendor.name		SVEC
+
+ vendor.id		TCM
++vendor.name		3Com
+
+ vendor.id		TCM
+&device.id		eisa 0x5090+0x0002
+|vendor.id		TCM
+&device.id		eisa 0x5094+0x0002
+|vendor.id		TCM
+&device.id		eisa 0x5098
++baseclass.id		0x002
++subclass.id		0x00
+
+ vendor.id		TER
++vendor.name		Terratec
+
+ vendor.id		TER
+&device.id		eisa 0x1411
++baseclass.id		0x004
++subclass.id		0x01
++device.name		Soundsystem Base 1
+
+ vendor.id		USR
++vendor.name		U.S. Robotics, Inc.
+
+ vendor.id		USR
+&device.id		eisa 0x9100
++device.name		U.S. Robotics 56K Message
+
+ vendor.id		YMH
++vendor.name		Yamaha
+

@@ -1,0 +1,60 @@
+# libhd/Makefile.common
+
+ARCH	:= $(shell uname -m)
+ifeq "$(ARCH)" "i486"
+ARCH	:= i386
+endif
+ifeq "$(ARCH)" "i586"
+ARCH	:= i386
+endif
+ifeq "$(ARCH)" "i686"
+ARCH	:= i386
+endif
+
+LIBHD_VERSION		:= $(shell cat $(TOPDIR)/VERSION)
+LIBHD_MINOR_VERSION	:= $(shell cut -d . -f 2 $(TOPDIR)/VERSION)
+LIBHD_MAJOR_VERSION	:= $(shell cut -d . -f 1 $(TOPDIR)/VERSION)
+
+CC	= gcc
+LD	= ld
+CFLAGS	= -Wall -O2 -pipe -g $(SHARED_FLAGS) $(EXTRA_FLAGS) -I$(TOPDIR)/src/hd
+SHARED_FLAGS	= -fPIC
+
+LDFLAGS	= -Lsrc
+
+CFILES	= $(wildcard *.c)
+OBJS	= $(CFILES:.c=.o)
+LIBHD	= $(TOPDIR)/src/libhd.a
+LIBHD_SO	= $(TOPDIR)/src/libhd.so.$(LIBHD_VERSION)
+LIBHD_D	= $(TOPDIR)/src/.lib
+
+export CC TOPDIR CFLAGS LIBHD ARCH
+
+.PHONY: all distclean clean install subdirs
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) $<
+
+all: subdirs $(TARGETS)
+
+install: all
+
+ifneq "$(SUBDIRS)" ""
+subdirs:
+	@for i in $(SUBDIRS) ; do make -C $$i $(MAKECMDGOALS) || exit ; done
+endif
+
+clean: subdirs
+	@rm -rf $(OBJS) .depend $(CLEANFILES) *~
+
+distclean: subdirs
+	@rm -rf $(OBJS) .depend $(CLEANFILES) $(DISTCLEANFILES) *~
+
+ifneq "$(CFILES)" ""
+ifeq ($(findstring $(MAKECMDGOALS), clean distclean),)
+.depend: $(CFILES)
+	@$(CC) -MG -MM $(CFLAGS) $(CFILES) >$@
+
+-include .depend
+endif
+endif

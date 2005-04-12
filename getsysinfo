@@ -1,0 +1,77 @@
+#! /bin/sh
+
+if [ "$1" ] ; then
+  cat <<EOF
+Usage: getsysinfo
+Collect some system data that are useful for debugging
+hardware detection bugs.
+EOF
+  exit 0
+fi
+
+# collect some system data
+
+dir=`mktemp -d /tmp/getsysinfo.XXXXXXXXXX`
+
+[ -d "$dir" ] || exit 1
+
+host=`hostname`
+[ "$host" ] || host=xxx
+
+mkdir -p "$dir/$host"
+
+for i in \
+  /proc/bus/input \
+  /proc/cpuinfo \
+  /proc/device-tree \
+  /proc/devices \
+  /proc/dma \
+  /proc/driver/nvram \
+  /proc/fb \
+  /proc/iSeries \
+  /proc/ide \
+  /proc/interrupts \
+  /proc/iomem \
+  /proc/ioports \
+  /proc/meminfo \
+  /proc/modules \
+  /proc/net/dev \
+  /proc/partitions \
+  /proc/scsi \
+  /proc/sys/dev/cdrom/info \
+  /proc/sys/dev/parport \
+  /proc/tty \
+  /proc/version \
+  /sys \
+  /var/log/boot.msg
+do
+  if [ -e "$i" ] ; then
+    echo "$i"
+    cp -a --parents "$i" "$dir/$host" 2>/dev/null
+    chmod -R u+w,a+r,a+X "$dir/$host"
+  fi
+done
+
+echo /proc/mounts
+cp --parents /proc/mounts "$dir/$host"
+
+echo -e "\n------  dmesg start  ------\n" >>"$dir/$host/var/log/boot.msg"
+dmesg >>"$dir/$host/var/log/boot.msg"
+
+file="$host.tar.gz"
+tar -C "$dir" -zcf "$dir/$file" "$host"
+
+rm -f "/tmp/$file"
+
+if [ -e "/tmp/$file" ] ; then
+  echo "Warning: /tmp/$file exists, no info written"\!
+  rm -rf "$dir"
+  exit 1
+fi
+
+ln -nf "$dir/$file" "/tmp/$file"
+
+rm -rf "$dir"
+
+echo -e "\nSystem data written to: /tmp/$file"
+

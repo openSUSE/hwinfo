@@ -1,0 +1,5 @@
+# 48093
+ vendor.id		pci 0x1077
+&device.id		pci 0x2200
++driver.module.modprobe	qla2200
+

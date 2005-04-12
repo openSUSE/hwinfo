@@ -1,0 +1,77 @@
+# bus types
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# 0x00 - 0x7f are PCI types
+
+ bus.id			0x00
++bus.name		None
+
+ bus.id			0x01
++bus.name		ISA
+
+ bus.id			0x02
++bus.name		EISA
+
+ bus.id			0x03
++bus.name		MC
+
+ bus.id			0x04
++bus.name		PCI
+
+ bus.id			0x05
++bus.name		PCMCIA
+
+ bus.id			0x06
++bus.name		NuBUS
+
+ bus.id			0x07
++bus.name		CardBus
+
+ bus.id			0x08
++bus.name		Unknown
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# >0x80 are our own bus/interface types
+
+ bus.id			0x80
++bus.name		PS/2
+
+ bus.id			0x81
++bus.name		Serial
+
+ bus.id			0x82
++bus.name		Parallel
+
+ bus.id			0x83
++bus.name		Floppy
+
+ bus.id			0x84
++bus.name		SCSI
+
+ bus.id			0x85
++bus.name		IDE
+
+ bus.id			0x86
++bus.name		USB
+
+ bus.id			0x87
++bus.name		ADB
+
+ bus.id			0x88
++bus.name		RAID
+
+ bus.id			0x89
++bus.name		SBUS
+
+ bus.id			0x8a
++bus.name		I2O
+
+ bus.id			0x8b
++bus.name		Virtual IO
+
+ bus.id			0x8c
++bus.name		CCW
+
+ bus.id			0x8d
++bus.name		IUCV

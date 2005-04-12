@@ -1,0 +1,113 @@
+#! /usr/bin/perl
+
+sub addr2line;
+
+$list = shift;
+$bin = shift;
+$ofs = shift;
+
+die "usage: mci data_file binary\n" unless -f($list);
+
+open F, $list; 
+
+while(<F>) {
+  if(/^;\s*(.+?)\s*$/) {
+    @i = split ' ', $1;
+    $i[0] = sprintf "%-24s", $i[0];
+    $i[1] = addr2line $i[1];
+    print "; ", join("\t", @i), "\n";
+    next
+  }
+  @i = split;
+
+  die "oops, format error" if @i > 3;
+
+  if(@i == 1) {
+    if($i[0] =~ /^>(\S+)/) {
+      unshift @funcs, $1;
+    }
+    elsif($i[0] =~ /<(\S+)/) {
+     if($funcs[0] eq $1) {
+       shift @funcs
+     }
+     else {
+       die "oops, strange data (line $.)\n"
+     }
+    }
+    else {
+       die "oops, format error"
+    }
+  }
+  else {
+    $func = $i[0];
+    $addr = $i[1];
+    $size = undef;
+    $size = @i == 2 ? undef : $i[2];
+
+    if(defined $size) {
+      if(exists $mem{$addr}) {
+        $x = addr2line $func;
+        $y = addr2line ${$mem{$addr}}[1];
+        print "malloc oops (line $.): mem $addr; old: $y, size ${$mem{$addr}}[0]; new: $x, size $size\n";
+      }
+      $mem{$addr} = [ $size, $func, @funcs ];
+      delete $lfree{$addr};
+    }
+    else {
+      if(!exists $mem{$addr}) {
+        $xx = "";
+        $first = 1;
+        for $f ($func, @funcs) {
+          $xx .= "<-" unless $first;
+          $first = 0; 
+          $xx .=  addr2line $f;
+        }
+        print "free oops (line $.): $addr ($xx) [last free: line $lfree{$addr}]\n";
+      }
+      delete $mem{$addr};
+      $lfree{$addr} .= " $.";
+    }
+  }
+}
+
+for (sort keys %mem) {
+  $total += oct(${$mem{$_}}[0]);
+  $cnt++;
+
+#  $x = `addr2line -s -e $bin ${$mem{$_}}[1]`;
+#  chomp $x;
+#  $x = $x =~ /\?{2}/ ? undef : "$x ";
+  $x = addr2line ${$mem{$_}}[1];
+
+  print "$_\t${$mem{$_}}[0]\t";
+  $first = 1;
+  for $f (@{$mem{$_}}[1..$#{$mem{$_}}]) {
+    print "<-" unless $first;
+    $first = 0; 
+    print addr2line $f;
+  }
+  print "\n"
+}
+
+printf "total: %u bytes in %u blocks\n", $total, $cnt;
+
+
+sub addr2line
+{
+  my ($x, $y);
+
+  return $_[0] unless $bin;
+
+  $y = sprintf "0x%x", oct($_[0]) + $ofs;
+
+  return $addr_cache{$y} if exists $addr_cache{$y};
+
+  $x = `addr2line -s -e $bin $y`;
+  chomp $x;
+  $x = $x =~ /\?{2}/ ? $_[0] : $x;
+
+  $addr_cache{$y} = $x;
+
+  return $x;
+}
+

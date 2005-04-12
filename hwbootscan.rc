@@ -1,0 +1,101 @@
+#! /bin/sh
+# Copyright (c) 2002 SuSE GmbH Nuernberg, Germany.  All rights reserved.
+#
+# Author: Marcus Meissner <meissner@suse.de>
+#
+# /etc/init.d/hwscan
+#
+# System startup script for boot hw probing and reconfiguration
+#
+### BEGIN INIT INFO
+# Provides: hwscan
+# Required-Start:
+# X-UnitedLinux-Should-Start: hotplug kbd
+# Required-Stop:
+# Default-Start: 2 3 5
+# Default-Stop:
+# Description: Hardware scan and reconfiguration on boot.
+### END INIT INFO
+
+HWBOOTSCAN_BIN=/usr/sbin/hwbootscan
+test -x $HWBOOTSCAN_BIN || exit 5
+
+# Shell functions sourced from /etc/rc.status:
+#      rc_check         check and set local and overall rc status
+#      rc_status        check and set local and overall rc status
+#      rc_status -v     ditto but be verbose in local rc status
+#      rc_status -v -r  ditto and clear the local rc status
+#      rc_failed        set local and overall rc status to failed
+#      rc_reset         clear local rc status (overall remains)
+#      rc_exit          exit appropriate to overall rc status
+. /etc/rc.status
+
+# First reset status of this service
+rc_reset
+
+# Return values acc. to LSB for all commands but status:
+# 0 - success
+# 1 - misc error
+# 2 - invalid or excess args
+# 3 - unimplemented feature (e.g. reload)
+# 4 - insufficient privilege
+# 5 - program not installed
+# 6 - program not configured
+# 7 - program is not running
+#
+# Note that starting an already running service, stopping
+# or restarting a not-running service as well as the restart
+# with force-reload (in case signalling is not supported) are
+# considered a success.
+
+case "$1" in
+    start)
+	echo -n "Starting hardware scan on boot"
+	rc_splash "YaST"
+	[ -n "$REDIRECT" ] && exec 0<> $REDIRECT 1>&0 2>&0
+	$HWBOOTSCAN_BIN
+	rc_check
+        rc_status -v
+	;;
+    stop)
+	rc_check
+	;;
+    restart)
+        ## Stop the service and regardless of whether it was
+        ## running or not, start it again.
+        # Remember status and be quiet
+	rc_check
+        ;;
+    force-reload)
+        ## Signal the daemon to reload its config. Most daemons
+        ## do this on signal 1 (SIGHUP).
+        ## If it does not support it, restart.
+        # Remember status and be quiet
+	rc_check
+        ;;
+    reload)
+        ## Like force-reload, but if daemon does not support
+        ## signalling, do nothing (!)
+
+        # If it supports signalling:
+	rc_reset
+        ;;
+    status)
+        ## Check status with checkproc(8), if process is running
+        ## checkproc will return with exit status 0.
+
+        # Status has a slightly different for the status command:
+        # 0 - service running
+        # 1 - service dead, but /var/run/  pid  file exists
+        # 2 - service dead, but /var/lock/ lock file exists
+        # 3 - service not running
+
+	rc_reset
+        ;;
+    *)
+	echo "Usage: $0 {start|stop|restart|force-reload|reload|status}"
+	exit 1
+	;;
+esac
+rc_exit
+

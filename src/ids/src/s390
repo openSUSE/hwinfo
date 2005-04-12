@@ -1,0 +1,274 @@
+# special s390 hardware
+ vendor.id		special 0x6001
++vendor.name		IBM
+
+ vendor.id		special 0x6001
+&device.id		special 0x1731
+&subdevice.id		special 0x1732
+&detail.ccw.data.cu_model 1
++device.name		OSA Express Network card
++baseclass.id		2
++subclass.id		0x86
++driver.module.modprobe	qeth
+
+ vendor.id		special 0x6001
+&device.id		special 0x1731
+&subdevice.id		special 0x1732
+&detail.ccw.data.cu_model 3
++device.name		zFCP controller
++baseclass.id		1
++subclass.id		0
++driver.module.modprobe zfcp
+
+ vendor.id		special 0x6001
+&device.id		special 0x1731
+&subdevice.id		special 0x1732
+&detail.ccw.data.cu_model 5
++device.name		Hipersocket
++baseclass.id		2
++subclass.id		0x87
++driver.module.modprobe qeth
+
+ vendor.id		special 0x6001
+&device.id		special 0x2540
+&baseclass.id		0x10c
++device.name		z/VM Virtual Card Reader
+
+ vendor.id		special 0x6001
+&device.id		special 0x2540
+&baseclass.id		0x109
++device.name		z/VM Virtual Card Punch
+
+ vendor.id		special 0x6001
+&device.id		special 0x2701
++device.name		2701 Data Adapter
+
+ vendor.id		special 0x6001
+&device.id		special 0x3890
++device.name		Document Processor
+
+ vendor.id		special 0x6001
+&device.id		special 0x3250
++device.name		3250 Display
+
+ vendor.id		special 0x6001
+&device.id		special 0x3178
+|device.id		special 0x3179
+|device.id		special 0x3180
+|device.id		special 0x3190
+|device.id		special 0x3270
+|device.id		special 0x3277
+|device.id		special 0x3278
+|device.id		special 0x3279
+|device.id		special 0x3290
++device.name		3270-Family Display
++baseclass.id		0x108
++subclass.id		1
+
+ vendor.id		special 0x6001
+&device.id		special 0x3203
+|device.id		special 0x3211
+|device.id		special 0x3262
+|device.id		special 0x4245
+|device.id		special 0x4248
+|device.id		special 0x6562
++device.name		Impact Printer
++baseclass.id		0x109
+
+ vendor.id		special 0x6001
+&device.id		special 0x3203
+&detail.ccw.data.cu_model 5
++device.name		z/VM Virtual Printer
++baseclass.id		0x109
+
+ vendor.id		special 0x6001
+&device.id		special 0x3215
++device.name		3215 Display
++baseclass.id		0x108
++subclass.id		1
+
+ vendor.id		special 0x6001
+&device.id		special 0x3990
+&subdevice.id		special 0x3390
+|subdevice.id		special 0x3380
+|subdevice.id		special 0x3350
+|subdevice.id		special 0x3330
+|subdevice.id		special 0x3375
+|subdevice.id		special 0x3851
++device.name		DASD
++baseclass.id		0x106
++subclass.id		0
++progif.id		1
++driver.module.modprobe dasd_eckd_mod
+
+ vendor.id		special 0x6001
+&device.id		special 0x2105
+&subdevice.id		special 0x3390
+|subdevice.id		special 0x3380
++device.name		DASD
++baseclass.id		0x106
++subclass.id		0
++progif.id		1
++driver.module.modprobe dasd_eckd_mod
+
+ vendor.id		special 0x6001
+&device.id		special 0x3880
+&subdevice.id		special 0x3390
++device.name		DASD
++baseclass.id		0x106
++subclass.id		0
++progif.id		1
++driver.module.modprobe dasd_eckd_mod
+
+ vendor.id		special 0x6001
+&device.id		special 0x3880
+&subdevice.id		special 0x3370
++device.name		DASD
++baseclass.id		0x106
++subclass.id		0
++progif.id		2
++driver.module.modprobe dasd_fba_mod
+
+ vendor.id		special 0x6001
+&device.id		special 0x9343
+&subdevice.id		special 0x9345
++device.name		DASD
++baseclass.id		0x106
++subclass.id		0
++progif.id		1
++driver.module.modprobe dasd_eckd_mod
+
+ vendor.id		special 0x6001
+&device.id		special 0x6310
+&subdevice.id		special 0x9336
++device.name		DASD
++baseclass.id		0x106
++subclass.id		0
++progif.id		2
++driver.module.modprobe dasd_fba_mod
+
+ vendor.id		special 0x6001
+&device.id		special 0x2107
+|device.id		special 0x1750
++device.name		DASD
++baseclass.id		0x106
++subclass.id		0
++progif.id		1
++driver.module.modprobe dasd_eckd_mod
+
+ vendor.id		special 0x6001
+&device.id		special 0x3705
+&device.id		special 0x3725
+&device.id		special 0x3745
++device.name		37x5 Line Adapter
+
+ vendor.id		special 0x6001
+&device.id		special 0x3286
+&device.id		special 0x3287
+&device.id		special 0x3288
+&device.id		special 0x3289
++device.name		328x Display Printer
+
+ vendor.id		special 0x6001
+&device.id		special 0x3420
++device.name		3420 Tape Drive
++baseclass.id		0x106
++subclass.id		1
++driver.module.modprobe tape_34xx
+ 
+ vendor.id		special 0x6001
+&device.id		special 0x3422
++device.name		3422 Tape Drive
++baseclass.id		0x106
++subclass.id		1
++driver.module.modprobe tape_34xx
+ 
+ vendor.id		special 0x6001
+&device.id		special 0x3480
++device.name		3480 Tape Drive
++baseclass.id		0x106
++subclass.id		1
++driver.module.modprobe tape_34xx
+ 
+ vendor.id		special 0x6001
+&device.id		special 0x3490
++device.name		3490 Tape Drive
++baseclass.id		0x106
++subclass.id		1
++driver.module.modprobe tape_34xx
+
+ vendor.id		special 0x6001
+&device.id		special 0x3505
++device.name		3505 Card Reader
+ 
+ vendor.id		special 0x6001
+&device.id		special 0x3525
++device.name		3525 Card Punch
+
+ vendor.id		special 0x6001
+&device.id		special 0x3800
++device.name		3800 Printer
++baseclass.id		0x109
+
+ vendor.id		special 0x6001
+&device.id		special 0x3820
++device.name		3820 Printer
++baseclass.id		0x109
+
+ vendor.id		special 0x6001
+&device.id		special 0x5080
++device.name		5080 Graphics Display
+
+ vendor.id		special 0x6001
+&device.id		special 0x9032
+|device.id		special 0x9033
++device.name		903x ES Connection Director
+ 
+ vendor.id		special 0x6001
+&device.id		special 0x0001
++device.name		Token ring card
+
+ vendor.id		special 0x6001
+&device.id		special 0x3088
+&detail.ccw.data.cu_model 8
++device.name		parallel CTC Adapter
++baseclass.id		2
++subclass.id		0x88
++driver.module.modprobe ctc
+
+ vendor.id		special 0x6001
+&device.id		special 0x3088
+&detail.ccw.data.cu_model 0x1f
++device.name		ESCON Adapter
++baseclass.id		2
++subclass.id		0x8f
++driver.module.modprobe ctc
+
+ vendor.id		special 0x6001
+&device.id		special 0x3088
+&detail.ccw.data.cu_model 0x1e
++device.name		FICON Adapter
++baseclass.id		2
++subclass.id		0x8e
+
+ vendor.id		special 0x6001
+&device.id		special 0x3088
+&detail.ccw.data.cu_model 1
++device.name		P/390
++baseclass.id		2
++subclass.id		0x89
+
+ vendor.id		special 0x6001
+&device.id		special 0x3088
+&detail.ccw.data.cu_model 0x60
++device.name		OSA2 Adapter
++baseclass.id		2
++subclass.id		0x89
++driver.module.modprobe lcs
+
+ vendor.id		special 0x6001
+&device.id		special 0x0005
++device.name		IUCV
++baseclass.id		2
++subclass.id		0x90
++driver.module.modprobe netiucv

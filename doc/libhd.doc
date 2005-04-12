@@ -1,0 +1,109 @@
+/*! \mainpage libhd documentation
+
+<h2>Introduction</h2>
+
+libhd is a hardware detection lib.
+
+<h2>Changes</h2>
+
+\ref libhd_5_12
+
+<h2>Examples</h2>
+
+\ref example1
+
+\ref example2
+
+*/
+
+
+/*! \page examples Examples
+
+\ref example1
+
+\ref example2
+
+<hr>
+
+\subsection example1 Get list of SCSI controllers
+
+\include example1.c
+
+<hr>
+
+\subsection example2 Get primary display controller
+
+\include example2.c
+
+*/
+
+/*! \page changes Changes
+
+\ref libhd_5_12
+
+<hr>
+
+\subsection libhd_5_12 libhd-5.12
+
+<ul>
+
+  <li>changes in \ref hd_t
+
+    <ul>
+
+    <li>\ref hd_t::bus "bus" is now a struct, use \ref hd_t::bus "bus.id" instead.
+
+    <li>\ref hd_t::base_class "base_class" is now a struct, use \ref hd_t::base_class "base_class.id" instead.
+
+    <li>\ref hd_t::sub_class "sub_class" is now a struct, use \ref hd_t::sub_class "sub_class.id" instead.
+
+    <li>\ref hd_t::prog_if "prog_if" is now a struct, use \ref hd_t::prog_if "prog_if.id" instead.
+
+    <li>\ref hd_t::vendor "vendor" is a struct replacing vend and vend_name.
+      Use \ref hd_t::vendor "vendor.id" and \ref hd_t::vendor "vendor.name" now.
+
+    <li>\ref hd_t::device "device" is a struct replacing dev and dev_name.
+      Use \ref hd_t::device "device.id" and \ref hd_t::device "device.name" now.
+
+    <li>\ref hd_t::sub_vendor "sub_vendor" is a struct replacing sub_vend and sub_vend_name.
+      Use \ref hd_t::sub_vendor "sub_vendor.id" and \ref hd_t::sub_vendor "sub_vendor.name" now.
+
+    <li>\ref hd_t::sub_device "sub_device" is a struct replacing sub_dev and sub_dev_name.
+      Use \ref hd_t::sub_device "sub_device.id" and \ref hd_t::sub_device "sub_device.name" now.
+
+    <li>\ref hd_t::revision "revision" is a struct replacing rev and rev_name.
+      Use \ref hd_t::revision "revision.id" and \ref hd_t::revision "revision.name" now.
+
+    <li>\ref hd_t::compat_vendor "compat_vendor" is a struct replacing compat_vend.
+      Use \ref hd_t::compat_vendor "compat_vendor.id" now.
+
+    <li>\ref hd_t::compat_device "compat_device" is a struct replacing compat_dev.
+      Use \ref hd_t::compat_device "compat_device.id" now.
+
+    </ul>
+
+  <li>interface functions removed
+
+    <ul>
+
+    <li>hd_bus_name is gone. Use \ref hd_t::bus "bus.name" instead.
+
+    <li>hd_class_name is gone. Use \ref hd_t::base_class "base_class.name",
+      \ref hd_t::sub_class "sub_class.name" or \ref hd_t::prog_if "prog_if.name" instead.
+
+    <li>hd_vendor_name is gone. Use \ref hd_t::vendor "vendor.name" instead.
+
+    <li>hd_device_name is gone. Use \ref hd_t::device "device.name" instead.
+
+    <li>hd_sub_device_name is gone. Use \ref hd_t::sub_device "sub_device.name" instead.
+
+    <li>hd_find_device_by_name is gone.
+
+    </ul>
+
+</ul>
+
+<hr>
+
+*/
+

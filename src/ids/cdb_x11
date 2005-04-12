@@ -1,0 +1,349 @@
+#!/usr/bin/perl -w
+# Copyright (c) 1996 SuSE GmbH Nuernberg, Germany.  All rights reserved.
+#
+# Author: Dirk Hessing <dhess@suse.de>, 08/2001
+#
+# Exporting hw-data for x11 from developer-CDB
+
+
+use DBI;
+use strict;
+use IO::Handle;
+use Getopt::Long;
+
+# MySQL-Host / MySQL-User
+my $hostname     = "cdbintern.suse.de";
+my $mysql_user   = "cdbclient";
+my $mysql_passwd = "cdb";
+my $target       = "cdb";
+
+my $driver       = DBI->install_driver('mysql');
+my $dbh          = DBI->connect('DBI:mysql:'.$target.':'.$hostname,$mysql_user,$mysql_passwd)
+  or die "Can't connect to the MySQL Database, table $target";
+
+### Log-Handle und STDOUT-Handle auf ungepufferte Ausgabe setzten (schlechtere Performance ;-)
+STDOUT->autoflush();
+
+
+my $dist_name = "Stable";
+my $date      = localtime();
+
+my (@query,$x,$result,$arch_name,@arch_names,$filename,$count);
+my ($product_id,$product_name,$vendor_name,$bus_name,$subclass_name);
+my ($vId,$dId,$sdId,$svId);
+my (%tooltopics,$tooltopic_name,$vario_name,$charvalue);
+
+my $opt_dir = "tmp";
+
+
+# convert to new id format
+sub new_id
+{
+  my ($old_id, $id_class, $tag, $id);
+
+  ($old_id, $id_class) = @_;
+
+  if($old_id =~ /^([us]?)(\S{4})$/) {
+    $tag = $1;
+    $id = $2;
+  }
+  else {
+    die "invalid id format: \"$old_id\"\n";
+  }
+
+  if($tag eq "" && $id_class && $id_class =~ /^([us]?)(\S{4})$/) {
+    $tag = $1;
+  }
+
+  if($tag eq "s") {
+    $tag = "special ";
+  }
+  elsif($tag eq "u") {
+    $tag = "usb ";
+  }
+  elsif($tag eq "") {
+    $tag = "pci ";
+  }
+  else {
+    die "invalid id format: \"$old_id\"\n";
+  }
+
+  return "${tag}0x$id";
+}
+
+
+# write data to FH
+sub write_info
+{
+  my ($arch, $xfree, $has3d, $vId, $dId, $svId, $sdId, $vName, $dName, $tt, $raw, @raw);
+
+  ($arch, $xfree, $has3d, $vId, $dId, $svId, $sdId, $vName, $dName, $tt) = @_;
+
+  return unless $vId ne "" && $dId ne "";
+
+  # print FH "\n# vId = $vId, dId = $dId, svId = $svId, sdId = $sdId, vName = \"$vName\", dName = \"$dName\"\n";
+
+  if($svId ne "" && $sdId ne "") {
+    print FH "\n vendor.id\t\t${\new_id $vId}\n";
+    print FH "+vendor.name\t\t$vName\n";
+
+    print FH "\n vendor.id\t\t${\new_id $vId}\n";
+    print FH "&device.id\t\t${\new_id $dId, $vId}\n";
+    print FH "&subvendor.id\t\t${\new_id $svId, $vId}\n";
+    print FH "&subdevice.id\t\t${\new_id $sdId, $vId}\n";
+    print FH "+subdevice.name\t\t$dName\n";
+  }
+  else {
+    print FH "\n vendor.id\t\t${\new_id $vId}\n";
+    print FH "+vendor.name\t\t$vName\n";
+
+    print FH "\n vendor.id\t\t${\new_id $vId}\n";
+    print FH "&device.id\t\t${\new_id $dId, $vId}\n";
+    print FH "+device.name\t\t$dName\n";
+  }
+
+  if($$tt{resol} ne "") {
+    $$tt{resol} =~ s/bpp//g;
+  }
+	
+  # Teste ob mehr als ein driver- oder installscript-topic vorhanden ist:
+  if(($$tt{driver} =~ /,/) || ($$tt{installscript} =~ /,/)) {
+    warn
+      "\nMore than one driver- or installscript-topic.\n" .
+      "  Product-id = $product_id, Vario = $vario_name, Arch = $arch\n" .
+      "  Id = (${\new_id $vId}, ${\new_id $dId, $vId}), Name = $dName\n" .
+      "  Driver = \"$$tt{driver}\", script = \"$$tt{installscript}\"\n";
+  }
+
+  print FH
+    "+driver.xfree\t\t$xfree|$$tt{driver}|" .
+    ($has3d ? "3d" : "") .
+    "|$$tt{package}|$$tt{extension}|$$tt{option}|$$tt{resol}||$$tt{installscript}|\n";
+
+  if ($$tt{raw} ne "") {
+    @raw = (split(',',$$tt{raw}));
+    foreach $raw (@raw) {
+      print FH "+driver.xfree.config\t$raw\n";
+    }
+  }
+}
+
+
+# get product info and write everything to FH
+sub get_info
+{
+  my ($arch_name, $xfree, $has3d);
+
+  ($arch_name, $vario_name) = @_;
+
+  $xfree = $vario_name =~ /XFree3/ ? 3 : 4;
+  $has3d = $vario_name =~ /3D/ ? 1 : 0;
+
+  $tooltopics{driver} = "";
+  $tooltopics{package} = "";
+  $tooltopics{extension} = "";
+  $tooltopics{option} = "";
+  $tooltopics{resol} = "";
+  $tooltopics{installscript} = "";
+  $tooltopics{raw} = "";
+
+  # Product supported=full?
+  $query[2] = $dbh->prepare("SELECT toolproperty.charvalue FROM toolproperty
+                                 LEFT JOIN tooltopic ON toolproperty.tooltopic_id=tooltopic.id
+                                 LEFT JOIN arch_dist_l_vario ON toolproperty.arch_dist_l_vario_id=arch_dist_l_vario.id
+                                 LEFT JOIN arch ON arch_dist_l_vario.arch_id=arch.id
+                                 LEFT JOIN distribution ON arch_dist_l_vario.distribution_id=distribution.id
+                                 LEFT JOIN vario ON arch_dist_l_vario.vario_id=vario.id
+                                 WHERE toolproperty.product_id=$product_id
+                                   AND tooltopic.name='supported'
+                                   AND arch.name='$arch_name'
+                                   AND distribution.name='$dist_name'
+                                   AND vario.name='$vario_name'
+                                   AND toolproperty.valid=1
+                                   AND tooltopic.valid=1
+                                   AND arch_dist_l_vario.valid=1")
+    or die "Can\'t select table toolproperty";
+  $query[2]->execute or die "Can\'t select table toolproperty";
+
+  undef $result;
+  $count = 0;
+  while ($x = $query[2]->fetchrow_array) {
+    $result = $x if defined $x;
+    multiple_supportedtopics($dbh,$product_id,$product_name,$arch_name,$dist_name,$vario_name) if $count > 0;
+    $count++;
+  }
+  $result = "" if not defined $result;
+
+  if ($result eq "full") {
+    $query[2] = $dbh->prepare("SELECT tooltopic.name,toolproperty.charvalue FROM toolproperty
+                                 LEFT JOIN tooltopic ON toolproperty.tooltopic_id=tooltopic.id
+                                 LEFT JOIN arch_dist_l_vario ON toolproperty.arch_dist_l_vario_id=arch_dist_l_vario.id
+                                 LEFT JOIN arch ON arch_dist_l_vario.arch_id=arch.id
+                                 LEFT JOIN distribution ON arch_dist_l_vario.distribution_id=distribution.id
+                                 LEFT JOIN language ON arch_dist_l_vario.lang_id=language.id
+                                 LEFT JOIN vario ON arch_dist_l_vario.vario_id=vario.id
+                                   WHERE arch.name='$arch_name'
+                                     AND distribution.name='$dist_name'
+                                     AND vario.name='$vario_name'
+                                     AND toolproperty.product_id=$product_id
+                                     AND tooltopic.name != 'supported'
+                                     AND toolproperty.valid=1
+                                     AND tooltopic.valid=1
+                                     AND arch_dist_l_vario.valid=1")
+      or die "Can\'t select table toolproperty";
+    $query[2]->execute or die "Can\'t select table toolproperty"; 
+
+    while ( ($tooltopic_name,$charvalue) = ($query[2]->fetchrow_array) ) {
+      if (($charvalue eq "none") || ($charvalue eq "None")) {
+	  $charvalue = "";
+      }
+      next if $charvalue eq "";
+      if (!$tooltopics{"$tooltopic_name"}) {
+        $tooltopics{"$tooltopic_name"} = $charvalue;
+      } else {
+        $tooltopics{"$tooltopic_name"} .= ",".$charvalue;
+      }
+    }
+
+    write_info $arch_name, $xfree, $has3d, $vId, $dId, $svId, $sdId, $vendor_name, $product_name, \%tooltopics;
+  }
+}
+
+
+GetOptions(
+  'dir=s' => \$opt_dir
+) ;
+
+
+print "\n\nGenerating x11.hwinfo-files, one for each architecture.\n";
+mkdir($opt_dir, 0755) || die "\nmkdir: $opt_dir: $!\n" unless -d $opt_dir;
+
+print "\nStoring files in \"$opt_dir\"\n\n";
+
+$query[0] = $dbh->prepare("SELECT name FROM arch WHERE valid=1")
+  or die "Can\'t select table arch";
+$query[0]->execute or die "Can\'t select table arch";
+while ($result = $query[0]->fetchrow_array) {
+  push(@arch_names,$result);
+}
+
+# Für jede Architektur wird eine eigene Datei geschrieben
+foreach $arch_name (@arch_names) {
+  $filename = "$opt_dir/x11.hwinfo.$arch_name";
+  open(FH,"> $filename") or die "Can\'t open $filename";
+  print FH "#\n";
+  print FH "# x11.hwinfo-file for architecture $arch_name\n";
+  print FH "#\n";
+  print FH "# generated at: $date\n";
+  print FH "# data source:  CDB\n";
+  print FH "# distribution: $dist_name\n";
+  print FH "#\n\n\n";
+
+  $query[0] = $dbh->prepare("SELECT product.id,product.name,
+                                    product.vId,product.dId,product.svId,product.sdId,
+                                    vendor.longname,product.vId,
+                                    bus.name,subclass.name FROM product
+                               LEFT JOIN product_area ON product.id=product_area.product_id
+                               LEFT JOIN groups ON product_area.group_id=groups.id
+                               LEFT JOIN vendor ON product.vendor_id=vendor.id
+                               LEFT JOIN bus ON product.bus_id=bus.id
+                               LEFT JOIN subclass ON product.subclass_id=subclass.id
+                                WHERE groups.name='graphic-developer'
+                                  AND product_area.valid=1
+                                  AND product.valid=1")
+    or die "Can\'t select table product";
+  $query[0]->execute or die "Can\'t select table product";
+  while ( ($product_id,$product_name,$vId,$dId,$svId,$sdId,$vendor_name,$vId,$bus_name,$subclass_name) = ($query[0]->fetchrow_array) ) {
+    # Postinitialisierung, falls undefinierte Werte
+    $vId = "----" if !defined($vId);
+    $dId = "----" if !defined($dId);
+    $svId = "----" if !defined($svId);
+    $sdId = "----" if !defined($sdId);
+
+    $vId = "" if $vId eq "----";
+    $dId = "" if $dId eq "----";
+    $svId = "" if $svId eq "----";
+    $sdId = "" if $sdId eq "----";
+
+    # Step 1: Erzeuge Zeilen für XFree 3 ohne 3D
+    get_info $arch_name, "XFree3";
+
+    # Step 2: Erzeuge Zeilen für XFree 3 mit 3D
+    get_info $arch_name, "XFree3 with 3D";
+
+    # Step 2: Erzeuge Zeilen für XFree 4 ohne 3D
+    get_info $arch_name, "XFree4";
+
+    # Step 2: Erzeuge Zeilen für XFree 4 mit 3D
+    get_info $arch_name, "XFree4 with 3D";
+
+  } # Ende der Produktschleife
+  close(FH);
+} # Ende der Arch-Schleife
+
+
+
+
+sub multiple_supportedtopics {
+  my $handle = shift;
+  my $product_id = shift;
+  my $product_name = shift;
+  my $arch_name = shift;
+  my $dist_name = shift;
+  my $vario_name = shift;
+  my ($query,$id,$value,$name,$time,$htime,%topic,$key,$answer,%key);
+
+  my $min_key = "0";
+  undef %key;
+
+  print "\n    *********** Unconsistency registered *******************";
+  print "\nMultiple supported-topics:";
+  print "\nProduct_name: $product_name  ID=$product_id";
+  print "\nArch=$arch_name Dist=$dist_name Vario=$vario_name";
+  print "\n";
+  
+    $query = $handle->prepare("SELECT toolproperty.id,tooltopic.name,
+                                   toolproperty.charvalue,toolproperty.createtime
+                             FROM toolproperty
+                              LEFT JOIN tooltopic ON toolproperty.tooltopic_id=tooltopic.id
+                              LEFT JOIN arch_dist_l_vario ON toolproperty.arch_dist_l_vario_id=arch_dist_l_vario.id
+                              LEFT JOIN arch ON arch_dist_l_vario.arch_id=arch.id
+                              LEFT JOIN distribution ON arch_dist_l_vario.distribution_id=distribution.id
+                              LEFT JOIN vario ON arch_dist_l_vario.vario_id=vario.id
+                              WHERE toolproperty.product_id=$product_id
+                                AND tooltopic.name='supported'
+                                AND toolproperty.valid=1
+                                AND arch.name='$arch_name'
+                                AND distribution.name='$dist_name'
+                                AND vario.name='$vario_name'")
+      or die "Can\'t select table toolproperty";
+    $query->execute or die "Can\'t select table toolproperty";
+  while (($id,$name,$value,$time) = ($query->fetchrow_array)) {
+    $htime = localtime($time);
+    $topic{$id} = $htime."  ".$value;
+    $min_key = $id;
+  }
+  foreach $key (sort keys %topic) {
+    $min_key = $key if $key<$min_key;
+  }
+  foreach $key (sort keys %topic) {
+    print "\nD toolproperty-ID $key: $topic{$key}" if $key != $min_key;
+  }
+  print "\n* toolproperty-ID $min_key:$topic{$min_key}";
+  print "\n\nDeleting doublettes marked with D (* will be left the valid one) [N|y] ?";
+  $answer = <STDIN>;
+  chop($answer);
+  if ( ($answer eq "y") || ($answer eq "Y") ) {
+    print "\n\nDeleting supported-doublettes.... done\n";
+    foreach $key (keys %topic) {
+      if ($key != $min_key) {
+	$query = $handle->prepare("DELETE FROM toolproperty
+                                WHERE id=$key")
+	  or die "Can\'t delete from toolproperty";
+	$query->execute or die "Can\'t delete from toolproperty";
+      }
+    }
+  }
+  return;
+}
+

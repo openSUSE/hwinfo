@@ -1,0 +1,14 @@
+usage: smp
+
+exit codes:
+     0 -> ok, is smp
+  != 0 -> no, is single processor
+
+Note1: just checks the smp capability of the board, not if >1 processor is
+actually installed.
+
+Note2: must be run as 'root'.
+
+Original is:
+
+/mirror/distributions/redhat/ftp.redhat.com/redhat/redhat-6.1/i386/misc/src/anaconda/isys/smp.c

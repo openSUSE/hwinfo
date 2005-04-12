@@ -1,0 +1,142 @@
+#! /usr/bin/perl
+
+#
+# read gcc -E {aic79xx_pci.c,aic7xxx_pci.c} and extract module info
+#
+
+sub add_range;
+sub add_entry;
+
+while(<>) {
+  if(/^struct.*ah[cd]_pci_ident_table\s*\[\s*\]\s*=\s*$/ .. /^\}/) {
+    if(/^struct.*ah([cd])_pci_ident_table\s*\[\s*\]\s*=\s*$/) {
+      $mod = $1 eq "c" ? "aic7xxx" : "aic79xx";
+    }
+
+    if(/^\s+\{/ .. /^\s+\}/) {
+      if(/^\s+\}/) {
+        if($field && $field != 4) {
+          die "oops, unexpected line $.: $_";
+        }
+        if($field) {
+          # print "id = $id, id_mask = $id_mask, mask = $mask, name = $name, func = $func\n";
+          add_entry;
+        }
+
+        undef $field;
+        undef $id;
+        undef $id_mask;
+        undef $mask;
+        undef $name;
+        undef $func;
+      }
+
+      if($field == 0 && /^\s+0x([0-9A-Fa-f]{16})ull\s*,\s*$/) {
+        $id = $1;
+        $field++;
+      }
+      elsif($field == 0 && /^\s+0x([0-9A-Fa-f]{16})ull\s*\&\s*0x([0-9A-Fa-f]{16})ull\s*,\s*$/) {
+        $id = $1;
+        $id_mask = $2;
+        $field++;
+      }
+      elsif($field == 1 && /^\s+0x([0-9A-Fa-f]{16})ull\s*,\s*$/) {
+        $mask = $1;
+        $field++;
+      }
+      elsif($field == 2 && /^\s+((NULL|\(\(void\s*\*\)\s*0\))|(\".+\"))\s*,\s*$/) {
+        $name = $1;
+        $field++;
+      }
+      elsif($field == 3 && /^\s+((NULL|\(\(void\s*\*\)\s*0\))|([a-z].+))\s*,?\s*$/) {
+        $func = $1;
+        $field++;
+      }
+    }
+
+  }
+}
+
+sub add_range
+{
+  my ($r);
+
+  $r = 0xffff - $_[0];
+
+  return unless $r;
+
+  if($r != 15) {
+    printf " & 0x%04x", $r;
+  }
+  else {
+    printf " + 0x0010";
+  }
+}
+
+
+sub add_entry
+{
+  local $_;
+  my ($v, $d, $sv, $sd);
+  my ($vm, $dm, $svm, $sdm);
+  my ($tag);
+
+  $id_mask = "F" x 16 unless defined $id_mask;
+
+  $d  = hex(substr $id,  0, 4) & hex(substr $id_mask,  0, 4);
+  $v  = hex(substr $id,  4, 4) & hex(substr $id_mask,  4, 4);
+  $sd = hex(substr $id,  8, 4) & hex(substr $id_mask,  8, 4);
+  $sv = hex(substr $id, 12, 4) & hex(substr $id_mask, 12, 4);
+
+  $dm  = hex(substr $mask,  0, 4);
+  $vm  = hex(substr $mask,  4, 4);
+  $sdm = hex(substr $mask,  8, 4);
+  $svm = hex(substr $mask, 12, 4);
+
+  $name =~ s/^"|"$//g;
+
+  if($func !~ /^[a-z]/) {
+    print STDERR "entry \"$name\" dropped\n";
+    return;
+  }
+
+  print "\n# $name\n";
+
+  $tag = " ";
+
+  if($vm) {
+    printf "${tag}vendor.id\t\tpci 0x%04x", $v;
+    add_range $vm;
+    print "\n";
+
+    $tag = "&";
+  }
+
+  if($dm) {
+    printf "${tag}device.id\t\tpci 0x%04x", $d;
+    add_range $dm;
+    print "\n";
+
+    $tag = "&";
+  }
+
+  if($svm) {
+    printf "${tag}subvendor.id\t\tpci 0x%04x", $sv;
+    add_range $svm;
+    print "\n";
+
+    $tag = "&";
+  }
+
+  if($sdm) {
+    printf "${tag}subdevice.id\t\tpci 0x%04x", $sd;
+    add_range $sdm;
+    print "\n";
+
+    $tag = "&";
+  }
+
+  printf "+driver.module.modprobe\t%s\n", $mod;
+
+}
+

@@ -1,0 +1,21 @@
+# chipcard reader
+
+
+ vendor.id		TWK
++vendor.name		Towitoko
+
+ vendor.id		TWK
+&device.id		eisa 0x5542
++baseclass.id		0x10e
++subclass.id		0x00
++device.name		Smartcard reader
++requires		pcsc-towitoko
+
+ vendor.id		usb 0x0c4b
+&device.id		usb 0x0100
++baseclass.id		0x10e
++subclass.id		0x00
++device.name		Cyberjack USB
++driver.module.modprobe	cyberjack
++requires		ctapi-cyberjack
+

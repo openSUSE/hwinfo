@@ -1,0 +1,1116 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <byteswap.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#if defined(__i386__) || defined (__x86_64__) || defined(__ia64__)
+#include <sys/io.h>
+#endif
+#include <sys/pci.h>
+
+#include "hd.h"
+#include "hd_int.h"
+#include "bios.h"
+#include "smbios.h"
+#include "klog.h"
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * bios info
+ *
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ */
+
+#if defined(__i386__) || defined (__x86_64__) || defined (__ia64__)
+
+#ifndef LIBHD_TINY
+static struct {
+  int width;
+  int height;
+  char *vendor;
+  char *name;
+  char *version;
+} panel_data[] = {
+  {  800,  600, "Fujitsu Siemens", "LiteLine", "LF6" },
+  { 1024,  768, "ASUSTEK", "L2000D", NULL },
+  { 1024,  768, "ASUSTeK Computer Inc.", "L8400C series Notebook PC", NULL },
+  { 1024,  768, "ASUSTeK Computer Inc.", "S5N", NULL },
+  { 1024,  768, "Acer", "TravelMate 720", NULL },
+  { 1024,  768, "COMPAL", "N30T5", NULL },
+  { 1024,  768, "Dell Computer Corporation", "Inspiron 5000", NULL },
+  { 1024,  768, "Dell Computer Corporation", "Latitude C400", NULL },
+  { 1024,  768, "Dell Computer Corporation", "Latitude CPt C400GT", NULL },
+  { 1024,  768, "Hewlett-Packard", "HP OmniBook PC", "HP OmniBook 4150 B" },
+  { 1024,  768, "IBM", "18305CU", NULL },
+  { 1024,  768, "IBM", "18344AU", NULL },
+  { 1024,  768, "IBM", "18344EU", NULL },
+  { 1024,  768, "IBM", "18345BU", NULL },
+  { 1024,  768, "IBM", "1834NEU", NULL },
+  { 1024,  768, "IBM", "1836BAU", NULL },
+  { 1024,  768, "IBM", "1836H7U", NULL },
+  { 1024,  768, "IBM", "18422QU", NULL },
+  { 1024,  768, "IBM", "23711CU", NULL },
+  { 1024,  768, "IBM", "23716EU", NULL },
+  { 1024,  768, "IBM", "23716FU", NULL },
+  { 1024,  768, "IBM", "23716GU", NULL },
+  { 1024,  768, "IBM", "23717GU", NULL },
+  { 1024,  768, "IBM", "23718EU", NULL },
+  { 1024,  768, "IBM", "237197U", NULL },
+  { 1024,  768, "IBM", "23731FU", NULL },
+  { 1024,  768, "IBM", "23731HU", NULL },
+  { 1024,  768, "IBM", "23731WU", NULL },
+  { 1024,  768, "IBM", "23734YU", NULL },
+  { 1024,  768, "IBM", "23735TU", NULL },
+  { 1024,  768, "IBM", "23736VU", NULL },
+  { 1024,  768, "IBM", "23737FU", NULL },
+  { 1024,  768, "IBM", "2373JTU", NULL },
+  { 1024,  768, "IBM", "23785UU", NULL },
+  { 1024,  768, "IBM", "2378DGU", NULL },
+  { 1024,  768, "IBM", "2378DHU", NULL },
+  { 1024,  768, "IBM", "2378DTU", NULL },
+  { 1024,  768, "IBM", "2378DUU", NULL },
+  { 1024,  768, "IBM", "2378DWU", NULL },
+  { 1024,  768, "IBM", "2378FTU", NULL },
+  { 1024,  768, "IBM", "2378FZU", NULL },
+  { 1024,  768, "IBM", "2378R1U", NULL },
+  { 1024,  768, "IBM", "2378R8U", NULL },
+  { 1024,  768, "IBM", "23795VU", NULL },
+  { 1024,  768, "IBM", "2379DKU", NULL },
+  { 1024,  768, "IBM", "2379DWU", NULL },
+  { 1024,  768, "IBM", "23826UU", NULL },
+  { 1024,  768, "IBM", "2382ECU", NULL },
+  { 1024,  768, "IBM", "2382HCU", NULL },
+  { 1024,  768, "IBM", "2384A9U", NULL },
+  { 1024,  768, "IBM", "2384ATU", NULL },
+  { 1024,  768, "IBM", "2384B9U", NULL },
+  { 1024,  768, "IBM", "2384DLU", NULL },
+  { 1024,  768, "IBM", "2384DWU", NULL },
+  { 1024,  768, "IBM", "2384ECU", NULL },
+  { 1024,  768, "IBM", "2384EHU", NULL },
+  { 1024,  768, "IBM", "2384JCU", NULL },
+  { 1024,  768, "IBM", "238613U", NULL },
+  { 1024,  768, "IBM", "23861CU", NULL },
+  { 1024,  768, "IBM", "23861ZU", NULL },
+  { 1024,  768, "IBM", "23865FU", NULL },
+  { 1024,  768, "IBM", "23866GU", NULL },
+  { 1024,  768, "IBM", "23866RU", NULL },
+  { 1024,  768, "IBM", "23866UU", NULL },
+  { 1024,  768, "IBM", "23868EU", NULL },
+  { 1024,  768, "IBM", "23868WU", NULL },
+  { 1024,  768, "IBM", "23884QU", NULL },
+  { 1024,  768, "IBM", "238852U", NULL },
+  { 1024,  768, "IBM", "2388DGU", NULL },
+  { 1024,  768, "IBM", "2388DMU", NULL },
+  { 1024,  768, "IBM", "2388ENU", NULL },
+  { 1024,  768, "IBM", "2388F4U", NULL },
+  { 1024,  768, "IBM", "2388HBU", NULL },
+  { 1024,  768, "IBM", "2388JBU", NULL },
+  { 1024,  768, "IBM", "2389DHU", NULL },
+  { 1024,  768, "IBM", "26284UG", NULL },
+  { 1024,  768, "IBM", "26446AG", NULL },
+  { 1024,  768, "IBM", "26455BG", NULL },
+  { 1024,  768, "IBM", "264721G", NULL },
+  { 1024,  768, "IBM", "26725KU", NULL },
+  { 1024,  768, "IBM", "2672REU", NULL },
+  { 1024,  768, "IBM", "2672RHU", NULL },
+  { 1024,  768, "IBM", "267358U", NULL },
+  { 1024,  768, "IBM", "26735KU", NULL },
+  { 1024,  768, "IBM", "26817FU", NULL },
+  { 1024,  768, "IBM", "2682PAU", NULL },
+  { 1024,  768, "IBM", "27225JU", NULL },
+  { 1024,  768, "IBM", "27233XU", NULL },
+  { 1024,  768, "IBM", "288157U", NULL },
+  { 1024,  768, "IBM", "28832ZU", NULL },
+  { 1024,  768, "IBM", "28838QU", NULL },
+  { 1024,  768, "IBM", "2883ARU", NULL },
+  { 1024,  768, "IBM", "28854WU", NULL },
+  { 1024,  768, "IBM", "2885PWU", NULL },
+  { 1024,  768, "IBM", "28865TU", NULL },
+  { 1024,  768, "IBM", "288692U", NULL },
+  { 1024,  768, "IBM", "28872KU", NULL },
+  { 1024,  768, "IBM", "288745U", NULL },
+  { 1024,  768, "IBM", "288767U", NULL },
+  { 1024,  768, "IBM", "28885RU", NULL },
+  { 1024,  768, "IBM", "2888M9U", NULL },
+  { 1400, 1050, "IBM", "1830BQU", NULL },
+  { 1400, 1050, "IBM", "1836H8U", NULL },
+  { 1400, 1050, "IBM", "1836H9U", NULL },
+  { 1400, 1050, "IBM", "1836HAU", NULL },
+  { 1400, 1050, "IBM", "237394U", NULL },
+  { 1400, 1050, "IBM", "23739FU", NULL },
+  { 1400, 1050, "IBM", "2373G1U", NULL },
+  { 1400, 1050, "IBM", "2373GEU", NULL },
+  { 1400, 1050, "IBM", "2373GGU", NULL },
+  { 1400, 1050, "IBM", "2373GHG", NULL },
+  { 1400, 1050, "IBM", "2373KTU", NULL },
+  { 1400, 1050, "IBM", "2373KUU", NULL },
+  { 1400, 1050, "IBM", "2378DXU", NULL },
+  { 1400, 1050, "IBM", "2378FVU", NULL },
+  { 1400, 1050, "IBM", "2379DJU", NULL },
+  { 1400, 1050, "IBM", "2379DXU", NULL },
+  { 1400, 1050, "IBM", "2379R9U", NULL },
+  { 1400, 1050, "IBM", "23885DU", NULL },
+  { 1400, 1050, "IBM", "2388F5U", NULL },
+  { 1400, 1050, "IBM", "288679U", NULL },
+  { 1400, 1050, "IBM", "288693U", NULL },
+  { 1600, 1200, "IBM", "183222U", NULL },
+  { 1600, 1200, "IBM", "183223U", NULL },
+  { 1600, 1200, "IBM", "2373HTU", NULL },
+  { 1600, 1200, "IBM", "2373KXU", NULL },
+  { 1600, 1200, "IBM", "2373KYU", NULL },
+  { 1600, 1200, "IBM", "2373Q1U", NULL },
+  { 1600, 1200, "IBM", "2378DYU", NULL },
+  { 1600, 1200, "IBM", "2379DYU", NULL },
+  { 1024,  768, "KDST", "KDS6KSUMO", NULL  },
+  { 1024,  768, "Sony Corporation", "PCG-F370(UC)", NULL },
+  { 1024,  768, "Sony Corporation", "PCG-N505SN", NULL },
+  { 1024,  768, "TOSHIBA", "S2400-103", NULL },
+  { 1400, 1050, "Acer", "TravelMate 660", NULL },
+  { 1400, 1050, "Dell Computer Corporation", "Inspiron 8000", NULL },
+  { 1600, 1200, "Dell Computer Corporation", "Inspiron 8200", NULL },
+  { 1600, 1200, "Dell Computer Corporation", "Latitude C840", NULL }
+};
+#endif
+
+#define BIOS_TEST
+
+typedef struct {
+  unsigned eax, ebx, ecx, edx, esi, edi, eip, es, iret, cli;
+} bios32_regs_t;
+
+static void read_memory(hd_data_t *hd_data, memory_range_t *mem);
+#ifndef LIBHD_TINY
+static void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *label);
+static void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt);
+static void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt);
+static void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt);
+static void add_panel_info(hd_data_t *hd_data, bios_info_t *bt);
+static void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt);
+static unsigned char crc(unsigned char *mem, unsigned len);
+static int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
+static void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
+static int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios32);
+#endif
+
+int detect_smp_bios(hd_data_t *hd_data)
+{
+  bios_info_t *bt;
+  hd_t *hd;
+
+  if(!hd_data->bios_ram.data) return -1;	/* hd_scan_bios() not called */
+
+  for(bt = NULL, hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->base_class.id == bc_internal &&
+      hd->sub_class.id == sc_int_bios &&
+      hd->detail &&
+      hd->detail->type == hd_detail_bios &&
+      (bt = hd->detail->bios.data)
+    ) {
+      break;
+    }
+  }
+
+  if(!bt) return -1;
+
+//  return bt->smp.ok ? bt->smp.cpus_en ? bt->smp.cpus_en : 1 : 0;
+// Dell Dimension 8100 has a MP table with 0 cpus!
+
+  return bt->smp.ok ? bt->smp.cpus_en : 0;
+
+  return 0;
+}
+
+
+void hd_scan_bios(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  bios_info_t *bt;
+#ifndef LIBHD_TINY
+  char *s;
+  unsigned char *bios_ram;
+  unsigned u, u1;
+  memory_range_t mem;
+  unsigned smp_ok;
+  vbe_info_t *vbe;
+  vbe_mode_info_t *mi;
+  hd_res_t *res;
+  str_list_t *sl;
+#endif
+
+  if(!hd_probe_feature(hd_data, pr_bios)) return;
+
+  /* we better do nothing on a SGI Altix machine */
+  if(hd_is_sgi_altix(hd_data)) return;
+
+  hd_data->module = mod_bios;
+
+  /* some clean-up */
+  remove_hd_entries(hd_data);
+
+  PROGRESS(1, 0, "cmdline");
+
+  hd = add_hd_entry(hd_data, __LINE__, 0);
+  hd->base_class.id = bc_internal;
+  hd->sub_class.id = sc_int_bios;
+  hd->detail = new_mem(sizeof *hd->detail);
+  hd->detail->type = hd_detail_bios;
+  hd->detail->bios.data = bt = new_mem(sizeof *bt);
+
+#ifndef LIBHD_TINY
+
+  /*
+   * first, look for APM support
+   */
+  if((s = get_cmd_param(hd_data, 1))) {
+    if(strlen(s) >= 10) {
+      bt->apm_supported = 1;
+      bt->apm_ver = hex(s, 1);
+      bt->apm_subver = hex(s + 1, 1);
+      bt->apm_bios_flags = hex(s + 2, 2);
+      /*
+       * Bitfields for APM flags (from Ralf Brown's list):
+       * Bit(s)  Description
+       *  0      16-bit protected mode interface supported
+       *  1      32-bit protected mode interface supported
+       *  2      CPU idle call reduces processor speed
+       *  3      BIOS power management disabled
+       *  4      BIOS power management disengaged (APM v1.1)
+       *  5-7    reserved
+       */
+      bt->apm_enabled = (bt->apm_bios_flags & 8) ? 0 : 1;
+
+      bt->vbe_ver = hex(s + 4, 2);
+      bt->vbe_ver = (((bt->vbe_ver >> 4) & 0xf) << 8) + (bt->vbe_ver & 0xf);
+      bt->vbe_video_mem = hex(s + 6, 4) << 16;
+    }
+
+    s = free_mem(s);
+  }
+
+  if((s = get_cmd_param(hd_data, 2))) {
+    if(strlen(s) > 8) {
+      if(s[8] == '.') bt->lba_support = 1;
+    }
+
+    s = free_mem(s);
+  }
+
+  PROGRESS(1, 1, "apm");
+
+  if(!bt->apm_ver) {
+    str_list_t *sl0, *sl;
+
+    sl0 = read_file(PROC_APM, 0, 0);
+    if(sl0) {
+      bt->apm_supported = 1;
+      bt->apm_enabled = 1;
+      ADD2LOG("----- %s -----\n", PROC_APM);
+      for(sl = sl0; sl; sl = sl->next) {
+        ADD2LOG("  %s", sl->str);
+      }
+      ADD2LOG("----- %s end -----\n", PROC_APM);
+    }
+    free_str_list(sl0);
+  }
+
+#endif		/* !defined(LIBHD_TINY) */
+
+  /*
+   * get the i/o ports for the parallel & serial interfaces from the BIOS
+   * memory area starting at 0x40:0
+   */
+  PROGRESS(2, 0, "ram");
+
+  hd_data->bios_ram.start = BIOS_RAM_START;
+  hd_data->bios_ram.size = BIOS_RAM_SIZE;
+  read_memory(hd_data, &hd_data->bios_ram);
+
+  hd_data->bios_rom.start = BIOS_ROM_START;
+  hd_data->bios_rom.size = BIOS_ROM_SIZE;
+  read_memory(hd_data, &hd_data->bios_rom);
+
+#ifndef LIBHD_TINY
+
+  if(hd_data->bios_ram.data) {
+    bios_ram = hd_data->bios_ram.data;
+
+    bt->ser_port0 = (bios_ram[1] << 8) + bios_ram[0];
+    bt->ser_port1 = (bios_ram[3] << 8) + bios_ram[2];
+    bt->ser_port2 = (bios_ram[5] << 8) + bios_ram[4];
+    bt->ser_port3 = (bios_ram[7] << 8) + bios_ram[6];
+
+    bt->par_port0 = (bios_ram[  9] << 8) + bios_ram[  8];
+    bt->par_port1 = (bios_ram[0xb] << 8) + bios_ram[0xa];
+    bt->par_port2 = (bios_ram[0xd] << 8) + bios_ram[0xc];
+
+    bt->led.scroll_lock = bios_ram[0x97] & 1;
+    bt->led.num_lock = (bios_ram[0x97] >> 1) & 1;
+    bt->led.caps_lock = (bios_ram[0x97] >> 2) & 1;
+    bt->led.ok = 1;
+
+    /*
+     * do some consistency checks:
+     *
+     * ports must be < 0x1000 and not appear twice
+     */
+    if(bt->ser_port0 >= 0x1000) bt->ser_port0 = 0;
+
+    if(
+      bt->ser_port1 >= 0x1000 ||
+      bt->ser_port1 == bt->ser_port0
+    ) bt->ser_port1 = 0;
+
+    if(
+      bt->ser_port2 >= 0x1000 ||
+      bt->ser_port2 == bt->ser_port0 ||
+      bt->ser_port2 == bt->ser_port1
+    ) bt->ser_port2 = 0;
+
+    if(
+      bt->ser_port3 >= 0x1000 ||
+      bt->ser_port3 == bt->ser_port0 ||
+      bt->ser_port3 == bt->ser_port1 ||
+      bt->ser_port3 == bt->ser_port2
+    ) bt->ser_port3 = 0;
+
+    if(bt->par_port0 >= 0x1000) bt->par_port0 = 0;
+
+    if(
+      bt->par_port1 >= 0x1000 ||
+      bt->par_port1 == bt->par_port0
+    ) bt->par_port1 = 0;
+
+    if(
+      bt->par_port2 >= 0x1000 ||
+      bt->par_port2 == bt->par_port0 ||
+      bt->par_port2 == bt->par_port1
+    ) bt->par_port2 = 0;
+
+    ADD2LOG("  bios: %u disks\n", bios_ram[0x75]);
+
+    bt->low_mem_size = ((bios_ram[0x14] << 8) + bios_ram[0x13]) << 10;
+
+    if(bt->low_mem_size >= 768 || bt->low_mem_size < 500) {
+      bt->low_mem_size = 0;
+    }
+
+    hd_data->bios_ebda.start = hd_data->bios_ebda.size = 0;
+    hd_data->bios_ebda.data = free_mem(hd_data->bios_ebda.data);
+    u = ((bios_ram[0x0f] << 8) + bios_ram[0x0e]) << 4;
+    if(u) {
+      hd_data->bios_ebda.start = u;
+      hd_data->bios_ebda.size = 1;	/* just one byte */
+      read_memory(hd_data, &hd_data->bios_ebda);
+      if(hd_data->bios_ebda.data) {
+        u1 = hd_data->bios_ebda.data[0];
+        if(u1 > 0 && u1 <= 64) {	/* be sensible, typically only 1k */
+          u1 <<= 10;
+          if(u + u1 <= (1 << 20)) {
+            hd_data->bios_ebda.size = u1;
+            read_memory(hd_data, &hd_data->bios_ebda);
+          }
+        }
+      }
+    }
+
+    if(hd_data->bios_ebda.data) {
+      ADD2LOG(
+        "  bios: EBDA 0x%05x bytes at 0x%05x\n",
+        hd_data->bios_ebda.size, hd_data->bios_ebda.start
+      );
+    }
+  }
+
+  /*
+   * read the bios rom and look for useful things there...
+   */
+  PROGRESS(2, 0, "rom");
+
+  if(hd_data->bios_rom.data) {
+    get_pnp_support_status(&hd_data->bios_rom, bt);
+    smbios_get_info(hd_data, &hd_data->bios_rom, bt);
+    get_fsc_info(hd_data, &hd_data->bios_rom, bt);
+    add_panel_info(hd_data, bt);
+    add_mouse_info(hd_data, bt);
+  }
+
+  PROGRESS(3, 0, "smp");
+
+  smp_ok = 0;
+
+  mem = hd_data->bios_ebda;
+  smp_ok = get_smp_info(hd_data, &mem, &bt->smp);
+
+  if(!smp_ok) {
+    mem = hd_data->bios_rom;
+    if(mem.data) {
+      mem.size -= 0xf0000 - mem.start;
+      mem.data += 0xf0000 - mem.start;
+      mem.start = 0xf0000;
+      if(mem.size < (1 << 20)) smp_ok = get_smp_info(hd_data, &mem, &bt->smp);
+    }
+  }
+
+  if(!smp_ok) {
+    mem.size = 1 << 10;
+    mem.start = 639 << 10;
+    mem.data = NULL;
+    read_memory(hd_data, &mem);
+    if(mem.data) smp_ok = get_smp_info(hd_data, &mem, &bt->smp);
+    mem.data = free_mem(mem.data);
+  }
+
+  if(bt->smp.ok && bt->smp.mpconfig) {
+    mem.start = bt->smp.mpconfig;
+    mem.size = 1 << 16;
+    mem.data = NULL;
+    read_memory(hd_data, &mem);
+    parse_mpconfig(hd_data, &mem, &bt->smp);
+    mem.data = free_mem(mem.data);
+  }
+  
+  if((hd_data->debug & HD_DEB_BIOS)) {
+    dump_memory(hd_data, &hd_data->bios_ram, 0, "BIOS data");
+    dump_memory(hd_data, &hd_data->bios_ebda, hd_data->bios_ebda.size <= (8 << 10) ? 0 : 1, "EBDA");
+    // dump_memory(hd_data, &hd_data->bios_rom, 1, "BIOS ROM");
+
+    if(bt->smp.ok && bt->smp.mpfp) {
+      mem.start = bt->smp.mpfp;
+      mem.size = 0x10;
+      mem.data = NULL;
+      read_memory(hd_data, &mem);
+      dump_memory(hd_data, &mem, 0, "MP FP");
+      mem.data = free_mem(mem.data);
+    }
+
+    if(bt->smp.ok && bt->smp.mpconfig && bt->smp.mpconfig_size) {
+      mem.start = bt->smp.mpconfig;
+      mem.size = bt->smp.mpconfig_size;
+      mem.data = NULL;
+      read_memory(hd_data, &mem);
+      dump_memory(hd_data, &mem, 0, "MP config table");
+      mem.data = free_mem(mem.data);
+    }
+  }
+
+  if(hd_probe_feature(hd_data, pr_bios_vesa)) {
+    PROGRESS(4, 0, "vbe");
+
+    vbe = &bt->vbe;
+    vbe->ok = 0;
+
+    if(!hd_data->klog) read_klog(hd_data);
+    for(sl = hd_data->klog; sl; sl = sl->next) {
+      if(sscanf(sl->str, "<6>PCI: Using configuration type %u", &u) == 1) {
+        hd_data->pci_config_type = u;
+        ADD2LOG("  klog: pci config type %u\n", hd_data->pci_config_type);
+      }
+    }
+
+    get_vbe_info(hd_data, vbe);
+
+    if(vbe->ok) {
+      bt->vbe_ver = vbe->version;
+    }
+
+    if(vbe->ok && vbe->fb_start) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class.id = bc_framebuffer;
+      hd->sub_class.id = sc_fb_vesa;
+
+      hd_set_hw_class(hd, hw_vbe);
+
+#if 0
+      hd->detail = new_mem(sizeof *hd->detail);
+      hd->detail->type = hd_detail_bios;
+      hd->detail->bios.data = bt = new_mem(sizeof *bt);
+#endif
+
+      hd->vendor.name = new_str(vbe->vendor_name);
+      hd->device.name = new_str(vbe->product_name);
+      hd->sub_vendor.name = new_str(vbe->oem_name);
+      hd->revision.name = new_str(vbe->product_revision);
+
+      res = add_res_entry(&hd->res, new_mem(sizeof *res));
+      res->phys_mem.type = res_phys_mem;
+      res->phys_mem.range = vbe->memory;
+
+      res = add_res_entry(&hd->res, new_mem(sizeof *res));
+      res->mem.type = res_mem;
+      res->mem.base = vbe->fb_start;
+      res->mem.range = vbe->memory;
+      res->mem.access = acc_rw;
+      res->mem.enabled = 1;
+
+      if(vbe->mode) {
+        for(u = 0; u < vbe->modes; u++) {
+          mi = vbe->mode + u;
+          if(
+            (mi->attributes & 1) &&	/* mode supported */
+            mi->fb_start &&
+            mi->pixel_size != -1u	/* text mode */
+          ) {
+            res = add_res_entry(&hd->res, new_mem(sizeof *res));
+            res->framebuffer.type = res_framebuffer;
+            res->framebuffer.width = mi->width;
+            res->framebuffer.bytes_p_line = mi->bytes_p_line;
+            res->framebuffer.height = mi->height;
+            res->framebuffer.colorbits = mi->pixel_size;
+            res->framebuffer.mode = mi->number + 0x200;
+          }
+        }
+      }
+
+#if 0
+      if(
+        hd->vend_name &&
+        !strcmp(hd->vend_name, "Matrox") &&
+        hd->device.name &&
+        (
+          strstr(hd->dev_name, "G200") ||
+          strstr(hd->dev_name, "G400") ||
+          strstr(hd->dev_name, "G450")
+        )
+      ) {
+        hd->broken = 1;
+      }
+#endif
+
+    }
+  }
+
+  PROGRESS(5, 0, "32");
+
+  mem = hd_data->bios_rom;
+  if(mem.data) {
+    mem.size -= 0xe0000 - mem.start;
+    mem.data += 0xe0000 - mem.start;
+    mem.start = 0xe0000;
+    if(mem.size < (1 << 20)) get_bios32_info(hd_data, &mem, &bt->bios32);
+  }
+
+  if(bt->bios32.ok) {
+    mem = hd_data->bios_rom;
+
+    if(
+      mem.start <= 0xfffea &&
+      mem.start + mem.size >= 0xfffea + 6 &&
+      !memcmp(mem.data + 0xfffea - mem.start, "COMPAQ", 6)
+    ) {
+      bt->bios32.compaq = 1;
+      ADD2LOG("  bios32: compaq machine\n");
+    }
+  }
+
+
+#endif		/* !defined(LIBHD_TINY) */
+
+}
+
+
+void read_memory(hd_data_t *hd_data, memory_range_t *mem)
+{
+#ifdef BIOS_TEST
+  char *s = getenv("LIBHD_MEM");
+#endif
+
+#ifdef LIBHD_MEMCHECK
+  {
+    if(libhd_log) fprintf(libhd_log, ">%p\n", CALLED_FROM(read_memory, mem));
+  }
+#endif
+
+  if(mem->data) free_mem(mem->data);
+  mem->data = new_mem(mem->size);
+#ifdef BIOS_TEST
+  hd_read_mmap(hd_data, s ?: DEV_MEM, mem->data, mem->start, mem->size);
+#else
+  hd_read_mmap(hd_data, DEV_MEM, mem->data, mem->start, mem->size);
+#endif
+
+#ifdef LIBHD_MEMCHECK
+  {
+    if(libhd_log) fprintf(libhd_log, "<%p\n", CALLED_FROM(read_memory, mem));
+  }
+#endif
+}
+
+
+void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *label)
+{
+  unsigned u, step;
+
+  if(!mem->size || !mem->data) return;
+
+#if 1
+  step = sparse ? 0x1000 : 0x10;
+#else
+  step = 0x10;
+#endif
+
+  ADD2LOG("----- %s 0x%05x - 0x%05x -----\n", label, mem->start, mem->start + mem->size - 1);
+  for(u = 0; u < mem->size; u += step) {
+    ADD2LOG("  %03x  ", u + mem->start);
+    hexdump(&hd_data->log, 1, 0x10, mem->data + u);
+    ADD2LOG("\n");
+  }
+  ADD2LOG("----- %s end -----\n", label);
+}
+
+
+#ifndef LIBHD_TINY
+void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt)
+{
+  int i;
+  unsigned char pnp[4] = { '$', 'P', 'n', 'P' };
+  unsigned char *t;
+  unsigned l, cs;
+
+  if(!mem->data) return;
+
+  for(i = 0xf0000 - mem->start; (unsigned) i < mem->size; i += 0x10) {
+    t = mem->data + i;
+    if(t[0] == pnp[0] && t[1] == pnp[1] && t[2] == pnp[2] && t[3] == pnp[3]) {
+      for(l = cs = 0; l < t[5]; l++) { cs += t[l]; }
+      if((cs & 0xff) == 0) {    	// checksum ok
+        bt->is_pnp_bios = 1;
+//        printf("0x%x bytes at 0x%x, cs = 0x%x\n", t[5], i, cs);
+        bt->pnp_id = t[0x17] + (t[0x18] << 8) + (t[0x19] << 16) + (t[0x20] << 24);
+      }
+    }
+  }
+}
+
+unsigned char crc(unsigned char *mem, unsigned len)
+{
+  unsigned char uc = 0;
+
+  while(len--) uc += *mem++;
+
+  return uc;
+}
+
+
+void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
+{
+  unsigned u, u1, u2, ok, hlen = 0, ofs;
+  unsigned addr = 0, len = 0, scnt;
+  unsigned structs = 0, type, slen;
+  char *s;
+  memory_range_t memory;
+  hd_smbios_t *sm;
+
+  if(!mem->data || mem->size < 0x100) return;
+
+  for(u = ok = 0; u <= mem->size - 0x100; u += 0x10) {
+    if(*(unsigned *) (mem->data + u) == 0x5f4d535f) {	/* "_SM_" */
+      hlen = mem->data[u + 5];
+      addr = *(unsigned *) (mem->data + u + 0x18);
+      len = *(unsigned short *) (mem->data + u + 0x16);
+      structs = *(unsigned short *) (mem->data + u + 0x1c);
+      if(hlen < 0x1e) continue;
+      ok = crc(mem->data + u, hlen) == 0 && addr < (1 << 20) && len;
+      if(ok) break;
+    }
+  }
+
+  if(!ok) return;
+
+  bt->smbios_ver = (mem->data[u + 6] << 8) + mem->data[u + 7];
+
+  hd_data->smbios = smbios_free(hd_data->smbios);
+
+  memory.start = mem->start + u;
+  memory.size = hlen;
+  memory.data = mem->data + u;
+  dump_memory(hd_data, &memory, 0, "SMBIOS Entry Point");
+
+  memory.start = addr;
+  memory.size = len;
+  memory.data = NULL;
+  read_memory(hd_data, &memory);
+  if(len >= 0x4000) {
+    ADD2LOG(
+      "  SMBIOS Structure Table at 0x%05x (size 0x%x)\n",
+      addr, len
+    );
+  }
+  else {
+    dump_memory(hd_data, &memory, 0, "SMBIOS Structure Table");
+  }
+
+  for(type = 0, u = 0, ofs = 0; u < structs && ofs + 3 < len; u++) {
+    type = memory.data[ofs];
+    slen = memory.data[ofs + 1];
+    if(ofs + slen > len || slen < 4) break;
+    sm = smbios_add_entry(&hd_data->smbios, new_mem(sizeof *sm));
+    sm->any.type = type;
+    sm->any.data_len = slen;
+    sm->any.data = new_mem(slen);
+    memcpy(sm->any.data, memory.data + ofs, slen);
+    sm->any.handle = memory.data[ofs + 2] + (memory.data[ofs + 3] << 8);
+    ADD2LOG("  type 0x%02x [0x%04x]: ", type, sm->any.handle);
+    if(slen) hexdump(&hd_data->log, 0, slen, sm->any.data);
+    ADD2LOG("\n");
+    if(type == sm_end) break;
+    ofs += slen;
+    u1 = ofs;
+    u2 = 1;
+    scnt = 0;
+    while(ofs + 1 < len) {
+      if(!memory.data[ofs]) {
+        if(ofs > u1) {
+          s = canon_str(memory.data + u1, strlen(memory.data + u1));
+          add_str_list(&sm->any.strings, s);
+          scnt++;
+          if(*s) ADD2LOG("       str%d: \"%s\"\n", scnt, s);
+          free_mem(s);
+          u1 = ofs + 1;
+          u2++;
+        }
+        if(!memory.data[ofs + 1]) {
+          ofs += 2;
+          break;
+        }
+      }
+      ofs++;
+    }
+  }
+
+  if(u != structs) {
+    if(type == sm_end) {
+      ADD2LOG("  smbios: stopped at end tag\n");
+    }
+    else {
+      ADD2LOG("  smbios oops: only %d of %d structs found\n", u, structs);
+    }
+  }
+
+  memory.data = free_mem(memory.data);
+
+  smbios_parse(hd_data);
+}
+
+
+void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
+{
+  unsigned u, mtype, fsc_id;
+  unsigned x, y;
+  hd_smbios_t *sm;
+  char *vendor = NULL;
+
+  if(!mem->data || mem->size < 0x20) return;
+
+  for(sm = hd_data->smbios; sm; sm = sm->next) {
+    if(sm->any.type == sm_sysinfo) {
+      vendor = sm->sysinfo.manuf;
+      break;
+    }
+  }
+
+  vendor = vendor && !strcasecmp(vendor, "Fujitsu") ? "Fujitsu" : "Fujitsu Siemens";
+
+  for(u = 0; u <= mem->size - 0x20; u += 0x10) {
+    if(
+      *(unsigned *) (mem->data + u) == 0x696a7546 &&
+      *(unsigned *) (mem->data + u + 4) == 0x20757374
+    ) {
+      mtype = *(unsigned *) (mem->data + u + 0x14);
+      if(!crc(mem->data + u, 0x20) && !(mtype & 0xf0000000)) {
+        fsc_id = (mtype >> 12) & 0xf;
+
+        switch(fsc_id) {
+          case 1:
+            x = 640; y = 480;
+            break;
+
+          case 2:
+            x = 800; y = 600;
+            break;
+
+          case 3:
+            x = 1024; y = 768;
+            break;
+
+          case 4:
+            x = 1280; y = 1024;
+            break;
+
+          case 5:
+            x = 1400; y = 1050;
+            break;
+
+          case 6:
+            x = 1024; y = 512;
+            break;
+
+          case 7:
+            x = 1280; y = 600;
+            break;
+
+          case 8:
+            x = 1600; y = 1200;
+            break;
+
+          default:
+            x = 0; y = 0;
+        }
+
+        if(x) {
+          bt->lcd.vendor = new_str(vendor);
+          bt->lcd.name = new_str("Notebook LCD");
+          bt->lcd.width = x;
+          bt->lcd.height = y;
+        }
+
+        ADD2LOG("  found FSC LCD: %d (%ux%u)\n", fsc_id, x, y);
+        break;
+      }
+    }
+  }
+}
+
+
+void add_panel_info(hd_data_t *hd_data, bios_info_t *bt)
+{
+  unsigned width, height;
+  char *vendor, *name, *version;
+  hd_smbios_t *sm;
+  unsigned u;
+
+  if(bt->lcd.width || !hd_data->smbios) return;
+
+  vendor = name = version = NULL;
+  width = height = 0;
+
+  for(sm = hd_data->smbios; sm; sm = sm->next) {
+    if(sm->any.type == sm_sysinfo) {
+      vendor = sm->sysinfo.manuf;
+      name = sm->sysinfo.product;
+      version = sm->sysinfo.version;
+      break;
+    }
+  }
+
+  if(!vendor || !name) return;
+
+  for(u = 0; u < sizeof panel_data / sizeof *panel_data; u++) {
+    if(
+      !strcmp(vendor, panel_data[u].vendor) &&
+      !strcmp(name, panel_data[u].name) &&
+      (version || !panel_data[u].version) &&
+      (!version || !panel_data[u].version || !strcmp(version, panel_data[u].version))
+    ) {
+      bt->lcd.vendor = new_str(vendor);
+      bt->lcd.name = new_str("Notebook LCD");
+      bt->lcd.width = panel_data[u].width;
+      bt->lcd.height = panel_data[u].height;
+      break;
+    }
+  }
+}
+
+
+void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt)
+{
+  unsigned compat_vend, compat_dev, bus;
+  char *vendor, *name, *type;
+  hd_smbios_t *sm;
+
+  if(bt->mouse.compat_vend || !hd_data->smbios) return;
+
+  vendor = name = type = NULL;
+  compat_vend = compat_dev = bus = 0;
+
+  for(sm = hd_data->smbios; sm; sm = sm->next) {
+    if(sm->any.type == sm_sysinfo) {
+      vendor = sm->sysinfo.manuf;
+      name = sm->sysinfo.product;
+    }
+    if(
+      sm->any.type == sm_mouse &&
+      !compat_vend	/* take the first entry */
+    ) {
+      compat_vend = compat_dev = bus = 0;
+      type = NULL;
+      
+      switch(sm->mouse.interface.id) {
+        case 4:	/* ps/2 */
+        case 7:	/* bus mouse (dell notebooks report this) */
+          bus = bus_ps2;
+          compat_vend = MAKE_ID(TAG_SPECIAL, 0x0200);
+          compat_dev = MAKE_ID(TAG_SPECIAL, sm->mouse.buttons == 3 ? 0x0007 : 0x0006);
+          break;
+      }
+      type = sm->mouse.mtype.name;
+      if(sm->mouse.mtype.id == 1) type = "Touch Pad";	/* Why??? */
+      if(sm->mouse.mtype.id == 2) type = NULL;		/* "Other" */
+    }
+  }
+
+  if(!vendor || !name) return;
+
+  if(!type) {
+    if(!strcmp(vendor, "Sony Corporation") && strstr(name, "PCG-") == name) {
+      bus = bus_ps2;
+      type = "Touch Pad";
+      compat_vend = MAKE_ID(TAG_SPECIAL, 0x0200);
+      compat_dev = MAKE_ID(TAG_SPECIAL, 0x0006);
+    }
+  }
+
+  if(!type) return;
+
+  bt->mouse.vendor = new_str(vendor);
+  bt->mouse.type = new_str(type);
+  bt->mouse.bus = bus;
+  bt->mouse.compat_vend = compat_vend;
+  bt->mouse.compat_dev = compat_dev;
+}
+
+
+int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
+{
+#ifndef __ia64__
+  unsigned u, ok;
+  unsigned addr = 0, len;
+
+  if(mem->size < 0x10) return 0;
+
+  for(u = ok = 0; u <= mem->size - 0x10; u++) {
+    if(*(unsigned *) (mem->data + u) == 0x5f504d5f) {	/* "_MP_" */
+      addr = *(unsigned *) (mem->data + u + 4);
+      len = mem->data[u + 8];
+      ok = len == 1 && crc(mem->data + u, 0x10) == 0 && addr < (1 << 20) ? 1 : 0;
+      ADD2LOG(
+        "  smp: %svalid MP FP at 0x%05x (size 0x%x, rev %u), MP config at 0x%05x\n",
+        ok ? "" : "in", u + mem->start, len << 4, mem->data[u + 9], addr
+      );
+      if(ok) break;
+    }
+  }
+
+  if(ok) {
+    smp->ok = 1;
+    smp->mpfp = mem->start + u;
+    smp->rev = mem->data[u + 9];
+    smp->mpconfig = addr;
+    memcpy(smp->feature, mem->data + u + 11, 5);
+  }
+
+  return ok;
+#else
+  return 0;
+#endif
+}
+
+
+void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
+{
+  unsigned cfg_len, xcfg_len;
+  unsigned char u0, ux0;
+  unsigned u, type, len, entries, entry_cnt;
+  char *s;
+
+  cfg_len = xcfg_len = 0;
+
+  if(*(unsigned *) (mem->data) == 0x504d4350) {		/* "PCMP" */
+    cfg_len = mem->data[0x04] + (mem->data[0x05] << 8);
+    smp->mpconfig_size = cfg_len;
+    u0 = crc(mem->data, cfg_len);
+    if(u0) return;
+    smp->mpconfig_ok = 1;
+    smp->cpus = smp->cpus_en = 0;
+    xcfg_len = mem->data[0x28] + (mem->data[0x29] << 8);
+    ux0 = crc(mem->data + cfg_len, xcfg_len) + mem->data[0x2a];
+    if(!ux0) {
+      smp->mpconfig_size += xcfg_len;
+    }
+    else {
+      xcfg_len = 0;
+    }
+  }
+
+  if(cfg_len) {
+    s = canon_str(mem->data + 8, 8);
+    strcpy(smp->oem_id, s);
+    free_mem(s);
+    s = canon_str(mem->data + 0x10, 12);
+    strcpy(smp->prod_id, s);
+    s = free_mem(s);
+
+    entries = mem->data[0x22] + (mem->data[0x23] << 8);
+    ADD2LOG("  base MP config table (%u entries):\n", entries);
+    entry_cnt = 0;
+    for(u = 0x2c; u < cfg_len - 1; u += len, entry_cnt++) {
+      type = mem->data[u];
+      len = type == 0 ? 20 : type <= 4 ? 8 : 16;
+      ADD2LOG("  %stype %u, len %u\n    ", type > 4 ? "unknown ": "", type, len);
+      if(len + u > cfg_len) len = cfg_len - u;
+      hexdump(&hd_data->log, 1, len, mem->data + u);
+      ADD2LOG("\n");
+      if(type > 4) break;
+      if(type == 0) {
+        smp->cpus++;
+        if((mem->data[u + 3] & 1)) smp->cpus_en++;
+      }
+    }
+    if(entry_cnt != entries) {
+      ADD2LOG("  oops: %u entries instead of %u found\n", entry_cnt, entries);
+    }
+  }
+
+  if(xcfg_len) {
+    ADD2LOG("  extended MP config table:\n");
+    for(u = 0; u < xcfg_len - 2; u += len) {
+      type = mem->data[u + cfg_len];
+      len = mem->data[u + cfg_len + 1];
+      ADD2LOG("  type %u, len %u\n    ", type, len);
+      if(len + u > xcfg_len) len = xcfg_len - u;
+      hexdump(&hd_data->log, 1, len, mem->data + cfg_len + u);
+      ADD2LOG("\n");
+      if(len < 2) {
+        ADD2LOG("  oops: invalid record lenght\n");
+        break;
+      }
+    }
+  }
+}
+
+
+int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios32)
+{
+  unsigned u, ok;
+  unsigned addr = 0, len;
+
+  if(mem->size < 0x10) return 0;
+
+  for(u = ok = 0; u <= mem->size - 0x10; u += 0x10) {
+    if(*(unsigned *) (mem->data + u) == 0x5f32335f) {	/* "_32_" */
+      addr = *(unsigned *) (mem->data + u + 4);
+      len = mem->data[u + 9];
+      ok = len == 1 && crc(mem->data + u, 0x10) == 0 && addr < (1 << 20) ? 1 : 0;
+      ADD2LOG(
+        "  bios32: %svalid SD header at 0x%05x (size 0x%x, rev %u), SD at 0x%05x\n",
+        ok ? "" : "in", u + mem->start, len << 4, mem->data[u + 8], addr
+      );
+      if(ok) break;
+    }
+  }
+
+  if(ok) {
+    bios32->ok = 1;
+    bios32->entry = addr;
+  }
+
+  return ok;
+}
+
+
+#endif		/* !defined(LIBHD_TINY) */
+
+
+#endif /* defined(__i386__) || defined (__x86_64__) */

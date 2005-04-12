@@ -1,0 +1,23 @@
+#! /usr/bin/perl
+
+mkdir "tmp", 0755;
+
+system "./cdb_x11";
+
+unlink "tmp/x11.hwinfo.all", "tmp/x11.hwinfo.s390";
+
+chdir "tmp";
+
+for (<x11.hwinfo.*>) {
+  chomp;
+  $in = $_;
+  s/hwinfo\.//;
+  $out = $_;
+  system "../convert_hd $in";
+  system "../check_hd --sort --check --join-keys-first --split --log=$out.log --out=$out hd.ids";
+  rename $out, "../src/$out";
+}
+
+chdir "..";
+
+system "rm -rf tmp";

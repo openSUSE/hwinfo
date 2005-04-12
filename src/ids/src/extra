@@ -1,0 +1,304 @@
+# some special entries
+# drop most of them???
+
+
+ vendor.id		pci 0x1000
+&device.id		pci 0x0001
++baseclass.id		0x001
++subclass.id		0x00
++device.name		53c810
+
+ vendor.id		pci 0x1000
+&device.id		pci 0x000a
++device.name		53C1510D
+
+ vendor.id		pci 0x1011
+&device.id		pci 0x1065
++device.name		DAC960
+
+ vendor.id		pci 0x1039
+&device.id		pci 0x7016
++device.name		SiS 7016 (RealTek RTL8139) Fast Ethernet
+
+ vendor.id		pci 0x103c
+&device.id		pci 0x100a
++device.name		HP FX6 OpenGL
+
+ vendor.id		pci 0x1050
+&device.id		pci 0x5a5a
++device.name		Winbond
+
+ vendor.id		pci 0x106b
+&device.id		pci 0x0003
++baseclass.id		0x003
++subclass.id		0x80
+
+ vendor.id		pci 0x106b
+&device.id		pci 0x0021
++baseclass.id		0x002
++subclass.id		0x00
++device.name		GMAC Ethernet Controller
+
+ vendor.id		pci 0x106b
+&device.id		pci 0x0024
++baseclass.id		0x002
++subclass.id		0x00
++device.name		GMAC Ethernet Controller
+
+ vendor.id		pci 0x106b
+&device.id		pci 0x0022
++device.name		Keylargo Mac I/O
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x1016
++device.name		QLA10160
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x1080
++device.name		QLA1080
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x1216
++device.name		QLA12160
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x1240
++device.name		QLA1240
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x1280
++device.name		QLA1280
+
+ vendor.id		pci 0x10b7
+&device.id		pci 0x5055
++device.name		3c555 Laptop Hurricane
+
+ vendor.id		pci 0x10b7
+&device.id		pci 0x6560
++device.name		3CCFE656 Cyclone CardBus
+
+ vendor.id		pci 0x10b7
+&device.id		pci 0x7646
++device.name		3cSOHO100-TX Hurricane
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0020
++device.name		Riva TNT
+
+ vendor.id		pci 0x10ec
+&device.id		pci 0x8138
++device.name		RTL8139B
+
+ vendor.id		pci 0x1101
+&device.id		pci 0x0002
++device.name		INI-A100U2W
+
+ vendor.id		pci 0x1101
+&device.id		pci 0x1060
++device.name		INI-A100U2W
+
+ vendor.id		pci 0x1179
+&device.id		pci 0x0601
++device.name		Pentium Host Bridge for Notebooks
+
+ vendor.id		pci 0x11ad
+&device.id		pci 0xc115
++device.name		Lite-On LC82C115 PNIC-II
+
+ vendor.id		pci 0x12c3
+&device.id		pci 0x0058
++device.name		HT80232
+
+ vendor.id		pci 0x12c3
+&device.id		pci 0x5598
++device.name		HT80229
+
+ vendor.id		pci 0x12eb
++vendor.name		Aureal Semiconductor
+
+ vendor.id		pci 0x12eb
+&device.id		pci 0x0001
++device.name		AU8820 Vortex Digital Audio Processor
+
+ vendor.id		pci 0x12eb
+&device.id		pci 0x0001
+&subvendor.id		pci 0x5053
+&subdevice.id		pci 0x3355
++subdevice.name		TBS Montego A3D
+
+ vendor.id		pci 0x134a
+&device.id		pci 0x0002
++device.name		INI-920
+
+ vendor.id		pci 0x15ad
++vendor.name		VMWare, Inc.
+
+ vendor.id		pci 0x15ad
+&device.id		pci 0x0405
++baseclass.id		0x003
++subclass.id		0x00
+
+ vendor.id		pci 0x15ad
+&device.id		pci 0x0710
++baseclass.id		0x003
++subclass.id		0x00
+
+
+# internal modems
+# (just started...)
+ vendor.id		pci 0x127a
++vendor.name		Rockwell International
+
+ vendor.id		pci 0x127a
+&device.id		pci 0x1004
++device.name		HCF 56k V90 FaxModem
+
+ vendor.id		pci 0x127a
+&device.id		pci 0x1005
++device.name		PCI56RVP Modem
+
+ vendor.id		pci 0x12b9
++vendor.name		U.S. Robotics, Inc.
+
+ vendor.id		pci 0x12b9
+&device.id		pci 0x1006
++device.name		56k voice modem
+
+ vendor.id		pci 0x1318
+&device.id		pci 0x0911
++device.name		Hamachi GNIC-II
+
+
+# new gdth.o (21/06/2001)
+ vendor.id		pci 0x1119
+&device.id		pci 0x0136
++device.name		GDT6x13RS
+
+ vendor.id		pci 0x1119
+&device.id		pci 0x0137
++device.name		GDT6x23RS
+
+ vendor.id		pci 0x1119
+&device.id		pci 0x013c
++device.name		GDT6x33RS
+
+ vendor.id		pci 0x1119
+&device.id		pci 0x013d
++device.name		GDT6x43RS
+
+ vendor.id		pci 0x1119
+&device.id		pci 0x013e
++device.name		GDT6x53RS
+
+ vendor.id		pci 0x1119
+&device.id		pci 0x013f
++device.name		GDT6x63RS
+
+ vendor.id		pci 0x1119
+&device.id		pci 0x01d6
++device.name		GDT4x13RZ
+
+ vendor.id		pci 0x1119
+&device.id		pci 0x01d7
++device.name		GDT4x23RZ
+
+ vendor.id		pci 0x1119
+&device.id		pci 0x01f6
++device.name		GDT8x13RZ
+
+ vendor.id		pci 0x1119
+&device.id		pci 0x01f7
++device.name		GDT8x23RZ
+
+ vendor.id		pci 0x1119
+&device.id		pci 0x01fc
++device.name		GDT8x33RZ
+
+ vendor.id		pci 0x1119
+&device.id		pci 0x01fd
++device.name		GDT8x43RZ
+
+ vendor.id		pci 0x1119
+&device.id		pci 0x01fe
++device.name		GDT8x53RZ
+
+ vendor.id		pci 0x1119
+&device.id		pci 0x01ff
++device.name		GDT8x63RZ
+
+ vendor.id		pci 0x1119
+&device.id		pci 0x0300
++device.name		ICP vortex GDT RAID Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x0600
++device.name		RAID Controller
+
+
+# cf #9638
+ vendor.id		pci 0x14e4
++vendor.name		Broadcom
+
+ vendor.id		pci 0x14e4
+&device.id		pci 0x1647
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x0099
++subdevice.name		NC7780 Gigabit Server Adapter
+
+ vendor.id		pci 0x14e4
+&device.id		pci 0x1647
+&subvendor.id		pci 0x0e11
+&subdevice.id		pci 0x009a
++subdevice.name		NC7770 Gigabit Server Adapter
+
+
+# IBM ServeRAID adapters (#20268)
+ vendor.id		pci 0x1014
+&device.id		pci 0x002e
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x022e
++subdevice.name		ServeRAID 4H
+
+ vendor.id		pci 0x1014
+&device.id		pci 0x01bd
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x01be
++subdevice.name		ServeRAID 4M
+
+ vendor.id		pci 0x1014
+&device.id		pci 0x01bd
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x01bf
++subdevice.name		ServeRAID 4L
+
+ vendor.id		pci 0x1014
+&device.id		pci 0x01bd
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x0208
++subdevice.name		ServeRAID 4Mx
+
+ vendor.id		pci 0x1014
+&device.id		pci 0x01bd
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x020e
++subdevice.name		ServeRAID 4Lx
+
+ vendor.id		pci 0x1014
+&device.id		pci 0x01bd
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x0258
++subdevice.name		ServeRAID 5i
+
+ vendor.id		pci 0x1014
+&device.id		pci 0x01bd
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x0259
++subdevice.name		ServeRAID 5i
+
+ vendor.id		pci 0x1022
++vendor.name		AMD
+
+# 63973
+ vendor.id		pci 0x10a9
++vendor.name		SGI
+

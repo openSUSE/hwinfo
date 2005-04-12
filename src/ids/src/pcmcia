@@ -1,0 +1,293 @@
+ vendor.id		pcmcia 0x0004
+&device.id		pcmcia 0x0004
++driver.module.modprobe	fmvj18x_cs
+
+ vendor.id		pcmcia 0x000b
+&device.id		pcmcia 0x7300
+|vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x0001
+|vendor.id		pcmcia 0x0138
+&device.id		pcmcia 0x0002
+|vendor.id		pcmcia 0x014d
+&device.id		pcmcia 0x0001
+|vendor.id		pcmcia 0x0156
+&device.id		pcmcia 0x0002
+|vendor.id		pcmcia 0x016b
+&device.id		pcmcia 0x0001
+|vendor.id		pcmcia 0x01eb
+&device.id		pcmcia 0x080a
+|vendor.id		pcmcia 0x0261
+&device.id		pcmcia 0x0002
+|vendor.id		pcmcia 0x0268
+&device.id		pcmcia 0x0001
+|vendor.id		pcmcia 0x0274
+&device.id		pcmcia 0x1613
+|vendor.id		pcmcia 0x028a
+&device.id		pcmcia 0x0002
+|vendor.id		pcmcia 0x028a
+&device.id		pcmcia 0x0673
+|vendor.id		pcmcia 0x02ac
+&device.id		pcmcia 0x0002
+|vendor.id		pcmcia 0xd601
+&device.id		pcmcia 0x0002
+|vendor.id		pcmcia 0xd601
+&device.id		pcmcia 0x0005
++driver.module.modprobe	orinoco_cs
+
+ vendor.id		pcmcia 0x0032
+&device.id		pcmcia 0x0704
+|vendor.id		pcmcia 0x00a4
+&device.id		pcmcia 0x002d
++driver.module.modprobe	ide-cs
+
+ vendor.id		pcmcia 0x0057
+&device.id		pcmcia 0x0021
+|vendor.id		pcmcia 0x0104
+&device.id		pcmcia 0x000a
+|vendor.id		pcmcia 0x0105
+&device.id		pcmcia 0xea15
+|vendor.id		pcmcia 0x0143
+&device.id		pcmcia 0x3341
+|vendor.id		pcmcia 0x0143
+&device.id		pcmcia 0xc0ab
+|vendor.id		pcmcia 0x0175
+&device.id		pcmcia 0x0000
+|vendor.id		pcmcia 0x021b
+&device.id		pcmcia 0x0101
+|vendor.id		pcmcia 0x08a1
+&device.id		pcmcia 0xc0ab
++driver.module.modprobe	pcnet_cs
++driver.module.modprobe	serial_cs
+
+ vendor.id		pcmcia 0x0057
+&device.id		pcmcia 0x1004
+|vendor.id		pcmcia 0x0104
+&device.id		pcmcia 0x000d
+|vendor.id		pcmcia 0x0104
+&device.id		pcmcia 0x0075
+|vendor.id		pcmcia 0x0104
+&device.id		pcmcia 0x0145
+|vendor.id		pcmcia 0x0149
+&device.id		pcmcia 0x0230
+|vendor.id		pcmcia 0x0149
+&device.id		pcmcia 0x4530
+|vendor.id		pcmcia 0x0186
+&device.id		pcmcia 0x0110
+|vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x2216
+|vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x2328
+|vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x8041
+|vendor.id		pcmcia 0x0213
+&device.id		pcmcia 0x2452
+|vendor.id		pcmcia 0x021b
+&device.id		pcmcia 0x0202
+|vendor.id		pcmcia 0x026f
+&device.id		pcmcia 0x0300
+|vendor.id		pcmcia 0x026f
+&device.id		pcmcia 0x030a
+|vendor.id		pcmcia 0x0274
+&device.id		pcmcia 0x1103
+|vendor.id		pcmcia 0x0274
+&device.id		pcmcia 0x1121
+|vendor.id		pcmcia 0xc00f
+&device.id		pcmcia 0x0002
++driver.module.modprobe	pcnet_cs
+
+ vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x0102
+|vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x0113
+|vendor.id		pcmcia 0x00a4
+&device.id		pcmcia 0x0113
+|vendor.id		pcmcia 0x0105
+&device.id		pcmcia 0x0500
+|vendor.id		pcmcia 0x0149
+&device.id		pcmcia 0x0231
+|vendor.id		pcmcia 0x0149
+&device.id		pcmcia 0xc2ab
+|vendor.id		pcmcia 0x0186
+&device.id		pcmcia 0x0101
+|vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x2220
+|vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x2225
+|vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x2227
+|vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x8036
+|vendor.id		pcmcia 0x01da
+&device.id		pcmcia 0x0081
+|vendor.id		pcmcia 0x01da
+&device.id		pcmcia 0x0090
+|vendor.id		pcmcia 0x021b
+&device.id		pcmcia 0x0510
+|vendor.id		pcmcia 0x022d
+&device.id		pcmcia 0x2103
+|vendor.id		pcmcia 0x02ac
+&device.id		pcmcia 0x1012
+|vendor.id		pcmcia 0x13d1
+&device.id		pcmcia 0xab02+0x0002
+|vendor.id		pcmcia 0x50c7
+&device.id		pcmcia 0xcafe
+|vendor.id		pcmcia 0x9513
+&device.id		pcmcia 0x0081
+|vendor.id		pcmcia 0xe815
+&device.id		pcmcia 0x0081
++driver.module.modprobe	tulip_cb
+
+ vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x0103
++driver.module.modprobe	eepro100_cb
+
+ vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x0301
+|vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x0039
+|vendor.id		pcmcia 0x0104
+&device.id		pcmcia 0x0006
+|vendor.id		pcmcia 0x010b
+&device.id		pcmcia 0x0d50+0x0004
+|vendor.id		pcmcia 0x010b
+&device.id		pcmcia 0xd180
+|vendor.id		pcmcia 0x0137
+&device.id		pcmcia 0x000e
+|vendor.id		pcmcia 0x0137
+&device.id		pcmcia 0x001b
+|vendor.id		pcmcia 0x0137
+&device.id		pcmcia 0x0025
+|vendor.id		pcmcia 0x0137
+&device.id		pcmcia 0x0045
+|vendor.id		pcmcia 0x0137
+&device.id		pcmcia 0x0052
++driver.module.modprobe	serial_cs
+
+ vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x1103
++driver.module.modprobe	eepro100_cb
++driver.module.modprobe	serial_cb
+
+ vendor.id		pcmcia 0x0089
+&device.id		pcmcia 0x110a
+|vendor.id		pcmcia 0x0138
+&device.id		pcmcia 0x110a
++driver.module.modprobe	xirc2ps_cs
++driver.module.modprobe	serial_cs
+
+ vendor.id		pcmcia 0x00a4
+&device.id		pcmcia 0x0103
++driver.module.modprobe	tulip_cb
++driver.module.modprobe	serial_cb
+
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x0035
+|vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x003d
+|vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x0562
++driver.module.modprobe	3c589_cs
++driver.module.modprobe	serial_cs
+
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x0556
++driver.module.modprobe	3c574_cs
++driver.module.modprobe	serial_cs
+
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x0574
++driver.module.modprobe	3c574_cs
+
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x0589
++driver.module.modprobe	3c589_cs
+
+ vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x5057
+|vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x5157
+|vendor.id		pcmcia 0x0101
+&device.id		pcmcia 0x5257
+|vendor.id		pcmcia 0x0102
+&device.id		pcmcia 0x6560
+|vendor.id		pcmcia 0x0102
+&device.id		pcmcia 0x6562
+|vendor.id		pcmcia 0x0102
+&device.id		pcmcia 0x6564
++driver.module.modprobe	3c575_cb
+
+ vendor.id		pcmcia 0x0104
+&device.id		pcmcia 0x0070
++driver.module.modprobe	serial_cs
+
+ vendor.id		pcmcia 0x0105
+&device.id		pcmcia 0x0007
+|vendor.id		pcmcia 0x015f
+&device.id		pcmcia 0x0005
+|vendor.id		pcmcia 0x015f
+&device.id		pcmcia 0x0007
+|vendor.id		pcmcia 0x015f
+&device.id		pcmcia 0x000a
++driver.module.modprobe	airo_cs
+
+ vendor.id		pcmcia 0x0109
+&device.id		pcmcia 0x0501
+|vendor.id		pcmcia 0x0140
+&device.id		pcmcia 0x000a
+|vendor.id		pcmcia 0x016c
+&device.id		pcmcia 0x0020
++driver.module.modprobe	smc91c92_cs
++driver.module.modprobe	serial_cs
+
+ vendor.id		pcmcia 0x012f
+&device.id		pcmcia 0xcb01
++driver.module.modprobe	apa1480_cb
+
+ vendor.id		pcmcia 0x0137
+&device.id		pcmcia 0x0003
++driver.module.modprobe	parport_cs
+
+ vendor.id		pcmcia 0x0140
+&device.id		pcmcia 0x000f
+|vendor.id		pcmcia 0x0140
+&device.id		pcmcia 0x0012
+|vendor.id		pcmcia 0x016c
+&device.id		pcmcia 0x0021
++driver.module.modprobe	epic_cb
++driver.module.modprobe	serial_cb
+
+ vendor.id		pcmcia 0x0140
+&device.id		pcmcia 0x0011
++driver.module.modprobe	epic_cb
+
+ vendor.id		pcmcia 0x0149
+&device.id		pcmcia 0xc1ab
+|vendor.id		pcmcia 0x018a
+&device.id		pcmcia 0x0301
+|vendor.id		pcmcia 0x026f
+&device.id		pcmcia 0x0301
+|vendor.id		pcmcia 0x026f
+&device.id		pcmcia 0x0303
+|vendor.id		pcmcia 0x8a01
+&device.id		pcmcia 0xc1ab
++driver.module.modprobe	axnet_cs
+
+ vendor.id		pcmcia 0x016c
+&device.id		pcmcia 0x0023
+|vendor.id		pcmcia 0x0186
+&device.id		pcmcia 0x0100
++driver.module.modprobe	smc91c92_cs
+
+ vendor.id		pcmcia 0x016c
+&device.id		pcmcia 0x0081
++driver.module.modprobe	axnet_cs
++driver.module.modprobe	serial_cs
+
+ vendor.id		pcmcia 0x01a6
+&device.id		pcmcia 0x0000
++driver.module.modprobe	ray_cs
+
+ vendor.id		pcmcia 0x01bf
+&device.id		pcmcia 0x010a
++driver.module.modprobe	xirc2ps_cs
+

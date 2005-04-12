@@ -1,0 +1,14 @@
+# x11 ppc data not in CDB
+
+ vendor.id		pci 0x106b
+&device.id		pci 0x0003
++driver.xfree		4|fbdev
+
+ vendor.id		special 0x0401
+&device.id		special 0x3000
++driver.xfree		4|fbdev
+
+ vendor.id		special 0x0401
+&device.id		special 0x3001
++driver.xfree		3|FBDev
+
