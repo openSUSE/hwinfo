@@ -1,3 +1,6 @@
+12/4/2005:	v8.84
+	- import x11 data from sl 9.3 (hwinfo v10.16)
+
 11/4/2005:	v8.83
 	- report pci class 0x403 as audio devices (#76720, backport of
 	  #66466 from sl 9.3)
