@@ -56,7 +56,7 @@ do
 done
 
 echo /proc/mounts
-cp --parents /proc/mounts "$dir/$host"
+perl -nl -e 'print unless (split)[0] =~ /none|automount|:/' /proc/mounts >"$dir/$host/proc/mounts"
 
 echo -e "\n------  dmesg start  ------\n" >>"$dir/$host/var/log/boot.msg"
 dmesg >>"$dir/$host/var/log/boot.msg"
