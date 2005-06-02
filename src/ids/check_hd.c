@@ -200,6 +200,7 @@ struct option options[] = {
   { "no-compact", 0, NULL, 13},
   { "join-keys-first", 0, NULL, 14},
   { "combine", 0, NULL, 15},
+  { "no-range", 0, NULL, 16},
   { }
 };
 
@@ -220,6 +221,7 @@ struct {
   unsigned no_compact:1;
   unsigned join_keys_first:1;
   unsigned combine:1;		/* always combine driver info */
+  unsigned no_range:1;		/* don't create entries with ranges */
   char *logfile;
   char *outfile;
   char *cfile;
@@ -303,6 +305,10 @@ int main(int argc, char **argv)
 
       case 15:
         opt.combine = 1;
+        break;
+
+      case 16:
+        opt.no_range = 1;
         break;
 
       default:
@@ -1784,6 +1790,8 @@ int combine_keys(skey_t *skey0, skey_t *skey1)
 
   /* no mask value */
   if(hid0->num.has.mask || hid1->num.has.mask) return 0;
+
+  if(opt.no_range) return 0;
 
   /* must be adjacent ranges, can overlap  */
   r0 = hid0->num.has.range ? hid0->num.range : 1;

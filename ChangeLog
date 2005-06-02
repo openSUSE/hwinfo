@@ -1,3 +1,5 @@
+	- getsysinfo collects more info
+
 11/4/2005:	v11.1
 	- smbios detection: don't assume dmi records start below 1MB
 	- fixed kernel header include

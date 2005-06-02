@@ -21,6 +21,8 @@ host=`hostname`
 mkdir -p "$dir/$host"
 
 for i in \
+  /proc/acpi \
+  /proc/asound \
   /proc/bus/input \
   /proc/cpuinfo \
   /proc/device-tree \
@@ -28,6 +30,7 @@ for i in \
   /proc/dma \
   /proc/driver/nvram \
   /proc/fb \
+  /proc/filesystems \
   /proc/iSeries \
   /proc/ide \
   /proc/interrupts \
