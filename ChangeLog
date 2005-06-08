@@ -1,4 +1,6 @@
 	- getsysinfo collects more info
+	- some more ibm notebooks
+	- don't use de4x5
 
 11/4/2005:	v11.1
 	- smbios detection: don't assume dmi records start below 1MB
