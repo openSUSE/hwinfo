@@ -663,9 +663,10 @@
 +device.name		Sony Notebook
 +requires		spicctrl
 
+# acpi temperature control modules
+# see hddb.c::hddb_add_info()
  vendor.id		special 0xf001
 &device.id		special 0x0004
-+device.name		HP Notebook
 +driver.module.modprobe	thermal|fan
 
 

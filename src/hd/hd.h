@@ -2109,6 +2109,7 @@ typedef struct s_hd_t {
     unsigned dvdram:1;		/* DVD-RAM */
     unsigned pppoe:1;		/* PPPOE modem connected */
     unsigned wlan:1;		/* WLAN card */
+    unsigned with_acpi:1;	/* acpi works fine */
   } is;
 
   struct tag_s {		/* this struct is for internal purposes only */

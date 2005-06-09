@@ -1,6 +1,8 @@
+9/6/2005:	v11.2
 	- getsysinfo collects more info
 	- some more ibm notebooks
 	- don't use de4x5
+	- acpi: always load thermal & fan modules (#72146)
 
 11/4/2005:	v11.1
 	- smbios detection: don't assume dmi records start below 1MB

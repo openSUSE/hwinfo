@@ -1787,6 +1787,23 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     }
   }
 
+  /* acpi: load temperature control modules */
+  if(!new_driver_info && hd->is.with_acpi) {
+    memset(&hs, 0, sizeof hs);
+
+    hs.vendor.id = MAKE_ID(TAG_SPECIAL, 0xf001);
+    hs.key |= 1 << he_vendor_id;
+
+    hs.device.id = MAKE_ID(TAG_SPECIAL, 4);
+    hs.key |= 1 << he_device_id;
+
+    hddb_search(hd_data, &hs, 1);
+
+    if((hs.value & (1 << he_driver))) {
+      new_driver_info =  hddb_to_device_driver(hd_data, &hs);
+    }
+  }
+
   if(!new_driver_info && hd->base_class.id == bc_keyboard) {
     new_driver_info = kbd_driver(hd_data, hd);
   }

@@ -976,10 +976,10 @@ void int_system(hd_data_t *hd_data)
   hd_smbios_t *sm;
   struct {
     unsigned notebook:1;
-    unsigned acpi_mods:1;	/*  *** evil hack *** */
     enum { v_none = 0, v_ibm = 1, v_toshiba, v_sony } vendor;
   } is = { };
   char *s;
+  struct stat sbuf;
 
   for(hd_sys = hd_data->hd; hd_sys; hd_sys = hd_sys->next) {
     if(
@@ -1005,16 +1005,6 @@ void int_system(hd_data_t *hd_data)
   }
 
   for(sm = hd_data->smbios; sm; sm = sm->next) {
-    if(
-      sm->any.type == sm_sysinfo &&
-      sm->sysinfo.manuf &&
-      sm->sysinfo.product &&
-      !strcasecmp(sm->sysinfo.manuf, "Hewlett-Packard") &&
-      !strcasecmp(sm->sysinfo.product, "HP Compaq nc6220")
-    ) {
-      is.acpi_mods = 1;
-    }
-
     if(
       sm->any.type == sm_sysinfo &&
       sm->sysinfo.manuf &&
@@ -1083,10 +1073,9 @@ void int_system(hd_data_t *hd_data)
     hd_sys->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0xf001);
     hd_sys->compat_device.id = MAKE_ID(TAG_SPECIAL, is.vendor);
   }
-  else if(is.acpi_mods) {
-    hd_sys->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0xf001);
-    hd_sys->compat_device.id = MAKE_ID(TAG_SPECIAL, 4);
-  }
+
+  hd_sys->is.with_acpi = stat("/proc/acpi", &sbuf) ? 0 : 1;
+  ADD2LOG("  acpi: %d\n", hd_sys->is.with_acpi);
 }
 
 
