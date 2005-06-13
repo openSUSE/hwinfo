@@ -69,7 +69,9 @@ static void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, cha
 static void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt);
 static void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt);
 static void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt);
+#ifndef LIBHD_TINY
 static void add_panel_info(hd_data_t *hd_data, bios_info_t *bt);
+#endif
 static void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt);
 static unsigned char crc(unsigned char *mem, unsigned len);
 static int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
@@ -329,7 +331,9 @@ void hd_scan_bios(hd_data_t *hd_data)
     get_pnp_support_status(&hd_data->bios_rom, bt);
     smbios_get_info(hd_data, &hd_data->bios_rom, bt);
     get_fsc_info(hd_data, &hd_data->bios_rom, bt);
+#ifndef LIBHD_TINY
     add_panel_info(hd_data, bt);
+#endif
     add_mouse_info(hd_data, bt);
   }
 
@@ -768,6 +772,7 @@ void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
 }
 
 
+#ifndef LIBHD_TINY
 void add_panel_info(hd_data_t *hd_data, bios_info_t *bt)
 {
   unsigned width, height;
@@ -806,7 +811,7 @@ void add_panel_info(hd_data_t *hd_data, bios_info_t *bt)
     }
   }
 }
-
+#endif
 
 void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt)
 {
