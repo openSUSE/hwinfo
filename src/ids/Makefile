@@ -5,13 +5,13 @@ DISTCLEANFILES	= *.h *.xml *.ids check_hd
 
 include $(TOPDIR)/Makefile.common
 
-ifeq "$(ARCH)" "ppc"
-IDFILES += src/ppc
-endif
+# ifeq "$(ARCH)" "ppc"
+# IDFILES += src/ppc
+# endif
 
-ifeq "$(ARCH)" "ppc64"
-IDFILES += src/ppc
-endif
+# ifeq "$(ARCH)" "ppc64"
+# IDFILES += src/ppc
+# endif
 
 IDFILES	+= src/bus src/class src/extra src/special src/scanner src/network \
 	  src/usb src/usb2 src/isapnp src/monitor src/camera src/tv src/dvb \
