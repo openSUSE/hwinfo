@@ -106,7 +106,7 @@ typedef enum probe_feature {
   pr_parallel_imm, pr_s390, pr_cpuemu, pr_sysfs, pr_s390disks, pr_udev,
   pr_block, pr_block_cdrom, pr_block_part, pr_edd, pr_edd_mod, pr_bios_ddc,
   pr_bios_fb, pr_bios_mode, pr_input, pr_block_mods, pr_bios_vesa,
-  pr_cpuemu_debug, pr_scsi_noserial, pr_wlan,
+  pr_cpuemu_debug, pr_scsi_noserial, pr_wlan, pr_bios_crc, pr_hal,
   pr_max, pr_lxrc, pr_dsl, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
@@ -2240,6 +2240,7 @@ typedef struct {
     unsigned udev:1;		/**< return first udev symlink as device name */
     unsigned edd_used:1;	/**< internal: edd info has been used  */
     unsigned keep_kmods:2;	/**< internal: don't reread kmods */
+    unsigned nobioscrc:1;	/**< internal: don't check VBIOS crc */
   } flags;
 
 

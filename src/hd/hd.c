@@ -239,6 +239,7 @@ static struct s_pr_flags {
   { pr_bios_fb,       pr_bios_vesa,       0, "bios.fb"       },
   { pr_bios_mode,     pr_bios_vesa,       0, "bios.mode"     },
   { pr_bios_vbe,      pr_bios_mode,       0, "bios.vbe"      }, // just an alias
+  { pr_bios_crc,      0,                  0, "bios.crc"      },
   { pr_cpu,           0,            8|4|2|1, "cpu"           },
   { pr_monitor,       0,            8|4|2|1, "monitor"       },
   { pr_serial,        0,              4|2|1, "serial"        },
@@ -300,7 +301,8 @@ static struct s_pr_flags {
   { pr_edd,           0,            8|4|2|1, "edd"           },
   { pr_edd_mod,       pr_edd,       8|4|2|1, "edd.mod"       },
   { pr_input,         0,            8|4|2|1, "input"         },
-  { pr_wlan,          0,            8|4|2|1, "wlan"          }
+  { pr_wlan,          0,            8|4|2|1, "wlan"          },
+  { pr_hal,           0,                  0, "hal"           }
 };
 
 struct s_pr_flags *get_pr_flags(enum probe_feature feature)
@@ -1686,6 +1688,7 @@ void hd_scan(hd_data_t *hd_data)
     if(!hd_probe_feature(hd_data, pr_sysfs)) hd_data->flags.nosysfs = 1;
     if(hd_probe_feature(hd_data, pr_cpuemu)) hd_data->flags.cpuemu = 1;
     if(hd_probe_feature(hd_data, pr_udev)) hd_data->flags.udev = 1;
+    if(!hd_probe_feature(hd_data, pr_bios_crc)) hd_data->flags.nobioscrc = 1;
   }
 
   /* get shm segment, if we didn't do it already */

@@ -344,6 +344,7 @@ int copy_vbios(hd_data_t *hd_data)
 {
   unsigned size;
   unsigned char tmp[3];
+  int i;
 
   if(!hd_read_mmap(hd_data, MEM_FILE, tmp, V_BIOS, sizeof tmp)) {
     log_err("vbe: failed to read %u bytes at 0x%x\n", (unsigned) sizeof tmp, V_BIOS);
@@ -362,7 +363,13 @@ int copy_vbios(hd_data_t *hd_data)
     return 0;
   }
 
-  return chksum((CARD8 *) V_BIOS) ? 1 : 0;
+  if((i = chksum((CARD8 *) V_BIOS)) || !hd_data->flags.nobioscrc) return i;
+#ifdef __i386__
+  /* use cpu emulation for broken BIOSes */
+  hd_data->flags.cpuemu |= 1;
+#endif
+
+  return 1;
 }
 
 
