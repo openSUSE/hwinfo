@@ -2,8 +2,8 @@ TOPDIR		= $(CURDIR)
 SUBDIRS		= src
 TARGETS		= hwinfo
 CLEANFILES	= hwinfo hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~
-LIBDIR		= /lib
-ULIBDIR		= /usr$(LIBDIR)
+LIBDIR		= /usr/lib
+ULIBDIR		= $(LIBDIR)
 LIBS		= -lhd
 SLIBS		= -lhd -lsysfs -ldbus-1 -lhal
 TLIBS		= -lhd_tiny -lsysfs -ldbus-1 -lhal
@@ -68,7 +68,7 @@ doc:
 
 install:
 	install -d -m 755 $(DESTDIR)/sbin $(DESTDIR)/usr/sbin $(DESTDIR)$(ULIBDIR)\
-		$(DESTDIR)/usr/include $(DESTDIR)/etc/init.d
+		$(DESTDIR)/usr/include
 	install -m 755 hwinfo $(DESTDIR)/usr/sbin
 	install -m 755 -s src/ids/check_hd $(DESTDIR)/usr/sbin
 	install -m 755 src/ids/convert_hd $(DESTDIR)/usr/sbin
