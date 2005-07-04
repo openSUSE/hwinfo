@@ -108,7 +108,7 @@ enum mod_idx {
   mod_serial, mod_usb, mod_adb, mod_modem, mod_parallel, mod_isa, mod_isdn,
   mod_kbd, mod_prom, mod_sbus, mod_int, mod_braille, mod_xtra, mod_sys,
   mod_manual, mod_fb, mod_veth, mod_pppoe, mod_pcmcia, mod_s390,
-  mod_sysfs, mod_dsl, mod_block, mod_edd, mod_input, mod_wlan
+  mod_sysfs, mod_dsl, mod_block, mod_edd, mod_input, mod_wlan, mod_hal
 };
 
 void *new_mem(size_t size);
@@ -228,7 +228,7 @@ int hd_report_this(hd_data_t *hd_data, hd_t *hd);
 str_list_t *hd_module_list(hd_data_t *hd_data, unsigned id);
 
 int hd_is_iseries(hd_data_t *hd_data);
-
+hal_device_t *hd_free_hal_devices(hal_device_t *dev);
 
 #ifdef __cplusplus
 }

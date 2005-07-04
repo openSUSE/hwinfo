@@ -1336,6 +1336,42 @@ typedef struct {
 
 
 /*
+ * HAL device property types
+ */
+typedef enum {
+  p_invalid, p_string, p_int32, p_uint64, p_double, p_bool, p_list
+} hal_prop_type_t;
+
+
+/*
+ * HAL device properties
+ */
+typedef struct hal_prop_s {
+  struct hal_prop_s *next;
+  hal_prop_type_t type;
+  char *key;
+  union {
+    char *str;
+    int32_t int32;
+    uint64_t uint64;
+    double d;     
+    int bool;
+    str_list_t *list;
+  } val;  
+} hal_prop_t;
+
+
+/*
+ * HAL device
+ */
+typedef struct hal_device_s {
+  struct hal_device_s *next;
+  char *udi;
+  hal_prop_t *prop;
+} hal_device_t;
+
+
+/*
  * resource types
  */
 typedef enum resource_types {
@@ -2308,6 +2344,7 @@ typedef struct {
   uint64_t sysfsdrv_id;		/**< (Internal) sysfs driver info id */
   str_list_t *scanner_db;	/**< (Internal) list of scanner modules */
   edd_info_t edd[0x80];		/**< (Internal) enhanced disk drive data */
+  hal_device_t *hal;		/**< (Internal) HAL data (if any) */
 } hd_data_t;
 
 

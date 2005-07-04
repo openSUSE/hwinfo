@@ -5,10 +5,10 @@ CLEANFILES	= hwinfo hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/l
 LIBDIR		= /lib
 ULIBDIR		= /usr$(LIBDIR)
 LIBS		= -lhd
-SLIBS		= -lhd -lsysfs
-TLIBS		= -lhd_tiny -lsysfs
-SO_LIBS		= -lsysfs
-TSO_LIBS	= -lsysfs
+SLIBS		= -lhd -lsysfs -ldbus-1 -lhal
+TLIBS		= -lhd_tiny -lsysfs -ldbus-1 -lhal
+SO_LIBS		= -lsysfs -ldbus-1 -lhal
+TSO_LIBS	= -lsysfs -ldbus-1 -lhal
 
 export SO_LIBS
 
@@ -67,15 +67,15 @@ doc:
 	@cd doc ; doxygen libhd.doxy
 
 install:
-	install -d -m 755 $(DESTDIR)/sbin $(DESTDIR)/usr/sbin $(DESTDIR)$(LIBDIR) $(DESTDIR)$(ULIBDIR)\
+	install -d -m 755 $(DESTDIR)/sbin $(DESTDIR)/usr/sbin $(DESTDIR)$(ULIBDIR)\
 		$(DESTDIR)/usr/include $(DESTDIR)/etc/init.d
 	install -m 755 hwinfo $(DESTDIR)/usr/sbin
 	install -m 755 -s src/ids/check_hd $(DESTDIR)/usr/sbin
 	install -m 755 src/ids/convert_hd $(DESTDIR)/usr/sbin
 	if [ -f $(LIBHD_SO) ] ; then \
-		install $(LIBHD_SO) $(DESTDIR)$(LIBDIR) ; \
-		ln -snf $(LIBHD_NAME) $(DESTDIR)$(LIBDIR)/$(LIBHD_SONAME) ; \
-		ln -snf $(LIBDIR)/$(LIBHD_SONAME) $(DESTDIR)$(ULIBDIR)/$(LIBHD_BASE).so ; \
+		install $(LIBHD_SO) $(DESTDIR)$(ULIBDIR) ; \
+		ln -snf $(LIBHD_NAME) $(DESTDIR)$(ULIBDIR)/$(LIBHD_SONAME) ; \
+		ln -snf $(LIBHD_SONAME) $(DESTDIR)$(ULIBDIR)/$(LIBHD_BASE).so ; \
 	else \
 		install -m 644 $(LIBHD) $(DESTDIR)$(ULIBDIR) ; \
 	fi

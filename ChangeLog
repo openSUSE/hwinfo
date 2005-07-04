@@ -1,5 +1,8 @@
+4/7/2005:	v11.3
 	- removed special ppc driver info (#91437)
 	- skip Video BIOS checksum test
+	- move libhd back to /usr
+	- use hal/dbus
 
 9/6/2005:	v11.2
 	- getsysinfo collects more info

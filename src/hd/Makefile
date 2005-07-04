@@ -4,6 +4,8 @@ CLEANFILES	= version.h
 
 include $(TOPDIR)/Makefile.common
 
+CFLAGS		+= -I /usr/include/dbus-1.0 -I /usr/lib/dbus-1.0/include -I /usr/lib64/dbus-1.0/include
+
 version.h: $(TOPDIR)/VERSION
 	@echo "#define HD_VERSION_STRING \"`cat $(TOPDIR)/VERSION`\"" >$@
 

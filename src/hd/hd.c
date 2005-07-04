@@ -67,6 +67,7 @@
 #include "edd.h"
 #include "input.h"
 #include "wlan.h"
+#include "hal.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -139,6 +140,9 @@ static void hd_scan_xtra(hd_data_t *hd_data);
 static hd_t *hd_get_device_by_id(hd_data_t *hd_data, char *id);
 static int has_item(hd_hw_item_t *items, hd_hw_item_t item);
 static int has_hw_class(hd_t *hd, hd_hw_item_t *items);
+static void hd_scan_with_hal(hd_data_t *hd_data);
+static void hd_scan_no_hal(hd_data_t *hd_data);
+static hal_prop_t *hd_free_hal_properties(hal_prop_t *prop);
 
 static void test_read_block0_open(void *arg);
 static void get_kernel_version(hd_data_t *hd_data);
@@ -871,11 +875,53 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
     hd_data->edd[u].sysfs_id = free_mem(hd_data->edd[u].sysfs_id);
   }
 
+  hd_data->hal = hd_free_hal_devices(hd_data->hal);
+
   hd_data->last_idx = 0;
 
   hd_shm_done(hd_data);
 
   memset(hd_data, 0, sizeof *hd_data);
+
+  return NULL;
+}
+
+
+/*
+ * Free HAL property data.
+ */
+hal_prop_t *hd_free_hal_properties(hal_prop_t *prop)
+{
+  hal_prop_t *next;
+  char **s;
+
+  for(; prop; prop = next) {
+    next = prop->next;
+
+    free_mem(prop->key);
+    if(prop->type == p_string) free_mem(prop->val.str);
+    if(prop->type == p_list) free_str_list(prop->val.list);
+    free_mem(prop);
+  }
+
+  return NULL;
+}
+
+
+/*
+ * Free HAL data.
+ */
+hal_device_t *hd_free_hal_devices(hal_device_t *dev)
+{
+  hal_device_t *next;
+
+  for(; dev; dev = next) {
+    next = dev->next;
+
+    free_mem(dev->udi);
+    hd_free_hal_properties(dev->prop);
+    free_mem(dev);
+  }
 
   return NULL;
 }
@@ -1716,6 +1762,107 @@ void hd_scan(hd_data_t *hd_data)
   }
 #endif
 
+  hd_scan_with_hal(hd_data);
+
+  if(!hd_data->hal) {
+    hd_scan_no_hal(hd_data);
+  }
+
+  hd_scan_int(hd_data);
+
+  /* and again... */
+  for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd_data, hd);
+
+  /* assign parent & child ids */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    hd->child_ids = free_str_list(hd->child_ids);
+    if((hd2 = hd_get_device_by_idx(hd_data, hd->attached_to))) {
+      free_mem(hd->parent_id);
+      hd->parent_id = new_str(hd2->unique_id);
+    }
+    else if((hd2 = hd_get_device_by_id(hd_data, hd->parent_id))) {
+      hd->attached_to = hd2->idx;
+    }
+    else {
+      hd->attached_to = 0;
+    }
+  }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if((hd2 = hd_get_device_by_idx(hd_data, hd->attached_to))) {
+      add_str_list(&hd2->child_ids, hd->unique_id);
+    }
+  }
+
+  /* assign a hw_class & build a useful model string */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    assign_hw_class(hd_data, hd);
+
+    /* create model name _after_ hw_class */
+    create_model_name(hd_data, hd);
+  }
+
+#ifndef LIBHD_TINY
+  /* must be _after_ we have valid hw_class entries */
+  hd_scan_manual2(hd_data);
+#endif
+
+  /* we are done... */
+  for(hd = hd_data->hd; hd; hd = hd->next) hd->tag.fixed = 1;
+
+  /* for compatibility */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    hd->driver = free_mem(hd->driver);
+    if(hd->drivers && hd->drivers->str) hd->driver = new_str(hd->drivers->str);
+  }
+
+  hd_data->module = mod_none;
+
+  if(
+    hd_data->debug &&
+    !hd_data->flags.internal &&
+    (
+      hd_data->kmods ||
+      hd_probe_feature(hd_data, pr_int /* arbitrary; just avoid /proc/modules for -pr_all */)
+    )
+  ) {
+    sl0 = read_file(PROC_MODULES, 0, 0);
+    ADD2LOG("----- /proc/modules -----\n");
+    for(sl = sl0; sl; sl = sl->next) {
+      ADD2LOG("  %s", sl->str);
+    }
+    ADD2LOG("----- /proc/modules end -----\n");
+    free_str_list(sl0);
+  }
+
+  update_irq_usage(hd_data);
+
+  if(hd_data->debug && !hd_data->flags.internal) {
+    irqs = hd_data->used_irqs;
+
+    ADD2LOG("  used irqs:");
+    for(i = j = 0; i < 64; i++, irqs >>= 1) {
+      if((irqs & 1)) {
+        ADD2LOG("%c%d", j ? ',' : ' ', i);
+        j = 1;
+      }
+    }
+    ADD2LOG("\n");
+  }
+}
+
+
+void hd_scan_with_hal(hd_data_t *hd_data)
+{
+  hd_scan_hal(hd_data);
+
+}
+
+
+void hd_scan_no_hal(hd_data_t *hd_data)
+{
+  hd_t *hd;
+
   /*
    * for various reasons, do it befor scan_misc()
    */
@@ -1830,87 +1977,7 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_isdn(hd_data);
   hd_scan_dsl(hd_data);
 #endif
-  hd_scan_int(hd_data);
 
-  /* and again... */
-  for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd_data, hd);
-
-  /* assign parent & child ids */
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    hd->child_ids = free_str_list(hd->child_ids);
-    if((hd2 = hd_get_device_by_idx(hd_data, hd->attached_to))) {
-      free_mem(hd->parent_id);
-      hd->parent_id = new_str(hd2->unique_id);
-    }
-    else if((hd2 = hd_get_device_by_id(hd_data, hd->parent_id))) {
-      hd->attached_to = hd2->idx;
-    }
-    else {
-      hd->attached_to = 0;
-    }
-  }
-
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if((hd2 = hd_get_device_by_idx(hd_data, hd->attached_to))) {
-      add_str_list(&hd2->child_ids, hd->unique_id);
-    }
-  }
-
-  /* assign a hw_class & build a useful model string */
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    assign_hw_class(hd_data, hd);
-
-    /* create model name _after_ hw_class */
-    create_model_name(hd_data, hd);
-  }
-
-#ifndef LIBHD_TINY
-  /* must be _after_ we have valid hw_class entries */
-  hd_scan_manual2(hd_data);
-#endif
-
-  /* we are done... */
-  for(hd = hd_data->hd; hd; hd = hd->next) hd->tag.fixed = 1;
-
-  /* for compatibility */
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    hd->driver = free_mem(hd->driver);
-    if(hd->drivers && hd->drivers->str) hd->driver = new_str(hd->drivers->str);
-  }
-
-  hd_data->module = mod_none;
-
-  if(
-    hd_data->debug &&
-    !hd_data->flags.internal &&
-    (
-      hd_data->kmods ||
-      hd_probe_feature(hd_data, pr_int /* arbitrary; just avoid /proc/modules for -pr_all */)
-    )
-  ) {
-    sl0 = read_file(PROC_MODULES, 0, 0);
-    ADD2LOG("----- /proc/modules -----\n");
-    for(sl = sl0; sl; sl = sl->next) {
-      ADD2LOG("  %s", sl->str);
-    }
-    ADD2LOG("----- /proc/modules end -----\n");
-    free_str_list(sl0);
-  }
-
-  update_irq_usage(hd_data);
-
-  if(hd_data->debug && !hd_data->flags.internal) {
-    irqs = hd_data->used_irqs;
-
-    ADD2LOG("  used irqs:");
-    for(i = j = 0; i < 64; i++, irqs >>= 1) {
-      if((irqs & 1)) {
-        ADD2LOG("%c%d", j ? ',' : ' ', i);
-        j = 1;
-      }
-    }
-    ADD2LOG("\n");
-  }
 }
 
 
