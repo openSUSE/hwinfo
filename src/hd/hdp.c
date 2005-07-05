@@ -97,6 +97,14 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
 
   a2 = free_mem(a2);
 
+  if(h->udi) {
+    dump_line("UDI: %s\n", h->udi);
+  }
+
+  if(h->parent_udi) {
+    dump_line("Parent UDI: %s\n", h->parent_udi);
+  }
+
   if((hd_data->debug & HD_DEB_CREATION) && h->unique_id) {
     dump_line("Unique ID: %s\n", h->unique_id);
   }

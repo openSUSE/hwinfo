@@ -1365,8 +1365,9 @@ typedef struct hal_prop_s {
  * HAL device
  */
 typedef struct hal_device_s {
-  struct hal_device_s *next;
+  struct hal_device_s *next, *parent;
   char *udi;
+  unsigned used:1;
   hal_prop_t *prop;
 } hal_device_t;
 
@@ -2055,6 +2056,16 @@ typedef struct s_hd_t {
    * CHPID for s390.
    */
   char *rom_id;
+
+  /**
+   * HAL udi.
+   */
+  char *udi;
+
+  /**
+   * \ref udi of parent (\ref attached_to).
+   */
+  char *parent_udi;
 
   /**
    * Unique id for this hardware.

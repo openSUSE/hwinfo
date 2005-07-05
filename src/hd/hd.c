@@ -206,7 +206,8 @@ static struct s_mod_names {
   { mod_dsl, "dsl" },
   { mod_block, "block" },
   { mod_edd, "edd" },
-  { mod_input, "input" }
+  { mod_input, "input" },
+  { mod_hal, "hal" }
 };
 
 /*
@@ -1233,6 +1234,7 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->unix_dev_name2);
   free_mem(hd->rom_id);
   free_mem(hd->unique_id);
+  free_mem(hd->udi);
   free_mem(hd->block0);
   free_mem(hd->driver);
   free_str_list(hd->drivers);
@@ -3118,6 +3120,7 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
 #ifndef LIBHD_TINY
 /* with LIBHD_TINY hd->status is not maintained (cf. manual.c) */
       && (
+        hd_data->hal ||
         hd->status.available == status_yes ||
         hd->status.available == status_unknown ||
         item == hw_manual ||
@@ -3244,6 +3247,7 @@ hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan)
 #ifndef LIBHD_TINY
 /* with LIBHD_TINY hd->status is not maintained (cf. manual.c) */
       && (
+        hd_data->hal ||
         hd->status.available == status_yes ||
         hd->status.available == status_unknown ||
         is_manual ||

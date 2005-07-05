@@ -22,6 +22,15 @@
 #include "hal.h"
 
 static void read_hal(hd_data_t *hd_data);
+static void add_pci(hd_data_t *hd_data);
+static void link_hal_tree(hd_data_t *hd_data);
+static hal_device_t *hal_find_device(hd_data_t *hd_data, char *udi);
+
+static hal_prop_t *hal_get_int32(hal_prop_t *prop, char *key);
+static hal_prop_t *hal_get_str(hal_prop_t *prop, char *key);
+static char *hal_get_useful_str(hal_prop_t *prop, char *key);
+static int hal_match_str(hal_prop_t *prop, char *key, char *val);
+
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  *
@@ -43,6 +52,14 @@ void hd_scan_hal(hd_data_t *hd_data)
   PROGRESS(1, 0, "read hal data");
 
   read_hal(hd_data);
+
+  if(!hd_data->hal) return;
+
+  link_hal_tree(hd_data);
+
+  PROGRESS(1, 0, "pci devices");
+
+  add_pci(hd_data);
 
 }
 
@@ -182,6 +199,129 @@ void read_hal(hd_data_t *hd_data)
   dbus_connection_unref(conn);
 
   dbus_error_free(&error);
+}
+
+
+void link_hal_tree(hd_data_t *hd_data)
+{
+  hal_device_t *dev;
+  hal_prop_t *prop;
+
+  for(dev = hd_data->hal; dev; dev = dev->next) {
+    prop = hal_get_str(dev->prop, "info.parent");
+    if(prop) {
+      dev->parent = hal_find_device(hd_data, prop->val.str);
+    }
+  }
+}
+
+
+hal_device_t *hal_find_device(hd_data_t *hd_data, char *udi)
+{
+  hal_device_t *dev;
+
+  if(udi) {
+    for(dev = hd_data->hal; dev; dev = dev->next) {
+      if(!strcmp(dev->udi, udi)) return dev;
+    }
+  }
+
+  return NULL;
+}
+
+
+hal_prop_t *hal_get_int32(hal_prop_t *prop, char *key)
+{
+  for(; prop; prop = prop->next) {
+    if(prop->type == p_int32 && !strcmp(prop->key, key)) return prop;
+  }
+
+  return NULL;
+}
+
+
+hal_prop_t *hal_get_str(hal_prop_t *prop, char *key)
+{
+  for(; prop; prop = prop->next) {
+    if(prop->type == p_string && !strcmp(prop->key, key)) return prop;
+  }
+
+  return NULL;
+}
+
+
+char *hal_get_useful_str(hal_prop_t *prop, char *key)
+{
+  for(; prop; prop = prop->next) {
+    if(prop->type == p_string && !strcmp(prop->key, key)) {
+      if(strncmp(prop->val.str, "Unknown", sizeof "Unknown" - 1)) return prop->val.str;
+      break;
+    }
+  }
+
+  return NULL;
+}
+
+
+int hal_match_str(hal_prop_t *prop, char *key, char *val)
+{
+  return val && (prop = hal_get_str(prop, key)) && !strcmp(prop->val.str, val);
+}
+
+
+void add_pci(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  hal_prop_t *prop;
+  int i, j;
+  char *s;
+  hal_device_t *dev;
+
+  for(dev = hd_data->hal ; dev; dev = dev->next) {
+    if(dev->used) continue;
+    if(!hal_match_str(dev->prop, "info.bus", "pci")) continue;
+    dev->used = 1;
+
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+
+    hd->udi = new_str(dev->udi);
+    if(dev->parent) hd->parent_udi = new_str(dev->parent->udi);
+
+    hd->bus.id = bus_pci;
+
+    if((prop = hal_get_int32(dev->prop, "pci.device_protocol"))) hd->prog_if.id = prop->val.int32;
+    if((prop = hal_get_int32(dev->prop, "pci.device_subclass"))) hd->sub_class.id = prop->val.int32;
+    if((prop = hal_get_int32(dev->prop, "pci.device_class"))) hd->base_class.id = prop->val.int32;
+
+    i = (prop = hal_get_int32(dev->prop, "pci.vendor_id")) ? prop->val.int32 : 0;
+    j = (prop = hal_get_int32(dev->prop, "pci.product_id")) ? prop->val.int32 : 0;
+
+    if(i || j) {
+      hd->vendor.id = MAKE_ID(TAG_PCI, i);
+      hd->device.id = MAKE_ID(TAG_PCI, j);
+    }
+
+    if((s = hal_get_useful_str(dev->prop, "pci.vendor"))) hd->vendor.name = new_str(s);
+    if((s = hal_get_useful_str(dev->prop, "pci.product"))) hd->device.name = new_str(s);
+
+    i = (prop = hal_get_int32(dev->prop, "pci.subsys_vendor_id")) ? prop->val.int32 : 0;
+    j = (prop = hal_get_int32(dev->prop, "pci.subsys_product_id")) ? prop->val.int32 : 0;
+
+    if(i || j) {
+      hd->sub_vendor.id = MAKE_ID(TAG_PCI, i);
+      hd->sub_device.id = MAKE_ID(TAG_PCI, j);
+    }
+
+    if((s = hal_get_useful_str(dev->prop, "pci.subsys_vendor"))) hd->sub_vendor.name = new_str(s);
+    if((s = hal_get_useful_str(dev->prop, "pci.subsys_product"))) hd->sub_device.name = new_str(s);
+
+    if((prop = hal_get_str(dev->prop, "linux.sysfs_path"))) hd->sysfs_id = new_str(hd_sysfs_id(prop->val.str));
+
+    if((prop = hal_get_str(dev->prop, "info.linux.driver"))) add_str_list(&hd->drivers, prop->val.str);
+
+
+  }
+
 }
 
 
