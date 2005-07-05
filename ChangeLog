@@ -1,3 +1,6 @@
+5/7/2005:	v11.4
+	- make C++ happy
+
 4/7/2005:	v11.3
 	- removed special ppc driver info (#91437)
 	- skip Video BIOS checksum test

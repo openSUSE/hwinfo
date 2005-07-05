@@ -893,7 +893,6 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
 hal_prop_t *hd_free_hal_properties(hal_prop_t *prop)
 {
   hal_prop_t *next;
-  char **s;
 
   for(; prop; prop = next) {
     next = prop->next;

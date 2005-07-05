@@ -136,8 +136,8 @@ void read_hal(hd_data_t *hd_data)
           case LIBHAL_PROPERTY_TYPE_BOOLEAN:
             prop->type = p_bool;
             prop->key = new_str(libhal_psi_get_key(&it));
-            prop->val.bool = libhal_psi_get_bool(&it);
-            ADD2LOG("  %s = %s (bool)\n", prop->key, prop->val.bool ? "true" : "false");
+            prop->val.b = libhal_psi_get_bool(&it);
+            ADD2LOG("  %s = %s (bool)\n", prop->key, prop->val.b ? "true" : "false");
             break;
 
           case LIBHAL_PROPERTY_TYPE_STRLIST:

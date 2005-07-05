@@ -1355,7 +1355,7 @@ typedef struct hal_prop_s {
     int32_t int32;
     uint64_t uint64;
     double d;     
-    int bool;
+    int b;
     str_list_t *list;
   } val;  
 } hal_prop_t;
