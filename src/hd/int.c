@@ -41,6 +41,8 @@ static void int_softraid(hd_data_t *hd_data);
 static void int_system(hd_data_t *hd_data);
 static void int_legacy_geo(hd_data_t *hd_data);
 #endif
+static void int_find_parent(hd_data_t *hd_data);
+
 
 void hd_scan_int(hd_data_t *hd_data)
 {
@@ -108,6 +110,8 @@ void hd_scan_int(hd_data_t *hd_data)
   int_legacy_geo(hd_data);
 #endif
 
+  PROGRESS(16, 0, "parent");
+  int_find_parent(hd_data);
 }
 
 /*
@@ -1121,10 +1125,25 @@ void int_legacy_geo(hd_data_t *hd_data)
 
     }
   }
-
-
 }
-
 #endif
+
+
+void int_find_parent(hd_data_t *hd_data)
+{
+  hd_t *hd, *hd2;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->attached_to || !hd->parent_udi) continue;
+
+    for(hd2 = hd_data->hd; hd2; hd2 = hd2->next) {
+      if(!hd2->udi) continue;
+      if(!strcmp(hd->parent_udi, hd2->udi)) {
+        hd->attached_to = hd2->idx;
+        break;
+      }
+    }
+  }
+}
 
 

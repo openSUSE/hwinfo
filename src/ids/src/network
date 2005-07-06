@@ -633,8 +633,7 @@
 &device.id		pci 0x00e6
 |vendor.id		pci 0x10de
 &device.id		pci 0x01c3
-+baseclass.id		0x002
-+subclass.id		0x00
++hwclass		network
 +driver.module.modprobe	forcedeth
 
 

@@ -22,9 +22,9 @@ typedef enum hddb_entry_e {
   he_vendor_id, he_device_id, he_subvendor_id, he_subdevice_id, he_rev_id,
   he_bus_name, he_baseclass_name, he_subclass_name, he_progif_name,
   he_vendor_name, he_device_name, he_subvendor_name, he_subdevice_name,
-  he_rev_name, he_serial, he_driver, he_requires /* 21 */,
+  he_rev_name, he_serial, he_driver, he_requires,
+  he_detail_ccw_data_cu_model, he_hwclass /* 23 */,
 
-  he_detail_ccw_data_cu_model,
   /* add new entries _here_! */
 
   he_nomask,
@@ -38,7 +38,8 @@ typedef enum hddb_entry_e {
 
 static hddb_entry_t hddb_is_numeric[] = {
   he_bus_id, he_baseclass_id, he_subclass_id, he_progif_id, he_vendor_id,
-  he_device_id, he_subvendor_id, he_subdevice_id, he_rev_id, he_detail_ccw_data_cu_model
+  he_device_id, he_subvendor_id, he_subdevice_id, he_rev_id,
+  he_detail_ccw_data_cu_model, he_hwclass
 };
 
 static char *hddb_entry_strings[] = {
@@ -47,7 +48,7 @@ static char *hddb_entry_strings[] = {
   "bus.name", "baseclass.name", "subclass.name", "progif.name",
   "vendor.name", "device.name", "subvendor.name", "subdevice.name",
   "rev.name", "serial", "driver", "requires",
-  "detail.ccw.data.cu_model",
+  "detail.ccw.data.cu_model", "hwclass",
   "class.id", "driver.module.insmod", "driver.module.modprobe",
   "driver.module.config", "driver.xfree", "driver.xfree.config",
   "driver.mouse", "driver.display", "driver.any"

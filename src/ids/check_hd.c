@@ -10,6 +10,22 @@
 
 #include "../hd/hddb_int.h"
 
+typedef enum hw_item {
+  hw_none = 0, hw_sys, hw_cpu, hw_keyboard, hw_braille, hw_mouse,
+  hw_joystick, hw_printer, hw_scanner, hw_chipcard, hw_monitor, hw_tv,
+  hw_display, hw_framebuffer, hw_camera, hw_sound, hw_storage_ctrl,
+  hw_network_ctrl, hw_isdn, hw_modem, hw_network, hw_disk, hw_partition,
+  hw_cdrom, hw_floppy, hw_manual, hw_usb_ctrl, hw_usb, hw_bios, hw_pci,
+  hw_isapnp, hw_bridge, hw_hub, hw_scsi, hw_ide, hw_memory, hw_dvb,
+  hw_pcmcia, hw_pcmcia_ctrl, hw_ieee1394, hw_ieee1394_ctrl, hw_hotplug,
+  hw_hotplug_ctrl, hw_zip, hw_pppoe, hw_wlan, hw_redasd, hw_dsl, hw_block,
+  hw_tape, hw_vbe, hw_bluetooth,
+  /* append new entries here */
+  hw_unknown, hw_all                                    /* hw_all must be last */
+} hd_hw_item_t;
+
+#include "../hd/hwclass_names.h"
+
 #define TAG_PCI		1	/* pci ids */
 #define TAG_EISA	2	/* eisa ids */
 #define TAG_USB		3	/* usb ids */
@@ -828,10 +844,10 @@ hddb_entry_mask_t add_entry(skey_t *skey, hddb_entry_t idx, char *val)
 {
   hddb_entry_mask_t e_mask = 0;
   int i;
-  unsigned id, tag, range, mask;
+  unsigned id, tag, range, mask, u, u1;
   char *s, *s1, *s2, c;
   hid_t *hid;
-  str_t *str;
+  str_t *str, *str0;
 
   for(i = 0; (unsigned) i < sizeof hddb_is_numeric / sizeof *hddb_is_numeric; i++) {
     if(idx == hddb_is_numeric[i]) break;
@@ -843,7 +859,25 @@ hddb_entry_mask_t add_entry(skey_t *skey, hddb_entry_t idx, char *val)
     /* numeric id */
     e_mask |= 1 << idx;
 
-    i = parse_id(val, &id, &tag, &range, &mask);
+    /* special */
+    if(idx == he_hwclass) {
+      tag = id = 0;
+
+      str0 = split('|', val);
+      for(u1 = 0, str = str0; str && u1 <= 16; str = str->next) {
+        u = hd_hw_item_type(str->str);
+        if(u) {
+          id += u << u1;
+          u1 += 8;
+        }
+      }
+      free_str(str0, 1);
+
+      i = 1;
+    }
+    else {
+      i = parse_id(val, &id, &tag, &range, &mask);
+    }
 
     // printf("parse_id = %d\n", i);
 
@@ -1083,7 +1117,7 @@ void write_id(FILE *f, hddb_entry_t ent, hid_t *hid)
   static char *tag_name[6] = { "", "pci ", "eisa ", "usb ", "special ", "pcmcia " };
   int tag;
   unsigned u;
-  char c;
+  char c, *s;
 
   switch(hid->any.flag) {
     case FLAG_ID:
@@ -1092,7 +1126,15 @@ void write_id(FILE *f, hddb_entry_t ent, hid_t *hid)
         fprintf(stderr, "internal oops\n");
         exit(2);
       }
-      if(tag == TAG_EISA && (ent == he_vendor_id || ent == he_subvendor_id)) {
+      if(ent == he_hwclass) {
+        /* is special */
+        for(u = (hid->num.id & 0xffffff); u; u >>= 8) {
+          s = hd_hw_item_name(u & 0xff);
+          if(s) fprintf(f, "%s", s);
+          if(u > 0x100) fprintf(f, "|");
+        }
+      }
+      else if(tag == TAG_EISA && (ent == he_vendor_id || ent == he_subvendor_id)) {
         fprintf(f, "%s", eisa_str(hid->num.id));
       }
       else {

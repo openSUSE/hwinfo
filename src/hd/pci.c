@@ -35,9 +35,8 @@
  */
 
 static struct sysfs_attribute *hd_read_single_sysfs_attribute(char *path, char *name);
-static void get_pci_data(hd_data_t *hd_data);
 static void add_pci_data(hd_data_t *hd_data);
-static void add_driver_info(hd_data_t *hd_data);
+// static void add_driver_info(hd_data_t *hd_data);
 static pci_t *add_pci_entry(hd_data_t *hd_data, pci_t *new_pci);
 static unsigned char pci_cfg_byte(pci_t *pci, int fd, unsigned idx);
 static void dump_pci_data(hd_data_t *hd_data);
@@ -58,7 +57,7 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
 
   PROGRESS(2, 0, "get sysfs pci data");
 
-  get_pci_data(hd_data);
+  hd_pci_read_data(hd_data);
   if(hd_data->debug) dump_pci_data(hd_data);
 
   add_pci_data(hd_data);
@@ -92,7 +91,7 @@ struct sysfs_attribute *hd_read_single_sysfs_attribute(char *path, char *name)
  * Note: non-root users can only read the first 64 bytes (of 256)
  * of the device headers.
  */
-void get_pci_data(hd_data_t *hd_data)
+void hd_pci_read_data(hd_data_t *hd_data)
 {
   uint64_t ul0, ul1, ul2;
   unsigned u, u0, u1, u2, u3;
@@ -213,7 +212,7 @@ void get_pci_data(hd_data_t *hd_data)
           }
         }
 
-        /* let's get through the capability list */
+        /* let's go through the capability list */
         if(
           pci->hdr_type == PCI_HEADER_TYPE_NORMAL &&
           (nxt = pci->data[PCI_CAPABILITY_LIST])
@@ -262,7 +261,6 @@ void add_pci_data(hd_data_t *hd_data)
 {
   hd_t *hd, *hd2;
   pci_t *pci, *pnext;
-  hd_res_t *res;
   unsigned u;
   char *s, *t;
 
@@ -276,75 +274,20 @@ void add_pci_data(hd_data_t *hd_data)
     s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
     if(s) add_str_list(&hd->drivers, s);
 
-    if(pci->sysfs_bus_id && *pci->sysfs_bus_id) {
-      hd->sysfs_bus_id = new_str(pci->sysfs_bus_id);
-    }
+    hd->detail = new_mem(sizeof *hd->detail);
+    hd->detail->type = hd_detail_pci;
+    hd->detail->pci.data = pci;
 
-    hd->bus.id = bus_pci;
-    hd->slot = pci->slot + (pci->bus << 8);
-    hd->func = pci->func;
-    hd->base_class.id = pci->base_class;
-    hd->sub_class.id = pci->sub_class;
-    hd->prog_if.id = pci->prog_if;
+    pci->next = NULL;
 
-    /* fix up old VGA's entries */
-    if(hd->base_class.id == bc_none && hd->sub_class.id == 0x01) {
-      hd->base_class.id = bc_display;
-      hd->sub_class.id = sc_dis_vga;
-    }
-
-    if(pci->dev || pci->vend) {
-      hd->device.id = MAKE_ID(TAG_PCI, pci->dev);
-      hd->vendor.id = MAKE_ID(TAG_PCI, pci->vend);
-    }
-    if(pci->sub_dev || pci->sub_vend) {
-      hd->sub_device.id = MAKE_ID(TAG_PCI, pci->sub_dev);
-      hd->sub_vendor.id = MAKE_ID(TAG_PCI, pci->sub_vend);
-    }
-    hd->revision.id = pci->rev;
+    hd_pci_complete_data(hd);
 
     if((u = device_class(hd_data, hd->vendor.id, hd->device.id))) {
       hd->base_class.id = u >> 8;
       hd->sub_class.id = u & 0xff;
     }
-
-    for(u = 0; u < sizeof pci->base_addr / sizeof *pci->base_addr; u++) {
-      if((pci->addr_flags[u] & IORESOURCE_IO)) {
-        res = new_mem(sizeof *res);
-        res->io.type = res_io;
-        res->io.enabled = pci->addr_flags[u] & IORESOURCE_DISABLED ? 0 : 1;
-        res->io.base = pci->base_addr[u];
-        res->io.range = pci->base_len[u];
-        res->io.access = pci->addr_flags[u] & IORESOURCE_READONLY ? acc_ro : acc_rw;
-        add_res_entry(&hd->res, res);
-      }
-
-      if((pci->addr_flags[u] & IORESOURCE_MEM)) {
-        res = new_mem(sizeof *res);
-        res->mem.type = res_mem;
-        res->mem.enabled = pci->addr_flags[u] & IORESOURCE_DISABLED ? 0 : 1;
-        res->mem.base = pci->base_addr[u];
-        res->mem.range = pci->base_len[u];
-        res->mem.access = pci->addr_flags[u] & IORESOURCE_READONLY ? acc_ro : acc_rw;
-        res->mem.prefetch = pci->addr_flags[u] & IORESOURCE_PREFETCH ? flag_yes : flag_no;
-        add_res_entry(&hd->res, res);
-      }
-    }
-
-    if(pci->irq) {
-      res = new_mem(sizeof *res);
-      res->irq.type = res_irq;
-      res->irq.enabled = 1;
-      res->irq.base = pci->irq;
-      add_res_entry(&hd->res, res);
-    }
-
-    hd->detail = new_mem(sizeof *hd->detail);
-    hd->detail->type = hd_detail_pci;
-    hd->detail->pci.data = pci;
-    if(pci->flags & (1 << pci_flag_agp)) hd->is.agp = 1;
-    pci->next = NULL;
   }
+
   hd_data->pci = NULL;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -361,10 +304,86 @@ void add_pci_data(hd_data_t *hd_data)
     }
   }
 
-  add_driver_info(hd_data);
+//  add_driver_info(hd_data);
 }
 
 
+void hd_pci_complete_data(hd_t *hd)
+{
+  pci_t *pci;
+  hd_res_t *res;
+  unsigned u;
+
+  if(
+    !hd->detail ||
+    hd->detail->type != hd_detail_pci ||
+    !(pci = hd->detail->pci.data)
+  ) return;
+
+  hd->bus.id = bus_pci;
+
+  if(pci->sysfs_bus_id && *pci->sysfs_bus_id) {
+    hd->sysfs_bus_id = new_str(pci->sysfs_bus_id);
+  }
+
+  hd->slot = pci->slot + (pci->bus << 8);
+  hd->func = pci->func;
+  hd->base_class.id = pci->base_class;
+  hd->sub_class.id = pci->sub_class;
+  hd->prog_if.id = pci->prog_if;
+
+  /* fix up old VGA's entries */
+  if(hd->base_class.id == bc_none && hd->sub_class.id == 0x01) {
+    hd->base_class.id = bc_display;
+    hd->sub_class.id = sc_dis_vga;
+  }
+
+  if(pci->dev || pci->vend) {
+    hd->device.id = MAKE_ID(TAG_PCI, pci->dev);
+    hd->vendor.id = MAKE_ID(TAG_PCI, pci->vend);
+  }
+  if(pci->sub_dev || pci->sub_vend) {
+    hd->sub_device.id = MAKE_ID(TAG_PCI, pci->sub_dev);
+    hd->sub_vendor.id = MAKE_ID(TAG_PCI, pci->sub_vend);
+  }
+  hd->revision.id = pci->rev;
+
+  for(u = 0; u < sizeof pci->base_addr / sizeof *pci->base_addr; u++) {
+    if((pci->addr_flags[u] & IORESOURCE_IO)) {
+      res = new_mem(sizeof *res);
+      res->io.type = res_io;
+      res->io.enabled = pci->addr_flags[u] & IORESOURCE_DISABLED ? 0 : 1;
+      res->io.base = pci->base_addr[u];
+      res->io.range = pci->base_len[u];
+      res->io.access = pci->addr_flags[u] & IORESOURCE_READONLY ? acc_ro : acc_rw;
+      add_res_entry(&hd->res, res);
+    }
+
+    if((pci->addr_flags[u] & IORESOURCE_MEM)) {
+      res = new_mem(sizeof *res);
+      res->mem.type = res_mem;
+      res->mem.enabled = pci->addr_flags[u] & IORESOURCE_DISABLED ? 0 : 1;
+      res->mem.base = pci->base_addr[u];
+      res->mem.range = pci->base_len[u];
+      res->mem.access = pci->addr_flags[u] & IORESOURCE_READONLY ? acc_ro : acc_rw;
+      res->mem.prefetch = pci->addr_flags[u] & IORESOURCE_PREFETCH ? flag_yes : flag_no;
+      add_res_entry(&hd->res, res);
+    }
+  }
+
+  if(pci->irq) {
+    res = new_mem(sizeof *res);
+    res->irq.type = res_irq;
+    res->irq.enabled = 1;
+    res->irq.base = pci->irq;
+    add_res_entry(&hd->res, res);
+  }
+
+  if(pci->flags & (1 << pci_flag_agp)) hd->is.agp = 1;
+}
+
+
+#if 0
 /*
  * Add driver info in some special cases.
  */
@@ -394,6 +413,7 @@ void add_driver_info(hd_data_t *hd_data)
     }
   }
 }
+#endif
 
 
 #if 1

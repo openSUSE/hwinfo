@@ -1,5 +1,7 @@
 6/7/2005:	v11.5
 	- pci devs basically work
+	- use giant ibm notebook database
+	- added 'hwclass' entry to db format
 
 5/7/2005:	v11.4
 	- make C++ happy

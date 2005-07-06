@@ -57,7 +57,11 @@ void hd_scan_hal(hd_data_t *hd_data)
 
   link_hal_tree(hd_data);
 
-  PROGRESS(1, 0, "pci devices");
+  PROGRESS(1, 0, "pci sysfs");
+
+  hd_pci_read_data(hd_data);
+
+  PROGRESS(2, 0, "pci devices");
 
   add_pci(hd_data);
 
@@ -276,6 +280,7 @@ void add_pci(hd_data_t *hd_data)
   int i, j;
   char *s;
   hal_device_t *dev;
+  pci_t *pci;
 
   for(dev = hd_data->hal ; dev; dev = dev->next) {
     if(dev->used) continue;
@@ -284,10 +289,22 @@ void add_pci(hd_data_t *hd_data)
 
     hd = add_hd_entry(hd_data, __LINE__, 0);
 
+    if((prop = hal_get_str(dev->prop, "linux.sysfs_path"))) hd->sysfs_id = new_str(hd_sysfs_id(prop->val.str));
+
+    for(pci = hd_data->pci; pci; pci = pci->next) {
+      if(!strcmp(hd_sysfs_id(pci->sysfs_id), hd->sysfs_id)) {
+        hd->detail = new_mem(sizeof *hd->detail);
+        hd->detail->type = hd_detail_pci;
+        hd->detail->pci.data = pci;
+
+        break;
+      }
+    }
+
+    hd_pci_complete_data(hd);
+
     hd->udi = new_str(dev->udi);
     if(dev->parent) hd->parent_udi = new_str(dev->parent->udi);
-
-    hd->bus.id = bus_pci;
 
     if((prop = hal_get_int32(dev->prop, "pci.device_protocol"))) hd->prog_if.id = prop->val.int32;
     if((prop = hal_get_int32(dev->prop, "pci.device_subclass"))) hd->sub_class.id = prop->val.int32;
@@ -318,10 +335,19 @@ void add_pci(hd_data_t *hd_data)
     if((prop = hal_get_str(dev->prop, "linux.sysfs_path"))) hd->sysfs_id = new_str(hd_sysfs_id(prop->val.str));
 
     if((prop = hal_get_str(dev->prop, "info.linux.driver"))) add_str_list(&hd->drivers, prop->val.str);
-
-
   }
 
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      !hd->detail ||
+      hd->detail->type != hd_detail_pci ||
+      !(pci = hd->detail->pci.data)
+    ) continue;
+
+    pci->next = NULL;
+  }
+
+  hd_data->pci = NULL;
 }
 
 

@@ -229,6 +229,8 @@ str_list_t *hd_module_list(hd_data_t *hd_data, unsigned id);
 
 int hd_is_iseries(hd_data_t *hd_data);
 hal_device_t *hd_free_hal_devices(hal_device_t *dev);
+void hd_pci_complete_data(hd_t *hd);
+void hd_pci_read_data(hd_data_t *hd_data);
 
 #ifdef __cplusplus
 }

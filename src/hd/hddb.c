@@ -54,6 +54,7 @@ typedef struct {
   char *serial;
   str_list_t *driver;
   char *requires;
+  unsigned hwclass;
 } hddb_search_t;
 
 
@@ -652,6 +653,7 @@ hddb_entry_mask_t add_entry(hddb2_data_t *hddb2, tmp_entry_t *te, hddb_entry_t i
   int i;
   unsigned u, u0, u1, u2;
   char *s, c;
+  str_list_t *sl, *sl0;
 
   for(i = 0; (unsigned) i < sizeof hddb_is_numeric / sizeof *hddb_is_numeric; i++) {
     if(idx == hddb_is_numeric[i]) break;
@@ -661,7 +663,23 @@ hddb_entry_mask_t add_entry(hddb2_data_t *hddb2, tmp_entry_t *te, hddb_entry_t i
     /* numeric id */
     mask |= 1 << idx;
 
-    i = parse_id(str, &u0, &u1, &u2);
+    /* special */
+    if(idx == he_hwclass) {
+      sl0 = hd_split('|', str);
+      for(u0 = u1 = 0, sl = sl0; sl && u1 <= 16; sl = sl->next) {
+        u = hd_hw_item_type(sl->str);
+        if(u) {
+          u0 += u << u1;
+          u1 += 8;
+        }
+      }
+      free_str_list(sl0);
+
+      i = 1;
+    }
+    else {
+      i = parse_id(str, &u0, &u1, &u2);
+    }
 
     switch(i) {
       case 1:
@@ -839,7 +857,7 @@ void hddb_dump_skey(hddb2_data_t *hddb, FILE *f, prefix_t pre, hddb_entry_mask_t
   hddb_entry_t ent;
   unsigned rm_val = 0, r_or_m = 0;
   unsigned fl, val, *ids, id, tag, u;
-  char *str_val;
+  char *str_val, *s;
   int i;
 
   if(pre >= sizeof pref_char) return;
@@ -883,7 +901,15 @@ void hddb_dump_skey(hddb2_data_t *hddb, FILE *f, prefix_t pre, hddb_entry_mask_t
       if(fl == FLAG_ID) {
         tag = ID_TAG(val);
         id = ID_VALUE(val);
-        if(tag == TAG_EISA && (ent == he_vendor_id || ent == he_subvendor_id)) {
+        if(ent == he_hwclass) {
+          /* is special */
+          for(u = (val & 0xffffff); u; u >>= 8) {
+            s = hd_hw_item_name(u & 0xff);
+            if(s) fprintf(f, "%s", s);
+            if(u > 0x100) fprintf(f, "|");
+          }
+        }
+        else if(tag == TAG_EISA && (ent == he_vendor_id || ent == he_subvendor_id)) {
           fprintf(f, "%s", eisa_vendor_str(id));
         }
         else {
@@ -1073,9 +1099,15 @@ int compare_ids(hddb2_data_t *hddb, hddb_search_t *hs, hddb_entry_mask_t mask, u
         case he_rev_id:
           id = hs->revision.id;
           break;
+
 	case he_detail_ccw_data_cu_model:
 	  id = hs->cu_model.id;
 	  break;
+
+#if 0
+	/* not allowed as search key */
+	case he_hwclass:
+#endif
 
         default:
           ok = 0;
@@ -1205,6 +1237,7 @@ int compare_ids(hddb2_data_t *hddb, hddb_search_t *hs, hddb_entry_mask_t mask, u
   return res;
 }
 
+
 void complete_ids(
   hddb2_data_t *hddb, hddb_search_t *hs,
   hddb_entry_mask_t key_mask, hddb_entry_mask_t mask, unsigned val_idx
@@ -1269,9 +1302,13 @@ void complete_ids(
         case he_rev_id:
           id = &hs->revision.id;
           break;
-	
+
 	case he_detail_ccw_data_cu_model:
 	  id = &hs->cu_model.id;
+	  break;
+
+	case he_hwclass:
+	  id = &hs->hwclass;
 	  break;
 
         default:
@@ -1532,6 +1569,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
 {
   hddb_search_t hs = {};
   driver_info_t *new_driver_info = NULL;
+  unsigned u;
 #if WITH_ISDN
   cdb_isdn_card *cic;
 #endif
@@ -1680,6 +1718,12 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
   if((hs.value & (1 << he_detail_ccw_data_cu_model))) {
     if(hd->detail && hd->detail->ccw.data)
       hd->detail->ccw.data->cu_model=hs.cu_model.id;
+  }
+
+  if((hs.value & (1 << he_hwclass))) {
+    for(u = hs.hwclass; u; u >>= 8) {
+      hd_set_hw_class(hd, u & 0xff);
+    }
   }
 
   /* look for sub vendor again */

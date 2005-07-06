@@ -116,16 +116,18 @@ typedef enum probe_feature {
  * if you want to modify this: cf. manual.c::hw_items[]
  *
  * Note: hw_tv _must_ be < hw_display!
+ * Sync with check_hd and convert_hd!
  */
 typedef enum hw_item {
-  hw_sys = 1, hw_cpu, hw_keyboard, hw_braille, hw_mouse, hw_joystick,
-  hw_printer, hw_scanner, hw_chipcard, hw_monitor, hw_tv, hw_display,
-  hw_framebuffer, hw_camera, hw_sound, hw_storage_ctrl, hw_network_ctrl,
-  hw_isdn, hw_modem, hw_network, hw_disk, hw_partition, hw_cdrom, hw_floppy,
-  hw_manual, hw_usb_ctrl, hw_usb, hw_bios, hw_pci, hw_isapnp, hw_bridge,
-  hw_hub, hw_scsi, hw_ide, hw_memory, hw_dvb, hw_pcmcia, hw_pcmcia_ctrl,
-  hw_ieee1394, hw_ieee1394_ctrl, hw_hotplug, hw_hotplug_ctrl, hw_zip, hw_pppoe,
-  hw_wlan, hw_redasd, hw_dsl, hw_block, hw_tape, hw_vbe, hw_bluetooth,
+  hw_none = 0, hw_sys, hw_cpu, hw_keyboard, hw_braille, hw_mouse,
+  hw_joystick, hw_printer, hw_scanner, hw_chipcard, hw_monitor, hw_tv,
+  hw_display, hw_framebuffer, hw_camera, hw_sound, hw_storage_ctrl,
+  hw_network_ctrl, hw_isdn, hw_modem, hw_network, hw_disk, hw_partition,
+  hw_cdrom, hw_floppy, hw_manual, hw_usb_ctrl, hw_usb, hw_bios, hw_pci,
+  hw_isapnp, hw_bridge, hw_hub, hw_scsi, hw_ide, hw_memory, hw_dvb,
+  hw_pcmcia, hw_pcmcia_ctrl, hw_ieee1394, hw_ieee1394_ctrl, hw_hotplug,
+  hw_hotplug_ctrl, hw_zip, hw_pppoe, hw_wlan, hw_redasd, hw_dsl, hw_block,
+  hw_tape, hw_vbe, hw_bluetooth,
   /* append new entries here */
   hw_unknown, hw_all					/* hw_all must be last */
 } hd_hw_item_t;
@@ -2442,6 +2444,7 @@ hd_manual_t *hd_free_manual(hd_manual_t *manual);
 hd_t *hd_read_config(hd_data_t *hd_data, const char *id);
 int hd_write_config(hd_data_t *hd_data, hd_t *hd);
 char *hd_hw_item_name(hd_hw_item_t item);
+hd_hw_item_t hd_hw_item_type(char *name);
 char *hd_status_value_name(hd_status_value_t status);
 int hd_change_status(const char *id, hd_status_t status, const char *config_string);
 int hd_read_mmap(hd_data_t *hd_data, char *name, unsigned char *buf, off_t start, unsigned size);

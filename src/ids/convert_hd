@@ -67,7 +67,7 @@ $dump = new Dumpvalue();
   $he_vendor_id, $he_device_id, $he_subvendor_id, $he_subdevice_id, $he_rev_id,
   $he_bus_name, $he_baseclass_name, $he_subclass_name, $he_progif_name,
   $he_vendor_name, $he_device_name, $he_subvendor_name, $he_subdevice_name,
-  $he_rev_name, $he_serial, $he_driver, $he_requires,
+  $he_rev_name, $he_serial, $he_driver, $he_requires, $he_hwclass,
   $he_nomask,
   $he_driver_module_insmod, $he_driver_module_modprobe,
   $he_driver_module_config, $he_driver_xfree, $he_driver_xfree_config,
@@ -80,7 +80,7 @@ $he_class_id = $he_nomask;
   "vendor.id", "device.id", "subvendor.id", "subdevice.id", "rev.id",
   "bus.name", "baseclass.name", "subclass.name", "progif.name",
   "vendor.name", "device.name", "subvendor.name", "subdevice.name",
-  "rev.name", "serial", "driver", "requires",
+  "rev.name", "serial", "driver", "requires", "hwclass",
   "class.id", "driver.module.insmod", "driver.module.modprobe",
   "driver.module.config", "driver.xfree", "driver.xfree.config",
   "driver.mouse", "driver.display", "driver.any"
@@ -113,6 +113,19 @@ $flag_cont = 8;
   'microtek'  => [ 0x10c, 0 ],
   'scanner'   => [ 0x10c, 0 ]
 );
+
+@hwclass_names = (
+  undef, "system", "cpu", "keyboard", "braille", "mouse", "joystick",
+  "printer", "scanner", "chipcard", "monitor", "tv card", "graphics card",
+  "framebuffer", "camera", "sound", "storage", "network", "isdn adapter",
+  "modem", "network interface", "disk", "partition", "cdrom", "floppy",
+  "manual", "usb controller", "usb", "bios", "pci", "isapnp", "bridge",
+  "hub", "scsi", "ide", "memory", "dvb card", "pcmcia", "pcmcia controller",
+  "firewire", "firewire controller", "hotplug", "hotplug controller", "zip",
+  "pppoe", "wlan card", "redasd", "dsl adapter", "block device", "tape",
+  "vesa bios", "bluetooth", "unknown"
+);
+@hwclass_values{@hwclass_names} = ( 0 .. 255 );
 
 
 # options
@@ -711,7 +724,7 @@ sub num
 sub read_id_file
 {
   my ( $line, $file, $file_name, $tag, $pre, $fields, @item, @id, $state, $keyid );
-  my ( $is_id, $i );
+  my ( $is_id, $i, $j );
   local $_;
 
   my $rif_save_item = sub
@@ -843,6 +856,14 @@ sub read_id_file
 
     if($is_id) {
       $id[$keyid] = $str2id->($val);
+    }
+    elsif($keyid == $he_hwclass) {
+      $i = 0;
+      for $j (reverse split /\|/, $val) {
+        $i = ($i << 8) + $hwclass_values{$j} if $hwclass_values{$j};
+        last if $i > 0xffff;
+      }
+      $id[$keyid] = [ $flag_id, 0, $i ] if $i;
     }
     elsif($keyid < $he_nomask) {
       $id[$keyid] = [ $flag_string, $val ];
@@ -2310,13 +2331,22 @@ sub ent_name_pr
 
 sub id_dump
 {
-  my ($id, $ent, $str, $tag, $format);
+  my ($id, $ent, $str, $tag, $format, $u, $s);
 
   ($ent, $id) = @_;
 
   if($id->[0] == $flag_id) {
     $tag = $id->[1];
-    if($tag == $tag_eisa && ($ent == $he_vendor_id || $ent == $he_subvendor_id)) {
+    if($ent == $he_hwclass) {
+      $str = "";
+      for($u = $id->[2] & 0xffffff; $u; $u >>= 8) {
+        if(defined $hwclass_names[$u & 0xff]) {
+          $str .= $hwclass_names[$u & 0xff];
+          $str .= "|" if $u > 0x100;
+        }
+      }
+    }
+    elsif($tag == $tag_eisa && ($ent == $he_vendor_id || $ent == $he_subvendor_id)) {
       $str = eisa_str $id->[2];
     }
     else {

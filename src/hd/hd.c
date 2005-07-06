@@ -796,6 +796,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_block_mods);
       break;
 
+    case hw_none:
     case hw_unknown:
     case hw_ieee1394:
     case hw_hotplug:
@@ -4542,6 +4543,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         case hw_vbe:
           break;
 
+        case hw_none:
         case hw_unknown:
         case hw_all:
         case hw_manual:		/* special */
