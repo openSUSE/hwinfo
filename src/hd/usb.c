@@ -213,9 +213,9 @@ void get_usb_devs(hd_data_t *hd_data)
 
           if((s = hd_attr_str(sysfs_get_device_attr(sf_dev_2, "speed")))) {
             s = canon_str(s, strlen(s));
-            if(strcmp(s, "1.5")) usb->speed = 15*100000;
-            else if(strcmp(s, "12")) usb->speed = 12*1000000;
-            else if(strcmp(s, "240")) usb->speed = 240*1000000;
+            if(!strcmp(s, "1.5")) usb->speed = 15*100000;
+            else if(!strcmp(s, "12")) usb->speed = 12*1000000;
+            else if(!strcmp(s, "480")) usb->speed = 480*1000000;
             ADD2LOG("    speed = \"%s\"\n", s);
             s = free_mem(s);
           }
