@@ -279,6 +279,12 @@ char *hd_status_value_name(hd_status_value_t status)
  */
 hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
 {
+#if 1
+
+  return NULL;
+
+#else
+
   char path[PATH_MAX];
   int i, j, line;
   str_list_t *sl, *sl0;
@@ -471,6 +477,8 @@ hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
   }
 
   return entry;
+
+#endif
 }
 
 
@@ -480,6 +488,12 @@ hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
 
 int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
 {
+#if 1
+
+  return 0;
+
+#else
+
   FILE *f;
   char path[PATH_MAX];
   int error = 0;
@@ -612,6 +626,8 @@ int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
   }
 
   return error;
+
+#endif
 }
 
 

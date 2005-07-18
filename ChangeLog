@@ -1,3 +1,6 @@
+18/7/2005:	v11.6
+	- rip out remaining old db access methods
+
 6/7/2005:	v11.5
 	- pci devs basically work
 	- use giant ibm notebook database
