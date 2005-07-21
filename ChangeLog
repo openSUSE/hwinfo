@@ -1,3 +1,6 @@
+21/7/2005:	v11.7
+	- read/write udi-based persitent properties works
+
 18/7/2005:	v11.6
 	- rip out remaining old db access methods
 

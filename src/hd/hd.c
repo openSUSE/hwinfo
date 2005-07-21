@@ -142,7 +142,6 @@ static int has_item(hd_hw_item_t *items, hd_hw_item_t item);
 static int has_hw_class(hd_t *hd, hd_hw_item_t *items);
 static void hd_scan_with_hal(hd_data_t *hd_data);
 static void hd_scan_no_hal(hd_data_t *hd_data);
-static hal_prop_t *hd_free_hal_properties(hal_prop_t *prop);
 
 static void test_read_block0_open(void *arg);
 static void get_kernel_version(hd_data_t *hd_data);
@@ -1856,7 +1855,13 @@ void hd_scan(hd_data_t *hd_data)
 
 void hd_scan_with_hal(hd_data_t *hd_data)
 {
+  hd_t *hd;
+
   hd_scan_hal(hd_data);
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(!hd->persistent_prop) hd->persistent_prop = hd_read_properties(hd->udi);
+  }
 
 }
 

@@ -46,6 +46,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
   hd_t *hd_tmp;
   int i, j;
   str_list_t *sl;
+  hal_prop_t *prop;
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -192,6 +193,22 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line0("\n");
   }
 
+  if(hd_data->debug == -1 && (prop = h->hal_prop)) {
+    dump_line_str("HAL Properties:\n");
+    for(; prop; prop = prop->next) {
+      s = hd_hal_print_prop(prop);
+      dump_line("  %s\n", s);
+    }
+  }
+
+  if(hd_data->debug == -1 && (prop = h->persistent_prop)) {
+    dump_line_str("Persistent Properties:\n");
+    for(; prop; prop = prop->next) {
+      s = hd_hal_print_prop(prop);
+      dump_line("  %s\n", s);
+    }
+  }
+
   if(
     hd_data->debug && (
       h->status.configured ||
@@ -252,9 +269,9 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
 
   if(h->detail && h->detail->ccw.type==hd_detail_ccw)
   {
-  	  dump_line("LCSS: %x.%x\n",h->detail->ccw.data->lcss >> 8, h->detail->ccw.data->lcss & 0xf);
-	  dump_line("CU Model: 0x%x\n",h->detail->ccw.data->cu_model);
-	  dump_line("Device Model: 0x%x\n",h->detail->ccw.data->dev_model);
+    dump_line("LCSS: %x.%x\n",h->detail->ccw.data->lcss >> 8, h->detail->ccw.data->lcss & 0xf);
+    dump_line("CU Model: 0x%x\n",h->detail->ccw.data->cu_model);
+    dump_line("Device Model: 0x%x\n",h->detail->ccw.data->dev_model);
   }
 
 #if defined(__s390__) || defined(__s390x__)

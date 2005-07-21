@@ -52,6 +52,7 @@ extern "C" {
  * libhd's directory
  */
 #define HARDWARE_DIR		"/var/lib/hardware"
+#define HARDWARE_UDI		HARDWARE_DIR "/udi"
 #define HARDWARE_UNIQUE_KEYS	HARDWARE_DIR "/unique-keys"
 
 /**
@@ -2227,6 +2228,10 @@ typedef struct s_hd_t {
 
   str_list_t *requires;		/* packages/programs required for this hardware */
 
+  hal_prop_t *hal_prop;		/* hal property list */
+
+  hal_prop_t *persistent_prop;	/* persistent property list */
+
   /*
    * These are used internally for memory management.
    * Do not even _think_ of modifying these!
@@ -2419,6 +2424,10 @@ int hd_is_hw_class(hd_t *hd, hd_hw_item_t hw_class);
 int hd_is_sgi_altix(hd_data_t *hd_data);
 
 char *hd_version(void);
+
+hal_prop_t *hd_free_hal_properties(hal_prop_t *prop);
+hal_prop_t *hd_read_properties(char *udi);
+int hd_write_properties(char *udi, hal_prop_t *prop);
 
 /* implemented in hddb.c */
 

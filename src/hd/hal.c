@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 #include <fcntl.h>
 #include <inttypes.h>
 #include <errno.h>
@@ -31,6 +32,12 @@ static hal_prop_t *hal_get_str(hal_prop_t *prop, char *key);
 static char *hal_get_useful_str(hal_prop_t *prop, char *key);
 static int hal_match_str(hal_prop_t *prop, char *key, char *val);
 
+static int check_udi(char *udi);
+static FILE *hd_open_properties(char *udi, char *mode);
+static char *skip_space(char *s);
+static char *skip_non_eq_or_space(char *s);
+static char *skip_nonquote(char *s);
+static void parse_property(hal_prop_t *prop, char *str);
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  *
@@ -75,11 +82,10 @@ void read_hal(hd_data_t *hd_data)
   LibHalContext *hal_ctx;
   LibHalPropertySet *props;
   LibHalPropertySetIterator it;
-  char **device_names, **slist;
+  char **device_names, **slist, *s;
   int i, num_devices, type;
   hal_device_t *dev;
   hal_prop_t *prop;
-  str_list_t *sl;
 
   dbus_error_init(&error);
 
@@ -130,35 +136,30 @@ void read_hal(hd_data_t *hd_data)
             prop->type = p_string;
             prop->key = new_str(libhal_psi_get_key(&it));
             prop->val.str = new_str(libhal_psi_get_string(&it));
-            ADD2LOG("  %s = '%s' (string)\n", prop->key, prop->val.str);
             break;
 
           case LIBHAL_PROPERTY_TYPE_INT32:
             prop->type = p_int32;
             prop->key = new_str(libhal_psi_get_key(&it));
             prop->val.int32 = libhal_psi_get_int(&it);
-            ADD2LOG("  %s = %d (0x%x) (int)\n", prop->key, prop->val.int32, prop->val.int32);
             break;
 
           case LIBHAL_PROPERTY_TYPE_UINT64:
             prop->type = p_uint64;
             prop->key = new_str(libhal_psi_get_key(&it));
             prop->val.uint64 = libhal_psi_get_uint64(&it);
-            ADD2LOG("  %s = %"PRId64" (0x%"PRIx64") (uint64)\n", prop->key, prop->val.uint64, prop->val.uint64);
             break;
 
           case LIBHAL_PROPERTY_TYPE_DOUBLE:
             prop->type = p_double;
             prop->key = new_str(libhal_psi_get_key(&it));
             prop->val.d = libhal_psi_get_double(&it);
-            ADD2LOG("  %s = %g (double)\n", prop->key, prop->val.d);
             break;
 
           case LIBHAL_PROPERTY_TYPE_BOOLEAN:
             prop->type = p_bool;
             prop->key = new_str(libhal_psi_get_key(&it));
             prop->val.b = libhal_psi_get_bool(&it);
-            ADD2LOG("  %s = %s (bool)\n", prop->key, prop->val.b ? "true" : "false");
             break;
 
           case LIBHAL_PROPERTY_TYPE_STRLIST:
@@ -167,15 +168,14 @@ void read_hal(hd_data_t *hd_data)
             for(slist = libhal_psi_get_strlist(&it); *slist; slist++) {
               add_str_list(&prop->val.list, *slist);
             }
-            ADD2LOG("  %s = { ", prop->key);
-            for(sl = prop->val.list; sl; sl = sl->next) {
-              ADD2LOG("'%s'%s", sl->str, sl->next ? ", " : "");
-            }
-            ADD2LOG(" } (string list)\n");
             break;
 
           default:
             prop->type = p_invalid;
+        }
+
+        if((s = hd_hal_print_prop(prop))) {
+          ADD2LOG("  %s\n", s);
         }
       }
 
@@ -335,6 +335,9 @@ void add_pci(hd_data_t *hd_data)
     if((prop = hal_get_str(dev->prop, "linux.sysfs_path"))) hd->sysfs_id = new_str(hd_sysfs_id(prop->val.str));
 
     if((prop = hal_get_str(dev->prop, "info.linux.driver"))) add_str_list(&hd->drivers, prop->val.str);
+
+    hd->hal_prop = dev->prop;
+    dev->prop = NULL;
   }
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -348,6 +351,274 @@ void add_pci(hd_data_t *hd_data)
   }
 
   hd_data->pci = NULL;
+}
+
+
+char *hd_hal_print_prop(hal_prop_t *prop)
+{
+  static char *s = NULL;
+  str_list_t *sl;
+
+  switch(prop->type) {
+    case p_string:
+      str_printf(&s, 0, "%s = '%s'", prop->key, prop->val.str);
+      break;
+
+    case p_int32:
+      str_printf(&s, 0, "%s = %d (0x%x)", prop->key, prop->val.int32, prop->val.int32);
+      break;
+
+    case p_uint64:
+      str_printf(&s, 0, "%s = %"PRIu64"ull (0x%"PRIx64"ull)", prop->key, prop->val.uint64, prop->val.uint64);
+      break;
+
+    case p_double:
+      str_printf(&s, 0, "%s = %#g", prop->key, prop->val.d);
+      break;
+
+    case p_bool:
+      str_printf(&s, 0, "%s = %s", prop->key, prop->val.b ? "true" : "false");
+      break;
+
+    case p_list:
+      str_printf(&s, 0, "%s = { ", prop->key);
+      for(sl = prop->val.list; sl; sl = sl->next) {
+        str_printf(&s, -1, "'%s'%s", sl->str, sl->next ? ", " : "");
+      }
+      str_printf(&s, -1, " }");
+      break;
+
+    case p_invalid:
+      str_printf(&s, 0, "%s", prop->key);
+      break;
+  }
+
+  return s;
+}
+
+
+/*
+ * Ensure that udi is a sane path name.
+ *
+ * return:
+ *   0/1: fail/ok
+ */
+int check_udi(char *udi)
+{
+  if(
+    !udi ||
+    !strncmp(udi, "../", sizeof "../" - 1) ||
+    strstr(udi, "/../") ||
+    strstr(udi, "//")
+  ) return 0;
+
+  return 1;
+}
+
+
+int hd_write_properties(char *udi, hal_prop_t *prop)
+{
+  FILE *f;
+  char *s;
+
+  f = hd_open_properties(udi, "w");
+
+  if(!f) return 1;
+
+  for(; prop; prop = prop->next) {
+    s = hd_hal_print_prop(prop);
+    if(s) fprintf(f, "%s\n", s);
+  }
+
+  fclose(f);
+
+  return 0;
+}
+
+
+hal_prop_t *hd_read_properties(char *udi)
+{
+  char *path = NULL;
+  str_list_t *sl0, *sl;
+  hal_prop_t *prop_list = NULL, *prop_list_e = NULL, prop, *p;
+
+  if(!udi) return NULL;
+
+  while(*udi == '/') udi++;
+
+  if(!check_udi(udi)) return NULL;
+
+  str_printf(&path, 0, "%s/%s", HARDWARE_UDI, udi);
+
+  sl0 = read_file(path, 0, 0);
+
+  free_mem(path);
+
+  for(sl = sl0; sl; sl = sl->next) {
+    parse_property(&prop, sl->str);
+    if(prop.type != p_invalid) {
+      p = new_mem(sizeof *p);
+      *p = prop;
+      if(prop_list) {
+        prop_list_e->next = p;
+        prop_list_e = prop_list_e->next;
+      }
+      else {
+        prop_list = prop_list_e = p;
+      }
+    }
+    else {
+      prop.key = free_mem(prop.key);
+    }
+  }
+
+  return prop_list;
+}
+
+
+FILE *hd_open_properties(char *udi, char *mode)
+{
+  str_list_t *path, *sl;
+  struct stat sbuf;
+  char *dir = NULL;
+  int err, i;
+  FILE *f = NULL;
+
+  if(!udi) return f;
+  while(*udi == '/') udi++;
+
+  if(!check_udi(udi)) return f;
+
+  path = hd_split('/', udi);
+
+  if(!path) return f;
+
+  dir = new_str(HARDWARE_UDI);
+
+  for(err = 0, sl = path; sl->next; sl = sl->next) {
+    str_printf(&dir, -1, "/%s", sl->str);
+    i = lstat(dir, &sbuf);
+    if(i == -1 && errno == ENOENT) {
+      mkdir(dir, 0755);
+      i = lstat(dir, &sbuf);
+    }
+    if(i || !S_ISDIR(sbuf.st_mode)) {
+      err = 1;
+      break;
+    }
+  }
+
+  if(!err) {
+    str_printf(&dir, -1, "/%s", sl->str);
+    f = fopen(dir, mode);
+  }
+
+  free_mem(dir);
+
+  return f;
+}
+
+
+char *skip_space(char *s)
+{
+  while(isspace(*s)) s++;
+
+  return s;
+}
+
+
+char *skip_non_eq_or_space(char *s)
+{
+  while(*s && *s != '=' && !isspace(*s)) s++;
+
+  return s;
+}
+
+
+char *skip_nonquote(char *s)
+{
+  while(*s && *s != '\'') s++;
+
+  return s;
+}
+
+
+void parse_property(hal_prop_t *prop, char *str)
+{
+  char *s, *s1, *key, *s_val;
+  int l;
+
+  memset(prop, 0, sizeof *prop);
+  prop->type = p_invalid;
+
+  s = skip_space(str);
+  s = skip_non_eq_or_space(key = s);
+
+  *s++ = 0;
+  if(!*key) return;
+
+  s = skip_space(s);
+  if(*s == '=') s++;
+  s = skip_space(s);
+
+  prop->key = new_str(key);
+
+  if(!*s) return;
+
+  if(*s == '\'') {
+    s_val = s + 1;
+    s = strrchr(s_val, '\'');
+    *(s ?: s_val) = 0;
+    prop->type = p_string;
+    prop->val.str = strdup(s_val);
+  }
+  else if(*s == '{') {
+    s_val = skip_space(s + 1);
+    s1 = strrchr(s_val, '}');
+    if(s1) *s1 = 0;
+    prop->type = p_list;
+    while(*s_val++ == '\'') {
+      s = skip_nonquote(s_val);
+      if(*s) *s++ = 0;
+      add_str_list(&prop->val.list, s_val);
+      s_val = skip_nonquote(s);
+    }
+  }
+  else if(!strncmp(s, "true", 4)) {
+    s += 4;
+    prop->type = p_bool;
+    prop->val.b = 1;
+  }
+  else if(!strncmp(s, "false", 5)) {
+    s += 5;
+    prop->type = p_bool;
+    prop->val.b = 0;
+  }
+  else if(isdigit(*s) || *s == '+' || *s == '-' || *s == '.') {
+    *skip_non_eq_or_space(s) = 0;
+    if(strchr(s, '.')) {
+      prop->type = p_double;
+      prop->val.d = strtod(s, NULL);
+    }
+    else {
+      l = strlen(s);
+      if(l >= 2 && s[l - 2] == 'l' && s[l - 1] == 'l') {
+        prop->type = p_uint64;
+        s[l -= 2] = 0;
+      }
+      else {
+        prop->type = p_int32;
+      }
+      if(l >= 1 && s[l - 1] == 'u') s[--l] = 0;
+
+      if(prop->type == p_int32) {
+        prop->val.int32 = strtol(s, NULL, 0);
+      }
+      else {
+        prop->val.uint64 = strtoull(s, NULL, 0);
+      }
+    }
+  }
 }
 
 

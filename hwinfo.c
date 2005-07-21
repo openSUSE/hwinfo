@@ -48,6 +48,7 @@ void dump_db(hd_data_t *hd_data);
 void do_chroot(hd_data_t *hd_data, char *dir);
 void ask_db(hd_data_t *hd_data, char *query);
 void get_mapping(hd_data_t *hd_data);
+void write_udi(hd_data_t *hd_data, char *udi);
 
 
 struct {
@@ -78,6 +79,7 @@ struct option options[] = {
   { "listmd", 0, NULL, 312 },
   { "map", 0, NULL, 313 },
   { "kernel-version", 1, NULL, 314 },
+  { "write-udi", 1, NULL, 315 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -261,6 +263,10 @@ int main(int argc, char **argv)
 
         case 314:
           if(*optarg) setenv("LIBHD_KERNELVERSION", optarg, 1);
+          break;
+
+        case 315:
+          write_udi(hd_data, optarg);
           break;
 
         case 400:
@@ -2098,6 +2104,22 @@ void get_mapping(hd_data_t *hd_data)
     }
 
   }
-
 }
+
+
+void write_udi(hd_data_t *hd_data, char *udi)
+{
+  hal_prop_t prop = {};
+  int i;
+
+  prop.type = p_string;
+  prop.key = "foo.bar";
+  prop.val.str = "test XXX";
+
+  i = hd_write_properties(udi, &prop);
+
+  fprintf(stderr, "write = %d\n", i);
+}
+
+
 

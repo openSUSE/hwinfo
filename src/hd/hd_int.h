@@ -232,6 +232,9 @@ hal_device_t *hd_free_hal_devices(hal_device_t *dev);
 void hd_pci_complete_data(hd_t *hd);
 void hd_pci_read_data(hd_data_t *hd_data);
 
+char *hd_hal_print_prop(hal_prop_t *prop);
+
+
 #ifdef __cplusplus
 }
 #endif
