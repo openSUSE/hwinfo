@@ -201,7 +201,7 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     }
   }
 
-  if(hd_data->debug == -1 && (prop = h->persistent_prop)) {
+  if((prop = h->persistent_prop)) {
     dump_line_str("Persistent Properties:\n");
     for(; prop; prop = prop->next) {
       s = hd_hal_print_prop(prop);
