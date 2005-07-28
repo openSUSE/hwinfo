@@ -32,8 +32,8 @@ static hal_prop_t *hal_get_str(hal_prop_t *prop, char *key);
 static char *hal_get_useful_str(hal_prop_t *prop, char *key);
 static int hal_match_str(hal_prop_t *prop, char *key, char *val);
 
-static int check_udi(char *udi);
-static FILE *hd_open_properties(char *udi, char *mode);
+static int check_udi(const char *udi);
+static FILE *hd_open_properties(const char *udi, const char *mode);
 static char *skip_space(char *s);
 static char *skip_non_eq_or_space(char *s);
 static char *skip_nonquote(char *s);
@@ -403,7 +403,7 @@ char *hd_hal_print_prop(hal_prop_t *prop)
  * return:
  *   0/1: fail/ok
  */
-int check_udi(char *udi)
+int check_udi(const char *udi)
 {
   if(
     !udi ||
@@ -416,7 +416,7 @@ int check_udi(char *udi)
 }
 
 
-int hd_write_properties(char *udi, hal_prop_t *prop)
+int hd_write_properties(const char *udi, hal_prop_t *prop)
 {
   FILE *f;
   char *s;
@@ -436,7 +436,7 @@ int hd_write_properties(char *udi, hal_prop_t *prop)
 }
 
 
-hal_prop_t *hd_read_properties(char *udi)
+hal_prop_t *hd_read_properties(const char *udi)
 {
   char *path = NULL;
   str_list_t *sl0, *sl;
@@ -476,7 +476,7 @@ hal_prop_t *hd_read_properties(char *udi)
 }
 
 
-FILE *hd_open_properties(char *udi, char *mode)
+FILE *hd_open_properties(const char *udi, const char *mode)
 {
   str_list_t *path, *sl;
   struct stat sbuf;

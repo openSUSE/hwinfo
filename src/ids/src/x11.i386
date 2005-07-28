@@ -3513,11 +3513,15 @@
 +device.name		915 GM
 +driver.xfree		4|i810
 +driver.xfree.config	Option "NoDDC"
++driver.xfree		4|i810|3d||dri
++driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2772
 +device.name		945G
 +driver.xfree		4|i810
++driver.xfree.config	Option "NoDDC"
++driver.xfree		4|i810|3d||dri
 +driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086

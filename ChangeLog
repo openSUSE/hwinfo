@@ -1,3 +1,6 @@
+	- updated X11 data
+	- implement compat wrapper to keep old db functions working
+
 25/7/2005:	v11.8
 	- updated X11 data
 	- static mpt fusion pci id data removed (#97665)

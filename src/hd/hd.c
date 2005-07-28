@@ -4979,20 +4979,20 @@ int hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res
 }
 
 
-str_list_t *hd_split(char del, char *str)
+str_list_t *hd_split(char del, const char *str)
 {
-  char *t, *s;
+  char *t, *s, *str0;
   str_list_t *sl = NULL;
 
   if(!str) return NULL;
 
-  for(s = str = new_str(str); (t = strchr(s, del)); s = t + 1) {
+  for(s = str0 = new_str(str); (t = strchr(s, del)); s = t + 1) {
     *t = 0;
     add_str_list(&sl, s);
   }
   add_str_list(&sl, s);
 
-  free_mem(str);
+  free_mem(str0);
 
   return sl;
 }

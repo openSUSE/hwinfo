@@ -197,7 +197,7 @@ char *vend_id2str(unsigned vend);
 
 int hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res_t **size);
 
-str_list_t *hd_split(char del, char *str);
+str_list_t *hd_split(char del, const char *str);
 char *hd_join(char *del, str_list_t *str);
 
 int is_pnpinfo(ser_device_t *mi, int ofs);

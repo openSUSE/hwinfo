@@ -123,7 +123,7 @@ static hash_t hw_ids_hd_items[] = {
 
 #ifndef LIBHD_TINY
 
-static void dump_manual(hd_data_t *hd_data);
+// static void dump_manual(hd_data_t *hd_data);
 static unsigned str2id(char *str);
 static void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd);
 static void hd2manual(hd_t *hd, hd_manual_t *entry);
@@ -160,26 +160,7 @@ void hd_scan_manual(hd_data_t *hd_data)
     closedir(dir);
   }
 
-  /* for compatibility: read old files, too */
-  if((dir = opendir(HARDWARE_DIR))) {
-    i = 0;
-    while((de = readdir(dir))) {
-      if(*de->d_name == '.') continue;
-      for(entry = hd_data->manual; entry; entry = entry->next) {
-        if(entry->unique_id && !strcmp(entry->unique_id, de->d_name)) break;
-      }
-      if(entry) continue;
-      PROGRESS(2, ++i, "read");
-      if((entry = hd_manual_read_entry(hd_data, de->d_name))) {
-        ADD2LOG("  got %s\n", entry->unique_id);
-        *entry_next = entry;
-        entry_next = &entry->next;
-      }
-    }
-    closedir(dir);
-  }
-
-  if(hd_data->debug) dump_manual(hd_data);
+//  if(hd_data->debug) dump_manual(hd_data);
 
   /* initialize some useful status value */
   for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -274,17 +255,15 @@ char *hd_status_value_name(hd_status_value_t status)
   return key2value(status_names, status);
 }
 
+
 /*
  * read an entry
  */
 hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
 {
 #if 1
-
   return NULL;
-
 #else
-
   char path[PATH_MAX];
   int i, j, line;
   str_list_t *sl, *sl0;
@@ -477,8 +456,59 @@ hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
   }
 
   return entry;
-
 #endif
+}
+
+
+/*
+ * read an entry
+ */
+hal_prop_t *hd_manual_read_entry_old(hd_data_t *hd_data, const char *id)
+{
+  char path[PATH_MAX];
+  int line;
+  str_list_t *sl, *sl0;
+  char *s, *s1, *s2;
+  hal_prop_t *prop_list = NULL, *prop = NULL;
+
+  snprintf(path, sizeof path, "%s/%s", HARDWARE_UNIQUE_KEYS, id);
+
+  if(!(sl0 = read_file(path, 0, 0))) return prop_list;
+
+  for(line = 1, sl = sl0; sl; sl = sl->next, line++) {
+    s = sl->str;
+    while(isspace(*s)) s++;
+    if(!*s || *s == '#' || *s == ';') continue;	/* empty lines & comments */
+
+    s2 = s;
+    s1 = strsep(&s2, "=");
+
+    if(!s2 && *s == '[') continue;
+
+    if(!s2) {
+      ADD2LOG("  %s: invalid line %d\n", id, line);
+      break;
+    }
+
+    if(s1) {
+      if(prop) {
+        prop->next = new_mem(sizeof *prop);
+        prop = prop->next;
+      }
+      else {
+        prop_list = prop = new_mem(sizeof *prop);
+      }
+
+      prop->type = p_string;
+      for(s = s1; *s; s++) if(*s >= 'A' && *s <= 'Z') *s += 'a' - 'A';
+      str_printf(&prop->key, 0, "hwinfo.%s", s1);
+      prop->val.str = canon_str(s2, strlen(s2));
+    }
+  }
+
+  free_str_list(sl0);
+
+  return prop_list;
 }
 
 
@@ -631,6 +661,7 @@ int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
 }
 
 
+#if 0
 void dump_manual(hd_data_t *hd_data)
 {
   hd_manual_t *entry;
@@ -694,7 +725,7 @@ void dump_manual(hd_data_t *hd_data)
   }
   ADD2LOG("----- %s end -----\n", txt);
 }
-
+#endif
 
 unsigned str2id(char *str)
 {
@@ -1436,19 +1467,20 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
 hd_t *hd_read_config(hd_data_t *hd_data, const char *id)
 {
   hd_t *hd = NULL;
-  hd_manual_t *entry;
+  hal_prop_t *prop;
 
   hddb_init(hd_data);
 
-  entry = hd_manual_read_entry(hd_data, id);
+  prop = hd_read_properties(id);
+  if(!prop) prop = hd_manual_read_entry_old(hd_data, id);
 
-  if(entry) {
+  if(prop) {
     hd = new_mem(sizeof *hd);
     hd->module = hd_data->module;
     hd->line = __LINE__;
     hd->tag.freeit = 1;		/* make it a 'stand alone' entry */
-    manual2hd(hd_data, entry, hd);
-    hd_free_manual(entry);
+    hd->persistent_prop = prop;
+//    prop2hd(hd_data, hd);
   }
 
   return hd;

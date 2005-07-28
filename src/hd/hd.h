@@ -2426,8 +2426,8 @@ int hd_is_sgi_altix(hd_data_t *hd_data);
 char *hd_version(void);
 
 hal_prop_t *hd_free_hal_properties(hal_prop_t *prop);
-hal_prop_t *hd_read_properties(char *udi);
-int hd_write_properties(char *udi, hal_prop_t *prop);
+hal_prop_t *hd_read_properties(const char *udi);
+int hd_write_properties(const char *udi, hal_prop_t *prop);
 
 /* implemented in hddb.c */
 
