@@ -2343,7 +2343,7 @@ typedef struct {
   devtree_t *devtree;		/**< (Internal) prom device tree on ppc */
   unsigned kernel_version;	/**< (Internal) kernel version */
   int in_vmware;		/**< (Internal) running in vmware */
-  hd_manual_t *manual;		/**< (Internal) hardware config info */
+  hd_t *manual;			/**< (Internal) hardware config info */
   str_list_t *disks;		/**< (Internal) disks according to /proc/partitions */
   str_list_t *partitions;	/**< (Internal) dto, partitions */
   str_list_t *cdroms;		/**< (Internal) cdroms according to PROC_CDROM_INFO */

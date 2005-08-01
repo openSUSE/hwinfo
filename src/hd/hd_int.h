@@ -234,6 +234,9 @@ void hd_pci_read_data(hd_data_t *hd_data);
 
 char *hd_hal_print_prop(hal_prop_t *prop);
 
+hal_prop_t *hal_get_int32(hal_prop_t *prop, char *key);
+hal_prop_t *hal_get_str(hal_prop_t *prop, char *key);
+
 
 #ifdef __cplusplus
 }

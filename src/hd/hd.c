@@ -859,7 +859,17 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->cmd_line = free_mem(hd_data->cmd_line);
   hd_data->xtra_hd = free_str_list(hd_data->xtra_hd);
   hd_data->devtree = free_devtree(hd_data);
-  hd_data->manual = hd_free_manual(hd_data->manual);
+
+#if 0
+  // always NULL -> manual.c
+  for(hd = hd_data->manual; hd; hd = next) {
+    next = hd->next;
+    hd->next = NULL;
+    hd_free_hd_list(hd);
+  }
+  hd_data->manual = NULL;
+#endif
+
   hd_data->disks = free_str_list(hd_data->disks);
   hd_data->partitions = free_str_list(hd_data->partitions);
   hd_data->cdroms = free_str_list(hd_data->cdroms);
@@ -1326,28 +1336,9 @@ scsi_t *free_scsi(scsi_t *scsi, int free_all)
 }
 
 
+// FIXME: obsolete
 hd_manual_t *hd_free_manual(hd_manual_t *manual)
 {
-  hd_manual_t *next;
-
-  if(!manual) return NULL;
-
-  for(; manual; manual = next) {
-    next = manual->next;
-
-    free_mem(manual->unique_id);
-    free_mem(manual->parent_id);
-    free_mem(manual->child_ids);
-    free_mem(manual->model);
-
-    free_mem(manual->config_string);
-
-    free_str_list(manual->key);
-    free_str_list(manual->value);
-
-    free_mem(manual);
-  }
-
   return NULL;
 }
 
@@ -4826,28 +4817,28 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
 int hd_change_status(const char *id, hd_status_t status, const char *config_string)
 {
   hd_data_t *hd_data;
-  hd_manual_t *entry;
+  hd_t *hd;
   int i;
 
   hd_data = new_mem(sizeof *hd_data);
 
-  entry = hd_manual_read_entry(hd_data, (char *) id);
+  hd = hd_read_config(hd_data, id);
 
-  if(!entry || status.invalid) return 1;
+  if(!hd || hd->status.invalid) return 1;
 
-  if(status.configured) entry->status.configured = status.configured;
-  if(status.available) entry->status.available = status.available;
-  if(status.needed) entry->status.needed = status.needed;
-  entry->status.invalid = status.invalid;
+  if(status.configured) hd->status.configured = status.configured;
+  if(status.available) hd->status.available = status.available;
+  if(status.needed) hd->status.needed = status.needed;
+  hd->status.invalid = status.invalid;
 
-  if(config_string) {
-    free_mem(entry->config_string);
-    entry->config_string = new_str(config_string);
+  if(hd->config_string) {
+    free_mem(hd->config_string);
+    hd->config_string = new_str(config_string);
   }
 
-  i = hd_manual_write_entry(hd_data, entry);
+  i = hd_write_config(hd_data, hd);
   
-  hd_free_manual(entry);
+  hd_free_hd_list(hd);
 
   hd_free_hd_data(hd_data);
 

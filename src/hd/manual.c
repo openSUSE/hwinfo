@@ -123,18 +123,14 @@ static hash_t hw_ids_hd_items[] = {
 
 #ifndef LIBHD_TINY
 
-// static void dump_manual(hd_data_t *hd_data);
 static unsigned str2id(char *str);
-static void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd);
-static void hd2manual(hd_t *hd, hd_manual_t *entry);
 
 void hd_scan_manual(hd_data_t *hd_data)
 {
   DIR *dir;
   struct dirent *de;
-  hd_manual_t *entry, **entry_next;
   int i;
-  hd_t *hd, *hd1;
+  hd_t *hd, *hd1, *next, *hdm, **next2;
 
   if(!hd_probe_feature(hd_data, pr_manual)) return;
 
@@ -143,24 +139,48 @@ void hd_scan_manual(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
 
-  hd_data->manual = hd_free_manual(hd_data->manual);
-  entry_next = &hd_data->manual;
+  for(hd = hd_data->manual; hd; hd = next) {
+    next = hd->next; 
+    hd->next = NULL;
+    hd_free_hd_list(hd);
+  }
+  hd_data->manual = NULL;
 
-  if((dir = opendir(HARDWARE_UNIQUE_KEYS))) {
+  next2 = &hd_data->manual;
+
+  if((dir = opendir(HARDWARE_UDI))) {
     i = 0;
     while((de = readdir(dir))) {
       if(*de->d_name == '.') continue;
       PROGRESS(1, ++i, "read");
-      if((entry = hd_manual_read_entry(hd_data, de->d_name))) {
-        ADD2LOG("  got %s\n", entry->unique_id);
-        *entry_next = entry;
-        entry_next = &entry->next;
+      if((hd = hd_read_config(hd_data, de->d_name))) {
+        ADD2LOG("  got %s\n", hd->unique_id);
+        *next2 = hd;
+        next2 = &hd->next;
       }
     }
     closedir(dir);
   }
 
-//  if(hd_data->debug) dump_manual(hd_data);
+  // FIXME!
+  if((dir = opendir(HARDWARE_UNIQUE_KEYS))) {
+    i = 0;
+    while((de = readdir(dir))) {
+      if(*de->d_name == '.') continue;
+      PROGRESS(2, ++i, "read");
+      // evil kludge
+      for(hd = hd_data->manual; hd; hd = hd->next) {
+        if(hd->unique_id && !strcmp(hd->unique_id, de->d_name)) break;
+      }
+      if(hd) continue;
+      if((hd = hd_read_config(hd_data, de->d_name))) {
+        ADD2LOG("  got %s\n", hd->unique_id);
+        *next2 = hd;
+        next2 = &hd->next;
+      }
+    }
+    closedir(dir);
+  }
 
   /* initialize some useful status value */
   for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -179,27 +199,35 @@ void hd_scan_manual(hd_data_t *hd_data)
   }
 
   hd_data->flags.keep_kmods = 1;
-  for(entry = hd_data->manual; entry; entry = entry->next) {
+  for(hdm = hd_data->manual; hdm; hdm = next) {
+    next = hdm->next;
 
     for(hd = hd_data->hd; hd; hd = hd->next) {
-      if(hd->unique_id && !strcmp(hd->unique_id, entry->unique_id)) break;
+      if(hd->unique_id && hdm->unique_id && !strcmp(hd->unique_id, hdm->unique_id)) break;
     }
 
     if(hd) {
       /* just update config status */
-      hd->status = entry->status;
+      hd->status = hdm->status;
       hd->status.available = status_yes;
 
-      hd->config_string = new_str(entry->config_string);
+      hd->config_string = new_str(hdm->config_string);
+
+      hd->persistent_prop = hdm->persistent_prop;
+      hdm->persistent_prop = NULL;
     }
     else {
       /* add new entry */
       hd = add_hd_entry(hd_data, __LINE__, 0);
+      *hd = *hdm;
+      hd->next = NULL;
+      hd->tag.freeit = 0;
 
-      manual2hd(hd_data, entry, hd);
+      hdm->tag.remove = 1;
 
       if(hd->status.available != status_unknown) hd->status.available = status_no;
 
+      // FIXME: do it really here?
       if(hd->parent_id) {
         for(hd1 = hd_data->hd; hd1; hd1 = hd1->next) {
           if(hd1->unique_id && !strcmp(hd1->unique_id, hd->parent_id)) {
@@ -211,6 +239,19 @@ void hd_scan_manual(hd_data_t *hd_data)
     }
   }
   hd_data->flags.keep_kmods = 0;
+
+  for(hd = hd_data->manual; hd; hd = next) {
+    next = hd->next;
+    hd->next = NULL;
+    if(!hd->tag.remove) {
+      hd_free_hd_list(hd);
+    }
+    else {
+      free_mem(hd);
+    }
+  }
+  hd_data->manual = NULL;
+
 
 }
 
@@ -257,206 +298,11 @@ char *hd_status_value_name(hd_status_value_t status)
 
 
 /*
- * read an entry
+ * read an entry - obsolete
  */
 hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
 {
-#if 1
   return NULL;
-#else
-  char path[PATH_MAX];
-  int i, j, line;
-  str_list_t *sl, *sl0;
-  hd_manual_t *entry;
-  hash_t *sect;
-  char *s, *s1, *s2;
-  int err = 0;
-
-  snprintf(path, sizeof path, "%s/%s", HARDWARE_UNIQUE_KEYS, id);
-
-  if(!(sl0 = read_file(path, 0, 0))) {
-    /* try old location, too */
-    snprintf(path, sizeof path, "%s/%s", HARDWARE_DIR, id);
-    if(!(sl0 = read_file(path, 0, 0))) return NULL;
-  }
-
-  entry = new_mem(sizeof *entry);
-
-  // default list: no valid entries
-  sect = hw_ids_general + sizeof hw_ids_general / sizeof *hw_ids_general - 1;
-
-  for(line = 1, sl = sl0; sl; sl = sl->next, line++) {
-    s = sl->str;
-    while(isspace(*s)) s++;
-    if(!*s || *s == '#' || *s == ';') continue;	/* empty lines & comments */
-
-    s2 = s;
-    s1 = strsep(&s2, "=");
-
-    if(!s2 && *s == '[') {
-      s2 = s + 1;
-      s1 = strsep(&s2, "]");
-      if(s1) {
-        if(!strcmp(s1, MAN_SECT_GENERAL)) {
-          sect = hw_ids_general;
-          continue;
-        }
-        if(!strcmp(s1, MAN_SECT_STATUS)) {
-          sect = hw_ids_status;
-          continue;
-        }
-        if(!strcmp(s1, MAN_SECT_HARDWARE)) {
-          sect = NULL;
-          continue;
-        }
-      }
-      s2 = NULL;
-    }
-
-    if(!s2) {
-      ADD2LOG("  %s: invalid line %d\n", id, line);
-      err = 1;
-      break;
-    }
-
-    if(sect) {
-      i = value2key(sect, s1);
-      if(!i) {
-        ADD2LOG("  %s: invalid line %d\n", id, line);
-        err = 1;
-        break;
-      }
-      s = canon_str(s2, strlen(s2));
-      switch(i) {
-        case hw_id_unique:
-          entry->unique_id = s;
-          s = NULL;
-          break;
-
-        case hw_id_parent:
-          entry->parent_id = s;
-          s = NULL;
-          break;
-
-        case hw_id_child:
-          entry->child_ids = s;
-          s = NULL;
-          break;
-
-        case hw_id_hwclass:
-          j = value2key(hw_items, s);
-          entry->hw_class = j;
-          if(!j) err = 1;
-          break;
-
-        case hw_id_model:
-          entry->model = s;
-          s = NULL;
-          break;
-
-        case hw_id_configured:
-          j = value2key(status_names, s);
-          entry->status.configured = j;
-          if(!j) err = 1;
-          break;
-
-        case hw_id_available:
-          j = value2key(status_names, s);
-          entry->status.available_orig =
-          entry->status.available = j;
-          if(!j) err = 1;
-          break;
-
-        case hw_id_needed:
-          j = value2key(status_names, s);
-          entry->status.needed = j;
-          if(!j) err = 1;
-          break;
-
-        case hw_id_active:
-          j = value2key(status_names, s);
-          entry->status.active = j;
-          if(!j) err = 1;
-          break;
-
-        case hw_id_cfgstring:
-          entry->config_string = s;
-          s = NULL;
-          break;
-
-        default:
-          err = 1;
-      }
-
-      free_mem(s);
-
-      if(err) {
-        ADD2LOG("  %s: invalid line %d\n", id, line);
-        break;
-      }
-    }
-    else {
-      add_str_list(&entry->key, s1);
-      s = canon_str(s2, strlen(s2));
-      add_str_list(&entry->value, s);
-      free_mem(s);
-    }
-  }
-
-  free_str_list(sl0);
-
-  /*
-   * do some basic consistency checks
-   */
-
-  if(!entry->unique_id || strcmp(entry->unique_id, id)) {
-    ADD2LOG("  %s: unique id does not match file name\n", id);
-    err = 1;
-  }
-
-  /*
-   * if the status info is completely missing, fake some:
-   * new hardware, not autodetectable, not needed
-   */
-  if(
-    !entry->status.configured &&
-    !entry->status.available &&
-    !entry->status.needed &&
-    !entry->status.invalid
-  ) {
-    entry->status.configured = status_new;
-    entry->status.available = status_unknown;
-    entry->status.needed = status_no;
-  }
-
-  if(!entry->status.active) entry->status.active = status_unknown;
-
-  if(
-    !entry->status.configured ||
-    !entry->status.available ||
-    !entry->status.needed ||
-    !entry->status.active
-  ) {
-    ADD2LOG("  %s: incomplete status\n", id);
-    err = 1;
-  }
-
-  if(!entry->hw_class) {
-    ADD2LOG("  %s: no class\n", id);
-    err = 1;
-  }
-
-  if(!entry->model) {
-    ADD2LOG("  %s: no model\n", id);
-    err = 1;
-  }
-
-  if(err) {
-    entry = hd_free_manual(entry);
-  }
-
-  return entry;
-#endif
 }
 
 
@@ -661,72 +507,6 @@ int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
 }
 
 
-#if 0
-void dump_manual(hd_data_t *hd_data)
-{
-  hd_manual_t *entry;
-  static const char *txt = "manually configured hardware";
-  str_list_t *sl1, *sl2;
-
-  if(!hd_data->manual) return;
-
-  ADD2LOG("----- %s -----\n", txt);
-  for(entry = hd_data->manual; entry; entry = entry->next) {
-    ADD2LOG("  %s=%s\n",
-      key2value(hw_ids_general, hw_id_unique),
-      entry->unique_id
-    );
-    if(entry->parent_id)
-      ADD2LOG("    %s=%s\n",
-        key2value(hw_ids_general, hw_id_parent),
-        entry->parent_id
-      );
-    if(entry->child_ids)
-      ADD2LOG("    %s=%s\n",
-        key2value(hw_ids_general, hw_id_child),
-        entry->child_ids
-      );
-    ADD2LOG("    %s=%s\n",
-      key2value(hw_ids_general, hw_id_hwclass),
-      key2value(hw_items, entry->hw_class)
-    );
-    ADD2LOG("    %s=%s\n",
-      key2value(hw_ids_general, hw_id_model),
-      entry->model
-    );
-    ADD2LOG("    %s=%s\n",
-      key2value(hw_ids_status, hw_id_configured),
-      key2value(status_names, entry->status.configured)
-    );
-    ADD2LOG("    %s=%s\n",
-      key2value(hw_ids_status, hw_id_available),
-      key2value(status_names, entry->status.available)
-    );
-    ADD2LOG("    %s=%s\n",
-      key2value(hw_ids_status, hw_id_needed),
-      key2value(status_names, entry->status.needed)
-    );
-    ADD2LOG("    %s=%s\n",
-      key2value(hw_ids_status, hw_id_active),
-      key2value(status_names, entry->status.active)
-    );
-    if(entry->config_string)
-      ADD2LOG("    %s=%s\n",
-        key2value(hw_ids_status, hw_id_cfgstring),
-        entry->config_string
-      );
-    for(
-      sl1 = entry->key, sl2 = entry->value;
-      sl1 && sl2;
-      sl1 = sl1->next, sl2 = sl2->next
-    ) {
-      ADD2LOG("    %s=%s\n", sl1->str, sl2->str);
-    }
-  }
-  ADD2LOG("----- %s end -----\n", txt);
-}
-#endif
-
 unsigned str2id(char *str)
 {
   unsigned id;
@@ -759,6 +539,142 @@ unsigned str2id(char *str)
 }
 
 
+void prop2hd(hd_data_t *hd_data, hd_t *hd)
+{
+  hal_prop_t *prop, *list;
+
+  list = hd->persistent_prop;
+
+  if((prop = hal_get_str(list, "hwinfo.uniqueid"))) {
+    hd->unique_id = new_str(prop->val.str);
+  }
+
+  if((prop = hal_get_str(list, "hwinfo.parentid"))) {
+    hd->parent_id = new_str(prop->val.str);
+  }
+
+  if((prop = hal_get_str(list, "hwinfo.childids"))) {
+    hd->child_ids = hd_split(',', prop->val.str);
+  }
+
+  if((prop = hal_get_str(list, "hwinfo.model"))) {
+    hd->model = new_str(prop->val.str);
+  }
+
+  if((prop = hal_get_str(list, "hwinfo.hwclass"))) {
+    hd->hw_class = value2key(hw_items, prop->val.str);
+  }
+
+  if((prop = hal_get_str(list, "hwinfo.configstring"))) {
+    hd->config_string = new_str(prop->val.str);
+  }
+
+  if((prop = hal_get_str(list, "hwinfo.configured"))) {
+    hd->status.configured = value2key(status_names, prop->val.str);
+  }
+
+  if((prop = hal_get_str(list, "hwinfo.available"))) {
+    hd->status.available_orig =
+    hd->status.available = value2key(status_names, prop->val.str);
+  }
+
+  if((prop = hal_get_str(list, "hwinfo.needed"))) {
+    hd->status.needed = value2key(status_names, prop->val.str);
+  }
+
+  if((prop = hal_get_str(list, "hwinfo.active"))) {
+    hd->status.active = value2key(status_names, prop->val.str);
+  }
+
+  /*
+   * if the status info is completely missing, fake some:
+   * new hardware, not autodetectable, not needed
+   */
+  if(
+    !hd->status.configured &&
+    !hd->status.available &&
+    !hd->status.needed &&
+    !hd->status.invalid
+  ) {
+    hd->status.configured = status_new;
+    hd->status.available = status_unknown;
+    hd->status.needed = status_no;
+  }
+  if(!hd->status.active) hd->status.active = status_unknown;
+
+}
+
+
+hal_prop_t *hal_get_new_str(hal_prop_t **list, char *key)
+{
+  hal_prop_t *prop;
+
+  prop = hal_get_str(*list, key);
+  if(!prop) {
+    prop = new_mem(sizeof *prop);
+    prop->next = *list;
+    *list = prop;
+    prop->type = p_string;
+    prop->key = new_str(key);
+  }
+  else {
+    prop->val.str = free_mem(prop->val.str);
+  }
+
+  return prop;
+}
+
+
+void hd2prop(hd_data_t *hd_data, hd_t *hd)
+{
+  hal_prop_t *prop, **list;
+
+  list = &hd->persistent_prop;
+
+  if(hd->unique_id) {
+    prop = hal_get_new_str(list, "hwinfo.uniqueid");
+    prop->val.str = new_str(hd->unique_id);
+  }
+
+  if(hd->parent_id) {
+    prop = hal_get_new_str(list, "hwinfo.parentid");
+    prop->val.str = new_str(hd->parent_id);
+  }
+
+  if(hd->child_ids) {
+    prop = hal_get_new_str(list, "hwinfo.childids");
+    prop->val.str = hd_join(",", hd->child_ids);
+  }
+
+  if(hd->model) {
+    prop = hal_get_new_str(list, "hwinfo.model");
+    prop->val.str = new_str(hd->model);
+  }
+
+  if(hd->config_string) {
+    prop = hal_get_new_str(list, "hwinfo.configstring");
+    prop->val.str = new_str(hd->config_string);
+  }
+
+  prop = hal_get_new_str(list, "hwinfo.hwclass");
+  prop->val.str = new_str(key2value(hw_items, hd->hw_class));
+
+  prop = hal_get_new_str(list, "hwinfo.configured");
+  prop->val.str = new_str(key2value(status_names, hd->status.configured));
+
+  prop = hal_get_new_str(list, "hwinfo.available");
+  prop->val.str = new_str(key2value(status_names, hd->status.available));
+
+  prop = hal_get_new_str(list, "hwinfo.needed");
+  prop->val.str = new_str(key2value(status_names, hd->status.needed));
+
+  prop = hal_get_new_str(list, "hwinfo.active");
+  prop->val.str = new_str(key2value(status_names, hd->status.active));
+
+}
+
+
+#if 0
 /*
  * move info from hd_manual_t to hd_t
  */
@@ -1462,6 +1378,7 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
 
   free_mem(s);
 }
+#endif
 
 
 hd_t *hd_read_config(hd_data_t *hd_data, const char *id)
@@ -1476,11 +1393,12 @@ hd_t *hd_read_config(hd_data_t *hd_data, const char *id)
 
   if(prop) {
     hd = new_mem(sizeof *hd);
+    hd->idx = ++(hd_data->last_idx);
     hd->module = hd_data->module;
     hd->line = __LINE__;
     hd->tag.freeit = 1;		/* make it a 'stand alone' entry */
     hd->persistent_prop = prop;
-//    prop2hd(hd_data, hd);
+    prop2hd(hd_data, hd);
   }
 
   return hd;
@@ -1489,20 +1407,18 @@ hd_t *hd_read_config(hd_data_t *hd_data, const char *id)
 
 int hd_write_config(hd_data_t *hd_data, hd_t *hd)
 {
-  int err = 0;
-  hd_manual_t *entry;
+  char *udi;
 
   if(!hd_report_this(hd_data, hd)) return 0;
 
-  entry = new_mem(sizeof *entry);
+  hd2prop(hd_data, hd);
 
-  hd2manual(hd, entry);
+  udi = hd->unique_id;
+  if(hd->udi) udi = hd->udi;
 
-  err = entry->unique_id ? hd_manual_write_entry(hd_data, entry) : 5;
+  if(!udi) return 5;
 
-  hd_free_manual(entry);
-
-  return err;
+  return hd_write_properties(udi, hd->persistent_prop);
 }
 
 
