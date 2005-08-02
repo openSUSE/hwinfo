@@ -138,12 +138,24 @@ void get_input_devices(hd_data_t *hd_data)
           }
           else if(strstr(handlers, "mouse")) {
             hd = add_hd_entry(hd_data, __LINE__, 0);
-            hd->base_class.id = bc_mouse;
-            hd->sub_class.id = sc_mou_ps2;
-            hd->bus.id = bus_ps2;
 
             hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0210);
             hd->device.id = MAKE_ID(TAG_SPECIAL, (mouse_wheels << 4) + mouse_buttons);
+
+            hd->base_class.id = bc_mouse;
+            if(bus == BUS_ADB) {
+              hd->sub_class.id = sc_mou_bus;
+              hd->bus.id = bus_adb;
+              hd->compat_vendor.id = hd->vendor.id;
+              hd->compat_device.id = hd->device.id;
+              hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0100);
+              hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0300);
+            }
+            else {
+              hd->sub_class.id = sc_mou_ps2;
+              hd->bus.id = bus_ps2;
+            }
+
             hd->device.name = new_str(name);
 
             /* Synaptics/Alps TouchPad */

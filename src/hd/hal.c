@@ -27,8 +27,8 @@ static void add_pci(hd_data_t *hd_data);
 static void link_hal_tree(hd_data_t *hd_data);
 static hal_device_t *hal_find_device(hd_data_t *hd_data, char *udi);
 
-static char *hal_get_useful_str(hal_prop_t *prop, char *key);
-static int hal_match_str(hal_prop_t *prop, char *key, char *val);
+static char *hal_get_useful_str(hal_prop_t *prop, const char *key);
+static int hal_match_str(hal_prop_t *prop, const char *key, const char *val);
 
 static int check_udi(const char *udi);
 static FILE *hd_open_properties(const char *udi, const char *mode);
@@ -232,7 +232,34 @@ hal_device_t *hal_find_device(hd_data_t *hd_data, char *udi)
 }
 
 
-hal_prop_t *hal_get_int32(hal_prop_t *prop, char *key)
+void hal_invalidate(hal_prop_t *prop)
+{
+  if(prop->type == p_string) free_mem(prop->val.str);
+  if(prop->type == p_list) free_str_list(prop->val.list);
+  prop->type = p_invalid;
+  memset(&prop->val, 0, sizeof prop->val);
+}
+
+
+void hal_invalidate_all(hal_prop_t *prop, const char *key)
+{
+  for(; (prop = hal_get_any(prop, key)); prop = prop->next) {
+    hal_invalidate(prop);
+  }
+}
+
+
+hal_prop_t *hal_get_any(hal_prop_t *prop, const char *key)
+{
+  for(; prop; prop = prop->next) {
+    if(!strcmp(prop->key, key)) return prop;
+  }
+
+  return NULL;
+}
+
+
+hal_prop_t *hal_get_int32(hal_prop_t *prop, const char *key)
 {
   for(; prop; prop = prop->next) {
     if(prop->type == p_int32 && !strcmp(prop->key, key)) return prop;
@@ -242,7 +269,7 @@ hal_prop_t *hal_get_int32(hal_prop_t *prop, char *key)
 }
 
 
-hal_prop_t *hal_get_str(hal_prop_t *prop, char *key)
+hal_prop_t *hal_get_str(hal_prop_t *prop, const char *key)
 {
   for(; prop; prop = prop->next) {
     if(prop->type == p_string && !strcmp(prop->key, key)) return prop;
@@ -252,7 +279,7 @@ hal_prop_t *hal_get_str(hal_prop_t *prop, char *key)
 }
 
 
-char *hal_get_useful_str(hal_prop_t *prop, char *key)
+char *hal_get_useful_str(hal_prop_t *prop, const char *key)
 {
   for(; prop; prop = prop->next) {
     if(prop->type == p_string && !strcmp(prop->key, key)) {
@@ -265,7 +292,7 @@ char *hal_get_useful_str(hal_prop_t *prop, char *key)
 }
 
 
-int hal_match_str(hal_prop_t *prop, char *key, char *val)
+int hal_match_str(hal_prop_t *prop, const char *key, const char *val)
 {
   return val && (prop = hal_get_str(prop, key)) && !strcmp(prop->val.str, val);
 }
@@ -424,6 +451,7 @@ int hd_write_properties(const char *udi, hal_prop_t *prop)
   if(!f) return 1;
 
   for(; prop; prop = prop->next) {
+    if(prop->type == p_invalid) continue;
     s = hd_hal_print_prop(prop);
     if(s) fprintf(f, "%s\n", s);
   }

@@ -1930,8 +1930,11 @@ void hd_scan_no_hal(hd_data_t *hd_data)
   hd_scan_sysfs_usb(hd_data);
   hd_scan_sysfs_edd(hd_data);
 
+#if 0
+  // no longer needed, done via kernel input device list
 #if defined(__PPC__)
   hd_scan_adb(hd_data);
+#endif
 #endif
 
 #ifndef LIBHD_TINY

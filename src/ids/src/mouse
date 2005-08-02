@@ -91,9 +91,9 @@
 +driver.mouse		explorerps/2|exps2|5|1
 
 # ADB mice
- vendor.id		special 0x0100
-&device.id		special 0x0300+0x0100
-+driver.mouse		explorerps/2|exps2|1|0
+# vendor.id		special 0x0100
+#&device.id		special 0x0300+0x0100
+#+driver.mouse		explorerps/2|exps2|1|0
 
 # general USB mice
  vendor.id		special 0x0200
