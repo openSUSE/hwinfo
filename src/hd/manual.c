@@ -41,24 +41,6 @@ typedef enum {
 #define MAN_SECT_STATUS		"Status"
 #define MAN_SECT_HARDWARE	"Hardware"
 
-static hash_t hw_ids_general[] = {
-  { hw_id_unique,     "UniqueID"   },
-  { hw_id_parent,     "ParentID"   },
-  { hw_id_child,      "ChildIDs"   },
-  { hw_id_hwclass,    "HWClass"    },
-  { hw_id_model,      "Model"      },
-  { 0,                NULL         }
-};
-
-static hash_t hw_ids_status[] = {
-  { hw_id_configured, "Configured"   },
-  { hw_id_available,  "Available"    },
-  { hw_id_needed,     "Needed"       },
-  { hw_id_cfgstring,  "ConfigString" },
-  { hw_id_active,     "Active"       },
-  { 0,                NULL           }
-};
-
 /* structure elements from hd_t */
 typedef enum {
   hwdi_bus = 1, hwdi_slot, hwdi_func, hwdi_base_class, hwdi_sub_class,
@@ -73,6 +55,7 @@ typedef enum {
   hwdi_sysfs_busid, hwdi_sysfs_link
 } hw_hd_items_t;
 
+#if 0
 static hash_t hw_ids_hd_items[] = {
   { hwdi_bus,             "Bus"              },
   { hwdi_slot,            "Slot"             },
@@ -121,9 +104,11 @@ static hash_t hw_ids_hd_items[] = {
 };
 #endif
 
+#endif	/* LIBHD_TINY */
+
 #ifndef LIBHD_TINY
 
-static unsigned str2id(char *str);
+// static unsigned str2id(char *str);
 
 static hal_prop_t *hal_get_new(hal_prop_t **list, const char *key);
 static void hd2prop_add_int32(hal_prop_t **list, const char *key, int32_t i);
@@ -386,6 +371,7 @@ int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
 }
 
 
+#if 0
 unsigned str2id(char *str)
 {
   unsigned id;
@@ -416,7 +402,7 @@ unsigned str2id(char *str)
 
   return MAKE_ID(tag, ID_VALUE(id));
 }
-
+#endif
 
 void prop2hd(hd_data_t *hd_data, hd_t *hd)
 {
@@ -552,7 +538,7 @@ void hd2prop_add_list(hal_prop_t **list, const char *key, str_list_t *sl)
 
 void hd2prop(hd_data_t *hd_data, hd_t *hd)
 {
-  hal_prop_t *prop, **list;
+  hal_prop_t **list;
   char *s = NULL, *key;
   unsigned u;
   str_list_t *sl;
@@ -1479,11 +1465,24 @@ void hd2manual(hd_t *hd, hd_manual_t *entry)
 hd_t *hd_read_config(hd_data_t *hd_data, const char *id)
 {
   hd_t *hd = NULL;
-  hal_prop_t *prop;
+  hal_prop_t *prop = NULL;
+  const char *udi = NULL;
 
-  hddb_init(hd_data);
+  /* only of we didn't already (check internal db pointer) */
+  if(!hd_data->hddb2[1]) hddb_init(hd_data);
 
-  prop = hd_read_properties(id);
+  if(*id != '/') {
+    /* try to find udi entry */
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      if(hd->udi && hd->unique_id && !strcmp(id, hd->unique_id)) {
+        udi = hd->udi;
+        break;
+      }
+    }
+  }
+
+  if(udi) prop = hd_read_properties(udi);
+  if(!prop) prop = hd_read_properties(id);
   if(!prop) prop = hd_manual_read_entry_old(hd_data, id);
 
   if(prop) {

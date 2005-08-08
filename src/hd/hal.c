@@ -37,6 +37,8 @@ static char *skip_non_eq_or_space(char *s);
 static char *skip_nonquote(char *s);
 static void parse_property(hal_prop_t *prop, char *str);
 
+static void find_udi(hd_data_t *hd_data, hd_t *hd);
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  *
  * read hal data
@@ -70,6 +72,19 @@ void hd_scan_hal(hd_data_t *hd_data)
 
   add_pci(hd_data);
 
+}
+
+
+void hd_scan_hal_basic(hd_data_t *hd_data)
+{
+  hd_data->module = mod_hal;
+
+  /* some clean-up */
+  hd_data->hal = hd_free_hal_devices(hd_data->hal);
+
+  PROGRESS(1, 0, "read hal data");
+
+  read_hal(hd_data);
 }
 
 
@@ -645,6 +660,51 @@ void parse_property(hal_prop_t *prop, char *str)
       }
     }
   }
+}
+
+
+void hd_scan_hal_assign_udi(hd_data_t *hd_data)
+{
+  hd_t *hd;
+
+  if(!hd_data->hal) return;
+
+  PROGRESS(2, 0, "assign udi");
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    find_udi(hd_data, hd);
+  }
+}
+
+
+void find_udi(hd_data_t *hd_data, hd_t *hd)
+{
+  hal_device_t *dev;
+  char *h_sysfsid, *h_devname;
+
+  if(hd->udi) return;
+
+  dev = NULL;
+
+  /* based on sysfs id */
+  if(hd->sysfs_id) for(dev = hd_data->hal; dev; dev = dev->next) {
+    h_sysfsid = hd_sysfs_id(hal_get_useful_str(dev->prop, "linux.sysfs_path"));
+    if(h_sysfsid && !strcmp(hd->sysfs_id, h_sysfsid)) break;
+  }
+
+  /* based on device file */
+  if(!dev && hd->unix_dev_name) for(dev = hd_data->hal; dev; dev = dev->next) {
+    h_devname = hal_get_useful_str(dev->prop, "linux.device_file");
+    if(!h_devname) h_devname = hal_get_useful_str(dev->prop, "block.device");
+    if(h_devname && !strcmp(hd->unix_dev_name, h_devname)) break;
+  }
+
+  if(dev) {
+    hd->udi = new_str(dev->udi);
+    hd->hal_prop = dev->prop;
+    dev->prop = NULL;
+  }
+
 }
 
 

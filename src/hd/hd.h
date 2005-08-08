@@ -2456,6 +2456,7 @@ char *hd_hw_item_name(hd_hw_item_t item);
 hd_hw_item_t hd_hw_item_type(char *name);
 char *hd_status_value_name(hd_status_value_t status);
 int hd_change_status(const char *id, hd_status_t status, const char *config_string);
+int hd_change_config_status(hd_data_t *hd_data, const char *id, hd_status_t status, const char *config_string);
 int hd_read_mmap(hd_data_t *hd_data, char *name, unsigned char *buf, off_t start, unsigned size);
 
 

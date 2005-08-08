@@ -1757,6 +1757,7 @@ void hd_scan(hd_data_t *hd_data)
   hd_scan_with_hal(hd_data);
 
   if(!hd_data->hal) {
+    hd_scan_hal_basic(hd_data);
     hd_scan_no_hal(hd_data);
   }
 
@@ -1965,6 +1966,8 @@ void hd_scan_no_hal(hd_data_t *hd_data)
 #endif
 
   for(hd = hd_data->hd; hd; hd = hd->next) hd_add_id(hd_data, hd);
+
+  hd_scan_hal_assign_udi(hd_data);
 
 #ifndef LIBHD_TINY
   hd_scan_manual(hd_data);
@@ -4817,13 +4820,10 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
 
 
 #ifndef LIBHD_TINY
-int hd_change_status(const char *id, hd_status_t status, const char *config_string)
+int hd_change_config_status(hd_data_t *hd_data, const char *id, hd_status_t status, const char *config_string)
 {
-  hd_data_t *hd_data;
   hd_t *hd;
   int i;
-
-  hd_data = new_mem(sizeof *hd_data);
 
   hd = hd_read_config(hd_data, id);
 
@@ -4842,6 +4842,20 @@ int hd_change_status(const char *id, hd_status_t status, const char *config_stri
   i = hd_write_config(hd_data, hd);
   
   hd_free_hd_list(hd);
+
+  return i;
+}
+
+
+/* wrapper for hd_change_config_status(); obsolete - do not use */
+int hd_change_status(const char *id, hd_status_t status, const char *config_string)
+{
+  hd_data_t *hd_data;
+  int i;
+
+  hd_data = new_mem(sizeof *hd_data);
+
+  i = hd_change_config_status(hd_data, id, status, config_string);
 
   hd_free_hd_data(hd_data);
 
