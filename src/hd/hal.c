@@ -27,7 +27,6 @@ static void add_pci(hd_data_t *hd_data);
 static void link_hal_tree(hd_data_t *hd_data);
 static hal_device_t *hal_find_device(hd_data_t *hd_data, char *udi);
 
-static char *hal_get_useful_str(hal_prop_t *prop, const char *key);
 static int hal_match_str(hal_prop_t *prop, const char *key, const char *val);
 
 static int check_udi(const char *udi);
@@ -298,7 +297,7 @@ char *hal_get_useful_str(hal_prop_t *prop, const char *key)
 {
   for(; prop; prop = prop->next) {
     if(prop->type == p_string && !strcmp(prop->key, key)) {
-      if(strncmp(prop->val.str, "Unknown", sizeof "Unknown" - 1)) return prop->val.str;
+      if(prop->val.str && strncmp(prop->val.str, "Unknown", sizeof "Unknown" - 1)) return prop->val.str;
       break;
     }
   }
@@ -310,6 +309,16 @@ char *hal_get_useful_str(hal_prop_t *prop, const char *key)
 int hal_match_str(hal_prop_t *prop, const char *key, const char *val)
 {
   return val && (prop = hal_get_str(prop, key)) && !strcmp(prop->val.str, val);
+}
+
+
+hal_prop_t *hal_get_list(hal_prop_t *prop, const char *key)
+{
+  for(; prop; prop = prop->next) {
+    if(prop->type == p_list && !strcmp(prop->key, key)) return prop;
+  }
+
+  return NULL;
 }
 
 

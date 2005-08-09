@@ -321,6 +321,12 @@ int main(int argc, char **argv)
 #ifndef LIBHD_TINY
       if(showconfig) {
         hd = hd_read_config(hd_data, showconfig);
+        if(hd_data->debug == -1) {
+          fprintf(f ? f : stdout,
+            "============ start debug info ============\n%s=========== end debug info ============\n",
+            hd_data->log
+          );
+        }
         if(hd) {
           hd_dump_entry(hd_data, hd, f ? f : stdout);
           hd = hd_free_hd_list(hd);
@@ -514,9 +520,12 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
       );
     }
 
+    i = hd_data->debug;
+    hd_data->debug = -1;
     for(hd = hd_data->hd; hd; hd = hd->next) {
       hd_dump_entry(hd_data, hd, f);
     }
+    hd_data->debug = i;
 
     fprintf(f,
       "============ end hardware log ============\n"
@@ -641,6 +650,7 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
 void do_hw_multi(hd_data_t *hd_data, FILE *f, hd_hw_item_t *hw_items)
 {
   hd_t *hd, *hd0;
+  int i;
 
   hd0 = hd_list2(hd_data, hw_items, 1);
 
@@ -660,9 +670,12 @@ void do_hw_multi(hd_data_t *hd_data, FILE *f, hd_hw_item_t *hw_items)
       );
     }
 
+    i = hd_data->debug;
+    hd_data->debug = -1;
     for(hd = hd_data->hd; hd; hd = hd->next) {
       hd_dump_entry(hd_data, hd, f);
     }
+    hd_data->debug = i;
 
     fprintf(f,
       "============ end hardware log ============\n"

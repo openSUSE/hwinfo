@@ -239,6 +239,8 @@ void hal_invalidate_all(hal_prop_t *prop, const char *key);
 hal_prop_t *hal_get_any(hal_prop_t *prop, const char *key);
 hal_prop_t *hal_get_int32(hal_prop_t *prop, const char *key);
 hal_prop_t *hal_get_str(hal_prop_t *prop, const char *key);
+hal_prop_t *hal_get_list(hal_prop_t *prop, const char *key);
+char *hal_get_useful_str(hal_prop_t *prop, const char *key);       
 
 
 #ifdef __cplusplus

@@ -286,7 +286,7 @@ static struct s_pr_flags {
 #endif
   { pr_ignx11,        0,                  0, "ignx11"        },
   { pr_sys,           0,            8|4|2|1, "sys"           },
-  { pr_manual,        0,            8|4|2|1, "manual"        },
+  { pr_manual,        0,                  0, "manual"        },
   { pr_fb,            0,            8|4|2|1, "fb"            },
   { pr_pppoe,         0,            8|4|2|1, "pppoe"         },
   /* dummy, used to turn off hwscan */
@@ -442,7 +442,7 @@ int hd_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 {
   hd_set_probe_feature(hd_data, pr_int);
-  hd_set_probe_feature(hd_data, pr_manual);
+//  hd_set_probe_feature(hd_data, pr_manual);
 
   switch(item) {
     case hw_cdrom:
@@ -3170,7 +3170,7 @@ hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t sta
 
   memcpy(probe_save, hd_data->probe, sizeof probe_save);
   hd_clear_probe_feature(hd_data, pr_all);
-  hd_set_probe_feature(hd_data, pr_manual);
+//  hd_set_probe_feature(hd_data, pr_manual);
   hd_scan(hd_data);
   memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
 
@@ -3288,7 +3288,7 @@ hd_t *hd_list_with_status2(hd_data_t *hd_data, hd_hw_item_t *items, hd_status_t 
 
   memcpy(probe_save, hd_data->probe, sizeof probe_save);
   hd_clear_probe_feature(hd_data, pr_all);
-  hd_set_probe_feature(hd_data, pr_manual);
+//  hd_set_probe_feature(hd_data, pr_manual);
   hd_scan(hd_data);
   memcpy(hd_data->probe, probe_save, sizeof hd_data->probe);
 

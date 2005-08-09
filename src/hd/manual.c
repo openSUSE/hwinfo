@@ -14,7 +14,7 @@
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  *
- * hardware in /var/lib/hardware/
+ * hardware in /var/lib/hardware/udi/
  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
@@ -29,31 +29,6 @@ static hash_t status_names[] = {
   { status_new,     "new"     },
   { 0,              NULL      }
 };
-
-typedef enum {
-  hw_id_unique = 1, hw_id_parent, hw_id_child, hw_id_hwclass, hw_id_model,
-  hw_id_configured, hw_id_available, hw_id_needed, hw_id_cfgstring, hw_id_active
-} hw_id_t;
-
-#ifndef LIBHD_TINY
-
-#define MAN_SECT_GENERAL	"General"
-#define MAN_SECT_STATUS		"Status"
-#define MAN_SECT_HARDWARE	"Hardware"
-
-/* structure elements from hd_t */
-typedef enum {
-  hwdi_bus = 1, hwdi_slot, hwdi_func, hwdi_base_class, hwdi_sub_class,
-  hwdi_prog_if, hwdi_dev, hwdi_vend, hwdi_sub_dev, hwdi_sub_vend, hwdi_rev,
-  hwdi_compat_dev, hwdi_compat_vend, hwdi_dev_name, hwdi_vend_name,
-  hwdi_sub_dev_name, hwdi_sub_vend_name, hwdi_rev_name, hwdi_serial,
-  hwdi_unix_dev_name, hwdi_unix_dev_name2, hwdi_unix_dev_names, hwdi_rom_id,
-  hwdi_broken, hwdi_usb_guid, hwdi_res_mem, hwdi_res_phys_mem, hwdi_res_io,
-  hwdi_res_irq, hwdi_res_dma, hwdi_res_size, hwdi_res_baud, hwdi_res_cache,
-  hwdi_res_disk_geo, hwdi_res_monitor, hwdi_res_framebuffer, hwdi_features,
-  hwdi_hotplug, hwdi_class_list, hwdi_drivers, hwdi_sysfs_id,
-  hwdi_sysfs_busid, hwdi_sysfs_link
-} hw_hd_items_t;
 
 #if 0
 static hash_t hw_ids_hd_items[] = {
@@ -104,16 +79,20 @@ static hash_t hw_ids_hd_items[] = {
 };
 #endif
 
-#endif	/* LIBHD_TINY */
-
 #ifndef LIBHD_TINY
 
 // static unsigned str2id(char *str);
 
+static void prop2hd(hd_data_t *hd_data, hd_t *hd, int status_only);
 static hal_prop_t *hal_get_new(hal_prop_t **list, const char *key);
 static void hd2prop_add_int32(hal_prop_t **list, const char *key, int32_t i);
 static void hd2prop_add_str(hal_prop_t **list, const char *key, const char *str);
 static void hd2prop_add_list(hal_prop_t **list, const char *key, str_list_t *sl);
+static void hd2prop_append_list(hal_prop_t **list, const char *key, char *str);
+static void hd2prop(hd_data_t *hd_data, hd_t *hd);
+
+static hal_prop_t *hd_manual_read_entry_old(const char *id);
+static hal_prop_t *read_properties(hd_data_t *hd_data, const char *udi, const char *id);
 
 
 void hd_scan_manual(hd_data_t *hd_data)
@@ -251,6 +230,13 @@ void hd_scan_manual2(hd_data_t *hd_data)
 {
   hd_t *hd, *hd1;
 
+  /* add persistent properties */
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->persistent_prop) continue;
+    hd->persistent_prop = read_properties(hd_data, hd->udi, hd->unique_id);
+    prop2hd(hd_data, hd, 1);
+  }
+
   /* check if it's necessary to reconfigure this hardware */
   for(hd = hd_data->hd; hd; hd = hd->next) {
     hd->status.reconfig = status_no;
@@ -278,9 +264,6 @@ void hd_scan_manual2(hd_data_t *hd_data)
   }
 }
 
-#endif
-
-#ifndef LIBHD_TINY
 
 char *hd_status_value_name(hd_status_value_t status)
 {
@@ -300,13 +283,15 @@ hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
 /*
  * read an entry
  */
-hal_prop_t *hd_manual_read_entry_old(hd_data_t *hd_data, const char *id)
+hal_prop_t *hd_manual_read_entry_old(const char *id)
 {
   char path[PATH_MAX];
   int line;
   str_list_t *sl, *sl0;
   char *s, *s1, *s2;
   hal_prop_t *prop_list = NULL, *prop = NULL;
+
+  if(!id) return NULL;
 
   snprintf(path, sizeof path, "%s/%s", HARDWARE_UNIQUE_KEYS, id);
 
@@ -322,10 +307,7 @@ hal_prop_t *hd_manual_read_entry_old(hd_data_t *hd_data, const char *id)
 
     if(!s2 && *s == '[') continue;
 
-    if(!s2) {
-      ADD2LOG("  %s: invalid line %d\n", id, line);
-      break;
-    }
+    if(!s2) break;
 
     if(s1) {
       if(prop) {
@@ -404,35 +386,50 @@ unsigned str2id(char *str)
 }
 #endif
 
-void prop2hd(hd_data_t *hd_data, hd_t *hd)
+
+char *prop2hd_str(hal_prop_t *prop, const char *id)
+{
+  return (prop = hal_get_str(prop, id)) ? new_str(prop->val.str) : NULL;
+}
+
+
+int32_t prop2hd_int32(hal_prop_t *prop, const char *id)
+{
+  return (prop = hal_get_int32(prop, id)) ? prop->val.int32 : 0;
+}
+
+
+str_list_t *prop2hd_list(hal_prop_t *prop, const char *id)
+{
+  str_list_t *sl0 = NULL, *sl;
+
+  prop = hal_get_list(prop, id);
+
+  if(prop) {
+    for(sl = prop->val.list; sl; sl = sl->next) {
+      add_str_list(&sl0, sl->str);
+    }
+  }
+
+  return sl0;
+}
+
+
+void prop2hd(hd_data_t *hd_data, hd_t *hd, int status_only)
 {
   hal_prop_t *prop, *list;
+  hd_res_t *res;
+  int i;
+  unsigned u, u0, u1, u2, u3, u4;
+  char *s;
+  uint64_t u64_0, u64_1;
+  str_list_t *sl;
 
   list = hd->persistent_prop;
 
-  if((prop = hal_get_str(list, "hwinfo.uniqueid"))) {
-    hd->unique_id = new_str(prop->val.str);
-  }
+  if(!list) return;
 
-  if((prop = hal_get_str(list, "hwinfo.parentid"))) {
-    hd->parent_id = new_str(prop->val.str);
-  }
-
-  if((prop = hal_get_str(list, "hwinfo.childids"))) {
-    hd->child_ids = hd_split(',', prop->val.str);
-  }
-
-  if((prop = hal_get_str(list, "hwinfo.model"))) {
-    hd->model = new_str(prop->val.str);
-  }
-
-  if((prop = hal_get_str(list, "hwinfo.hwclass"))) {
-    hd->hw_class = value2key(hw_items, prop->val.str);
-  }
-
-  if((prop = hal_get_str(list, "hwinfo.configstring"))) {
-    hd->config_string = new_str(prop->val.str);
-  }
+  hd->config_string = prop2hd_str(list, "hwinfo.configstring");
 
   if((prop = hal_get_str(list, "hwinfo.configured"))) {
     hd->status.configured = value2key(status_names, prop->val.str);
@@ -466,6 +463,226 @@ void prop2hd(hd_data_t *hd_data, hd_t *hd)
     hd->status.needed = status_no;
   }
   if(!hd->status.active) hd->status.active = status_unknown;
+
+  if(hd->status.available == status_unknown) hd->is.manual = 1;
+
+  if(status_only) return;
+
+  hd->udi = prop2hd_str(list, "info.udi");
+  hd->unique_id = prop2hd_str(list, "hwinfo.uniqueid");
+  hd->parent_id = prop2hd_str(list, "hwinfo.parentid");
+  hd->child_ids = prop2hd_list(list, "hwinfo.childids");
+  hd->model = prop2hd_str(list, "hwinfo.model");
+
+  if((prop = hal_get_str(list, "hwinfo.hwclass"))) {
+    hd->hw_class = value2key(hw_items, prop->val.str);
+  }
+
+  hd->broken = prop2hd_int32(list, "hwinfo.broken");
+
+  hd->bus.id = prop2hd_int32(list, "hwinfo.busid");
+  hd->slot = prop2hd_int32(list, "hwinfo.slot");
+  hd->func = prop2hd_int32(list, "hwinfo.func");
+
+  hd->base_class.id = prop2hd_int32(list, "hwinfo.baseclass");
+  hd->sub_class.id = prop2hd_int32(list, "hwinfo.subclass");
+  hd->prog_if.id = prop2hd_int32(list, "hwinfo.progif");
+
+  hd->revision.id = prop2hd_int32(list, "hwinfo.revisionid");
+  hd->revision.name = prop2hd_str(list, "hwinfo.revisionname");
+
+  hd->vendor.id = prop2hd_int32(list, "hwinfo.vendorid");
+  hd->vendor.name = prop2hd_str(list, "hwinfo.vendorname");
+
+  hd->device.id = prop2hd_int32(list, "hwinfo.deviceid");
+  hd->device.name = prop2hd_str(list, "hwinfo.devicename");
+
+  hd->sub_vendor.id = prop2hd_int32(list, "hwinfo.subvendorid");
+  hd->sub_vendor.name = prop2hd_str(list, "hwinfo.subvendorname");
+
+  hd->sub_device.id = prop2hd_int32(list, "hwinfo.subdeviceid");
+  hd->sub_device.name = prop2hd_str(list, "hwinfo.subdevicename");
+
+  hd->compat_device.id = prop2hd_int32(list, "hwinfo.compatdeviceid");
+  hd->compat_device.name = prop2hd_str(list, "hwinfo.compatdevicename");
+
+  hd->serial = prop2hd_str(list, "hwinfo.serial");
+  hd->unix_dev_name = prop2hd_str(list, "hwinfo.unixdevice");
+  hd->unix_dev_name2 = prop2hd_str(list, "hwinfo.unixdevicealt");
+
+  hd->unix_dev_names = prop2hd_list(list, "hwinfo.unixdevicelist");
+  hd->drivers = prop2hd_list(list, "hwinfo.drivers");
+
+  hd->sysfs_id = prop2hd_str(list, "hwinfo.sysfsid");
+  hd->sysfs_bus_id = prop2hd_str(list, "hwinfo.sysfsbusid");
+  hd->sysfs_device_link = prop2hd_str(list, "hwinfo.sysfslink");
+  hd->rom_id = prop2hd_str(list, "hwinfo.romid");
+  hd->usb_guid = prop2hd_str(list, "hwinfo.usbguid");
+  hd->hotplug = prop2hd_int32(list, "hwinfo.hotplug");
+
+  if((s = hal_get_useful_str(list, "hwinfo.hwclasslist"))) {
+    for(u = 0; u < sizeof hd->hw_class_list / sizeof *hd->hw_class_list; u++) {
+      if(*s && s[1] && (i = hex(s, 2)) >= 0) {
+        hd->hw_class_list[u] = i;
+        s += 2;
+      }
+      else {
+        break;
+      }
+    }
+  }
+
+  u = prop2hd_int32(list, "hwinfo.features");
+  if(u & (1 << 0)) hd->is.agp = 1;
+  if(u & (1 << 1)) hd->is.isapnp = 1;
+  if(u & (1 << 2)) hd->is.softraiddisk = 1;
+  if(u & (1 << 3)) hd->is.zip = 1;
+  if(u & (1 << 4)) hd->is.cdr = 1;
+  if(u & (1 << 5)) hd->is.cdrw = 1;
+  if(u & (1 << 6)) hd->is.dvd = 1;
+  if(u & (1 << 7)) hd->is.dvdr = 1;
+  if(u & (1 << 8)) hd->is.dvdram = 1;
+  if(u & (1 << 9)) hd->is.pppoe = 1;
+  if(u & (1 << 10)) hd->is.wlan = 1;
+
+
+  if((prop = hal_get_list(list, "hwinfo.res.memory"))) {
+    for(sl = prop->val.list; sl; sl = sl->next) {
+      if(sscanf(sl->str, "0x%"SCNx64",0x%"SCNx64",%u,%u,%u", &u64_0, &u64_1, &u0, &u1, &u2) == 5) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_mem;
+        res->mem.base = u64_0;
+        res->mem.range = u64_1;
+        res->mem.enabled = u0;
+        res->mem.access = u1;
+        res->mem.prefetch = u2;
+      }
+    }
+  }
+
+  if((prop = hal_get_list(list, "hwinfo.res.physmemory"))) {
+    for(sl = prop->val.list; sl; sl = sl->next) {
+      if(sscanf(sl->str, "0x%"SCNx64"", &u64_0) == 1) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_phys_mem;
+        res->phys_mem.range = u64_0;
+      }
+    }
+  }
+
+  if((prop = hal_get_list(list, "hwinfo.res.io"))) {
+    for(sl = prop->val.list; sl; sl = sl->next) {
+      if(sscanf(sl->str, "0x%"SCNx64",0x%"SCNx64",%u,%u", &u64_0, &u64_1, &u0, &u1) == 4) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_io;
+        res->io.base = u64_0;
+        res->io.range = u64_1;
+        res->io.enabled = u0;
+        res->io.access = u1;
+      }
+    }
+  }
+
+  if((prop = hal_get_list(list, "hwinfo.res.interrupts"))) {
+    for(sl = prop->val.list; sl; sl = sl->next) {
+      if(sscanf(sl->str, "%u,%u,%u", &u0, &u1, &u2) == 3) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_irq;
+        res->irq.base = u0;
+        res->irq.triggered = u1;
+        res->irq.enabled = u2;
+      }
+    }
+  }
+
+  if((prop = hal_get_list(list, "hwinfo.res.dma"))) {
+    for(sl = prop->val.list; sl; sl = sl->next) {
+      if(sscanf(sl->str, "%u,%u", &u0, &u1) == 2) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_dma;
+        res->dma.base = u0;
+        res->dma.enabled = u1;
+      }
+    }
+  }
+
+  if((prop = hal_get_list(list, "hwinfo.res.size"))) {
+    for(sl = prop->val.list; sl; sl = sl->next) {
+      if(sscanf(sl->str, "%u,%u,%u", &u0, &u1, &u2) == 3) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_size;
+        res->size.unit = u0;
+        res->size.val1 = u1;
+        res->size.val2 = u2;
+      }
+    }
+  }
+
+  if((prop = hal_get_list(list, "hwinfo.res.baud"))) {
+    for(sl = prop->val.list; sl; sl = sl->next) {
+      if(sscanf(sl->str, "%u,%u,%u,%u,%u", &u0, &u1, &u2, &u3, &u4) == 5) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_baud;
+        res->baud.speed = u0;
+        res->baud.bits = u1;
+        res->baud.stopbits = u2;
+        res->baud.parity = (char) u3;
+        res->baud.handshake = (char) u4;
+      }
+    }
+  }
+
+  if((prop = hal_get_list(list, "hwinfo.res.cache"))) {
+    for(sl = prop->val.list; sl; sl = sl->next) {
+      if(sscanf(sl->str, "%u", &u0) == 1) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_cache;
+        res->cache.size = u0;
+      }
+    }
+  }
+
+  if((prop = hal_get_list(list, "hwinfo.res.diskgeometry"))) {
+    for(sl = prop->val.list; sl; sl = sl->next) {
+      if(sscanf(sl->str, "%u,%u,%u,%u", &u0, &u1, &u2, &u3) == 4) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_disk_geo;
+        res->disk_geo.cyls = u0;
+        res->disk_geo.heads = u1;
+        res->disk_geo.sectors = u2;
+        res->disk_geo.geotype = u3;
+      }
+    }
+  }
+
+  if((prop = hal_get_list(list, "hwinfo.res.monitor"))) {
+    for(sl = prop->val.list; sl; sl = sl->next) {
+      if(sscanf(sl->str, "%u,%u,%u,%u", &u0, &u1, &u2, &u3) == 4) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_monitor;
+        res->monitor.width = u0;
+        res->monitor.height = u1;
+        res->monitor.vfreq = u2;
+        res->monitor.interlaced = u3;
+      }
+    }
+  }
+
+  if((prop = hal_get_list(list, "hwinfo.res.framebuffer"))) {
+    for(sl = prop->val.list; sl; sl = sl->next) {
+      if(sscanf(sl->str, "%u,%u,%u,%u,%u", &u0, &u1, &u2, &u3, &u4) == 5) {
+        res = add_res_entry(&hd->res, new_mem(sizeof *res));
+        res->any.type = res_framebuffer;
+        res->framebuffer.width = u0;
+        res->framebuffer.height = u1;
+        res->framebuffer.bytes_p_line = u2;
+        res->framebuffer.colorbits = u3;
+        res->framebuffer.mode = u4;
+      }
+    }
+  }
+
+  hddb_add_info(hd_data, hd);
 
 }
 
@@ -536,15 +753,35 @@ void hd2prop_add_list(hal_prop_t **list, const char *key, str_list_t *sl)
 }
 
 
+void hd2prop_append_list(hal_prop_t **list, const char *key, char *str)
+{
+  hal_prop_t *prop;
+  str_list_t *sl = NULL;
+
+  if(!str) return;
+
+  prop = hal_get_list(*list, key);
+
+  if(!prop) {
+    add_str_list(&sl, str);
+    hd2prop_add_list(list, key, sl);
+    return;
+  }
+
+  add_str_list(&prop->val.list, str);
+}
+
+
 void hd2prop(hd_data_t *hd_data, hd_t *hd)
 {
   hal_prop_t **list;
-  char *s = NULL, *key;
+  char *s = NULL;
   unsigned u;
-  str_list_t *sl;
   hd_res_t *res;
 
   list = &hd->persistent_prop;
+
+  hd2prop_add_str(list, "info.udi", hd->udi);
 
   hd2prop_add_str(list, "hwinfo.uniqueid", hd->unique_id);
   hd2prop_add_str(list, "hwinfo.parentid", hd->parent_id);
@@ -620,137 +857,117 @@ void hd2prop(hd_data_t *hd_data, hd_t *hd)
   if(hd->is.wlan)         u |= 1 << 10;
 
   hd2prop_add_int32(list, "hwinfo.features", u);
+
+  hal_invalidate_all(*list, "hwinfo.res.memory");
+  hal_invalidate_all(*list, "hwinfo.res.physmemory");
+  hal_invalidate_all(*list, "hwinfo.res.io");
+  hal_invalidate_all(*list, "hwinfo.res.interrupts");
+  hal_invalidate_all(*list, "hwinfo.res.dma");
+  hal_invalidate_all(*list, "hwinfo.res.size");
+  hal_invalidate_all(*list, "hwinfo.res.baud");
+  hal_invalidate_all(*list, "hwinfo.res.cache");
+  hal_invalidate_all(*list, "hwinfo.res.diskgeometry");
+  hal_invalidate_all(*list, "hwinfo.res.monitor");
+  hal_invalidate_all(*list, "hwinfo.res.framebuffer");
   
   for(res = hd->res; res; res = res->next) {
-    sl = NULL;
-    key = NULL;
     switch(res->any.type) {
       case res_mem:
-        key = "hwinfo.res.memory";
-        str_printf(&s, 0, "0x%"PRIx64"", res->mem.base);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "0x%"PRIx64"", res->mem.range);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->mem.enabled);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->mem.access);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->mem.prefetch);
-        add_str_list(&sl, s);
+        str_printf(&s, 0,
+          "0x%"PRIx64",0x%"PRIx64",%u,%u,%u",
+          res->mem.base, res->mem.range, res->mem.enabled, res->mem.access, res->mem.prefetch
+        );
+        hd2prop_append_list(list, "hwinfo.res.memory", s);
         break;
 
       case res_phys_mem:
-        key = "hwinfo.res.physmemory";
-        str_printf(&s, 0, "0x%"PRIx64"", res->phys_mem.range);
-        add_str_list(&sl, s);
+        str_printf(&s, 0,
+          "0x%"PRIx64,
+          res->phys_mem.range
+        );
+        hd2prop_append_list(list, "hwinfo.res.physmemory", s);
         break;
 
       case res_io:
-        key = "hwinfo.res.io";
-        str_printf(&s, 0, "0x%"PRIx64"", res->io.base);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "0x%"PRIx64"", res->io.range);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->io.enabled);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->io.access);
-        add_str_list(&sl, s);
+        str_printf(&s, 0,
+          "0x%"PRIx64",0x%"PRIx64",%u,%u",
+          res->io.base, res->io.range, res->io.enabled, res->io.access
+        );
+        hd2prop_append_list(list, "hwinfo.res.io", s);
         break;
 
       case res_irq:
-        key = "hwinfo.res.interrupts";
-        str_printf(&s, 0, "%u", res->irq.base);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->irq.triggered);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->irq.enabled);
-        add_str_list(&sl, s);
+        str_printf(&s, 0,
+          "%u,%u,%u",
+          res->irq.base, res->irq.triggered, res->irq.enabled
+        );
+        hd2prop_append_list(list, "hwinfo.res.interrupts", s);
         break;
 
       case res_dma:
-        key = "hwinfo.res.dma";
-        str_printf(&s, 0, "%u", res->dma.base);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->dma.enabled);
-        add_str_list(&sl, s);
+        str_printf(&s, 0,
+          "%u,%u",
+          res->dma.base, res->dma.enabled
+        );
+        hd2prop_append_list(list, "hwinfo.res.dma", s);
         break;
 
       case res_size:
-        key = "hwinfo.res.size";
-        str_printf(&s, 0, "%u", res->size.unit);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%"PRIu64, res->size.val1);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%"PRIu64, res->size.val2);
-        add_str_list(&sl, s);
+        str_printf(&s, 0,
+          "%u,%"PRIu64",%"PRIu64,
+          res->size.unit, res->size.val1, res->size.val2
+        );
+        hd2prop_append_list(list, "hwinfo.res.size", s);
         break;
 
       case res_baud:
-        key = "hwinfo.res.baud";
-        str_printf(&s, 0, "%u", res->baud.speed);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->baud.bits);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->baud.stopbits);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "0x%02x", (unsigned) res->baud.parity);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "0x%02x", (unsigned) res->baud.handshake);
-        add_str_list(&sl, s);
+        str_printf(&s, 0,
+          "%u,%u,%u,0x%02x,0x%02x",
+          res->baud.speed, res->baud.bits, res->baud.stopbits,
+          (unsigned) res->baud.parity, (unsigned) res->baud.handshake
+        );
+        hd2prop_append_list(list, "hwinfo.res.baud", s);
         break;
 
       case res_cache:
-        key = "hwinfo.res.cache";
-        str_printf(&s, 0, "%u", res->cache.size);
-        add_str_list(&sl, s);
+        str_printf(&s, 0,
+          "%u",
+          res->cache.size
+        );
+        hd2prop_append_list(list, "hwinfo.res.cache", s);
         break;
 
       case res_disk_geo:
-        key = "hwinfo.res.diskgeometry";
-        str_printf(&s, 0, "%u", res->disk_geo.cyls);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->disk_geo.heads);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->disk_geo.sectors);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->disk_geo.geotype);
-        add_str_list(&sl, s);
+        str_printf(&s, 0,
+          "%u,%u,%u,%u",
+          res->disk_geo.cyls, res->disk_geo.heads, res->disk_geo.sectors, res->disk_geo.geotype
+        );
+        hd2prop_append_list(list, "hwinfo.res.diskgeometry", s);
         break;
 
       case res_monitor:
-        key = "hwinfo.res.monitor";
-        str_printf(&s, 0, "%u", res->monitor.width);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->monitor.height);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->monitor.vfreq);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->monitor.interlaced);
-        add_str_list(&sl, s);
+        str_printf(&s, 0,
+          "%u,%u,%u,%u",
+          res->monitor.width, res->monitor.height, res->monitor.vfreq, res->monitor.interlaced
+        );
+        hd2prop_append_list(list, "hwinfo.res.monitor", s);
         break;
 
       case res_framebuffer:
-        key = "hwinfo.res.framebuffer";
-        str_printf(&s, 0, "%u", res->framebuffer.width);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->framebuffer.height);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->framebuffer.bytes_p_line);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->framebuffer.colorbits);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->framebuffer.mode);
-        add_str_list(&sl, s);
+        str_printf(&s, 0,
+          "%u,%u,%u,%u,%u",
+          res->framebuffer.width, res->framebuffer.height, res->framebuffer.bytes_p_line,
+          res->framebuffer.colorbits, res->framebuffer.mode
+        );
+        hd2prop_append_list(list, "hwinfo.res.framebuffer", s);
         break;
 
       default:
         break;
     }
-
-    if(key) hd2prop_add_list(list, key, sl);
-
-    free_str_list(sl);
   }
+
+  s = free_mem(s);
 
 }
 
@@ -761,299 +978,6 @@ void hd2prop(hd_data_t *hd_data, hd_t *hd)
  */
 void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
 {
-  str_list_t *sl1, *sl2;
-  hw_hd_items_t item;
-  unsigned tag, u0, u1, u2, u3, u4;
-  hd_res_t *res;
-  uint64_t u64_0, u64_1;
-  char *s;
-  int i;
-
-  if(!hd || !entry) return;
-
-  hd->unique_id = new_str(entry->unique_id);
-  hd->parent_id = new_str(entry->parent_id);
-  hd->child_ids = hd_split(',', entry->child_ids);
-  hd->model = new_str(entry->model);
-  hd->hw_class = entry->hw_class;
-
-  hd->config_string = new_str(entry->config_string);
-
-  hd->status = entry->status;
-
-  for(
-    sl1 = entry->key, sl2 = entry->value;
-    sl1 && sl2;
-    sl1 = sl1->next, sl2 = sl2->next
-  ) {
-    switch(item = value2key(hw_ids_hd_items, sl1->str)) {
-      case hwdi_bus:
-        hd->bus.id = strtoul(sl2->str, NULL, 0);
-        break;
-
-      case hwdi_slot:
-        hd->slot = strtoul(sl2->str, NULL, 0);
-        break;
-
-      case hwdi_func:
-        hd->func = strtoul(sl2->str, NULL, 0);
-        break;
-
-      case hwdi_base_class:
-        hd->base_class.id = strtoul(sl2->str, NULL, 0);
-        break;
-
-      case hwdi_sub_class:
-        hd->sub_class.id = strtoul(sl2->str, NULL, 0);
-        break;
-
-      case hwdi_prog_if:
-        hd->prog_if.id = strtoul(sl2->str, NULL, 0);
-        break;
-
-      case hwdi_dev:
-        hd->device.id = str2id(sl2->str);
-        break;
-
-      case hwdi_vend:
-        hd->vendor.id = str2id(sl2->str);
-        break;
-
-      case hwdi_sub_dev:
-        hd->sub_device.id = str2id(sl2->str);
-        break;
-
-      case hwdi_sub_vend:
-        hd->sub_vendor.id = str2id(sl2->str);
-        break;
-
-      case hwdi_rev:
-        hd->revision.id = strtoul(sl2->str, NULL, 0);
-        break;
-
-      case hwdi_compat_dev:
-        hd->compat_device.id = str2id(sl2->str);
-        break;
-
-      case hwdi_compat_vend:
-        hd->compat_vendor.id = str2id(sl2->str);
-        break;
-
-      case hwdi_dev_name:
-        hd->device.name = new_str(sl2->str);
-        break;
-
-      case hwdi_vend_name:
-        hd->vendor.name = new_str(sl2->str);
-        break;
-
-      case hwdi_sub_dev_name:
-        hd->sub_device.name = new_str(sl2->str);
-        break;
-
-      case hwdi_sub_vend_name:
-        hd->sub_vendor.name = new_str(sl2->str);
-        break;
-
-      case hwdi_rev_name:
-        hd->revision.name = new_str(sl2->str);
-        break;
-
-      case hwdi_serial:
-        hd->serial = new_str(sl2->str);
-        break;
-
-      case hwdi_unix_dev_name:
-        hd->unix_dev_name = new_str(sl2->str);
-        break;
-
-      case hwdi_unix_dev_name2:
-        hd->unix_dev_name2 = new_str(sl2->str);
-        break;
-
-      case hwdi_unix_dev_names:
-        hd->unix_dev_names = hd_split(' ', sl2->str);
-        break;
-
-      case hwdi_drivers:
-        hd->drivers = hd_split('|', sl2->str);
-        break;
-
-      case hwdi_sysfs_id:
-        hd->sysfs_id = new_str(sl2->str);
-        break;
-
-      case hwdi_sysfs_busid:
-        hd->sysfs_bus_id = new_str(sl2->str);
-        break;
-
-      case hwdi_sysfs_link:
-        hd->sysfs_device_link = new_str(sl2->str);
-        break;
-
-      case hwdi_rom_id:
-        hd->rom_id = new_str(sl2->str);
-        break;
-
-      case hwdi_broken:
-        hd->broken = strtoul(sl2->str, NULL, 0);
-        break;
-
-      case hwdi_usb_guid:
-        hd->usb_guid = new_str(sl2->str);
-        break;
-
-      case hwdi_hotplug:
-        hd->hotplug = strtol(sl2->str, NULL, 0);
-        break;
-
-      case hwdi_class_list:
-        for(
-          u0 = 0, s = sl2->str;
-          u0 < sizeof hd->hw_class_list / sizeof *hd->hw_class_list;
-          u0++
-        ) {
-          if(*s && s[1] && (i = hex(s, 2)) >= 0) {
-            hd->hw_class_list[u0] = i;
-            s += 2;
-          }
-          else {
-            break;
-          }
-        }
-        break;
-
-      case hwdi_res_mem:
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->any.type = res_mem;
-        if(sscanf(sl2->str, "0x%"SCNx64",0x%"SCNx64",%u,%u,%u", &u64_0, &u64_1, &u0, &u1, &u2) == 5) {
-          res->mem.base = u64_0;
-          res->mem.range = u64_1;
-          res->mem.enabled = u0;
-          res->mem.access = u1;
-          res->mem.prefetch = u2;
-        }
-        break;
-
-      case hwdi_res_phys_mem:
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->any.type = res_phys_mem;
-        if(sscanf(sl2->str, "0x%"SCNx64"", &u64_0) == 1) {
-          res->phys_mem.range = u64_0;
-        }
-        break;
-
-      case hwdi_res_io:
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->any.type = res_io;
-        if(sscanf(sl2->str, "0x%"SCNx64",0x%"SCNx64",%u,%u", &u64_0, &u64_1, &u0, &u1) == 4) {
-          res->io.base = u64_0;
-          res->io.range = u64_1;
-          res->io.enabled = u0;
-          res->io.access = u1;
-        }
-        break;
-
-      case hwdi_res_irq:
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->any.type = res_irq;
-        if(sscanf(sl2->str, "%u,%u,%u", &u0, &u1, &u2) == 3) {
-          res->irq.base = u0;
-          res->irq.triggered = u1;
-          res->irq.enabled = u2;
-        }
-        break;
-
-      case hwdi_res_dma:
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->any.type = res_dma;
-        if(sscanf(sl2->str, "%u,%u", &u0, &u1) == 2) {
-          res->dma.base = u0;
-          res->dma.enabled = u1;
-        }
-        break;
-
-      case hwdi_res_size:
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->any.type = res_size;
-        if(sscanf(sl2->str, "%u,%u,%u", &u0, &u1, &u2) == 3) {
-          res->size.unit = u0;
-          res->size.val1 = u1;
-          res->size.val2 = u2;
-        }
-        break;
-
-      case hwdi_res_baud:
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->any.type = res_baud;
-        if(sscanf(sl2->str, "%u,%u,%u,%u,%u", &u0, &u1, &u2, &u3, &u4) == 5) {
-          res->baud.speed = u0;
-          res->baud.bits = u1;
-          res->baud.stopbits = u2;
-          res->baud.parity = (char) u3;
-          res->baud.handshake = (char) u4;
-        }
-        break;
-
-      case hwdi_res_cache:
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->any.type = res_cache;
-        if(sscanf(sl2->str, "%u", &u0) == 1) {
-          res->cache.size = u0;
-        }
-        break;
-
-      case hwdi_res_disk_geo:
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->any.type = res_disk_geo;
-        if(sscanf(sl2->str, "%u,%u,%u,%u", &u0, &u1, &u2, &u3) == 4) {
-          res->disk_geo.cyls = u0;
-          res->disk_geo.heads = u1;
-          res->disk_geo.sectors = u2;
-          res->disk_geo.geotype = u3;
-        }
-        break;
-
-      case hwdi_res_monitor:
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->any.type = res_monitor;
-        if(sscanf(sl2->str, "%u,%u,%u,%u", &u0, &u1, &u2, &u3) == 4) {
-          res->monitor.width = u0;
-          res->monitor.height = u1;
-          res->monitor.vfreq = u2;
-          res->monitor.interlaced = u3;
-        }
-        break;
-
-      case hwdi_res_framebuffer:
-        res = add_res_entry(&hd->res, new_mem(sizeof *res));
-        res->any.type = res_framebuffer;
-        if(sscanf(sl2->str, "%u,%u,%u,%u,%u", &u0, &u1, &u2, &u3, &u4) == 5) {
-          res->framebuffer.width = u0;
-          res->framebuffer.height = u1;
-          res->framebuffer.bytes_p_line = u2;
-          res->framebuffer.colorbits = u3;
-          res->framebuffer.mode = u4;
-        }
-        break;
-
-      case hwdi_features:
-        u0 = strtoul(sl2->str, NULL, 0);
-        if(u0 & (1 << 0)) hd->is.agp = 1;
-        if(u0 & (1 << 1)) hd->is.isapnp = 1;
-        if(u0 & (1 << 2)) hd->is.softraiddisk = 1;
-        if(u0 & (1 << 3)) hd->is.zip = 1;
-        if(u0 & (1 << 4)) hd->is.cdr = 1;
-        if(u0 & (1 << 5)) hd->is.cdrw = 1;
-        if(u0 & (1 << 6)) hd->is.dvd = 1;
-        if(u0 & (1 << 7)) hd->is.dvdr = 1;
-        if(u0 & (1 << 8)) hd->is.dvdram = 1;
-        if(u0 & (1 << 9)) hd->is.pppoe = 1;
-        if(u0 & (1 << 10)) hd->is.wlan = 1;
-        break;
-    }
-  }
-
   if(hd->device.id || hd->vendor.id) {
     tag = ID_TAG(hd->device.id);
     tag = tag ? tag : ID_TAG(hd->vendor.id);
@@ -1078,388 +1002,48 @@ void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
     hd->compat_vendor.id = MAKE_ID(tag, ID_VALUE(hd->compat_vendor.id));
   }
 
-  if(hd->status.available == status_unknown) hd->is.manual = 1;
-
-  /* create some entries, if missing */
-
-  if(!hd->device.id && !hd->vendor.id && !hd->device.name) {
-    hd->device.name = new_str(hd->model);
-  }
-
-  if(hd->hw_class && !hd->base_class.id) {
-    switch(hd->hw_class) {
-      case hw_cdrom:
-        hd->base_class.id = bc_storage_device;
-        hd->sub_class.id = sc_sdev_cdrom;
-        break;
-
-      case hw_mouse:
-        hd->base_class.id = bc_mouse;
-        hd->sub_class.id = sc_mou_other;
-        break;
-
-      default:
-	break;
-    }
-  }
-
-  hddb_add_info(hd_data, hd);
-}
-
-
-void hd2manual(hd_t *hd, hd_manual_t *entry)
-{
-  char *s, *t;
-  hd_res_t *res;
-  str_list_t *sl;
-  unsigned u;
-
-  if(!hd || !entry) return;
-
-  entry->unique_id = new_str(hd->unique_id);
-  entry->parent_id = new_str(hd->parent_id);
-  entry->child_ids = hd_join(",", hd->child_ids);
-  entry->model = new_str(hd->model);
-  entry->hw_class = hd->hw_class;
-
-  entry->config_string = new_str(hd->config_string);
-
-  entry->status = hd->status;
-
-  if(
-    !entry->status.configured &&
-    !entry->status.available &&
-    !entry->status.needed &&
-    !entry->status.active &&
-    !entry->status.invalid
-  ) {
-    entry->status.configured = status_new;
-    entry->status.available = hd->module == mod_manual ? status_unknown : status_yes;
-    entry->status.needed = status_no;
-    entry->status.active = status_unknown;
-  }
-
-  s = NULL;
-
-  if(hd->broken) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_broken));
-    str_printf(&s, 0, "0x%x", hd->broken);
-    add_str_list(&entry->value, s);
-  }
-
-  if(hd->bus.id) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_bus));
-    str_printf(&s, 0, "0x%x", hd->bus.id);
-    add_str_list(&entry->value, s);
-  }
-
-  if(hd->slot) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_slot));
-    str_printf(&s, 0, "0x%x", hd->slot);
-    add_str_list(&entry->value, s);
-  }
-
-  if(hd->func) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_func));
-    str_printf(&s, 0, "0x%x", hd->func);
-    add_str_list(&entry->value, s);
-  }
-
-  if(hd->base_class.id) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_base_class));
-    str_printf(&s, 0, "0x%x", hd->base_class.id);
-    add_str_list(&entry->value, s);
-  }
-
-  if(hd->sub_class.id) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_class));
-    str_printf(&s, 0, "0x%x", hd->sub_class.id);
-    add_str_list(&entry->value, s);
-  }
-
-  if(hd->prog_if.id) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_prog_if));
-    str_printf(&s, 0, "0x%x", hd->prog_if.id);
-    add_str_list(&entry->value, s);
-  }
-
-  if(hd->device.id || hd->vendor.id) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_vend));
-    add_str_list(&entry->value, vend_id2str(hd->vendor.id));
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_dev));
-    str_printf(&s, 0, "%04x", ID_VALUE(hd->device.id));
-    add_str_list(&entry->value, s);
-  }
-
-  if(hd->sub_device.id || hd->sub_vendor.id) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_vend));
-    add_str_list(&entry->value, vend_id2str(hd->sub_vendor.id));
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_dev));
-    str_printf(&s, 0, "%04x", ID_VALUE(hd->sub_device.id));
-    add_str_list(&entry->value, s);
-  }
-
-  if(hd->revision.id) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_rev));
-    str_printf(&s, 0, "0x%x", hd->revision.id);
-    add_str_list(&entry->value, s);
-  }
-
-  if(hd->compat_device.id || hd->compat_vendor.id) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_compat_vend));
-    add_str_list(&entry->value, vend_id2str(hd->compat_vendor.id));
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_compat_dev));
-    str_printf(&s, 0, "%04x", ID_VALUE(hd->compat_device.id));
-    add_str_list(&entry->value, s);
-  }
-
-  if(hd->device.name) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_dev_name));
-    add_str_list(&entry->value, hd->device.name);
-  }
-
-  if(hd->vendor.name) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_vend_name));
-    add_str_list(&entry->value, hd->vendor.name);
-  }
-
-  if(hd->sub_device.name) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_dev_name));
-    add_str_list(&entry->value, hd->sub_device.name);
-  }
-
-  if(hd->sub_vendor.name) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sub_vend_name));
-    add_str_list(&entry->value, hd->sub_vendor.name);
-  }
-
-  if(hd->revision.name) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_rev_name));
-    add_str_list(&entry->value, hd->revision.name);
-  }
-
-  if(hd->serial) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_serial));
-    add_str_list(&entry->value, hd->serial);
-  }
-
-  if(hd->unix_dev_name) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_unix_dev_name));
-    add_str_list(&entry->value, hd->unix_dev_name);
-  }
-
-  if(hd->unix_dev_name2) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_unix_dev_name2));
-    add_str_list(&entry->value, hd->unix_dev_name2);
-  }
-
-  if(hd->unix_dev_names) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_unix_dev_names));
-    s = free_mem(s);
-    s = hd_join(" ", hd->unix_dev_names);
-    add_str_list(&entry->value, s);
-  }
-
-  if(hd->drivers) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_drivers));
-    s = free_mem(s);
-    s = hd_join("|", hd->drivers);
-    add_str_list(&entry->value, s);
-  }
-
-  if(hd->sysfs_id) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sysfs_id));
-    add_str_list(&entry->value, hd->sysfs_id);
-  }
-
-  if(hd->sysfs_bus_id) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sysfs_busid));
-    add_str_list(&entry->value, hd->sysfs_bus_id);
-  }
-
-  if(hd->sysfs_device_link) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_sysfs_link));
-    add_str_list(&entry->value, hd->sysfs_device_link);
-  }
-
-  if(hd->rom_id) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_rom_id));
-    add_str_list(&entry->value, hd->rom_id);
-  }
-
-  if(hd->usb_guid) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_usb_guid));
-    add_str_list(&entry->value, hd->usb_guid);
-  }
-
-  if(hd->hotplug) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_hotplug));
-    str_printf(&s, 0, "%d", hd->hotplug);
-    add_str_list(&entry->value, s);
-  }
-
-  s = free_mem(s);
-  for(u = 0; u < sizeof hd->hw_class_list / sizeof *hd->hw_class_list; u++) {
-    str_printf(&s, -1, "%02x", hd->hw_class_list[u]);
-  }
-  add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_class_list));
-  add_str_list(&entry->value, s);
-
-  u = 0;
-  if(hd->is.agp)          u |= 1 << 0;
-  if(hd->is.isapnp)       u |= 1 << 1;
-  if(hd->is.softraiddisk) u |= 1 << 2;
-  if(hd->is.zip)          u |= 1 << 3;
-  if(hd->is.cdr)          u |= 1 << 4;
-  if(hd->is.cdrw)         u |= 1 << 5;
-  if(hd->is.dvd)          u |= 1 << 6;
-  if(hd->is.dvdr)         u |= 1 << 7;
-  if(hd->is.dvdram)       u |= 1 << 8;
-  if(hd->is.pppoe)        u |= 1 << 9;
-  if(hd->is.wlan)         u |= 1 << 10;
-  
-  if(u) {
-    add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_features));
-    str_printf(&s, 0, "0x%x", u);
-    add_str_list(&entry->value, s);
-  }
-
-  for(res = hd->res; res; res = res->next) {
-    sl = NULL;
-    switch(res->any.type) {
-      case res_mem:
-        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_mem));
-        str_printf(&s, 0, "0x%"PRIx64"", res->mem.base);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "0x%"PRIx64"", res->mem.range);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->mem.enabled);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->mem.access);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->mem.prefetch);
-        add_str_list(&sl, s);
-        break;
-
-      case res_phys_mem:
-        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_phys_mem));
-        str_printf(&s, 0, "0x%"PRIx64"", res->phys_mem.range);
-        add_str_list(&sl, s);
-        break;
-
-      case res_io:
-        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_io));
-        str_printf(&s, 0, "0x%"PRIx64"", res->io.base);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "0x%"PRIx64"", res->io.range);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->io.enabled);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->io.access);
-        add_str_list(&sl, s);
-        break;
-
-      case res_irq:
-        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_irq));
-        str_printf(&s, 0, "%u", res->irq.base);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->irq.triggered);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->irq.enabled);
-        add_str_list(&sl, s);
-        break;
-
-      case res_dma:
-        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_dma));
-        str_printf(&s, 0, "%u", res->dma.base);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->dma.enabled);
-        add_str_list(&sl, s);
-        break;
-
-      case res_size:
-        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_size));
-        str_printf(&s, 0, "%u", res->size.unit);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%"PRIu64, res->size.val1);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%"PRIu64, res->size.val2);
-        add_str_list(&sl, s);
-        break;
-
-      case res_baud:
-        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_baud));
-        str_printf(&s, 0, "%u", res->baud.speed);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->baud.bits);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->baud.stopbits);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "0x%02x", (unsigned) res->baud.parity);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "0x%02x", (unsigned) res->baud.handshake);
-        add_str_list(&sl, s);
-        break;
-
-      case res_cache:
-        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_cache));
-        str_printf(&s, 0, "%u", res->cache.size);
-        add_str_list(&sl, s);
-        break;
-
-      case res_disk_geo:
-        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_disk_geo));
-        str_printf(&s, 0, "%u", res->disk_geo.cyls);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->disk_geo.heads);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->disk_geo.sectors);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->disk_geo.geotype);
-        add_str_list(&sl, s);
-        break;
-
-      case res_monitor:
-        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_monitor));
-        str_printf(&s, 0, "%u", res->monitor.width);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->monitor.height);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->monitor.vfreq);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->monitor.interlaced);
-        add_str_list(&sl, s);
-        break;
-
-      case res_framebuffer:
-        add_str_list(&entry->key, key2value(hw_ids_hd_items, hwdi_res_framebuffer));
-        str_printf(&s, 0, "%u", res->framebuffer.width);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->framebuffer.height);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->framebuffer.bytes_p_line);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->framebuffer.colorbits);
-        add_str_list(&sl, s);
-        str_printf(&s, 0, "%u", res->framebuffer.mode);
-        add_str_list(&sl, s);
-        break;
-
-      default:
-        break;
-    }
-    /* keep entry->key & entry->value symmetrical! */
-    if(sl) {
-      t = hd_join(",", sl);
-      add_str_list(&entry->value, t);
-      free_mem(t);
-      free_str_list(sl);
-    }
-  }
-
-  free_mem(s);
 }
 #endif
+
+
+hal_prop_t *read_properties(hd_data_t *hd_data, const char *udi, const char *id)
+{
+  hd_t *hd;
+  hal_prop_t *prop = NULL;
+
+  if(udi) {
+    prop = hd_read_properties(udi);
+    ADD2LOG("  prop read: %s (%s)\n", udi, prop ? "ok" : "failed");
+  }
+
+  if(prop) return prop;
+
+  if(id && !udi) {
+    /* try to find udi entry */
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      if(hd->udi && hd->unique_id && !strcmp(id, hd->unique_id)) {
+        udi = hd->udi;
+        break;
+      }
+    }
+
+    if(udi) {
+      prop = hd_read_properties(udi);
+      ADD2LOG("  prop read: %s (%s)\n", udi, prop ? "ok" : "failed");
+    }
+  }
+
+  if(!prop) {
+    prop = hd_read_properties(id);
+    ADD2LOG("  prop read: %s (%s)\n", id, prop ? "ok" : "failed");
+  }
+  if(!prop) {
+    prop = hd_manual_read_entry_old(id);
+    ADD2LOG("  old prop read: %s (%s)\n", id, prop ? "ok" : "failed");
+  }
+
+  return prop;
+}
 
 
 hd_t *hd_read_config(hd_data_t *hd_data, const char *id)
@@ -1469,21 +1053,15 @@ hd_t *hd_read_config(hd_data_t *hd_data, const char *id)
   const char *udi = NULL;
 
   /* only of we didn't already (check internal db pointer) */
+  /* prop2hd() makes db lookups */
   if(!hd_data->hddb2[1]) hddb_init(hd_data);
 
-  if(*id != '/') {
-    /* try to find udi entry */
-    for(hd = hd_data->hd; hd; hd = hd->next) {
-      if(hd->udi && hd->unique_id && !strcmp(id, hd->unique_id)) {
-        udi = hd->udi;
-        break;
-      }
-    }
+  if(id && *id == '/') {
+    udi = id;
+    id = NULL;
   }
 
-  if(udi) prop = hd_read_properties(udi);
-  if(!prop) prop = hd_read_properties(id);
-  if(!prop) prop = hd_manual_read_entry_old(hd_data, id);
+  prop = read_properties(hd_data, udi, id);
 
   if(prop) {
     hd = new_mem(sizeof *hd);
@@ -1492,7 +1070,7 @@ hd_t *hd_read_config(hd_data_t *hd_data, const char *id)
     hd->line = __LINE__;
     hd->tag.freeit = 1;		/* make it a 'stand alone' entry */
     hd->persistent_prop = prop;
-    prop2hd(hd_data, hd);
+    prop2hd(hd_data, hd, 0);
   }
 
   return hd;
