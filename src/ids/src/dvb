@@ -84,6 +84,15 @@
 +driver.module.modprobe	bt878
 +subdevice.name		"Pinnacle PCTV Sat"
 
+ vendor.id		pci 0x109e
+&device.id		pci 0x0878
+&subvendor.id		pci 0x7063
+&subdevice.id		pci 0x2000
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	bt878
++subdevice.name		"pcHDTV HD-2000"
+
  vendor.id		pci 0x1131
 &device.id		pci 0x7146
 &subvendor.id		pci 0x00a1
@@ -168,7 +177,6 @@
 +subclass.id		0x00
 +driver.module.modprobe	budget-ci
 
-
  vendor.id		pci 0x14f1
 &device.id		pci 0x8802
 &subvendor.id		pci 0x17de
@@ -189,4 +197,12 @@
 +subclass.id		0x00
 +driver.module.modprobe	cx88-dvb
 
+ vendor.id		pci 0x14f1
+&device.id		pci 0x8802
+&subvendor.id		pci 0x7063
+&subdevice.id		pci 0x3000
++baseclass.id		0x111
++subclass.id		0x00
++driver.module.modprobe	cx88-dvb
++subdevice.name		"pcHDTV HD-3000"
 
