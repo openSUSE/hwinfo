@@ -30,58 +30,7 @@ static hash_t status_names[] = {
   { 0,              NULL      }
 };
 
-#if 0
-static hash_t hw_ids_hd_items[] = {
-  { hwdi_bus,             "Bus"              },
-  { hwdi_slot,            "Slot"             },
-  { hwdi_func,            "Function"         },
-  { hwdi_base_class,      "BaseClass"        },
-  { hwdi_sub_class,       "SubClass"         },
-  { hwdi_prog_if,         "ProgIF"           },
-  { hwdi_dev,             "DeviceID"         },
-  { hwdi_vend,            "VendorID"         },
-  { hwdi_sub_dev,         "SubDeviceID"      },
-  { hwdi_sub_vend,        "SubVendorID"      },
-  { hwdi_rev,             "RevisionID"       },
-  { hwdi_compat_dev,      "CompatDeviceID"   },
-  { hwdi_compat_vend,     "CompatVendorID"   },
-  { hwdi_dev_name,        "DeviceName"       },
-  { hwdi_vend_name,       "VendorName"       },
-  { hwdi_sub_dev_name,    "SubDeviceName"    },
-  { hwdi_sub_vend_name,   "SubVendorName"    },
-  { hwdi_rev_name,        "RevisionName"     },
-  { hwdi_serial,          "Serial"           },
-  { hwdi_unix_dev_name,   "UnixDevice"       },
-  { hwdi_unix_dev_name2,  "UnixDeviceAlt"    },
-  { hwdi_unix_dev_names,  "UnixDeviceList"   },
-  { hwdi_rom_id,          "ROMID"            },
-  { hwdi_broken,          "Broken"           },
-  { hwdi_usb_guid,        "USBGUID"          },
-  { hwdi_res_phys_mem,    "Res.PhysMemory"   },
-  { hwdi_res_mem,         "Res.Memory"       },
-  { hwdi_res_io,          "Res.IO"           },
-  { hwdi_res_irq,         "Res.Interrupts"   },
-  { hwdi_res_dma,         "Res.DMA"          },
-  { hwdi_res_size,        "Res.Size"         },
-  { hwdi_res_baud,        "Res.Baud"         },
-  { hwdi_res_cache,       "Res.Cache"        },
-  { hwdi_res_disk_geo,    "Res.DiskGeometry" },
-  { hwdi_res_monitor,     "Res.Monitor"      },
-  { hwdi_res_framebuffer, "Res.Framebuffer"  },
-  { hwdi_features,        "Features"         },
-  { hwdi_hotplug,         "Hotplug"          },
-  { hwdi_class_list,      "HWClassList"      },
-  { hwdi_drivers,         "Drivers"          },
-  { hwdi_sysfs_id,        "SysfsID"          },
-  { hwdi_sysfs_busid,     "SysfsBusID"       },
-  { hwdi_sysfs_link,      "SysfsLink"        },
-  { 0,                    NULL               }
-};
-#endif
-
 #ifndef LIBHD_TINY
-
-// static unsigned str2id(char *str);
 
 static void prop2hd(hd_data_t *hd_data, hd_t *hd, int status_only);
 static hal_prop_t *hal_get_new(hal_prop_t **list, const char *key);
@@ -101,6 +50,7 @@ void hd_scan_manual(hd_data_t *hd_data)
   struct dirent *de;
   int i;
   hd_t *hd, *hd1, *next, *hdm, **next2;
+  char *s;
 
   if(!hd_probe_feature(hd_data, pr_manual)) return;
 
@@ -118,20 +68,25 @@ void hd_scan_manual(hd_data_t *hd_data)
 
   next2 = &hd_data->manual;
 
-  if((dir = opendir(HARDWARE_UDI))) {
+  if((dir = opendir(HARDWARE_UDI "/org/freedesktop/Hal/devices"))) {
     i = 0;
+    s = NULL;
     while((de = readdir(dir))) {
       if(*de->d_name == '.') continue;
       PROGRESS(1, ++i, "read");
-      if((hd = hd_read_config(hd_data, de->d_name))) {
+      str_printf(&s, 0, "/org/freedesktop/Hal/devices/%s", de->d_name);
+      if((hd = hd_read_config(hd_data, s))) {
+        if(hd->status.available != status_unknown) hd->status.available = status_no;
         ADD2LOG("  got %s\n", hd->unique_id);
         *next2 = hd;
         next2 = &hd->next;
       }
     }
+    s = free_mem(s);
     closedir(dir);
   }
 
+#if 0
   // FIXME!
   if((dir = opendir(HARDWARE_UNIQUE_KEYS))) {
     i = 0;
@@ -167,6 +122,7 @@ void hd_scan_manual(hd_data_t *hd_data)
       hd->status.active = status_unknown;
     }
   }
+#endif
 
   hd_data->flags.keep_kmods = 1;
   for(hdm = hd_data->manual; hdm; hdm = next) {
@@ -179,7 +135,7 @@ void hd_scan_manual(hd_data_t *hd_data)
     if(hd) {
       /* just update config status */
       hd->status = hdm->status;
-      hd->status.available = status_yes;
+      if(hd->status.available != status_unknown) hd->status.available = status_yes;
 
       hd->config_string = new_str(hdm->config_string);
 
@@ -196,6 +152,8 @@ void hd_scan_manual(hd_data_t *hd_data)
       hdm->tag.remove = 1;
 
       if(hd->status.available != status_unknown) hd->status.available = status_no;
+
+      printf("status %s %d\n", hd->unique_id, hd->status.available);
 
       // FIXME: do it really here?
       if(hd->parent_id) {
@@ -222,7 +180,6 @@ void hd_scan_manual(hd_data_t *hd_data)
   }
   hd_data->manual = NULL;
 
-
 }
 
 
@@ -235,6 +192,7 @@ void hd_scan_manual2(hd_data_t *hd_data)
     if(hd->persistent_prop) continue;
     hd->persistent_prop = read_properties(hd_data, hd->udi, hd->unique_id);
     prop2hd(hd_data, hd, 1);
+    if(hd->status.available != status_unknown) hd->status.available = status_yes;
   }
 
   /* check if it's necessary to reconfigure this hardware */
@@ -353,40 +311,6 @@ int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
 }
 
 
-#if 0
-unsigned str2id(char *str)
-{
-  unsigned id;
-  unsigned tag = 0;
-
-  if(strlen(str) == 3) return name2eisa_id(str);
-
-  switch(*str) {
-    case 'p':
-      tag = TAG_PCI; str++; break;
-
-    case 'r':
-      str++; break;
-
-    case 'u':
-      tag = TAG_USB; str++; break;
-
-    case 's':
-      tag = TAG_SPECIAL; str++; break;
-
-    case 'P':
-      tag = TAG_PCMCIA; str++; break;
-
-  }
-
-  id = strtoul(str, &str, 16);
-  if(*str) return 0;
-
-  return MAKE_ID(tag, ID_VALUE(id));
-}
-#endif
-
-
 char *prop2hd_str(hal_prop_t *prop, const char *id)
 {
   return (prop = hal_get_str(prop, id)) ? new_str(prop->val.str) : NULL;
@@ -427,8 +351,6 @@ void prop2hd(hd_data_t *hd_data, hd_t *hd, int status_only)
 
   list = hd->persistent_prop;
 
-  if(!list) return;
-
   hd->config_string = prop2hd_str(list, "hwinfo.configstring");
 
   if((prop = hal_get_str(list, "hwinfo.configured"))) {
@@ -450,7 +372,7 @@ void prop2hd(hd_data_t *hd_data, hd_t *hd, int status_only)
 
   /*
    * if the status info is completely missing, fake some:
-   * new hardware, not autodetectable, not needed
+   * new hardware, autodetectable, not needed
    */
   if(
     !hd->status.configured &&
@@ -459,14 +381,17 @@ void prop2hd(hd_data_t *hd_data, hd_t *hd, int status_only)
     !hd->status.invalid
   ) {
     hd->status.configured = status_new;
-    hd->status.available = status_unknown;
+    hd->status.available = status_yes;
     hd->status.needed = status_no;
   }
   if(!hd->status.active) hd->status.active = status_unknown;
 
+#if 0
+  /* ??? */
   if(hd->status.available == status_unknown) hd->is.manual = 1;
+#endif
 
-  if(status_only) return;
+  if(status_only || !list) return;
 
   hd->udi = prop2hd_str(list, "info.udi");
   hd->unique_id = prop2hd_str(list, "hwinfo.uniqueid");

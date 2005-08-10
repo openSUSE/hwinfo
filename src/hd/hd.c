@@ -3245,7 +3245,7 @@ hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan)
     if(!hd_report_this(hd_data, hd)) continue;
     if(
       (
-        is_manual || has_hw_class(hd, items)
+        (is_manual && hd->module == mod_manual) || has_hw_class(hd, items)
       )
 #ifndef LIBHD_TINY
 /* with LIBHD_TINY hd->status is not maintained (cf. manual.c) */
@@ -3268,7 +3268,9 @@ hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan)
 
   if(is_manual) {
     for(hd = hd_list; hd; hd = hd->next) {
-      hd->status.available = hd->status.available_orig;
+      if(hd->module == mod_manual) {
+        hd->status.available = hd->status.available_orig;
+      }
     }
   }
 

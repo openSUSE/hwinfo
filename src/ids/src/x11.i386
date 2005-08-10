@@ -21,13 +21,6 @@
 &subvendor.id		pci 0x174b
 &subdevice.id		pci 0x0450
 +subdevice.name		Radeon X600 Pro
-+driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
-+driver.xfree.config	Option "UseInternalAGPGART" "no"
-+driver.xfree.config	Option "mtrr" "off"
-+driver.xfree.config	Option "VideoOverlay" "on"
-+driver.xfree.config	Option "OpenGLOverlay" "off"
-+requires		fglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x3e54
@@ -326,12 +319,6 @@
 &device.id		pci 0x4a50
 +device.name		R420 JP
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
-+driver.xfree.config	Option "UseInternalAGPGART" "no"
-+driver.xfree.config	Option "mtrr" "off"
-+driver.xfree.config	Option "VideoOverlay" "on"
-+driver.xfree.config	Option "OpenGLOverlay" "off"
-+requires		fglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4b49
@@ -488,12 +475,6 @@
 &device.id		pci 0x4e44
 +device.name		R300 ND
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
-+driver.xfree.config	Option "UseInternalAGPGART" "no"
-+driver.xfree.config	Option "mtrr" "off"
-+driver.xfree.config	Option "VideoOverlay" "on"
-+driver.xfree.config	Option "OpenGLOverlay" "off"
-+requires		fglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e44
@@ -515,12 +496,6 @@
 &device.id		pci 0x4e47
 +device.name		R300 NG
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
-+driver.xfree.config	Option "UseInternalAGPGART" "no"
-+driver.xfree.config	Option "mtrr" "off"
-+driver.xfree.config	Option "VideoOverlay" "on"
-+driver.xfree.config	Option "OpenGLOverlay" "off"
-+requires		fglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e47
@@ -1069,13 +1044,11 @@
 &device.id		pci 0x5954
 +device.name		Radeon XPRESS 200 5954 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5955
 +device.name		Radeon XPRESS 200M 5955 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5960
@@ -1123,37 +1096,31 @@
 &device.id		pci 0x5974
 +device.name		Radeon XPRESS 200 5974 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5975
 +device.name		Radeon XPRESS 200M 5975 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5a41
 +device.name		Radeon XPRESS 200 5A41 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5a42
 +device.name		Radeon XPRESS 200M 5A42 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5a61
 +device.name		Radeon XPRESS 200 5A61 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5a62
 +device.name		Radeon XPRESS 200M 5A62 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5b60
@@ -1165,13 +1132,6 @@
 &subvendor.id		pci 0x174b
 &subdevice.id		pci 0x0440
 +subdevice.name		Radeon X300 SE
-+driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
-+driver.xfree.config	Option "UseInternalAGPGART" "no"
-+driver.xfree.config	Option "mtrr" "off"
-+driver.xfree.config	Option "VideoOverlay" "on"
-+driver.xfree.config	Option "OpenGLOverlay" "off"
-+requires		fglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5b62
@@ -1264,8 +1224,6 @@
 &device.id		pci 0x5e4b
 +device.name		Radeon X700 PRO (RV410) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
-+requires		fglrx
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5e4c
@@ -2145,6 +2103,8 @@
 &device.id		pci 0x0140
 +device.name		GeForce 6600 GT
 +driver.xfree		4|nv
++driver.xfree.config	Option XaaNoPixmapCache"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de

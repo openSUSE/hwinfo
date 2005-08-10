@@ -2,6 +2,7 @@
 	- drop special ADB input device scanning (#98324)
 	- internal db function rework continued (#102575)
 	- add udi when possible (#102575)
+	- updated X11 data
 
 1/8/2005:	v11.9
 	- updated X11 data

@@ -94,11 +94,13 @@ int InitInt10(hd_data_t *hd_data, int pci_cfg_method)
     return -1;
   }
 
+#if 0
   scan_pci(pci_cfg_method);
 
   for(; CurrentPci; CurrentPci = CurrentPci->next) {
     if(CurrentPci->active) break;
   }
+#endif
 
   iopl(0);
 
