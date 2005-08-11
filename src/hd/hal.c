@@ -702,10 +702,17 @@ void find_udi(hd_data_t *hd_data, hd_t *hd)
   }
 
   /* based on device file */
-  if(!dev && hd->unix_dev_name) for(dev = hd_data->hal; dev; dev = dev->next) {
+  if(
+    !dev &&
+    (hd->unix_dev_name || hd->unix_dev_name2 || hd->unix_dev_names)
+  ) for(dev = hd_data->hal; dev; dev = dev->next) {
     h_devname = hal_get_useful_str(dev->prop, "linux.device_file");
     if(!h_devname) h_devname = hal_get_useful_str(dev->prop, "block.device");
-    if(h_devname && !strcmp(hd->unix_dev_name, h_devname)) break;
+    if(h_devname) {
+      if(hd->unix_dev_name && !strcmp(hd->unix_dev_name, h_devname)) break;
+      if(hd->unix_dev_name2 && !strcmp(hd->unix_dev_name2, h_devname)) break;
+      if(search_str_list(hd->unix_dev_names, h_devname)) break;
+    }
   }
 
   if(dev) {

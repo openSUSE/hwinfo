@@ -1,4 +1,6 @@
+10/8/2005:	v11.11
 	- added hdtv cards (#102933)
+	- find input device udi (#102575)
 
 8/8/2005:	v11.10
 	- drop special ADB input device scanning (#98324)

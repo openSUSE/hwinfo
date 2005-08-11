@@ -181,6 +181,18 @@ void get_input_devices(hd_data_t *hd_data)
               }
             }
 
+            add_str_list(&hd->unix_dev_names, hd->unix_dev_name);
+            add_str_list(&hd->unix_dev_names, hd->unix_dev_name2);
+
+            for(sl1 = handler_list; sl1; sl1 = sl1->next) {
+              if(sscanf(sl1->str, "event%u", &u) == 1) {
+                s = NULL;
+                str_printf(&s, 0, "/dev/input/event%u", u);
+                add_str_list(&hd->unix_dev_names, s);
+                s = free_mem(s);
+                break;
+              }
+            }
           }
         }
 
