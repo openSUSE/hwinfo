@@ -810,7 +810,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
  */
 hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
 {
-  hddb_pci_t *p;
+  modinfo_t *p;
   unsigned u;
 
 #ifdef LIBHD_MEMCHECK
@@ -839,9 +839,15 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->proc_usb = free_str_list(hd_data->proc_usb);
   /* hd_data->usb is always NULL */
 
-  if((p = hd_data->hddb_pci)) {
-    for(; p->module; p++) free_mem(p->module);
+  if((p = hd_data->modinfo)) {
+    for(; p->type; p++) free_mem(p->module);
   }
+  hd_data->modinfo = free_mem(hd_data->modinfo);
+  if((p = hd_data->modinfo_ext)) {
+    for(; p->type; p++) free_mem(p->module);
+  }
+  hd_data->modinfo = free_mem(hd_data->modinfo_ext);
+
   if(hd_data->hddb2[0]) {
     free_mem(hd_data->hddb2[0]->list);
     free_mem(hd_data->hddb2[0]->ids); 
@@ -851,7 +857,6 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   /* hddb2[1] is the static internal database; don't try to free it! */
   hd_data->hddb2[1] = NULL;
 
-  hd_data->hddb_pci = free_mem(hd_data->hddb_pci);
   hd_data->kmods = free_str_list(hd_data->kmods);
   hd_data->bios_rom.data = free_mem(hd_data->bios_rom.data);
   hd_data->bios_ram.data = free_mem(hd_data->bios_ram.data);

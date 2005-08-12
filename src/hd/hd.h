@@ -1325,17 +1325,47 @@ typedef struct {
 } hddb2_data_t;
 
 /*
- * pci module info
+ * module.alias info
  */
+typedef enum modinfo_type_e { mi_none = 0, mi_pci, mi_usb } modinfo_type_t;
+
 typedef struct {
   char *module;
-  unsigned vendor;
-  unsigned device;
-  unsigned subvendor;
-  unsigned subdevice;
-  unsigned pciclass;
-  unsigned classmask;
-} hddb_pci_t;
+  modinfo_type_t type;
+  union {
+    struct {
+      struct {
+        unsigned vendor:1;
+        unsigned device:1;
+        unsigned sub_vendor:1;
+        unsigned sub_device:1;
+        unsigned base_class:1;
+        unsigned sub_class:1;
+        unsigned prog_if:1;
+      } has;
+      unsigned vendor;
+      unsigned device;
+      unsigned sub_vendor;
+      unsigned sub_device;
+      unsigned base_class;
+      unsigned sub_class;
+      unsigned prog_if;
+    } pci;
+
+    struct {
+      struct {
+        unsigned vendor:1;
+        unsigned product:1;
+        unsigned device_class:1;
+        unsigned device_subclass:1;
+      } has;
+      unsigned vendor;
+      unsigned product;
+      unsigned device_class;
+      unsigned device_subclass;
+    } usb;
+  };
+} modinfo_t;
 
 
 /*
@@ -2327,8 +2357,8 @@ typedef struct {
   str_list_t *klog;		/**< (Internal) kernel log */
   str_list_t *proc_usb;		/**< (Internal) /proc/bus/usb info */
   usb_t *usb;			/**< (Internal) usb info */
-  hddb_pci_t *hddb_pci_hm;	/**< (Internal) pci module info */
-  hddb_pci_t *hddb_pci;		/**< (Internal) pci module info */
+  modinfo_t *modinfo_ext;	/**< (Internal) external module info */
+  modinfo_t *modinfo;		/**< (Internal) module info */
   hddb2_data_t *hddb2[2];	/**< (Internal) hardware database */
   str_list_t *kmods;		/**< (Internal) list of active kernel modules */
   uint64_t used_irqs;		/**< (Internal) irq usage */

@@ -60,8 +60,10 @@ typedef struct {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 static void hddb_init_pci(hd_data_t *hd_data);
-static hddb_pci_t *parse_pcimap(str_list_t *file);
-static driver_info_t *hd_pcidb(hd_data_t *hd_data, hddb_pci_t *pci_db, hd_t *hd, driver_info_t *drv_info);
+static char *get_mi_field(char *str, char *tag, int field_len, unsigned *value, unsigned *has_value);
+static modinfo_t *parse_pcimap(str_list_t *file);
+static modinfo_t *parse_modinfo(str_list_t *file);
+static driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd, driver_info_t *drv_info);
 static void hddb_init_external(hd_data_t *hd_data);
 
 static line_t *parse_line(char *str);
@@ -102,127 +104,375 @@ void hddb_init_pci(hd_data_t *hd_data)
   char *s = NULL, *r;
   struct utsname ubuf;
 
-  if(!hd_data->hddb_pci) {
+  if(!hd_data->modinfo) {
     if(!uname(&ubuf)) {
       r = getenv("LIBHD_KERNELVERSION");
       if(!r || !*r) r = ubuf.release;
-      str_printf(&s, 0, "/lib/modules/%s/modules.pcimap", r);
+      str_printf(&s, 0, "/lib/modules/%s/modules.alias", r);
       sl = read_file(s, 0, 0);
       s = free_mem(s);
     }
 
-    hd_data->hddb_pci = parse_pcimap(sl);
+    hd_data->modinfo = parse_modinfo(sl);
 
     sl = free_str_list(sl);
   }
 
-  if(!hd_data->hddb_pci_hm) {
+  if(!hd_data->modinfo_ext) {
     sl = read_file("/etc/hotplug/pci.handmap", 0, 0);
-    hd_data->hddb_pci_hm = parse_pcimap(sl);
+    hd_data->modinfo_ext = parse_pcimap(sl);
     sl = free_str_list(sl);
   }
 }
 
 
-hddb_pci_t *parse_pcimap(str_list_t *file)
+char *get_mi_field(char *str, char *tag, int field_len, unsigned *value, unsigned *has_value)
+{
+  int i, j;
+
+  i = strlen(tag);
+
+  if(strncmp(str, tag, i)) return NULL;
+  str += i;
+
+  if(*str == '*') {
+    str++;
+    *value = 0;
+    *has_value = 0;
+  }
+  else {
+    i = sscanf(str, "%8x%n", value, &j);
+    if(i < 1) return NULL;
+    *has_value = 1;
+    str += j;
+  }
+
+  return str;
+}
+
+
+modinfo_t *parse_modinfo(str_list_t *file)
 {
   str_list_t *sl;
   unsigned len;
-  hddb_pci_t *pci, *p;
+  modinfo_t *modinfo, *m;
+  char *s, *t;
+  unsigned u;
+
+  /* lenght + 1! */
+  for(len = 1, sl = file; sl; sl = sl->next) len++;
+
+  modinfo = new_mem(len * sizeof *modinfo);
+
+  for(m = modinfo, sl = file; sl; sl = sl->next) {
+    if(!strncmp(sl->str, "alias pci:", sizeof "alias pci:" - 1)) {
+      s = sl->str + sizeof "alias pci:" - 1;
+
+      if(!(s = get_mi_field(s, "v", 8, &m->pci.vendor, &u))) continue;
+      m->pci.has.vendor = u;
+
+      if(!(s = get_mi_field(s, "d", 8, &m->pci.device, &u))) continue;
+      m->pci.has.device = u;
+
+      if(!(s = get_mi_field(s, "sv", 8, &m->pci.sub_vendor, &u))) continue;
+      m->pci.has.sub_vendor = u;
+
+      if(!(s = get_mi_field(s, "sd", 8, &m->pci.sub_device, &u))) continue;
+      m->pci.has.sub_device = u;
+
+      if(!(s = get_mi_field(s, "bc", 2, &m->pci.base_class, &u))) continue;
+      m->pci.has.base_class = u;
+
+      if(!(s = get_mi_field(s, "sc", 2, &m->pci.sub_class, &u))) continue;
+      m->pci.has.sub_class = u;
+
+      if(!(s = get_mi_field(s, "i", 2, &m->pci.prog_if, &u))) continue;
+      m->pci.has.prog_if = u;
+
+      if(*s == '*') s++;
+
+      while(isspace(*s)) s++;
+      for(t = s; *t; t++) {
+        if(isspace(*t)) {
+          *t = 0;
+          break;
+        }
+      }
+
+      if(*s) {
+        m->module = new_str(s);
+        m++->type = mi_pci;
+      }
+    }
+  }
+
+  /* note: list stops at first entry with m->type == mi_none */
+
+#if 0
+  fprintf(stderr, "---  modinfo  ---\n");
+  for(m = modinfo; m->type; m++) {
+    switch(m->type) {
+      case mi_pci:
+        fprintf(stderr, "%s:%d, v 0x%x:%u, d 0x%x:%u, sv 0x%x:%u, sd 0x%x:%u, bc 0x%x:%u, sc 0x%x:%u, i 0x%x:%u\n",
+          m->module, m->type,
+          m->pci.vendor, m->pci.has.vendor,
+          m->pci.device, m->pci.has.device,
+          m->pci.sub_vendor, m->pci.has.sub_vendor,
+          m->pci.sub_device, m->pci.has.sub_device,
+          m->pci.base_class, m->pci.has.base_class,
+          m->pci.sub_class, m->pci.has.sub_class,
+          m->pci.prog_if, m->pci.has.prog_if
+        );
+        break;
+
+      case mi_usb:
+        break;
+
+      case mi_none:
+        break;
+    }
+  }
+#endif
+
+  return modinfo;
+}
+
+
+modinfo_t *parse_pcimap(str_list_t *file)
+{
+  str_list_t *sl;
+  unsigned len;
+  modinfo_t *modinfo, *m;
   char buf[64];
   unsigned u0, u1, u2, u3, u4, u5;
 
   for(len = 1, sl = file; sl; sl = sl->next) len++;
 
-  pci = new_mem(len * sizeof *pci);
+  modinfo = new_mem(len * sizeof *modinfo);
 
-  for(p = pci, sl = file; sl; sl = sl->next) {
+  for(m = modinfo, sl = file; sl; sl = sl->next) {
     if(sscanf(sl->str, "%63s %x %x %x %x %x %x", buf, &u0, &u1, &u2, &u3, &u4, &u5) == 7) {
-      p->module = new_str(buf);
-      p->vendor = u0;
-      p->device = u1;
-      p->subvendor = u2;
-      p->subdevice = u3;
-      p->pciclass = u4;
-      p->classmask = u5;
+      m->type = mi_pci;
+      m->module = new_str(buf);
 
-      p++;
+      if(u0 != 0xffffffff) {
+        m->pci.vendor = u0;
+        m->pci.has.vendor = 1;
+      }
+      if(u1 != 0xffffffff) {
+        m->pci.device = u1;
+        m->pci.has.device = 1;
+      }
+      if(u2 != 0xffffffff) {
+        m->pci.sub_vendor = u2;
+        m->pci.has.sub_vendor = 1;
+      }
+      if(u3 != 0xffffffff) {
+        m->pci.sub_device = u3;
+        m->pci.has.sub_device = 1;
+      }
+      if((u5 & 0xff0000) == 0xff0000) {
+        m->pci.base_class = u4 >> 16;
+        m->pci.has.base_class = 1;
+      }
+      if((u5 & 0xff00) == 0xff00) {
+        m->pci.sub_class = (u4 >> 8) & 0xff;
+        m->pci.has.sub_class = 1;
+      }
+      if((u5 & 0xff) == 0xff) {
+        m->pci.prog_if = u4 & 0xff;
+        m->pci.has.prog_if = 1;
+      }
+
+      m++;
     }
   }
 
 #if 0
   fprintf(stderr, "---  pcimap  ---\n");
-  for(p = pci; p->module; p++) {
-    fprintf(stderr, "%s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n",
-      p->module, p->vendor, p->device, p->subvendor, p->subdevice,
-      p->pciclass, p->classmask
+  for(m = modinfo; m->module; m++) {
+    fprintf(stderr, "%s:%d, v 0x%x:%u, d 0x%x:%u, sv 0x%x:%u, sd 0x%x:%u, bc 0x%x:%u, sc 0x%x:%u, i 0x%x:%u\n",
+      m->module, m->type,
+      m->pci.vendor, m->pci.has.vendor,
+      m->pci.device, m->pci.has.device,
+      m->pci.sub_vendor, m->pci.has.sub_vendor,
+      m->pci.sub_device, m->pci.has.sub_device,
+      m->pci.base_class, m->pci.has.base_class,
+      m->pci.sub_class, m->pci.has.sub_class,
+      m->pci.prog_if, m->pci.has.prog_if
     );
   }
 #endif
 
-  return pci;
+  return modinfo;
 }
 
 
-driver_info_t *hd_pcidb(hd_data_t *hd_data, hddb_pci_t *pci_db, hd_t *hd, driver_info_t *drv_info)
+/* return prio, 0: no match */
+int match_modinfo(modinfo_t *db, modinfo_t *match)
 {
-  unsigned vendor, device, subvendor, subdevice, pciclass;
+  int prio = 0;
+
+  if(db->type != match->type) return prio;
+
+  switch(db->type) {
+    case mi_pci:
+      if(db->pci.has.base_class) {
+        if(match->pci.has.base_class && db->pci.base_class == match->pci.base_class) {
+          prio = 1;
+        }
+        else {
+          prio = 0;
+          break;
+        }
+      }
+      if(db->pci.has.sub_class) {
+        if(match->pci.has.sub_class && db->pci.sub_class == match->pci.sub_class) {
+          prio = 1;
+        }
+        else {
+          prio = 0;
+          break;
+        }
+      }
+      if(db->pci.has.prog_if) {
+        if(match->pci.has.prog_if && db->pci.prog_if == match->pci.prog_if) {
+          prio = 1;
+        }
+        else {
+          prio = 0;
+          break;
+        }
+      }
+      if(db->pci.has.vendor) {
+        if(match->pci.has.vendor && db->pci.vendor == match->pci.vendor) {
+          prio = 2;
+        }
+        else {
+          prio = 0;
+          break;
+        }
+      }
+      if(db->pci.has.device) {
+        if(match->pci.has.device && db->pci.device == match->pci.device) {
+          prio = 3;
+        }
+        else {
+          prio = 0;
+          break;
+        }
+      }
+      if(db->pci.has.sub_vendor) {
+        if(match->pci.has.sub_vendor && db->pci.sub_vendor == match->pci.sub_vendor) {
+          prio = 4;
+        }
+        else {
+          prio = 0;
+          break;
+        }
+      }
+      if(db->pci.has.sub_device) {
+        if(match->pci.has.sub_device && db->pci.sub_device == match->pci.sub_device) {
+          prio = 5;
+        }
+        else {
+          prio = 0;
+          break;
+        }
+      }
+
+    case mi_usb:
+      break;
+
+    case mi_none:
+      return 0;
+  }
+
+  return prio;
+}
+
+
+driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd, driver_info_t *drv_info)
+{
   driver_info_t **di = NULL, *di2;
   pci_t *pci;
   char *mod_list[16 /* arbitrary */];
   int mod_prio[sizeof mod_list / sizeof *mod_list];
   int i, prio, mod_list_len;
+  modinfo_t match = { };
 
-  if(!pci_db) return drv_info;
+  if(!modinfo_db) return drv_info;
 
-  if(ID_TAG(hd->vendor.id) != TAG_PCI) return drv_info;
+  if(
+    ID_TAG(hd->vendor.id) == TAG_PCI ||
+    ID_TAG(hd->device.id) == TAG_PCI
+  ) {
+    match.type = mi_pci;
+  }
+  else if(
+    ID_TAG(hd->vendor.id) == TAG_USB ||
+    ID_TAG(hd->device.id) == TAG_USB
+  ) {
+    match.type = mi_usb;
+  }
+  
+  if(!match.type) return drv_info;
 
   /* don't add module info if driver info of some other type exists */
   for(di = &drv_info; *di; di = &(*di)->next) {
     if((*di)->any.type != di_module) return drv_info;
   }
 
-  vendor = ID_VALUE(hd->vendor.id);
-  device = ID_VALUE(hd->device.id);
-  subvendor = ID_VALUE(hd->sub_vendor.id);
-  subdevice = ID_VALUE(hd->sub_device.id);
-  pciclass = (hd->base_class.id << 16) + ((hd->sub_class.id & 0xff) << 8) + (hd->prog_if.id & 0xff);
+  if(match.type == mi_pci) {
+    if(hd->vendor.id) {
+      match.pci.vendor = ID_VALUE(hd->vendor.id);
+      match.pci.has.vendor = 1;
+    }
+    if(hd->device.id) {
+      match.pci.device = ID_VALUE(hd->device.id);
+      match.pci.has.device = 1;
+    }
+    if(hd->sub_vendor.id) {
+      match.pci.sub_vendor = ID_VALUE(hd->sub_vendor.id);
+      match.pci.has.sub_vendor = 1;
+    }
+    if(hd->sub_device.id) {
+      match.pci.sub_device = ID_VALUE(hd->sub_device.id);
+      match.pci.has.sub_device = 1;
+    }
+    match.pci.base_class = hd->base_class.id;
+    match.pci.has.base_class = 1;
+    match.pci.sub_class = hd->sub_class.id;
+    match.pci.has.sub_class = 1;
+    match.pci.prog_if = hd->prog_if.id;
+    match.pci.has.prog_if = 1;
 
-  if(
-    hd->detail &&
-    hd->detail->type == hd_detail_pci &&
-    (pci = hd->detail->pci.data)
-  ) {
-    pciclass = (pci->base_class << 16) + ((pci->sub_class & 0xff) << 8) + (pci->prog_if & 0xff);
+    if(
+      hd->detail &&
+      hd->detail->type == hd_detail_pci &&
+      (pci = hd->detail->pci.data)
+    ) {
+      match.pci.base_class = pci->base_class;
+      match.pci.sub_class = pci->sub_class;
+      match.pci.prog_if = pci->prog_if;
+    }
   }
 
-  for(mod_list_len = 0; pci_db->module; pci_db++) {
-    if(
-      (pci_db->vendor == 0xffffffff || pci_db->vendor == vendor) &&
-      (pci_db->device == 0xffffffff || pci_db->device == device) &&
-      (pci_db->subvendor == 0xffffffff || pci_db->subvendor == subvendor) &&
-      (pci_db->subdevice == 0xffffffff || pci_db->subdevice == subdevice) &&
-      !((pci_db->pciclass ^ pciclass) & pci_db->classmask)
-    ) {
+  for(mod_list_len = 0; modinfo_db->type; modinfo_db++) {
+    if((prio = match_modinfo(modinfo_db, &match))) {
       for(di2 = drv_info; di2; di2 = di2->next) {
         if(
           di2->any.type == di_module &&
           di2->any.hddb0 &&
           di2->any.hddb0->str &&
-          !strcmp(di2->any.hddb0->str, pci_db->module)
+          !strcmp(di2->any.hddb0->str, modinfo_db->module)
         ) break;
       }
 
       if(di2) continue;
 
-      prio = 0;
-      if(pci_db->vendor == vendor) prio = 1;
-      if(pci_db->device == device) prio = 2;
-      if(pci_db->subvendor == subvendor) prio = 3;
-      if(pci_db->subdevice == subdevice) prio = 4;
-
       mod_prio[mod_list_len] = prio;
-      mod_list[mod_list_len++] = pci_db->module;
+      mod_list[mod_list_len++] = modinfo_db->module;
 
       if(mod_list_len >= sizeof mod_list / sizeof *mod_list) break;
     }
@@ -1805,7 +2055,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
 #endif
 
   if(!new_driver_info) {
-    new_driver_info = hd_pcidb(hd_data, hd_data->hddb_pci_hm, hd, new_driver_info);
+    new_driver_info = hd_modinfo_db(hd_data, hd_data->modinfo_ext, hd, new_driver_info);
   }
 
   if(!new_driver_info && (hs.value & (1 << he_driver))) {
@@ -1856,7 +2106,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     new_driver_info = monitor_driver(hd_data, hd);
   }
 
-  new_driver_info = hd_pcidb(hd_data, hd_data->hddb_pci, hd, new_driver_info);
+  new_driver_info = hd_modinfo_db(hd_data, hd_data->modinfo, hd, new_driver_info);
 
   if(new_driver_info) {
     if(!hd->ref) {
