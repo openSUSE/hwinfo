@@ -109,11 +109,26 @@ void get_input_devices(hd_data_t *hd_data)
               if(hd->unix_dev_name2 && !strcmp(hd->unix_dev_name2, s)) {
                 hd->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0210);
                 hd->compat_device.id = MAKE_ID(TAG_SPECIAL, (mouse_wheels << 4) + mouse_buttons);
+
+                add_str_list(&hd->unix_dev_names, hd->unix_dev_name);
+                add_str_list(&hd->unix_dev_names, hd->unix_dev_name2);
+
+                for(sl1 = handler_list; sl1; sl1 = sl1->next) {
+                  if(sscanf(sl1->str, "event%u", &u) == 1) {
+                    str_printf(&s, 0, "/dev/input/event%u", u);
+                    add_str_list(&hd->unix_dev_names, s);
+                    s = free_mem(s);
+                    break;
+                  }
+                }
+
+                break;
               }
             }
           }
 
           s = free_mem(s);
+
         }
         else {
           if(search_str_list(handler_list, "kbd") && test_bit(key, KEY_1)) {

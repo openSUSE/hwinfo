@@ -695,11 +695,7 @@ void find_udi(hd_data_t *hd_data, hd_t *hd)
 
   dev = NULL;
 
-  /* based on sysfs id */
-  if(hd->sysfs_id) for(dev = hd_data->hal; dev; dev = dev->next) {
-    h_sysfsid = hd_sysfs_id(hal_get_useful_str(dev->prop, "linux.sysfs_path"));
-    if(h_sysfsid && !strcmp(hd->sysfs_id, h_sysfsid)) break;
-  }
+  /* device file first, thanks to usb devices */
 
   /* based on device file */
   if(
@@ -713,6 +709,12 @@ void find_udi(hd_data_t *hd_data, hd_t *hd)
       if(hd->unix_dev_name2 && !strcmp(hd->unix_dev_name2, h_devname)) break;
       if(search_str_list(hd->unix_dev_names, h_devname)) break;
     }
+  }
+
+  /* based on sysfs id */
+  if(!dev && hd->sysfs_id) for(dev = hd_data->hal; dev; dev = dev->next) {
+    h_sysfsid = hd_sysfs_id(hal_get_useful_str(dev->prop, "linux.sysfs_path"));
+    if(h_sysfsid && !strcmp(hd->sysfs_id, h_sysfsid)) break;
   }
 
   if(dev) {
