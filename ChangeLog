@@ -3,6 +3,7 @@
 	- find input device udi (#102575)
 	- fixed usb device udi matching (#102575)
 	- read modules.alias, not modules.pcimap
+	- updated X11 data
 
 8/8/2005:	v11.10
 	- drop special ADB input device scanning (#98324)

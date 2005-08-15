@@ -2103,8 +2103,8 @@
 &device.id		pci 0x0140
 +device.name		GeForce 6600 GT
 +driver.xfree		4|nv
-+driver.xfree.config	Option XaaNoPixmapCache"
-+driver.xfree.config	Option "XaaNoOffScreenPixmaps"
++driver.xfree.config	Option  "XaaNoPixmapCache"
++driver.xfree.config	Option  "XaaNoOffScreenPixmaps"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -2231,6 +2231,8 @@
 &device.id		pci 0x0161
 +device.name		GeForce 6200 TurboCache(TM)
 +driver.xfree		4|nv
++driver.xfree.config	Option  "XaaNoPixmapCache"
++driver.xfree.config	Option  "XaaNoOffScreenPixmaps"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
