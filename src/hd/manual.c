@@ -153,8 +153,6 @@ void hd_scan_manual(hd_data_t *hd_data)
 
       if(hd->status.available != status_unknown) hd->status.available = status_no;
 
-      printf("status %s %d\n", hd->unique_id, hd->status.available);
-
       // FIXME: do it really here?
       if(hd->parent_id) {
         for(hd1 = hd_data->hd; hd1; hd1 = hd1->next) {

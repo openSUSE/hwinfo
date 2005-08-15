@@ -50,6 +50,7 @@ void ask_db(hd_data_t *hd_data, char *query);
 void get_mapping(hd_data_t *hd_data);
 void write_udi(hd_data_t *hd_data, char *udi);
 
+void do_saveconfig(hd_data_t *hd_data, hd_t *hd, FILE *f);
 
 struct {
   unsigned db_idx;
@@ -333,22 +334,6 @@ int main(int argc, char **argv)
         }
         else {
           fprintf(f ? f : stdout, "No config data: %s\n", showconfig);
-        }
-      }
-
-      if(saveconfig) {
-        for(hd = hd_data->hd; hd; hd = hd->next) {
-          if(!strcmp(hd->unique_id, saveconfig)) {
-            i = hd_write_config(hd_data, hd);
-            fprintf(f ? f : stdout, "%s: %s\n",
-              saveconfig,
-              i ? "Error writing config data" : "config saved"
-            );
-            break;
-          }
-        }
-        if(!hd) {
-          fprintf(f ? f : stdout, "No such hardware: %s\n", saveconfig);
         }
       }
 #endif
@@ -636,6 +621,7 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
       for(hd = hd0; hd; hd = hd->next) {
         hd_dump_entry(hd_data, hd, f ? f : stdout);
       }
+      do_saveconfig(hd_data, hd0, f ? f : stdout);
     }
   }
 
@@ -691,6 +677,7 @@ void do_hw_multi(hd_data_t *hd_data, FILE *f, hd_hw_item_t *hw_items)
     for(hd = hd0; hd; hd = hd->next) {
       hd_dump_entry(hd_data, hd, f ? f : stdout);
     }
+    do_saveconfig(hd_data, hd0, f ? f : stdout);
   }
 
   hd_free_hd_list(hd0);
@@ -2135,4 +2122,31 @@ void write_udi(hd_data_t *hd_data, char *udi)
 }
 
 
+
+void do_saveconfig(hd_data_t *hd_data, hd_t *hd, FILE *f)
+{
+#ifndef LIBHD_TINY
+  int i;
+
+  if(!saveconfig) return;
+
+  fprintf(f, "\nSave Configuration:\n");
+  for(; hd; hd = hd->next) {
+    if(
+      !strcmp(saveconfig, "all") ||
+      (hd->udi && !strcmp(hd->udi, saveconfig)) ||
+      (hd->unique_id && !strcmp(hd->unique_id, saveconfig)) ||
+      (hd->unix_dev_name && !strcmp(hd->unix_dev_name, saveconfig)) ||
+      (hd->unix_dev_name2 && !strcmp(hd->unix_dev_name2, saveconfig)) ||
+      search_str_list(hd->unix_dev_names, saveconfig)
+    ) {
+      i = hd_write_config(hd_data, hd);
+      fprintf(f, "  %s: %s\n",
+        hd->udi ?: hd->unique_id ?: saveconfig,
+        i ? "failed" : "ok"
+      );
+    }
+  }
+#endif
+}
 
