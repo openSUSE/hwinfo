@@ -1,3 +1,6 @@
+16/8/2005:	v11.12
+	- fixed evil bug when hal is running (#104654)
+
 10/8/2005:	v11.11
 	- added hdtv cards (#102933)
 	- find input device udi (#102575)

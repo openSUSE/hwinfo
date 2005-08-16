@@ -1854,6 +1854,8 @@ void hd_scan_with_hal(hd_data_t *hd_data)
 {
   hd_t *hd;
 
+  hd_data->hal = hd_free_hal_devices(hd_data->hal);
+
   hd_scan_hal(hd_data);
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
