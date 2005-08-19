@@ -108,7 +108,7 @@ typedef enum probe_feature {
   pr_block, pr_block_cdrom, pr_block_part, pr_edd, pr_edd_mod, pr_bios_ddc,
   pr_bios_fb, pr_bios_mode, pr_input, pr_block_mods, pr_bios_vesa,
   pr_cpuemu_debug, pr_scsi_noserial, pr_wlan, pr_bios_crc, pr_hal,
-  pr_max, pr_lxrc, pr_dsl, pr_default, pr_all		/* pr_all must be last */
+  pr_max, pr_lxrc, pr_default, pr_all		/* pr_all must be last */
 } hd_probe_feature_t;
 
 /*
@@ -981,6 +981,7 @@ typedef struct s_pci_t {
   uint64_t rom_base_len;			/* memory range for card ROM */
   char *sysfs_id;				/* sysfs path */
   char *sysfs_bus_id;				/* sysfs bus id */
+  char *modalias;				/* module alias */
 } pci_t;
 
 /*
@@ -1327,10 +1328,11 @@ typedef struct {
 /*
  * module.alias info
  */
-typedef enum modinfo_type_e { mi_none = 0, mi_pci, mi_usb } modinfo_type_t;
+typedef enum modinfo_type_e { mi_none = 0, mi_pci, mi_usb, mi_pcmcia } modinfo_type_t;
 
 typedef struct {
   char *module;
+  char *alias;
   modinfo_type_t type;
   union {
     struct {
@@ -2261,6 +2263,8 @@ typedef struct s_hd_t {
   hal_prop_t *hal_prop;		/* hal property list */
 
   hal_prop_t *persistent_prop;	/* persistent property list */
+
+  char *modalias;		/* module alias */
 
   /*
    * These are used internally for memory management.

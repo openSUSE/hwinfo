@@ -61,6 +61,7 @@ void do_lp(hd_data_t *hd_data)
       unload_module(hd_data, "lp");
       unload_module(hd_data, "parport_pc");
       probe_module(hd_data, "parport_pc");
+      probe_module(hd_data, "lp");
     }
   }
 

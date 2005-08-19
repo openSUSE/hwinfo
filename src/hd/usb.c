@@ -133,6 +133,16 @@ void get_usb_devs(hd_data_t *hd_data)
 
       usb->ifdescr = ul0;
 
+      if((s = hd_attr_str(sysfs_get_device_attr(sf_dev, "modalias")))) {
+        s = canon_str(s, strlen(s));
+        ADD2LOG("    modalias = \"%s\"\n", s);
+        if(s && *s) {
+          hd->modalias = s;
+          s = NULL;
+        }
+        s = free_mem(s);
+      }
+
       ADD2LOG("    bInterfaceNumber = %u\n", hd->func);
 
       if(hd_attr_uint(sysfs_get_device_attr(sf_dev, "bInterfaceClass"), &ul0, 16)) {

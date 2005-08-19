@@ -134,6 +134,12 @@ void hd_pci_read_data(hd_data_t *hd_data)
     pci->slot = u2;
     pci->func = u3;
 
+    if((s = hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "modalias")))) {
+      pci->modalias = canon_str(s, strlen(s));
+      ADD2LOG("    modalias = \"%s\"\n", s);
+    }
+    sysfs_close_attribute(attr);
+
     if(hd_attr_uint(attr = hd_read_single_sysfs_attribute(sf_dev->path, "class"), &ul0, 0)) {
       ADD2LOG("    class = 0x%x\n", (unsigned) ul0);
       pci->prog_if = ul0 & 0xff;
@@ -323,7 +329,13 @@ void hd_pci_complete_data(hd_t *hd)
   hd->bus.id = bus_pci;
 
   if(pci->sysfs_bus_id && *pci->sysfs_bus_id) {
-    hd->sysfs_bus_id = new_str(pci->sysfs_bus_id);
+    hd->sysfs_bus_id = pci->sysfs_bus_id;
+    pci->sysfs_bus_id = NULL;
+  }
+
+  if(pci->modalias && *pci->modalias) {
+    hd->modalias = pci->modalias;
+    pci->modalias = NULL;
   }
 
   hd->slot = pci->slot + (pci->bus << 8);

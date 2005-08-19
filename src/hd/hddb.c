@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <fnmatch.h>
 #include <sys/utsname.h>
 
 #include "hd.h"
@@ -61,7 +62,6 @@ typedef struct {
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 static void hddb_init_pci(hd_data_t *hd_data);
 static char *get_mi_field(char *str, char *tag, int field_len, unsigned *value, unsigned *has_value);
-static modinfo_t *parse_pcimap(str_list_t *file);
 static modinfo_t *parse_modinfo(str_list_t *file);
 static driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd, driver_info_t *drv_info);
 static void hddb_init_external(hd_data_t *hd_data);
@@ -118,11 +118,14 @@ void hddb_init_pci(hd_data_t *hd_data)
     sl = free_str_list(sl);
   }
 
+#if 0
+  // currently nothing
   if(!hd_data->modinfo_ext) {
-    sl = read_file("/etc/hotplug/pci.handmap", 0, 0);
-    hd_data->modinfo_ext = parse_pcimap(sl);
+    sl = read_file("/WHATEVER", 0, 0);
+    hd_data->modinfo_ext = parse_modinfo(sl);
     sl = free_str_list(sl);
   }
+#endif
 }
 
 
@@ -156,8 +159,9 @@ modinfo_t *parse_modinfo(str_list_t *file)
   str_list_t *sl;
   unsigned len;
   modinfo_t *modinfo, *m;
-  char *s, *t;
+  char *s;
   unsigned u;
+  char alias[256], module[256];
 
   /* lenght + 1! */
   for(len = 1, sl = file; sl; sl = sl->next) len++;
@@ -165,8 +169,10 @@ modinfo_t *parse_modinfo(str_list_t *file)
   modinfo = new_mem(len * sizeof *modinfo);
 
   for(m = modinfo, sl = file; sl; sl = sl->next) {
-    if(!strncmp(sl->str, "alias pci:", sizeof "alias pci:" - 1)) {
-      s = sl->str + sizeof "alias pci:" - 1;
+    if(sscanf(sl->str, "alias %255s %255s", alias, module) != 2) continue;
+
+    if(!strncmp(alias, "pci:", sizeof "pci:" - 1)) {
+      s = alias + sizeof "pci:" - 1;
 
       if(!(s = get_mi_field(s, "v", 8, &m->pci.vendor, &u))) continue;
       m->pci.has.vendor = u;
@@ -189,21 +195,33 @@ modinfo_t *parse_modinfo(str_list_t *file)
       if(!(s = get_mi_field(s, "i", 2, &m->pci.prog_if, &u))) continue;
       m->pci.has.prog_if = u;
 
-      if(*s == '*') s++;
+      m->module = new_str(module);
+      m->alias = new_str(alias);
+      m++->type = mi_pci;
 
-      while(isspace(*s)) s++;
-      for(t = s; *t; t++) {
-        if(isspace(*t)) {
-          *t = 0;
-          break;
-        }
-      }
-
-      if(*s) {
-        m->module = new_str(s);
-        m++->type = mi_pci;
-      }
+      continue;
     }
+
+    if(!strncmp(alias, "usb:", sizeof "usb:" - 1)) {
+      s = alias + sizeof "usb:" - 1;
+
+      m->module = new_str(module);
+      m->alias = new_str(alias);
+      m++->type = mi_usb;
+
+      continue;
+    }
+
+    if(!strncmp(alias, "pcmcia:", sizeof "pcmcia:" - 1)) {
+      s = alias + sizeof "pcmcia:" - 1;
+
+      m->module = new_str(module);
+      m->alias = new_str(alias);
+      m++->type = mi_pcmcia;
+
+      continue;
+    }
+
   }
 
   /* note: list stops at first entry with m->type == mi_none */
@@ -213,8 +231,8 @@ modinfo_t *parse_modinfo(str_list_t *file)
   for(m = modinfo; m->type; m++) {
     switch(m->type) {
       case mi_pci:
-        fprintf(stderr, "%s:%d, v 0x%x:%u, d 0x%x:%u, sv 0x%x:%u, sd 0x%x:%u, bc 0x%x:%u, sc 0x%x:%u, i 0x%x:%u\n",
-          m->module, m->type,
+        fprintf(stderr, "%s:%d, %s\n  v 0x%x:%u, d 0x%x:%u, sv 0x%x:%u, sd 0x%x:%u, bc 0x%x:%u, sc 0x%x:%u, i 0x%x:%u\n",
+          m->module, m->type, m->alias,
           m->pci.vendor, m->pci.has.vendor,
           m->pci.device, m->pci.has.device,
           m->pci.sub_vendor, m->pci.has.sub_vendor,
@@ -226,6 +244,10 @@ modinfo_t *parse_modinfo(str_list_t *file)
         break;
 
       case mi_usb:
+      case mi_pcmcia:
+        fprintf(stderr, "%s:%d, %s\n",
+          m->module, m->type, m->alias
+        );
         break;
 
       case mi_none:
@@ -238,80 +260,11 @@ modinfo_t *parse_modinfo(str_list_t *file)
 }
 
 
-modinfo_t *parse_pcimap(str_list_t *file)
-{
-  str_list_t *sl;
-  unsigned len;
-  modinfo_t *modinfo, *m;
-  char buf[64];
-  unsigned u0, u1, u2, u3, u4, u5;
-
-  for(len = 1, sl = file; sl; sl = sl->next) len++;
-
-  modinfo = new_mem(len * sizeof *modinfo);
-
-  for(m = modinfo, sl = file; sl; sl = sl->next) {
-    if(sscanf(sl->str, "%63s %x %x %x %x %x %x", buf, &u0, &u1, &u2, &u3, &u4, &u5) == 7) {
-      m->type = mi_pci;
-      m->module = new_str(buf);
-
-      if(u0 != 0xffffffff) {
-        m->pci.vendor = u0;
-        m->pci.has.vendor = 1;
-      }
-      if(u1 != 0xffffffff) {
-        m->pci.device = u1;
-        m->pci.has.device = 1;
-      }
-      if(u2 != 0xffffffff) {
-        m->pci.sub_vendor = u2;
-        m->pci.has.sub_vendor = 1;
-      }
-      if(u3 != 0xffffffff) {
-        m->pci.sub_device = u3;
-        m->pci.has.sub_device = 1;
-      }
-      if((u5 & 0xff0000) == 0xff0000) {
-        m->pci.base_class = u4 >> 16;
-        m->pci.has.base_class = 1;
-      }
-      if((u5 & 0xff00) == 0xff00) {
-        m->pci.sub_class = (u4 >> 8) & 0xff;
-        m->pci.has.sub_class = 1;
-      }
-      if((u5 & 0xff) == 0xff) {
-        m->pci.prog_if = u4 & 0xff;
-        m->pci.has.prog_if = 1;
-      }
-
-      m++;
-    }
-  }
-
-#if 0
-  fprintf(stderr, "---  pcimap  ---\n");
-  for(m = modinfo; m->module; m++) {
-    fprintf(stderr, "%s:%d, v 0x%x:%u, d 0x%x:%u, sv 0x%x:%u, sd 0x%x:%u, bc 0x%x:%u, sc 0x%x:%u, i 0x%x:%u\n",
-      m->module, m->type,
-      m->pci.vendor, m->pci.has.vendor,
-      m->pci.device, m->pci.has.device,
-      m->pci.sub_vendor, m->pci.has.sub_vendor,
-      m->pci.sub_device, m->pci.has.sub_device,
-      m->pci.base_class, m->pci.has.base_class,
-      m->pci.sub_class, m->pci.has.sub_class,
-      m->pci.prog_if, m->pci.has.prog_if
-    );
-  }
-#endif
-
-  return modinfo;
-}
-
-
 /* return prio, 0: no match */
 int match_modinfo(modinfo_t *db, modinfo_t *match)
 {
   int prio = 0;
+  char *s;
 
   if(db->type != match->type) return prio;
 
@@ -380,8 +333,16 @@ int match_modinfo(modinfo_t *db, modinfo_t *match)
           break;
         }
       }
+      break;
 
     case mi_usb:
+    case mi_pcmcia:
+      if(match->alias && db->alias) {
+        if(!fnmatch(db->alias, match->alias, 0)) {
+          s = strchr(db->alias, '*');
+          prio = s ? s - db->alias + 1 : strlen(db->alias) + 1;
+        }
+      }
       break;
 
     case mi_none:
@@ -415,6 +376,14 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
   ) {
     match.type = mi_usb;
   }
+  else if(
+    ID_TAG(hd->vendor.id) == TAG_PCMCIA ||
+    ID_TAG(hd->device.id) == TAG_PCMCIA
+  ) {
+    match.type = mi_pcmcia;
+  }
+
+  match.alias = hd->modalias;
   
   if(!match.type) return drv_info;
 
@@ -471,6 +440,15 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
 
       if(di2) continue;
 
+      for(i = 0; i < mod_list_len; i++) {
+        if(!strcmp(mod_list[i], modinfo_db->module)) {
+          if(prio > mod_prio[i]) mod_prio[i] = prio;
+          break;
+        }
+      }
+
+      if(i < mod_list_len) continue;
+
       mod_prio[mod_list_len] = prio;
       mod_list[mod_list_len++] = modinfo_db->module;
 
@@ -478,7 +456,7 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
     }
   }
 
-  for(prio = 4; prio >= 0; prio--) {
+  for(prio = 256; prio >= 0; prio--) {
     for(i = 0; i < mod_list_len; i++) {
       if(mod_prio[i] == prio) {
         *di = new_mem(sizeof **di);
@@ -2058,6 +2036,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
     new_driver_info = hd_modinfo_db(hd_data, hd_data->modinfo_ext, hd, new_driver_info);
   }
 
+#if 1
   if(!new_driver_info && (hs.value & (1 << he_driver))) {
     new_driver_info = hddb_to_device_driver(hd_data, &hs);
   }
@@ -2080,6 +2059,7 @@ void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
       new_driver_info =  hddb_to_device_driver(hd_data, &hs);
     }
   }
+#endif
 
   /* acpi: load temperature control modules */
   if(!new_driver_info && hd->is.with_acpi) {

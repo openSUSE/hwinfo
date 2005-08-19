@@ -562,7 +562,6 @@ void int_floppy(hd_data_t *hd_data)
 }
 
 
-#define COPY_ENTRY(a) if(hd_scsi->a) { free_mem(hd_usb->a); hd_usb->a = new_str(hd_scsi->a); }
 /*
  * Remove usb entries that are handled by usb-storage.
  */
@@ -592,6 +591,24 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
             add_res_entry(&hd_scsi->res, hd_usb->res);
             hd_usb->res = NULL;
 
+            if(!hd_scsi->modalias) {
+              hd_scsi->modalias = hd_usb->modalias;
+              hd_usb->modalias = NULL;
+            }
+
+            if(!hd_scsi->vendor.id) hd_scsi->vendor.id = hd_usb->vendor.id;
+            if(!hd_scsi->device.id) hd_scsi->device.id = hd_usb->device.id;
+
+            if(!hd_scsi->serial) {
+              hd_scsi->serial = hd_usb->serial;
+              hd_usb->serial = NULL;
+            }
+
+            if(!hd_scsi->driver_info) {
+              hd_scsi->driver_info = hd_usb->driver_info;
+              hd_usb->driver_info = NULL;
+            }
+
             new_id(hd_data, hd_scsi);
 
             hd_usb->tag.remove = 1;
@@ -599,75 +616,10 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
         }
       }
     }
-
   }
-
-
-
-#if 0
-  for(hd_scsi = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
-    if(
-      hd_scsi->bus.id == bus_scsi &&
-      hd_scsi->usb_guid &&
-      search_str_list(hd_scsi->drivers, "usb-storage")
-    ) {
-      for(hd_usb = hd_data->hd; hd_usb ; hd_usb = hd_usb->next) {
-        if(
-          hd_usb->bus.id == bus_usb &&
-          hd_usb->usb_guid &&
-          !hd_usb->tag.remove &&
-          !strcmp(hd_usb->usb_guid, hd_scsi->usb_guid) &&
-          hd_usb->detail &&
-          hd_usb->detail->type == hd_detail_usb &&
-          (usb = hd_usb->detail->usb.data) &&
-          usb->driver &&
-          !strcmp(usb->driver, "usb-storage")
-        ) {
-          hd_scsi->tag.remove = 1;
-
-          /* join usb & scsi info */
-          hd_usb->bus.id = hd_scsi->bus.id;
-          COPY_ENTRY(bus.name);
-          hd_usb->base_class.id = hd_scsi->base_class.id;
-          COPY_ENTRY(base_class.name);
-          hd_usb->sub_class.id = hd_scsi->sub_class.id;
-          COPY_ENTRY(sub_class.name);
-          hd_usb->prog_if.id = hd_scsi->prog_if.id;
-          COPY_ENTRY(prog_if.name);
-          COPY_ENTRY(unix_dev_name);
-          COPY_ENTRY(model);
-          // ###### FIXME?: COPY_ENTRY(driver)
-
-          hd_usb->vendor.id = hd_scsi->vendor.id;
-          COPY_ENTRY(vendor.name);
-          hd_usb->device.id = hd_scsi->device.id;
-          COPY_ENTRY(device.name);
-          hd_usb->sub_vendor.name = free_mem(hd_usb->sub_vendor.name);
-          COPY_ENTRY(sub_vendor.name);
-          hd_usb->sub_device.name = free_mem(hd_usb->sub_device.name);
-          COPY_ENTRY(sub_device.name);
-          COPY_ENTRY(revision.name);
-          COPY_ENTRY(serial);
-
-          hd_usb->is.notready = hd_scsi->is.notready;
-          if(hd_usb->block0) free_mem(hd_usb->block0);
-          hd_usb->block0 = hd_scsi->block0;
-          hd_scsi->block0 = NULL;
-          add_res_entry(&hd_usb->res, hd_scsi->res);
-          hd_scsi->res = NULL;
-
-          new_id(hd_data, hd_usb);
-        }
-      }
-    }
-  }
-#endif
-
-
 
   remove_tagged_hd_entries(hd_data);
 }
-#undef COPY_ENTRY
 
 
 /*

@@ -46,7 +46,8 @@ for i in \
   /proc/tty \
   /proc/version \
   /sys \
-  /var/log/boot.msg
+  /var/log/boot.msg \
+  /var/lib/hardware/udi
 do
   if [ -e "$i" ] ; then
     echo "$i"
@@ -60,6 +61,11 @@ perl -nl -e 'print unless (split)[0] =~ /none|automount|:/' /proc/mounts >"$dir/
 
 echo -e "\n------  dmesg start  ------\n" >>"$dir/$host/var/log/boot.msg"
 dmesg >>"$dir/$host/var/log/boot.msg"
+
+if [ -x /usr/bin/lshal ] ; then
+  echo lshal
+  lshal >$dir/$host/lshal.txt 2>/dev/null
+fi
 
 file="$host.tar.gz"
 tar -C "$dir" -zcf "$dir/$file" "$host"

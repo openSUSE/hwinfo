@@ -296,7 +296,6 @@ static struct s_pr_flags {
   { pr_cpuemu,        0,                  0, "cpuemu"        },
   { pr_cpuemu_debug,  pr_cpuemu,          0, "cpuemu.debug"  },
   { pr_sysfs,         0,                  0, "sysfs"         },
-  { pr_dsl,           0,              4|2|1, "dsl"           },
   { pr_udev,          0,            8|4|2|1, "udev"          },
   { pr_block,         0,            8|4|2|1, "block"         },
   { pr_block_cdrom,   pr_block,     8|4|2|1, "block.cdrom"   },
@@ -628,7 +627,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_isapnp_mod);
       hd_set_probe_feature(hd_data, pr_sbus);
       hd_set_probe_feature(hd_data, pr_isdn);
-      hd_set_probe_feature(hd_data, pr_dsl);
       hd_set_probe_feature(hd_data, pr_prom);
       hd_set_probe_feature(hd_data, pr_s390);
       hd_set_probe_feature(hd_data, pr_wlan);
@@ -709,7 +707,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_usb:
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_isdn);	// need pr_misc, too?
-      hd_set_probe_feature(hd_data, pr_dsl);
       hd_set_probe_feature(hd_data, pr_block);
       hd_set_probe_feature(hd_data, pr_block_mods);
       hd_set_probe_feature(hd_data, pr_scsi);
@@ -722,7 +719,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_net);
       hd_set_probe_feature(hd_data, pr_isdn);
-      hd_set_probe_feature(hd_data, pr_dsl);
       hd_set_probe_feature(hd_data, pr_prom);
       break;
 
@@ -783,7 +779,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_bluetooth:
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_isdn);	// need pr_misc, too?
-      hd_set_probe_feature(hd_data, pr_dsl);
       break;
 
     case hw_all:
@@ -840,7 +835,10 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   /* hd_data->usb is always NULL */
 
   if((p = hd_data->modinfo)) {
-    for(; p->type; p++) free_mem(p->module);
+    for(; p->type; p++) {
+      free_mem(p->module);
+      free_mem(p->alias);
+    }
   }
   hd_data->modinfo = free_mem(hd_data->modinfo);
   if((p = hd_data->modinfo_ext)) {
@@ -1267,6 +1265,8 @@ hd_t *free_hd_entry(hd_t *hd)
 
   free_driver_info(hd->driver_info);
   free_str_list(hd->requires);
+
+  free_mem(hd->modalias);
 
   memset(hd, 0, sizeof *hd);
 

@@ -787,6 +787,10 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line0("\n");
   }
 
+  if(h->modalias) {
+    dump_line("Module Alias: \"%s\"\n", h->modalias);
+  }
+
   for(di = h->driver_info, i = 0; di; di = di->next, i++) {
     dump_line("Driver Info #%d:\n", i);
     ind += 2;

@@ -1,3 +1,11 @@
+19/8/2005:	v11.13
+	- rip out all special tulip-related module info (#105730)
+	- load lp module (#104874)
+	- pcmcia probing works again (#103740)
+	- support 'modalias' sysfs entries (#103740, #103978)
+	- getsysinfo collects a bit more info
+	- drop pci.handmap code (after talking to zoz)
+
 16/8/2005:	v11.12
 	- fixed evil bug when hal is running (#104654)
 
