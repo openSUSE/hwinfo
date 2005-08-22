@@ -4578,8 +4578,8 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 
       if(test_func) {
         if(test_func(hd_data, hd)) {
-          hd->hw_class = item;
-          break;
+          hd_set_hw_class(hd, item);
+          if(!hd->hw_class) hd->hw_class = item;
         }
       }
       else if(
@@ -4605,8 +4605,8 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           hd->sub_class.id == sc_ser_fiber
         )
       ) {
-        hd->hw_class = item;
-        break;
+        hd_set_hw_class(hd, item);
+        if(!hd->hw_class) hd->hw_class = item;
       }
     }
 

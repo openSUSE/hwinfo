@@ -1,3 +1,6 @@
+22/8/2005:	v11.14
+	- fix pcmcia controller detection
+
 19/8/2005:	v11.13
 	- rip out all special tulip-related module info (#105730)
 	- load lp module (#104874)
