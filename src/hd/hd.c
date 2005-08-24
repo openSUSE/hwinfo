@@ -147,6 +147,7 @@ static void test_read_block0_open(void *arg);
 static void get_kernel_version(hd_data_t *hd_data);
 static int is_modem(hd_data_t *hd_data, hd_t *hd);
 static int is_audio(hd_data_t *hd_data, hd_t *hd);
+static int is_pppoe(hd_data_t *hd_data, hd_t *hd);
 static void assign_hw_class(hd_data_t *hd_data, hd_t *hd);
 static void short_vendor(char *vendor);
 static void create_model_name(hd_data_t *hd_data, hd_t *hd);
@@ -4370,6 +4371,12 @@ int is_audio(hd_data_t *hd_data, hd_t *hd)
 }
 
 
+int is_pppoe(hd_data_t *hd_data, hd_t *hd)
+{
+  return hd->base_class.id == bc_network_interface && hd->is.pppoe ? 1 : 0;
+}
+
+
 void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 {
   int sc;		/* compare sub_class too */
@@ -4537,7 +4544,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           break;
 
         case hw_pppoe:
-          base_class = bc_network_interface;
+          test_func = is_pppoe;
           break;
 
         case hw_partition:
@@ -4629,10 +4636,6 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
   }
   else if(hd->bus.id == bus_isa && hd->is.isapnp) {
     hd_set_hw_class(hd, hw_isapnp);
-  }
-
-  if(hd->hw_class == hw_network && hd->is.pppoe) {
-    hd_set_hw_class(hd, hw_pppoe);
   }
 
   if(hd->usb_guid) {

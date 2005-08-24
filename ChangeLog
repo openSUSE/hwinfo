@@ -1,3 +1,6 @@
+23/8/2005:	v11.15
+	- fix pppoe detection (#106836)
+
 22/8/2005:	v11.14
 	- fix pcmcia controller detection
 
