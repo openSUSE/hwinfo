@@ -47,6 +47,7 @@ void hd_scan_input(hd_data_t *hd_data)
 #define INP_HANDLERS	"H: Handlers="
 #define INP_KEY		"B: KEY="
 #define INP_REL		"B: REL="
+#define INP_ABS		"B: ABS="
 
 void get_input_devices(hd_data_t *hd_data)
 {
@@ -56,7 +57,7 @@ void get_input_devices(hd_data_t *hd_data)
   unsigned ok, u;
   unsigned bus, vendor, product, version;
   unsigned mouse_buttons, mouse_wheels;
-  char *name = NULL, *handlers = NULL, *key = NULL, *rel = NULL;
+  char *name = NULL, *handlers = NULL, *key = NULL, *rel = NULL, *abso = NULL;
   size_t len;
   str_list_t *handler_list;
   hd_dev_num_t dev_num = { type: 'c', range: 1 };
@@ -75,6 +76,7 @@ void get_input_devices(hd_data_t *hd_data)
       if(handlers) ADD2LOG("  handlers = %s\n", handlers);
       if(key) ADD2LOG("  key = %s\n", key);
       if(rel) ADD2LOG("  rel = %s\n", rel);
+      if(abso) ADD2LOG("  abs = %s\n", abso);
 
       mouse_buttons = 0;
       if(key) {
@@ -174,7 +176,14 @@ void get_input_devices(hd_data_t *hd_data)
             hd->device.name = new_str(name);
 
             /* Synaptics/Alps TouchPad */
-            if(vendor == 2 && (product == 7 || product == 8)) {
+            if(
+              vendor == 2 &&
+              (product == 7 || product == 8) &&
+              test_bit(abso, ABS_X) &&
+              test_bit(abso, ABS_Y) &&
+              test_bit(abso, ABS_PRESSURE) &&
+              test_bit(key, BTN_TOOL_FINGER)
+            ) {
               hd->compat_vendor.id = hd->vendor.id;
               hd->compat_device.id = hd->device.id;
               hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0212);
@@ -220,6 +229,7 @@ void get_input_devices(hd_data_t *hd_data)
       handlers = free_mem(handlers);
       key = free_mem(key);
       rel = free_mem(rel);
+      abso = free_mem(abso);
     }
 
     if(sscanf(sl->str, "I: Bus=%04x Vendor=%04x Product=%04x Version=%04x", &bus, &vendor, &product, &version) == 4) {
@@ -253,6 +263,13 @@ void get_input_devices(hd_data_t *hd_data)
       s = sl->str + sizeof INP_REL - 1;
       rel = canon_str(s, strlen(s));
       rel = all_bits(rel);
+      continue;
+    }
+
+    if(!strncmp(sl->str, INP_ABS, sizeof INP_ABS - 1)) {
+      s = sl->str + sizeof INP_ABS - 1;
+      abso = canon_str(s, strlen(s));
+      abso = all_bits(abso);
       continue;
     }
   }
