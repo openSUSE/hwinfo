@@ -1,4 +1,5 @@
-	- fix alps touchpad detection (#98947)
+	- fix alps touchpad detection (#98947, #103075)
+	- drop ltmodem support (#113336)
 
 23/8/2005:	v11.15
 	- fix pppoe detection (#106836)

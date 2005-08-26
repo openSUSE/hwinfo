@@ -12,6 +12,6 @@
 &device.id		pci 0x0440+0x001d
 +baseclass.id		0x102
 +subclass.id		0x03
-+requires		ltmodem
-+driver.module.modprobe	lt_serial
+# +requires		ltmodem
+# +driver.module.modprobe	ltserial
 
