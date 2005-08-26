@@ -283,14 +283,14 @@ char *all_bits(char *str)
 {
   str_list_t *sl, *sl0;
   char *s = NULL;
-  unsigned u;
+  unsigned long u;
 
   if(!str) return NULL;
 
   sl = sl0 = hd_split(' ', str);
   for(; sl; sl = sl->next) {
     u = strtoul(sl->str, NULL, 16);
-    str_printf(&s, -1, "%08x", u);
+    str_printf(&s, -1, "%0*lx", sizeof (unsigned long) * 2, u);
   }
   free_str_list(sl0);
   free_mem(str);
