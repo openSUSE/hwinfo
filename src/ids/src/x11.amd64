@@ -547,6 +547,7 @@
 &device.id		pci 0x4e54
 +device.name		RV350 NT
 +driver.xfree		4|radeon
++driver.xfree.config	Option "DynamicClocks" "on"
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e56
@@ -3057,25 +3058,13 @@
 
  vendor.id		pci 0x1106
 &device.id		pci 0x3122
-+device.name		VIA CLE 3122
++device.name		CLE266
++driver.xfree		4|via|||dri
+
+ vendor.id		pci 0x1106
+&device.id		pci 0x7205
++device.name		KM400
 +driver.xfree		4|via
-
- vendor.id		pci 0x1106
-&device.id		pci 0x7205
-+device.name		VIA VT 7205
-+driver.xfree		4|via
-
- vendor.id		pci 0x1106
-&device.id		pci 0x7205
-&subvendor.id		pci 0x1025
-&subdevice.id		pci 0x0033
-+subdevice.name		Acer Incorporated VIA VT 7205
-
- vendor.id		pci 0x1106
-&device.id		pci 0x7205
-&subvendor.id		pci 0x1584
-&subdevice.id		pci 0x800a
-+subdevice.name		Uniwill VIA VT 7205
 
  vendor.id		pci 0x1142
 +vendor.name		Alliance Semiconductor Corporation

@@ -35,6 +35,7 @@ void hd_scan_floppy(hd_data_t *hd_data)
   str_list_t *sl;
   hd_res_t *res;
   int floppy_stat[2] = { 1, 1 };
+  unsigned floppy_created = 0;
 
   if(!hd_probe_feature(hd_data, pr_floppy)) return;
 
@@ -115,13 +116,15 @@ void hd_scan_floppy(hd_data_t *hd_data)
         floppy_ctrls++;
       }
 
-      if(floppy_ctrls) {
+      if(floppy_ctrls && !(floppy_created & (1 << u))) {
         hd = add_hd_entry(hd_data, __LINE__, 0);
         hd->base_class.id = bc_storage_device;
         hd->sub_class.id = sc_sdev_floppy;
         hd->bus.id = bus_floppy;
         hd->slot = u;
         str_printf(&hd->unix_dev_name, 0, "/dev/fd%u", u);
+
+        floppy_created |= 1 << u;
 
         if(*b0) {
           res = add_res_entry(&hd->res, new_mem(sizeof *res));

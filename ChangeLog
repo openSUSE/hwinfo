@@ -1,5 +1,10 @@
+29/8/2005:	v11.16
 	- fix alps touchpad detection (#98947, #103075)
 	- drop ltmodem support (#113336)
+	- don't make too many floppies (#113571)
+	- updated X11 data
+	- updated pci ids
+	- added WinTV PVR-350 as dvb card
 
 23/8/2005:	v11.15
 	- fix pppoe detection (#106836)

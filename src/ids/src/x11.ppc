@@ -2185,16 +2185,6 @@
 +device.name		0x034f
 +driver.xfree		4|nv
 
- vendor.id		pci 0x1106
-+vendor.name		nVidia Corporation
-
- vendor.id		pci 0x1106
-&device.id		pci 0x7205
-&subvendor.id		pci 0x1025
-&subdevice.id		pci 0x0033
-+subdevice.name		Acer Incorporated VIA VT 7205
-+driver.xfree		4|via
-
  vendor.id		pci 0x12d2
 +vendor.name		NVidia / SGS Thomson (Joint Venture)
 
