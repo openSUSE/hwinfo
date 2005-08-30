@@ -829,10 +829,10 @@ void int_udev(hd_data_t *hd_data)
       if(ui->name && !strcmp(ui->sysfs, hd->sysfs_id)) {
         hd->unix_dev_names = free_str_list(hd->unix_dev_names);
         hd->unix_dev_name = free_mem(hd->unix_dev_name);
-        str_printf(&s, 0, "%s%s", ui->type == 'n' ? "" : "/dev/", ui->name);
+        str_printf(&s, 0, "/dev/%s", ui->name);
         add_str_list(&hd->unix_dev_names, s);
         for(sl = ui->links; sl; sl = sl->next) {
-          str_printf(&s, 0, "%s%s", ui->type == 'n' ? "" : "/dev/", sl->str);
+          str_printf(&s, 0, "/dev/%s", sl->str);
           add_str_list(&hd->unix_dev_names, s);
         }
         s = free_mem(s);
