@@ -1,3 +1,5 @@
+	- fixed udev parser bug (#113766)
+
 30/8/2005:	v11.17
 	- jg: added support for WPA Wireless Extension in WLAN probing
 	  (fixes faulty probing of ipw2x00 and hostap devices)

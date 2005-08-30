@@ -5533,6 +5533,8 @@ void read_udevinfo(hd_data_t *hd_data)
       continue;
     }
 
+    if(!ui) continue;
+
     if(sscanf(sl->str, "T: %255s", buf) == 1) {
       ui->type = *buf;
 
