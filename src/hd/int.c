@@ -777,10 +777,12 @@ void int_wlan(hd_data_t *hd_data)
     "ray_cs",
     "rt2400",
     "rt2500",
+    "rt2570",
     "usbdfu",
     "wavelan",
     "wavelan_cs",
-    "wl3501_cs"
+    "wl3501_cs",
+    "zd1201"
   };
 
   for(hd = hd_data->hd; hd; hd = hd->next) {

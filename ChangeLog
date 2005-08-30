@@ -1,3 +1,8 @@
+30/8/2005:	v11.17
+	- jg: added support for WPA Wireless Extension in WLAN probing
+	  (fixes faulty probing of ipw2x00 and hostap devices)
+	- jg: added rt2570 & zd1201 driver to list of WLAN adapters (#105623)
+
 29/8/2005:	v11.16
 	- fix alps touchpad detection (#98947, #103075)
 	- drop ltmodem support (#113336)

@@ -196,7 +196,7 @@ void hd_scan_wlan(hd_data_t *hd_data)
 	  if (search_str_list(hd->drivers, "hostap_cs") ||
 	      search_str_list(hd->drivers, "hostap_pci") ||
 	      search_str_list(hd->drivers, "hostap_plx") )
-	    wpa_drv = &wpa_driver_hostap_ops;
+	    wpa_drv = &wpa_driver_wext_ops;
 	/* prism54 is not ready yet
 	   else if (search_str_list(hd->drivers, "prism54")==0)
 	   wpa_drv = &wpa_driver_prism54_ops;
@@ -208,8 +208,8 @@ void hd_scan_wlan(hd_data_t *hd_data)
 	  else if (search_str_list(hd->drivers, "ndiswrapper"))
 	    wpa_drv = &wpa_driver_ndiswrapper_ops;
 	  else if ((search_str_list(hd->drivers, "ipw2100")) ||
-		   (search_str_list(hd->drivers, "ipw2200")) )
-	    wpa_drv = &wpa_driver_ipw_ops;
+						 (search_str_list(hd->drivers, "ipw2200")) )
+	    wpa_drv = &wpa_driver_wext_ops;
 	}
 	
 	if (wpa_drv) {
@@ -1036,6 +1036,153 @@ struct wpa_driver_ops wpa_driver_ndiswrapper_ops = {
 };
 
 /* end ndiswrapper */
+
+/* begin wext */
+#define IW_AUTH_WPA_ENABLED             7
+#define IW_AUTH_INDEX           0x0FFF
+
+struct wpa_driver_wext_data {
+	void *ctx;
+	int event_sock;
+	int ioctl_sock;
+	char ifname[IFNAMSIZ + 1];
+};
+
+static int wpa_driver_wext_set_wpa(const char *ifname, int enabled)
+{
+	struct iwreq iwr;
+	int ret = 0;
+	int s;
+	
+	memset(&iwr, 0,sizeof(iwr));
+	strncpy(iwr.ifr_name, ifname, IFNAMSIZ);
+	iwr.u.param.flags = IW_AUTH_WPA_ENABLED & IW_AUTH_INDEX;
+	iwr.u.param.value = enabled;
+
+	s = socket(PF_INET, SOCK_DGRAM, 0);
+	if (s < 0) return -1;
+	
+	if ((ret=ioctl(s, SIOCSIWAUTH, &iwr)) < 0) {
+		ret = -1;
+	}
+	close(s);
+	return ret;
+}
+
+static int wpa_driver_wext_set_auth_alg(const char *ifname, int auth_alg)
+{
+	int algs = 0;
+	struct iwreq iwr;
+	int ret = 0;
+	int s;
+	
+	if (auth_alg & AUTH_ALG_OPEN_SYSTEM)
+		algs |= IW_AUTH_ALG_OPEN_SYSTEM;
+	if (auth_alg & AUTH_ALG_SHARED_KEY)
+		algs |= IW_AUTH_ALG_SHARED_KEY;
+	if (auth_alg & AUTH_ALG_LEAP)
+		algs |= IW_AUTH_ALG_LEAP;
+	if (algs == 0) {
+		 /* at least one algorithm should be set */
+		algs = IW_AUTH_ALG_OPEN_SYSTEM;
+	}
+	
+	memset(&iwr, 0, sizeof(iwr));
+	strncpy(iwr.ifr_name, ifname, IFNAMSIZ);
+	iwr.u.param.flags = IW_AUTH_80211_AUTH_ALG & IW_AUTH_INDEX;
+	iwr.u.param.value = algs;
+
+	s = socket(PF_INET, SOCK_DGRAM, 0);
+	if (s < 0) return -1;
+
+	if (ioctl(s, SIOCSIWAUTH, &iwr) < 0) {
+		ret = -1;
+	}
+	close(s);
+	return ret;
+}
+
+static int wpa_driver_wext_set_key(const char *ifname, wpa_alg alg, u8 *addr,
+																	 int key_idx, int set_tx, u8 *seq, size_t seq_len,
+                                   u8 *key, size_t key_len)
+{
+	struct iwreq iwr;
+	struct iw_encode_ext *ext;
+	int ret = 0;
+	int s;
+
+	if (seq_len > IW_ENCODE_SEQ_MAX_SIZE) {
+		return -1;
+	}
+
+	ext = malloc(sizeof(*ext) + key_len);
+	if (ext == NULL)
+		return -1;
+	memset(ext, 0, sizeof(*ext) + key_len);
+	memset(&iwr, 0, sizeof(iwr));
+	strncpy(iwr.ifr_name, ifname, IFNAMSIZ);
+	iwr.u.encoding.flags = key_idx + 1;
+	if (alg == WPA_ALG_NONE)
+		iwr.u.encoding.flags |= IW_ENCODE_DISABLED;
+	iwr.u.encoding.pointer = (caddr_t) ext;
+	iwr.u.encoding.length = sizeof(*ext) + key_len;
+
+	if (addr == NULL ||
+			memcmp(addr, "\xff\xff\xff\xff\xff\xff", ETH_ALEN) == 0)
+		ext->ext_flags |= IW_ENCODE_EXT_GROUP_KEY;
+	if (set_tx)
+		ext->ext_flags |= IW_ENCODE_EXT_SET_TX_KEY;
+	
+	 //ext->addr.sa_family = ARPHRD_ETHER;
+	if (addr)
+		memcpy(ext->addr.sa_data, addr, ETH_ALEN);
+	else
+		memset(ext->addr.sa_data, 0xff, ETH_ALEN);
+	if (key && key_len) {
+		memcpy(ext + 1, key, key_len);
+		ext->key_len = key_len;
+	}
+	switch (alg) {
+		case WPA_ALG_NONE:
+			ext->alg = IW_ENCODE_ALG_NONE;
+			break;
+		case WPA_ALG_WEP:
+			ext->alg = IW_ENCODE_ALG_WEP;
+			break;
+		case WPA_ALG_TKIP:
+			ext->alg = IW_ENCODE_ALG_TKIP;
+			break;
+		case WPA_ALG_CCMP:
+			ext->alg = IW_ENCODE_ALG_CCMP;
+			break;
+		default:
+			free(ext);
+			return -1;
+	}
+
+	if (seq && seq_len) {
+		ext->ext_flags |= IW_ENCODE_EXT_RX_SEQ_VALID;
+		memcpy(ext->rx_seq, seq, seq_len);
+	}
+
+	s = socket(PF_INET, SOCK_DGRAM, 0);
+	if (s < 0) return -1;
+	
+	if (ioctl(s, SIOCSIWENCODEEXT, &iwr) < 0) {
+		ret = -1;
+	}
+	close(s);
+	free(ext);
+	return ret;
+}
+
+struct wpa_driver_ops wpa_driver_wext_ops = {
+  .set_wpa = wpa_driver_wext_set_wpa,
+  .set_key = wpa_driver_wext_set_key,
+  .set_auth_alg = wpa_driver_wext_set_auth_alg
+};
+
+/* end wext */
 
 #endif		/* !defined(LIBHD_TINY) */
 
