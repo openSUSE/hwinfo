@@ -168,6 +168,11 @@
 +driver.display		|50-78|31-65
 
  vendor.id		APP
+&device.id		eisa 0x9c21
++device.name		Color LCD
++driver.display		1280x854|58-75|31-65
+
+ vendor.id		APP
 &device.id		eisa 0x9d03
 +driver.display		|58-75|31-60
 
