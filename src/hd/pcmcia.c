@@ -24,6 +24,7 @@
  */
 
 static void pcmcia_read_data(hd_data_t *hd_data);
+static void pcmcia_ctrl_read_data(hd_data_t *hd_data);
 
 
 void hd_scan_pcmcia(hd_data_t *hd_data)
@@ -42,6 +43,10 @@ void hd_scan_pcmcia(hd_data_t *hd_data)
   PROGRESS(2, 0, "pcmcia");
 
   pcmcia_read_data(hd_data);
+
+  PROGRESS(3, 0, "pcmcia ctrl");
+
+  pcmcia_ctrl_read_data(hd_data);
 
 }
 
@@ -198,4 +203,70 @@ void pcmcia_read_data(hd_data_t *hd_data)
 
   sysfs_close_bus(sf_bus);
 }
+
+
+void pcmcia_ctrl_read_data(hd_data_t *hd_data)
+{
+  hd_t *hd, *bridge_hd;
+  char *s;
+  unsigned u;
+  unsigned sockets[16 /* just large enough */] = { };
+
+  struct sysfs_class *sf_class;
+  struct sysfs_class_device *sf_cdev;
+  struct sysfs_device *sf_dev;
+  struct dlist *sf_cdev_list;
+
+  sf_class = sysfs_open_class("pcmcia_socket");
+
+  if(!sf_class) {
+    ADD2LOG("sysfs: no such class: pcmcia_socket\n");
+  }
+  else {
+    sf_cdev_list = sysfs_get_class_devices(sf_class);
+
+    if(sf_cdev_list) dlist_for_each_data(sf_cdev_list, sf_cdev, struct sysfs_class_device) {
+      if(
+        sscanf(sf_cdev->name, "pcmcia_socket%u", &u) == 1 &&
+        (sf_dev = sysfs_get_classdev_device(sf_cdev))
+      ) {
+        s = hd_sysfs_id(sf_dev->path);
+        hd = hd_find_sysfs_id(hd_data, s);
+        if(hd && u < sizeof sockets / sizeof *sockets) sockets[u] = hd->idx;
+
+        ADD2LOG("  pcmcia socket %u: %s\n", u, s);
+      }
+    }
+
+    sysfs_close_class(sf_class);
+  }
+
+
+  /* find card bus devices & assign them socket numbers */
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(hd->bus.id != bus_pci) continue;
+    if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
+      if(
+        bridge_hd->base_class.id == bc_bridge &&
+        bridge_hd->sub_class.id == sc_bridge_cardbus
+      ) {
+        hd->hotplug = hp_cardbus;
+      }
+     else if(
+        bridge_hd->base_class.id == bc_bridge &&
+        bridge_hd->sub_class.id == sc_bridge_pcmcia
+      ) {
+        hd->hotplug = hp_pcmcia;
+      }
+
+      for(u = 0; u < sizeof sockets / sizeof *sockets; u++) {
+        if(sockets[u] == bridge_hd->idx) {
+          hd->hotplug_slot = u + 1;
+        }
+      }
+    }
+  }
+}
+
 

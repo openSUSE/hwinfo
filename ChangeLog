@@ -1,7 +1,8 @@
-30/8/2005:	v11.18
+1/9/2005:	v11.18
 	- fixed udev parser bug (#113766)
 	- use new 'udevinfo -e' option (#113766)
 	- add PowerBook LCD to db (#113795)
+	- cardbus device detection fixed (#113708)
 
 30/8/2005:	v11.17
 	- jg: added support for WPA Wireless Extension in WLAN probing
