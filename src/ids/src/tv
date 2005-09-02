@@ -395,6 +395,127 @@
 +driver.module.modprobe	cx8800
 
 
+# ivtv-cards.c
+ vendor.id		pci 0x4444
+&device.id		pci 0x0803
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0x4000
+|vendor.id		pci 0x4444
+&device.id		pci 0x0803
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0x4800
++subdevice.name		WinTV PVR 350
++baseclass.id		0x112
++subclass.id		0x00
++driver.module.modprobe	ivtv
+
+ vendor.id		pci 0x4444
+&device.id		pci 0x0803
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0x4001
+|vendor.id		pci 0x4444
+&device.id		pci 0x0803
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0x4801
+|vendor.id		pci 0x4444
+&device.id		pci 0x0016
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0x4801
+|vendor.id		pci 0x4444
+&device.id		pci 0x0016
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0x4803
+|vendor.id		pci 0x4444
+&device.id		pci 0x0016
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0x4009
+|vendor.id		pci 0x4444
+&device.id		pci 0x0016
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0x0003
++subdevice.name		WinTV PVR 250
++baseclass.id		0x112
++subclass.id		0x00
++driver.module.modprobe	ivtv
+
+ vendor.id		pci 0x4444
+&device.id		pci 0x0016
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0x8801
+|vendor.id		pci 0x4444
+&device.id		pci 0x0016
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0x8003
+|vendor.id		pci 0x4444
+&device.id		pci 0x0016
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0xe807
+|vendor.id		pci 0x4444
+&device.id		pci 0x0016
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0x0807
+|vendor.id		pci 0x4444
+&device.id		pci 0x0016
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0xe817
+|vendor.id		pci 0x4444
+&device.id		pci 0x0016
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0xc801
+|vendor.id		pci 0x4444
+&device.id		pci 0x0016
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0x0801
+|vendor.id		pci 0x4444
+&device.id		pci 0x0016
+&subvendor.id		pci 0x0070
+&subdevice.id		pci 0x0009
++subdevice.name		WinTV PVR 150
++baseclass.id		0x112
++subclass.id		0x00
++driver.module.modprobe	ivtv
+
+ vendor.id		pci 0x4444
+&device.id		pci 0x0803
+&subvendor.id		pci 0x1461
+&subdevice.id		pci 0xa3ce+2
++subdevice.name		M179
++baseclass.id		0x112
++subclass.id		0x00
++driver.module.modprobe	ivtv
+
+ vendor.id		pci 0x4444
+&device.id		pci 0x0803
+&subvendor.id		pci 0xff92
+&subdevice.id		pci 0x0070
++subdevice.name		PG600/DIAMOND PVR-550 (CX FALCON2)
++baseclass.id		0x112
++subclass.id		0x00
++driver.module.modprobe	ivtv
+
+ vendor.id		pci 0x4444
+&device.id		pci 0x0803
+&subvendor.id		pci 0x12ab
+&subdevice.id		pci 0x0000
++subdevice.name		MPG160/Kuroutoshikou ITVC15-STVLP
++baseclass.id		0x112
++subclass.id		0x00
++driver.module.modprobe	ivtv
+
+ vendor.id		pci 0x4444
+&device.id		pci 0x0803
+&subvendor.id		pci 0x12ab
+&subdevice.id		pci 0xfff3
+|vendor.id		pci 0x4444
+&device.id		pci 0x0803
+&subvendor.id		pci 0x12ab
+&subdevice.id		pci 0xffff
++subdevice.name		MPG600/Kuroutoshikou ITVC16-STVLP
++baseclass.id		0x112
++subclass.id		0x00
++driver.module.modprobe	ivtv
+
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
  vendor.id		pci 0x1131

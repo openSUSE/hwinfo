@@ -206,11 +206,3 @@
 +driver.module.modprobe	cx88-dvb
 +subdevice.name		"pcHDTV HD-3000"
 
- vendor.id		pci 0x4444
-&device.id		pci 0x0803
-&subvendor.id		pci 0x0070
-&subdevice.id		pci 0x4000
-+baseclass.id		0x111
-+subclass.id		0x00
-+driver.module.modprobe	ivtv
-

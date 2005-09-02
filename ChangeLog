@@ -1,3 +1,6 @@
+2/9/2005:	v11.19
+	- report more ivtv cards, and make them (analog) tv cards (#113195)
+
 1/9/2005:	v11.18
 	- fixed udev parser bug (#113766)
 	- use new 'udevinfo -e' option (#113766)
