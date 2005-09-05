@@ -169,7 +169,7 @@
 &device.id		pci 0x4742
 +device.name		3D Rage Pro AGP 1X/2X
 +driver.xfree		4|ati
-+driver.xfree.config	Option "XaaNoPixmapCache"
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4744
@@ -215,7 +215,7 @@
 &device.id		pci 0x4752
 +device.name		Mach64 GR
 +driver.xfree		4|ati
-+driver.xfree.config	Option "XaaNoPixmapCache"
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4753
@@ -1496,14 +1496,14 @@
  vendor.id		pci 0x102b
 &device.id		pci 0x0520
 +device.name		MGA G200
-+driver.xfree		4|mga|||||8,16,24
++driver.xfree		4|mga||||NoHal|8,16,24
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0521
 +device.name		MGA G200 AGP
-+driver.xfree		4|mga|||||8,16,24
++driver.xfree		4|mga||||NoHal|8,16,24
 +driver.xfree.config	VideoRam 8192
-+driver.xfree		4|mga|3d||dri||16
++driver.xfree		4|mga|3d||dri|NoHal|16
 +driver.xfree.config	VideoRam 8192
 
  vendor.id		pci 0x102b
@@ -1560,6 +1560,8 @@
 &subvendor.id		pci 0x102b
 &subdevice.id		pci 0x23c3
 +subdevice.name		G450-23c3
++driver.xfree		4|mga||||NoHal
++driver.xfree		4|mga|3d||dri
 
  vendor.id		pci 0x102b
 &device.id		pci 0x1000
@@ -1829,18 +1831,23 @@
 &device.id		pci 0x0040
 +device.name		GeForce 6800 Ultra
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0041
 +device.name		GeForce 6800
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0042
 +device.name		GeForce 6800 LE
 +driver.xfree		4|nv
++driver.xfree.config	Option "ShadowFB" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -1853,12 +1860,16 @@
 &device.id		pci 0x0045
 +device.name		GeForce 6800 GT
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0046
 +device.name		GeForce 6800 GT (0x0046)
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -1948,6 +1959,8 @@
 &device.id		pci 0x00c1
 +device.name		GeForce 6800 (0x00C1)
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -1960,12 +1973,16 @@
 &device.id		pci 0x00c8
 +device.name		GeForce Go 6800
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x00c9
 +device.name		GeForce Go 6800 Ultra
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -1990,12 +2007,16 @@
 &device.id		pci 0x00f0
 +device.name		GeForce 6800/GeForce 6800 Ultra
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x00f1
 +device.name		GeForce 6600/GeForce 6600 GT
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -2008,7 +2029,7 @@
 &device.id		pci 0x00f3
 +device.name		GeForce 6200 (AGP)
 +driver.xfree		4|nv
-+driver.xfree.config	Option "noaccel"
++driver.xfree.config	Option "ShadowFB" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -2021,6 +2042,8 @@
 &device.id		pci 0x00f9
 +device.name		GeForce 6800 Ultra (0x00F9)
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -2104,14 +2127,15 @@
 &device.id		pci 0x0140
 +device.name		GeForce 6600 GT
 +driver.xfree		4|nv
-+driver.xfree.config	Option  "XaaNoPixmapCache"
-+driver.xfree.config	Option  "XaaNoOffScreenPixmaps"
++driver.xfree.config	Option "ShadowFB" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0141
 +device.name		GeForce 6600
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -2120,13 +2144,15 @@
 &subdevice.id		pci 0x3124
 +subdevice.name		GeForce 6600 (Gigabyte)
 +driver.xfree		4|nv
-+driver.xfree.config	Option "XaaNoScreenToScreenCopy"
++driver.xfree.config	Option "ShadowFB" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0142
 +device.name		GeForce 6600 LE
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -2139,36 +2165,48 @@
 &device.id		pci 0x0144
 +device.name		GeForce Go 6600
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0145
 +device.name		GeForce 6610 XL
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0146
 +device.name		GeForce Go 6600 TE/6200 TE
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0147
 +device.name		GeForce 6700 XL
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0148
 +device.name		GeForce Go 6600 (0x0148)
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0149
 +device.name		GeForce Go 6600 GT
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -2199,7 +2237,7 @@
 &device.id		pci 0x014f
 +device.name		GeForce 6200
 +driver.xfree		4|nv
-+driver.xfree.config	Option "XaaNoScreenToScreenCopy"
++driver.xfree.config	Option "ShadowFB" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -2232,23 +2270,16 @@
 &device.id		pci 0x0161
 +device.name		GeForce 6200 TurboCache(TM)
 +driver.xfree		4|nv
-+driver.xfree.config	Option  "XaaNoPixmapCache"
-+driver.xfree.config	Option  "XaaNoOffScreenPixmaps"
-+driver.xfree		4|nvidia|3d
-
- vendor.id		pci 0x10de
-&device.id		pci 0x0161
-&subvendor.id		pci 0x10de
-&subdevice.id		pci 0x025c
-+subdevice.name		GeForce 6200 TurboCache(TM) (10de:025c)
-+driver.xfree		4|nv
-+driver.xfree.config	Option "XaaNoScreenToScreenCopy"
++driver.xfree.config	Option  "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0162
 +device.name		GeForce 6200SE TurboCache(TM)
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -2261,6 +2292,8 @@
 &device.id		pci 0x0164
 +device.name		GeForce Go 6200
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -2273,18 +2306,24 @@
 &device.id		pci 0x0166
 +device.name		GeForce Go 6400
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0167
 +device.name		GeForce Go 6200 (0x0167)
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0168
 +device.name		GeForce Go 6400 (0x0168)
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -2546,18 +2585,24 @@
 &device.id		pci 0x0211
 +device.name		GeForce 6800 (0x0211)
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0212
 +device.name		GeForce 6800 LE (0x0212)
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0215
 +device.name		GeForce 6800 GT (0x0215)
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -2570,6 +2615,8 @@
 &device.id		pci 0x0221
 +device.name		GeForce 6200 (0x0221)
 +driver.xfree		4|nv
++driver.xfree.config	Option "XaaNoPixmapCache" "on"
++driver.xfree.config	Option "XaaNoOffScreenPixmaps" "on"
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -3064,7 +3111,7 @@
  vendor.id		pci 0x1106
 &device.id		pci 0x7205
 +device.name		KM400
-+driver.xfree		4|via
++driver.xfree		4|via|||dri
 
  vendor.id		pci 0x1142
 +vendor.name		Alliance Semiconductor Corporation
@@ -3431,65 +3478,49 @@
 &device.id		pci 0x2562
 +device.name		i845
 +driver.xfree		4|i810
-+driver.xfree.config	Option "NoDDC"
 +driver.xfree		4|i810|3d||dri
-+driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2572
 +device.name		865 G
 +driver.xfree		4|i810
-+driver.xfree.config	Option "NoDDC"
 +driver.xfree		4|i810|3d||dri
-+driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2582
 +device.name		915 G
 +driver.xfree		4|i810
-+driver.xfree.config	Option "NoDDC"
 +driver.xfree		4|i810|3d||dri
-+driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x258a
 +device.name		E7221
 +driver.xfree		4|i810
-+driver.xfree.config	Option "NoDDC"
 +driver.xfree		4|i810|3d||dri
-+driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2592
 +device.name		915 GM
 +driver.xfree		4|i810
-+driver.xfree.config	Option "NoDDC"
 +driver.xfree		4|i810|3d||dri
-+driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2772
 +device.name		945G
 +driver.xfree		4|i810
-+driver.xfree.config	Option "NoDDC"
 +driver.xfree		4|i810|3d||dri
-+driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3577
 +device.name		i830
 +driver.xfree		4|i810
-+driver.xfree.config	Option "NoDDC"
 +driver.xfree		4|i810|3d||dri
-+driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3582
 +device.name		855 GM
 +driver.xfree		4|i810
-+driver.xfree.config	Option "NoDDC"
 +driver.xfree		4|i810|3d||dri
-+driver.xfree.config	Option "NoDDC"
 
  vendor.id		pci 0x8086
 &device.id		pci 0x7121

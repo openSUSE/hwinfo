@@ -1,3 +1,8 @@
+5/9/2005:	v11.20
+	- ppc: read 'LCD,EDID', too (#115085)
+	- module renamed: skystar2 -> b2c2-flexcop-pci (#115262)
+	- dto, dmasound -> snd-powermac (#112919)
+
 2/9/2005:	v11.19
 	- report more ivtv cards, and make them (analog) tv cards (#113195)
 

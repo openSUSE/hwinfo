@@ -365,7 +365,7 @@
 # ppc audio
  vendor.id		special 0x0401
 &device.id		special 0x0010+0x0004
-+driver.module.modprobe	dmasound
++driver.module.modprobe	snd-powermac
 
 # ppc audio
  vendor.id		special 0x0402

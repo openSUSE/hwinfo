@@ -6,7 +6,7 @@
 &device.id		pci 0x2200
 +baseclass.id		0x111
 +subclass.id		0x00
-+driver.module.modprobe	skystar2
++driver.module.modprobe	b2c2-flexcop-pci
 
  vendor.id		pci 0x109e
 &device.id		pci 0x0878
