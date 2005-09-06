@@ -1,3 +1,6 @@
+6/9/2005:	v11.21
+	- toshiba notebooks don't need fnfx (#113714)
+
 5/9/2005:	v11.20
 	- ppc: read 'LCD,EDID', too (#115085)
 	- module renamed: skystar2 -> b2c2-flexcop-pci (#115262)
