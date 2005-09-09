@@ -656,7 +656,7 @@
  vendor.id		special 0xf001
 &device.id		special 0x0002
 +device.name		Toshiba Notebook
-+requires		toshutils
++requires		toshutils|ial
 
  vendor.id		special 0xf001
 &device.id		special 0x0003

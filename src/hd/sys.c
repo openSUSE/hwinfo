@@ -120,7 +120,7 @@ void hd_scan_sys(hd_data_t *hd_data)
 }
 
 #if defined(__i386__)
-void sigsegv_handler(int signum) { exit(77); }
+void sigsegv_handler(int signum) { _exit(77); }
 
 void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
 {
