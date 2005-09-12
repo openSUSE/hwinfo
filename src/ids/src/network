@@ -11,15 +11,6 @@
 &device.id		pci 0x170c
 +driver.module.modprobe	b44
 
-# pcimap
- vendor.id		pci 0x10de
-&device.id		pci 0x0066
-|vendor.id		pci 0x10de
-&device.id		pci 0x00d6
-|vendor.id		pci 0x10de
-&device.id		pci 0x01c3
-+driver.module.modprobe	forcedeth
-
 # net/r8169.c
  vendor.id		pci 0x10ec
 &device.id		pci 0x8169
@@ -510,7 +501,7 @@
 +driver.module.modprobe	ipw2100
 
 
-# make it an ethernet card explicitly (#65852)
+# make it an ethernet card explicitly (#65852, #116394)
  vendor.id		pci 0x10de
 &device.id		pci 0x0037+0x0002
 |vendor.id		pci 0x10de
@@ -529,6 +520,10 @@
 &device.id		pci 0x00e6
 |vendor.id		pci 0x10de
 &device.id		pci 0x01c3
+|vendor.id		pci 0x10de
+&device.id		pci 0x0268+0x0002
+|vendor.id		pci 0x10de
+&device.id		pci 0x0372+0x0002
 +hwclass		network
 +driver.module.modprobe	forcedeth
 
