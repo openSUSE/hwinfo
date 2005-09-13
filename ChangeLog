@@ -1,3 +1,6 @@
+13/9/2005:	v11.24
+	- better pcmcia module detection (#104517)
+
 12/9/2005:	v11.23
 	- update forcedeth driver info (#116394)
 

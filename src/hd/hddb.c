@@ -378,7 +378,8 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
   }
   else if(
     ID_TAG(hd->vendor.id) == TAG_PCMCIA ||
-    ID_TAG(hd->device.id) == TAG_PCMCIA
+    ID_TAG(hd->device.id) == TAG_PCMCIA ||
+    (hd->modalias && !strncmp(hd->modalias, "pcmcia:", sizeof "pcmcia:" - 1))
   ) {
     match.type = mi_pcmcia;
   }
