@@ -1,3 +1,6 @@
+14/9/2005:	v11.25
+	- fix forcedeth, again (#116394)
+
 13/9/2005:	v11.24
 	- better pcmcia module detection (#104517)
 

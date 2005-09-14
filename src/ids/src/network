@@ -524,7 +524,8 @@
 &device.id		pci 0x0268+0x0002
 |vendor.id		pci 0x10de
 &device.id		pci 0x0372+0x0002
-+hwclass		network
++baseclass.id		0x002
++subclass.id		0x00
 +driver.module.modprobe	forcedeth
 
 
