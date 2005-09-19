@@ -883,7 +883,7 @@ int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
     if(*(unsigned *) (mem->data + u) == 0x5f504d5f) {	/* "_MP_" */
       addr = *(unsigned *) (mem->data + u + 4);
       len = mem->data[u + 8];
-      ok = len == 1 && crc(mem->data + u, 0x10) == 0 && addr < (1 << 20) ? 1 : 0;
+      ok = len == 1 && crc(mem->data + u, 0x10) == 0 ? 1 : 0;
       ADD2LOG(
         "  smp: %svalid MP FP at 0x%05x (size 0x%x, rev %u), MP config at 0x%05x\n",
         ok ? "" : "in", u + mem->start, len << 4, mem->data[u + 9], addr

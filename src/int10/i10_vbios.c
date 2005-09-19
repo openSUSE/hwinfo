@@ -158,7 +158,7 @@ int int10_bios_ok()
   );
 
   /* It can't possibly start with all zeros. */
-  if(!*(uint32_t *) p) {
+  if( !(p[0] || p[1] || p[2] || p[3]) ) {
     log_err("  vbe: oops, int 10h points into nirvana!\n");
 
     return 0;
