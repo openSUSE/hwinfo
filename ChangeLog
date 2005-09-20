@@ -1,5 +1,7 @@
+20/9/2005:	v11.26
 	- don't assume mp records start below 1MB (#112699)
 	- fix unaligned accesses (#97838)
+	- gcc 4.1 fixes
 
 14/9/2005:	v11.25
 	- fix forcedeth, again (#116394)

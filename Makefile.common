@@ -20,7 +20,7 @@ LIBHD_MAJOR_VERSION	:= $(shell cut -d . -f 1 $(TOPDIR)/VERSION)
 
 CC	= gcc
 LD	= ld
-CFLAGS	= -Wall -O2 -pipe -g $(SHARED_FLAGS) $(EXTRA_FLAGS) -I$(TOPDIR)/src/hd
+CFLAGS	= -Wall -Wno-pointer-sign -O2 -pipe -g $(SHARED_FLAGS) $(EXTRA_FLAGS) -I$(TOPDIR)/src/hd
 SHARED_FLAGS	= -fPIC
 
 LDFLAGS	= -Lsrc
