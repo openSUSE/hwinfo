@@ -774,6 +774,7 @@ void int_wlan(hd_data_t *hd_data)
     "prism2_plx",
     "prism2_usb",
     "prism54",
+    "r8180",
     "ray_cs",
     "rt2400",
     "rt2500",

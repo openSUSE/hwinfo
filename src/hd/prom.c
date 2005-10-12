@@ -526,7 +526,7 @@ int add_prom_vscsi(hd_data_t *hd_data, devtree_t *dt)
       *(id = s + sizeof "v-scsi@" - 1)
     ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->bus.id = bus_none;
+      hd->bus.id = bus_vio;
       hd->base_class.id = bc_storage;
       hd->sub_class.id = sc_sto_scsi;
       hd->slot = veth_cnt++;
@@ -537,6 +537,7 @@ int add_prom_vscsi(hd_data_t *hd_data, devtree_t *dt)
       hd->rom_id = new_str(dt->path);
 
       str_printf(&hd->sysfs_id, 0, "/devices/vio/%s", id);
+      str_printf(&hd->sysfs_bus_id, 0, "%s", id);
 
       return 1;
     }
@@ -564,7 +565,7 @@ int add_prom_veth(hd_data_t *hd_data, devtree_t *dt)
       *(id = s + sizeof "l-lan@" - 1)
     ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->bus.id = bus_none;
+      hd->bus.id = bus_vio;
       hd->base_class.id = bc_network;
       hd->sub_class.id = 0x00;
       hd->slot = veth_cnt++;
@@ -575,6 +576,7 @@ int add_prom_veth(hd_data_t *hd_data, devtree_t *dt)
       hd->rom_id = new_str(dt->path);
 
       str_printf(&hd->sysfs_id, 0, "/devices/vio/%s", id);
+      str_printf(&hd->sysfs_bus_id, 0, "%s", id);
 
       return 1;
     }

@@ -1754,10 +1754,8 @@ void hd_scan(hd_data_t *hd_data)
    * There might be old 'manual' entries left from an earlier scan. Remove
    * them, they will confuse us.
    */
-  if(hd_probe_feature(hd_data, pr_manual)) {
-    hd_data->module = mod_manual;
-    remove_hd_entries(hd_data);
-  }
+  hd_data->module = mod_manual;
+  remove_hd_entries(hd_data);
 #endif
 
   hd_scan_with_hal(hd_data);

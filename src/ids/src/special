@@ -639,6 +639,11 @@
 +vendor.name		UML
 
 
+# Xen veth
+ vendor.id		special 0x6011
++vendor.name		Xen
+
+
 # internal: usb scanner driver list
  vendor.id		special 0xf000
 &device.id		special 0x0001

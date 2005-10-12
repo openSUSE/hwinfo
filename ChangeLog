@@ -1,3 +1,9 @@
+12/10/2005:	v11.27
+	- find xen ethernet cards
+	- remove old hardware entries (#118673)
+	- better support for virtual i/o hardware on ppc (#119592)
+	- added r8180 to wlan list (#115268)
+
 20/9/2005:	v11.26
 	- don't assume mp records start below 1MB (#112699)
 	- fix unaligned accesses (#97838)
