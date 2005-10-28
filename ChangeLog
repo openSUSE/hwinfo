@@ -1,3 +1,7 @@
+28/10/2005:	v11.28
+	- added Dell Notebook LCD size (#130180)
+	- another Notebook added (#130208)
+
 14/10/2005:	v11.27
 	- find xen ethernet cards
 	- remove old hardware entries (#118673)
