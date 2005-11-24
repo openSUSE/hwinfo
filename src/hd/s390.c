@@ -62,6 +62,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
   {
     int channel=strtol(rindex(curdev->bus_id,'.')+1,NULL,16);
     attributes = sysfs_get_device_attributes(curdev);
+    if(!attributes) continue;
     dlist_for_each_data(attributes,curattr,struct sysfs_attribute)
     {
       if(strcmp("cutype",curattr->name)==0)
@@ -79,7 +80,8 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     {
       virtual_machine=1;	/* we are running in VM */
       cutypes[i]=-2;	/* reader */
-      cutypes[i+1]=-3;	/* punch */
+      if(i < (1<<16)-1 && cutypes[i+1] == 0x2540)
+        cutypes[i+1]=-3;	/* punch */
     }
   }
   
@@ -116,6 +118,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     res=new_mem(sizeof *res);
 
     attributes = sysfs_get_device_attributes(curdev);
+    if(!attributes) continue;
     dlist_for_each_data(attributes,curattr, struct sysfs_attribute)
     {
       if (strcmp("online",curattr->name)==0)
