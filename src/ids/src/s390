@@ -14,6 +14,15 @@
  vendor.id		special 0x6001
 &device.id		special 0x1731
 &subdevice.id		special 0x1732
+&detail.ccw.data.cu_model 6
++device.name		OSA for NCP (OSN)
++baseclass.id		2
++subclass.id		0x86
++driver.module.modprobe	qeth
+
+ vendor.id		special 0x6001
+&device.id		special 0x1731
+&subdevice.id		special 0x1732
 &detail.ccw.data.cu_model 3
 +device.name		zFCP controller
 +baseclass.id		1
@@ -257,6 +266,7 @@
 +device.name		P/390
 +baseclass.id		2
 +subclass.id		0x89
++driver.module.modprobe	lcs
 
  vendor.id		special 0x6001
 &device.id		special 0x3088
