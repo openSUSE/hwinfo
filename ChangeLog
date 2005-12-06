@@ -1,7 +1,9 @@
+6/12/2005:	v11.29
 	- s390: make sysfs reading more robust
 	- s390: fixed stack corruption on exotic hw setups (bug #128453)
 	- s390: detect OSN devices as QETH interfaces (bug #120724)
 	- s390: add module entry for P/390 LCS device (bug #81207)
+	- adjust input device detection to new sysf layout (#134032)
 
 28/10/2005:	v11.28
 	- added Dell Notebook LCD size (#130180)
