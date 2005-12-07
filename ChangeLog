@@ -1,3 +1,6 @@
+7/12/2005:	v11.30
+	- report ide-generic for non-pci ide interfaces
+
 6/12/2005:	v11.29
 	- s390: make sysfs reading more robust
 	- s390: fixed stack corruption on exotic hw setups (bug #128453)

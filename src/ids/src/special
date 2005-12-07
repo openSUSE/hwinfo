@@ -421,6 +421,13 @@
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# non-pci ide interface
+
+ vendor.id		special 0x3000
+&device.id		special 0x1000
++driver.module.modprobe	ide-generic
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # sbus cards
 
  vendor.id		special 0x4001
