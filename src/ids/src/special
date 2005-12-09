@@ -651,6 +651,14 @@
 +vendor.name		Xen
 
 
+# VirtualIron
+ vendor.id		special 0x6012
++vendor.name		VirtualIron
+
+ vendor.id		special 0x6012
+&device.id		special 0x0001
++driver.module.modprobe	kveth2
+
 # internal: usb scanner driver list
  vendor.id		special 0xf000
 &device.id		special 0x0001

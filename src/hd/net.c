@@ -34,6 +34,7 @@ static void get_linkstate(hd_data_t *hd_data, hd_t *hd);
 static void add_xpnet(hd_data_t *hdata);
 static void add_iseries(hd_data_t *hdata);
 static void add_uml(hd_data_t *hdata);
+static void add_kma(hd_data_t *hdata);
 static void add_xen(hd_data_t *hdata);
 static void add_if_name(hd_t *hd_card, hd_t *hd);
 
@@ -288,6 +289,7 @@ void hd_scan_net(hd_data_t *hd_data)
   if(hd_is_iseries(hd_data)) add_iseries(hd_data);
   add_uml(hd_data);
   add_xen(hd_data);
+  add_kma(hd_data);
 
   /* add link status info */
   for(hd = hd_data->hd ; hd; hd = hd->next) {
@@ -525,6 +527,48 @@ void add_uml(hd_data_t *hd_data)
       hd_card->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
       hd_card->slot = card_cnt++;
       str_printf(&hd_card->device.name, 0, "Virtual Ethernet card %d", hd_card->slot);
+
+      hd->attached_to = hd_card->idx;
+
+      for(res = hd->res; res; res = res->next) {
+        if(res->any.type == res_hwaddr) break;
+      }
+
+      if(res) {
+        res2 = new_mem(sizeof *res2);
+        res2->hwaddr.type = res_hwaddr;
+        res2->hwaddr.addr = new_str(res->hwaddr.addr);
+        add_res_entry(&hd_card->res, res2);
+      }
+
+      add_if_name(hd_card, hd);
+    }
+  }
+}
+
+
+/*
+ * KMA veth devices.
+ */
+void add_kma(hd_data_t *hd_data)
+{
+  hd_t *hd, *hd_card;
+  hd_res_t *res, *res2;
+  unsigned card_cnt = 0;
+
+  for(hd = hd_data->hd ; hd; hd = hd->next) {
+    if(
+      hd->module == hd_data->module &&
+      hd->base_class.id == bc_network_interface &&
+      search_str_list(hd->drivers, "kveth2")
+    ) {
+      hd_card = add_hd_entry(hd_data, __LINE__, 0);
+      hd_card->base_class.id = bc_network;
+      hd_card->sub_class.id = 0x00;
+      hd_card->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6012);	// VirtualIron
+      hd_card->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
+      hd_card->slot = card_cnt++;
+      str_printf(&hd_card->device.name, 0, "Ethernet card %d", hd_card->slot);
 
       hd->attached_to = hd_card->idx;
 
