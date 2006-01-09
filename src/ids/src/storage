@@ -185,17 +185,6 @@
 &device.id		pci 0xa400
 +driver.module.modprobe	eata
 
-# scsi/dpti.c
- baseclass.id           0x00e
-&subclass.id            0x00
-&vendor.id		pci 0x1044
-&device.id		pci 0xa501
-|baseclass.id           0x00e
-&subclass.id            0x00
-&vendor.id		pci 0x1044
-&device.id		pci 0xa511
-+driver.module.modprobe	dpt_i2o
-
 # scsi/BusLogic.c
  vendor.id		pci 0x104b
 &device.id		pci 0x0140
@@ -493,9 +482,15 @@
 &device.id		special 0x0040
 +driver.module.modprobe	swim3
 
+# modalias, #129301
  baseclass.id		0x00e
-&subclass.id		0x00+2
-+driver.module.insmod	i2o_pci|i2o_core|i2o_config|i2o_block
+&subclass.id		0x00
+|vendor.id		pci 0x1044
+&device.id		pci 0xa511
+|vendor.id		pci 0x8086
+&device.id		pci 0x1962
+&subvendor.id		pci 0x105a
++driver.module.modprobe	i2o_block
 
 # scsi/aacraid/linit.c
  vendor.id		pci 0x1028
