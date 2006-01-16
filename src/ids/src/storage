@@ -640,6 +640,15 @@
 +baseclass.id		0x001
 
 
+# module.alias, #141069
+ vendor.id		pci 0x1077
+&device.id		pci 0x4010
+|vendor.id		pci 0x1077
+&device.id		pci 0x4022
++hwclass		storage
++driver.module.modprobe	qla4xxx
+
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # usb controller
 
