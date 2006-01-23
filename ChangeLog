@@ -1,3 +1,8 @@
+23/1/2006:	v11.35
+	- better monitor detection
+	- updated X11 dat
+	- qla* modules require qlogic-firmware
+
 16/1/2006:	v11.34
 	- added qla4xxx workaround (#141069)
 

@@ -1074,6 +1074,9 @@
 +device.name		ECOMO 22H99
 +driver.display		|50-160|31-121
 
+ vendor.id		ENC
++vendor.name		EIZO
+
  vendor.id		FCM
 +vendor.name		FUNAI
 

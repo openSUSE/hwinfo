@@ -89,6 +89,8 @@ void hd_scan_monitor(hd_data_t *hd_data)
 
       hd_set_hw_class(hd, hw_vbe);
 
+      hd->func = bt->vbe.port;
+
       add_edid_info(hd_data, hd, bt->vbe.ddc);
 
       return;
@@ -432,6 +434,11 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
   unsigned u, u1, u2;
 
   fix_edid_info(hd_data, edid);
+
+  if(edid[0x14] & 0x80) {
+    /* digital signal -> assume lcd */
+    hd->sub_class.id = 2;
+  }
 
   u = (edid[8] << 8) + edid[9];
   hd->vendor.id = MAKE_ID(TAG_EISA, u);

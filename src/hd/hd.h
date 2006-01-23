@@ -452,6 +452,7 @@ typedef struct {
   vbe_mode_info_t *mode;	/* video mode list */
   unsigned current_mode;	/* current video mode */
   unsigned char ddc[0x80];	/* ddc monitor info */
+  unsigned port;		/* monitor port */
 } vbe_info_t;
 
 

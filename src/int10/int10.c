@@ -19,7 +19,7 @@ void log_err(char *format, ...) __attribute__ ((format (printf, 1, 2)));
 
 void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 {
-  int i;
+  int i, port;
   unsigned char vbeinfo[0x200];
   int ax, bx, cx;
   unsigned cpuemu = hd_data->flags.cpuemu;
@@ -61,17 +61,21 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
   if(hd_probe_feature(hd_data, pr_bios_ddc)) {
     PROGRESS(4, 3, "ddc info");
 
-    memset(vbeinfo, 0, sizeof vbeinfo);
-    ax = 0x4f15; bx = 1; cx = 0;
-    i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo, cpuemu) & 0xffff;
+    for(port = 0; port < 4; port++) {
+      memset(vbeinfo, 0, sizeof vbeinfo);
+      ax = 0x4f15; bx = 1; cx = port;
+      i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo, cpuemu) & 0xffff;
+      if(i == 0x4f) break;
+    }
 
     if(i != 0x4f) {
       ADD2LOG("Error (0x4f15): 0x%04x\n", i);
     } else {
       vbe->ok = 1;
+      vbe->port = port;
       memcpy(vbe->ddc, vbeinfo, sizeof vbe->ddc);
 
-      ADD2LOG("edid record:\n");
+      ADD2LOG("edid record (port %d):\n", port);
       for(i = 0; (unsigned) i < sizeof vbe->ddc; i += 0x10) {
         ADD2LOG("  ");
         hexdump(&hd_data->log, 1, 0x10, vbe->ddc + i);
