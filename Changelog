@@ -1,6 +1,7 @@
-25/1/2006:	v11.36
+25/1/2006:	v12.0
 	- fixed serial device detection problem on Dell PowerEdge (#145051)
-	- report system type (e.g. laptop) (#145485)
+	- report system type (e.g. laptop) (#145485), resulting in:
+	- upgraded major version to reflect api change
 
 23/1/2006:	v11.35
 	- better monitor detection
