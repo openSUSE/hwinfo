@@ -1,3 +1,6 @@
+25/1/2006:	v11.36
+	- fixed serial device detection problem on Dell PowerEdge (#145051)
+
 23/1/2006:	v11.35
 	- better monitor detection
 	- updated X11 data

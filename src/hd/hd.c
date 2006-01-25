@@ -444,6 +444,10 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
   hd_set_probe_feature(hd_data, pr_int);
 //  hd_set_probe_feature(hd_data, pr_manual);
 
+/*
+ * note: pr_serial needs pr_pci
+ */
+
   switch(item) {
     case hw_cdrom:
       hd_set_probe_feature(hd_data, pr_pci);
@@ -541,6 +545,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_bios);
       hd_set_probe_feature(hd_data, pr_mouse);
       hd_set_probe_feature(hd_data, pr_input);
+      hd_set_probe_feature(hd_data, pr_pci);
       break;
 
     case hw_joystick:
@@ -555,6 +560,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       }
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_mouse);		/* we need the pnp code */
+      hd_set_probe_feature(hd_data, pr_pci);
       break;
 
     case hw_camera:
@@ -570,6 +576,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_input);
 #ifdef __PPC__
       hd_set_probe_feature(hd_data, pr_serial);
+      hd_set_probe_feature(hd_data, pr_pci);
 #endif
       break;
 
@@ -668,6 +675,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_braille_ht);
       hd_set_probe_feature(hd_data, pr_braille_baum);
       hd_set_probe_feature(hd_data, pr_usb);
+      hd_set_probe_feature(hd_data, pr_pci);
       break;
 
     case hw_sys:
@@ -1921,6 +1929,7 @@ void hd_scan_no_hal(hd_data_t *hd_data)
   /* after pci & isa */
   hd_scan_pcmcia(hd_data);
 
+  /* after pci */
   hd_scan_serial(hd_data);
 
   /* merge basic system info & the easy stuff */

@@ -27,9 +27,9 @@ static void dump_serial_data(hd_data_t *hd_data);
 
 void hd_scan_serial(hd_data_t *hd_data)
 {
-  hd_t *hd;
+  hd_t *hd, *hd2;
   serial_t *ser, *next;
-  hd_res_t *res;
+  hd_res_t *res, *res2;
   int i;
   char buf[4], *skip_dev[16];
   str_list_t *sl, *cmd;
@@ -112,7 +112,26 @@ void hd_scan_serial(hd_data_t *hd_data)
     res->irq.type = res_irq;
     res->irq.enabled = 1;
     res->irq.base = ser->irq;
-  }  
+
+    /* skip Dell Remote Access Cards - bug #145051 */
+    for(hd2 = hd_data->hd; hd2; hd2 = hd2->next) {
+      if(
+        hd2->vendor.id == MAKE_ID(TAG_PCI, 0x1028) && /* Dell */
+        hd2->device.id >= MAKE_ID(TAG_PCI, 0x07) &&
+        hd2->device.id <= MAKE_ID(TAG_PCI, 0x12) /* range that covers DRACs */
+      ) {
+        for(res2 = hd2->res; res2; res2 = res2->next) {
+          if(
+            res2->any.type == res_io &&
+            ser->port >= res2->io.base &&
+            ser->port < res2->io.base + res2->io.range
+          ) {
+            hd->tag.ser_skip = 1;
+          }
+        }
+      }
+    }
+  }
 
   for(ser = hd_data->serial; ser; ser = next) {
     next = ser->next;
