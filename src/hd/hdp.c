@@ -1175,8 +1175,13 @@ void dump_sys(hd_data_t *hd_data, hd_t *hd, FILE *f)
   if(st->system_type) {
     dump_line("SystemType: \"%s\"\n", st->system_type);
   }
+
   if(st->generation) {
     dump_line("Generation: \"%s\"\n", st->generation);
+  }
+
+  if(st->formfactor) {
+    dump_line("Formfactor: \"%s\"\n", st->formfactor);
   }
 
   if(st->lang) {

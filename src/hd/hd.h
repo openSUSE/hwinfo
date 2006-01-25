@@ -1223,6 +1223,7 @@ typedef struct {
   char *model;
   char *serial;
   char *lang;
+  char *formfactor;
 } sys_info_t;
 
 

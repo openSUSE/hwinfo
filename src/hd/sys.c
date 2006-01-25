@@ -39,6 +39,7 @@ void hd_scan_sys(hd_data_t *hd_data)
 {
   hd_t *hd;
   sys_info_t *st;
+  hal_device_t *hal;
 #if defined(__PPC__) || defined(__sparc__)
   char buf0[80], *s, *t;
   str_list_t *sl;
@@ -117,6 +118,10 @@ void hd_scan_sys(hd_data_t *hd_data)
   if(st->vendor) hd->vendor.name = new_str(st->vendor);
   if(st->model) hd->device.name = new_str(st->model);
   if(st->serial) hd->serial = new_str(st->serial);
+
+  if((hal = hal_find_device(hd_data, "/org/freedesktop/Hal/devices/computer"))) {
+    st->formfactor = new_str(hal_get_useful_str(hal->prop, "system.formfactor"));
+  }
 }
 
 #if defined(__i386__)

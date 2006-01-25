@@ -25,7 +25,6 @@
 static void read_hal(hd_data_t *hd_data);
 static void add_pci(hd_data_t *hd_data);
 static void link_hal_tree(hd_data_t *hd_data);
-static hal_device_t *hal_find_device(hd_data_t *hd_data, char *udi);
 
 static int hal_match_str(hal_prop_t *prop, const char *key, const char *val);
 
