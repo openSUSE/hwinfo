@@ -1,3 +1,6 @@
+30/1/2006:	v12.1
+	- updated X11 data
+
 25/1/2006:	v12.0
 	- fixed serial device detection problem on Dell PowerEdge (#145051)
 	- report system type (e.g. laptop) (#145485), resulting in:

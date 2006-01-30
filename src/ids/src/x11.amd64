@@ -955,6 +955,13 @@
 +driver.xfree		4|fglrx|3d||dri
 
  vendor.id		pci 0x1002
+&device.id		pci 0x5462
++device.name		MOBILITY RADEON X600SE
++driver.xfree		4|radeon
++driver.xfree		4|fglrx|3d||dri
++driver.xfree.config	ChipID 0x5460
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x5464
 +device.name		FireGL M22 GL 5464 (PCIE)
 +driver.xfree		4|radeon
@@ -1436,6 +1443,11 @@
 +driver.xfree		4|trident
 
  vendor.id		pci 0x1023
+&device.id		pci 0x2200
++device.name		XP5
++driver.xfree		4|trident
+
+ vendor.id		pci 0x1023
 &device.id		pci 0x8400
 +device.name		CyberBlade/i7
 +driver.xfree		4|trident
@@ -1885,7 +1897,6 @@
 &device.id		pci 0x002a
 +device.name		Unknown TNT2
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x002c
@@ -1913,7 +1924,6 @@
 &device.id		pci 0x0042
 +device.name		GeForce 6800 LE
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0043
@@ -1942,7 +1952,6 @@
 &device.id		pci 0x0048
 +device.name		GeForce 6800 XT
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x004e
@@ -1983,19 +1992,16 @@
 &device.id		pci 0x0098
 +device.name		GeForce Go 7800
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0099
 +device.name		GeForce Go 7800 GTX
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x009d
 +device.name		Quadro FX 4500
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x00a0
@@ -2024,7 +2030,6 @@
 &device.id		pci 0x00c3
 +device.name		GeForce 6800 XT (0x00C3)
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x00c8
@@ -2197,7 +2202,6 @@
 &device.id		pci 0x0143
 +device.name		GeForce 6600 VE
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0144
@@ -2221,7 +2225,6 @@
 &device.id		pci 0x0147
 +device.name		GeForce 6700 XL
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0148
@@ -2271,7 +2274,6 @@
 &device.id		pci 0x0160
 +device.name		GeForce 6500
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0161
@@ -2283,13 +2285,11 @@
 &device.id		pci 0x0162
 +device.name		GeForce 6200SE TurboCache(TM)
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0163
 +device.name		GeForce 6200 LE
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0164
@@ -2301,7 +2301,6 @@
 &device.id		pci 0x0165
 +device.name		0x0165
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0166
@@ -2325,7 +2324,6 @@
 &device.id		pci 0x0169
 +device.name		GeForce 6250
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0170
@@ -2467,13 +2465,11 @@
 &device.id		pci 0x0186
 +device.name		GeForce4 448 Go
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d||||16
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0187
 +device.name		GeForce4 488 Go
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d||||16
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0188
@@ -2508,7 +2504,6 @@
 &device.id		pci 0x018d
 +device.name		GeForce4 448 Go (0x018D)
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x01a0
@@ -2618,7 +2613,6 @@
 &device.id		pci 0x0221
 +device.name		GeForce 6200 (0x0221)
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0240
@@ -2635,6 +2629,8 @@
 &device.id		pci 0x0242
 +device.name		GeForce 6100
 +driver.xfree		4|nv
++driver.xfree		4|nv
++driver.xfree		4|nvidia|3d
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
@@ -2915,7 +2911,6 @@
 &device.id		pci 0x0329
 +device.name		GeForce FX 5200 (Mac)
 +driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
 &device.id		pci 0x032a

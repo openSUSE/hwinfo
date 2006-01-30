@@ -844,6 +844,11 @@
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
+&device.id		pci 0x5462
++device.name		MOBILITY RADEON X600SE
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x5464
 +device.name		FireGL M22 GL 5464 (PCIE)
 +driver.xfree		4|radeon
@@ -1273,6 +1278,11 @@
  vendor.id		pci 0x1023
 &device.id		pci 0x2100
 +device.name		CyberBlade/xp4
++driver.xfree		4|trident
+
+ vendor.id		pci 0x1023
+&device.id		pci 0x2200
++device.name		XP5
 +driver.xfree		4|trident
 
  vendor.id		pci 0x1023
@@ -2358,6 +2368,7 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x0242
 +device.name		GeForce 6100
++driver.xfree		4|nv
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
