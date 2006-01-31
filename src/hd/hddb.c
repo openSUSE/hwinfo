@@ -505,7 +505,7 @@ void hddb_init_external(hd_data_t *hd_data)
 
   hddb2 = hd_data->hddb2[0] = new_mem(sizeof *hd_data->hddb2[0]);
 
-  sl0 = read_file(ID_LIST, 0, 0);
+  sl0 = read_file(hd_get_hddb_path("hd.ids"), 0, 0);
 
   l_start = l_end = 0;
   state = 0;

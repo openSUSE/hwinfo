@@ -1699,9 +1699,13 @@ void hd_scan(hd_data_t *hd_data)
   }
 #endif
 
-  /* log the debug & probe flags */
-  if(hd_data->debug && !hd_data->flags.internal) {
-    ADD2LOG("libhd version %s%s (%s)\n", HD_VERSION_STRING, getuid() ? "u" : "", HD_ARCH);
+  if(!hd_data->flags.internal) {
+  /* log debug & probe flags */
+    if(hd_data->debug) {
+      ADD2LOG("libhd version %s%s (%s)\n", HD_VERSION_STRING, getuid() ? "u" : "", HD_ARCH);
+    }
+
+    ADD2LOG("using %s\n", hd_get_hddb_dir());
   }
 
   get_kernel_version(hd_data);
@@ -3515,12 +3519,12 @@ str_list_t *read_kmods(hd_data_t *hd_data)
 str_list_t *get_cmdline(hd_data_t *hd_data, char *key)
 {
   str_list_t *sl0, *sl1, *cmd = NULL;
-  char *s, *t, *t0;
+  char *s, *t, *t0, *lib_cmdline;
   int i, l = strlen(key);
 
   if(!hd_data->cmd_line) {
     sl0 = read_file(PROC_CMDLINE, 0, 1);
-    sl1 = read_file(LIB_CMDLINE, 0, 1);
+    sl1 = read_file((lib_cmdline = hd_get_hddb_path("cmdline")), 0, 1);
 
     if(sl0) {
       i = strlen(sl0->str);
@@ -3537,9 +3541,9 @@ str_list_t *get_cmdline(hd_data_t *hd_data, char *key)
       if(i && sl1->str[i - 1] == '\n') sl1->str[i - 1] = 0;
       str_printf(&hd_data->cmd_line, -1, " %s", sl1->str);
       if(hd_data->debug) {
-        ADD2LOG("----- " LIB_CMDLINE " -----\n");
+        ADD2LOG("----- %s -----\n", lib_cmdline);
         ADD2LOG("  %s\n", sl1->str);
-        ADD2LOG("----- " LIB_CMDLINE " end -----\n");
+        ADD2LOG("----- %s end -----\n", lib_cmdline);
       }
     }
 
@@ -5749,6 +5753,30 @@ int hd_read_mmap(hd_data_t *hd_data, char *name, unsigned char *buf, off_t start
   close(fd);
 
   return 1;
+}
+
+
+/*
+ * Get hardware data base dir (default: /var/lib/hardware).
+ */
+char *hd_get_hddb_dir()
+{
+  char *s = getenv("LIBHD_HDDB_DIR");
+
+  return s && *s ? s : HARDWARE_DIR;
+}
+
+
+/*
+ * Convenience function. Returns static buffer with full path.
+ */
+char *hd_get_hddb_path(char *sub)
+{
+  static char *dir = NULL;
+
+  str_printf(&dir, 0, "%s/%s", hd_get_hddb_dir(), sub);
+
+  return dir;
 }
 
 

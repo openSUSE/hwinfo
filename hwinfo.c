@@ -81,6 +81,7 @@ struct option options[] = {
   { "map", 0, NULL, 313 },
   { "kernel-version", 1, NULL, 314 },
   { "write-udi", 1, NULL, 315 },
+  { "hddb-dir", 1, NULL, 316 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -268,6 +269,10 @@ int main(int argc, char **argv)
 
         case 315:
           write_udi(hd_data, optarg);
+          break;
+
+        case 316:
+          if(*optarg) setenv("LIBHD_HDDB_DIR", optarg, 1);
           break;
 
         case 400:

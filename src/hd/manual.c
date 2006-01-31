@@ -68,7 +68,7 @@ void hd_scan_manual(hd_data_t *hd_data)
 
   next2 = &hd_data->manual;
 
-  if((dir = opendir(HARDWARE_UDI "/org/freedesktop/Hal/devices"))) {
+  if((dir = opendir(hd_get_hddb_path("udi/org/freedesktop/Hal/devices")))) {
     i = 0;
     s = NULL;
     while((de = readdir(dir))) {
@@ -85,44 +85,6 @@ void hd_scan_manual(hd_data_t *hd_data)
     s = free_mem(s);
     closedir(dir);
   }
-
-#if 0
-  // FIXME!
-  if((dir = opendir(HARDWARE_UNIQUE_KEYS))) {
-    i = 0;
-    while((de = readdir(dir))) {
-      if(*de->d_name == '.') continue;
-      PROGRESS(2, ++i, "read");
-      // evil kludge
-      for(hd = hd_data->manual; hd; hd = hd->next) {
-        if(hd->unique_id && !strcmp(hd->unique_id, de->d_name)) break;
-      }
-      if(hd) continue;
-      if((hd = hd_read_config(hd_data, de->d_name))) {
-        ADD2LOG("  got %s\n", hd->unique_id);
-        *next2 = hd;
-        next2 = &hd->next;
-      }
-    }
-    closedir(dir);
-  }
-
-  /* initialize some useful status value */
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(
-      !hd->status.configured &&
-      !hd->status.available &&
-      !hd->status.needed &&
-      !hd->status.active &&
-      !hd->status.invalid
-    ) {
-      hd->status.configured = status_new;
-      hd->status.available = hd->module == mod_manual ? status_unknown : status_yes;
-      hd->status.needed = status_no;
-      hd->status.active = status_unknown;
-    }
-  }
-#endif
 
   hd_data->flags.keep_kmods = 1;
   for(hdm = hd_data->manual; hdm; hdm = next) {
@@ -249,7 +211,7 @@ hal_prop_t *hd_manual_read_entry_old(const char *id)
 
   if(!id) return NULL;
 
-  snprintf(path, sizeof path, "%s/%s", HARDWARE_UNIQUE_KEYS, id);
+  snprintf(path, sizeof path, "%s/%s", hd_get_hddb_path("unique-keys"), id);
 
   if(!(sl0 = read_file(path, 0, 0))) return prop_list;
 
@@ -293,19 +255,7 @@ hal_prop_t *hd_manual_read_entry_old(const char *id)
 
 int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
 {
-#if 1
-
   return 0;
-
-#else
-
-  /* remove old file */
-  if(!error) {
-    snprintf(path, sizeof path, "%s/%s", HARDWARE_DIR, entry->unique_id);
-    unlink(path);
-  }
-
-#endif
 }
 
 
@@ -383,11 +333,6 @@ void prop2hd(hd_data_t *hd_data, hd_t *hd, int status_only)
     hd->status.needed = status_no;
   }
   if(!hd->status.active) hd->status.active = status_unknown;
-
-#if 0
-  /* ??? */
-  if(hd->status.available == status_unknown) hd->is.manual = 1;
-#endif
 
   if(status_only || !list) return;
 
@@ -893,40 +838,6 @@ void hd2prop(hd_data_t *hd_data, hd_t *hd)
   s = free_mem(s);
 
 }
-
-
-#if 0
-/*
- * move info from hd_manual_t to hd_t
- */
-void manual2hd(hd_data_t *hd_data, hd_manual_t *entry, hd_t *hd)
-{
-  if(hd->device.id || hd->vendor.id) {
-    tag = ID_TAG(hd->device.id);
-    tag = tag ? tag : ID_TAG(hd->vendor.id);
-    tag = tag ? tag : TAG_PCI;
-    hd->device.id = MAKE_ID(tag, ID_VALUE(hd->device.id));
-    hd->vendor.id = MAKE_ID(tag, ID_VALUE(hd->vendor.id));
-  }
-
-  if(hd->sub_device.id || hd->sub_vendor.id) {
-    tag = ID_TAG(hd->sub_device.id);
-    tag = tag ? tag : ID_TAG(hd->sub_vendor.id);
-    tag = tag ? tag : TAG_PCI;
-    hd->sub_device.id = MAKE_ID(tag, ID_VALUE(hd->sub_device.id));
-    hd->sub_vendor.id = MAKE_ID(tag, ID_VALUE(hd->sub_vendor.id));
-  }
-
-  if(hd->compat_device.id || hd->compat_vendor.id) {
-    tag = ID_TAG(hd->compat_device.id);
-    tag = tag ? tag : ID_TAG(hd->compat_vendor.id);
-    tag = tag ? tag : TAG_PCI;
-    hd->compat_device.id = MAKE_ID(tag, ID_VALUE(hd->compat_device.id));
-    hd->compat_vendor.id = MAKE_ID(tag, ID_VALUE(hd->compat_vendor.id));
-  }
-
-}
-#endif
 
 
 hal_prop_t *read_properties(hd_data_t *hd_data, const char *udi, const char *id)

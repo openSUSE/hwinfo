@@ -52,8 +52,6 @@ extern "C" {
  * libhd's directory
  */
 #define HARDWARE_DIR		"/var/lib/hardware"
-#define HARDWARE_UDI		HARDWARE_DIR "/udi"
-#define HARDWARE_UNIQUE_KEYS	HARDWARE_DIR "/unique-keys"
 
 /**
  * \defgroup idmacros Id macros

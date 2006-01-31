@@ -51,9 +51,6 @@
 #define KLOG_BOOT		"/var/log/boot.msg"
 #define ISAPNP_CONF		"/etc/isapnp.conf"
 
-#define ID_LIST			HARDWARE_DIR "/hd.ids"
-#define LIB_CMDLINE		HARDWARE_DIR "/cmdline"
-
 #define KERNEL_22		0x020200
 #define KERNEL_24		0x020400
 #define KERNEL_26		0x020600
@@ -243,6 +240,9 @@ hal_prop_t *hal_get_list(hal_prop_t *prop, const char *key);
 char *hal_get_useful_str(hal_prop_t *prop, const char *key);       
 
 hal_device_t *hal_find_device(hd_data_t *hd_data, char *udi);
+
+char *hd_get_hddb_dir(void);
+char *hd_get_hddb_path(char *sub);
 
 
 #ifdef __cplusplus

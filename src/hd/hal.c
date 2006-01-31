@@ -497,7 +497,7 @@ hal_prop_t *hd_read_properties(const char *udi)
 
   if(!check_udi(udi)) return NULL;
 
-  str_printf(&path, 0, "%s/%s", HARDWARE_UDI, udi);
+  str_printf(&path, 0, "%s/%s", hd_get_hddb_path("udi"), udi);
 
   sl0 = read_file(path, 0, 0);
 
@@ -542,7 +542,7 @@ FILE *hd_open_properties(const char *udi, const char *mode)
 
   if(!path) return f;
 
-  dir = new_str(HARDWARE_UDI);
+  dir = new_str(hd_get_hddb_path("udi"));
 
   for(err = 0, sl = path; sl->next; sl = sl->next) {
     str_printf(&dir, -1, "/%s", sl->str);
