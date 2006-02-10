@@ -1234,6 +1234,9 @@ typedef struct {
   unsigned manu_year;
   unsigned min_vsync, max_vsync;	/* vsync range */
   unsigned min_hsync, max_hsync;	/* hsync range */
+  unsigned clock;			/* pixel clock in kHz */
+  unsigned width, height;		/* display size */
+  unsigned width_mm, height_mm;		/* dto, in mm */
   char *vendor;
   char *name;
   char *serial;
@@ -1423,7 +1426,7 @@ typedef enum resource_types {
  */
 typedef enum size_units {
   size_unit_cm, size_unit_cinch, size_unit_byte, size_unit_sectors,
-  size_unit_kbyte, size_unit_mbyte, size_unit_gbyte
+  size_unit_kbyte, size_unit_mbyte, size_unit_gbyte, size_unit_mm
 } hd_size_units_t;
 
 /*

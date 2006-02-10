@@ -34,11 +34,6 @@ static void fix_edid_info(hd_data_t *hd_data, unsigned char *edid);
 void hd_scan_monitor(hd_data_t *hd_data)
 {
   hd_t *hd;
-  int i, j, k;
-  char *s, *s0, *s1, *se, m[8], *t;
-  unsigned u;
-  hd_res_t *res;
-  monitor_info_t *mi = NULL;
   bios_info_t *bt;
 
   if(!hd_probe_feature(hd_data, pr_monitor)) return;
@@ -57,7 +52,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
   /* first, see if we got the full edid record from bios */
   bt = NULL;
 
-#if 0
+#if 1
   /* for testing: LIBHD_EDID points to a file with valid edid record */
   {
     char *s = getenv("LIBHD_EDID");
@@ -110,177 +105,6 @@ void hd_scan_monitor(hd_data_t *hd_data)
     return;
   }
 
-  /* Maybe we have hidden edid info here? */
-  if(!(s = s0 = t = get_cmd_param(hd_data, 0))) return;		/* no :-( */
-
-  s = strsep(&t, "^");
-
-  se = s + strlen(s);
-
-  if(se - s < 7 + 2 * 4) {
-    free_mem(s0);
-    return;
-  }
-
-  /* Ok, we've got it. Now we split the fields. */
-
-  memcpy(m, s, 7); m[7] = 0; s += 7;
-
-  hd = add_hd_entry(hd_data, __LINE__, 0);
-
-  hd->base_class.id = bc_monitor;
-  hd->vendor.id = name2eisa_id(m);
-  if(sscanf(m + 3, "%x", &u) == 1) hd->device.id = MAKE_ID(TAG_EISA, u);
-  if((u = device_class(hd_data, hd->vendor.id, hd->device.id))) {
-    if((u >> 8) == bc_monitor) hd->sub_class.id = u & 0xff;
-  }
-
-  i = hex(s, 2); j = hex(s + 2, 2); s += 4;
-  if(i > 0 && j > 0) {
-    res = add_res_entry(&hd->res, new_mem(sizeof *res));
-    res->size.type = res_size;
-    res->size.unit = size_unit_cm;
-    res->size.val1 = i;		/* width */
-    res->size.val2 = j;		/* height */
-  }
-
-  i = hex(s, 2); s+= 2;
-  if(i & (1 << 7)) add_monitor_res(hd, 720, 400, 70, 0);
-  if(i & (1 << 6)) add_monitor_res(hd, 720, 400, 88, 0);
-  if(i & (1 << 5)) add_monitor_res(hd, 640, 480, 60, 0);
-  if(i & (1 << 4)) add_monitor_res(hd, 640, 480, 67, 0);
-  if(i & (1 << 3)) add_monitor_res(hd, 640, 480, 72, 0);
-  if(i & (1 << 2)) add_monitor_res(hd, 640, 480, 75, 0);
-  if(i & (1 << 1)) add_monitor_res(hd, 800, 600, 56, 0);
-  if(i & (1 << 0)) add_monitor_res(hd, 800, 600, 60, 0);
-
-  i = hex(s, 2); s+= 2;
-  if(i & (1 << 7)) add_monitor_res(hd,  800,  600, 72, 0);
-  if(i & (1 << 6)) add_monitor_res(hd,  800,  600, 75, 0);
-  if(i & (1 << 5)) add_monitor_res(hd,  832,  624, 75, 0);
-  if(i & (1 << 4)) add_monitor_res(hd, 1024,  768, 87, 1);
-  if(i & (1 << 3)) add_monitor_res(hd, 1024,  768, 60, 0);
-  if(i & (1 << 2)) add_monitor_res(hd, 1024,  768, 70, 0);
-  if(i & (1 << 1)) add_monitor_res(hd, 1024,  768, 75, 0);
-  if(i & (1 << 0)) add_monitor_res(hd, 1280, 1024, 75, 0);
-
-  if(((se - s) & 1) || se - s > 8 * 4 + 2) {
-    ADD2LOG("  ddc oops: %d bytes left?\n", (int) (se - s));
-    free_mem(s0);
-    return;
-  }
-
-  while(s + 4 <= se) {
-    i = (hex(s, 2) + 31) * 8; j = hex(s + 2, 2); s += 4;
-    k = 0;
-    switch((j >> 6) & 3) {
-      case 1: k = (i * 3) / 4; break;
-      case 2: k = (i * 4) / 5; break;
-      case 3: k = (i * 9) / 16; break;
-    }
-    if(k) add_monitor_res(hd, i, k, (j & 0x3f) + 60, 0);
-  }
-
-  u = 0;
-  if(se - s == 2) u = hex(s, 2) + 1990;
-
-  if(u || t) {
-    mi = new_mem(sizeof *mi);
-    if(u) mi->manu_year = u;
-    while((s = strsep(&t, "^"))) {
-      for(s1 = s; *s1++; ) if(*s1 == '_') *s1 = ' ';
-      switch(*s) {
-        case '0':
-          if(!mi->name && s[1]) mi->name = canon_str(s + 1, strlen(s + 1));
-          break;
-        case '1':
-          u = 0;
-          if(strlen(s) == 9) {
-            i = hex(s + 1, 2);
-            j = hex(s + 3, 2);
-            if(i > j || !i) u = 1;
-            mi->min_vsync = i;
-            mi->max_vsync = j;
-            i = hex(s + 5, 2);
-            j = hex(s + 7, 2);
-            if(i > j || !i) u = 1;
-            mi->min_hsync = i;
-            mi->max_hsync = j;
-          }
-          else {
-            u = 1;
-          }
-          if(u) {
-            mi->min_vsync = mi->max_vsync = mi->min_hsync = mi->max_hsync = 0;
-            ADD2LOG("  ddc oops: invalid freq data\n");
-          }
-          break;
-        case '2':
-          if(!mi->vendor && s[1]) mi->vendor = canon_str(s + 1, strlen(s + 1));
-          break;
-        case '3':
-          if(!mi->serial && s[1]) mi->serial = canon_str(s + 1, strlen(s + 1));
-          break;
-        default:
-          ADD2LOG("  ddc oops: invalid tag 0x%02x\n", *s);
-      }
-    }
-  }
-
-  if(mi) {
-    hd->detail = new_mem(sizeof *hd->detail);
-    hd->detail->type = hd_detail_monitor;
-    hd->detail->monitor.data = mi;
-
-    hd->serial = new_str(mi->serial);
-
-#if 0
-// ########### FIXME
-    if(
-      mi->vendor &&
-      ID_VALUE(hd->vendor.id) &&
-      !hd_vendor_name(hd_data, hd->vendor.id)
-    ) {
-      add_vendor_name(hd_data, hd->vend, mi->vendor);
-    }
-#endif
-
-#if 0
-// ########### FIXME 
-    if(
-      mi->name &&
-      (ID_VALUE(hd->vendor.id) || ID_VALUE(hd->device.id)) &&
-      !hd_device_name(hd_data, hd->vend, hd->device.id)
-    ) {
-      add_device_name(hd_data, hd->vend, hd->dev, mi->name);
-    }
-#endif
-
-    if(hd_data->debug) {
-      ADD2LOG("----- DDC info -----\n");
-      if(mi->vendor) {
-        ADD2LOG("  vendor: \"%s\"\n", mi->vendor);
-      }
-      if(mi->name) {
-        ADD2LOG("  model: \"%s\"\n", mi->name);
-      }
-      if(mi->serial) {
-        ADD2LOG("  serial: \"%s\"\n", mi->serial);
-      }
-      if(mi->min_hsync) {
-        ADD2LOG("  hsync: %u-%u kHz\n", mi->min_hsync, mi->max_hsync);
-      }
-      if(mi->min_vsync) {
-        ADD2LOG("  vsync: %u-%u Hz\n", mi->min_vsync, mi->max_vsync);
-      }
-      if(mi->manu_year) {
-        ADD2LOG("  manu. year: %u\n", mi->manu_year);
-      }
-      ADD2LOG("----- DDC info end -----\n");
-    }
-  }
-
-  free_mem(s0);
 }
 #endif	/* !defined(__PPC__) */
 
@@ -440,9 +264,12 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
   hd_res_t *res;
   monitor_info_t *mi = NULL;
   int i;
-  unsigned u, u1, u2;
+  unsigned u, u1, u2, tag;
+  char *s;
 
   fix_edid_info(hd_data, edid);
+
+  mi = new_mem(sizeof *mi);
 
   if(edid[0x14] & 0x80) {
     /* digital signal -> assume lcd */
@@ -458,11 +285,8 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
   }
 
   if(edid[0x15] > 0 && edid[0x16] > 0) {
-    res = add_res_entry(&hd->res, new_mem(sizeof *res));
-    res->size.type = res_size;
-    res->size.unit = size_unit_cm;
-    res->size.val1 = edid[0x15];	/* width */
-    res->size.val2 = edid[0x16];	/* height */
+    mi->width_mm = edid[0x15] * 10;
+    mi->height_mm = edid[0x16] * 10;
   }
 
   u = edid[0x23];
@@ -497,48 +321,78 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
     if(u) add_monitor_res(hd, u1, u, (u2 & 0x3f) + 60, 0);
   }
 
-  mi = new_mem(sizeof *mi);
   mi->manu_year = 1990 + edid[0x11];
 
+  ADD2LOG("  detailed timings:\n");
+
   for(i = 0x36; i < 0x36 + 4 * 0x12; i += 0x12) {
-    if(!(edid[i] || edid[i + 1] || edid[i + 2])) {
-      switch(edid[i + 3]) {
-        case 0xfc:
-          if(edid[i + 5]) {
-            /* the name entry is splitted some times */
-            str_printf(&mi->name, -1, "%s%s", mi->name ? " " : "", canon_str(edid + i + 5, 0xd));
-          }
-          break;
+    tag = (edid[i] << 24) + (edid[i + 1] << 16) + (edid[i + 2] << 8) + edid[i + 3];
 
-        case 0xfd:
-          u = 0;
-          u1 = edid[i + 5];
-          u2 = edid[i + 6];
-          if(u1 > u2 || !u1) u = 1;
-          mi->min_vsync = u1;
-          mi->max_vsync = u2;
-          u1 = edid[i + 7];
-          u2 = edid[i + 8];
-          if(u1 > u2 || !u1) u = 1;
-          mi->min_hsync = u1;
-          mi->max_hsync = u2;
-          if(u) {
-            mi->min_vsync = mi->max_vsync = mi->min_hsync = mi->max_hsync = 0;
-            ADD2LOG("  ddc oops: invalid freq data\n");
-          }
-          break;
+    ADD2LOG("  #%d: ", (i - 0x36)/0x12);
+    hexdump(&hd_data->log, 1, 0x12, edid + i);
+    ADD2LOG("\n");
 
-        case 0xfe:
-          if(!mi->vendor && edid[i + 5]) mi->vendor = canon_str(edid + i + 5, 0xd);
-          break;
+    switch(tag) {
+      case 0xfc:
+        if(edid[i + 5]) {
+          /* name entry is splitted some times */
+          str_printf(&mi->name, -1, "%s%s", mi->name ? " " : "", canon_str(edid + i + 5, 0xd));
+        }
+        break;
 
-        case 0xff:
-          if(!mi->serial && edid[i + 5]) mi->serial = canon_str(edid + i + 5, 0xd);
-          break;
+      case 0xfd:
+        u = 0;
+        u1 = edid[i + 5];
+        u2 = edid[i + 6];
+        if(u1 > u2 || !u1) u = 1;
+        mi->min_vsync = u1;
+        mi->max_vsync = u2;
+        u1 = edid[i + 7];
+        u2 = edid[i + 8];
+        if(u1 > u2 || !u1) u = 1;
+        mi->min_hsync = u1;
+        mi->max_hsync = u2;
+        if(u) {
+          mi->min_vsync = mi->max_vsync = mi->min_hsync = mi->max_hsync = 0;
+          ADD2LOG("  ddc oops: invalid freq data\n");
+        }
+        break;
 
-        default:
-          ADD2LOG("  ddc oops: invalid tag 0x%02x\n", edid[i + 3]);
-      }
+      case 0xfe:
+        if(!mi->vendor && edid[i + 5]) {
+          mi->vendor = canon_str(edid + i + 5, 0xd);
+          for(s = mi->vendor; *s; s++) if(*s < ' ') *s = ' ';
+        }
+        break;
+
+      case 0xff:
+        if(!mi->serial && edid[i + 5]) {
+          mi->serial = canon_str(edid + i + 5, 0xd);
+          for(s = mi->serial; *s; s++) if(*s < ' ') *s = ' ';
+        }
+        break;
+
+      default:
+        if(tag < 0x100) {
+          ADD2LOG("  unknown tag 0x%02x\n", tag);
+        }
+        else {
+          u = (edid[i + 0] + (edid[i + 1] << 8)) * 10;	/* pixel clock in kHz */
+          if(!u) break;
+          mi->clock = u;
+
+          u1 = edid[i + 2] + ((edid[i + 4] & 0xf0) << 4);
+          u2 = edid[i + 5] + ((edid[i + 7] & 0xf0) << 4);
+          if(!u1 || !u2) break;
+          mi->width = u1;
+          mi->height = u2;
+
+          u1 = edid[i + 12] + ((edid[i + 14] & 0xf0) << 4);
+          u2 = edid[i + 13] + ((edid[i + 14] & 0xf) << 8);
+          if(!u1 || !u2) break;
+          mi->width_mm = u1;
+          mi->height_mm = u2;
+        }
     }
   }
 
@@ -551,6 +405,26 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
     hd->vendor.name = new_str(mi->vendor);
     hd->device.name = new_str(mi->name);
 
+    if(mi->width && mi->height) {
+      for(res = hd->res; res; res = res->next) {
+        if(
+          res->any.type == res_monitor &&
+          res->monitor.width == mi->width &&
+          res->monitor.height == mi->height
+        ) break;
+      }
+      /* actually we could calculate the vsync value */
+      if(!res) add_monitor_res(hd, mi->width, mi->height, 60, 0);
+    }
+
+    if(mi->width_mm && mi->height_mm) {
+      res = add_res_entry(&hd->res, new_mem(sizeof *res));
+      res->size.type = res_size;
+      res->size.unit = size_unit_mm;
+      res->size.val1 = mi->width_mm;	/* width */
+      res->size.val2 = mi->height_mm;	/* height */
+    }
+
     if(hd_data->debug) {
       ADD2LOG("----- DDC info -----\n");
       if(mi->vendor) {
@@ -561,6 +435,15 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
       }
       if(mi->serial) {
         ADD2LOG("  serial: \"%s\"\n", mi->serial);
+      }
+      if(mi->width || mi->height) {
+        ADD2LOG("  size: %u x %u\n", mi->width, mi->height);
+      }
+      if(mi->width_mm || mi->height_mm) {
+        ADD2LOG("  size (mm): %u x %u\n", mi->width_mm, mi->height_mm);
+      }
+      if(mi->clock) {
+        ADD2LOG("  clock: %u kHz\n", mi->clock);
       }
       if(mi->min_hsync) {
         ADD2LOG("  hsync: %u-%u kHz\n", mi->min_hsync, mi->max_hsync);
