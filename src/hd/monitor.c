@@ -408,6 +408,7 @@ int chk_edid_info(hd_data_t *hd_data, unsigned char *edid)
 void add_lcd_info(hd_data_t *hd_data, hd_t *hd, bios_info_t *bt)
 {
   monitor_info_t *mi = NULL;
+  hd_res_t *res = NULL;
 
   hd->vendor.name = new_str(bt->lcd.vendor);
   hd->device.name = new_str(bt->lcd.name);
@@ -423,6 +424,14 @@ void add_lcd_info(hd_data_t *hd_data, hd_t *hd, bios_info_t *bt)
   mi->min_hsync = 31;
   mi->max_vsync = 75;
   mi->max_hsync = (mi->max_vsync * bt->lcd.height * 12) / 10000;
+
+  if (bt->lcd.xsize) {
+     res = add_res_entry(&hd->res, new_mem(sizeof *res));
+     res->size.type = res_size;
+     res->size.unit = size_unit_cm;
+     res->size.val1 = bt->lcd.xsize;
+     res->size.val2 = bt->lcd.ysize;
+  }
 }
 #endif
 

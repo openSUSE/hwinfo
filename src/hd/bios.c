@@ -26,41 +26,44 @@
 #if defined(__i386__) || defined (__x86_64__) || defined (__ia64__)
 
 static struct {
-  int width;
-  int height;
+  unsigned char xsize;	/* cm */
+  unsigned char ysize;	/* cm */
+  unsigned short width;
+  unsigned short height;
   char *vendor;
   char *name;
   char *version;
-} panel_data[] = {
-  {  800,  600, "Fujitsu Siemens", "LiteLine", "LF6" },
-  { 1024,  768, "ASUSTEK", "L2000D", NULL },
-  { 1024,  768, "ASUSTeK Computer Inc.", "L8400C series Notebook PC", NULL },
-  { 1024,  768, "ASUSTeK Computer Inc.", "S5N", NULL },
-  { 1024,  768, "Acer", "TravelMate 720", NULL },
-  { 1024,  768, "COMPAL", "N30T5", NULL },
-  { 1024,  768, "Dell Computer Corporation", "Inspiron 5000", NULL },
-  { 1024,  768, "Dell Computer Corporation", "Latitude C400", NULL },
-  { 1024,  768, "Dell Computer Corporation", "Latitude C600", NULL },
-  { 1024,  768, "Dell Computer Corporation", "Latitude CPt C400GT", NULL },
-  { 1024,  768, "Dell Computer Corporation", "Latitude CPx J650GT", NULL },
-  { 1024,  768, "Hewlett-Packard", "HP OmniBook PC", "HP OmniBook 4150 B" },
-  { 1280,  800, "Hewlett-Packard", "hp compaq nx9105 (DU367T#ABD)", "03" },
-  { 1280,  800, "Hewlett-Packard", "Pavilion zv5000 (PA456EA#ABD)", "F.11" },
+} __attribute((packed)) panel_data[] = {
 #include "ibm-notebooks.h"
-  { 1400, 1050, "IBM", "73geu99", NULL },
-  { 1024,  768, "KDST", "KDS6KSUMO", NULL  },
-  { 1024,  768, "Sony Corporation", "PCG-F370(UC)", NULL },
-  { 1024,  768, "Sony Corporation", "PCG-N505SN", NULL },
-  { 1024,  768, "TOSHIBA", "S2400-103", NULL },
-  { 1280,  800, "Acer", "Aspire 1520", NULL },
-  { 1440,  900, "FUJITSU SIEMENS", "Amilo M3438 Series", NULL },
-  { 1400, 1050, "Acer", "TravelMate 660", NULL },
-  { 1400, 1050, "Dell Computer Corporation", "Inspiron 8000", NULL },
-  { 1400, 1050, "Dell Computer Corporation", "Latitude D600", NULL },
-  { 1400, 1050, "TOSHIBA", "TECRA 9100", NULL },
-  { 1600, 1200, "Dell Computer Corporation", "Inspiron 8200", NULL },
-  { 1600, 1200, "Dell Computer Corporation", "Latitude C840", NULL },
-  { 1024,  600, "FUJITSU SIEMENS", "LIFEBOOK P1510", NULL }
+  {  0,  0, 1400, 1050, "IBM", "73geu99", NULL },
+  {  0,  0,  800,  600, "Fujitsu Siemens", "LiteLine", "LF6" },
+  {  0,  0, 1024,  768, "ASUSTEK", "L2000D", NULL },
+  {  0,  0, 1024,  768, "ASUSTeK Computer Inc.", "L8400C series Notebook PC", NULL },
+  {  0,  0, 1024,  768, "ASUSTeK Computer Inc.", "S5N", NULL },
+  {  0,  0, 1024,  768, "Acer", "TravelMate 720", NULL },
+  {  0,  0, 1024,  768, "COMPAL", "N30T5", NULL },
+  {  0,  0, 1024,  768, "Dell Computer Corporation", "Inspiron 5000", NULL },
+  {  0,  0, 1024,  768, "Dell Computer Corporation", "Latitude C400", NULL },
+  {  0,  0, 1024,  768, "Dell Computer Corporation", "Latitude C600", NULL },
+  {  0,  0, 1024,  768, "Dell Computer Corporation", "Latitude CPt C400GT", NULL },
+  {  0,  0, 1024,  768, "Dell Computer Corporation", "Latitude CPx J650GT", NULL },
+  {  0,  0, 1024,  768, "Hewlett-Packard", "HP OmniBook PC", "HP OmniBook 4150 B" },
+  {  0,  0, 1280,  800, "Hewlett-Packard", "hp compaq nx9105 (DU367T#ABD)", "03" },
+  { 33, 21, 1280,  800, "Hewlett-Packard", "hp compaq nx9105 (DU367T#ABD)", "F.21" },
+  {  0,  0, 1280,  800, "Hewlett-Packard", "Pavilion zv5000 (PA456EA#ABD)", "F.11" },
+  {  0,  0, 1024,  768, "KDST", "KDS6KSUMO", NULL  },
+  {  0,  0, 1024,  768, "Sony Corporation", "PCG-F370(UC)", NULL },
+  {  0,  0, 1024,  768, "Sony Corporation", "PCG-N505SN", NULL },
+  {  0,  0, 1024,  768, "TOSHIBA", "S2400-103", NULL },
+  {  0,  0, 1280,  800, "Acer", "Aspire 1520", NULL },
+  {  0,  0, 1440,  900, "FUJITSU SIEMENS", "Amilo M3438 Series", NULL },
+  {  0,  0, 1400, 1050, "Acer", "TravelMate 660", NULL },
+  {  0,  0, 1400, 1050, "Dell Computer Corporation", "Inspiron 8000", NULL },
+  {  0,  0, 1400, 1050, "Dell Computer Corporation", "Latitude D600", NULL },
+  {  0,  0, 1400, 1050, "TOSHIBA", "TECRA 9100", NULL },
+  {  0,  0, 1600, 1200, "Dell Computer Corporation", "Inspiron 8200", NULL },
+  {  0,  0, 1600, 1200, "Dell Computer Corporation", "Latitude C840", NULL },
+  {  0,  0, 1024,  600, "FUJITSU SIEMENS", "LIFEBOOK P1510", NULL }
 };
 
 #define BIOS_TEST
@@ -812,6 +815,8 @@ void add_panel_info(hd_data_t *hd_data, bios_info_t *bt)
       bt->lcd.name = new_str("Notebook LCD");
       bt->lcd.width = panel_data[u].width;
       bt->lcd.height = panel_data[u].height;
+      bt->lcd.xsize = panel_data[u].xsize;
+      bt->lcd.ysize = panel_data[u].ysize;
       break;
     }
   }

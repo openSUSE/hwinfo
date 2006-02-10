@@ -1,3 +1,7 @@
+10/2/2006:	v12.4
+	- ms: report LCD size
+	- updated ibm notebook list
+
 8/2/2006:	v12.3
 	- new wlan driver (#145190)
 	- remove dep on wireless-tools
