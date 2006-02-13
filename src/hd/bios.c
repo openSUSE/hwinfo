@@ -25,45 +25,47 @@
 
 #if defined(__i386__) || defined (__x86_64__) || defined (__ia64__)
 
+#include "ibm-notebooks.h"
+static int tp_lookup(char *key, unsigned *width, unsigned *height, unsigned *xsize, unsigned *ysize);
+
 static struct {
-  unsigned char xsize;	/* cm */
-  unsigned char ysize;	/* cm */
+  unsigned short xsize;	/* mm */
+  unsigned short ysize;	/* mm */
   unsigned short width;
   unsigned short height;
   char *vendor;
   char *name;
   char *version;
 } __attribute((packed)) panel_data[] = {
-#include "ibm-notebooks.h"
-  {  0,  0, 1400, 1050, "IBM", "73geu99", NULL },
-  {  0,  0,  800,  600, "Fujitsu Siemens", "LiteLine", "LF6" },
-  {  0,  0, 1024,  768, "ASUSTEK", "L2000D", NULL },
-  {  0,  0, 1024,  768, "ASUSTeK Computer Inc.", "L8400C series Notebook PC", NULL },
-  {  0,  0, 1024,  768, "ASUSTeK Computer Inc.", "S5N", NULL },
-  {  0,  0, 1024,  768, "Acer", "TravelMate 720", NULL },
-  {  0,  0, 1024,  768, "COMPAL", "N30T5", NULL },
-  {  0,  0, 1024,  768, "Dell Computer Corporation", "Inspiron 5000", NULL },
-  {  0,  0, 1024,  768, "Dell Computer Corporation", "Latitude C400", NULL },
-  {  0,  0, 1024,  768, "Dell Computer Corporation", "Latitude C600", NULL },
-  {  0,  0, 1024,  768, "Dell Computer Corporation", "Latitude CPt C400GT", NULL },
-  {  0,  0, 1024,  768, "Dell Computer Corporation", "Latitude CPx J650GT", NULL },
-  {  0,  0, 1024,  768, "Hewlett-Packard", "HP OmniBook PC", "HP OmniBook 4150 B" },
-  {  0,  0, 1280,  800, "Hewlett-Packard", "hp compaq nx9105 (DU367T#ABD)", "03" },
-  { 33, 21, 1280,  800, "Hewlett-Packard", "hp compaq nx9105 (DU367T#ABD)", "F.21" },
-  {  0,  0, 1280,  800, "Hewlett-Packard", "Pavilion zv5000 (PA456EA#ABD)", "F.11" },
-  {  0,  0, 1024,  768, "KDST", "KDS6KSUMO", NULL  },
-  {  0,  0, 1024,  768, "Sony Corporation", "PCG-F370(UC)", NULL },
-  {  0,  0, 1024,  768, "Sony Corporation", "PCG-N505SN", NULL },
-  {  0,  0, 1024,  768, "TOSHIBA", "S2400-103", NULL },
-  {  0,  0, 1280,  800, "Acer", "Aspire 1520", NULL },
-  {  0,  0, 1440,  900, "FUJITSU SIEMENS", "Amilo M3438 Series", NULL },
-  {  0,  0, 1400, 1050, "Acer", "TravelMate 660", NULL },
-  {  0,  0, 1400, 1050, "Dell Computer Corporation", "Inspiron 8000", NULL },
-  {  0,  0, 1400, 1050, "Dell Computer Corporation", "Latitude D600", NULL },
-  {  0,  0, 1400, 1050, "TOSHIBA", "TECRA 9100", NULL },
-  {  0,  0, 1600, 1200, "Dell Computer Corporation", "Inspiron 8200", NULL },
-  {  0,  0, 1600, 1200, "Dell Computer Corporation", "Latitude C840", NULL },
-  {  0,  0, 1024,  600, "FUJITSU SIEMENS", "LIFEBOOK P1510", NULL }
+  {   0,   0, 1400, 1050, "IBM", "73geu99", NULL },
+  {   0,   0,  800,  600, "Fujitsu Siemens", "LiteLine", "LF6" },
+  {   0,   0, 1024,  768, "ASUSTEK", "L2000D", NULL },
+  {   0,   0, 1024,  768, "ASUSTeK Computer Inc.", "L8400C series Notebook PC", NULL },
+  {   0,   0, 1024,  768, "ASUSTeK Computer Inc.", "S5N", NULL },
+  {   0,   0, 1024,  768, "Acer", "TravelMate 720", NULL },
+  {   0,   0, 1024,  768, "COMPAL", "N30T5", NULL },
+  {   0,   0, 1024,  768, "Dell Computer Corporation", "Inspiron 5000", NULL },
+  {   0,   0, 1024,  768, "Dell Computer Corporation", "Latitude C400", NULL },
+  {   0,   0, 1024,  768, "Dell Computer Corporation", "Latitude C600", NULL },
+  {   0,   0, 1024,  768, "Dell Computer Corporation", "Latitude CPt C400GT", NULL },
+  {   0,   0, 1024,  768, "Dell Computer Corporation", "Latitude CPx J650GT", NULL },
+  {   0,   0, 1024,  768, "Hewlett-Packard", "HP OmniBook PC", "HP OmniBook 4150 B" },
+  {   0,   0, 1280,  800, "Hewlett-Packard", "hp compaq nx9105 (DU367T#ABD)", "03" },
+  { 330, 210, 1280,  800, "Hewlett-Packard", "hp compaq nx9105 (DU367T#ABD)", "F.21" },
+  {   0,   0, 1280,  800, "Hewlett-Packard", "Pavilion zv5000 (PA456EA#ABD)", "F.11" },
+  {   0,   0, 1024,  768, "KDST", "KDS6KSUMO", NULL  },
+  {   0,   0, 1024,  768, "Sony Corporation", "PCG-F370(UC)", NULL },
+  {   0,   0, 1024,  768, "Sony Corporation", "PCG-N505SN", NULL },
+  {   0,   0, 1024,  768, "TOSHIBA", "S2400-103", NULL },
+  {   0,   0, 1280,  800, "Acer", "Aspire 1520", NULL },
+  {   0,   0, 1440,  900, "FUJITSU SIEMENS", "Amilo M3438 Series", NULL },
+  {   0,   0, 1400, 1050, "Acer", "TravelMate 660", NULL },
+  {   0,   0, 1400, 1050, "Dell Computer Corporation", "Inspiron 8000", NULL },
+  {   0,   0, 1400, 1050, "Dell Computer Corporation", "Latitude D600", NULL },
+  {   0,   0, 1400, 1050, "TOSHIBA", "TECRA 9100", NULL },
+  {   0,   0, 1600, 1200, "Dell Computer Corporation", "Inspiron 8200", NULL },
+  {   0,   0, 1600, 1200, "Dell Computer Corporation", "Latitude C840", NULL },
+  {   0,   0, 1024,  600, "FUJITSU SIEMENS", "LIFEBOOK P1510", NULL }
 };
 
 #define BIOS_TEST
@@ -783,7 +785,7 @@ void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
 #ifndef LIBHD_TINY
 void add_panel_info(hd_data_t *hd_data, bios_info_t *bt)
 {
-  unsigned width, height;
+  unsigned width, height, xsize = 0, ysize = 0;
   char *vendor, *name, *version;
   hd_smbios_t *sm;
   unsigned u;
@@ -803,6 +805,20 @@ void add_panel_info(hd_data_t *hd_data, bios_info_t *bt)
   }
 
   if(!vendor || !name) return;
+
+  if(
+    !strcmp(vendor, "IBM") &&
+    tp_lookup(name, &width, &height, &xsize, &ysize)
+  ) {
+    bt->lcd.vendor = new_str(vendor);
+    bt->lcd.name = new_str("Notebook LCD");
+    bt->lcd.width = width;
+    bt->lcd.height = height;
+    bt->lcd.xsize = xsize;
+    bt->lcd.ysize = ysize;
+
+    return;
+  }
 
   for(u = 0; u < sizeof panel_data / sizeof *panel_data; u++) {
     if(
@@ -1018,6 +1034,56 @@ int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios
   return ok;
 }
 
+/*
+ *
+ * db format (32 bits):
+ * leaf: 1, last: 1, key: 6, range: 4, ofs: 20
+ *
+ */
+int tp_lookup(char *key_str, unsigned *width, unsigned *height, unsigned *xsize, unsigned *ysize)
+{
+  unsigned u;
+  unsigned key, range, ofs, last, leaf = 0;
+
+  if(strlen(key_str) != 7) return 0;
+
+  for(u = 0; u < 7; u++) {
+    if(key_str[u] < '0' || key_str[u] >= '0' + 64) return 0;
+  }
+
+  for(u = 0; u < sizeof tp_db / sizeof *tp_db; u++) {
+    key = (tp_db[u] >> 24) & 0x3f;
+    range = (tp_db[u] >> 20) & 0xf;
+    ofs = tp_db[u] & ((1 << 20) - 1);
+    // printf("key = %d, range = %d, ofs = %d, str = %d\n", key, range, ofs, *key_str - '0');
+    if(*key_str - '0' >= key && *key_str - '0' <= key + range) {
+      // printf("match\n");
+      leaf = (tp_db[u] >> 31) & 1;
+      if(leaf) break;
+      key_str++;
+      // printf("%d\n", *key_str);
+      if(ofs >= sizeof tp_db / sizeof *tp_db || !*key_str) return 0;
+      u = ofs - 1;
+      // printf("next1 = %u\n", ofs);
+      continue;
+    }
+    else {
+      last = (tp_db[u] >> 30) & 1;
+      if(last) return 0;
+      // printf("next2 = %u\n", u + 1);
+    }
+  }
+
+  if(leaf) {
+    if(ofs >= sizeof tp_values / sizeof *tp_values) return 0;
+    *width = tp_values[ofs].width;
+    *height = tp_values[ofs].height;
+    *xsize = tp_values[ofs].xsize;
+    *ysize = tp_values[ofs].ysize;
+  }
+
+  return 1;
+}
 
 #endif /* defined(__i386__) || defined (__x86_64__) */
 

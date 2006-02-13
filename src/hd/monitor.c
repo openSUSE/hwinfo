@@ -252,7 +252,7 @@ void add_lcd_info(hd_data_t *hd_data, hd_t *hd, bios_info_t *bt)
   if (bt->lcd.xsize) {
      res = add_res_entry(&hd->res, new_mem(sizeof *res));
      res->size.type = res_size;
-     res->size.unit = size_unit_cm;
+     res->size.unit = size_unit_mm;
      res->size.val1 = bt->lcd.xsize;
      res->size.val2 = bt->lcd.ysize;
   }
