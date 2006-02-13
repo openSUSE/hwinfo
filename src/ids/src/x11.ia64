@@ -1001,6 +1001,7 @@
 &device.id		pci 0x5964
 +device.name		RV280 5964
 +driver.xfree		4|radeon
++driver.xfree.config	Option "XaaNoOffscreenPixmaps"
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5965
@@ -1964,7 +1965,6 @@
 &device.id		pci 0x0112
 +device.name		GeForce2 Go
 +driver.xfree		4|nv
-+driver.xfree.config	#Option "CrtcNumber" "0"
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0113
@@ -2131,29 +2131,22 @@
 &device.id		pci 0x0174
 +device.name		GeForce4 440 Go
 +driver.xfree		4|nv
-+driver.xfree.config	#Option "CrtcNumber" "0"
-+driver.xfree.config	#Option "CrtcNumber" "1"
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0175
 +device.name		GeForce4 420 Go
 +driver.xfree		4|nv
-+driver.xfree.config	#Option "CrtcNumber" "0"
-+driver.xfree.config	#Option "CrtcNumber" "1"
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0176
 +device.name		GeForce4 420 Go 32M
 +driver.xfree		4|nv
-+driver.xfree.config	#Option "CrtcNumber" "0"
-+driver.xfree.config	#Option "CrtcNumber" "1"
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0176
 &subvendor.id		pci 0x1584
 &subdevice.id		pci 0x2241
 +subdevice.name		GeForce4 Go DH
-+driver.xfree		4|nv
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0177
@@ -2175,8 +2168,6 @@
 &device.id		pci 0x0179
 +device.name		GeForce4 440 Go 64M
 +driver.xfree		4|nv
-+driver.xfree.config	#Option "CrtcNumber" "0"
-+driver.xfree.config	#Option "CrtcNumber" "1"
 
  vendor.id		pci 0x10de
 &device.id		pci 0x017a
@@ -2187,8 +2178,6 @@
 &device.id		pci 0x017c
 +device.name		Quadro4 500 GoGL
 +driver.xfree		4|nv
-+driver.xfree.config	#Option "CrtcNumber" "0"
-+driver.xfree.config	#Option "CrtcNumber" "1"
 
  vendor.id		pci 0x10de
 &device.id		pci 0x017d
@@ -2772,6 +2761,14 @@
 &device.id		pci 0x7205
 +device.name		KM400
 +driver.xfree		4|via|||dri
+
+ vendor.id		pci 0x1106
+&device.id		pci 0x7205
+&subvendor.id		pci 0x1025
+&subdevice.id		pci 0x0033
++subdevice.name		Aspire 1353LC KM400
++driver.xfree		4|via|||dri
++driver.xfree.config	Option "VBEModes" "true"
 
  vendor.id		pci 0x1142
 +vendor.name		Alliance Semiconductor Corporation
