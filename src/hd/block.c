@@ -154,6 +154,7 @@ void get_block_devs(hd_data_t *hd_data)
 
     hd = NULL;
 
+#if defined(__s390x__) || defined(__s390__)
     /* check if disk is DASD and has already been found by s390.c */
     if(sf_dev && sf_dev->driver_name && strstr(sf_dev->driver_name,"dasd"))
     {
@@ -184,7 +185,9 @@ void get_block_devs(hd_data_t *hd_data)
       hd=NULL;
       out:;
     }
-    else if((sl = search_str_list(hd_data->disks, hd_sysfs_name2_dev(sf_cdev->name)))) {
+    else
+#endif
+    if((sl = search_str_list(hd_data->disks, hd_sysfs_name2_dev(sf_cdev->name)))) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->sub_class.id = sc_sdev_disk;
     }
