@@ -61,7 +61,7 @@ static struct {
   {   0,   0, 1440,  900, "FUJITSU SIEMENS", "Amilo M3438 Series", NULL },
   {   0,   0, 1400, 1050, "Acer", "TravelMate 660", NULL },
   {   0,   0, 1400, 1050, "Dell Computer Corporation", "Inspiron 8000", NULL },
-  {   0,   0, 1400, 1050, "Dell Computer Corporation", "Latitude D600", NULL },
+  { 286, 214, 1400, 1050, "Dell Computer Corporation", "Latitude D600", NULL },
   {   0,   0, 1400, 1050, "TOSHIBA", "TECRA 9100", NULL },
   {   0,   0, 1600, 1200, "Dell Computer Corporation", "Inspiron 8200", NULL },
   {   0,   0, 1600, 1200, "Dell Computer Corporation", "Latitude C840", NULL },
