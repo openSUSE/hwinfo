@@ -1,3 +1,7 @@
+16/2/2006:	v12.7
+	- removed avm_fcdsl (#151148)
+	- more compact LCD data set
+
 14/2/2006:	v12.6
 	- added LCD size
 	- s390 dasd code conflicted with iSeries (#148346)
