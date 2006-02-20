@@ -78,16 +78,23 @@ void hd_scan_monitor(hd_data_t *hd_data)
     (bt = hd->detail->bios.data) &&
     bt->vbe.ok
   ) {
-    if(chk_edid_info(hd_data, bt->vbe.ddc)) {
-      hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class.id = bc_monitor;
+    int pid = 0;
+    int got_ddc_data = 0;
+    for(pid = 0; pid < sizeof bt->vbe.ddc_port / sizeof *bt->vbe.ddc_port; pid++) {
+      if(chk_edid_info(hd_data, bt->vbe.ddc_port[pid])) {
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+        hd->base_class.id = bc_monitor;
 
-      hd_set_hw_class(hd, hw_vbe);
+        hd_set_hw_class(hd, hw_vbe);
 
-      hd->func = bt->vbe.port;
+        hd->func = pid;
 
-      add_edid_info(hd_data, hd, bt->vbe.ddc);
+        add_edid_info(hd_data, hd, bt->vbe.ddc_port[pid]);
 
+        got_ddc_data = 1;
+      }
+    }
+    if(got_ddc_data) {
       return;
     }
   }

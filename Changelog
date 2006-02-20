@@ -1,4 +1,6 @@
+20/2/2006:	v12.8
 	- another LCD added (#151867)
+	- ms: detect more than one monitor
 
 16/2/2006:	v12.7
 	- removed avm_fcdsl (#151148)
