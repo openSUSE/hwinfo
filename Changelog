@@ -1,3 +1,6 @@
+27/2/2006:	v12.9
+	- fix libhd bug detecting mice on older 2.6 kernels
+
 20/2/2006:	v12.8
 	- another LCD added (#151867)
 	- ms: detect more than one monitor

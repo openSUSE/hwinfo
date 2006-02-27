@@ -33,6 +33,7 @@
 
 static void get_usb_devs(hd_data_t *hd_data);
 static void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb);
+static void add_input_dev(hd_data_t *hd_data, char *name);
 static void get_input_devs(hd_data_t *hd_data);
 static void get_printer_devs(hd_data_t *hd_data);
 static void read_usb_lp(hd_data_t *hd_data, hd_t *hd);
@@ -484,7 +485,7 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
 }
 
 
-void get_input_devs(hd_data_t *hd_data)
+void add_input_dev(hd_data_t *hd_data, char *name)
 {
   hd_t *hd;
   char *s, *t;
@@ -493,9 +494,78 @@ void get_input_devs(hd_data_t *hd_data)
 
   struct sysfs_class_device *sf_cdev;
   struct sysfs_device *sf_dev;
+
+  if(!(sf_cdev = sysfs_open_class_device_path(name))) return;
+
+  ADD2LOG(
+    "  input: name = %s, path = %s\n",
+    sf_cdev->name,
+    hd_sysfs_id(sf_cdev->path)
+  );
+
+  if(!strncmp(sf_cdev->name, "ts", sizeof "ts" - 1)) {
+    sysfs_close_class_device(sf_cdev);
+    return;
+  }
+
+  if((s = hd_attr_str(sysfs_get_classdev_attr(sf_cdev, "dev")))) {
+    if(sscanf(s, "%u:%u", &u1, &u2) == 2) {
+      dev_num.type = 'c';
+      dev_num.major = u1;
+      dev_num.minor = u2;
+      dev_num.range = 1;
+    }
+    ADD2LOG("    dev = %u:%u\n", u1, u2);
+  }
+
+  sf_dev = sysfs_get_classdev_device(sf_cdev);
+  if(sf_dev) {
+    s = hd_sysfs_id(sf_dev->path);
+
+    ADD2LOG(
+      "    input device: bus = %s, bus_id = %s driver = %s\n      path = %s\n",
+      sf_dev->bus,
+      sf_dev->bus_id,
+      sf_dev->driver_name,
+      s
+    );
+
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      if(
+        hd->module == hd_data->module &&
+        hd->sysfs_id &&
+        s &&
+        !strcmp(s, hd->sysfs_id)
+      ) {
+        t = NULL;
+        str_printf(&t, 0, "/dev/input/%s", sf_cdev->name);
+
+        if(strncmp(sf_cdev->name, "mouse", sizeof "mouse" - 1)) {
+          hd->unix_dev_name = t;
+          hd->unix_dev_num = dev_num;
+        }
+        else {
+          hd->unix_dev_name2 = t;
+          hd->unix_dev_num2 = dev_num;
+
+          dev_num.major = 13;
+          dev_num.minor = 63;
+          hd->unix_dev_name = new_str(DEV_MICE);
+          hd->unix_dev_num = dev_num;
+        }
+      }
+    }
+  }
+
+  sysfs_close_class_device(sf_cdev);
+}
+
+
+void get_input_devs(hd_data_t *hd_data)
+{
   struct sysfs_link *sf_link;
-  struct sysfs_directory *sf_dir;
-  struct dlist *sf_link_list;
+  struct sysfs_directory *sf_dir, *sf_subdir;
+  struct dlist *sf_list;
 
   sf_dir = sysfs_open_directory("/sys/class/input");
 
@@ -504,69 +574,19 @@ void get_input_devs(hd_data_t *hd_data)
     return;
   }
 
+  /*
+   * A bit tricky: if there are links, assume newer sysfs layout with compat
+   * symlinks; if not, assume old layout with directories.
+   */
+
   sysfs_read_dir_links(sf_dir);
+  if(!sf_dir->links) sysfs_read_dir_subdirs(sf_dir);
 
-  if((sf_link_list = sf_dir->links)) dlist_for_each_data(sf_link_list, sf_link, struct sysfs_link) {
-    if((sf_cdev = sysfs_open_class_device_path(sf_link->target))) {
-      ADD2LOG(
-        "  input: name = %s, path = %s\n",
-        sf_cdev->name,
-        hd_sysfs_id(sf_cdev->path)
-      );
-
-      if(!strncmp(sf_cdev->name, "ts", sizeof "ts" - 1)) continue;
-
-      if((s = hd_attr_str(sysfs_get_classdev_attr(sf_cdev, "dev")))) {
-        if(sscanf(s, "%u:%u", &u1, &u2) == 2) {
-          dev_num.type = 'c';
-          dev_num.major = u1;
-          dev_num.minor = u2;
-          dev_num.range = 1;
-        }
-        ADD2LOG("    dev = %u:%u\n", u1, u2);
-      }
-
-      sf_dev = sysfs_get_classdev_device(sf_cdev);
-      if(sf_dev) {
-        s = hd_sysfs_id(sf_dev->path);
-
-        ADD2LOG(
-          "    input device: bus = %s, bus_id = %s driver = %s\n      path = %s\n",
-          sf_dev->bus,
-          sf_dev->bus_id,
-          sf_dev->driver_name,
-          s
-        );
-
-        for(hd = hd_data->hd; hd; hd = hd->next) {
-          if(
-            hd->module == hd_data->module &&
-            hd->sysfs_id &&
-            s &&
-            !strcmp(s, hd->sysfs_id)
-          ) {
-            t = NULL;
-            str_printf(&t, 0, "/dev/input/%s", sf_cdev->name);
-
-            if(strncmp(sf_cdev->name, "mouse", sizeof "mouse" - 1)) {
-              hd->unix_dev_name = t;
-              hd->unix_dev_num = dev_num;
-            }
-            else {
-              hd->unix_dev_name2 = t;
-              hd->unix_dev_num2 = dev_num;
-
-              dev_num.major = 13;
-              dev_num.minor = 63;
-              hd->unix_dev_name = new_str(DEV_MICE);
-              hd->unix_dev_num = dev_num;
-            }
-          }
-        }
-      }
-
-      sysfs_close_class_device(sf_cdev);
-    }
+  if((sf_list = sf_dir->links)) dlist_for_each_data(sf_list, sf_link, struct sysfs_link) {
+    add_input_dev(hd_data, sf_link->target);
+  }
+  else if((sf_list = sf_dir->subdirs)) dlist_for_each_data(sf_list, sf_subdir, struct sysfs_directory) {
+    add_input_dev(hd_data, sf_subdir->path);
   }
 
   sysfs_close_directory(sf_dir);
