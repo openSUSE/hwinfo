@@ -1,5 +1,7 @@
+8/3/2006:	v12.10
 	- don't report hp-officeJet package (#155973)
 	- add sanity check for monitor size data (#155096)
+	- ppc monitor detection modernized (#156075)
 
 27/2/2006:	v12.9
 	- fix libhd bug detecting mice on older 2.6 kernels
