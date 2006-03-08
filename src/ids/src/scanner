@@ -735,19 +735,6 @@
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# hp officejet
- vendor.id		usb 0x03f0
-&device.id		usb 0x2811
-|vendor.id		usb 0x03f0
-&device.id		usb 0x2911
-|vendor.id		usb 0x03f0
-&device.id		usb 0x2a11
-|vendor.id		usb 0x03f0
-&device.id		usb 0x2d11
-+requires		hp-officeJet
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # 45074
  vendor.id		usb 0x04b8
 &device.id		usb 0x0805

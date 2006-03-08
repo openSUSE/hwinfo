@@ -273,6 +273,7 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
   int i;
   unsigned u, u1, u2, tag;
   char *s;
+  unsigned width_mm = 0, height_mm = 0;
 
   fix_edid_info(hd_data, edid);
 
@@ -292,8 +293,8 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
   }
 
   if(edid[0x15] > 0 && edid[0x16] > 0) {
-    mi->width_mm = edid[0x15] * 10;
-    mi->height_mm = edid[0x16] * 10;
+    mi->width_mm = width_mm = edid[0x15] * 10;
+    mi->height_mm = height_mm = edid[0x16] * 10;
   }
 
   u = edid[0x23];
@@ -422,6 +423,28 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
       }
       /* actually we could calculate the vsync value */
       if(!res) add_monitor_res(hd, mi->width, mi->height, 60, 0);
+
+      /* do some sanity check on display size, see bug 155096 */
+      if(mi->width_mm && mi->height_mm) {
+        u = (mi->width_mm * mi->height * 16) / (mi->height_mm * mi->width);
+        /* allow 1:2 distortion */
+        if(u <= 8 || u >= 32) {
+          ADD2LOG("  ddc: strange size data (%ux%u mm^2), trying cm values\n", mi->width_mm, mi->height_mm);
+          /* ok, try cm values */
+          if(width_mm && height_mm) {
+            u = (width_mm * mi->height * 16) / (height_mm * mi->width);
+            if(u > 8 && u < 32) {
+              mi->width_mm = width_mm;
+              mi->height_mm = height_mm;
+            }
+          }
+          /* could not fix, clear */
+          if(u <= 8 || u >= 32) {
+            ADD2LOG("  ddc: cm values (%ux%u mm^2) didn't work either - giving up\n", width_mm, height_mm);
+            mi->width_mm = mi->height_mm = 0;
+          }
+        }
+      }
     }
 
     if(mi->width_mm && mi->height_mm) {
