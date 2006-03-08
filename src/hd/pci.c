@@ -99,7 +99,7 @@ void hd_pci_read_data(hd_data_t *hd_data)
   str_list_t *sl;
   char *s;
   pci_t *pci;
-  int fd;
+  int fd, i;
 
   struct sysfs_bus *sf_bus;
   struct dlist *sf_dev_list;
@@ -136,7 +136,7 @@ void hd_pci_read_data(hd_data_t *hd_data)
 
     if((s = hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "modalias")))) {
       pci->modalias = canon_str(s, strlen(s));
-      ADD2LOG("    modalias = \"%s\"\n", s);
+      ADD2LOG("    modalias = \"%s\"\n", pci->modalias);
     }
     sysfs_close_attribute(attr);
 
@@ -246,6 +246,24 @@ void hd_pci_read_data(hd_data_t *hd_data)
 
       close(fd);
     }
+
+    str_printf(&s, 0, "%s/edid1", sf_dev->path);
+    if((fd = open(s, O_RDONLY)) != -1) {
+      pci->edid_len = read(fd, pci->edid, sizeof pci->edid);
+
+      ADD2LOG("    edid[%u]\n", pci->edid_len);
+
+      if(pci->edid_len > 0) {
+        for(i = 0; i < sizeof pci->edid; i += 0x10) {
+          ADD2LOG("      ");
+          hexdump(&hd_data->log, 1, 0x10, pci->edid + i);
+          ADD2LOG("\n");
+        }
+      }
+
+      close(fd);
+    }
+
     s = free_mem(s);
 
     pci->rev = pci->data[PCI_REVISION_ID];

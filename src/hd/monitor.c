@@ -20,21 +20,21 @@
 
 #ifdef __PPC__
 static void add_old_mac_monitor(hd_data_t *hd_data);
+#endif
 static void add_monitor(hd_data_t *hd_data, devtree_t *dt);
-#endif
 static int chk_edid_info(hd_data_t *hd_data, unsigned char *edid);
-#if !defined(__PPC__)
 static void add_lcd_info(hd_data_t *hd_data, hd_t *hd, bios_info_t *bt);
-#endif
 static void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid);
 static void add_monitor_res(hd_t *hd, unsigned x, unsigned y, unsigned hz, unsigned il);
 static void fix_edid_info(hd_data_t *hd_data, unsigned char *edid);
 
-#if !defined(__PPC__)
 void hd_scan_monitor(hd_data_t *hd_data)
 {
-  hd_t *hd;
+  hd_t *hd, *hd2;
   bios_info_t *bt;
+  devtree_t *dt;
+  pci_t *pci;
+  int found;
 
   if(!hd_probe_feature(hd_data, pr_monitor)) return;
 
@@ -52,7 +52,6 @@ void hd_scan_monitor(hd_data_t *hd_data)
   /* first, see if we got the full edid record from bios */
   bt = NULL;
 
-#if 1
   /* for testing: LIBHD_EDID points to a file with valid edid record */
   {
     char *s = getenv("LIBHD_EDID");
@@ -69,7 +68,8 @@ void hd_scan_monitor(hd_data_t *hd_data)
       return;
     }
   }
-#endif
+
+  PROGRESS(2, 0, "bios");
 
   if(
     hd &&
@@ -99,6 +99,29 @@ void hd_scan_monitor(hd_data_t *hd_data)
     }
   }
 
+  PROGRESS(3, 0, "pci");
+  found = 0;
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd &&
+      hd->detail &&
+      hd->detail->type == hd_detail_pci &&
+      (pci = hd->detail->pci.data) &&
+      pci->edid_len >= 0x80 &&
+      chk_edid_info(hd_data, pci->edid)
+    ) {
+      hd2 = add_hd_entry(hd_data, __LINE__, 0);
+      hd2->base_class.id = bc_monitor;
+      hd2->attached_to = hd->idx;
+      add_edid_info(hd_data, hd2, pci->edid);
+      found = 1;
+    }
+  }
+
+  if(found) return;
+
+  PROGRESS(4, 0, "internal db");
+
   /* Maybe a LCD panel? */
   if(bt && bt->lcd.width) {
     hd = add_hd_entry(hd_data, __LINE__, 0);
@@ -112,23 +135,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
     return;
   }
 
-}
-#endif	/* !defined(__PPC__) */
-
-#if defined(__PPC__)
-void hd_scan_monitor(hd_data_t *hd_data)
-{
-  devtree_t *dt;
-  int found;
-
-  if(!hd_probe_feature(hd_data, pr_monitor)) return;
-
-  hd_data->module = mod_monitor;
-
-  /* some clean-up */
-  remove_hd_entries(hd_data);
-
-  PROGRESS(1, 0, "prom");
+  PROGRESS(5, 0, "prom");
 
   found = 0;
   for(dt = hd_data->devtree; dt; dt = dt->next) {
@@ -138,11 +145,18 @@ void hd_scan_monitor(hd_data_t *hd_data)
     }
   }
 
+#if defined(__PPC__)
+  PROGRESS(6, 0, "old mac");
+
   if(!found) {
     add_old_mac_monitor(hd_data);
   }
+#endif
+
 }
 
+
+#if defined(__PPC__)
 void add_old_mac_monitor(hd_data_t *hd_data)
 {
   hd_t *hd;
@@ -193,8 +207,9 @@ void add_old_mac_monitor(hd_data_t *hd_data)
       break;
     }
   }
-
 }
+#endif	/* defined(__PPC__) */
+
 
 void add_monitor(hd_data_t *hd_data, devtree_t *dt)
 {
@@ -221,7 +236,6 @@ void add_monitor(hd_data_t *hd_data, devtree_t *dt)
   add_edid_info(hd_data, hd, edid);
 }
 
-#endif	/* defined(__PPC__) */
 
 /* do some checks to ensure we got a reasonable block */
 int chk_edid_info(hd_data_t *hd_data, unsigned char *edid)
@@ -235,7 +249,7 @@ int chk_edid_info(hd_data_t *hd_data, unsigned char *edid)
   return 1;
 }
 
-#if !defined(__PPC__)
+
 void add_lcd_info(hd_data_t *hd_data, hd_t *hd, bios_info_t *bt)
 {
   monitor_info_t *mi = NULL;
@@ -264,7 +278,7 @@ void add_lcd_info(hd_data_t *hd_data, hd_t *hd, bios_info_t *bt)
      res->size.val2 = bt->lcd.ysize;
   }
 }
-#endif
+
 
 void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
 {
