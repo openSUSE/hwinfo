@@ -447,7 +447,7 @@ mapPciRom(PciStructPtr pciP)
 	}
 
 	if ((mem_fd = open(MEM_FILE,O_RDONLY))<0) {
-		perror("opening memory");
+		// perror("opening memory");
 		restoreMem(pciP);
 		return (0);
 	}

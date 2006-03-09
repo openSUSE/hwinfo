@@ -55,7 +55,7 @@ static CARD8 code[] = { 0xcd, 0x10, 0xf4 };	/* int 0x10, hlt */
 static int int10_bios_ok(void);
 static int map(void);
 static void unmap(void);
-static int map_vram(void);
+static int map_vram(hd_data_t *hd_data);
 static void unmap_vram(void);
 static int copy_vbios(hd_data_t *hd_data);
 // static int copy_sbios(void);
@@ -111,7 +111,9 @@ int InitInt10(hd_data_t *hd_data, int pci_cfg_method)
     return -1;
   }
 
-  if(!map_vram() || !copy_bios_ram(hd_data)) {
+  if(hd_data->flags.biosvram) map_vram(hd_data);
+
+  if(!copy_bios_ram(hd_data)) {
     unmap();
     return -1;
   }
@@ -268,7 +270,7 @@ int map()
   mem = mmap(0, (size_t) SIZE, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, -1, 0);
 
   if(mem) {
-    perror("anonymous map");
+    // perror("anonymous map");
     return 0;
   }
 
@@ -286,42 +288,67 @@ void unmap()
 }
 
 
-static int
-map_vram(void)
+int map_vram(hd_data_t *hd_data)
 {
-	int mem_fd;
+  int mem_fd;
 
 #ifdef __ia64__
-	if ((mem_fd = open(MEM_FILE,O_RDWR | O_SYNC))<0) 
+  if((mem_fd = open(MEM_FILE,O_RDWR | O_SYNC)) < 0)
 #else
-	if ((mem_fd = open(MEM_FILE,O_RDWR))<0) 
+  if((mem_fd = open(MEM_FILE,O_RDWR)) < 0)
 #endif
-	  {
-		perror("opening memory");
-		return 0;
-	}
+  {
+    log_err("map vram: open /dev/mem failed (%s)\n", strerror(errno));
+
+    return 0;
+  }
 
 #ifndef __alpha__
-	if (mmap((void *) VRAM_START, (size_t) VRAM_SIZE,
-					 PROT_EXEC | PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FIXED,
-					 mem_fd, VRAM_START) == (void *) -1) 
+  if(
+    mmap(
+      (void *) VRAM_START,
+      (size_t) VRAM_SIZE,
+      PROT_EXEC | PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FIXED,
+      mem_fd,
+      VRAM_START
+    ) == (void *) -1
+  )
 #else
-		 if (!_bus_base()) sparse_shift = 7; /* Uh, oh, JENSEN... */
-		 if (!_bus_base_sparse()) sparse_shift = 0;
-		 if ((vram_map = mmap(0,(size_t) (VRAM_SIZE << sparse_shift),
-												 PROT_READ | PROT_WRITE,
-												 MAP_SHARED,
-												 mem_fd, (VRAM_START << sparse_shift)
-												 | _bus_base_sparse())) == (void *) -1)
+  if(!_bus_base()) sparse_shift = 7; /* Uh, oh, JENSEN... */
+  if(!_bus_base_sparse()) sparse_shift = 0;
+
+  if(
+    (vram_map = mmap(
+      0,
+      (size_t) (VRAM_SIZE << sparse_shift),
+      PROT_READ | PROT_WRITE,
+      MAP_SHARED,
+      mem_fd,
+      (VRAM_START << sparse_shift) | _bus_base_sparse()
+    )) == (void *) -1
+  )
 #endif
-	  {
-	    perror("mmap error in map_hardware_ram");
-			close(mem_fd);
-			return (0);
-		}
-	vram_mapped = 1;
-	close(mem_fd);
-	return (1);
+  {
+    log_err(
+      "/dev/mem[0x%x, %u]: mmap(, %u,,,, 0x%x) failed: %s\n",
+      (unsigned) VRAM_START, VRAM_SIZE, VRAM_SIZE, (unsigned) VRAM_START, strerror(errno)
+    );
+
+    close(mem_fd);
+
+    return 0;
+  }
+
+  log_err(
+    "/dev/mem[0x%x, %u]: mmap(, %u,,,, 0x%x) ok\n",
+    (unsigned) VRAM_START, VRAM_SIZE, VRAM_SIZE, (unsigned) VRAM_START
+  );
+
+  vram_mapped = 1;
+
+  close(mem_fd);
+
+  return 1;
 }
 
 

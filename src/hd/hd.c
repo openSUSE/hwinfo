@@ -244,7 +244,8 @@ static struct s_pr_flags {
   { pr_bios_fb,       pr_bios_vesa,       0, "bios.fb"       },
   { pr_bios_mode,     pr_bios_vesa,       0, "bios.mode"     },
   { pr_bios_vbe,      pr_bios_mode,       0, "bios.vbe"      }, // just an alias
-  { pr_bios_crc,      0,                  0, "bios.crc"      },
+  { pr_bios_crc,      0,                  0, "bios.crc"      }, // require bios crc check to succeed
+  { pr_bios_vram,     0,                  0, "bios.vram"     }, // map video bios ram
   { pr_cpu,           0,            8|4|2|1, "cpu"           },
   { pr_monitor,       0,            8|4|2|1, "monitor"       },
   { pr_serial,        0,              4|2|1, "serial"        },
@@ -1745,6 +1746,7 @@ void hd_scan(hd_data_t *hd_data)
     if(hd_probe_feature(hd_data, pr_cpuemu)) hd_data->flags.cpuemu = 1;
     if(hd_probe_feature(hd_data, pr_udev)) hd_data->flags.udev = 1;
     if(!hd_probe_feature(hd_data, pr_bios_crc)) hd_data->flags.nobioscrc = 1;
+    if(hd_probe_feature(hd_data, pr_bios_vram)) hd_data->flags.biosvram = 1;
   }
 
   /* get shm segment, if we didn't do it already */
