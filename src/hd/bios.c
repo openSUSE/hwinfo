@@ -66,7 +66,10 @@ static struct {
   {   0,   0, 1600, 1200, "Dell Computer Corporation", "Inspiron 8200", NULL },
   {   0,   0, 1600, 1200, "Dell Computer Corporation", "Latitude C840", NULL },
   { 190, 110, 1024,  600, "FUJITSU SIEMENS", "LIFEBOOK P1510", NULL },
-  { 285, 215, 1024,  768, "FUJITSU SIEMENS", "LIFEBOOK S7020", NULL }
+  { 285, 215, 1024,  768, "FUJITSU SIEMENS", "LIFEBOOK S7020", NULL },
+  { 305, 230, 1400, 1050, "Samsung Electronics", "SX20S", "Revision PR" },
+  { 290, 200, 1280,  800, "TOSHIBA", "Satellite M30X", "PSA72E-00J020GR" },
+  { 305, 230, 1400, 1050, "ASUSTeK Computer Inc.", "M6V", "1.0" },
 };
 
 #define BIOS_TEST

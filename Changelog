@@ -1,3 +1,7 @@
+13/3/2006:	v12.12
+	- added LCD data (#157587)
+	- updated X11 data
+
 9/3/2006:	v12.11
 	- don't map video bios ram - not really necessary; added hwprobe=bios.nvram
 	  option to turn it back on, in case it causes trouble (#155132)
