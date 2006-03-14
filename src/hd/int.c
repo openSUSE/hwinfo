@@ -120,10 +120,14 @@ void hd_scan_int(hd_data_t *hd_data)
 void int_hotplug(hd_data_t *hd_data)
 {
   hd_t *hd;
+  hal_prop_t *prop;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->bus.id == bus_usb || hd->usb_guid) {
       hd->hotplug = hp_usb;
+    }
+    if((prop = hal_get_bool(hd->hal_prop, "storage.hotpluggable")) && prop->val.b) {
+      hd->is.hotpluggable = 1;
     }
   }
 }
@@ -134,16 +138,41 @@ void int_hotplug(hd_data_t *hd_data)
 void int_cdrom(hd_data_t *hd_data)
 {
   hd_t *hd;
+  hal_prop_t *prop;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
       hd->base_class.id == bc_storage_device &&
-      hd->sub_class.id == sc_sdev_cdrom &&
-      !hd->prog_if.id
+      hd->sub_class.id == sc_sdev_cdrom
     ) {
-      if(hd->device.name && strstr(hd->device.name, "DVD")) {
-        hd->prog_if.id = 3;
+      if(!hd->prog_if.id && hd->device.name && strstr(hd->device.name, "DVD")) hd->is.dvd = 1;
+
+      if((prop = hal_get_bool(hd->hal_prop, "storage.cdrom.cdr")) && prop->val.b) {
+        hd->is.cdr = 1;
       }
+      if((prop = hal_get_bool(hd->hal_prop, "storage.cdrom.cdrw")) && prop->val.b) {
+        hd->is.cdrw = 1;
+      }
+      if((prop = hal_get_bool(hd->hal_prop, "storage.cdrom.dvdr")) && prop->val.b) {
+        hd->is.dvdr = 1;
+      }
+      if((prop = hal_get_bool(hd->hal_prop, "storage.cdrom.dvdrw")) && prop->val.b) {
+        hd->is.dvdrw = 1;
+      }
+      if((prop = hal_get_bool(hd->hal_prop, "storage.cdrom.dvdram")) && prop->val.b) {
+        hd->is.dvdram = 1;
+      }
+      if((prop = hal_get_bool(hd->hal_prop, "storage.cdrom.dvdplusr")) && prop->val.b) {
+        hd->is.dvdpr = 1;
+      }
+      if((prop = hal_get_bool(hd->hal_prop, "storage.cdrom.dvdplusrw")) && prop->val.b) {
+        hd->is.dvdprw = 1;
+      }
+      if((prop = hal_get_bool(hd->hal_prop, "storage.cdrom.dvdplusrdl")) && prop->val.b) {
+        hd->is.dvdprdl = 1;
+      }
+
+      if(hd->is.dvd) hd->prog_if.id = 3;
     }
   }
 }

@@ -35,7 +35,7 @@ static char *skip_non_eq_or_space(char *s);
 static char *skip_nonquote(char *s);
 static void parse_property(hal_prop_t *prop, char *str);
 
-static void find_udi(hd_data_t *hd_data, hd_t *hd);
+static void find_udi(hd_data_t *hd_data, hd_t *hd, int match);
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  *
@@ -266,6 +266,16 @@ hal_prop_t *hal_get_any(hal_prop_t *prop, const char *key)
 {
   for(; prop; prop = prop->next) {
     if(!strcmp(prop->key, key)) return prop;
+  }
+
+  return NULL;
+}
+
+
+hal_prop_t *hal_get_bool(hal_prop_t *prop, const char *key)
+{
+  for(; prop; prop = prop->next) {
+    if(prop->type == p_bool && !strcmp(prop->key, key)) return prop;
   }
 
   return NULL;
@@ -674,18 +684,19 @@ void parse_property(hal_prop_t *prop, char *str)
 void hd_scan_hal_assign_udi(hd_data_t *hd_data)
 {
   hd_t *hd;
+  int i;
 
   if(!hd_data->hal) return;
 
   PROGRESS(2, 0, "assign udi");
 
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    find_udi(hd_data, hd);
+  for(i = 0; i < 3; i++) {
+    for(hd = hd_data->hd; hd; hd = hd->next) find_udi(hd_data, hd, i);
   }
 }
 
 
-void find_udi(hd_data_t *hd_data, hd_t *hd)
+void find_udi(hd_data_t *hd_data, hd_t *hd, int match)
 {
   hal_device_t *dev;
   char *h_sysfsid, *h_devname;
@@ -699,19 +710,23 @@ void find_udi(hd_data_t *hd_data, hd_t *hd)
   /* based on device file */
   if(
     !dev &&
-    (hd->unix_dev_name || hd->unix_dev_name2 || hd->unix_dev_names)
+    (
+      (match == 0 && hd->unix_dev_name) ||
+      (match == 1 && hd->unix_dev_name2) ||
+      (match == 2 && hd->unix_dev_names)
+    )
   ) for(dev = hd_data->hal; dev; dev = dev->next) {
     h_devname = hal_get_useful_str(dev->prop, "linux.device_file");
     if(!h_devname) h_devname = hal_get_useful_str(dev->prop, "block.device");
     if(h_devname) {
-      if(hd->unix_dev_name && !strcmp(hd->unix_dev_name, h_devname)) break;
-      if(hd->unix_dev_name2 && !strcmp(hd->unix_dev_name2, h_devname)) break;
-      if(search_str_list(hd->unix_dev_names, h_devname)) break;
+      if(match == 0 && hd->unix_dev_name && !strcmp(hd->unix_dev_name, h_devname)) break;
+      if(match == 1 && hd->unix_dev_name2 && !strcmp(hd->unix_dev_name2, h_devname)) break;
+      if(match == 2 && search_str_list(hd->unix_dev_names, h_devname)) break;
     }
   }
 
-  /* based on sysfs id */
-  if(!dev && hd->sysfs_id) for(dev = hd_data->hal; dev; dev = dev->next) {
+  /* based on sysfs id, only once for match == 0 */
+  if(!dev && !match && hd->sysfs_id) for(dev = hd_data->hal; dev; dev = dev->next) {
     h_sysfsid = hd_sysfs_id(hal_get_useful_str(dev->prop, "linux.sysfs_path"));
     if(h_sysfsid && !strcmp(hd->sysfs_id, h_sysfsid)) break;
   }

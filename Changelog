@@ -1,3 +1,8 @@
+14/3/2006:	v12.13
+	- assigning to HAL udi could go wrong
+	- added 'hotpluggable' flag for external drives (#150744)
+	- suport more DVD types
+
 13/3/2006:	v12.12
 	- added LCD data (#157587)
 	- updated X11 data
