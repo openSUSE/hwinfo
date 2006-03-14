@@ -1,7 +1,10 @@
+14/3/2006:	v12.14
+	- limit monitor detection to 2 ports (#155018)
+
 14/3/2006:	v12.13
 	- assigning to HAL udi could go wrong
 	- added 'hotpluggable' flag for external drives (#150744)
-	- suport more DVD types
+	- support more DVD types
 
 13/3/2006:	v12.12
 	- added LCD data (#157587)
