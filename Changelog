@@ -1,3 +1,5 @@
+	- support mv643xx_eth (#117053)
+
 14/3/2006:	v12.14
 	- limit monitor detection to 2 ports (#155018)
 
