@@ -196,22 +196,11 @@ void hd_scan_wlan(hd_data_t *hd_data)
 
 	/* detect WPA capabilities */
 	if (hd->drivers) {
-	  if (search_str_list(hd->drivers, "hostap_cs") ||
-	      search_str_list(hd->drivers, "hostap_pci") ||
-	      search_str_list(hd->drivers, "hostap_plx") )
-	    wpa_drv = &wpa_driver_wext_ops;
-	/* prism54 is not ready yet
-	   else if (search_str_list(hd->drivers, "prism54")==0)
-	   wpa_drv = &wpa_driver_prism54_ops;
-	*/
-	  else if (search_str_list(hd->drivers, "ath_pci"))
+	  if (search_str_list(hd->drivers, "ath_pci"))
 	    wpa_drv = &wpa_driver_madwifi_ops;
 	  else if (strncmp(hd->drivers->str, "at76", 4)==0)
 	    wpa_drv = &wpa_driver_atmel_ops;
-	  else if (search_str_list(hd->drivers, "ndiswrapper"))
-	    wpa_drv = &wpa_driver_ndiswrapper_ops;
-	  else if ((search_str_list(hd->drivers, "ipw2100")) ||
-						 (search_str_list(hd->drivers, "ipw2200")) )
+	  else 
 	    wpa_drv = &wpa_driver_wext_ops;
 	}
 	
