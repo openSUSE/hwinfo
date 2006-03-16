@@ -734,6 +734,96 @@
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x016c
++subdevice.name		Radeon VE 1028:016c
++driver.xfree		4|radeon
++driver.xfree.config	Option "MonitorLayout" "CRT
++driver.xfree.config	CRT"
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x016d
++subdevice.name		Radeon VE 1028:016d
++driver.xfree		4|radeon
++driver.xfree.config	Option "MonitorLayout" "CRT
++driver.xfree.config	CRT"
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x016e
++subdevice.name		Radeon VE 1028:016e
++driver.xfree		4|radeon
++driver.xfree.config	Option "Monitorlayout" "CRT
++driver.xfree.config	CRT"
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x016f
++subdevice.name		Radeon VE 1028:016f
++driver.xfree		4|radeon
++driver.xfree.config	Option "Monitorlayout" "CRT
++driver.xfree.config	CRT"
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0170
++subdevice.name		Radeon VE 1028:0170
++driver.xfree		4|radeon
++driver.xfree.config	Option "Monitorlayout" "CRT
++driver.xfree.config	CRT"
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x017d
++subdevice.name		Radeon VE 1028:017d
++driver.xfree		4|radeon
++driver.xfree.config	Option "Monitorlayout" "CRT
++driver.xfree.config	CRT"
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x017e
++subdevice.name		Radeon VE 1028:017e
++driver.xfree		4|radeon
++driver.xfree.config	Option "Monitorlayout" "CRT
++driver.xfree.config	CRT"
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0183
++subdevice.name		Radeon VE 1028:0183
++driver.xfree		4|radeon
++driver.xfree.config	Option "Monitorlayout" "CRT
++driver.xfree.config	CRT"
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x018a
++subdevice.name		Radeon VE 1028:018a
++driver.xfree		4|radeon
++driver.xfree.config	Option "Monitorlayout" "CRT
++driver.xfree.config	CRT"
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x019a
++subdevice.name		Radeon VE 1028:019a
++driver.xfree		4|radeon
++driver.xfree.config	Option "Monitorlayout" "CRT
++driver.xfree.config	CRT"
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x515a
 +device.name		Radeon QZ
 +driver.xfree		4|radeon
@@ -1067,6 +1157,12 @@
 &device.id		pci 0x5b62
 +device.name		Radeon X600 (RV370) 5B62 (PCIE)
 +driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5b63
++device.name		RADEON X550
++driver.xfree		4|radeon
++driver.xfree.config	ChipID 0x5B60
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5b64
