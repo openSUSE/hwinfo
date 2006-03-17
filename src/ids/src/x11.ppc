@@ -1041,7 +1041,7 @@
 &device.id		pci 0x5653
 &subvendor.id		pci 0x1734
 &subdevice.id		pci 0x1093
-+subdevice.name		Mobility Radeon X700 5653 (M26) (PCIE) #155323
++subdevice.name		Mobility Radeon X700 5653 (M26) (PCIE) 155323
 +driver.xfree		4|radeon
 +driver.xfree.config	Option MonitorLayout "LVDS
 +driver.xfree.config	CRT"

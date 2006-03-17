@@ -40,6 +40,7 @@ static void add_pci_data(hd_data_t *hd_data);
 static pci_t *add_pci_entry(hd_data_t *hd_data, pci_t *new_pci);
 static unsigned char pci_cfg_byte(pci_t *pci, int fd, unsigned idx);
 static void dump_pci_data(hd_data_t *hd_data);
+static void hd_read_macio(hd_data_t *hd_data);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
 {
@@ -61,6 +62,10 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
   if(hd_data->debug) dump_pci_data(hd_data);
 
   add_pci_data(hd_data);
+
+  PROGRESS(3, 0, "macio");
+
+  hd_read_macio(hd_data);
 }
 
 
@@ -643,6 +648,92 @@ char *hd_sysfs_dev2_name(char *str)
   }
 
   return s;
+}
+
+
+/*
+ * Get mac-io data from sysfs.
+ */
+void hd_read_macio(hd_data_t *hd_data)
+{
+  char *s, *t;
+  char *macio_name, *macio_type, *macio_compat;
+  hd_t *hd, *hd2;
+
+  struct sysfs_bus *sf_bus;
+  struct dlist *sf_dev_list;
+  struct sysfs_device *sf_dev;
+  struct sysfs_attribute *attr;
+
+  sf_bus = sysfs_open_bus("macio");
+
+  if(!sf_bus) {
+    ADD2LOG("sysfs: no such bus: macio\n");
+    return;
+  }
+
+  sf_dev_list = sysfs_get_bus_devices(sf_bus);
+  if(sf_dev_list) dlist_for_each_data(sf_dev_list, sf_dev, struct sysfs_device) {
+    ADD2LOG(
+      "  macio device: name = %s, bus_id = %s, bus = %s\n    path = %s\n",
+      sf_dev->name,
+      sf_dev->bus_id,
+      sf_dev->bus,
+      hd_sysfs_id(sf_dev->path)
+    );
+
+    macio_name = macio_type = macio_compat = NULL;
+
+    if((s = hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "name")))) {
+      macio_name = canon_str(s, strlen(s));
+      ADD2LOG("    name = \"%s\"\n", macio_name);
+    }
+    sysfs_close_attribute(attr);
+
+    if((s = hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "type")))) {
+      macio_type = canon_str(s, strlen(s));
+      ADD2LOG("    type = \"%s\"\n", macio_type);
+    }
+    sysfs_close_attribute(attr);
+
+    if((s = hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "compatible")))) {
+      macio_compat = canon_str(s, strlen(s));
+      ADD2LOG("    compatible = \"%s\"\n", macio_compat);
+    }
+    sysfs_close_attribute(attr);
+
+    if(!strcmp(macio_compat, "wireless")) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+
+      hd->base_class.id = bc_network;
+      hd->sub_class.id = 0x82;
+      hd->is.wlan = 1;
+
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev->path));
+      hd->sysfs_bus_id = new_str(sf_dev->bus_id);
+      s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+      if(s) add_str_list(&hd->drivers, s);
+
+      s = new_str(hd->sysfs_id);
+
+      if((t = strrchr(s, '/'))) {
+        *t = 0;
+        if((t = strrchr(s, '/'))) {
+          *t = 0;
+          if((hd2 = hd_find_sysfs_id(hd_data, s))) {
+            hd->attached_to = hd2->idx;
+
+            hd->vendor.id = hd2->vendor.id;
+            hd->device.id = hd2->device.id;
+
+          }
+        }
+      }
+      free_mem(s);
+    }
+  }
+
+  sysfs_close_bus(sf_bus);
 }
 
 

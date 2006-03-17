@@ -207,7 +207,8 @@ static struct s_mod_names {
   { mod_block, "block" },
   { mod_edd, "edd" },
   { mod_input, "input" },
-  { mod_hal, "hal" }
+  { mod_hal, "hal" },
+  { mod_wlan, "wlan" }
 };
 
 /*
