@@ -834,6 +834,15 @@
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
+&device.id		pci 0x515e
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x0305
++subdevice.name		RN50 515E (156015)
++driver.xfree		4|radeon
++driver.xfree.config	Option "MonitorLayout" "CRT
++driver.xfree.config	AUTO"
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x5245
 +device.name		Rage 128 RE
 +driver.xfree		4|ati|||||8,15,16,24
@@ -1028,23 +1037,8 @@
 &device.id		pci 0x5653
 +device.name		Mobility Radeon X700 5653 (M26) (PCIE)
 +driver.xfree		4|radeon
-
- vendor.id		pci 0x1002
-&device.id		pci 0x5653
-&subvendor.id		pci 0x1025
-&subdevice.id		pci 0x007e
-+subdevice.name		Ferrari F-4000 X700
-+driver.xfree		4|radeon
-+driver.xfree.config	Option "MonitorLayout" "LVDS"
-
- vendor.id		pci 0x1002
-&device.id		pci 0x5653
-&subvendor.id		pci 0x1734
-&subdevice.id		pci 0x1093
-+subdevice.name		Mobility Radeon X700 5653 (M26) (PCIE) 155323
-+driver.xfree		4|radeon
-+driver.xfree.config	Option MonitorLayout "LVDS
-+driver.xfree.config	CRT"
++driver.xfree.config	Option "MonitorLayout" "LVDS
++driver.xfree.config	AUTO"
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5654
@@ -1384,11 +1378,6 @@
  vendor.id		pci 0x1023
 &device.id		pci 0x2100
 +device.name		CyberBlade/xp4
-+driver.xfree		4|trident
-
- vendor.id		pci 0x1023
-&device.id		pci 0x2200
-+device.name		XP5
 +driver.xfree		4|trident
 
  vendor.id		pci 0x1023
