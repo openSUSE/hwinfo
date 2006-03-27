@@ -1,4 +1,7 @@
-	 - updated X11 data
+	- updated X11 data
+	- cleaned up network module data
+	- updated pci ids
+	- add bmac network devices (#115845)
 
 17/3/2006:	v12.15
 	- support mv643xx_eth (#117053)

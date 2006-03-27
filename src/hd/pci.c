@@ -702,12 +702,20 @@ void hd_read_macio(hd_data_t *hd_data)
     }
     sysfs_close_attribute(attr);
 
-    if(!strcmp(macio_compat, "wireless")) {
+    if(
+      !strcmp(macio_compat, "wireless") ||
+      !strcmp(macio_compat, "bmac+")
+    ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
 
       hd->base_class.id = bc_network;
-      hd->sub_class.id = 0x82;
-      hd->is.wlan = 1;
+      if(!strcmp(macio_compat, "wireless")) {
+        hd->sub_class.id = 0x82;
+        hd->is.wlan = 1;
+      }
+      else {
+        hd->sub_class.id = 0;	/* ethernet */
+      }
 
       hd->sysfs_id = new_str(hd_sysfs_id(sf_dev->path));
       hd->sysfs_bus_id = new_str(sf_dev->bus_id);
