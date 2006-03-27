@@ -4,50 +4,6 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # pci/isapnp/sbus adapter
 
-# modinfo
- vendor.id		pci 0x14e4
-&device.id		pci 0x4401+2
-|vendor.id		pci 0x14e4
-&device.id		pci 0x170c
-+driver.module.modprobe	b44
-
-# net/r8169.c
- vendor.id		pci 0x10ec
-&device.id		pci 0x8169
-+driver.module.modprobe	r8169
-
-# net/tokenring/tmspci.c
- vendor.id		pci 0x0e11
-&device.id		pci 0x0508
-|vendor.id		pci 0x10b7
-&device.id		pci 0x3390
-|vendor.id		pci 0x10da
-&device.id		pci 0x0508
-|vendor.id		pci 0x1148
-&device.id		pci 0x4200
-+driver.module.modprobe	tmspci
-
-# net/tlan.c
- vendor.id		pci 0x0e11
-&device.id		pci 0xae32
-|vendor.id		pci 0x0e11
-&device.id		pci 0xae34+0x0002
-|vendor.id		pci 0x0e11
-&device.id		pci 0xae40
-|vendor.id		pci 0x0e11
-&device.id		pci 0xae43
-|vendor.id		pci 0x0e11
-&device.id		pci 0xb011+0x0002
-|vendor.id		pci 0x0e11
-&device.id		pci 0xb030
-|vendor.id		pci 0x0e11
-&device.id		pci 0xf130
-|vendor.id		pci 0x0e11
-&device.id		pci 0xf150
-|vendor.id		pci 0x108d
-&device.id		pci 0x0012+0x0003
-+driver.module.modprobe	tlan
-
 # net/yellowfin.c
  vendor.id		pci 0x1000
 &device.id		pci 0x0701+0x0002
@@ -384,46 +340,6 @@
 |vendor.id		pci 0x14b9
 &device.id		pci 0x4800
 +driver.module.modprobe	aironet4500
-
-# modules.alias
- vendor.id		pci 0x106b
-&device.id		pci 0x1645
-|vendor.id		pci 0x1148
-&device.id		pci 0x4400
-|vendor.id		pci 0x1148
-&device.id		pci 0x4500
-|vendor.id		pci 0x14e4
-&device.id		pci 0x164d
-|vendor.id		pci 0x173b
-&device.id		pci 0x03e8+0x0004
-+driver.module.modprobe	tg3
-
-# modules.alias
-# tg3 vs. bcm5700: #34486, #36992
- vendor.id		pci 0x14e4
-&device.id		pci 0x1644+0x0006
-|vendor.id		pci 0x14e4
-&device.id		pci 0x1653+0x0002
-|vendor.id		pci 0x14e4
-&device.id		pci 0x165d+0x0002
-|vendor.id		pci 0x14e4
-&device.id		pci 0x166e
-|vendor.id		pci 0x14e4
-&device.id		pci 0x1696
-|vendor.id		pci 0x14e4
-&device.id		pci 0x169c
-|vendor.id		pci 0x14e4
-&device.id		pci 0x16a6+0x0003
-|vendor.id		pci 0x14e4
-&device.id		pci 0x16c6+0x0002
-|vendor.id		pci 0x14e4
-&device.id		pci 0x170d+0x0002
-+driver.module.modprobe	tg3
-+driver.module.modprobe	bcm5700
-
- vendor.id		pci 0x14e4
-&device.id		pci 0x4401
-+driver.module.modprobe	bcm4400
 
 # net/arcnet/com20020-pci.c
  vendor.id		pci 0x1571
