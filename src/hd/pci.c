@@ -703,18 +703,23 @@ void hd_read_macio(hd_data_t *hd_data)
     sysfs_close_attribute(attr);
 
     if(
-      !strcmp(macio_compat, "wireless") ||
-      !strcmp(macio_compat, "bmac+")
+      !strcmp(macio_type, "network") ||
+      !strcmp(macio_type, "scsi")
     ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
 
-      hd->base_class.id = bc_network;
-      if(!strcmp(macio_compat, "wireless")) {
-        hd->sub_class.id = 0x82;
-        hd->is.wlan = 1;
-      }
-      else {
+      if(!strcmp(macio_type, "network")) {
+        hd->base_class.id = bc_network;
         hd->sub_class.id = 0;	/* ethernet */
+
+        if(!strcmp(macio_compat, "wireless")) {
+          hd->sub_class.id = 0x82;
+          hd->is.wlan = 1;
+        }
+      }
+      else { /* scsi */
+        hd->base_class.id = bc_storage;
+        hd->sub_class.id = sc_sto_scsi;
       }
 
       hd->sysfs_id = new_str(hd_sysfs_id(sf_dev->path));

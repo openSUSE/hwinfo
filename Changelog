@@ -1,7 +1,8 @@
+27/3/2006:	v12.16
 	- updated X11 data
 	- cleaned up network module data
 	- updated pci ids
-	- add bmac network devices (#115845)
+	- more macio devices (#115845, #117639)
 
 17/3/2006:	v12.15
 	- support mv643xx_eth (#117053)
