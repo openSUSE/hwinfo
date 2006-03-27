@@ -302,3 +302,19 @@
  vendor.id		pci 0x10a9
 +vendor.name		SGI
 
+ vendor.id		pci 0x0070
+&device.id		pci 0x4000
++device.name		WinTV PVR-350
+
+ vendor.id		pci 0x0070
+&device.id		pci 0x4001
++device.name		WinTV PVR-250 (v1)
+
+ vendor.id		pci 0x0070
+&device.id		pci 0x4009
++device.name		WinTV PVR-250
+
+ vendor.id		pci 0x0070
+&device.id		pci 0x4801
++device.name		WinTV PVR-250 MCE
+
