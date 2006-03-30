@@ -1,3 +1,7 @@
+30/3/2006:	v12.17
+	- updated X11 data
+	- fixed minor bug in X11 CDB access script
+
 27/3/2006:	v12.16
 	- updated X11 data
 	- cleaned up network module data

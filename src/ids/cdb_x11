@@ -121,7 +121,9 @@ sub write_info
     "|$$tt{package}|$$tt{extension}|$$tt{option}|$$tt{resol}||$$tt{installscript}|\n";
 
   if ($$tt{raw} ne "") {
-    @raw = (split(',',$$tt{raw}));
+    $raw = $$tt{raw};
+    $raw =~ s/(,)/$' =~ tr#"## & 1 ? $1 : "\n"/eg;
+    @raw = split "\n", $raw;
     foreach $raw (@raw) {
       print FH "+driver.xfree.config\t$raw\n";
     }
