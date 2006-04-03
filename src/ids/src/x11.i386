@@ -836,14 +836,6 @@
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
-&device.id		pci 0x515e
-&subvendor.id		pci 0x1014
-&subdevice.id		pci 0x0305
-+subdevice.name		RN50 515E (156015)
-+driver.xfree		4|radeon
-+driver.xfree.config	Option "MonitorLayout" "CRT,AUTO"
-
- vendor.id		pci 0x1002
 &device.id		pci 0x5245
 +device.name		Rage 128 RE
 +driver.xfree		4|ati|||||8,15,16,24
@@ -2524,11 +2516,6 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x01de
 +device.name		Quadro FX 350
-+driver.xfree		4|nv
-
- vendor.id		pci 0x10de
-&device.id		pci 0x01df
-+device.name		GeForce 7300 GS
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
