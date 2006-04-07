@@ -832,7 +832,7 @@
 
  vendor.id		pci 0x1002
 &device.id		pci 0x515e
-+device.name		RN50 515E
++device.name		ES1000 515E
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
@@ -1133,7 +1133,7 @@
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5969
-+device.name		RN50 5969
++device.name		ES1000 5969
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
@@ -1579,6 +1579,18 @@
 +driver.xfree.config	VideoRam 8192
 
  vendor.id		pci 0x102b
+&device.id		pci 0x0522
++device.name		G200 SE A (PCI)
++driver.xfree		4|mga
++driver.xfree.config	Option "XaaNoScreenToScreenCopy"
+
+ vendor.id		pci 0x102b
+&device.id		pci 0x0524
++device.name		G200 SE B (PCI)
++driver.xfree		4|mga
++driver.xfree.config	Option "XaaNoScreenToScreenCopy"
+
+ vendor.id		pci 0x102b
 &device.id		pci 0x0525
 +device.name		MGA G400 AGP
 +driver.xfree		4|mga
@@ -1741,6 +1753,7 @@
 &device.id		pci 0x6300
 +device.name		SiS630 GUI Accelerator+3D
 +driver.xfree		4|sis
++driver.xfree		4|sis|3d||dri
 
  vendor.id		pci 0x1039
 &device.id		pci 0x6306
@@ -1958,12 +1971,6 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x0091
 +device.name		GeForce 7800 GTX
-+driver.xfree		4|nv
-+driver.xfree		4|nvidia|3d
-
- vendor.id		pci 0x10de
-&device.id		pci 0x0092
-+device.name		GeForce 7800 GT
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d
 
@@ -2594,6 +2601,13 @@
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d
 +driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0242
+&subvendor.id		pci 0x1849
+&subdevice.id		pci 0x0242
++subdevice.name		GeForce 6100 ASRock
++driver.xfree		4|fbdev
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0244
