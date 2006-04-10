@@ -259,6 +259,7 @@
 +device.name		FICON Adapter
 +baseclass.id		2
 +subclass.id		0x8e
++driver.module.modprobe ctc
 
  vendor.id		special 0x6001
 &device.id		special 0x3088
