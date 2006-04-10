@@ -1764,6 +1764,11 @@
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
+&device.id		pci 0x0044
++device.name		GeForce 6800 XT (0x0044)
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x0045
 +device.name		GeForce 6800 GT
 +driver.xfree		4|nv
@@ -1797,6 +1802,18 @@
 &device.id		pci 0x0091
 +device.name		GeForce 7800 GTX
 +driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0092
++device.name		GeForce 7800 GT
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0092
+&subvendor.id		pci 0x3842
+&subdevice.id		pci 0xc517
++subdevice.name		GeForce 7800 GT
++driver.xfree		4|fbdev
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0093
@@ -1892,6 +1909,21 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x00f3
 +device.name		GeForce 6200 (AGP)
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x00f4
++device.name		GeForce 6600 LE AGP
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x00f5
++device.name		GeForce 7800 GS AGP
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x00f6
++device.name		GeForce 6800 GS AGP
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
@@ -2023,6 +2055,11 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x0149
 +device.name		GeForce Go 6600 GT
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x014a
++device.name		Quadro NVS 440
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
@@ -2288,6 +2325,18 @@
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
+&device.id		pci 0x01df
++device.name		GeForce 7300 GS
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x01df
+&subvendor.id		pci 0x3842
+&subdevice.id		pci 0xc436
++subdevice.name		GeForce 7300 GS
++driver.xfree		4|fbdev
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x01f0
 +device.name		GeForce4 MX Integrated GPU
 +driver.xfree		4|nv
@@ -2463,6 +2512,16 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x028c
 +device.name		Quadro4 700 GoGL
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0290
++device.name		GeForce 7900 GTX
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0291
++device.name		GeForce 7900 GT
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
@@ -2714,6 +2773,16 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x034e
 +device.name		Quadro FX 1100
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0391
++device.name		GeForce 7600 GT
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0392
++device.name		GeForce 7600 GS
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
