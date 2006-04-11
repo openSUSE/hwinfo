@@ -756,6 +756,8 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_d
     if(t) {
       if((s = strrchr(t, '/'))) *s = 0;
       if((s = strrchr(t, '/'))) *s = 0;
+      if((s = strrchr(t, '/'))) *s = 0;
+      if((s = strrchr(t, '/'))) *s = 0;
       if((s = strrchr(t, '/'))) {
         scsi->controller_id = new_str(s + 1);
       }

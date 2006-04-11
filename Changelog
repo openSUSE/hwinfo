@@ -1,3 +1,6 @@
+11/4/2006:	v12.23
+	- s390: storage controller need sysfs id (#162961)
+
 10/4/2006:	v12.22
 	- updated X11 data
 

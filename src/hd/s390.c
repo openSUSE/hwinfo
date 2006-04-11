@@ -167,6 +167,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     hd->sub_device.id=MAKE_ID(TAG_SPECIAL,devtype);
     hd->bus.id=bus_ccw;
     hd->sysfs_device_link = new_str(hd_sysfs_id(curdev->path));
+    hd->sysfs_id = new_str(hd->sysfs_device_link);
     hd->sysfs_bus_id = new_str(strrchr(curdev->path,'/')+1);
     
     if(cutypes[res->io.base]==-2)	/* virtual reader */
@@ -224,6 +225,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
 	      	  hd->rom_id=new_str(curattr->value);
   	      }
   	      hd->sysfs_device_link = new_str(hd_sysfs_id(curdev->path));
+              hd->sysfs_id = new_str(hd->sysfs_device_link);
   	      hd->sysfs_bus_id = new_str(strrchr(curdev->path,'/')+1);
   	      hddb_add_info(hd_data,hd);
   	    }
