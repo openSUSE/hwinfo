@@ -3230,6 +3230,13 @@
 +driver.xfree		4|i810
 
  vendor.id		pci 0x8086
+&device.id		pci 0x2592
+&subvendor.id		pci 0x1584
+&subdevice.id		pci 0x9800
++subdevice.name		915 GM
++driver.xfree		4|i810||||Noaccel,SWcursor
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x2772
 +device.name		945G
 +driver.xfree		4|i810
