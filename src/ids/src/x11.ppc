@@ -1387,50 +1387,50 @@
  vendor.id		pci 0x102b
 &device.id		pci 0x0519
 +device.name		MGA 2064W [Millennium]
-+driver.xfree		4|mga||||NoHal|8,16,24
++driver.xfree		4|fbdev||||NoHal|8,16,24
 
  vendor.id		pci 0x102b
 &device.id		pci 0x051a
 +device.name		MGA 1064SG [Mystique]
-+driver.xfree		4|mga||||NoHal|8,16,24
++driver.xfree		4|fbdev||||NoHal|8,16,24
 
  vendor.id		pci 0x102b
 &device.id		pci 0x051b
 +device.name		MGA 2164W [Millennium II]
-+driver.xfree		4|mga||||NoHal|8,16,24
++driver.xfree		4|fbdev||||NoHal|8,16,24
 
  vendor.id		pci 0x102b
 &device.id		pci 0x051f
 +device.name		MGA 2164W [Millennium II] AGP
-+driver.xfree		4|mga||||NoHal
++driver.xfree		4|fbdev||||NoHal
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0520
 +device.name		MGA G200
-+driver.xfree		4|mga||||NoHal|8,16,24
++driver.xfree		4|fbdev||||NoHal|8,16,24
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0521
 +device.name		MGA G200 AGP
-+driver.xfree		4|mga||||NoHal|8,16,24
++driver.xfree		4|fbdev||||NoHal|8,16,24
 +driver.xfree.config	VideoRam 8192
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0522
 +device.name		G200 SE A (PCI)
-+driver.xfree		4|mga
++driver.xfree		4|fbdev
 +driver.xfree.config	Option "XaaNoScreenToScreenCopy"
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0524
 +device.name		G200 SE B (PCI)
-+driver.xfree		4|mga
++driver.xfree		4|fbdev
 +driver.xfree.config	Option "XaaNoScreenToScreenCopy"
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0525
 +device.name		MGA G400 AGP
-+driver.xfree		4|mga
++driver.xfree		4|fbdev
 
  vendor.id		pci 0x102b
 &device.id		pci 0x0525
@@ -1479,22 +1479,22 @@
 &subvendor.id		pci 0x102b
 &subdevice.id		pci 0x23c3
 +subdevice.name		G450-23c3
-+driver.xfree		4|mga||||NoHal
++driver.xfree		4|fbdev||||NoHal
 
  vendor.id		pci 0x102b
 &device.id		pci 0x1000
 +device.name		MGA G100 [Productiva]
-+driver.xfree		4|mga||||NoHal
++driver.xfree		4|fbdev||||NoHal
 
  vendor.id		pci 0x102b
 &device.id		pci 0x1001
 +device.name		MGA G100 [Productiva] AGP
-+driver.xfree		4|mga||||NoHal|8,16,24
++driver.xfree		4|fbdev||||NoHal|8,16,24
 
  vendor.id		pci 0x102b
 &device.id		pci 0x2527
 +device.name		G550
-+driver.xfree		4|mga
++driver.xfree		4|fbdev
 
  vendor.id		pci 0x102c
 +vendor.name		Chips and Technologies

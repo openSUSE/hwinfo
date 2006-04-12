@@ -848,6 +848,7 @@
 &device.id		pci 0x5462
 +device.name		MOBILITY RADEON X600SE
 +driver.xfree		4|radeon
++driver.xfree.config	ChipID 0x5460
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5464
