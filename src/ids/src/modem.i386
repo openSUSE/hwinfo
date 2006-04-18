@@ -50,94 +50,77 @@
 +driver.module.modprobe	slamr
 +baseclass.id		0x102
 +subclass.id		0x04
-+requires		kernel-nongpl|smartlink-softmodem
 
  vendor.id		pci 0x1131
 &device.id		pci 0x5402
 &subvendor.id		pci 0x1244
 &subdevice.id		pci 0x0f00
 +driver.module.modprobe	fcdsl
-+requires		kernel-nongpl
 
  vendor.id		pci 0x1244
 &device.id		pci 0x0a00
 |vendor.id		pci 0x1244
 &device.id		pci 0x0e00
 +driver.module.modprobe	fcpci
-+requires		kernel-nongpl
 
  vendor.id		pci 0x1244
 &device.id		pci 0x2700
 +driver.module.modprobe	fcdslsl
-+requires		kernel-nongpl
 
  vendor.id		pci 0x1244
 &device.id		pci 0x2900
 +driver.module.modprobe	fcdsl2
-+requires		kernel-nongpl
 
  vendor.id		AVM
 &device.id		eisa 0x0900
 +driver.module.modprobe	fcpnp
-+requires		kernel-nongpl
 
  vendor.id		usb 0x0483
 &device.id		usb 0x7554
 +driver.module.modprobe	slusb
-+requires		kernel-nongpl
 
  vendor.id		usb 0x057c
 &device.id		usb 0x0c00
 +driver.module.modprobe	fcusb
-+requires		kernel-nongpl
 
  vendor.id		usb 0x057c
 &device.id		usb 0x1000
 |vendor.id		usb 0x057c
 &device.id		usb 0x1900
 +driver.module.modprobe	fcusb2
-+requires		kernel-nongpl
 
  vendor.id		usb 0x057c
 &device.id		usb 0x2000
 +driver.module.modprobe	fxusb
-+requires		kernel-nongpl
 
  vendor.id		usb 0x057c
 &device.id		usb 0x2300
 +driver.module.modprobe	fcdslusb
-+requires		kernel-nongpl
 
  vendor.id		usb 0x057c
 &device.id		usb 0x2800
 +driver.module.modprobe	fxusb_CZ
-+requires		kernel-nongpl
 
  vendor.id		usb 0x057c
 &device.id		usb 0x2805
 |vendor.id		usb 0x057c
 &device.id		usb 0x4401
 +driver.module.modprobe	e2220pc
-+requires		kernel-nongpl
 
  vendor.id		usb 0x057c
 &device.id		usb 0x2806
 |vendor.id		usb 0x057c
 &device.id		usb 0x4601
 +driver.module.modprobe	e5520pc
-+requires		kernel-nongpl
 
  vendor.id		usb 0x057c
 &device.id		usb 0x3000
 +driver.module.modprobe	fcdslusba
-+requires		kernel-nongpl
 
  vendor.id		usb 0x057c
 &device.id		usb 0x3500
 +driver.module.modprobe	fcdslslusb
-+requires		kernel-nongpl
 
  vendor.id		usb 0x057c
 &device.id		usb 0x3600
 +driver.module.modprobe	fcdslusb2
-+requires		kernel-nongpl
