@@ -1,3 +1,6 @@
+21/4/2006:	v12.26
+	- iseries network driver was renamed to iseries_veth (#162209)
+
 18/4/2006:	v12.25
 	- removed references to kernel-nongpl (#155357)
 
