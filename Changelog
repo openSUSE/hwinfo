@@ -1,3 +1,5 @@
+	- report monitor bandwidth
+
 21/4/2006:	v12.26
 	- iseries network driver was renamed to iseries_veth (#162209)
 

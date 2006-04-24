@@ -2411,6 +2411,7 @@ driver_info_t *monitor_driver(hd_data_t *hd_data, hd_t *hd)
     ddi->max_vsync = mi->max_vsync;
     ddi->min_hsync = mi->min_hsync;
     ddi->max_hsync = mi->max_hsync;
+    ddi->bandwidth = mi->clock / 1000;
 
     for(res = hd->res; res; res = res->next) {
       if(res->any.type == res_monitor) {
