@@ -1,4 +1,6 @@
+25/4/2006:	v12.27
 	- report monitor bandwidth
+	- remove obsolete megaraid info (#168325)
 
 21/4/2006:	v12.26
 	- iseries network driver was renamed to iseries_veth (#162209)
