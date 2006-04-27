@@ -128,6 +128,10 @@
 |vendor.id		pci 0x1131
 &device.id		pci 0x7146
 &subvendor.id		pci 0x13c2
+&subdevice.id		pci 0x000e
+|vendor.id		pci 0x1131
+&device.id		pci 0x7146
+&subvendor.id		pci 0x13c2
 &subdevice.id		pci 0x1002
 |vendor.id		pci 0x1131
 &device.id		pci 0x7146

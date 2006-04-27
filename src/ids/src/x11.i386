@@ -250,7 +250,7 @@
  vendor.id		pci 0x1002
 &device.id		pci 0x4756
 +device.name		3D Rage IIC 215IIC [Mach64 GT IIC]
-+driver.xfree		4|ati
++driver.xfree		4|fbdev
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4757
@@ -832,6 +832,76 @@
 +device.name		Radeon VE
 +driver.xfree		4|radeon
 +driver.xfree		4|radeon|3d||dri||16
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x016c
++subdevice.name		Radeon VE 1028:016c
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x016d
++subdevice.name		Radeon VE 1028:016d
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x016e
++subdevice.name		Radeon VE 1028:016e
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x016f
++subdevice.name		Radeon VE 1028:016f
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0170
++subdevice.name		Radeon VE 1028:0170
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x017d
++subdevice.name		Radeon VE 1028:017d
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x017e
++subdevice.name		Radeon VE 1028:017e
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x0183
++subdevice.name		Radeon VE 1028:0183
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x018a
++subdevice.name		Radeon VE 1028:018a
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x5159
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x019a
++subdevice.name		Radeon VE 1028:019a
++driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x515a
@@ -2295,6 +2365,11 @@
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
+&device.id		pci 0x014c
++device.name		Quadro FX 550
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x014e
 +device.name		Quadro FX 540
 +driver.xfree		4|nv
@@ -2841,6 +2916,21 @@
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
+&device.id		pci 0x029c
++device.name		Quadro FX 5500
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x029d
++device.name		Quadro FX 3500
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x029e
++device.name		Quadro FX 1500
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x0301
 +device.name		GeForce FX 5800 Ultra
 +driver.xfree		4|nv
@@ -3142,6 +3232,11 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x039c
 +device.name		Quadro FX 550M
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x039e
++device.name		Quadro FX 560
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10e0
@@ -3557,6 +3652,13 @@
 +driver.xfree		4|i810|3d||dri
 
  vendor.id		pci 0x8086
+&device.id		pci 0x2572
+&subvendor.id		pci 0x1462
+&subdevice.id		pci 0x7650
++subdevice.name		865 G
++driver.xfree		4|i810||||Noaccel,SWcursor
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x2582
 +device.name		915 G
 +driver.xfree		4|i810
@@ -3604,6 +3706,13 @@
 +device.name		855 GM
 +driver.xfree		4|i810
 +driver.xfree		4|i810|3d||dri
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x3582
+&subvendor.id		pci 0x1584
+&subdevice.id		pci 0x9500
++subdevice.name		855 GM
++driver.xfree		4|i810||||Noaccel,SWcursor
 
  vendor.id		pci 0x8086
 &device.id		pci 0x7121
