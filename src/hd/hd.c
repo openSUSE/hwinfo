@@ -1279,6 +1279,9 @@ hd_t *free_hd_entry(hd_t *hd)
 
   free_mem(hd->modalias);
 
+  hd_free_hal_properties(hd->hal_prop);
+  hd_free_hal_properties(hd->persistent_prop);
+
   memset(hd, 0, sizeof *hd);
 
   return NULL;

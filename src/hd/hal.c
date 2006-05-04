@@ -531,6 +531,8 @@ hal_prop_t *hd_read_properties(const char *udi)
     }
   }
 
+  free_str_list(sl0);
+
   return prop_list;
 }
 

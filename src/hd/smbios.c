@@ -851,7 +851,7 @@ void smbios_parse(hd_data_t *hd_data)
           sm->connect.i_type.id = sm_data[5];
           sm->connect.x_type.id = sm_data[7];
           sm->connect.port_type.id = sm_data[8];
-          smbios_id2str(&sm->connect.port_type, &smbios_connect_conn_type, 0xff);
+          smbios_id2str(&sm->connect.i_type, &smbios_connect_conn_type, 0xff);
           smbios_id2str(&sm->connect.x_type, &smbios_connect_conn_type, 0xff);
           smbios_id2str(&sm->connect.port_type, &smbios_connect_port_type, 0xff);
         }
