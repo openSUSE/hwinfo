@@ -1,3 +1,9 @@
+4/5/2006:	v12.30
+	- fix some memory leaks (#148043)
+	- jdelvare: last 240 bytes of ROM were not scanned for SMBIOS
+	  entry point (#171640)
+	- jdelvare: support legacy DMI entry points (#17164)
+
 2/5/2006:	v12.29
 	- updated X11 data
 
