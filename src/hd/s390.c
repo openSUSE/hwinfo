@@ -189,6 +189,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     hd->detail->ccw.data->lcss=(strtol(curdev->bus_id,0,16) << 8) + strtol(curdev->bus_id+2,0,16);
     hddb_add_info(hd_data,hd);
   }
+  sysfs_close_list(devlist);
 
   if(virtual_machine)
   {
@@ -229,6 +230,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
   	      hd->sysfs_bus_id = new_str(strrchr(curdev->path,'/')+1);
   	      hddb_add_info(hd_data,hd);
   	    }
+  	    sysfs_close_list(devlist);
   	  }
   	}
   	              

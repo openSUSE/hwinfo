@@ -160,7 +160,7 @@ int main(int argc, char **argv)
   FILE *f = NULL;
   int i;
   unsigned first_probe = 1;
-
+  
   hd_data = calloc(1, sizeof *hd_data);
   hd_data->progress = isatty(1) ? progress2 : NULL;
   hd_data->debug=~(HD_DEB_DRIVER_INFO | HD_DEB_HDDB);
