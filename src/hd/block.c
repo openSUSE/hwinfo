@@ -55,7 +55,9 @@ void hd_scan_sysfs_block(hd_data_t *hd_data)
     load_module(hd_data, "ide_cd");
     load_module(hd_data, "sr_mod");
     load_module(hd_data, "sd_mod");
+#if !defined(__s390__) && !defined(__s390x__)
     load_module(hd_data, "st");
+#endif
   }
 
   PROGRESS(2, 0, "sysfs drivers");
