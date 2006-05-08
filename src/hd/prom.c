@@ -28,8 +28,6 @@ static void read_devtree(hd_data_t *hd_data);
 static void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent);
 static void add_legacy_prom_devices(hd_data_t *hd_data, devtree_t *dt);
 static int add_prom_display(hd_data_t *hd_data, devtree_t *dt);
-static int add_prom_vscsi(hd_data_t *hd_data, devtree_t *dt);
-static int add_prom_veth(hd_data_t *hd_data, devtree_t *dt);
 static void add_devices(hd_data_t *hd_data);
 static void dump_devtree_data(hd_data_t *hd_data);
 
@@ -459,8 +457,6 @@ void add_legacy_prom_devices(hd_data_t *hd_data, devtree_t *dt)
   if(dt->pci) return;
 
   if(add_prom_display(hd_data, dt)) return;
-  if(add_prom_vscsi(hd_data, dt)) return;
-  if(add_prom_veth(hd_data, dt)) return;
 }
 
 int add_prom_display(hd_data_t *hd_data, devtree_t *dt)
@@ -501,82 +497,6 @@ int add_prom_display(hd_data_t *hd_data, devtree_t *dt)
         res->irq.enabled = 1;
         res->irq.base = dt->interrupt;
       }
-
-      return 1;
-    }
-  }
-
-  return 0;
-}
-
-int add_prom_vscsi(hd_data_t *hd_data, devtree_t *dt)
-{
-  hd_t *hd;
-  char *s, *id;
-
-  if(
-    dt->path &&
-    dt->device_type &&
-    !strcmp(dt->device_type, "vscsi")
-  ) {
-    /* vscsi storage */
-
-    if(
-      (s = strstr(dt->path, "v-scsi@")) &&
-      *(id = s + sizeof "v-scsi@" - 1)
-    ) {
-      hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->bus.id = bus_vio;
-      hd->base_class.id = bc_storage;
-      hd->sub_class.id = sc_sto_scsi;
-      hd->slot = veth_cnt++;
-
-      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);
-      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1001);
-      str_printf(&hd->device.name, 0, "Virtual SCSI %d", hd->slot);
-      hd->rom_id = new_str(dt->path);
-
-      str_printf(&hd->sysfs_id, 0, "/devices/vio/%s", id);
-      str_printf(&hd->sysfs_bus_id, 0, "%s", id);
-
-      return 1;
-    }
-  }
-
-  return 0;
-}
-
-int add_prom_veth(hd_data_t *hd_data, devtree_t *dt)
-{
-  hd_t *hd;
-  char *s, *id;
-
-  if(
-    dt->path &&
-    dt->device_type &&
-    dt->compatible &&
-    !strcmp(dt->device_type, "network") &&
-    !strcmp(dt->compatible, "IBM,l-lan")
-  ) {
-    /* veth network */
-
-    if(
-      (s = strstr(dt->path, "l-lan@")) &&
-      *(id = s + sizeof "l-lan@" - 1)
-    ) {
-      hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->bus.id = bus_vio;
-      hd->base_class.id = bc_network;
-      hd->sub_class.id = 0x00;
-      hd->slot = veth_cnt++;
-
-      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);
-      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1002);
-      str_printf(&hd->device.name, 0, "Virtual Ethernet card %d", hd->slot);
-      hd->rom_id = new_str(dt->path);
-
-      str_printf(&hd->sysfs_id, 0, "/devices/vio/%s", id);
-      str_printf(&hd->sysfs_bus_id, 0, "%s", id);
 
       return 1;
     }

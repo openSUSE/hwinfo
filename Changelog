@@ -1,4 +1,6 @@
 8/5/2006:	v12.31
+	- get vio devices from sysfs, not prom (#161684)
+	- don't load st module (#160304)
 	- fixed really big memory leak in s390 code (bug #148043)
 
 4/5/2006:	v12.30

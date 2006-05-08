@@ -41,6 +41,7 @@ static pci_t *add_pci_entry(hd_data_t *hd_data, pci_t *new_pci);
 static unsigned char pci_cfg_byte(pci_t *pci, int fd, unsigned idx);
 static void dump_pci_data(hd_data_t *hd_data);
 static void hd_read_macio(hd_data_t *hd_data);
+static void hd_read_vio(hd_data_t *hd_data);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
 {
@@ -66,6 +67,10 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
   PROGRESS(3, 0, "macio");
 
   hd_read_macio(hd_data);
+
+  PROGRESS(3, 0, "vio");
+
+  hd_read_vio(hd_data);
 }
 
 
@@ -703,8 +708,10 @@ void hd_read_macio(hd_data_t *hd_data)
     sysfs_close_attribute(attr);
 
     if(
-      !strcmp(macio_type, "network") ||
-      !strcmp(macio_type, "scsi")
+      macio_type && (
+        !strcmp(macio_type, "network") ||
+        !strcmp(macio_type, "scsi")
+      )
     ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
 
@@ -712,7 +719,7 @@ void hd_read_macio(hd_data_t *hd_data)
         hd->base_class.id = bc_network;
         hd->sub_class.id = 0;	/* ethernet */
 
-        if(!strcmp(macio_compat, "wireless")) {
+        if(macio_compat && !strcmp(macio_compat, "wireless")) {
           hd->sub_class.id = 0x82;
           hd->is.wlan = 1;
         }
@@ -743,6 +750,90 @@ void hd_read_macio(hd_data_t *hd_data)
         }
       }
       free_mem(s);
+    }
+  }
+
+  sysfs_close_bus(sf_bus);
+}
+
+
+/*
+ * Get vio data from sysfs.
+ */
+void hd_read_vio(hd_data_t *hd_data)
+{
+  char *s, *vio_name, *vio_type;
+  int eth_cnt = 0, scsi_cnt = 0;
+  hd_t *hd;
+
+  struct sysfs_bus *sf_bus;
+  struct dlist *sf_dev_list;
+  struct sysfs_device *sf_dev;
+  struct sysfs_attribute *attr;
+
+  sf_bus = sysfs_open_bus("vio");
+
+  if(!sf_bus) {
+    ADD2LOG("sysfs: no such bus: vio\n");
+    return;
+  }
+
+  sf_dev_list = sysfs_get_bus_devices(sf_bus);
+  if(sf_dev_list) dlist_for_each_data(sf_dev_list, sf_dev, struct sysfs_device) {
+    ADD2LOG(
+      "  vio device: name = %s, bus_id = %s, bus = %s\n    path = %s\n",
+      sf_dev->name,
+      sf_dev->bus_id,
+      sf_dev->bus,
+      hd_sysfs_id(sf_dev->path)
+    );
+
+    vio_name = vio_type = NULL;
+
+    if((s = hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "devspec")))) {
+      vio_name = canon_str(s, strlen(s));
+      ADD2LOG("    name = \"%s\"\n", vio_name);
+    }
+    sysfs_close_attribute(attr);
+
+    if((s = hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "name")))) {
+      vio_type = canon_str(s, strlen(s));
+      ADD2LOG("    type = \"%s\"\n", vio_type);
+    }
+    sysfs_close_attribute(attr);
+
+    if(
+      vio_type && (
+        !strcmp(vio_type, "l-lan") ||
+        !strcmp(vio_type, "v-scsi")
+      )
+    ) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->bus.id = bus_vio;
+
+      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);
+
+      if(!strcmp(vio_type, "l-lan")) {
+        hd->base_class.id = bc_network;
+        hd->sub_class.id = 0;	/* ethernet */
+        hd->slot = eth_cnt++;
+        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1002);
+        str_printf(&hd->device.name, 0, "Virtual Ethernet card %d", hd->slot);
+      }
+      else { /* scsi */
+        hd->base_class.id = bc_storage;
+        hd->sub_class.id = sc_sto_scsi;
+        hd->slot = scsi_cnt++;
+        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1001);
+        str_printf(&hd->device.name, 0, "Virtual SCSI %d", hd->slot);
+      }
+
+      hd->rom_id = new_str(vio_name ? vio_name + 1 : 0);	/* skip leading '/' */
+
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev->path));
+      hd->sysfs_bus_id = new_str(sf_dev->bus_id);
+      s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+      if(s) add_str_list(&hd->drivers, s);
     }
   }
 
