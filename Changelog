@@ -1,3 +1,6 @@
+16/5/2006:	v12.32
+	- internal monitor db can override fsc data
+
 8/5/2006:	v12.31
 	- get vio devices from sysfs, not prom (#161684)
 	- don't load st module (#160304)

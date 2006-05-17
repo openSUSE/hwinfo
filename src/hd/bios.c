@@ -807,7 +807,7 @@ void add_panel_info(hd_data_t *hd_data, bios_info_t *bt)
   hd_smbios_t *sm;
   unsigned u;
 
-  if(bt->lcd.width || !hd_data->smbios) return;
+  if(!hd_data->smbios) return;
 
   vendor = name = version = NULL;
   width = height = 0;
