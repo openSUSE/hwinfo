@@ -82,6 +82,7 @@ struct option options[] = {
   { "kernel-version", 1, NULL, 314 },
   { "write-udi", 1, NULL, 315 },
   { "hddb-dir", 1, NULL, 316 },
+  { "nowpa", 0, NULL, 317 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -273,6 +274,10 @@ int main(int argc, char **argv)
 
         case 316:
           if(*optarg) setenv("LIBHD_HDDB_DIR", optarg, 1);
+          break;
+
+        case 317:
+          hd_data->flags.nowpa = 1;
           break;
 
         case 400:

@@ -195,7 +195,7 @@ void hd_scan_wlan(hd_data_t *hd_data)
 	}
 
 	/* detect WPA capabilities */
-	if (hd->drivers) {
+	if (!hd_data->flags.nowpa && hd->drivers) {
 	  if (search_str_list(hd->drivers, "ath_pci"))
 	    wpa_drv = &wpa_driver_madwifi_ops;
 	  else if (strncmp(hd->drivers->str, "at76", 4)==0)
