@@ -48,6 +48,7 @@ void dump_db(hd_data_t *hd_data);
 void do_chroot(hd_data_t *hd_data, char *dir);
 void ask_db(hd_data_t *hd_data, char *query);
 void get_mapping(hd_data_t *hd_data);
+void get_mapping2(hd_data_t *hd_data);
 void write_udi(hd_data_t *hd_data, char *udi);
 
 void do_saveconfig(hd_data_t *hd_data, hd_t *hd, FILE *f);
@@ -82,6 +83,8 @@ struct option options[] = {
   { "kernel-version", 1, NULL, 314 },
   { "write-udi", 1, NULL, 315 },
   { "hddb-dir", 1, NULL, 316 },
+  { "nowpa", 0, NULL, 317 },
+  { "map2", 0, NULL, 318 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -273,6 +276,14 @@ int main(int argc, char **argv)
 
         case 316:
           if(*optarg) setenv("LIBHD_HDDB_DIR", optarg, 1);
+          break;
+
+        case 317:
+          hd_data->flags.nowpa = 1;
+          break;
+
+        case 318:
+          get_mapping2(hd_data);
           break;
 
         case 400:
@@ -2154,4 +2165,22 @@ void do_saveconfig(hd_data_t *hd_data, hd_t *hd, FILE *f)
   }
 #endif
 }
+
+
+void get_mapping2(hd_data_t *hd_data)
+{
+  hd_t *hd_manual, *hd;
+  hd_hw_item_t hw_items[] = { hw_disk, 0 };
+
+  hd_data->progress = NULL;
+
+  hd_data->flags.list_all = 1;
+
+  hd_manual = hd_list2(hd_data, hw_items, 1);
+  for(hd = hd_manual; hd; hd = hd->next) {
+    hd_dump_entry(hd_data, hd, stdout);
+  }
+
+}
+
 
