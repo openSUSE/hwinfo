@@ -837,70 +837,70 @@
 &device.id		pci 0x5159
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x016c
-+subdevice.name		Radeon VE 1028:016c
++subdevice.name		ATI Radeon VE (device 016c)
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x016d
-+subdevice.name		Radeon VE 1028:016d
++subdevice.name		ATI Radeon VE (device 016d)
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x016e
-+subdevice.name		Radeon VE 1028:016e
++subdevice.name		ATI Radeon VE (device 016e)
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x016f
-+subdevice.name		Radeon VE 1028:016f
++subdevice.name		ATI Radeon VE (device 016f)
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x0170
-+subdevice.name		Radeon VE 1028:0170
++subdevice.name		ATI Radeon VE (device 0170)
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x017d
-+subdevice.name		Radeon VE 1028:017d
++subdevice.name		ATI Radeon VE (device 017d)
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x017e
-+subdevice.name		Radeon VE 1028:017e
++subdevice.name		ATI Radeon VE (device 017e)
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x0183
-+subdevice.name		Radeon VE 1028:0183
++subdevice.name		ATI Radeon VE (device 0183)
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x018a
-+subdevice.name		Radeon VE 1028:018a
++subdevice.name		ATI Radeon VE (device 018a)
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x019a
-+subdevice.name		Radeon VE 1028:019a
++subdevice.name		ATI Radeon VE (device 019a)
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
@@ -1398,6 +1398,78 @@
 &device.id		pci 0x5e4f
 +device.name		Radeon X700 SE (RV410) 5E4F (PCIE)
 +driver.xfree		4|radeon
++driver.xfree		4|fglrx|3d||dri
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x7101
++device.name		MOBILITY RADEON X1800 (M58 7101)
++driver.xfree		4|fbdev
++driver.xfree		4|fglrx|3d||dri
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x7102
++device.name		MOBILITY RADEON X1800 (M58 7102)
++driver.xfree		4|fbdev
++driver.xfree		4|fglrx|3d||dri
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x7103
++device.name		MOBILITY FireGL V7200 (M58 7103)
++driver.xfree		4|fbdev
++driver.xfree		4|fglrx|3d||dri
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x7106
++device.name		MOBILITY FireGL V7100 (M58 7106)
++driver.xfree		4|fbdev
++driver.xfree		4|fglrx|3d||dri
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x7144
++device.name		MOBILITY FireGL (M54 GL 7144)
++driver.xfree		4|fbdev
++driver.xfree		4|fglrx|3d||dri
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x7145
++device.name		MOBILITY RADEON X1400 (M54 7145)
++driver.xfree		4|fbdev
++driver.xfree		4|fglrx|3d||dri
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x7149
++device.name		MOBILITY RADEON X1300 (M52 7149)
++driver.xfree		4|fbdev
++driver.xfree		4|fglrx|3d||dri
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x714a
++device.name		MOBILITY RADEON X1300 (M52 714A)
++driver.xfree		4|fbdev
++driver.xfree		4|fglrx|3d||dri
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x714b
++device.name		MOBILITY RADEON X1300 (M52 714B)
++driver.xfree		4|fbdev
++driver.xfree		4|fglrx|3d||dri
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x714c
++device.name		MOBILITY RADEON X1300 (M52 714C)
++driver.xfree		4|fbdev
++driver.xfree		4|fglrx|3d||dri
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x71c4
++device.name		MOBILITY FireGL V5200 (M56 71C4)
++driver.xfree		4|fbdev
++driver.xfree		4|fglrx|3d||dri
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x71c5
++device.name		MOBILITY RADEON X1600 (M56 71C5)
++driver.xfree		4|fbdev
 +driver.xfree		4|fglrx|3d||dri
 
  vendor.id		pci 0x1002

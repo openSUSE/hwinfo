@@ -2412,6 +2412,16 @@ driver_info_t *monitor_driver(hd_data_t *hd_data, hd_t *hd)
     ddi->min_hsync = mi->min_hsync;
     ddi->max_hsync = mi->max_hsync;
     ddi->bandwidth = mi->clock / 1000;
+    ddi->hdisp     = mi->hdisp; 
+    ddi->hsyncstart= mi->hsyncstart;
+    ddi->hsyncend  = mi->hsyncend;
+    ddi->htotal    = mi->htotal;
+    ddi->hflag     = mi->hflag;
+    ddi->vdisp     = mi->vdisp;
+    ddi->vsyncstart= mi->vsyncstart;
+    ddi->vsyncend  = mi->vsyncend;
+    ddi->vtotal    = mi->vtotal;
+    ddi->vflag     = mi->vflag;
 
     for(res = hd->res; res; res = res->next) {
       if(res->any.type == res_monitor) {

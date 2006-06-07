@@ -1,8 +1,6 @@
-*** there is a 10.1 branch ***
-
-
 	- add --nowpa option (#168971)
 	- parse monitor timing information
+	- updated X11 data
 
 16/5/2006:	v12.32
 	- internal monitor db can override fsc data

@@ -288,6 +288,7 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
   unsigned u, u1, u2, tag;
   char *s;
   unsigned width_mm = 0, height_mm = 0;
+  unsigned hblank, hsync_ofs, hsync, vblank, vsync_ofs, vsync;
 
   fix_edid_info(hd_data, edid);
 
@@ -415,51 +416,53 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
           mi->width_mm = u1;
           mi->height_mm = u2;
 
-          {
-            unsigned hblank, hsync_ofs, hsync, vblank, vsync_ofs, vsync;
 
-            hblank = edid[i + 3] + ((edid[i + 4] & 0xf) << 8);
-            hsync_ofs = edid[i + 8] + ((edid[i + 11] & 0xc0) << 2);
-            hsync = edid[i + 9] + ((edid[i + 11] & 0x30) << 4);
+          hblank = edid[i + 3] + ((edid[i + 4] & 0xf) << 8);
+          hsync_ofs = edid[i + 8] + ((edid[i + 11] & 0xc0) << 2);
+          hsync = edid[i + 9] + ((edid[i + 11] & 0x30) << 4);
 
-            vblank = edid[i + 6] + ((edid[i + 7] & 0xf) << 8);
-            vsync_ofs = ((edid[i + 10] & 0xf0) >> 4) + ((edid[i + 11] & 0x0c) << 2);
-            vsync = (edid[i + 10] & 0xf) + ((edid[i + 11] & 0x03) << 4);
+          vblank = edid[i + 6] + ((edid[i + 7] & 0xf) << 8);
+          vsync_ofs = ((edid[i + 10] & 0xf0) >> 4) + ((edid[i + 11] & 0x0c) << 2);
+          vsync = (edid[i + 10] & 0xf) + ((edid[i + 11] & 0x03) << 4);
 
+          mi->hdisp       = mi->width;
+          mi->hsyncstart  = mi->width + hsync_ofs;
+          mi->hsyncend    = mi->width + hsync_ofs + hsync;
+          mi->htotal      = mi->width + hblank;
+          ADD2LOG(
+            "    h: %4u %4u %4u %4u (+%u +%u +%u)\n",
+            mi->hdisp, mi->hsyncstart, mi->hsyncend, mi->htotal,
+            hsync_ofs, hsync_ofs + hsync, hblank
+          );
+
+          mi->vdisp       = mi->height;
+          mi->vsyncstart  = mi->height + vsync_ofs;
+          mi->vsyncend    = mi->height + vsync_ofs + vsync;
+          mi->vtotal      = mi->height + vblank;
+          ADD2LOG(
+            "    v: %4u %4u %4u %4u (+%u +%u +%u)\n",
+            mi->vdisp, mi->vsyncstart, mi->vsyncend, mi->vtotal,
+            vsync_ofs, vsync_ofs + vsync, vblank
+          );
+
+          u = edid[i + 17];
+
+          if(((u >> 3) & 3) == 3) {
+            mi->hflag = (u & 4) ? '+' : '-';
+            mi->vflag = (u & 2) ? '+' : '-';
+            ADD2LOG("    %chsync %cvsync\n", mi->hflag, mi->vflag);
+          }
+
+          u1 = mi->width  + hblank;
+          u2 = mi->height + vblank;
+
+          if(u1 && u2) {
             ADD2LOG(
-              "    h: %4u %4u %4u %4u (+%u +%u +%u)\n",
-              mi->width, mi->width + hsync_ofs, mi->width + hsync_ofs + hsync, mi->width + hblank,
-              hsync_ofs, hsync_ofs + hsync, hblank
+              "    %.1f MHz, %.1f kHz, %.1f Hz\n",
+              (double) mi->clock / 1000,
+              (double) mi->clock / u1,
+              (double) mi->clock / u1 / u2 * 1000
             );
-
-            ADD2LOG(
-              "    v: %4u %4u %4u %4u (+%u +%u +%u)\n",
-              mi->height, mi->height + vsync_ofs, mi->height + vsync_ofs + vsync, mi->height + vblank,
-              vsync_ofs, vsync_ofs + vsync, vblank
-            );
-
-            u = edid[i + 17];
-
-            if(((u >> 3) & 3) == 3) {
-              ADD2LOG(
-                "    %chsync %cvsync\n",
-                (u & 4) ? '+' : '-',
-                (u & 2) ? '+' : '-'
-              );
-            }
-
-            u1 = mi->width + hblank;
-            u2 = mi->height + vblank;
-
-            if(u1 && u2) {
-              ADD2LOG(
-                "    %.1f MHz, %.1f kHz, %.1f Hz\n",
-                (double) mi->clock / 1000,
-                (double) mi->clock / u1,
-                (double) mi->clock / u1 / u2 * 1000
-              );
-            }
-
           }
 
         }

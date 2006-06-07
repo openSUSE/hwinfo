@@ -70,6 +70,9 @@ static struct {
   { 305, 230, 1400, 1050, "Samsung Electronics", "SX20S", "Revision PR" },
   { 290, 200, 1280,  800, "TOSHIBA", "Satellite M30X", "PSA72E-00J020GR" },
   { 305, 230, 1400, 1050, "ASUSTeK Computer Inc.", "M6V", "1.0" },
+  { 246, 185, 1024,  768, "FUJITSU SIEMENS", "LifeBook T Series", NULL },
+  { 304, 190, 1400, 1050, "Hewlett-Packard", "HP Compaq nc6000 (PN887PA#ABG)", "F.0F" },
+  { 332, 208, 1280,  800, "MICRO-STAR INT'L CO.,LTD.", "MS-1011", "0101" },
 };
 
 #define BIOS_TEST
