@@ -2,6 +2,7 @@
 	- add --nowpa option (#168971)
 	- parse monitor timing information
 	- updated X11 data
+	- don't strip binaries
 
 16/5/2006:	v12.32
 	- internal monitor db can override fsc data

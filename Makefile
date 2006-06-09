@@ -67,10 +67,10 @@ doc:
 	@cd doc ; doxygen libhd.doxy
 
 install:
-	install -d -m 755 $(DESTDIR)/sbin $(DESTDIR)/usr/sbin $(DESTDIR)$(ULIBDIR)\
+	install -d -m 755 $(DESTDIR)/sbin $(DESTDIR)/usr/sbin $(DESTDIR)$(ULIBDIR) \
 		$(DESTDIR)/usr/include
 	install -m 755 hwinfo $(DESTDIR)/usr/sbin
-	install -m 755 -s src/ids/check_hd $(DESTDIR)/usr/sbin
+	install -m 755 src/ids/check_hd $(DESTDIR)/usr/sbin
 	install -m 755 src/ids/convert_hd $(DESTDIR)/usr/sbin
 	if [ -f $(LIBHD_SO) ] ; then \
 		install $(LIBHD_SO) $(DESTDIR)$(ULIBDIR) ; \
