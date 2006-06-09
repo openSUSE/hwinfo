@@ -1,3 +1,4 @@
+9/6/2006:	v12.33
 	- add --nowpa option (#168971)
 	- parse monitor timing information
 	- updated X11 data
