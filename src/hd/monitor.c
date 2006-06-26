@@ -489,11 +489,16 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
       /* actually we could calculate the vsync value */
       if(!res) add_monitor_res(hd, mi->width, mi->height, 60, 0);
 
-      /* do some sanity check on display size, see bug 155096 */
+      /* do some sanity checks on display size, see bug 155096, 186096 */
       if(mi->width_mm && mi->height_mm) {
         u = (mi->width_mm * mi->height * 16) / (mi->height_mm * mi->width);
-        /* allow 1:2 distortion */
-        if(u <= 8 || u >= 32) {
+        u1 = width_mm ? (width_mm * 16) / mi->width_mm : 16;
+        u2 = height_mm ? (height_mm * 16) / mi->height_mm : 16;
+        if(
+          u <= 8 || u >= 32 ||		/* allow 1:2 distortion */
+          u1 <= 8 || u1 >= 32 ||	/* width cm & mm values disagree by factor >2 --> use cm values */
+          u2 <= 8 || u2 >= 32		/* dto, height */
+        ) {
           ADD2LOG("  ddc: strange size data (%ux%u mm^2), trying cm values\n", mi->width_mm, mi->height_mm);
           /* ok, try cm values */
           if(width_mm && height_mm) {

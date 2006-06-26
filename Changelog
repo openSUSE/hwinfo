@@ -1,3 +1,5 @@
+	- add another sanity check to ddc parser (#186096)
+
 9/6/2006:	v12.33
 	- add --nowpa option (#168971)
 	- parse monitor timing information
