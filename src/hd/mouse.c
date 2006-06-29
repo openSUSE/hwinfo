@@ -14,12 +14,13 @@
 #include "hd_int.h"
 #include "mouse.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * mouse info
+/**
+ * @defgroup MOUSEdev Mouse devices
+ * @ingroup libhdDEVint
+ * @brief Mouse detection
  *
- * TODO: reset serial lines to old values (cf. modem.c)
- *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @todo reset serial lines to old values (cf. modem.c)
+ * @{
  */
 
 #ifndef LIBHD_TINY
@@ -783,3 +784,6 @@ void dump_ser_mouse_data(hd_data_t *hd_data)
 }
 
 #endif		/* !defined(LIBHD_TINY) */
+
+/** @} */
+

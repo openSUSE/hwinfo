@@ -19,12 +19,14 @@
 #include "klog.h"
 #include "cpu.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * cpu info
+/**
+ * @defgroup CPUint CPU information
+ * @ingroup  libhdINFOint
+ * @brief CPU detection functions
  *
  * Note: on other architectures, entries differ (cf. Alpha)!!!
- *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * 
+ * @{
  */
 
 static void read_cpuinfo(hd_data_t *hd_data);
@@ -774,4 +776,6 @@ int ia64DetectSMP(hd_data_t *hd_data)
 
 
 #endif	/* __ia64__ */
+
+/** @} */
 

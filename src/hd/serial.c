@@ -10,12 +10,13 @@
 #include "hd_int.h"
 #include "serial.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * serial interface
+/**
+ * @defgroup SERIALint Serial devices
+ * @ingroup libhdDEVint
+ * @brief Serial device interface
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
-
 
 static char *ser_names[] = {
   "8250", "16450", "16550", "16650", "16750", "16850", "16950"
@@ -255,4 +256,6 @@ void dump_serial_data(hd_data_t *hd_data)
   }
   ADD2LOG("----- serial info end -----\n");
 }
+
+/** @} */
 

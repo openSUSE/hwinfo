@@ -8,10 +8,12 @@
 
 #undef ISDN_TEST
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * identify isdn cards
+/**
+ * @defgroup ISDNint ISDN devices
+ * @ingroup libhdDEVint
+ * @brief ISDN identify functions
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 #ifndef LIBHD_TINY
@@ -308,4 +310,6 @@ cdb_isdn_card *get_dsl_info(hd_t *hd)
 #endif		/* !defined(__s390__) && !defined(__s390x__) && !defined(__alpha__) */
 
 #endif		/* !defined(LIBHD_TINY) */
+
+/** @} */
 

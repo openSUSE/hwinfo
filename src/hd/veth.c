@@ -11,10 +11,12 @@
 #include "hd_int.h"
 #include "veth.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * iSeries veth devices
+/**
+ * @defgroup VETHint iSeries veth devices
+ * @ingroup libhdDEVint
+ * @brief iSeries veth device functions
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 #if defined(__PPC__)
@@ -61,3 +63,6 @@ void hd_scan_veth(hd_data_t *hd_data)
 }
 
 #endif	/* __PPC__ */
+
+/** @} */
+

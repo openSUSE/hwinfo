@@ -13,14 +13,14 @@
 #include "hd_int.h"
 #include "pcmcia.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- *
- * pcmcia via sysfs
- *
+/**
+ * @defgroup PCMCIAint PCMCIA (via SysFS)
+ * @ingroup libhdBUSint
+ * @brief PCMCIA bus scan functions
  *
  * expects pci devs to be probed already to assign bridge
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 static void pcmcia_read_data(hd_data_t *hd_data);
@@ -269,4 +269,5 @@ void pcmcia_ctrl_read_data(hd_data_t *hd_data)
   }
 }
 
+/** @} */
 

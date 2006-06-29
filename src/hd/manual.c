@@ -12,11 +12,12 @@
 #include "manual.h"
 #include "hddb.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/**
+ * @defgroup Manualint UDI manual hardware 
+ * @ingroup  libhdInternals
+ * @brief Manual hardware information functions (/var/lib/hardware/udi/)
  *
- * hardware in /var/lib/hardware/udi/
- *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 #include <hwclass_names.h>
@@ -929,4 +930,6 @@ int hd_write_config(hd_data_t *hd_data, hd_t *hd)
 
 
 #endif	/* LIBHD_TINY */
+
+/** @} */
 

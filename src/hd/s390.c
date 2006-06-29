@@ -7,6 +7,14 @@
 #include "hddb.h"
 #include "s390.h"
 
+/**
+ * @defgroup S390int S390 information
+ * @ingroup libhdINFOint
+ * @brief S390 devices and information functions
+ *
+ * @{
+ */
+
 #if defined(__s390__) || defined(__s390x__)
 
 #include <sysfs/libsysfs.h>
@@ -250,4 +258,6 @@ void hd_scan_s390disks(hd_data_t *hd_data)
 }
 
 #endif
+
+/** @} */
 

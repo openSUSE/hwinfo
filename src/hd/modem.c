@@ -15,13 +15,14 @@
 #include "hddb.h"
 #include "modem.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * modem info
- *
+/**
+ * @defgroup MODEMint Modem devices
+ * @ingroup libhdDEVint
+ * @brief Modem detection functions
  *
  * Note: what about modem speed?
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 #ifndef LIBHD_TINY
@@ -1081,3 +1082,6 @@ void dump_ser_modem_data(hd_data_t *hd_data)
 }
 
 #endif	/* ifndef LIBHD_TINY */
+
+/** @} */
+

@@ -14,6 +14,14 @@
 #include "hd_int.h"
 #include "wlan.h"
 
+/**
+ * @defgroup WLANint WLAN devices
+ * @ingroup libhdDEVint
+ * @brief WLAN device functions
+ *
+ * @{
+ */
+
 #ifndef LIBHD_TINY
 
 #define AUTH_ALG_OPEN_SYSTEM    0x01
@@ -1177,4 +1185,6 @@ struct wpa_driver_ops wpa_driver_wext_ops = {
 /* end wext */
 
 #endif		/* !defined(LIBHD_TINY) */
+
+/** @} */
 

@@ -9,6 +9,14 @@
 #include "hd_int.h"
 #include "sbus.h"
 
+/**
+ * @defgroup SBUSint SBUS (Sparc)
+ * @ingroup libhdBUSint
+ * @brief ISA bus scan functions
+ *
+ * @{
+ */
+
 #ifdef __sparc__
 
 #ifdef DIET
@@ -689,3 +697,6 @@ hd_scan_sbus (hd_data_t *hd_data)
 }
 
 #endif
+
+/** @} */
+

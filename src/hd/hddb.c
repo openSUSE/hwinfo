@@ -11,6 +11,14 @@
 #include "isdn.h"
 #include "hddb_int.h"
 
+/**
+ * @defgroup HDDBint Hardware DB (HDDB)
+ * @ingroup libhdInternals
+ * @brief Hardware DB functions
+ *
+ * @{
+ */
+
 extern hddb2_data_t hddb_internal;
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -34,10 +42,13 @@ typedef struct line_s {
 
 typedef struct {
   int len;
-  unsigned val[32];	/* arbitrary (approx. max. number of modules/xf86 config lines) */
+  unsigned val[32];	/**< arbitrary (approx. max. number of modules/xf86 config lines) */
 } tmp_entry_t;
 
-/* except for driver, all strings are static and _must not_ be freed */
+/**
+ * Hardware DB search struct.
+ * @note except for driver, all strings are static and _must not_ be freed
+ */
 typedef struct {
   hddb_entry_mask_t key;
   hddb_entry_mask_t value;
@@ -57,7 +68,6 @@ typedef struct {
   char *requires;
   unsigned hwclass;
 } hddb_search_t;
-
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 static void hddb_init_pci(hd_data_t *hd_data);
@@ -260,7 +270,9 @@ modinfo_t *parse_modinfo(str_list_t *file)
 }
 
 
-/* return prio, 0: no match */
+/**
+ *  return prio, 0: no match 
+ */
 int match_modinfo(modinfo_t *db, modinfo_t *match)
 {
   int prio = 0;
@@ -1743,7 +1755,7 @@ void test_db(hd_data_t *hd_data)
 #endif
 
 
-str_list_t *get_hddb_packages(hd_data_t *hd_data)
+str_list_t *hddb_get_packages(hd_data_t *hd_data)
 {
   return NULL;
 }
@@ -3048,4 +3060,6 @@ char *hid_tag_name2(int tag)
 {
   return (unsigned) tag < sizeof hid_tag_names2 / sizeof *hid_tag_names2 ? hid_tag_names2[tag] : "";
 }
+
+/** @} */
 

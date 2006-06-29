@@ -22,10 +22,12 @@ static int active_vga_card(hd_t *);
 static void dump_misc_proc_data(hd_data_t *hd_data);
 static void dump_misc_data(hd_data_t *hd_data);
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * misc info
+/**
+ * @defgroup MISCint Misc information
+ * @ingroup libhdINFOint
+ * @brief Misc information functions
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 void hd_scan_misc(hd_data_t *hd_data)
@@ -742,3 +744,6 @@ void dump_misc_data(hd_data_t *hd_data)
 
   ADD2LOG("----- misc resources end -----\n");
 }
+
+/** @} */
+

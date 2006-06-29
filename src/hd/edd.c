@@ -11,10 +11,12 @@
 #include "hddb.h"
 #include "edd.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * edd
+/**
+ * @defgroup EDDint EDD partition information
+ * @ingroup  libhdINFOint
+ * @brief EDD disks layout / partition functions
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 static void get_edd_info(hd_data_t *hd_data);
@@ -239,4 +241,6 @@ void get_edd_info(hd_data_t *hd_data)
   }
 
 }
+
+/** @} */
 

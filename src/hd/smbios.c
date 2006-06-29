@@ -5,8 +5,13 @@
 #include "hd_int.h"
 #include "smbios.h"
 
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+/**
+ * @defgroup SMBIOSint System Management BIOS (SMBIOS)
+ * @ingroup libhdINFOint
+ * @brief System Management BIOS functions
+ *
+ * @{
+ */
 
 enum sm_map_type { sm_map_str, sm_map_num2str };
 
@@ -1659,4 +1664,6 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
     }
   }
 }
+
+/** @} */
 

@@ -1,4 +1,7 @@
+29/6/2006:	v13.0
 	- add another sanity check to ddc parser (#186096)
+	- updated X11 data (#176929, #186055)
+	- glogow@fbihome.de: major documentation update
 
 9/6/2006:	v12.33
 	- add --nowpa option (#168971)

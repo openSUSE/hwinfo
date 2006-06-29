@@ -7,6 +7,14 @@
 #include "hddb.h"
 #include "monitor.h"
 
+/**
+ * @defgroup MONITORint Monitor (DDC) information
+ * @ingroup libhdINFOint
+ * @brief Monitor information functions
+ *
+ * @{
+ */
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * monitor info
  *
@@ -596,4 +604,6 @@ void fix_edid_info(hd_data_t *hd_data, unsigned char *edid)
     edid[0x24] = (timing >> 8) & 0xff;
   }
 }
+
+/** @} */
 

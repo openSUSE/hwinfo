@@ -22,6 +22,13 @@
 #include "hd_int.h"
 #include "hal.h"
 
+/**
+ * @defgroup HALint Hardware abstraction (HAL) information
+ * @ingroup  libhdInternals
+ *
+ * @{
+ */
+
 static void read_hal(hd_data_t *hd_data);
 static void add_pci(hd_data_t *hd_data);
 static void link_hal_tree(hd_data_t *hd_data);
@@ -741,4 +748,5 @@ void find_udi(hd_data_t *hd_data, hd_t *hd, int match)
 
 }
 
+/** @} */
 

@@ -9,10 +9,12 @@
 #include "memory.h"
 #include "klog.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * memory stuff
+/**
+ * @defgroup MEMint Memory information
+ * @ingroup libhdINFOint
+ * @brief Memory information functions
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 uint64_t kcore_mem(hd_data_t *hd_data);
@@ -203,4 +205,5 @@ uint64_t meminfo_mem(hd_data_t *hd_data)
   return u;
 }
 
+/** @} */
 

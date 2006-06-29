@@ -11,6 +11,14 @@
 #include <sys/ioctl.h>
 #include <linux/serial.h>
 
+/**
+ * @defgroup KDBint Keyboard devices
+ * @ingroup libhdDEVint
+ * @brief Keyboard device functions
+ *
+ * @{
+ */
+
 #ifdef __sparc__
 
 struct serial_struct {
@@ -134,12 +142,13 @@ void add_serial_console(hd_data_t *hd_data)
   }
 
   if(!dev && (fd = open(DEV_CONSOLE, O_RDWR | O_NONBLOCK | O_NOCTTY)) >= 0) {
+/*
     if(ioctl(fd, TIOCGDEV, &u) != -1) {
       tty_major = (u >> 8) & 0xfff;
       tty_minor = (u & 0xff) | ((u >> 12) & 0xfff00);
       ADD2LOG(DEV_CONSOLE ": major %u, minor %u\n", tty_major, tty_minor);
     }
-
+*/
     if(tty_major == 229 /* iseries hvc */) {
       if (tty_minor >= 128) {
         str_printf(&dev, 0, "hvsi%u", tty_minor-128);
@@ -301,4 +310,5 @@ void add_sun_console(hd_data_t *hd_data)
 
 #endif	/* __sparc__ */
 
+/** @} */
 

@@ -13,11 +13,12 @@
 #include "hd_int.h"
 #include "fb.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/**
+ * @defgroup Framebuffer Framebuffer devices
+ * @ingroup  libhdDEVint
+ * @brief Scan framebuffer devices
  *
- * scan framebuffer devices
- *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 typedef struct {
@@ -134,3 +135,6 @@ fb_info_t *fb_get_info(hd_data_t *hd_data)
 
   return fb;
 }
+
+/** @} */
+

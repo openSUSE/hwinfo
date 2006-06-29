@@ -17,10 +17,12 @@
 #include "smbios.h"
 #include "klog.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * bios info
+/**
+ * @defgroup BIOSint BIOS information
+ * @ingroup  libhdINFOint
+ * @brief BIOS information scan
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 #if defined(__i386__) || defined (__x86_64__) || defined (__ia64__)
@@ -1054,11 +1056,9 @@ int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios
   return ok;
 }
 
-/*
- *
+/**
  * db format (32 bits):
  * leaf: 1, last: 1, key: 6, range: 4, ofs: 20
- *
  */
 int tp_lookup(char *key_str, unsigned *width, unsigned *height, unsigned *xsize, unsigned *ysize)
 {
@@ -1106,4 +1106,6 @@ int tp_lookup(char *key_str, unsigned *width, unsigned *height, unsigned *xsize,
 }
 
 #endif /* defined(__i386__) || defined (__x86_64__) */
+
+/** @} */
 

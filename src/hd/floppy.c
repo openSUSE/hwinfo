@@ -11,20 +11,20 @@
 #include "klog.h"
 #include "floppy.h"
 
-static void dump_floppy_data(hd_data_t *hd_data);
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * floppy info
+/**
+ * @defgroup FLOPPYint Floppy devices
+ * @ingroup  libhdDEVint
  *
  * This should currently be called *before* scan_misc() so we can try to get
  * the floppy controller resources in scan_misc() by actually accessing the
  * floppy drive. (Otherwise there would be a rather longish timeout.)
  *
  * This is all rather strange and should be rewritten...
- *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ *     
+ * @{
  */
 
+static void dump_floppy_data(hd_data_t *hd_data);
 
 void hd_scan_floppy(hd_data_t *hd_data)
 {
@@ -163,3 +163,6 @@ void dump_floppy_data(hd_data_t *hd_data)
   }
   ADD2LOG("----- /proc/nvram end -----\n");
 }
+
+/** @} */
+

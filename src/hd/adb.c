@@ -14,10 +14,13 @@
 #include "hd_int.h"
 #include "adb.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * adb info
+
+/**
+ * @defgroup ADBint ADB keyboard (PowerPC)
+ * @ingroup  libhdDEVint
+ * @brief ADB keyboard scan functions
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 #ifdef __PPC__
@@ -76,3 +79,6 @@ void hd_scan_adb(hd_data_t *hd_data)
 }
 
 #endif	/* __PPC__ */
+
+/** @} */
+

@@ -7,10 +7,12 @@
 #include "hd_int.h"
 #include "klog.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * kernel log info
+/**
+ * @defgroup KLOGint Kernel log information
+ * @ingroup libhdINFOint
+ * @brief Kernel log information scan functions
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 static int str_ok(str_list_t *sl);
@@ -151,3 +153,6 @@ void dump_klog(hd_data_t *hd_data)
   }
   ADD2LOG("----- kernel log end -----\n");
 }
+
+/** @} */
+

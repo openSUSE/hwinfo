@@ -24,6 +24,29 @@
 #define _LINUX_PRIO_TREE_H
 #include <linux/fs.h>
 
+/**
+ * @defgroup libhdBUSint Bus scanning code
+ * @ingroup libhdInternals
+ */
+
+/**
+ * @defgroup libhdDEVint Device handling
+ * @ingroup libhdInternals
+ */
+
+/**
+ * @defgroup libhdINFOint Information gathering
+ * @ingroup libhdInternals
+ */
+
+/**
+ * @defgroup libhdInternals Implementation internals
+ *
+ * various functions commmon to all probing modules
+ *
+ * @{
+ */
+
 #define u64 uint64_t
 
 #ifndef BLKSSZGET
@@ -5785,4 +5808,5 @@ char *hd_get_hddb_path(char *sub)
   return dir;
 }
 
+/** @} */
 

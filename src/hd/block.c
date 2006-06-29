@@ -16,10 +16,12 @@
 #include "hddb.h"
 #include "block.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * block device stuff
+/**
+ * @defgroup BLOCKint Block devices
+ * @ingroup  libhdDEVint
+ * @brief Block device functions
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 static void get_block_devs(hd_data_t *hd_data);
@@ -1582,4 +1584,5 @@ void add_disk_size(hd_data_t *hd_data, hd_t *hd)
   pr_str = free_mem(pr_str);
 }
 
+/** @} */
 

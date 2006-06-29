@@ -11,11 +11,15 @@
 #include "smbios.h"
 
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/**
+ * @defgroup HDPRINTint Hardware scan console output
+ * @ingroup libhdInternals
+ * @brief Hardware scan console output functions
+ *
  * This module provides a function that prints a hardware entry. 
  * This is useful for debugging or to provide the user with some fancy info.
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 #ifndef LIBHD_TINY
@@ -1302,4 +1306,6 @@ char *print_dev_num(hd_dev_num_t *d)
 void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f) { }
 
 #endif	/* ifndef LIBHD_TINY */
+
+/** @} */
 

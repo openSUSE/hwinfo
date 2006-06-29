@@ -13,10 +13,12 @@
 #include "hddb.h"
 #include "usb.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * usb
+/**
+ * @defgroup USBint Universal Serial Bus (USB)
+ * @ingroup libhdBUSint
+ * @brief USB scan functions
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 #define IOCNR_GET_DEVICE_ID             1
@@ -815,4 +817,5 @@ void get_serial_devs(hd_data_t *hd_data)
   sysfs_close_class(sf_class);
 }
 
+/** @} */
 

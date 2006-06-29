@@ -10,10 +10,12 @@
 #include "hd_int.h"
 #include "parallel.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * parallel port device info
+/**
+ * @defgroup PPORTint Parallel port devices
+ * @ingroup libhdDEVint
+ * @brief Parallel port device information
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 #ifndef LIBHD_TINY
@@ -293,4 +295,6 @@ void dump_parallel_data(hd_data_t *hd_data, str_list_t *sl)
 }
 
 #endif	/* ifndef LIBHD_TINY */
+
+/** @} */
 

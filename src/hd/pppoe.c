@@ -28,6 +28,14 @@
 
 static hd_data_t *hd_data;
 
+/**
+ * @defgroup PPPOEint PPPoE devices (DSL)
+ * @ingroup libhdDEVint
+ * @brief PPPoE devices scan functions
+ *
+ * @{
+ */
+
 /* Ethernet Frame Types */
 #define ETH_PPPOE_DISCOVERY	0x8863
 #define ETH_PPPOE_SESSION	0x8864
@@ -609,3 +617,6 @@ void hd_scan_pppoe(hd_data_t *hd_data2)
     }
   }
 }
+
+/** @} */
+

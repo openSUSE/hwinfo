@@ -23,10 +23,14 @@
 #include "hd_int.h"
 #include "net.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * gather network interface info
+/**
+ * @defgroup NETint Network devices
+ * @ingroup libhdDEVint
+ * @brief Network device scan functions
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * Gather network interface info
+ *
+ * @{
  */
 
 static void get_driverinfo(hd_data_t *hd_data, hd_t *hd);
@@ -727,4 +731,6 @@ void add_if_name(hd_t *hd_card, hd_t *hd)
     }
   }
 }
+
+/** @} */
 

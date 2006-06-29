@@ -1798,7 +1798,7 @@ void dump_packages(hd_data_t *hd_data)
   hd_data->progress = NULL;
   hd_scan(hd_data);
 
-  sl = get_hddb_packages(hd_data);
+  sl = hddb_get_packages(hd_data);
 
   for(i = 0; xserver3map[i]; i += 2) {
     if (!search_str_list(sl, xserver3map[i + 1]))

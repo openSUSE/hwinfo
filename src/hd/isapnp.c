@@ -7,11 +7,12 @@
 #include "hddb.h"
 #include "isapnp.h"
 
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * isapnp stuff
+/**
+ * @defgroup ISAPnPint ISA PnP
+ * @ingroup libhdBUSint
+ * @brief ISA PnP scan functions
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 #if defined(__i386__) || defined(__alpha__)
@@ -435,4 +436,6 @@ void build_list(hd_data_t *hd_data, str_list_t *isapnp_list)
 
 
 #endif /* defined(__i386__) || defined(__alpha__) */
+
+/** @} **/
 

@@ -10,11 +10,14 @@
 #include "hddb.h"
 #include "prom.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * prom info
+/**
+ * @defgroup PROMint PROM information (PowerPC)
+ * @ingroup libhdINFOint
+ * @brief PowerPC PROM information
  *
  * Note: make sure that hd_scan_sysfs_pci() has been run!
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ *
+ * @{
  */
 
 #if defined(__PPC__)
@@ -612,6 +615,7 @@ void dump_devtree_data(hd_data_t *hd_data)
   ADD2LOG("----- /proc device tree end -----\n");
 }
 
-
 #endif /* defined(__PPC__) */
+
+/** @} */
 

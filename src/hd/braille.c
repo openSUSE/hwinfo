@@ -9,10 +9,12 @@
 #include "hd_int.h"
 #include "braille.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * braille displays
+/**
+ * @defgroup BRAILLEint Braille devices
+ * @ingroup  libhdDEVint
+ * @brief Braille displays functions
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 #if !defined(LIBHD_TINY) && !defined(__sparc__)
@@ -452,4 +454,6 @@ unsigned do_baum(hd_data_t *hd_data, char *dev_name, int cnt)
 
 
 #endif	/* !defined(LIBHD_TINY) && !defined(__sparc__) */
+
+/** @} */
 

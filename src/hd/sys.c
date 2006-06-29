@@ -13,10 +13,12 @@
 #include "hd_int.h"
 #include "sys.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * general system info
+/**
+ * @defgroup GENSYSINFOint General system information
+ * @ingroup libhdINFOint
+ * @brief Gather general system information
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 #if defined(__i386__)
@@ -262,4 +264,6 @@ int chk_vaio(hd_data_t *hd_data, sys_info_t *st)
   return st->model ? 1 : 0;
 }
 #endif	/* __i386__ || __x86_64__ */
+
+/** @} */
 

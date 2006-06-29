@@ -14,6 +14,14 @@
 #include "hddb.h"
 #include "pci.h"
 
+/**
+ * @defgroup PCIint PCI
+ * @ingroup libhdBUSint
+ * @brief PCI bus scan functions
+ *
+ * @{
+ */
+
 /*
  * linux/ioport.h
  */
@@ -840,4 +848,5 @@ void hd_read_vio(hd_data_t *hd_data)
   sysfs_close_bus(sf_bus);
 }
 
+/** @} */
 

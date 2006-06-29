@@ -10,10 +10,12 @@
 #include "hd_int.h"
 #include "int.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * internal things
+/**
+ * @defgroup LIBHDint Internal utilities
+ * @ingroup libhdInternals
+ * @brief Internal utility functions
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 static void int_hotplug(hd_data_t *hd_data);
@@ -1134,4 +1136,5 @@ void int_find_parent(hd_data_t *hd_data)
   }
 }
 
+/** @} */
 

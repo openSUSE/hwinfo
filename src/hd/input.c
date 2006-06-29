@@ -12,10 +12,12 @@
 #include "hddb.h"
 #include "input.h"
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * input devs
+/**
+ * @defgroup INPUTint Input devices
+ * @ingroup libhdDEVint
+ * @brief Input device scan functions
  *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * @{
  */
 
 static void get_input_devices(hd_data_t *hd_data);
@@ -320,4 +322,5 @@ int test_bit(char *str, unsigned bit)
   return (u & mask) ? 1 : 0;
 }
 
+/** @} */
 
