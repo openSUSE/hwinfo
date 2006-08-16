@@ -748,5 +748,17 @@ void find_udi(hd_data_t *hd_data, hd_t *hd, int match)
 
 }
 
+const char* get_sysfs_attr(const char* bus, const char* device, const char* attr)
+{
+  static char buf[256];
+  FILE* fp;
+  sprintf(buf, "/sys/bus/%s/devices/%s/%s", bus, device, attr);
+  fp = fopen(buf, "r");
+  if(!fp) return NULL;
+  fgets(buf, 127, fp);
+  fclose(fp);
+  return buf;
+}
+
 /** @} */
 

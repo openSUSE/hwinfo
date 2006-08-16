@@ -17,8 +17,9 @@
 
 #if defined(__s390__) || defined(__s390x__)
 
-#include <sysfs/libsysfs.h>
-#include <sysfs/dlist.h>
+#include "hal.h"
+#include <dirent.h>
+#include <unistd.h>
 
 #define BUSNAME "ccw"
 #define BUSNAME_GROUP "ccwgroup"
@@ -28,18 +29,18 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
 {
   hd_t* hd;
   hd_res_t* res;
-  struct sysfs_bus *bus;
-  struct sysfs_bus *bus_group;
-  struct sysfs_device *curdev = NULL;
-  struct dlist *attributes = NULL;
-  struct sysfs_attribute *curattr = NULL;
-  struct dlist *devlist = NULL;
-  struct dlist *devlist_group = NULL;
+  DIR *bus;
+  DIR *bus_group;
+  struct dirent *curdev = NULL;
+  char attrname[128];
+  char dirname[128];
+  char linkname[128];
   int virtual_machine=0;
 
   unsigned int devtype=0,devmod=0,cutype=0,cumod=0;
 
   /* list of each channel's cutype, used for finding multichannel devices */
+  /* FIXME: may fail with channel subsystems > 0.0 */
   int cutypes[1<<16]={0};
   int i;
 
@@ -47,8 +48,8 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
 
   remove_hd_entries(hd_data);
 
-  bus=sysfs_open_bus(BUSNAME);
-  bus_group=sysfs_open_bus(BUSNAME_GROUP);
+  bus = opendir("/sys/bus/" BUSNAME "/devices");
+  bus_group = opendir("/sys/bus/" BUSNAME_GROUP "/devices");
 
   if (!bus)
   {
@@ -56,27 +57,12 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     return;
   }
 
-  devlist=sysfs_get_bus_devices(bus);
-  if(bus_group) devlist_group=sysfs_get_bus_devices(bus_group);
-  
-  if(!devlist)
-  {
-  	ADD2LOG("unable to get devices on bus " BUSNAME);
-  	return;
-  }
-  
   /* build cutypes list */
-  dlist_for_each_data(devlist, curdev, struct sysfs_device)
+  while((curdev = readdir(bus)))
   {
-    int channel=strtol(rindex(curdev->bus_id,'.')+1,NULL,16);
-    attributes = sysfs_get_device_attributes(curdev);
-    if(!attributes) continue;
-    dlist_for_each_data(attributes,curattr,struct sysfs_attribute)
-    {
-      if(strcmp("cutype",curattr->name)==0)
-	cutype=strtol(curattr->value,NULL,16);
-    }
-    cutypes[channel]=cutype;
+    if(curdev->d_type == DT_DIR) continue;	// skip "." and ".."
+    int channel=strtol(rindex(curdev->d_name,'.')+1,NULL,16);
+    cutypes[channel] = strtol(get_sysfs_attr(BUSNAME, curdev->d_name, "cutype"), NULL, 16);
   }
   /* check for each channel if it must be skipped and identify virtual reader/punch */
   for(i=0;i<(1<<16);i++)
@@ -94,22 +80,31 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
   }
   
   /* identify grouped channels */
-  if(devlist_group) dlist_for_each_data(devlist_group, curdev, struct sysfs_device)
+  if(bus_group) while((curdev = readdir(bus_group)))
   {
-    struct sysfs_directory* d;
+    DIR* d;
     struct dlist* dl;
-    struct sysfs_link* cl;
-    //printf("ccwg %s\n",curdev->path);
-    d=sysfs_open_directory(curdev->path);
-    dl=sysfs_get_dir_links(d);
-    dlist_for_each_data(dl,cl,struct sysfs_link)	/* iterate over this channel group */
+    struct dirent* cl;
+    
+    if(curdev->d_type == DT_DIR) continue;	// skip "." and ".."
+    
+    sprintf(dirname,"%s/%s","/sys/bus/" BUSNAME_GROUP "/devices/", curdev->d_name);
+    d = opendir(dirname);
+    
+    while ((cl = readdir(d)))
     {
-        if(!rindex(cl->target,'.')) continue;
-	int channel=strtol(rindex(cl->target,'.')+1,NULL,16);
-    	//printf("channel %x name %s target %s\n",channel,cl->name,cl->target);
-    	if(strncmp("cdev",cl->name,4)==0)
+        if(cl->d_type != DT_LNK) continue;	// skip everything except symlinks
+        
+        sprintf(linkname, "%s/%s", dirname, cl->d_name);
+        memset(attrname,0,128);
+        if(readlink(linkname, attrname, 127) == -1) continue;
+        
+        if(!rindex(attrname,'.')) continue;	// no dot? should not happen...
+        
+	int channel=strtol(rindex(attrname,'.')+1,NULL,16);
+    	if(strncmp("cdev",cl->d_name,4)==0)
     	{
-    		if(cl->name[4]=='0')	/* first channel in group gets an entry */
+    		if(cl->d_name[4]=='0')	/* first channel in group gets an entry */
     		{
     			if(cutypes[channel]<0) cutypes[channel]*=-1;	/* make sure its positive */
     		}
@@ -118,36 +113,31 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     	}
     		
     }
+    closedir(d);
+    
   }
   
-  dlist_for_each_data(devlist, curdev, struct sysfs_device)
+  rewinddir(bus);
+  while((curdev = readdir(bus)))
   {
     int readonly=0;
+    
+    if(curdev->d_type == DT_DIR) continue;	// skip "." and ".."
+    
     res=new_mem(sizeof *res);
 
-    attributes = sysfs_get_device_attributes(curdev);
-    if(!attributes) continue;
-    dlist_for_each_data(attributes,curattr, struct sysfs_attribute)
-    {
-      if (strcmp("online",curattr->name)==0)
-	res->io.enabled=atoi(curattr->value);
-      else if (strcmp("cutype",curattr->name)==0)
-      {
-	cutype=strtol(curattr->value,NULL,16);
-	cumod=strtol(index(curattr->value,'/')+1,NULL,16);
-      } else if (strcmp("devtype",curattr->name)==0)
-      {
-	devtype=strtol(curattr->value,NULL,16);
-	devmod=strtol(index(curattr->value,'/')+1,NULL,16);
-      } else if (strcmp("readonly",curattr->name)==0)
-      {
-        readonly=atoi(curattr->value);
-      }
-    }
+    res->io.enabled = atoi(get_sysfs_attr(BUSNAME, curdev->d_name, "online"));
+    cutype = strtol(get_sysfs_attr(BUSNAME, curdev->d_name, "cutype"), NULL, 16);
+    cumod = strtol(index(get_sysfs_attr(BUSNAME, curdev->d_name, "cutype"), '/') + 1, NULL, 16);
+    devtype = strtol(get_sysfs_attr(BUSNAME, curdev->d_name, "devtype"), NULL, 16);
+    devmod = strtol(index(get_sysfs_attr(BUSNAME, curdev->d_name, "devtype"), '/') + 1, NULL, 16);
+    readonly = atoi(get_sysfs_attr(BUSNAME, curdev->d_name, "readonly")?:"0");
+    
+    sprintf(attrname, "/sys/bus/" BUSNAME "/devices/%s", curdev->d_name);
     
     res->io.type=res_io;
     res->io.access=readonly?acc_ro:acc_rw;
-    res->io.base=strtol(rindex(curdev->bus_id,'.')+1,NULL,16);
+    res->io.base=strtol(rindex(curdev->d_name,'.')+1,NULL,16);
 
     /* Skip additional channels for multi-channel devices */
     if(cutypes[res->io.base] < -3)
@@ -174,9 +164,17 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     hd->device.id=MAKE_ID(TAG_SPECIAL,cutype);
     hd->sub_device.id=MAKE_ID(TAG_SPECIAL,devtype);
     hd->bus.id=bus_ccw;
-    hd->sysfs_device_link = new_str(hd_sysfs_id(curdev->path));
+    
+    /* whether resolving the symlink makes sense or not is debatable, but libsysfs did it, so it
+       is consistent with earlier versions of this code */
+    memset(linkname,0,128);
+    if(readlink(attrname,linkname,127) == -1)
+      hd->sysfs_device_link = new_str(hd_sysfs_id(attrname));
+    else
+      hd->sysfs_device_link = new_str(hd_sysfs_id(linkname+6));
+    
     hd->sysfs_id = new_str(hd->sysfs_device_link);
-    hd->sysfs_bus_id = new_str(strrchr(curdev->path,'/')+1);
+    hd->sysfs_bus_id = new_str(strrchr(attrname,'/')+1);
     
     if(cutypes[res->io.base]==-2)	/* virtual reader */
     {
@@ -194,10 +192,11 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     hd->detail->ccw.data=new_mem(sizeof(ccw_t));
     hd->detail->ccw.data->cu_model=cumod;
     hd->detail->ccw.data->dev_model=devmod;
-    hd->detail->ccw.data->lcss=(strtol(curdev->bus_id,0,16) << 8) + strtol(curdev->bus_id+2,0,16);
+    hd->detail->ccw.data->lcss=(strtol(curdev->d_name,0,16) << 8) + strtol(curdev->d_name+2,0,16);
     hddb_add_info(hd_data,hd);
   }
-  sysfs_close_list(devlist);
+  closedir(bus);
+  closedir(bus_group);
 
   if(virtual_machine)
   {
@@ -212,34 +211,29 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
   	hddb_add_info(hd_data,hd);
   	
   	/* add activated IUCV devices */
-	bus=sysfs_open_bus(BUSNAME_IUCV);
+	bus = opendir("/sys/bus/" BUSNAME_IUCV "/devices");
+	
 	if(bus)
 	{
-	  devlist=sysfs_get_bus_devices(bus);
-	  if(devlist)
-	  {
-	    dlist_for_each_data(devlist, curdev, struct sysfs_device)
-	    {
-	      hd=add_hd_entry(hd_data,__LINE__,0);
-	      hd->vendor.id=MAKE_ID(TAG_SPECIAL,0x6001); /* IBM */
-	      hd->device.id=MAKE_ID(TAG_SPECIAL,0x0005); /* IUCV */
-	      hd->bus.id=bus_iucv;
-	      hd->base_class.id=bc_network;
-	      hd->status.active=status_yes;
-	      hd->status.available=status_yes;
-	      attributes = sysfs_get_device_attributes(curdev);
-	      dlist_for_each_data(attributes,curattr,struct sysfs_attribute)
-	      {
-	      	if(strcmp("user",curattr->name)==0)
-	      	  hd->rom_id=new_str(curattr->value);
-  	      }
-  	      hd->sysfs_device_link = new_str(hd_sysfs_id(curdev->path));
-              hd->sysfs_id = new_str(hd->sysfs_device_link);
-  	      hd->sysfs_bus_id = new_str(strrchr(curdev->path,'/')+1);
-  	      hddb_add_info(hd_data,hd);
-  	    }
-  	    sysfs_close_list(devlist);
-  	  }
+          while((curdev = readdir(bus)))
+          {
+            if(curdev->d_type == DT_DIR) continue;	// skip "." and ".."
+            hd=add_hd_entry(hd_data,__LINE__,0);
+            hd->vendor.id=MAKE_ID(TAG_SPECIAL,0x6001); /* IBM */
+            hd->device.id=MAKE_ID(TAG_SPECIAL,0x0005); /* IUCV */
+            hd->bus.id=bus_iucv;
+            hd->base_class.id=bc_network;
+            hd->status.active=status_yes;
+            hd->status.available=status_yes;
+            hd->rom_id = new_str(get_sysfs_attr(BUSNAME_IUCV, curdev->d_name, "user"));
+
+            sprintf(attrname, "/sys/bus/" BUSNAME_IUCV "/devices/%s", curdev->d_name);
+            hd->sysfs_device_link = new_str(hd_sysfs_id(attrname));
+            hd->sysfs_id = new_str(hd->sysfs_device_link);
+            hd->sysfs_bus_id = new_str(strrchr(attrname,'/')+1);
+            hddb_add_info(hd_data,hd);
+          }
+  	  closedir(bus);
   	}
   	              
   }
