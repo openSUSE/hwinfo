@@ -748,7 +748,7 @@ void find_udi(hd_data_t *hd_data, hd_t *hd, int match)
 
 }
 
-const char* get_sysfs_attr(const char* bus, const char* device, const char* attr)
+char* get_sysfs_attr(const char* bus, const char* device, const char* attr)
 {
   static char buf[256];
   FILE* fp;
@@ -757,6 +757,36 @@ const char* get_sysfs_attr(const char* bus, const char* device, const char* attr
   if(!fp) return NULL;
   fgets(buf, 127, fp);
   fclose(fp);
+  return buf;
+}
+
+char* get_sysfs_attr_by_path(const char* path, const char* attr)
+{
+  static char buf[256];
+  FILE *fp;
+  sprintf(buf, "%s/%s", path, attr);
+  fp = fopen(buf, "r");
+  if(!fp) return NULL;
+  fgets(buf, 127, fp);
+  fclose(fp);
+  return buf;
+}  
+
+DIR* open_sys_bus_devices(const char* bus)
+{
+  char buf[128];
+  sprintf(buf,"/sys/bus/%s/devices", bus);
+  return opendir(buf);
+}
+
+char* get_sysfs_path(const char* bus, const char* device)
+{
+  static char buf[256];
+  char path[256];
+  sprintf(buf,"/sys/bus/%s/devices/%s", bus, device);
+  memset(path,0,256);
+  if(readlink(buf, path, 255) == -1) return NULL;
+  sprintf(buf,"/sys/%s", path + 9);
   return buf;
 }
 

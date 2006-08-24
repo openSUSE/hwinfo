@@ -588,6 +588,20 @@ int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u, int base)
   return ok;
 }
 
+int hd_attr_uint_new(char* attr, uint64_t* u, int base)
+{
+  char *s;
+  uint64_t u2;
+  int ok;
+  
+  if(!(s = attr)) return 0;
+  u2 = strtoull(s, &s, base);
+  ok = !*s || isspace(*s) ? 1 : 0;
+  
+  if(ok && u) *u = u2;
+  
+  return ok;
+}
 
 /*
  * Return attribute as string list.

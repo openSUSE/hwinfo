@@ -1,4 +1,5 @@
-	- remove libsysfs stuff from s390.c
+	- removed libsysfs stuff from usb.c
+	- removed libsysfs stuff from s390.c
 
 29/6/2006:	v13.0
 	- add another sanity check to ddc parser (#186096)
