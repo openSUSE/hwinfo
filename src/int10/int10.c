@@ -22,7 +22,7 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
   int i, port;
   unsigned char vbeinfo[0x200];
   int ax, bx, cx;
-  unsigned cpuemu = hd_data->flags.cpuemu;
+  unsigned cpuemu;
 
   log_hd_data = hd_data;
 
@@ -36,10 +36,11 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 
   PROGRESS(4, 1, "vbe info");
 
+  cpuemu = hd_data->flags.cpuemu;	/* InitInt10() might have modified hd_data->flags.cpuemu */
   if(hd_probe_feature(hd_data, pr_cpuemu_debug)) cpuemu |= 2;
 
 #ifdef __i386__
-  if(hd_data->flags.cpuemu)
+  if(cpuemu)
 #endif
     ADD2LOG("vm86: using CPU emulation\n");
 
