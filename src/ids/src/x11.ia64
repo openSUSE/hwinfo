@@ -7,6 +7,11 @@
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
+&device.id		pci 0x3152
++device.name		MOBILITY RADEON X300
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x3154
 +device.name		FireGL M24 GL 3154 (PCIE)
 +driver.xfree		4|radeon
@@ -308,6 +313,11 @@
  vendor.id		pci 0x1002
 &device.id		pci 0x4a50
 +device.name		R420 JP
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x4a54
++device.name		ATI Radeon AIW X800 VE (R420) JT (AGP)
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
@@ -703,25 +713,28 @@
  vendor.id		pci 0x1002
 &device.id		pci 0x5157
 +device.name		RV200 QW
-+driver.xfree		4|radeon
++driver.xfree		4|radeon||||norenderaccel
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5157
 &subvendor.id		pci 0x1002
 &subdevice.id		pci 0x013a
 +subdevice.name		Radeon 7500
++driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5157
 &subvendor.id		pci 0x174b
 &subdevice.id		pci 0x7146
 +subdevice.name		Radeon 7500-7146
++driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5157
 &subvendor.id		pci 0x174b
 &subdevice.id		pci 0x7161
 +subdevice.name		Radeon 7500 LE
++driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5158
@@ -992,6 +1005,11 @@
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
+&device.id		pci 0x564f
++device.name		ATI Radeon 7000 IGP (A4+) 4237
++driver.xfree		4|radeon
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x5652
 +device.name		Mobility Radeon X700 5652 (M26) (PCIE)
 +driver.xfree		4|radeon
@@ -1221,66 +1239,6 @@
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
-&device.id		pci 0x7101
-+device.name		MOBILITY RADEON X1800 (M58 7101)
-+driver.xfree		4|fbdev
-
- vendor.id		pci 0x1002
-&device.id		pci 0x7102
-+device.name		MOBILITY RADEON X1800 (M58 7102)
-+driver.xfree		4|fbdev
-
- vendor.id		pci 0x1002
-&device.id		pci 0x7103
-+device.name		MOBILITY FireGL V7200 (M58 7103)
-+driver.xfree		4|fbdev
-
- vendor.id		pci 0x1002
-&device.id		pci 0x7106
-+device.name		MOBILITY FireGL V7100 (M58 7106)
-+driver.xfree		4|fbdev
-
- vendor.id		pci 0x1002
-&device.id		pci 0x7144
-+device.name		MOBILITY FireGL (M54 GL 7144)
-+driver.xfree		4|fbdev
-
- vendor.id		pci 0x1002
-&device.id		pci 0x7145
-+device.name		MOBILITY RADEON X1400 (M54 7145)
-+driver.xfree		4|fbdev
-
- vendor.id		pci 0x1002
-&device.id		pci 0x7149
-+device.name		MOBILITY RADEON X1300 (M52 7149)
-+driver.xfree		4|fbdev
-
- vendor.id		pci 0x1002
-&device.id		pci 0x714a
-+device.name		MOBILITY RADEON X1300 (M52 714A)
-+driver.xfree		4|fbdev
-
- vendor.id		pci 0x1002
-&device.id		pci 0x714b
-+device.name		MOBILITY RADEON X1300 (M52 714B)
-+driver.xfree		4|fbdev
-
- vendor.id		pci 0x1002
-&device.id		pci 0x714c
-+device.name		MOBILITY RADEON X1300 (M52 714C)
-+driver.xfree		4|fbdev
-
- vendor.id		pci 0x1002
-&device.id		pci 0x71c4
-+device.name		MOBILITY FireGL V5200 (M56 71C4)
-+driver.xfree		4|fbdev
-
- vendor.id		pci 0x1002
-&device.id		pci 0x71c5
-+device.name		MOBILITY RADEON X1600 (M56 71C5)
-+driver.xfree		4|fbdev
-
- vendor.id		pci 0x1002
 &device.id		pci 0x7834
 +device.name		Radeon 9100 PRO IGP 7834
 +driver.xfree		4|radeon
@@ -1400,6 +1358,11 @@
  vendor.id		pci 0x1023
 &device.id		pci 0x2100
 +device.name		CyberBlade/xp4
++driver.xfree		4|trident
+
+ vendor.id		pci 0x1023
+&device.id		pci 0x2200
++device.name		XP5
 +driver.xfree		4|trident
 
  vendor.id		pci 0x1023
@@ -2185,11 +2148,6 @@
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
-&device.id		pci 0x014a
-+device.name		Quadro NVS 440
-+driver.xfree		4|nv
-
- vendor.id		pci 0x10de
 &device.id		pci 0x014c
 +device.name		Quadro FX 550
 +driver.xfree		4|nv
@@ -2558,6 +2516,14 @@
 +device.name		GeForce 6100
 +driver.xfree		4|nv
 +driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0242
+&subvendor.id		pci 0x1043
+&subdevice.id		pci 0x81bf
++subdevice.name		GeForce 6100
++driver.xfree		4|nv
++driver.xfree.config	Option "HWCursor" "off"
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0242

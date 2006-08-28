@@ -1285,6 +1285,7 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->block0);
   free_mem(hd->driver);
   free_str_list(hd->drivers);
+  free_str_list(hd->driver_modules);
   free_mem(hd->old_unique_id);
   free_mem(hd->unique_id1);
   free_mem(hd->usb_guid);
@@ -2527,6 +2528,47 @@ char *hd_read_symlink(char *link_name)
   buf[sizeof buf - 1] = 0;
   if(i >= 0 && (unsigned) i < sizeof buf) buf[i] = 0;
   if(i < 0) *buf = 0;
+
+  return buf;
+}
+
+
+str_list_t *read_dir2(char *base_dir, char *name, int type)
+{
+  char *s = NULL;
+  str_list_t *sl;
+
+  str_printf(&s, 0, "%s/%s", base_dir, name);
+
+  sl = read_dir(s, type);
+
+  free_mem(s);
+
+  return sl;
+}
+
+
+char *hd_read_sysfs_link(char *base_dir, char *link_name)
+{
+  char *s = NULL, *l, *t;
+  static char *buf = NULL;
+
+  str_printf(&s, 0, "%s/%s", base_dir, link_name);
+  l = hd_read_symlink(s);
+  free_mem(buf);
+
+  buf = new_mem(strlen(base_dir) + strlen(l) + 2);
+
+  s[strlen(base_dir)] = 0;
+
+  while(!strncmp(l, "../", 3)) {
+    if((t = strrchr(s, '/'))) *t = 0;
+    l += 3;
+  }
+
+  sprintf(buf, "%s/%s", s, l);
+
+  free_mem(s);
 
   return buf;
 }
@@ -5613,6 +5655,7 @@ hd_sysfsdrv_t *hd_free_sysfsdrv(hd_sysfsdrv_t *sf)
 
     free_mem(sf->driver);
     free_mem(sf->device);
+    free_mem(sf->module);
 
     free_mem(sf);
   }
@@ -5623,19 +5666,11 @@ hd_sysfsdrv_t *hd_free_sysfsdrv(hd_sysfsdrv_t *sf)
 
 void hd_sysfs_driver_list(hd_data_t *hd_data)
 {
-  char *bus;
   hd_sysfsdrv_t **sfp, *sf;
   str_list_t *sl, *sl0;
   uint64_t id = 0;
-
-  struct sysfs_bus *sf_bus;
-  struct sysfs_driver *sf_drv;
-  struct sysfs_device *sf_dev;
-
-  struct dlist *sf_subsys;
-  struct dlist *sf_drv_list;
-  struct dlist *sf_dev_list;
-
+  char *drv_dir = NULL, *drv = NULL, *module;
+  str_list_t *sf_bus, *sf_bus_e, *sf_drv, *sf_drv_e, *sf_drv2, *sf_drv2_e;
 
   for(sl = sl0 = read_file(PROC_MODULES, 0, 0); sl; sl = sl->next) {
     crc64(&id, sl->str, strlen(sl->str) + 1);
@@ -5654,29 +5689,49 @@ void hd_sysfs_driver_list(hd_data_t *hd_data)
 
   ADD2LOG("----- sysfs driver list (id 0x%016"PRIx64") -----\n", id);
 
-  sf_subsys = sysfs_open_subsystem_list("bus");
+  sf_bus = read_dir("/sys/bus", 'd');
 
-  if(sf_subsys) dlist_for_each_data(sf_subsys, bus, char) {
-    sf_bus = sysfs_open_bus(bus);
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    str_printf(&drv_dir, 0, "/sys/bus/%s/drivers", sf_bus_e->str);
+    sf_drv = read_dir(drv_dir, 'd');
 
-    if(sf_bus) {
-      sf_drv_list = sysfs_get_bus_drivers(sf_bus);
-      if(sf_drv_list) dlist_for_each_data(sf_drv_list, sf_drv, struct sysfs_driver) {
-        sf_dev_list = sysfs_get_driver_devices(sf_drv);
-        if(sf_dev_list) dlist_for_each_data(sf_dev_list, sf_dev, struct sysfs_device) {
+    for(sf_drv_e = sf_drv; sf_drv_e; sf_drv_e = sf_drv_e->next) {
+      str_printf(&drv, 0, "/sys/bus/%s/drivers/%s", sf_bus_e->str, sf_drv_e->str);
+
+      sf_drv2 = read_dir(drv, 'l');
+
+      for(sf_drv2_e = sf_drv2; sf_drv2_e; sf_drv2_e = sf_drv2_e->next) {
+        if(!strcmp(sf_drv2_e->str, "module")) {
+          module = strrchr(hd_read_sysfs_link(drv, sf_drv2_e->str), '/');
+          if(module) {
+            sf = *sfp = new_mem(sizeof **sfp);
+            sfp = &(*sfp)->next;
+            sf->driver = new_str(sf_drv_e->str);
+            sf->module = new_str(module + 1);
+            ADD2LOG("%16s: module = %s\n", sf->driver, sf->module);
+          }
+        }
+        else {
           sf = *sfp = new_mem(sizeof **sfp);
           sfp = &(*sfp)->next;
-          sf->driver = new_str(sf_drv->name);
-          sf->device = new_str(hd_sysfs_id(sf_dev->path));
+          sf->driver = new_str(sf_drv_e->str);
+          sf->device = new_str(hd_sysfs_id(hd_read_sysfs_link(drv, sf_drv2_e->str)));
           ADD2LOG("%16s: %s\n", sf->driver, sf->device);
         }
       }
 
-      sysfs_close_bus(sf_bus);
+      free_str_list(sf_drv2);
+
     }
+
+    free_str_list(sf_drv);
+
   }
 
-  sysfs_close_list(sf_subsys);
+  free_str_list(sf_bus);
+
+  drv = free_mem(drv);
+  drv_dir = free_mem(drv_dir);
 
   ADD2LOG("----- sysfs driver list end -----\n");
 }

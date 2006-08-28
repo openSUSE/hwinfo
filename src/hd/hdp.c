@@ -471,6 +471,12 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     s = free_mem(s);
   }
 
+  if(h->driver_modules) {
+    s = hd_join("\", \"", h->driver_modules);
+    dump_line("Driver Modules: \"%s\"\n", s);
+    s = free_mem(s);
+  }
+
   if(h->broken) {
     dump_line_str("Warning: might be broken\n");
   }

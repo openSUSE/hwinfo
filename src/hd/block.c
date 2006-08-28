@@ -328,7 +328,7 @@ char *hd_sysfs_find_driver(hd_data_t *hd_data, char *sysfs_id, int exact)
 
   if(exact) {
     for(sf = hd_data->sysfsdrv; sf; sf = sf->next) {
-      if(!strcmp(sysfs_id, sf->device)) {
+      if(sf->device && !strcmp(sysfs_id, sf->device)) {
         t = sf->driver;
         break;
       }
@@ -338,6 +338,7 @@ char *hd_sysfs_find_driver(hd_data_t *hd_data, char *sysfs_id, int exact)
     u2 = strlen(sysfs_id);
     u3 = 0;
     for(sf = hd_data->sysfsdrv; sf; sf = sf->next) {
+      if(!sf->device) continue;
       u1 = strlen(sf->device);
       if(u1 > u3 && u1 <= u2 && !strncmp(sysfs_id, sf->device, u1)) {
         u3 = u1;
@@ -539,7 +540,7 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd, struct sysfs_device *sf_de
     if((sl = read_file(fname, 0, 1))) {
       if((s = strchr(sl->str, ' '))) *s = 0;
       s = canon_str(sl->str, strlen(sl->str));
-      add_str_list(&hd->drivers, s);
+      if(!search_str_list(hd->drivers, s)) add_str_list(&hd->drivers, s);
       s = free_mem(s);
       free_str_list(sl);
     }

@@ -44,6 +44,7 @@ static void int_system(hd_data_t *hd_data);
 static void int_legacy_geo(hd_data_t *hd_data);
 #endif
 static void int_find_parent(hd_data_t *hd_data);
+static void int_add_driver_modules(hd_data_t *hd_data);
 
 
 void hd_scan_int(hd_data_t *hd_data)
@@ -85,6 +86,9 @@ void hd_scan_int(hd_data_t *hd_data)
     hddb_add_info(hd_data, hd);
   }
   hd_data->flags.keep_kmods = 0;
+
+  PROGRESS(7, 1, "modules");
+  int_add_driver_modules(hd_data);
 
   PROGRESS(8, 0, "usbscsi");
   int_fix_usb_scsi(hd_data);
@@ -1135,6 +1139,27 @@ void int_find_parent(hd_data_t *hd_data)
     }
   }
 }
+
+
+void int_add_driver_modules(hd_data_t *hd_data)
+{
+  hd_t *hd;
+  hd_sysfsdrv_t *sf;
+  str_list_t *sl;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    hd->driver_modules = free_str_list(hd->driver_modules);
+
+    for(sl = hd->drivers; sl; sl = sl->next) {
+      for(sf = hd_data->sysfsdrv; sf; sf = sf->next) {
+        if(sf->module && !strcmp(sf->driver, sl->str)) {
+          add_str_list(&hd->driver_modules, sf->module);
+        }
+      }
+    }
+  }
+}
+
 
 /** @} */
 

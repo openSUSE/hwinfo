@@ -990,6 +990,7 @@ typedef struct s_sysfsdrv_t {
   struct s_sysfsdrv_t *next;
   char *driver;
   char *device;
+  char *module;
 } hd_sysfsdrv_t;
 
 
@@ -2391,6 +2392,11 @@ typedef struct s_hd_t {
    * List of currently active drivers.
    */
   str_list_t *drivers;
+
+  /**
+   * List of currently active driver modules.
+   */
+  str_list_t *driver_modules;
 
   /**
    * Old \ref unique_id for compatibility.

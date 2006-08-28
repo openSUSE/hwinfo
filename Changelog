@@ -1,3 +1,4 @@
+	- updated X11 data
 	- x86 emulation was not turned on for broken BIOSes (#188839)
 	- use dbus_connection_close, not dbus_connection_disconnect 
 	- removed libsysfs stuff from usb.c
