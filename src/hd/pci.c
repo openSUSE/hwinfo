@@ -105,7 +105,7 @@ struct sysfs_attribute *hd_read_single_sysfs_attribute(char *path, char *name)
 
 
 /*
- * Get the (raw) PCI data, taken from /sys/bus/pci/.
+ * Get the (raw) PCI data, taken from /sys/bus/pci.
  *
  * Note: non-root users can only read the first 64 bytes (of 256)
  * of the device headers.
@@ -119,85 +119,74 @@ void hd_pci_read_data(hd_data_t *hd_data)
   char *s;
   pci_t *pci;
   int fd, i;
+  str_list_t *sf_bus, *sf_bus_e;
+  char *sf_dev;
 
-  struct sysfs_bus *sf_bus;
-  struct dlist *sf_dev_list;
-  struct sysfs_device *sf_dev;
-  struct sysfs_attribute *attr;
-
-  sf_bus = sysfs_open_bus("pci");
+  sf_bus = reverse_str_list(read_dir("/sys/bus/pci/devices", 'l'));;
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: pci\n");
     return;
   }
 
-  sf_dev_list = sysfs_get_bus_devices(sf_bus);
-  if(sf_dev_list) dlist_for_each_data(sf_dev_list, sf_dev, struct sysfs_device) {
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/pci/devices", sf_bus_e->str));
+
     ADD2LOG(
-      "  pci device: name = %s, bus_id = %s, bus = %s\n    path = %s\n",
-      sf_dev->name,
-      sf_dev->bus_id,
-      sf_dev->bus,
-      hd_sysfs_id(sf_dev->path)
+      "  pci device: name = %s\n    path = %s\n",
+      sf_bus_e->str,
+      hd_sysfs_id(sf_dev)
     );
 
-    if(sscanf(sf_dev->bus_id, "%x:%x:%x.%x", &u0, &u1, &u2, &u3) != 4) continue;
+    if(sscanf(sf_bus_e->str, "%x:%x:%x.%x", &u0, &u1, &u2, &u3) != 4) continue;
 
     pci = add_pci_entry(hd_data, new_mem(sizeof *pci));
 
-    pci->sysfs_id = new_str(sf_dev->path);
-    pci->sysfs_bus_id = new_str(sf_dev->bus_id);
+    pci->sysfs_id = new_str(sf_dev);
+    pci->sysfs_bus_id = new_str(sf_bus_e->str);
 
     pci->bus = (u0 << 8) + u1;
     pci->slot = u2;
     pci->func = u3;
 
-    if((s = hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "modalias")))) {
+    if((s = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
       pci->modalias = canon_str(s, strlen(s));
       ADD2LOG("    modalias = \"%s\"\n", pci->modalias);
     }
-    sysfs_close_attribute(attr);
 
-    if(hd_attr_uint(attr = hd_read_single_sysfs_attribute(sf_dev->path, "class"), &ul0, 0)) {
+    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "class"), &ul0, 0)) {
       ADD2LOG("    class = 0x%x\n", (unsigned) ul0);
       pci->prog_if = ul0 & 0xff;
       pci->sub_class = (ul0 >> 8) & 0xff;
       pci->base_class = (ul0 >> 16) & 0xff;
     }
-    sysfs_close_attribute(attr);
 
-    if(hd_attr_uint(attr = hd_read_single_sysfs_attribute(sf_dev->path, "vendor"), &ul0, 0)) {
+    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "vendor"), &ul0, 0)) {
       ADD2LOG("    vendor = 0x%x\n", (unsigned) ul0);
       pci->vend = ul0 & 0xffff;
     }
-    sysfs_close_attribute(attr);
 
-    if(hd_attr_uint(attr = hd_read_single_sysfs_attribute(sf_dev->path, "device"), &ul0, 0)) {
+    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "device"), &ul0, 0)) {
       ADD2LOG("    device = 0x%x\n", (unsigned) ul0);
       pci->dev = ul0 & 0xffff;
     }
-    sysfs_close_attribute(attr);
 
-    if(hd_attr_uint(attr = hd_read_single_sysfs_attribute(sf_dev->path, "subsystem_vendor"), &ul0, 0)) {
+    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "subsystem_vendor"), &ul0, 0)) {
       ADD2LOG("    subvendor = 0x%x\n", (unsigned) ul0);
       pci->sub_vend = ul0 & 0xffff;
     }
-    sysfs_close_attribute(attr);
 
-    if(hd_attr_uint(attr = hd_read_single_sysfs_attribute(sf_dev->path, "subsystem_device"), &ul0, 0)) {
+    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "subsystem_device"), &ul0, 0)) {
       ADD2LOG("    subdevice = 0x%x\n", (unsigned) ul0);
       pci->sub_dev = ul0 & 0xffff;
     }
-    sysfs_close_attribute(attr);
 
-    if(hd_attr_uint(attr = hd_read_single_sysfs_attribute(sf_dev->path, "irq"), &ul0, 0)) {
+    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "irq"), &ul0, 0)) {
       ADD2LOG("    irq = %d\n", (unsigned) ul0);
       pci->irq = ul0;
     }
-    sysfs_close_attribute(attr);
 
-    sl = hd_attr_list(hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "resource")));
+    sl = hd_attr_list(get_sysfs_attr_by_path(sf_dev, "resource"));
     for(u = 0; sl; sl = sl->next, u++) {
       if(
         sscanf(sl->str, "0x%"SCNx64" 0x%"SCNx64" 0x%"SCNx64, &ul0, &ul1, &ul2) == 3 &&
@@ -210,10 +199,9 @@ void hd_pci_read_data(hd_data_t *hd_data)
         pci->addr_flags[u] = ul2;
       }
     }
-    sysfs_close_attribute(attr);
 
     s = NULL;
-    str_printf(&s, 0, "%s/config", sf_dev->path);
+    str_printf(&s, 0, "%s/config", sf_dev);
     if((fd = open(s, O_RDONLY)) != -1) {
       pci->data_len = pci->data_ext_len = read(fd, pci->data, 0x40);
       ADD2LOG("    config[%u]\n", pci->data_len);
@@ -266,7 +254,7 @@ void hd_pci_read_data(hd_data_t *hd_data)
       close(fd);
     }
 
-    str_printf(&s, 0, "%s/edid1", sf_dev->path);
+    str_printf(&s, 0, "%s/edid1", sf_dev);
     if((fd = open(s, O_RDONLY)) != -1) {
       pci->edid_len = read(fd, pci->edid, sizeof pci->edid);
 
@@ -294,9 +282,11 @@ void hd_pci_read_data(hd_data_t *hd_data)
     }
 
     pci->flags |= (1 << pci_flag_ok);
+
+    free_mem(sf_dev);
   }
 
-  sysfs_close_bus(sf_bus);
+  free_str_list(sf_bus);
 }
 
 
