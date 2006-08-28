@@ -209,41 +209,40 @@ void pcmcia_ctrl_read_data(hd_data_t *hd_data)
   char *s;
   unsigned u;
   unsigned sockets[16 /* just large enough */] = { };
+  str_list_t *sf_class, *sf_class_e;
+  char *sf_cdev = NULL, *sf_dev;
 
-  struct sysfs_class *sf_class;
-  struct sysfs_class_device *sf_cdev;
-  struct sysfs_device *sf_dev;
-  struct dlist *sf_cdev_list;
-
-  sf_class = sysfs_open_class("pcmcia_socket");
+  sf_class = reverse_str_list(read_dir("/sys/class/pcmcia_socket", 'd'));
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: pcmcia_socket\n");
   }
   else {
-    sf_cdev_list = sysfs_get_class_devices(sf_class);
+    for(sf_class_e = sf_class; sf_class_e; sf_class_e = sf_class_e->next) {
+      str_printf(&sf_cdev, 0, "/sys/class/pcmcia_socket/%s", sf_class_e->str);
+      sf_dev = new_str(hd_read_sysfs_link(sf_cdev, "device"));
 
-    if(sf_cdev_list) dlist_for_each_data(sf_cdev_list, sf_cdev, struct sysfs_class_device) {
       if(
-        sscanf(sf_cdev->name, "pcmcia_socket%u", &u) == 1 &&
-        (sf_dev = sysfs_get_classdev_device(sf_cdev))
+        sf_dev &&
+        sscanf(sf_class_e->str, "pcmcia_socket%u", &u) == 1
       ) {
-        s = hd_sysfs_id(sf_dev->path);
+        s = hd_sysfs_id(sf_dev);
         hd = hd_find_sysfs_id(hd_data, s);
         if(hd && u < sizeof sockets / sizeof *sockets) sockets[u] = hd->idx;
 
         ADD2LOG("  pcmcia socket %u: %s\n", u, s);
       }
+
+      free_mem(sf_dev);
     }
 
-    sysfs_close_class(sf_class);
+    sf_cdev = free_mem(sf_cdev);
   }
-
 
   /* find card bus devices & assign them socket numbers */
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(hd->bus.id != bus_pci) continue;
+    if(hd->bus.id != bus_pcmcia) continue;
     if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
       if(
         bridge_hd->base_class.id == bc_bridge &&
