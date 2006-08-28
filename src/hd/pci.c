@@ -11,6 +11,7 @@
 
 #include "hd.h"
 #include "hd_int.h"
+#include "hal.h"
 #include "hddb.h"
 #include "pci.h"
 
@@ -686,48 +687,41 @@ void hd_read_macio(hd_data_t *hd_data)
   char *s, *t;
   char *macio_name, *macio_type, *macio_compat;
   hd_t *hd, *hd2;
+  str_list_t *sf_bus, *sf_bus_e;
+  char *sf_dev;
 
-  struct sysfs_bus *sf_bus;
-  struct dlist *sf_dev_list;
-  struct sysfs_device *sf_dev;
-  struct sysfs_attribute *attr;
-
-  sf_bus = sysfs_open_bus("macio");
+  sf_bus = reverse_str_list(read_dir("/sys/bus/macio/devices", 'l'));
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: macio\n");
     return;
   }
 
-  sf_dev_list = sysfs_get_bus_devices(sf_bus);
-  if(sf_dev_list) dlist_for_each_data(sf_dev_list, sf_dev, struct sysfs_device) {
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/macio/devices", sf_bus_e->str));
+
     ADD2LOG(
-      "  macio device: name = %s, bus_id = %s, bus = %s\n    path = %s\n",
-      sf_dev->name,
-      sf_dev->bus_id,
-      sf_dev->bus,
-      hd_sysfs_id(sf_dev->path)
+      "  macio device: name = %s\n    path = %s\n",
+      sf_bus_e->str,
+      hd_sysfs_id(sf_dev)
     );
 
     macio_name = macio_type = macio_compat = NULL;
 
-    if((s = hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "name")))) {
+    if((s = get_sysfs_attr_by_path(sf_dev, "name"))) {
       macio_name = canon_str(s, strlen(s));
       ADD2LOG("    name = \"%s\"\n", macio_name);
     }
-    sysfs_close_attribute(attr);
 
-    if((s = hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "type")))) {
+    if((s = get_sysfs_attr_by_path(sf_dev, "type"))) {
       macio_type = canon_str(s, strlen(s));
       ADD2LOG("    type = \"%s\"\n", macio_type);
     }
-    sysfs_close_attribute(attr);
 
-    if((s = hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "compatible")))) {
+    if((s = get_sysfs_attr_by_path(sf_dev, "compatible"))) {
       macio_compat = canon_str(s, strlen(s));
       ADD2LOG("    compatible = \"%s\"\n", macio_compat);
     }
-    sysfs_close_attribute(attr);
 
     if(
       macio_type && (
@@ -751,8 +745,8 @@ void hd_read_macio(hd_data_t *hd_data)
         hd->sub_class.id = sc_sto_scsi;
       }
 
-      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev->path));
-      hd->sysfs_bus_id = new_str(sf_dev->bus_id);
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+      hd->sysfs_bus_id = new_str(sf_bus_e->str);
       s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
       if(s) add_str_list(&hd->drivers, s);
 
@@ -773,9 +767,11 @@ void hd_read_macio(hd_data_t *hd_data)
       }
       free_mem(s);
     }
+
+    free_mem(sf_dev);
   }
 
-  sysfs_close_bus(sf_bus);
+  free_str_list(sf_bus);
 }
 
 
