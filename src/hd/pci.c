@@ -43,7 +43,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-static struct sysfs_attribute *hd_read_single_sysfs_attribute(char *path, char *name);
 static void add_pci_data(hd_data_t *hd_data);
 // static void add_driver_info(hd_data_t *hd_data);
 static pci_t *add_pci_entry(hd_data_t *hd_data, pci_t *new_pci);
@@ -80,27 +79,6 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
   PROGRESS(3, 0, "vio");
 
   hd_read_vio(hd_data);
-}
-
-
-/*
- * sysfs_get_device_attr() reads *all* device attributes, then returns the
- * requested one.
- *
- * This leads to problems where some attribute *must not* be read.
- */
-struct sysfs_attribute *hd_read_single_sysfs_attribute(char *path, char *name)
-{
-  char *attr_path = NULL;
-  struct sysfs_attribute *attr;
-
-  str_printf(&attr_path, 0, "%s/%s", path, name);
-  attr = sysfs_open_attribute(attr_path);
-  free_mem(attr_path);
-
-  sysfs_read_attribute(attr);
-
-  return attr;
 }
 
 
