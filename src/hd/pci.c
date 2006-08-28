@@ -783,42 +783,36 @@ void hd_read_vio(hd_data_t *hd_data)
   char *s, *vio_name, *vio_type;
   int eth_cnt = 0, scsi_cnt = 0;
   hd_t *hd;
+  str_list_t *sf_bus, *sf_bus_e;
+  char *sf_dev;
 
-  struct sysfs_bus *sf_bus;
-  struct dlist *sf_dev_list;
-  struct sysfs_device *sf_dev;
-  struct sysfs_attribute *attr;
-
-  sf_bus = sysfs_open_bus("vio");
+  sf_bus = reverse_str_list(read_dir("/sys/bus/vio/devices", 'l'));
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: vio\n");
     return;
   }
 
-  sf_dev_list = sysfs_get_bus_devices(sf_bus);
-  if(sf_dev_list) dlist_for_each_data(sf_dev_list, sf_dev, struct sysfs_device) {
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/vio/devices", sf_bus_e->str));
+
     ADD2LOG(
-      "  vio device: name = %s, bus_id = %s, bus = %s\n    path = %s\n",
-      sf_dev->name,
-      sf_dev->bus_id,
-      sf_dev->bus,
-      hd_sysfs_id(sf_dev->path)
+      "  vio device: name = %s\n    path = %s\n",
+      sf_bus_e->str,
+      hd_sysfs_id(sf_dev)
     );
 
     vio_name = vio_type = NULL;
 
-    if((s = hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "devspec")))) {
+    if((s = get_sysfs_attr_by_path(sf_dev, "devspec"))) {
       vio_name = canon_str(s, strlen(s));
       ADD2LOG("    name = \"%s\"\n", vio_name);
     }
-    sysfs_close_attribute(attr);
 
-    if((s = hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "name")))) {
+    if((s = get_sysfs_attr_by_path(sf_dev, "name"))) {
       vio_type = canon_str(s, strlen(s));
       ADD2LOG("    type = \"%s\"\n", vio_type);
     }
-    sysfs_close_attribute(attr);
 
     if(
       vio_type && (
@@ -848,14 +842,16 @@ void hd_read_vio(hd_data_t *hd_data)
 
       hd->rom_id = new_str(vio_name ? vio_name + 1 : 0);	/* skip leading '/' */
 
-      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev->path));
-      hd->sysfs_bus_id = new_str(sf_dev->bus_id);
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+      hd->sysfs_bus_id = new_str(sf_bus_e->str);
       s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
       if(s) add_str_list(&hd->drivers, s);
     }
+
+    free_mem(sf_dev);
   }
 
-  sysfs_close_bus(sf_bus);
+  free_str_list(sf_bus);
 }
 
 /** @} */
