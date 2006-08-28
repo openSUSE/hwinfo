@@ -8,6 +8,7 @@
 
 #include "hd.h"
 #include "hd_int.h"
+#include "hal.h"
 #include "hddb.h"
 #include "edd.h"
 
@@ -52,10 +53,8 @@ void get_edd_info(hd_data_t *hd_data)
   str_list_t *sl;
   bios_info_t *bt;
   edd_info_t *ei;
-
-  struct sysfs_directory *sf_dir;
-  struct sysfs_directory *sf_dir_2;
-  struct sysfs_link *sf_link;
+  str_list_t *sf_dir, *sf_dir_e;
+  char *sf_edd = NULL, *sf_link;
 
   for(u = 0; u < sizeof hd_data->edd / sizeof *hd_data->edd; u++) {
     free_mem(hd_data->edd[u].sysfs_id);
@@ -63,94 +62,90 @@ void get_edd_info(hd_data_t *hd_data)
 
   memset(hd_data->edd, 0, sizeof hd_data->edd);
 
-  sf_dir = sysfs_open_directory("/sys/firmware/edd");
+  sf_dir = reverse_str_list(read_dir("/sys/firmware/edd", 'd'));
 
-  if(sf_dir) {
-    if(!sysfs_read_all_subdirs(sf_dir)) {
-      if(sf_dir->subdirs) {
-        dlist_for_each_data(sf_dir->subdirs, sf_dir_2, struct sysfs_directory) {
+  for(sf_dir_e = sf_dir; sf_dir_e; sf_dir_e = sf_dir_e->next) {
+    str_printf(&sf_edd, 0, "/sys/firmware/edd/%s", sf_dir_e->str);
 
-          if(
-            sscanf(sf_dir_2->name, "int13_dev%02x", &u) == 1 &&
-            u >= 0x80 &&
-            u <= 0xff
-          ) {
-            edd_cnt++;
+    if(
+      sscanf(sf_dir_e->str, "int13_dev%02x", &u) == 1 &&
+      u >= 0x80 &&
+      u <= 0xff
+    ) {
+      edd_cnt++;
 
-            u -= 0x80;
+      u -= 0x80;
 
-            ei = hd_data->edd + u;
+      ei = hd_data->edd + u;
 
-            if(hd_attr_uint(sysfs_get_directory_attribute(sf_dir_2, "sectors"), &ul0, 0)) {
-              ei->sectors = ul0;
-            }
+      if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_edd, "sectors"), &ul0, 0)) {
+        ei->sectors = ul0;
+      }
 
-            if(hd_attr_uint(sysfs_get_directory_attribute(sf_dir_2, "default_cylinders"), &ul0, 0)) {
-              ei->edd.cyls = ul0;
-            }
+      if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_edd, "default_cylinders"), &ul0, 0)) {
+        ei->edd.cyls = ul0;
+      }
 
-            if(hd_attr_uint(sysfs_get_directory_attribute(sf_dir_2, "default_heads"), &ul0, 0)) {
-              ei->edd.heads = ul0;
-            }
+      if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_edd, "default_heads"), &ul0, 0)) {
+        ei->edd.heads = ul0;
+      }
 
-            if(hd_attr_uint(sysfs_get_directory_attribute(sf_dir_2, "default_sectors_per_track"), &ul0, 0)) {
-              ei->edd.sectors = ul0;
-            }
+      if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_edd, "default_sectors_per_track"), &ul0, 0)) {
+        ei->edd.sectors = ul0;
+      }
 
-            if(hd_attr_uint(sysfs_get_directory_attribute(sf_dir_2, "legacy_max_cylinder"), &ul0, 0)) {
-              ei->legacy.cyls = ul0 + 1;
-            }
+      if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_edd, "legacy_max_cylinder"), &ul0, 0)) {
+        ei->legacy.cyls = ul0 + 1;
+      }
 
-            if(hd_attr_uint(sysfs_get_directory_attribute(sf_dir_2, "legacy_max_head"), &ul0, 0)) {
-              ei->legacy.heads = ul0 + 1;
-            }
+      if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_edd, "legacy_max_head"), &ul0, 0)) {
+        ei->legacy.heads = ul0 + 1;
+      }
 
-            if(hd_attr_uint(sysfs_get_directory_attribute(sf_dir_2, "legacy_sectors_per_track"), &ul0, 0)) {
-              ei->legacy.sectors = ul0;
-            }
+      if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_edd, "legacy_sectors_per_track"), &ul0, 0)) {
+        ei->legacy.sectors = ul0;
+      }
 
-            if(ei->sectors && ei->edd.heads && ei->edd.sectors) {
-              ei->edd.cyls = ei->sectors / (ei->edd.heads * ei->edd.sectors);
-            }
+      if(ei->sectors && ei->edd.heads && ei->edd.sectors) {
+        ei->edd.cyls = ei->sectors / (ei->edd.heads * ei->edd.sectors);
+      }
 
-            sf_link = sysfs_get_directory_link(sf_dir_2, "pci_dev");
-            if(sf_link) {
-              hd_data->edd[u].sysfs_id = new_str(hd_sysfs_id(sf_link->target));
-              if((hd = hd_find_sysfs_id(hd_data, hd_data->edd[u].sysfs_id))) {
-                hd_data->edd[u].hd_idx = hd->idx;
-              }
-            }
-
-            sl = hd_attr_list(sysfs_get_directory_attribute(sf_dir_2, "extensions"));
-            if(search_str_list(sl, "Fixed disk access")) hd_data->edd[u].ext_fixed_disk = 1;
-            if(search_str_list(sl, "Device locking and ejecting")) hd_data->edd[u].ext_lock_eject = 1;
-            if(search_str_list(sl, "Enhanced Disk Drive support")) hd_data->edd[u].ext_edd = 1;
-            if(search_str_list(sl, "64-bit extensions")) hd_data->edd[u].ext_64bit = 1;
-
-            ADD2LOG(
-              "edd: 0x%02x\n  size: %"PRIu64"\n  chs default: %u/%u/%u\n  chs legacy: %u/%u/%u\n  caps: %s%s%s%s\n  attached: #%u %s\n",
-              u + 0x80,
-              ei->sectors,
-              ei->edd.cyls,
-              ei->edd.heads,
-              ei->edd.sectors,
-              ei->legacy.cyls,
-              ei->legacy.heads,
-              ei->legacy.sectors,
-              ei->ext_fixed_disk ? "fixed " : "",
-              ei->ext_lock_eject ? "lock " : "",
-              ei->ext_edd ? "edd " : "",
-              ei->ext_64bit ? "64bit " : "",
-              ei->hd_idx,
-              ei->sysfs_id ?: ""
-            );
-          }
+      sf_link = hd_read_sysfs_link(sf_edd, "pci_dev");
+      if(sf_link) {
+        hd_data->edd[u].sysfs_id = new_str(hd_sysfs_id(sf_link));
+        if((hd = hd_find_sysfs_id(hd_data, hd_data->edd[u].sysfs_id))) {
+          hd_data->edd[u].hd_idx = hd->idx;
         }
       }
+
+      sl = hd_attr_list(get_sysfs_attr_by_path(sf_edd, "extensions"));
+      if(search_str_list(sl, "Fixed disk access")) hd_data->edd[u].ext_fixed_disk = 1;
+      if(search_str_list(sl, "Device locking and ejecting")) hd_data->edd[u].ext_lock_eject = 1;
+      if(search_str_list(sl, "Enhanced Disk Drive support")) hd_data->edd[u].ext_edd = 1;
+      if(search_str_list(sl, "64-bit extensions")) hd_data->edd[u].ext_64bit = 1;
+
+      ADD2LOG(
+        "edd: 0x%02x\n  size: %"PRIu64"\n  chs default: %u/%u/%u\n  chs legacy: %u/%u/%u\n  caps: %s%s%s%s\n  attached: #%u %s\n",
+        u + 0x80,
+        ei->sectors,
+        ei->edd.cyls,
+        ei->edd.heads,
+        ei->edd.sectors,
+        ei->legacy.cyls,
+        ei->legacy.heads,
+        ei->legacy.sectors,
+        ei->ext_fixed_disk ? "fixed " : "",
+        ei->ext_lock_eject ? "lock " : "",
+        ei->ext_edd ? "edd " : "",
+        ei->ext_64bit ? "64bit " : "",
+        ei->hd_idx,
+        ei->sysfs_id ?: ""
+      );
     }
   }
 
-  sysfs_close_directory(sf_dir);
+  free_mem(sf_edd);
+  free_str_list(sf_dir);
 
   if(!edd_cnt) return;
 

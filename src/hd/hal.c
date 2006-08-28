@@ -760,15 +760,31 @@ char* get_sysfs_attr(const char* bus, const char* device, const char* attr)
   return buf;
 }
 
-char* get_sysfs_attr_by_path(const char* path, const char* attr)
+
+/*
+ * must be able to read more than one line
+ */
+char *get_sysfs_attr_by_path(const char* path, const char* attr)
 {
-  static char buf[256];
-  FILE *fp;
+  static char buf[1024];
+  int i, fd;
+
   sprintf(buf, "%s/%s", path, attr);
-  fp = fopen(buf, "r");
-  if(!fp) return NULL;
-  fgets(buf, 127, fp);
-  fclose(fp);
+  fd = open(buf, O_RDONLY);
+  if(fd >= 0) {
+    i = read(fd, buf, sizeof buf - 1);
+    close(fd);
+    if(i >= 0) {
+      buf[i] = 0;
+    }
+    else {
+      return NULL;
+    }
+  }
+  else {
+    return NULL;
+  }
+
   return buf;
 }  
 

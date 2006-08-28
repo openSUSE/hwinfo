@@ -196,7 +196,7 @@ void hd_pci_read_data(hd_data_t *hd_data)
     }
     sysfs_close_attribute(attr);
 
-    sl = hd_attr_list(attr = hd_read_single_sysfs_attribute(sf_dev->path, "resource"));
+    sl = hd_attr_list(hd_attr_str(attr = hd_read_single_sysfs_attribute(sf_dev->path, "resource")));
     for(u = 0; sl; sl = sl->next, u++) {
       if(
         sscanf(sl->str, "0x%"SCNx64" 0x%"SCNx64" 0x%"SCNx64, &ul0, &ul1, &ul2) == 3 &&
@@ -606,13 +606,13 @@ int hd_attr_uint_new(char* attr, uint64_t* u, int base)
 /*
  * Return attribute as string list.
  */
-str_list_t *hd_attr_list(struct sysfs_attribute *attr)
+str_list_t *hd_attr_list(char *str)
 {
   static str_list_t *sl = NULL;
 
   free_str_list(sl);
 
-  return sl = hd_split('\n', hd_attr_str(attr));
+  return sl = hd_split('\n', str);
 }
 
 
