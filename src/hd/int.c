@@ -1147,6 +1147,8 @@ void int_add_driver_modules(hd_data_t *hd_data)
   hd_sysfsdrv_t *sf;
   str_list_t *sl;
 
+  hd_sysfs_driver_list(hd_data);
+
   for(hd = hd_data->hd; hd; hd = hd->next) {
     hd->driver_modules = free_str_list(hd->driver_modules);
 

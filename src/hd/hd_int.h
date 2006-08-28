@@ -138,6 +138,7 @@ void hexdump(char **buf, int with_ascii, unsigned data_len, unsigned char *data)
 str_list_t *search_str_list(str_list_t *sl, char *str);
 str_list_t *add_str_list(str_list_t **sl, char *str);
 str_list_t *free_str_list(str_list_t *list);
+str_list_t *reverse_str_list(str_list_t *list);
 str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines);
 str_list_t *read_dir(char *dir_name, int type);
 str_list_t *read_dir2(char *base_dir, char *name, int type);

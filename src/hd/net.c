@@ -21,6 +21,7 @@
 
 #include "hd.h"
 #include "hd_int.h"
+#include "hal.h"
 #include "net.h"
 
 /**
@@ -55,12 +56,9 @@ void hd_scan_net(hd_data_t *hd_data)
   char *s, *hw_addr;
   hd_res_t *res, *res1;
   uint64_t ul0;
-
-  struct sysfs_class *sf_class;
-  struct sysfs_class_device *sf_cdev;
-  struct sysfs_device *sf_dev;
-  struct sysfs_driver *sf_drv;
-  struct dlist *sf_cdev_list;
+  str_list_t *sf_class, *sf_class_e;
+  char *sf_cdev = NULL, *sf_dev = NULL;
+  char *sf_drv_name, *sf_drv;
 
   if(!hd_probe_feature(hd_data, pr_net)) return;
 
@@ -72,47 +70,50 @@ void hd_scan_net(hd_data_t *hd_data)
 
   PROGRESS(1, 0, "get network data");
 
-  sf_class = sysfs_open_class("net");
+  sf_class = reverse_str_list(read_dir("/sys/class/net", 'd'));
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: net\n");
     return;
   }
 
-  sf_cdev_list = sysfs_get_class_devices(sf_class);
-  if(sf_cdev_list) dlist_for_each_data(sf_cdev_list, sf_cdev, struct sysfs_class_device) {
+  for(sf_class_e = sf_class; sf_class_e; sf_class_e = sf_class_e->next) {
+    str_printf(&sf_cdev, 0, "/sys/class/net/%s", sf_class_e->str);
+
     hd_card = NULL;
 
     ADD2LOG(
-      "  net interface: name = %s, classname = %s, path = %s\n",
-      sf_cdev->name,
-      sf_cdev->classname,
-      hd_sysfs_id(sf_cdev->path)
+      "  net interface: name = %s, path = %s\n",
+      sf_class_e->str,
+      hd_sysfs_id(sf_cdev)
     );
 
     if_type = -1;
-    if(hd_attr_uint(sysfs_get_classdev_attr(sf_cdev, "type"), &ul0, 0)) {
+    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_cdev, "type"), &ul0, 0)) {
       if_type = ul0;
       ADD2LOG("    type = %d\n", if_type);
     }
 
     hw_addr = NULL;
-    if((s = hd_attr_str(sysfs_get_classdev_attr(sf_cdev, "address")))) {
+    if((s = get_sysfs_attr_by_path(sf_cdev, "address"))) {
       hw_addr = canon_str(s, strlen(s));
       ADD2LOG("    hw_addr = %s\n", hw_addr);
     }
 
-    sf_dev = sysfs_get_classdev_device(sf_cdev);
+    sf_dev = new_str(hd_read_sysfs_link(sf_cdev, "device"));
     if(sf_dev) {
-      ADD2LOG("    net device: path = %s\n", hd_sysfs_id(sf_dev->path));
+      ADD2LOG("    net device: path = %s\n", hd_sysfs_id(sf_dev));
     }
 
-    sf_drv = sysfs_get_classdev_driver(sf_cdev);
+    sf_drv_name = NULL;
+    sf_drv = hd_read_sysfs_link(sf_dev, "driver");
     if(sf_drv) {
+      sf_drv_name = strrchr(sf_drv, '/');
+      if(sf_drv_name) sf_drv_name++;
       ADD2LOG(
         "    net driver: name = %s, path = %s\n",
-        sf_drv->name,
-        hd_sysfs_id(sf_drv->path)
+        sf_drv_name,
+        hd_sysfs_id(sf_drv)
       );
     }
 
@@ -130,20 +131,20 @@ void hd_scan_net(hd_data_t *hd_data)
 
     hw_addr = free_mem(hw_addr);
 
-    hd->unix_dev_name = new_str(sf_cdev->name);
-    hd->sysfs_id = new_str(hd_sysfs_id(sf_cdev->path));
+    hd->unix_dev_name = new_str(sf_class_e->str);
+    hd->sysfs_id = new_str(hd_sysfs_id(sf_cdev));
 
-    if(sf_drv) {
-      add_str_list(&hd->drivers, sf_drv->name);
+    if(sf_drv_name) {
+      add_str_list(&hd->drivers, sf_drv_name);
     }
     else if(hd->res) {
       get_driverinfo(hd_data, hd);
     }
 
     if(sf_dev) {
-      hd->sysfs_device_link = new_str(hd_sysfs_id(sf_dev->path)); 
+      hd->sysfs_device_link = new_str(hd_sysfs_id(sf_dev)); 
 
-      hd_card = hd_find_sysfs_id(hd_data, hd_sysfs_id(sf_dev->path));
+      hd_card = hd_find_sysfs_id(hd_data, hd_sysfs_id(sf_dev));
       if(hd_card) {
         hd->attached_to = hd_card->idx;
 
@@ -185,6 +186,7 @@ void hd_scan_net(hd_data_t *hd_data)
     "xp"	sc_nif_xp
     "usb"	sc_nif_usb
 #endif
+
     switch(if_type) {
       case ARPHRD_ETHER:	/* eth */
         hd->sub_class.id = sc_nif_ethernet;
@@ -286,9 +288,12 @@ void hd_scan_net(hd_data_t *hd_data)
         }
       }
     }
+
+    sf_dev = free_mem(sf_dev);
   }
 
-  sysfs_close_class(sf_class);
+  sf_cdev = free_mem(sf_cdev);
+  sf_class = free_str_list(sf_class);
 
   if(hd_is_sgi_altix(hd_data)) add_xpnet(hd_data);
   if(hd_is_iseries(hd_data)) add_iseries(hd_data);
