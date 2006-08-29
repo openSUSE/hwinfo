@@ -5892,5 +5892,151 @@ char *hd_get_hddb_path(char *sub)
   return dir;
 }
 
+
+/*
+ * Parse attribute and return integer value.
+ */
+int hd_attr_uint(char* attr, uint64_t* u, int base)
+{
+  char *s;
+  uint64_t u2;
+  int ok;
+  
+  if(!(s = attr)) return 0;
+  u2 = strtoull(s, &s, base);
+  ok = !*s || isspace(*s) ? 1 : 0;
+  
+  if(ok && u) *u = u2;
+  
+  return ok;
+}
+
+/*
+ * Return attribute as string list.
+ */
+str_list_t *hd_attr_list(char *str)
+{
+  static str_list_t *sl = NULL;
+
+  free_str_list(sl);
+
+  return sl = hd_split('\n', str);
+}
+
+
+/*
+ * Remove leading "/sys" from path.
+ */
+char *hd_sysfs_id(char *path)
+{
+  if(!path || !*path) return NULL;
+
+  return strchr(path + 1, '/');
+}
+
+
+/*
+ * Convert '!' to '/'.
+ */
+char *hd_sysfs_name2_dev(char *str)
+{
+  static char *s = NULL;
+
+  if(!str) return NULL;
+
+  free_mem(s);
+  s = str = new_str(str);
+
+  while(*str) {
+    if(*str == '!') *str = '/';
+    str++;
+  }
+
+  return s;
+}
+
+
+/*
+ * Convert '/' to '!'.
+ */
+char *hd_sysfs_dev2_name(char *str)
+{
+  static char *s = NULL;
+
+  if(!str) return NULL;
+
+  free_mem(s);
+  s = str = new_str(str);
+
+  while(*str) {
+    if(*str == '/') *str = '!';
+    str++;
+  }
+
+  return s;
+}
+
+
+char* get_sysfs_attr(const char* bus, const char* device, const char* attr)
+{
+  static char buf[256];
+  FILE* fp;
+  sprintf(buf, "/sys/bus/%s/devices/%s/%s", bus, device, attr);
+  fp = fopen(buf, "r");
+  if(!fp) return NULL;
+  fgets(buf, 127, fp);
+  fclose(fp);
+  return buf;
+}
+
+
+/*
+ * must be able to read more than one line
+ */
+char *get_sysfs_attr_by_path(const char* path, const char* attr)
+{
+  static char buf[1024];
+  int i, fd;
+
+  sprintf(buf, "%s/%s", path, attr);
+  fd = open(buf, O_RDONLY);
+  if(fd >= 0) {
+    i = read(fd, buf, sizeof buf - 1);
+    close(fd);
+    if(i >= 0) {
+      buf[i] = 0;
+    }
+    else {
+      return NULL;
+    }
+  }
+  else {
+    return NULL;
+  }
+
+  return buf;
+}  
+
+
+DIR* open_sys_bus_devices(const char* bus)
+{
+  char buf[128];
+  sprintf(buf,"/sys/bus/%s/devices", bus);
+  return opendir(buf);
+}
+
+
+char* get_sysfs_path(const char* bus, const char* device)
+{
+  static char buf[256];
+  char path[256];
+  sprintf(buf,"/sys/bus/%s/devices/%s", bus, device);
+  memset(path,0,256);
+  if(readlink(buf, path, 255) == -1) return NULL;
+  sprintf(buf,"/sys/%s", path + 9);
+  return buf;
+}
+
+
 /** @} */
 

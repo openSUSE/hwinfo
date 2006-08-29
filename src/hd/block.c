@@ -13,7 +13,6 @@
 
 #include "hd.h"
 #include "hd_int.h"
-#include "hal.h"
 #include "hddb.h"
 #include "block.h"
 

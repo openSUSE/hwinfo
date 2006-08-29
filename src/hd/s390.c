@@ -17,7 +17,6 @@
 
 #if defined(__s390__) || defined(__s390x__)
 
-#include "hal.h"
 #include <dirent.h>
 #include <unistd.h>
 

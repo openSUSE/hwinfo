@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
@@ -12,7 +13,8 @@
 #include "hd_int.h"
 #include "hddb.h"
 #include "usb.h"
-#include "hal.h"
+
+DIR* open_sys_bus_devices(const char* bus);
 
 /**
  * @defgroup USBint Universal Serial Bus (USB)

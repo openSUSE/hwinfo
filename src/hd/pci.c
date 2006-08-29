@@ -11,7 +11,6 @@
 
 #include "hd.h"
 #include "hd_int.h"
-#include "hal.h"
 #include "hddb.h"
 #include "pci.h"
 
@@ -535,90 +534,6 @@ void dump_pci_data(hd_data_t *hd_data)
   }
 
   ADD2LOG("---------- PCI raw data end ----------\n");
-}
-
-
-/*
- * Parse attribute and return integer value.
- */
-int hd_attr_uint(char* attr, uint64_t* u, int base)
-{
-  char *s;
-  uint64_t u2;
-  int ok;
-  
-  if(!(s = attr)) return 0;
-  u2 = strtoull(s, &s, base);
-  ok = !*s || isspace(*s) ? 1 : 0;
-  
-  if(ok && u) *u = u2;
-  
-  return ok;
-}
-
-/*
- * Return attribute as string list.
- */
-str_list_t *hd_attr_list(char *str)
-{
-  static str_list_t *sl = NULL;
-
-  free_str_list(sl);
-
-  return sl = hd_split('\n', str);
-}
-
-
-/*
- * Remove leading "/sys" from path.
- */
-char *hd_sysfs_id(char *path)
-{
-  if(!path || !*path) return NULL;
-
-  return strchr(path + 1, '/');
-}
-
-
-/*
- * Convert '!' to '/'.
- */
-char *hd_sysfs_name2_dev(char *str)
-{
-  static char *s = NULL;
-
-  if(!str) return NULL;
-
-  free_mem(s);
-  s = str = new_str(str);
-
-  while(*str) {
-    if(*str == '!') *str = '/';
-    str++;
-  }
-
-  return s;
-}
-
-
-/*
- * Convert '/' to '!'.
- */
-char *hd_sysfs_dev2_name(char *str)
-{
-  static char *s = NULL;
-
-  if(!str) return NULL;
-
-  free_mem(s);
-  s = str = new_str(str);
-
-  while(*str) {
-    if(*str == '/') *str = '!';
-    str++;
-  }
-
-  return s;
 }
 
 

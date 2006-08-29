@@ -11,7 +11,6 @@
 
 #include "hd.h"
 #include "hd_int.h"
-#include "hal.h"
 #include "pcmcia.h"
 
 /**

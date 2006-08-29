@@ -21,7 +21,6 @@
 
 #include "hd.h"
 #include "hd_int.h"
-#include "hal.h"
 #include "net.h"
 
 /**
