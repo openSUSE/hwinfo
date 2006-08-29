@@ -103,7 +103,7 @@ void get_usb_devs(hd_data_t *hd_data)
 
   while((sf_dev = readdir(sf_bus))) {
     if(sf_dev->d_type == DT_DIR) continue;	/* skip "." and ".." */
-    if(hd_attr_uint_new(get_sysfs_attr("usb",sf_dev->d_name, "bNumInterfaces"), &ul0, 0)) {
+    if(hd_attr_uint(get_sysfs_attr("usb",sf_dev->d_name, "bNumInterfaces"), &ul0, 0)) {
       add_str_list(&usb_devs, get_sysfs_path("usb",sf_dev->d_name));
       ADD2LOG("  usb dev: %s\n", hd_sysfs_id(get_sysfs_path("usb",sf_dev->d_name)));
     }
@@ -122,7 +122,7 @@ void get_usb_devs(hd_data_t *hd_data)
 #endif
 
     if(
-      hd_attr_uint_new(get_sysfs_attr("usb",sf_dev->d_name, "bInterfaceNumber"), &ul0, 16)
+      hd_attr_uint(get_sysfs_attr("usb",sf_dev->d_name, "bInterfaceNumber"), &ul0, 16)
     ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
 
@@ -150,17 +150,17 @@ void get_usb_devs(hd_data_t *hd_data)
 
       ADD2LOG("    bInterfaceNumber = %u\n", hd->func);
 
-      if(hd_attr_uint_new(get_sysfs_attr("usb",sf_dev->d_name, "bInterfaceClass"), &ul0, 16)) {
+      if(hd_attr_uint(get_sysfs_attr("usb",sf_dev->d_name, "bInterfaceClass"), &ul0, 16)) {
         usb->i_cls = ul0;
         ADD2LOG("    bInterfaceClass = %u\n", usb->i_cls);
       }
 
-      if(hd_attr_uint_new(get_sysfs_attr("usb",sf_dev->d_name, "bInterfaceSubClass"), &ul0, 16)) {
+      if(hd_attr_uint(get_sysfs_attr("usb",sf_dev->d_name, "bInterfaceSubClass"), &ul0, 16)) {
         usb->i_sub = ul0;
         ADD2LOG("    bInterfaceSubClass = %u\n", usb->i_sub);
       }
 
-      if(hd_attr_uint_new(get_sysfs_attr("usb",sf_dev->d_name, "bInterfaceProtocol"), &ul0, 16)) {
+      if(hd_attr_uint(get_sysfs_attr("usb",sf_dev->d_name, "bInterfaceProtocol"), &ul0, 16)) {
         usb->i_prot = ul0;
         ADD2LOG("    bInterfaceProtocol = %u\n", usb->i_prot);
       }
@@ -181,27 +181,27 @@ void get_usb_devs(hd_data_t *hd_data)
         sf_dev_2 = new_str(s);
         if(sf_dev_2) {
 
-          if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev_2, "bDeviceClass"), &ul0, 16)) {
+          if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev_2, "bDeviceClass"), &ul0, 16)) {
             usb->d_cls = ul0;
             ADD2LOG("    bDeviceClass = %u\n", usb->d_cls);
           }
 
-          if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev_2, "bDeviceSubClass"), &ul0, 16)) {
+          if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev_2, "bDeviceSubClass"), &ul0, 16)) {
             usb->d_sub = ul0;
             ADD2LOG("    bDeviceSubClass = %u\n", usb->d_sub);
           }
 
-          if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev_2, "bDeviceProtocol"), &ul0, 16)) {
+          if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev_2, "bDeviceProtocol"), &ul0, 16)) {
             usb->d_prot = ul0;
             ADD2LOG("    bDeviceProtocol = %u\n", usb->d_prot);
           }
 
-          if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev_2, "idVendor"), &ul0, 16)) {
+          if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev_2, "idVendor"), &ul0, 16)) {
             usb->vendor = ul0;
             ADD2LOG("    idVendor = 0x%04x\n", usb->vendor);
           }
 
-          if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev_2, "idProduct"), &ul0, 16)) {
+          if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev_2, "idProduct"), &ul0, 16)) {
             usb->device = ul0;
             ADD2LOG("    idProduct = 0x%04x\n", usb->device);
           }
@@ -221,7 +221,7 @@ void get_usb_devs(hd_data_t *hd_data)
             ADD2LOG("    serial = \"%s\"\n", usb->serial);
           }
 
-          if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev_2, "bcdDevice"), &ul0, 16)) {
+          if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev_2, "bcdDevice"), &ul0, 16)) {
             usb->rev = ul0;
             ADD2LOG("    bcdDevice = %04x\n", usb->rev);
           }

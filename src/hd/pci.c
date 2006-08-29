@@ -100,7 +100,7 @@ void hd_pci_read_data(hd_data_t *hd_data)
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev;
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/pci/devices", 'l'));;
+  sf_bus = reverse_str_list(read_dir("/sys/bus/pci/devices", 'l'));
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: pci\n");
@@ -132,34 +132,34 @@ void hd_pci_read_data(hd_data_t *hd_data)
       ADD2LOG("    modalias = \"%s\"\n", pci->modalias);
     }
 
-    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "class"), &ul0, 0)) {
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "class"), &ul0, 0)) {
       ADD2LOG("    class = 0x%x\n", (unsigned) ul0);
       pci->prog_if = ul0 & 0xff;
       pci->sub_class = (ul0 >> 8) & 0xff;
       pci->base_class = (ul0 >> 16) & 0xff;
     }
 
-    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "vendor"), &ul0, 0)) {
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "vendor"), &ul0, 0)) {
       ADD2LOG("    vendor = 0x%x\n", (unsigned) ul0);
       pci->vend = ul0 & 0xffff;
     }
 
-    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "device"), &ul0, 0)) {
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "device"), &ul0, 0)) {
       ADD2LOG("    device = 0x%x\n", (unsigned) ul0);
       pci->dev = ul0 & 0xffff;
     }
 
-    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "subsystem_vendor"), &ul0, 0)) {
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "subsystem_vendor"), &ul0, 0)) {
       ADD2LOG("    subvendor = 0x%x\n", (unsigned) ul0);
       pci->sub_vend = ul0 & 0xffff;
     }
 
-    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "subsystem_device"), &ul0, 0)) {
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "subsystem_device"), &ul0, 0)) {
       ADD2LOG("    subdevice = 0x%x\n", (unsigned) ul0);
       pci->sub_dev = ul0 & 0xffff;
     }
 
-    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "irq"), &ul0, 0)) {
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "irq"), &ul0, 0)) {
       ADD2LOG("    irq = %d\n", (unsigned) ul0);
       pci->irq = ul0;
     }
@@ -541,23 +541,7 @@ void dump_pci_data(hd_data_t *hd_data)
 /*
  * Parse attribute and return integer value.
  */
-int hd_attr_uint(struct sysfs_attribute *attr, uint64_t *u, int base)
-{
-  char *s;
-  uint64_t u2;
-  int ok;
-
-  if(!(s = hd_attr_str(attr))) return 0;
-
-  u2 = strtoull(s, &s, base);
-  ok = !*s || isspace(*s) ? 1 : 0;
-
-  if(ok && u) *u = u2;
-
-  return ok;
-}
-
-int hd_attr_uint_new(char* attr, uint64_t* u, int base)
+int hd_attr_uint(char* attr, uint64_t* u, int base)
 {
   char *s;
   uint64_t u2;
@@ -582,15 +566,6 @@ str_list_t *hd_attr_list(char *str)
   free_str_list(sl);
 
   return sl = hd_split('\n', str);
-}
-
-
-/*
- * Return attribute as string.
- */
-char *hd_attr_str(struct sysfs_attribute *attr)
-{
-  return attr ? attr->value : NULL;
 }
 
 

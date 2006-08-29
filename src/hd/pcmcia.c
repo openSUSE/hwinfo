@@ -101,12 +101,12 @@ void pcmcia_read_data(hd_data_t *hd_data)
       ADD2LOG("    modalias = \"%s\"\n", s);
     }
 
-    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "manf_id"), &ul0, 0)) {
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "manf_id"), &ul0, 0)) {
       ADD2LOG("    manf_id = 0x%04x\n", (unsigned) ul0);
       hd->vendor.id = MAKE_ID(TAG_PCMCIA, ul0);
     }
 
-    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "card_id"), &ul0, 0)) {
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "card_id"), &ul0, 0)) {
       ADD2LOG("    card_id = 0x%04x\n", (unsigned) ul0);
       hd->device.id = MAKE_ID(TAG_PCMCIA, ul0);
     }
@@ -117,7 +117,7 @@ void pcmcia_read_data(hd_data_t *hd_data)
      * "SCSI"
      */
     func_id = 0;
-    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_dev, "func_id"), &ul0, 0)) {
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "func_id"), &ul0, 0)) {
       func_id = ul0;
       ADD2LOG("    func_id = 0x%04x\n", func_id);
     }
@@ -238,6 +238,8 @@ void pcmcia_ctrl_read_data(hd_data_t *hd_data)
 
     sf_cdev = free_mem(sf_cdev);
   }
+
+  sf_class = free_str_list(sf_class);
 
   /* find card bus devices & assign them socket numbers */
 

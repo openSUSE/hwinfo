@@ -5,10 +5,10 @@ CLEANFILES	= hwinfo hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/l
 LIBDIR		= /usr/lib
 ULIBDIR		= $(LIBDIR)
 LIBS		= -lhd
-SLIBS		= -lhd -lsysfs -ldbus-1 -lhal
-TLIBS		= -lhd_tiny -lsysfs -ldbus-1 -lhal
-SO_LIBS		= -lsysfs -ldbus-1 -lhal
-TSO_LIBS	= -lsysfs -ldbus-1 -lhal
+SLIBS		= -lhd -ldbus-1 -lhal
+TLIBS		= -lhd_tiny -ldbus-1 -lhal
+SO_LIBS		= -ldbus-1 -lhal
+TSO_LIBS	= -ldbus-1 -lhal
 
 export SO_LIBS
 

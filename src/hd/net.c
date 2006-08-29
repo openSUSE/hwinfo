@@ -89,7 +89,7 @@ void hd_scan_net(hd_data_t *hd_data)
     );
 
     if_type = -1;
-    if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_cdev, "type"), &ul0, 0)) {
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_cdev, "type"), &ul0, 0)) {
       if_type = ul0;
       ADD2LOG("    type = %d\n", if_type);
     }

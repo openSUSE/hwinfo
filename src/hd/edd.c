@@ -78,31 +78,31 @@ void get_edd_info(hd_data_t *hd_data)
 
       ei = hd_data->edd + u;
 
-      if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_edd, "sectors"), &ul0, 0)) {
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_edd, "sectors"), &ul0, 0)) {
         ei->sectors = ul0;
       }
 
-      if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_edd, "default_cylinders"), &ul0, 0)) {
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_edd, "default_cylinders"), &ul0, 0)) {
         ei->edd.cyls = ul0;
       }
 
-      if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_edd, "default_heads"), &ul0, 0)) {
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_edd, "default_heads"), &ul0, 0)) {
         ei->edd.heads = ul0;
       }
 
-      if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_edd, "default_sectors_per_track"), &ul0, 0)) {
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_edd, "default_sectors_per_track"), &ul0, 0)) {
         ei->edd.sectors = ul0;
       }
 
-      if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_edd, "legacy_max_cylinder"), &ul0, 0)) {
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_edd, "legacy_max_cylinder"), &ul0, 0)) {
         ei->legacy.cyls = ul0 + 1;
       }
 
-      if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_edd, "legacy_max_head"), &ul0, 0)) {
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_edd, "legacy_max_head"), &ul0, 0)) {
         ei->legacy.heads = ul0 + 1;
       }
 
-      if(hd_attr_uint_new(get_sysfs_attr_by_path(sf_edd, "legacy_sectors_per_track"), &ul0, 0)) {
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_edd, "legacy_sectors_per_track"), &ul0, 0)) {
         ei->legacy.sectors = ul0;
       }
 
