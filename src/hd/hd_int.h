@@ -138,7 +138,6 @@ str_list_t *free_str_list(str_list_t *list);
 str_list_t *reverse_str_list(str_list_t *list);
 str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines);
 str_list_t *read_dir(char *dir_name, int type);
-str_list_t *read_dir2(char *base_dir, char *name, int type);
 char *hd_read_symlink(char *link_name);
 char *hd_read_sysfs_link(char *base_dir, char *link_name);
 void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg);
@@ -225,7 +224,6 @@ str_list_t *hd_module_list(hd_data_t *hd_data, unsigned id);
 
 char* get_sysfs_attr(const char* bus, const char* device, const char* attr);
 char* get_sysfs_attr_by_path(const char* path, const char* attr);
-char* get_sysfs_path(const char* bus, const char* device);
 
 int hd_is_iseries(hd_data_t *hd_data);
 hal_device_t *hd_free_hal_devices(hal_device_t *dev);

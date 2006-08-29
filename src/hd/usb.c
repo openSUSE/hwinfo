@@ -14,8 +14,6 @@
 #include "hddb.h"
 #include "usb.h"
 
-DIR* open_sys_bus_devices(const char* bus);
-
 /**
  * @defgroup USBint Universal Serial Bus (USB)
  * @ingroup libhdBUSint
@@ -91,40 +89,36 @@ void get_usb_devs(hd_data_t *hd_data)
   char *s, *s1, *t;
   hd_res_t *res;
   size_t l;
+  str_list_t *sf_bus, *sf_bus_e;
+  char *sf_dev, *sf_dev_2;
 
-  DIR *sf_bus;
-  struct dirent *sf_dev;
-  char *sf_dev_2;
-
-  sf_bus = open_sys_bus_devices("usb");
+  sf_bus = reverse_str_list(read_dir("/sys/bus/usb/devices", 'l'));
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: usb\n");
     return;
   }
 
-  while((sf_dev = readdir(sf_bus))) {
-    if(sf_dev->d_type == DT_DIR) continue;	/* skip "." and ".." */
-    if(hd_attr_uint(get_sysfs_attr("usb",sf_dev->d_name, "bNumInterfaces"), &ul0, 0)) {
-      add_str_list(&usb_devs, get_sysfs_path("usb",sf_dev->d_name));
-      ADD2LOG("  usb dev: %s\n", hd_sysfs_id(get_sysfs_path("usb",sf_dev->d_name)));
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = hd_read_sysfs_link("/sys/bus/usb/devices", sf_bus_e->str);
+
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "bNumInterfaces"), &ul0, 0)) {
+      add_str_list(&usb_devs, sf_dev);
+      ADD2LOG("  usb dev: %s\n", hd_sysfs_id(sf_dev));
     }
   }
 
-  rewinddir(sf_bus);
-  while((sf_dev = readdir(sf_bus))) {
-#if 0 /* FIXME */
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/usb/devices", sf_bus_e->str));
+
     ADD2LOG(
-      "  usb device: name = %s, bus_id = %s, bus = %s\n    path = %s\n",
-      sf_dev->name,
-      sf_dev->bus_id,
-      sf_dev->bus,
-      hd_sysfs_id(sf_dev->path)
+      "  usb device: name = %s\n    path = %s\n",
+      sf_bus_e->str,
+      hd_sysfs_id(sf_dev)
     );
-#endif
 
     if(
-      hd_attr_uint(get_sysfs_attr("usb",sf_dev->d_name, "bInterfaceNumber"), &ul0, 16)
+      hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "bInterfaceNumber"), &ul0, 16)
     ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
 
@@ -132,15 +126,15 @@ void get_usb_devs(hd_data_t *hd_data)
       hd->detail->type = hd_detail_usb;
       hd->detail->usb.data = usb = new_mem(sizeof *usb);
 
-      hd->sysfs_id = new_str(hd_sysfs_id(get_sysfs_path("usb",sf_dev->d_name)));
-      hd->sysfs_bus_id = new_str(sf_dev->d_name);
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+      hd->sysfs_bus_id = new_str(sf_bus_e->str);
 
       hd->bus.id = bus_usb;
       hd->func = ul0;
 
       usb->ifdescr = ul0;
 
-      if((s = get_sysfs_attr("usb",sf_dev->d_name, "modalias"))) {
+      if((s = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
         s = canon_str(s, strlen(s));
         ADD2LOG("    modalias = \"%s\"\n", s);
         if(s && *s) {
@@ -152,27 +146,27 @@ void get_usb_devs(hd_data_t *hd_data)
 
       ADD2LOG("    bInterfaceNumber = %u\n", hd->func);
 
-      if(hd_attr_uint(get_sysfs_attr("usb",sf_dev->d_name, "bInterfaceClass"), &ul0, 16)) {
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "bInterfaceClass"), &ul0, 16)) {
         usb->i_cls = ul0;
         ADD2LOG("    bInterfaceClass = %u\n", usb->i_cls);
       }
 
-      if(hd_attr_uint(get_sysfs_attr("usb",sf_dev->d_name, "bInterfaceSubClass"), &ul0, 16)) {
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "bInterfaceSubClass"), &ul0, 16)) {
         usb->i_sub = ul0;
         ADD2LOG("    bInterfaceSubClass = %u\n", usb->i_sub);
       }
 
-      if(hd_attr_uint(get_sysfs_attr("usb",sf_dev->d_name, "bInterfaceProtocol"), &ul0, 16)) {
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "bInterfaceProtocol"), &ul0, 16)) {
         usb->i_prot = ul0;
         ADD2LOG("    bInterfaceProtocol = %u\n", usb->i_prot);
       }
 
       /* device has longest matching sysfs id */
-      u2 = strlen(get_sysfs_path("usb",sf_dev->d_name));
+      u2 = strlen(sf_dev);
       s = NULL;
       for(u3 = 0, sl = usb_devs; sl; sl = sl->next) {
         u1 = strlen(sl->str);
-        if(u1 > u3 && u1 <= u2 && !strncmp(get_sysfs_path("usb",sf_dev->d_name), sl->str, u1)) {
+        if(u1 > u3 && u1 <= u2 && !strncmp(sf_dev, sl->str, u1)) {
           u3 = u1;
           s = sl->str;
         }
@@ -237,7 +231,7 @@ void get_usb_devs(hd_data_t *hd_data)
             s = free_mem(s);
           }
 
-          free(sf_dev_2);
+          sf_dev_2 = free_mem(sf_dev_2);
         }
       }
 
@@ -278,11 +272,12 @@ void get_usb_devs(hd_data_t *hd_data)
       if(hd->base_class.id == bc_modem) {
         hd->unix_dev_name = new_str("/dev/ttyACM0");
       }
-
     }
+
+    sf_dev = free_mem(sf_dev);
   }
 
-  closedir(sf_bus);
+  sf_bus = free_str_list(sf_bus);
 
   /* connect usb devices to each other */
   for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -497,12 +492,11 @@ void add_input_dev(hd_data_t *hd_data, char *name)
   char *s, *t;
   hd_dev_num_t dev_num = { };
   unsigned u1, u2;
+  char *sf_drv_name, *sf_drv, *bus_name, *bus_id;
+  char *sf_cdev_name, *sf_dev;
 
-  char sf_cdev_name[20];
-  char buf[256];
-  char sf_dev[256];
-
-  strcpy(sf_cdev_name, rindex(name,'/')+1);
+  sf_cdev_name = name ? strrchr(name, '/') : NULL;
+  if(sf_cdev_name) sf_cdev_name++;
 
   ADD2LOG(
     "  input: name = %s, path = %s\n",
@@ -510,9 +504,7 @@ void add_input_dev(hd_data_t *hd_data, char *name)
     hd_sysfs_id(name)
   );
 
-  if(!strncmp(sf_cdev_name, "ts", sizeof "ts" - 1)) {
-    return;
-  }
+  if(!strncmp(sf_cdev_name, "ts", sizeof "ts" - 1)) return;
 
   if((s = get_sysfs_attr_by_path(name, "dev"))) {
     if(sscanf(s, "%u:%u", &u1, &u2) == 2) {
@@ -524,20 +516,35 @@ void add_input_dev(hd_data_t *hd_data, char *name)
     ADD2LOG("    dev = %u:%u\n", u1, u2);
   }
 
-  sprintf(buf,"%s/device",name);	/* link to device */
-  memset(sf_dev,0,256);
-  if(readlink(buf,sf_dev,255) != -1) {
-    s = hd_sysfs_id(rindex(sf_dev,'.')-3);	/* leave one '../' for hd_sysfs_id to strip */
+  sf_dev = new_str(hd_read_sysfs_link(name, "device"));
 
-#if 0	/* FIXME: where in God's name am I supposed to get bus_id? */
+  if(sf_dev) {
+    bus_id = sf_dev ? strrchr(sf_dev, '/') : NULL;
+    if(bus_id) bus_id++;
+
+    sf_drv_name = NULL;
+    if((sf_drv = hd_read_sysfs_link(sf_dev, "driver"))) {
+      sf_drv_name = strrchr(sf_drv, '/');
+      if(sf_drv_name) sf_drv_name++;
+      sf_drv_name = new_str(sf_drv_name);
+    }
+
+    bus_name = NULL;
+    if((s = hd_read_sysfs_link(sf_dev, "bus"))) {
+      bus_name = strrchr(s, '/');
+      if(bus_name) bus_name++;
+      bus_name = new_str(bus_name);
+    }
+
+    s = hd_sysfs_id(sf_dev);
+
     ADD2LOG(
       "    input device: bus = %s, bus_id = %s driver = %s\n      path = %s\n",
-      sf_dev->bus,
-      sf_dev->bus_id,
-      sf_dev->driver_name,
+      bus_name,
+      bus_id,
+      sf_drv_name,
       s
     );
-#endif 
 
     for(hd = hd_data->hd; hd; hd = hd->next) {
       if(
@@ -564,33 +571,48 @@ void add_input_dev(hd_data_t *hd_data, char *name)
         }
       }
     }
+
+    bus_name = free_mem(bus_name);
+    sf_drv_name = free_mem(sf_drv_name);
   }
 }
 
 
 void get_input_devs(hd_data_t *hd_data)
 {
-  DIR* sf_dir;
-  char path[256];
-  char buf[256];
-  struct dirent* sf_link;
+  str_list_t *sf_dir, *sf_dir_e;
+  char *sf_dev = NULL;
+  int is_dir = 0;
+
+  /*
+   * A bit tricky: if there are links, assume newer sysfs layout with compat
+   * symlinks; if not, assume old layout with directories.
+   */
+  sf_dir = reverse_str_list(read_dir("/sys/class/input", 'l'));
+  if(!sf_dir) {
+    sf_dir = reverse_str_list(read_dir("/sys/class/input", 'd'));
+    is_dir = 1;
+  }
   
-  sf_dir = opendir("/sys/class/input");
   if(!sf_dir) {
     ADD2LOG("sysfs: no such class: input\n");
     return;
   }
-  
-  while((sf_link = readdir(sf_dir))) {
-    if(sf_link->d_type != DT_LNK) continue; /* screw the old layout! */
-    sprintf(path,"/sys/class/input/%s", sf_link->d_name);
-    memset(buf,0,256);
-    readlink(path, buf, 255);
-    sprintf(path,"/sys%s",rindex(buf,'.')+1);
-    add_input_dev(hd_data, path);
+
+  for(sf_dir_e = sf_dir; sf_dir_e; sf_dir_e = sf_dir_e->next) {
+    if(is_dir) {
+      str_printf(&sf_dev, 0, "/sys/class/input/%s", sf_dir_e->str);
+    }
+    else {
+      sf_dev = new_str(hd_read_sysfs_link("/sys/class/input", sf_dir_e->str));
+    }
+
+    add_input_dev(hd_data, sf_dev);
+
+    sf_dev = free_mem(sf_dev);
   }
-  
-  closedir(sf_dir);
+
+  sf_dir = free_str_list(sf_dir);
 }
 
 

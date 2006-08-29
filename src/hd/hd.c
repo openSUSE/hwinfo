@@ -2556,23 +2556,6 @@ char *hd_read_symlink(char *link_name)
 }
 
 
-str_list_t *read_dir2(char *base_dir, char *name, int type)
-{
-  char *s = NULL;
-  str_list_t *sl;
-
-  if(!base_dir || !name) return NULL;
-
-  str_printf(&s, 0, "%s/%s", base_dir, name);
-
-  sl = read_dir(s, type);
-
-  free_mem(s);
-
-  return sl;
-}
-
-
 char *hd_read_sysfs_link(char *base_dir, char *link_name)
 {
   char *s = NULL, *l, *t;
@@ -6016,26 +5999,6 @@ char *get_sysfs_attr_by_path(const char* path, const char* attr)
 
   return buf;
 }  
-
-
-DIR* open_sys_bus_devices(const char* bus)
-{
-  char buf[128];
-  sprintf(buf,"/sys/bus/%s/devices", bus);
-  return opendir(buf);
-}
-
-
-char* get_sysfs_path(const char* bus, const char* device)
-{
-  static char buf[256];
-  char path[256];
-  sprintf(buf,"/sys/bus/%s/devices/%s", bus, device);
-  memset(path,0,256);
-  if(readlink(buf, path, 255) == -1) return NULL;
-  sprintf(buf,"/sys/%s", path + 9);
-  return buf;
-}
 
 
 /** @} */
