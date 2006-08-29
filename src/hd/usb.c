@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
@@ -575,6 +574,8 @@ void add_input_dev(hd_data_t *hd_data, char *name)
     bus_name = free_mem(bus_name);
     sf_drv_name = free_mem(sf_drv_name);
   }
+
+  sf_dev = free_mem(sf_dev);
 }
 
 
@@ -622,30 +623,29 @@ void get_printer_devs(hd_data_t *hd_data)
   char *s, *t;
   hd_dev_num_t dev_num = { };
   unsigned u1, u2;
+  str_list_t *sf_class, *sf_class_e;
+  char *sf_cdev = NULL, *sf_dev;
+  char *sf_drv_name, *sf_drv, *bus_id, *bus_name;
 
-  DIR *sf_class;
-  struct dirent *sf_cdev;
-  char path[256];
-  char buf[256];
-
-  sf_class = opendir("/sys/class/usb");
+  sf_class = reverse_str_list(read_dir("/sys/class/usb", 'd'));
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: usb\n");
     return;
   }
 
-  while((sf_cdev = readdir(sf_class))) {
-    if(strncmp(sf_cdev->d_name, "lp", 2)) continue;
+  for(sf_class_e = sf_class; sf_class_e; sf_class_e = sf_class_e->next) {
+    if(strncmp(sf_class_e->str, "lp", 2)) continue;
+
+    str_printf(&sf_cdev, 0, "/sys/class/usb/%s", sf_class_e->str);
 
     ADD2LOG(
-      "  usb: name = %s, path = /class/usb/%s\n",
-      sf_cdev->d_name,
-      sf_cdev->d_name
+      "  usb: name = %s, path = %s\n",
+      sf_class_e->str,
+      hd_sysfs_id(sf_cdev)
     );
 
-    sprintf(path,"/sys/class/usb/%s", sf_cdev->d_name);
-    if((s = get_sysfs_attr_by_path(path, "dev"))) {
+    if((s = get_sysfs_attr_by_path(sf_cdev, "dev"))) {
       if(sscanf(s, "%u:%u", &u1, &u2) == 2) {
         dev_num.type = 'c';
         dev_num.major = u1;
@@ -655,20 +655,35 @@ void get_printer_devs(hd_data_t *hd_data)
       ADD2LOG("    dev = %u:%u\n", u1, u2);
     }
 
-    sprintf(path,"/sys/class/usb/%s/device", sf_cdev->d_name);
-    memset(buf, 0, 256);
-    if(readlink(path, buf, 255) != -1) {
-      s = hd_sysfs_id(rindex(buf,'.')-2);
+    sf_dev = new_str(hd_read_sysfs_link(sf_cdev, "device"));
 
-#if 0 /* FIXME */
+    if(sf_dev) {
+      bus_id = sf_dev ? strrchr(sf_dev, '/') : NULL;
+      if(bus_id) bus_id++;
+
+      sf_drv_name = NULL;
+      if((sf_drv = hd_read_sysfs_link(sf_dev, "driver"))) {
+        sf_drv_name = strrchr(sf_drv, '/');
+        if(sf_drv_name) sf_drv_name++;
+        sf_drv_name = new_str(sf_drv_name);
+      }
+
+      bus_name = NULL;
+      if((s = hd_read_sysfs_link(sf_dev, "bus"))) {
+        bus_name = strrchr(s, '/');
+        if(bus_name) bus_name++;
+        bus_name = new_str(bus_name);
+      }
+
+      s = hd_sysfs_id(sf_dev);
+
       ADD2LOG(
         "    usb device: bus = %s, bus_id = %s driver = %s\n      path = %s\n",
-        sf_dev->bus,
-        sf_dev->bus_id,
-        sf_dev->driver_name,
+        bus_name,
+        bus_id,
+        sf_drv_name,
         s
       );
-#endif
 
       for(hd = hd_data->hd; hd; hd = hd->next) {
         if(
@@ -678,7 +693,7 @@ void get_printer_devs(hd_data_t *hd_data)
           !strcmp(s, hd->sysfs_id)
         ) {
           t = NULL;
-          str_printf(&t, 0, "/dev/usb/%s", sf_cdev->d_name);
+          str_printf(&t, 0, "/dev/usb/%s", sf_class_e->str);
 
           hd->unix_dev_name = t;
           hd->unix_dev_num = dev_num;
@@ -686,10 +701,16 @@ void get_printer_devs(hd_data_t *hd_data)
           read_usb_lp(hd_data, hd);
         }
       }
+
+      bus_name = free_mem(bus_name);
+      sf_drv_name = free_mem(sf_drv_name);
     }
+
+    sf_dev = free_mem(sf_dev);
   }
 
-  closedir(sf_class);
+  sf_cdev = free_mem(sf_cdev);
+  sf_class = free_str_list(sf_class);
 }
 
 
@@ -770,30 +791,29 @@ void get_serial_devs(hd_data_t *hd_data)
   char *s, *t;
   hd_dev_num_t dev_num = { };
   unsigned u1, u2;
+  str_list_t *sf_class, *sf_class_e;
+  char *sf_cdev = NULL, *sf_dev;
+  char *sf_drv_name, *sf_drv, *bus_id, *bus_name;
 
-  DIR *sf_class;
-  struct dirent *sf_cdev;
-  char buf[256];
-  char path[256];
-
-  sf_class = opendir("/sys/class/tty");
+  sf_class = reverse_str_list(read_dir("/sys/class/tty", 'd'));
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: tty\n");
     return;
   }
 
-  while((sf_cdev = readdir(sf_class))) {
-    if(strncmp(sf_cdev->d_name, "ttyUSB", 6)) continue;
+  for(sf_class_e = sf_class; sf_class_e; sf_class_e = sf_class_e->next) {
+    if(strncmp(sf_class_e->str, "ttyUSB", 6)) continue;
+
+    str_printf(&sf_cdev, 0, "/sys/class/usb/%s", sf_class_e->str);
 
     ADD2LOG(
-      "  usb: name = %s, path = /class/tty/%s\n",
-      sf_cdev->d_name,
-      sf_cdev->d_name
+      "  usb: name = %s, path = %s\n",
+      sf_class_e->str,
+      hd_sysfs_id(sf_cdev)
     );
 
-    sprintf(path, "/sys/class/tty/%s", sf_cdev->d_name);
-    if((s = get_sysfs_attr_by_path(path, "dev"))) {
+    if((s = get_sysfs_attr_by_path(sf_cdev, "dev"))) {
       if(sscanf(s, "%u:%u", &u1, &u2) == 2) {
         dev_num.type = 'c';
         dev_num.major = u1;
@@ -803,22 +823,37 @@ void get_serial_devs(hd_data_t *hd_data)
       ADD2LOG("    dev = %u:%u\n", u1, u2);
     }
 
-    sprintf(path, "/sys/class/tty/%s/device", sf_cdev->d_name);
-    memset(buf, 0, 256);
-    if(readlink(path, buf, 255) != -1) {
-      s = hd_sysfs_id(rindex(buf, '.') - 2);
+    sf_dev = new_str(hd_read_sysfs_link(sf_cdev, "device"));
 
-      if((t = strrchr(s, '/')) && !strncmp(t + 1, "ttyUSB", sizeof "ttyUSB" - 1)) *t =0;
+    if(sf_dev) {
+      bus_id = sf_dev ? strrchr(sf_dev, '/') : NULL;
+      if(bus_id) bus_id++;
 
-#if 0	/* FIXME */
+      sf_drv_name = NULL;
+      if((sf_drv = hd_read_sysfs_link(sf_dev, "driver"))) {
+        sf_drv_name = strrchr(sf_drv, '/');
+        if(sf_drv_name) sf_drv_name++;
+        sf_drv_name = new_str(sf_drv_name);
+      }
+
+      bus_name = NULL;
+      if((s = hd_read_sysfs_link(sf_dev, "bus"))) {
+        bus_name = strrchr(s, '/');
+        if(bus_name) bus_name++;
+        bus_name = new_str(bus_name);
+      }
+
+      s = hd_sysfs_id(sf_dev);
+
+      if((t = strrchr(s, '/')) && !strncmp(t + 1, "ttyUSB", sizeof "ttyUSB" - 1)) *t = 0;
+
       ADD2LOG(
         "    usb device: bus = %s, bus_id = %s driver = %s\n      path = %s\n",
-        sf_dev->bus,
-        sf_dev->bus_id,
-        sf_dev->driver_name,
+        bus_name,
+        bus_id,
+        sf_drv_name,
         s
       );
-#endif
 
       for(hd = hd_data->hd; hd; hd = hd->next) {
         if(
@@ -828,7 +863,7 @@ void get_serial_devs(hd_data_t *hd_data)
           !strcmp(s, hd->sysfs_id)
         ) {
           t = NULL;
-          str_printf(&t, 0, "/dev/%s", sf_cdev->d_name);
+          str_printf(&t, 0, "/dev/%s", sf_class_e->str);
 
           hd->unix_dev_name = t;
           hd->unix_dev_num = dev_num;
@@ -839,9 +874,12 @@ void get_serial_devs(hd_data_t *hd_data)
         }
       }
     }
+
+    sf_dev = free_mem(sf_dev);
   }
 
-  closedir(sf_class);
+  sf_cdev = free_mem(sf_cdev);
+  sf_class = free_str_list(sf_class);
 }
 
 /** @} */
