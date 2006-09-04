@@ -72,7 +72,7 @@ doc:
 
 install:
 	install -d -m 755 $(DESTDIR)/sbin $(DESTDIR)/usr/sbin $(DESTDIR)$(ULIBDIR) \
-		$(DESTDIR)/usr/include
+		$(DESTDIR)$(ULIBDIR)/pkgconfig $(DESTDIR)/usr/include
 	install -m 755 hwinfo $(DESTDIR)/usr/sbin
 	install -m 755 src/ids/check_hd $(DESTDIR)/usr/sbin
 	install -m 755 src/ids/convert_hd $(DESTDIR)/usr/sbin
