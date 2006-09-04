@@ -1,6 +1,7 @@
 4/9/2006:	v13.2
 	- more general modalias matching (#199112)
 	- more device files (#159405)
+	- mvidner: add pkgconfig file
 
 29/8/2006:	v13.1
 	- updated X11 data

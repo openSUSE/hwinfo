@@ -1,7 +1,7 @@
 TOPDIR		= $(CURDIR)
 SUBDIRS		= src
-TARGETS		= hwinfo
-CLEANFILES	= hwinfo hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~
+TARGETS		= hwinfo hwinfo.pc
+CLEANFILES	= hwinfo hwinfo.pc hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~
 LIBDIR		= /usr/lib
 ULIBDIR		= $(LIBDIR)
 LIBS		= -lhd
@@ -30,6 +30,10 @@ hwscand: hwscand.o
 
 hwscanqueue: hwscanqueue.o
 	$(CC) $< $(LDFLAGS) -o $@
+
+hwinfo.pc: hwinfo.pc.in
+	VERSION=`cat VERSION`; \
+	sed -e "s,@VERSION@,$${VERSION},g" -e 's,@LIBDIR@,$(ULIBDIR),g;s,@LIBS@,$(LIBS),g' $< > $@.tmp && mv $@.tmp $@
 
 # kept for compatibility
 shared:
@@ -79,6 +83,7 @@ install:
 	else \
 		install -m 644 $(LIBHD) $(DESTDIR)$(ULIBDIR) ; \
 	fi
+	install -m 644 hwinfo.pc $(DESTDIR)$(ULIBDIR)/pkgconfig
 	install -m 644 src/hd/hd.h $(DESTDIR)/usr/include
 	install -m 755 getsysinfo $(DESTDIR)/usr/sbin
 	install -m 755 src/isdn/cdb/mk_isdnhwdb $(DESTDIR)/usr/sbin
