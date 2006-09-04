@@ -1446,7 +1446,7 @@ typedef struct {
 /**
  * module information type
  */
-typedef enum modinfo_type_e { mi_none = 0, mi_pci, mi_usb, mi_pcmcia } modinfo_type_t;
+typedef enum modinfo_type_e { mi_none = 0, mi_pci, mi_other } modinfo_type_t;
 
 /**
  * module.alias information

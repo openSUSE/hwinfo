@@ -173,7 +173,7 @@ modinfo_t *parse_modinfo(str_list_t *file)
   unsigned u;
   char alias[256], module[256];
 
-  /* lenght + 1! */
+  /* length + 1! */
   for(len = 1, sl = file; sl; sl = sl->next) len++;
 
   modinfo = new_mem(len * sizeof *modinfo);
@@ -181,8 +181,14 @@ modinfo_t *parse_modinfo(str_list_t *file)
   for(m = modinfo, sl = file; sl; sl = sl->next) {
     if(sscanf(sl->str, "alias %255s %255s", alias, module) != 2) continue;
 
+    m->module = new_str(module);
+    m->alias = new_str(alias);
+    m->type = mi_other;
+
     if(!strncmp(alias, "pci:", sizeof "pci:" - 1)) {
       s = alias + sizeof "pci:" - 1;
+
+      m->type = mi_pci;
 
       if(!(s = get_mi_field(s, "v", 8, &m->pci.vendor, &u))) continue;
       m->pci.has.vendor = u;
@@ -204,34 +210,9 @@ modinfo_t *parse_modinfo(str_list_t *file)
 
       if(!(s = get_mi_field(s, "i", 2, &m->pci.prog_if, &u))) continue;
       m->pci.has.prog_if = u;
-
-      m->module = new_str(module);
-      m->alias = new_str(alias);
-      m++->type = mi_pci;
-
-      continue;
     }
 
-    if(!strncmp(alias, "usb:", sizeof "usb:" - 1)) {
-      s = alias + sizeof "usb:" - 1;
-
-      m->module = new_str(module);
-      m->alias = new_str(alias);
-      m++->type = mi_usb;
-
-      continue;
-    }
-
-    if(!strncmp(alias, "pcmcia:", sizeof "pcmcia:" - 1)) {
-      s = alias + sizeof "pcmcia:" - 1;
-
-      m->module = new_str(module);
-      m->alias = new_str(alias);
-      m++->type = mi_pcmcia;
-
-      continue;
-    }
-
+    m++;
   }
 
   /* note: list stops at first entry with m->type == mi_none */
@@ -241,8 +222,8 @@ modinfo_t *parse_modinfo(str_list_t *file)
   for(m = modinfo; m->type; m++) {
     switch(m->type) {
       case mi_pci:
-        fprintf(stderr, "%s:%d, %s\n  v 0x%x:%u, d 0x%x:%u, sv 0x%x:%u, sd 0x%x:%u, bc 0x%x:%u, sc 0x%x:%u, i 0x%x:%u\n",
-          m->module, m->type, m->alias,
+        fprintf(stderr, "%s: %s\n  v 0x%x:%u, d 0x%x:%u, sv 0x%x:%u, sd 0x%x:%u, bc 0x%x:%u, sc 0x%x:%u, i 0x%x:%u\n",
+          m->module, m->alias,
           m->pci.vendor, m->pci.has.vendor,
           m->pci.device, m->pci.has.device,
           m->pci.sub_vendor, m->pci.has.sub_vendor,
@@ -253,10 +234,9 @@ modinfo_t *parse_modinfo(str_list_t *file)
         );
         break;
 
-      case mi_usb:
-      case mi_pcmcia:
-        fprintf(stderr, "%s:%d, %s\n",
-          m->module, m->type, m->alias
+      case mi_other:
+        fprintf(stderr, "%s: %s\n",
+          m->module, m->alias
         );
         break;
 
@@ -347,8 +327,7 @@ int match_modinfo(modinfo_t *db, modinfo_t *match)
       }
       break;
 
-    case mi_usb:
-    case mi_pcmcia:
+    case mi_other:
       if(match->alias && db->alias) {
         if(!fnmatch(db->alias, match->alias, 0)) {
           s = strchr(db->alias, '*');
@@ -369,7 +348,7 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
 {
   driver_info_t **di = NULL, *di2;
   pci_t *pci;
-  char *mod_list[16 /* arbitrary */];
+  char *mod_list[16 /* arbitrary, > 0 */];
   int mod_prio[sizeof mod_list / sizeof *mod_list];
   int i, prio, mod_list_len;
   modinfo_t match = { };
@@ -382,18 +361,8 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
   ) {
     match.type = mi_pci;
   }
-  else if(
-    ID_TAG(hd->vendor.id) == TAG_USB ||
-    ID_TAG(hd->device.id) == TAG_USB
-  ) {
-    match.type = mi_usb;
-  }
-  else if(
-    ID_TAG(hd->vendor.id) == TAG_PCMCIA ||
-    ID_TAG(hd->device.id) == TAG_PCMCIA ||
-    (hd->modalias && !strncmp(hd->modalias, "pcmcia:", sizeof "pcmcia:" - 1))
-  ) {
-    match.type = mi_pcmcia;
+  else {
+    match.type = mi_other;
   }
 
   match.alias = hd->modalias;
@@ -447,7 +416,7 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
           di2->any.type == di_module &&
           di2->any.hddb0 &&
           di2->any.hddb0->str &&
-          !strcmp(di2->any.hddb0->str, modinfo_db->module)
+          !hd_mod_cmp(di2->any.hddb0->str, modinfo_db->module)
         ) break;
       }
 
@@ -467,6 +436,11 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
 
       if(mod_list_len >= sizeof mod_list / sizeof *mod_list) break;
     }
+  }
+
+  if(!mod_list_len && hd->modalias && !strchr(hd->modalias, ':')) {
+    mod_prio[mod_list_len] = 0;
+    mod_list[mod_list_len++] = hd->modalias;
   }
 
   for(prio = 256; prio >= 0; prio--) {

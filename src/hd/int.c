@@ -855,7 +855,6 @@ void int_udev(hd_data_t *hd_data)
 {
   hd_udevinfo_t *ui;
   hd_t *hd;
-  char *s = NULL;
   str_list_t *sl;
 
   if(!hd_data->udevinfo) read_udevinfo(hd_data);
@@ -863,30 +862,49 @@ void int_udev(hd_data_t *hd_data)
   if(!hd_data->udevinfo) return;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(!hd->unix_dev_names && hd->unix_dev_name) {
+      add_str_list(&hd->unix_dev_names, hd->unix_dev_name);
+    }
+
     if(!hd->sysfs_id) continue;
 
     for(ui = hd_data->udevinfo; ui; ui = ui->next) {
       if(ui->name && !strcmp(ui->sysfs, hd->sysfs_id)) {
-        hd->unix_dev_names = free_str_list(hd->unix_dev_names);
-        hd->unix_dev_name = free_mem(hd->unix_dev_name);
-        str_printf(&s, 0, "/dev/%s", ui->name);
-        add_str_list(&hd->unix_dev_names, s);
+        if(!search_str_list(hd->unix_dev_names, ui->name)) {
+          add_str_list(&hd->unix_dev_names, ui->name);
+        }
         for(sl = ui->links; sl; sl = sl->next) {
-          str_printf(&s, 0, "/dev/%s", sl->str);
-          add_str_list(&hd->unix_dev_names, s);
-        }
-        s = free_mem(s);
-
-        sl = hd->unix_dev_names;
-
-        if(hd_data->flags.udev) {
-          /* use first link as canonical device name */
-          if(ui->links) sl = sl->next;
+          if(!search_str_list(hd->unix_dev_names, sl->str)) {
+            add_str_list(&hd->unix_dev_names, sl->str);
+          }
         }
 
-        hd->unix_dev_name = new_str(sl->str);
+        if(!hd->unix_dev_name) {
+          sl = hd->unix_dev_names;
+
+          if(hd_data->flags.udev) {
+            /* use first link as canonical device name */
+            if(ui->links) sl = sl->next;
+          }
+
+          hd->unix_dev_name = new_str(sl->str);
+        }
 
         break;
+      }
+    }
+  }
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(!hd->unix_dev_names) continue;
+
+    for(ui = hd_data->udevinfo; ui; ui = ui->next) {
+      if(search_str_list(hd->unix_dev_names, ui->name)) {
+        for(sl = ui->links; sl; sl = sl->next) {
+          if(!search_str_list(hd->unix_dev_names, sl->str)) {
+            add_str_list(&hd->unix_dev_names, sl->str);
+          }
+        }
       }
     }
   }

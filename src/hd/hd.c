@@ -5582,7 +5582,7 @@ void read_udevinfo(hd_data_t *hd_data)
 {
   str_list_t *sl, *udevinfo;
   hd_udevinfo_t **uip, *ui;
-  char *s, buf[256];
+  char *s = NULL, buf[256];
 
   udevinfo = read_file("| " PROG_UDEVINFO " -e 2>/dev/null", 0, 0);
 
@@ -5608,18 +5608,20 @@ void read_udevinfo(hd_data_t *hd_data)
     if(!ui) continue;
 
     if(sscanf(sl->str, "N: %255s", buf) == 1) {
-      free_mem(ui->name);
-      ui->name = new_str(buf);
+      str_printf(&ui->name, 0, "/dev/%s", buf);
 
       continue;
     }
 
     if(sscanf(sl->str, "S: %255s", buf) == 1) {
-      add_str_list(&ui->links, buf);
+      str_printf(&s, 0, "/dev/%s", buf);
+      add_str_list(&ui->links, s);
 
       continue;
     }
   }
+
+  s = free_mem(s);
 
   for(ui = hd_data->udevinfo; ui; ui = ui->next) {
     ADD2LOG("%s\n", ui->sysfs);
@@ -5999,6 +6001,29 @@ char *get_sysfs_attr_by_path(const char* path, const char* attr)
 
   return buf;
 }  
+
+
+/*
+ * Compare module names.
+ */
+int hd_mod_cmp(char *str1, char *str2)
+{
+  char *s;
+  int i;
+
+  str1 = strdup(str1);
+  str2 = strdup(str2);
+
+  for(s = str1; *s; s++) if(*s == '-') *s = '_';
+  for(s = str2; *s; s++) if(*s == '-') *s = '_';
+
+  i = strcmp(str1, str2);  
+
+  free(str1);
+  free(str2);
+
+  return i;
+}
 
 
 /** @} */

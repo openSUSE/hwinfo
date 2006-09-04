@@ -246,6 +246,8 @@ hal_device_t *hal_find_device(hd_data_t *hd_data, char *udi);
 char *hd_get_hddb_dir(void);
 char *hd_get_hddb_path(char *sub);
 
+int hd_mod_cmp(char *str1, char *str2);
+
 
 #ifdef __cplusplus
 }

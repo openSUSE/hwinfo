@@ -453,12 +453,17 @@ void add_mv(hd_data_t *hd_data)
   hd_t *hd, *hd_card;
   hd_res_t *res, *res2;
   struct stat sbuf;
+  char *s, *sf_dev, *sf_dev_name, *module;
 
   /*
    * Actually there are two (.0 & .1), but only one seems to be used - so we
    * don't care.
    */
-  if(stat("/sys/devices/platform/mv643xx_eth.0", &sbuf) || !S_ISDIR(sbuf.st_mode)) return;
+  sf_dev = "/sys/devices/platform/mv643xx_eth.0";
+  sf_dev_name = "mv643xx_eth.0";
+  module = "mv643xx_eth";
+
+  if(stat(sf_dev, &sbuf) || !S_ISDIR(sbuf.st_mode)) return;
 
   for(hd = hd_data->hd ; hd; hd = hd->next) {
     if(
@@ -471,8 +476,16 @@ void add_mv(hd_data_t *hd_data)
   hd_card->base_class.id = bc_network;
   hd_card->sub_class.id = 0;
 
-  hd_card->sysfs_id = new_str("/devices/platform/mv643xx_eth.0");
-  hd_card->sysfs_bus_id = new_str("mv643xx_eth.0");
+  hd_card->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+  hd_card->sysfs_bus_id = new_str(sf_dev_name);
+
+  if((s = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
+    hd_card->modalias = canon_str(s, strlen(s));
+    ADD2LOG("    modalias = \"%s\"\n", hd_card->modalias);
+  }
+  else {
+    hd_card->modalias = new_str(module);
+  }
 
   if(hd) {
     hd_card->attached_to = hd->idx;
@@ -484,8 +497,8 @@ void add_mv(hd_data_t *hd_data)
     hd_card->device.name = new_str("Gigabit Ethernet");
   }
 
-  if(hd_module_is_active(hd_data, "mv643xx_eth")) {
-    add_str_list(&hd_card->drivers, "mv643xx_eth");
+  if(hd_module_is_active(hd_data, module)) {
+    add_str_list(&hd_card->drivers, module);
   }
 
   for(hd = hd_data->hd ; hd; hd = hd->next) {
