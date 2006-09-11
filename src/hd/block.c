@@ -625,7 +625,7 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd)
     str_printf(&fname, 0, PROC_IDE "/%s/identify", dev_name);
     if((f = fopen(fname, "r"))) {
       u1 = 0;
-      memset(buf, sizeof buf, 0);
+      memset(buf, 0, sizeof buf);
       while(u1 < sizeof buf - 1 && fscanf(f, "%x", &u0) == 1) {
         buf[u1++] = u0 >> 8; buf[u1++] = u0;
       }
