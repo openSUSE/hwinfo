@@ -773,6 +773,7 @@ void int_wlan(hd_data_t *hd_data)
   str_list_t *sl;
   unsigned u, found;
   static char *wlan_mods[] = {
+    "acx",
     "acx_pci",
     "airo",
     "airo_cs",
