@@ -1,3 +1,4 @@
+27/9/2006:	v13.5
 	- revert TIOCGDEV removal accidentally introduced in v13.0 (#201741)
 	- remove adb code (#206648)
 	- provide bogo mips value (#206649)
