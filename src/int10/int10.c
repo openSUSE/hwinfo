@@ -62,7 +62,9 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
   if(hd_probe_feature(hd_data, pr_bios_ddc)) {
     PROGRESS(4, 3, "ddc info");
 
-    for(port = 0; port < sizeof vbe->ddc_port / sizeof *vbe->ddc_port; port++) {
+    ADD2LOG("vbe: probing %d ports\n", vbe->ddc_ports);
+
+    for(port = 0; port < vbe->ddc_ports; port++) {
       memset(vbeinfo, 0, sizeof vbeinfo);
       ax = 0x4f15; bx = 1; cx = port;
       i = CallInt10(&ax, &bx, &cx, vbeinfo, sizeof vbeinfo, cpuemu) & 0xffff;
