@@ -98,6 +98,7 @@ void read_cpuinfo(hd_data_t *hd_data)
 #ifdef __ia64__
   char model_id[80], vendor_id[80], features[0x100];
   unsigned mhz, stepping;
+  double bogo;
   char *t0, *t;
 #endif
 
@@ -386,6 +387,7 @@ void read_cpuinfo(hd_data_t *hd_data)
 #ifdef __ia64__
   *model_id = *vendor_id = *features = 0;
   mhz = stepping = 0;
+  bogo = 0;
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(sscanf(sl->str, "family : %79[^\n]", model_id) == 1);
@@ -393,6 +395,7 @@ void read_cpuinfo(hd_data_t *hd_data)
     if(sscanf(sl->str, "features : %255[^\n]", features) == 1);
     if(sscanf(sl->str, "cpu MHz : %u", &mhz) == 1);
     if(sscanf(sl->str, "revision : %u", &stepping) == 1);
+    if(sscanf(sl->str, "BogoMIPS : %lg", &bogo) == 1);
 
     if(strstr(sl->str, "processor") == sl->str || !sl->next) {		/* EOF */
       if(*model_id || *vendor_id) {	/* at least one of those */
