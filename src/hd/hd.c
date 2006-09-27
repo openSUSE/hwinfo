@@ -69,7 +69,6 @@
 #include "net.h"
 #include "version.h"
 #include "usb.h"
-#include "adb.h"
 #include "modem.h"
 #include "parallel.h"
 #include "isa.h"
@@ -208,7 +207,6 @@ static struct s_mod_names {
   { mod_mouse, "mouse"},
   { mod_scsi, "scsi"},
   { mod_usb, "usb"},
-  { mod_adb, "adb"},
   { mod_modem, "modem"},
   { mod_parallel, "parallel" },
   { mod_isa, "isa" },
@@ -283,7 +281,6 @@ static struct s_pr_flags {
   { pr_scsi_noserial, 0,                  0, "scsi.noserial" },
   { pr_usb,           0,            8|4|2|1, "usb"           },
   { pr_usb_mods,      0,              4    , "usb.mods"      },
-  { pr_adb,           0,            8|4|2|1, "adb"           },
   { pr_modem,         0,              4|2|1, "modem"         },
   { pr_modem_usb,     pr_modem,       4|2|1, "modem.usb"     },
   { pr_parallel,      0,              4|2|1, "parallel"      },
@@ -563,7 +560,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       if(!hd_data->flags.fast) {
         hd_set_probe_feature(hd_data, pr_serial);
       }
-      hd_set_probe_feature(hd_data, pr_adb);
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_kbd);
       hd_set_probe_feature(hd_data, pr_sys);
@@ -595,7 +591,6 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
     case hw_keyboard:
       hd_set_probe_feature(hd_data, pr_cpu);
       hd_set_probe_feature(hd_data, pr_misc);
-      hd_set_probe_feature(hd_data, pr_adb);
       hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_kbd);
       hd_set_probe_feature(hd_data, pr_input);
@@ -1978,13 +1973,8 @@ void hd_scan_no_hal(hd_data_t *hd_data)
   hd_scan_sysfs_block(hd_data);
   hd_scan_sysfs_scsi(hd_data);
   hd_scan_sysfs_usb(hd_data);
+#if defined(__i386__) || defined(__x86_64__)
   hd_scan_sysfs_edd(hd_data);
-
-#if 0
-  // no longer needed, done via kernel input device list
-#if defined(__PPC__)
-  hd_scan_adb(hd_data);
-#endif
 #endif
 
 #ifndef LIBHD_TINY

@@ -1,4 +1,7 @@
 	- revert TIOCGDEV removal accidentally introduced in v13.0 (#201741)
+	- remove adb code (#206648)
+	- provide bogo mips value (#206649)
+	- no edd unless x86 or x86_64 (#206654)
 
 18/9/2006:	v13.4
 	- acx_pci is now acx (#164992)

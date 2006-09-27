@@ -19,6 +19,8 @@
  * @{
  */
 
+#if defined(__i386__) || defined(__x86_64__)
+
 static void get_edd_info(hd_data_t *hd_data);
 
 void hd_scan_sysfs_edd(hd_data_t *hd_data)
@@ -235,6 +237,8 @@ void get_edd_info(hd_data_t *hd_data)
   }
 
 }
+
+#endif /* defined(__i386__) || defined(__x86_64__) */
 
 /** @} */
 

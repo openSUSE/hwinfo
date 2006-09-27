@@ -1379,6 +1379,7 @@ typedef struct {
   char *model_name;		/**< axp: cpu model */
   char *platform;		/**< x86: NULL */
   str_list_t *features;		/**< x86: flags */
+  double bogo;			/**< bogo mips */
 } cpu_info_t;
 
 

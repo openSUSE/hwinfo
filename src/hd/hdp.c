@@ -1077,7 +1077,7 @@ void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
   }
 
   if(ct->clock) dump_line("Clock: %u MHz\n", ct->clock);
-
+  if(ct->bogo) dump_line("BogoMips: %.2f\n", ct->bogo);
   if(ct->cache) dump_line("Cache: %u kb\n", ct->cache);
   if(ct->units) dump_line("Units/Processor: %u\n", ct->units);
 }
