@@ -352,24 +352,6 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     }
   }
 
-#if 0
-  if(
-    h->base_class.id == bc_storage_device &&
-    h->sub_class.id == sc_sdev_floppy &&
-    h->detail &&
-    h->detail->type == hd_detail_floppy
-  ) {
-    floppy_info_t *fi = h->detail->floppy.data;
-
-    if(fi) {
-      dump_line_str("Drive status: floppy found\n");
-    }
-    else {
-      dump_line_str("Drive status: no floppy found\n");
-    }
-  }
-#endif
-
   ind -= 2;
 
   if(h->next) dump_line_str("\n");
@@ -389,6 +371,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
   driver_info_t *di;
   str_list_t *sl, *sl1, *sl2;
   isdn_parm_t *ip;
+  monitor_info_t *mi;
   static char *geo_type_str[] = { "Physical", "Logical", "BIOS EDD", "BIOS Legacy" };
 
   if(h->model) dump_line("Model: \"%s\"\n", h->model);
@@ -808,6 +791,35 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 
   if(h->modalias) {
     dump_line("Module Alias: \"%s\"\n", h->modalias);
+  }
+
+  if(
+    h->detail &&
+    h->detail->type == hd_detail_monitor &&
+    (mi = h->detail->monitor.data)
+  ) {
+    if(mi->htotal && mi->vtotal) {
+      dump_line_str("Detailed Timings:\n");
+      dump_line("   Resolution: %ux%u\n", mi->width, mi->height);
+      dump_line(
+        "   Horizontal: %4u %4u %4u %4u (+%u +%u +%u) %chsync\n",
+        mi->hdisp, mi->hsyncstart, mi->hsyncend, mi->htotal,
+        mi->hsyncstart - mi->hdisp, mi->hsyncend - mi->hdisp, mi->htotal - mi->hdisp,
+        mi->hflag
+      );
+      dump_line(
+        "     Vertical: %4u %4u %4u %4u (+%u +%u +%u) %cvsync\n",
+        mi->vdisp, mi->vsyncstart, mi->vsyncend, mi->vtotal,
+        mi->vsyncstart - mi->vdisp, mi->vsyncend - mi->vdisp, mi->vtotal - mi->vdisp,
+        mi->vflag
+      );
+      dump_line(
+        "  Frequencies: %.2f MHz, %.2f kHz, %.2f Hz\n",
+        (double) mi->clock / 1000,
+        (double) mi->clock / mi->htotal,
+        (double) mi->clock / mi->htotal / mi->vtotal * 1000
+      );
+    }
   }
 
   for(di = h->driver_info, i = 0; di; di = di->next, i++) {

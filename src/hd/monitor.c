@@ -472,7 +472,6 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
               (double) mi->clock / u1 / u2 * 1000
             );
           }
-
         }
     }
   }
