@@ -23,6 +23,12 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
   unsigned char vbeinfo[0x200];
   int ax, bx, cx;
   unsigned cpuemu;
+  hd_smbios_t *sm;
+  struct {
+    unsigned notebook:1;
+    unsigned dell:1;
+    unsigned nvidia:1;
+  } is = { };
 
   log_hd_data = hd_data;
 
@@ -58,6 +64,42 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 
     read_vbe_info(hd_data, vbe, vbeinfo, cpuemu);
   }
+
+  /* scan only 2 ports for monitor data, some BIOSes crash when you try more */
+  vbe->ddc_ports = 2;
+
+  for(sm = hd_data->smbios; sm; sm = sm->next) {
+    if(
+      sm->any.type == sm_sysinfo &&
+      sm->sysinfo.manuf &&
+      !strncasecmp(sm->sysinfo.manuf, "dell ", 5)
+    ) {
+      is.dell = 1;
+    }
+
+    if(
+      sm->any.type == sm_chassis &&
+      (
+       (sm->chassis.ch_type.id >= 8 && sm->chassis.ch_type.id <= 11) ||
+        sm->chassis.ch_type.id == 14
+      )
+    ) {
+      is.notebook = 1;
+    }
+  }
+
+  if(
+    (vbe->vendor_name && !strncasecmp(vbe->vendor_name, "nvidia", sizeof "nvidia" - 1)) ||
+    (vbe->oem_name && !strncasecmp(vbe->oem_name, "nvidia", sizeof "nvidia" - 1))
+  ) is.nvidia = 1;
+
+  /* notebooks like to have it at port 3 */
+  if((is.dell || is.nvidia) && is.notebook) vbe->ddc_ports = 3;
+
+  if(hd_probe_feature(hd_data, pr_bios_ddc_ports_1)) vbe->ddc_ports = 1;
+  if(hd_probe_feature(hd_data, pr_bios_ddc_ports_2)) vbe->ddc_ports = 2;
+  if(hd_probe_feature(hd_data, pr_bios_ddc_ports_3)) vbe->ddc_ports = 3;
+  if(hd_probe_feature(hd_data, pr_bios_ddc_ports_4)) vbe->ddc_ports = 4;
 
   if(hd_probe_feature(hd_data, pr_bios_ddc)) {
     PROGRESS(4, 3, "ddc info");

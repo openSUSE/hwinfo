@@ -263,6 +263,10 @@ static struct s_pr_flags {
   { pr_bios,          0,            8|4|2|1, "bios"          },
   { pr_bios_vesa,     pr_bios,        4|2|1, "bios.vesa"     },
   { pr_bios_ddc,      pr_bios_vesa,       0, "bios.ddc"      },
+  { pr_bios_ddc_ports_1,  pr_bios_ddc,        0, "bios.ddc.ports=1"  }, // probe 1 ddc port
+  { pr_bios_ddc_ports_2,  pr_bios_ddc,        0, "bios.ddc.ports=2"  }, // probe 2 ddc ports
+  { pr_bios_ddc_ports_3,  pr_bios_ddc,        0, "bios.ddc.ports=3"  }, // probe 3 ddc ports
+  { pr_bios_ddc_ports_4,  pr_bios_ddc,        0, "bios.ddc.ports=4"  }, // probe 4 ddc ports
   { pr_bios_fb,       pr_bios_vesa,       0, "bios.fb"       },
   { pr_bios_mode,     pr_bios_vesa,       0, "bios.mode"     },
   { pr_bios_vbe,      pr_bios_mode,       0, "bios.vbe"      }, // just an alias
@@ -544,6 +548,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_prom);
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_bios_ddc);
+      hd_set_probe_feature(hd_data, pr_bios_fb);
       hd_set_probe_feature(hd_data, pr_fb);
       hd_set_probe_feature(hd_data, pr_monitor);
       break;

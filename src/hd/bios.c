@@ -157,7 +157,6 @@ void hd_scan_bios(hd_data_t *hd_data)
   hd_res_t *res;
   str_list_t *sl, *sl0;
   hd_smbios_t *sm;
-  unsigned is_dell_nb;
 #endif
 
   if(!hd_probe_feature(hd_data, pr_bios)) return;
@@ -431,34 +430,6 @@ void hd_scan_bios(hd_data_t *hd_data)
         ADD2LOG("  klog: pci config type %u\n", hd_data->pci_config_type);
       }
     }
-
-    /* scan only 2 ports for monitor data, some BIOSes crash when you try more */
-    vbe->ddc_ports = 2;
-
-    is_dell_nb = 0;
-
-    for(sm = hd_data->smbios; sm; sm = sm->next) {
-      if(
-        sm->any.type == sm_sysinfo &&
-        sm->sysinfo.manuf &&
-        !strncasecmp(sm->sysinfo.manuf, "dell ", 5)
-      ) {
-        is_dell_nb |= 1;
-      }
-
-      if(
-        sm->any.type == sm_chassis &&
-        (
-         (sm->chassis.ch_type.id >= 8 && sm->chassis.ch_type.id <= 11) ||
-          sm->chassis.ch_type.id == 14
-        )
-      ) {
-        is_dell_nb |= 2;
-      }
-    }
-
-    /* for Dell notebooks, go for 3 */
-    if(is_dell_nb == 3) vbe->ddc_ports = 3;
 
     get_vbe_info(hd_data, vbe);
 

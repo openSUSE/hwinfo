@@ -117,7 +117,8 @@ typedef enum probe_feature {
   pr_block, pr_block_cdrom, pr_block_part, pr_edd, pr_edd_mod, pr_bios_ddc,
   pr_bios_fb, pr_bios_mode, pr_input, pr_block_mods, pr_bios_vesa,
   pr_cpuemu_debug, pr_scsi_noserial, pr_wlan, pr_bios_crc, pr_hal,
-  pr_bios_vram, pr_bios_acpi,
+  pr_bios_vram, pr_bios_acpi, pr_bios_ddc_ports_1, pr_bios_ddc_ports_2,
+  pr_bios_ddc_ports_3, pr_bios_ddc_ports_4,
   pr_max, pr_lxrc, pr_default, 
   pr_all		/**< pr_all must be last */
 } hd_probe_feature_t;
