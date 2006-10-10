@@ -1,5 +1,7 @@
+10/10/2006:	v13.6
 	- scan 3 ports on all notebooks with nvidia cards for monitor data
 	- print detailed monitor timings
+	- report driver module name
 
 27/9/2006:	v13.5
 	- revert TIOCGDEV removal accidentally introduced in v13.0 (#201741)

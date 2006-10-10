@@ -460,6 +460,10 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     s = free_mem(s);
   }
 
+  if(hd_data->debug == -1u && h->driver_module) {
+    dump_line("Main Driver Module: \"%s\"\n", h->driver_module);
+  }
+
   if(h->broken) {
     dump_line_str("Warning: might be broken\n");
   }

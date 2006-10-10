@@ -2392,6 +2392,11 @@ typedef struct s_hd_t {
   char *driver;
 
   /**
+   * Currently active driver module (if any).
+   */
+  char *driver_module;
+
+  /**
    * List of currently active drivers.
    */
   str_list_t *drivers;

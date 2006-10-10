@@ -156,7 +156,6 @@ void hd_scan_bios(hd_data_t *hd_data)
   vbe_mode_info_t *mi;
   hd_res_t *res;
   str_list_t *sl, *sl0;
-  hd_smbios_t *sm;
 #endif
 
   if(!hd_probe_feature(hd_data, pr_bios)) return;
