@@ -529,7 +529,7 @@ void hd_scan_bios(hd_data_t *hd_data)
   if(hd_probe_feature(hd_data, pr_bios_acpi)) {
     PROGRESS(6, 0, "acpi");
 
-    if((sl0 = read_file("|/usr/sbin/acpidump", 0, 0))) {
+    if((sl0 = read_file("|/usr/sbin/acpidump 2>/dev/null", 0, 0))) {
       ADD2LOG("----- %s -----\n", "ACPI dump");
       for(sl = sl0; sl; sl = sl->next) {
         ADD2LOG("%s", sl->str);
