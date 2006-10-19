@@ -45,6 +45,7 @@ static void int_legacy_geo(hd_data_t *hd_data);
 #endif
 static void int_find_parent(hd_data_t *hd_data);
 static void int_add_driver_modules(hd_data_t *hd_data);
+static void int_update_driver_data(hd_data_t *hd_data, hd_t *hd);
 
 
 void hd_scan_int(hd_data_t *hd_data)
@@ -1163,24 +1164,63 @@ void int_find_parent(hd_data_t *hd_data)
 void int_add_driver_modules(hd_data_t *hd_data)
 {
   hd_t *hd;
-  hd_sysfsdrv_t *sf;
-  str_list_t *sl;
 
   hd_sysfs_driver_list(hd_data);
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    hd->driver_modules = free_str_list(hd->driver_modules);
+    int_update_driver_data(hd_data, hd);
+  }
+}
 
-    for(sl = hd->drivers; sl; sl = sl->next) {
-      for(sf = hd_data->sysfsdrv; sf; sf = sf->next) {
-        if(sf->module && !strcmp(sf->driver, sl->str)) {
-          add_str_list(&hd->driver_modules, sf->module);
-        }
+
+void int_update_driver_data(hd_data_t *hd_data, hd_t *hd)
+{
+  hd_sysfsdrv_t *sf;
+  str_list_t *sl;
+
+  hd->driver_modules = free_str_list(hd->driver_modules);
+
+  for(sl = hd->drivers; sl; sl = sl->next) {
+    for(sf = hd_data->sysfsdrv; sf; sf = sf->next) {
+      if(sf->module && !strcmp(sf->driver, sl->str)) {
+        add_str_list(&hd->driver_modules, sf->module);
+      }
+    }
+  }
+
+  hd->driver = free_mem(hd->driver);
+  hd->driver_module = free_mem(hd->driver_module);
+
+  if(hd->drivers && hd->drivers->str) {
+    hd->driver = new_str(hd->drivers->str);
+
+    for(sf = hd_data->sysfsdrv; sf; sf = sf->next) {
+      if(sf->module && !strcmp(sf->driver, hd->driver)) {
+        hd->driver_module = new_str(sf->module);
       }
     }
   }
 }
 
+
+/*
+ * Add driver data, if it is missing.
+ *
+ * Interface function, don't use internally.
+ */
+void hd_add_driver_data(hd_data_t *hd_data, hd_t *hd)
+{
+  char *s;
+
+  if(hd->drivers) return;
+
+  hd_sysfs_driver_list(hd_data);
+
+  s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+  if(s) add_str_list(&hd->drivers, s);
+
+  int_update_driver_data(hd_data, hd);
+}
 
 /** @} */
 

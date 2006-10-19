@@ -1854,24 +1854,6 @@ void hd_scan(hd_data_t *hd_data)
   /* we are done... */
   for(hd = hd_data->hd; hd; hd = hd->next) hd->tag.fixed = 1;
 
-  /* for compatibility */
-  for(hd = hd_data->hd; hd; hd = hd->next) {
-    hd_sysfsdrv_t *sf;
-
-    hd->driver = free_mem(hd->driver);
-    hd->driver_module = free_mem(hd->driver_module);
-
-    if(hd->drivers && hd->drivers->str) {
-      hd->driver = new_str(hd->drivers->str);
-
-      for(sf = hd_data->sysfsdrv; sf; sf = sf->next) {
-        if(sf->module && !strcmp(sf->driver, hd->driver)) {
-          hd->driver_module = new_str(sf->module);
-        }
-      }
-    }
-  }
-
   hd_data->module = mod_none;
 
   if(

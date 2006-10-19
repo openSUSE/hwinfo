@@ -217,7 +217,6 @@ void read_hal(hd_data_t *hd_data)
 
   libhal_ctx_free(hal_ctx);
 
-  dbus_connection_close(conn);
   dbus_connection_unref(conn);
 
   dbus_error_free(&error);
