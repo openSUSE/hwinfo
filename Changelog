@@ -1,3 +1,6 @@
+20/10/2006:	v13.9
+	- more checks for obviously broken monitor sizes (#213630)
+
 19/10/2006:	v13.8
 	- thoenig: do not close shared connection to the D-Bus system bus
 	- added hd_update_driver_data() that updates just the driver

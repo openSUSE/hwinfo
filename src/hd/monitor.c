@@ -414,13 +414,13 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
 
           u1 = edid[i + 2] + ((edid[i + 4] & 0xf0) << 4);
           u2 = edid[i + 5] + ((edid[i + 7] & 0xf0) << 4);
-          if(!u1 || !u2) break;
+          if(!u1 || !u2 || u1 == 0xfff || u2 == 0xfff) break;
           mi->width = u1;
           mi->height = u2;
 
           u1 = edid[i + 12] + ((edid[i + 14] & 0xf0) << 4);
           u2 = edid[i + 13] + ((edid[i + 14] & 0xf) << 8);
-          if(!u1 || !u2) break;
+          if(!u1 || !u2 || u1 == 0xfff || u2 == 0xfff) break;
           mi->width_mm = u1;
           mi->height_mm = u2;
 
@@ -496,7 +496,7 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
       /* actually we could calculate the vsync value */
       if(!res) add_monitor_res(hd, mi->width, mi->height, 60, 0);
 
-      /* do some sanity checks on display size, see bug 155096, 186096 */
+      /* do some sanity checks on display size, see bugs 155096, 186096, 213630 */
       if(mi->width_mm && mi->height_mm) {
         u = (mi->width_mm * mi->height * 16) / (mi->height_mm * mi->width);
         u1 = width_mm ? (width_mm * 16) / mi->width_mm : 16;
@@ -504,19 +504,21 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
         if(
           u <= 8 || u >= 32 ||		/* allow 1:2 distortion */
           u1 <= 8 || u1 >= 32 ||	/* width cm & mm values disagree by factor >2 --> use cm values */
-          u2 <= 8 || u2 >= 32		/* dto, height */
+          u2 <= 8 || u2 >= 32 ||	/* dto, height */
+          mi->width_mm < 100 ||		/* too small to be true... */
+          mi->height_mm < 100
         ) {
           ADD2LOG("  ddc: strange size data (%ux%u mm^2), trying cm values\n", mi->width_mm, mi->height_mm);
           /* ok, try cm values */
           if(width_mm && height_mm) {
             u = (width_mm * mi->height * 16) / (height_mm * mi->width);
-            if(u > 8 && u < 32) {
+            if(u > 8 && u < 32 && width_mm >= 100 && height_mm >= 100) {
               mi->width_mm = width_mm;
               mi->height_mm = height_mm;
             }
           }
           /* could not fix, clear */
-          if(u <= 8 || u >= 32) {
+          if(u <= 8 || u >= 32 || mi->width_mm < 100 || mi->height_mm < 100) {
             ADD2LOG("  ddc: cm values (%ux%u mm^2) didn't work either - giving up\n", width_mm, height_mm);
             mi->width_mm = mi->height_mm = 0;
           }
