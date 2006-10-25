@@ -1,5 +1,6 @@
 25/10/2006:	v13.10
 	- sometimes it's not really an usb mouse (#208745)
+	- give all apple usb keyboards a 'macintosh' layout (#213294)
 
 20/10/2006:	v13.9
 	- more checks for obviously broken monitor sizes (#213630)
