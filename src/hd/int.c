@@ -665,6 +665,28 @@ void int_mouse(hd_data_t *hd_data)
 {
   hd_t *hd;
   bios_info_t *bt = NULL;
+  str_list_t *sl;
+
+  for(hd = hd_data->hd; hd; hd = hd->next) {
+    if(
+      hd->bus.id != bus_usb ||
+      hd->base_class.id != bc_mouse ||
+      hd->sub_class.id != sc_mou_usb ||
+      !search_str_list(hd->drivers, "usbhid")
+    ) continue;
+
+    for(sl = hd->unix_dev_names; sl; sl = sl->next) {
+      if(strstr(sl->str, "/mice") || strstr(sl->str, "/mouse")) break;
+    }
+
+    /* not really a mouse */
+    if(!sl) {
+      hd->base_class.id = 0;
+      hd->sub_class.id = 0;
+      hd->compat_vendor.id = 0;
+      hd->compat_device.id = 0;
+    }
+  }
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
