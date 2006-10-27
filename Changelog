@@ -1,3 +1,6 @@
+27/10/2006:	v13.11
+	- resolved piix vs. ata_piix (#214992)
+
 25/10/2006:	v13.10
 	- sometimes it's not really an usb mouse (#208745)
 	- give all apple usb keyboards a 'macintosh' layout (#213294)
