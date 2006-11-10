@@ -531,7 +531,7 @@
 &device.id		pci 0x4e46
 +device.name		R300 NF
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e47
