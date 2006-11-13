@@ -1418,6 +1418,12 @@
 +driver.xfree		4|fglrx|3d||dri
 
  vendor.id		pci 0x1002
+&device.id		pci 0x71d4
++device.name		FireGL v5250
++driver.xfree		4|fbdev
++driver.xfree.config	Option "ShadowFB" "off"
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x7834
 +device.name		Radeon 9100 PRO IGP 7834
 +driver.xfree		4|radeon
