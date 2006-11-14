@@ -543,7 +543,7 @@ void dump_pci_data(hd_data_t *hd_data)
 void hd_read_macio(hd_data_t *hd_data)
 {
   char *s, *t;
-  char *macio_name, *macio_type, *macio_compat;
+  char *macio_name, *macio_type, *macio_compat, *macio_modalias;
   hd_t *hd, *hd2;
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev;
@@ -564,7 +564,7 @@ void hd_read_macio(hd_data_t *hd_data)
       hd_sysfs_id(sf_dev)
     );
 
-    macio_name = macio_type = macio_compat = NULL;
+    macio_name = macio_type = macio_compat = macio_modalias = NULL;
 
     if((s = get_sysfs_attr_by_path(sf_dev, "name"))) {
       macio_name = canon_str(s, strlen(s));
@@ -579,6 +579,11 @@ void hd_read_macio(hd_data_t *hd_data)
     if((s = get_sysfs_attr_by_path(sf_dev, "compatible"))) {
       macio_compat = canon_str(s, strlen(s));
       ADD2LOG("    compatible = \"%s\"\n", macio_compat);
+    }
+
+    if((s = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
+      macio_modalias = canon_str(s, strlen(s));
+      ADD2LOG("    modalias = \"%s\"\n", macio_modalias);
     }
 
     if(
@@ -607,6 +612,9 @@ void hd_read_macio(hd_data_t *hd_data)
       hd->sysfs_bus_id = new_str(sf_bus_e->str);
       s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
       if(s) add_str_list(&hd->drivers, s);
+
+      hd->modalias = macio_modalias;
+      macio_modalias = NULL;
 
       s = new_str(hd->sysfs_id);
 
