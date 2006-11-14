@@ -364,17 +364,9 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
 
   if(!modinfo_db) return drv_info;
 
-  if(
-    ID_TAG(hd->vendor.id) == TAG_PCI ||
-    ID_TAG(hd->device.id) == TAG_PCI
-  ) {
-    match.type = mi_pci;
-  }
-  else {
-    match.type = mi_other;
-  }
-
   match.alias = hd->modalias;
+
+  match.type = match.alias && !strncmp(match.alias, "pci:", 4) ? mi_pci : mi_other;
   
   if(!match.type) return drv_info;
 
