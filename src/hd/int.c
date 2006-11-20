@@ -666,6 +666,7 @@ void int_mouse(hd_data_t *hd_data)
   hd_t *hd;
   bios_info_t *bt = NULL;
   str_list_t *sl;
+  int is_mouse;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
@@ -675,12 +676,26 @@ void int_mouse(hd_data_t *hd_data)
       !search_str_list(hd->drivers, "usbhid")
     ) continue;
 
+    is_mouse = 0;
+
     for(sl = hd->unix_dev_names; sl; sl = sl->next) {
-      if(strstr(sl->str, "/mice") || strstr(sl->str, "/mouse")) break;
+      if(strstr(sl->str, "/mice") || strstr(sl->str, "/mouse")) {
+        is_mouse = 1;
+        break;
+      }
+    }
+
+    if(!is_mouse) {
+      if(
+        (hd->unix_dev_name && strstr(hd->unix_dev_name, "/mice")) ||
+        (hd->unix_dev_name2 && strstr(hd->unix_dev_name2, "/mouse"))
+      ) {
+        is_mouse = 1;
+      }
     }
 
     /* not really a mouse */
-    if(!sl) {
+    if(!is_mouse) {
       hd->base_class.id = 0;
       hd->sub_class.id = 0;
       hd->compat_vendor.id = 0;

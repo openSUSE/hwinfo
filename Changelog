@@ -1,3 +1,6 @@
+20/11/2006:	v13.15
+	- sometimes usb mice were missed (#216091)
+
 14/11/2006:	v13.14
 	- read modalias entry for macio devices (#220762)
 	- fixed modalias matching
