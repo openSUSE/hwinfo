@@ -5,7 +5,7 @@
 &device.id		pci 0x3150
 +device.name		Radeon Mobility X600 (M24) 3150 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x3152
@@ -777,7 +777,6 @@
 &device.id		pci 0x5148
 +device.name		fgl8x00
 +driver.xfree		4|radeon
-+driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5148
@@ -1162,7 +1161,7 @@
 +device.name		Mobility Radeon X700 5653 (M26) (PCIE)
 +driver.xfree		4|radeon
 +driver.xfree.config	Option "MonitorLayout" "LVDS,AUTO"
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5654
@@ -1279,7 +1278,7 @@
 &device.id		pci 0x5b60
 +device.name		Radeon X300 (RV370) 5B60 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5b60
@@ -1304,7 +1303,7 @@
 &device.id		pci 0x5b64
 +device.name		FireGL V3100 (RV370) 5B64 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5b65

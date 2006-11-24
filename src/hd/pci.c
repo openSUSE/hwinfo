@@ -49,6 +49,7 @@ static unsigned char pci_cfg_byte(pci_t *pci, int fd, unsigned idx);
 static void dump_pci_data(hd_data_t *hd_data);
 static void hd_read_macio(hd_data_t *hd_data);
 static void hd_read_vio(hd_data_t *hd_data);
+static void hd_read_xen(hd_data_t *hd_data);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
 {
@@ -75,9 +76,13 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
 
   hd_read_macio(hd_data);
 
-  PROGRESS(3, 0, "vio");
+  PROGRESS(4, 0, "vio");
 
   hd_read_vio(hd_data);
+
+  PROGRESS(5, 0, "xen");
+
+  hd_read_xen(hd_data);
 }
 
 
@@ -719,6 +724,74 @@ void hd_read_vio(hd_data_t *hd_data)
 
   free_str_list(sf_bus);
 }
+
+
+/*
+ * Get xen (network) data from sysfs.
+ */
+void hd_read_xen(hd_data_t *hd_data)
+{
+  char *s, *xen_type, *xen_node;
+  int eth_cnt = 0;
+  hd_t *hd;
+  str_list_t *sf_bus, *sf_bus_e;
+  char *sf_dev;
+
+  sf_bus = reverse_str_list(read_dir("/sys/bus/xen/devices", 'l'));
+
+  if(!sf_bus) {
+    ADD2LOG("sysfs: no such bus: xen\n");
+    return;
+  }
+
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/xen/devices", sf_bus_e->str));
+
+    ADD2LOG(
+      "  xen device: name = %s\n    path = %s\n",
+      sf_bus_e->str,
+      hd_sysfs_id(sf_dev)
+    );
+
+    xen_type = xen_node = NULL;
+
+    if((s = get_sysfs_attr_by_path(sf_dev, "devtype"))) {
+      xen_type = canon_str(s, strlen(s));
+      ADD2LOG("    type = \"%s\"\n", xen_type);
+    }
+
+    if((s = get_sysfs_attr_by_path(sf_dev, "nodename"))) {
+      xen_node = canon_str(s, strlen(s));
+      ADD2LOG("    node = \"%s\"\n", xen_node);
+    }
+
+    if(
+      xen_type &&
+      !strcmp(xen_type, "vif")
+    ) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+
+      hd->bus.id = bus_none;
+      hd->base_class.id = bc_network;
+      hd->sub_class.id = 0;	/* ethernet */
+      hd->slot = eth_cnt++;
+      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6011);	/* xen */
+      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
+      str_printf(&hd->device.name, 0, "Virtual Ethernet card %d", hd->slot);
+      hd->rom_id = new_str(xen_node);
+
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+      hd->sysfs_bus_id = new_str(sf_bus_e->str);
+      s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+      if(s) add_str_list(&hd->drivers, s);
+    }
+
+    free_mem(sf_dev);
+  }
+
+  free_str_list(sf_bus);
+}
+
 
 /** @} */
 
