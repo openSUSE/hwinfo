@@ -3790,6 +3790,12 @@
 +driver.xfree		4|i810|3d||dri
 
  vendor.id		pci 0x8086
+&device.id		pci 0x2982
++device.name		965G-1
++driver.xfree		4|i810beta
++driver.xfree		4|i810beta|3d||dri
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x3577
 +device.name		i830
 +driver.xfree		4|i810
