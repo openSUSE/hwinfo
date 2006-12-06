@@ -717,6 +717,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 
     case hw_usb:
       hd_set_probe_feature(hd_data, pr_usb);
+      hd_set_probe_feature(hd_data, pr_input);
       hd_set_probe_feature(hd_data, pr_isdn);	// need pr_misc, too?
       hd_set_probe_feature(hd_data, pr_block);
       hd_set_probe_feature(hd_data, pr_block_mods);
@@ -759,6 +760,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_block);
       hd_set_probe_feature(hd_data, pr_block_mods);
       hd_set_probe_feature(hd_data, pr_scsi);
+      hd_set_probe_feature(hd_data, pr_usb);
       break;
 
     case hw_ide:
