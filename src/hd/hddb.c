@@ -2238,6 +2238,10 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
           }
         }
       }
+      if(ID_TAG(hd->vendor.id) == TAG_USB) {
+        free_mem(ki->XkbModel);
+        ki->XkbModel = new_str(hd->vendor.id == MAKE_ID(TAG_USB, 0x05ac) ? "macintosh" : "pc104");
+      }
       break;
 
     case arch_sparc:

@@ -1,4 +1,6 @@
+26/1/2007:	v13.19
 	- there are usb tapes (#222978)
+	- apple vs. pc kbd layout issue solved for ppc (#233968)
 
 27/11/2006:	v13.18
 	- updated X11 data
