@@ -2373,6 +2373,23 @@ str_list_t *free_str_list(str_list_t *list)
 }
 
 
+/** \relates s_str_list_t
+ * Reverse string list.
+ */
+str_list_t *reverse_str_list(str_list_t *list)
+{
+  str_list_t *sl, *sl_new = NULL, *next;
+
+  for(sl = list; sl; sl = next) {
+    next = sl->next;
+    sl->next = sl_new;
+    sl_new = sl;
+  }
+
+  return sl_new;
+}
+
+
 /*
  * Read a file; return a linked list of lines.
  *
@@ -2504,10 +2521,46 @@ char *hd_read_symlink(char *link_name)
   static char buf[256];
   int i;
 
+  if(!link_name) {
+    *buf = 0;
+
+    return buf;
+  }
+
   i = readlink(link_name, buf, sizeof buf);
   buf[sizeof buf - 1] = 0;
   if(i >= 0 && (unsigned) i < sizeof buf) buf[i] = 0;
   if(i < 0) *buf = 0;
+
+  return buf;
+}
+
+
+char *hd_read_sysfs_link(char *base_dir, char *link_name)
+{
+  char *s = NULL, *l, *t;
+  static char *buf = NULL;
+
+  if(!base_dir || !link_name) return NULL;
+
+  str_printf(&s, 0, "%s/%s", base_dir, link_name);
+  l = hd_read_symlink(s);
+  if(!*l) return NULL;
+
+  free_mem(buf);
+
+  buf = new_mem(strlen(base_dir) + strlen(l) + 2);
+
+  s[strlen(base_dir)] = 0;
+
+  while(!strncmp(l, "../", 3)) {
+    if((t = strrchr(s, '/'))) *t = 0;
+    l += 3;
+  }
+
+  sprintf(buf, "%s/%s", s, l);
+
+  free_mem(s);
 
   return buf;
 }
@@ -5788,5 +5841,33 @@ char *hd_get_hddb_path(char *sub)
 
   return dir;
 }
+
+
+/*
+ * must be able to read more than one line
+ */
+char *get_sysfs_attr_by_path(const char* path, const char* attr)
+{
+  static char buf[1024];
+  int i, fd;
+
+  sprintf(buf, "%s/%s", path, attr);
+  fd = open(buf, O_RDONLY);
+  if(fd >= 0) {
+    i = read(fd, buf, sizeof buf - 1);
+    close(fd);
+    if(i >= 0) {
+      buf[i] = 0;
+    }
+    else {
+      return NULL;
+    }
+  }
+  else {
+    return NULL;
+  }
+
+  return buf;
+}  
 
 

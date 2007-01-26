@@ -138,9 +138,11 @@ void hexdump(char **buf, int with_ascii, unsigned data_len, unsigned char *data)
 str_list_t *search_str_list(str_list_t *sl, char *str);
 str_list_t *add_str_list(str_list_t **sl, char *str);
 str_list_t *free_str_list(str_list_t *list);
+str_list_t *reverse_str_list(str_list_t *list);
 str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines);
 str_list_t *read_dir(char *dir_name, int type);
 char *hd_read_symlink(char *link_name);
+char *hd_read_sysfs_link(char *base_dir, char *link_name);
 void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg);
 
 void remove_hd_entries(hd_data_t *hd_data);
@@ -223,6 +225,8 @@ void hd_sysfs_driver_list(hd_data_t *hd_data);
 char *hd_sysfs_find_driver(hd_data_t *hd_data, char *sysfs_id, int exact);
 int hd_report_this(hd_data_t *hd_data, hd_t *hd);
 str_list_t *hd_module_list(hd_data_t *hd_data, unsigned id);
+
+char* get_sysfs_attr_by_path(const char* path, const char* attr);
 
 int hd_is_iseries(hd_data_t *hd_data);
 hal_device_t *hd_free_hal_devices(hal_device_t *dev);
