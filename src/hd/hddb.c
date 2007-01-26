@@ -2238,7 +2238,7 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
     case arch_x86_64:
     case arch_alpha:
       ki->XkbRules = new_str("xfree86");
-      ki->XkbModel = new_str("pc104");
+      ki->XkbModel = new_str(hd->vendor.id == MAKE_ID(TAG_USB, 0x05ac) ? "macintosh" : "pc104");
       break;
 
     case arch_ppc:
@@ -2259,6 +2259,10 @@ driver_info_t *kbd_driver(hd_data_t *hd_data, hd_t *hd)
             ki->XkbModel = new_str("pc104");
           }
         }
+      }
+      if(ID_TAG(hd->vendor.id) == TAG_USB) {
+        free_mem(ki->XkbModel);
+        ki->XkbModel = new_str(hd->vendor.id == MAKE_ID(TAG_USB, 0x05ac) ? "macintosh" : "pc104");
       }
       break;
 
