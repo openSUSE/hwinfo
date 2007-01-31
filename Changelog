@@ -1,3 +1,6 @@
+31/1/2007:	v12.39
+	- don't read memory crossing 1MB border to make Xen happy (#154681)
+
 26/1/2007:	v12.38
 	- adjust network detection to new xen (backport from 10.2, #237340, #220817)
 

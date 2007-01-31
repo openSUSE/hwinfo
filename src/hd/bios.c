@@ -380,6 +380,15 @@ void hd_scan_bios(hd_data_t *hd_data)
   if(bt->smp.ok && bt->smp.mpconfig) {
     mem.start = bt->smp.mpconfig;
     mem.size = 1 << 16;
+
+    /*
+     * xen is somewhat picky, bug 154681:
+     * reduce size to not overlap 1MB border, but not below 0x40 bytes
+     */
+    if(mem.start < (1 << 20) - 0x40 && mem.start > ((1 << 20) - mem.size)) {
+      mem.size = (1 << 20) - mem.start;
+    }
+
     mem.data = NULL;
     read_memory(hd_data, &mem);
     parse_mpconfig(hd_data, &mem, &bt->smp);
