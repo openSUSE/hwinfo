@@ -70,6 +70,7 @@ static struct {
   { 305, 230, 1400, 1050, "Samsung Electronics", "SX20S", "Revision PR" },
   { 290, 200, 1280,  800, "TOSHIBA", "Satellite M30X", "PSA72E-00J020GR" },
   { 305, 230, 1400, 1050, "ASUSTeK Computer Inc.", "M6V", "1.0" },
+  { 248, 189,  640,  480, "IBM CORPORATION", "4851514", NULL },
 };
 
 #define BIOS_TEST
