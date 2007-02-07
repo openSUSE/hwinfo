@@ -35,6 +35,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
   char dirname[128];
   char linkname[128];
   int virtual_machine=0;
+  int linkstrip;
 
   unsigned int devtype=0,devmod=0,cutype=0,cumod=0;
 
@@ -132,8 +133,6 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     devmod = strtol(index(get_sysfs_attr(BUSNAME, curdev->d_name, "devtype"), '/') + 1, NULL, 16);
     readonly = atoi(get_sysfs_attr(BUSNAME, curdev->d_name, "readonly")?:"0");
     
-    sprintf(attrname, "/sys/bus/" BUSNAME "/devices/%s", curdev->d_name);
-    
     res->io.type=res_io;
     res->io.access=readonly?acc_ro:acc_rw;
     res->io.base=strtol(rindex(curdev->d_name,'.')+1,NULL,16);
@@ -156,6 +155,18 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
       case 0x3088:    /* CU3088 (CTC, LCS) */
 	res->io.range++;
     }
+    
+    if(res->io.range > 1) {
+      sprintf(attrname, "/sys/bus/" BUSNAME "/devices/%s/group_device", curdev->d_name);
+      memset(linkname,0,128);
+      if(readlink(attrname, linkname, 127) == -1) {
+        sprintf(attrname, "/sys/bus/" BUSNAME "/devices/%s", curdev->d_name);
+        linkstrip = 6;
+      } else linkstrip = 9;
+    } else {
+      linkstrip = 6;
+      sprintf(attrname, "/sys/bus/" BUSNAME "/devices/%s", curdev->d_name);
+    }
 
     hd=add_hd_entry(hd_data,__LINE__,0);
     add_res_entry(&hd->res,res);
@@ -164,16 +175,17 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     hd->sub_device.id=MAKE_ID(TAG_SPECIAL,devtype);
     hd->bus.id=bus_ccw;
     
-    /* whether resolving the symlink makes sense or not is debatable, but libsysfs did it, so it
-       is consistent with earlier versions of this code */
-    memset(linkname,0,128);
+    /* whether resolving the symlink in the non-grouped device case makes sense or not is debatable, but libsysfs did it, so it
+       is consistent with earlier versions of this code. in the grouped device case it is necessary to obtain a sysfs id that
+       is consistent with net.c which resolves /sys/class/net/<ifname>/device. */
+    memset(linkname, 0, 128);
     if(readlink(attrname,linkname,127) == -1)
       hd->sysfs_device_link = new_str(hd_sysfs_id(attrname));
     else
-      hd->sysfs_device_link = new_str(hd_sysfs_id(linkname+6));
+      hd->sysfs_device_link = new_str(hd_sysfs_id(linkname+linkstrip));
     
     hd->sysfs_id = new_str(hd->sysfs_device_link);
-    hd->sysfs_bus_id = new_str(strrchr(attrname,'/')+1);
+    hd->sysfs_bus_id = new_str(curdev->d_name);
     
     if(cutypes[res->io.base]==-2)	/* virtual reader */
     {
