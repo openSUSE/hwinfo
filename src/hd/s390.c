@@ -28,6 +28,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
   struct dlist *devlist = NULL;
   struct dlist *devlist_group = NULL;
   int virtual_machine=0;
+  char gpath[256];
 
   unsigned int devtype=0,devmod=0,cutype=0,cumod=0;
 
@@ -159,6 +160,19 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
       case 0x3088:    /* CU3088 (CTC, LCS) */
 	res->io.range++;
     }
+    
+    if(res->io.range > 1) {
+      /* use the group device path if possible. this is necessary to keep the sysfs ids consistent with those
+         used for network interfaces, which in turn is necessary to find out which network if sits on top of
+         which network card. */
+      strcpy(gpath, curdev->path);
+      strcat(gpath, "/group_device");
+      char ggpath[256];
+      memset(ggpath, 0, 256);
+      if(readlink(gpath, ggpath, 256) == -1) strcpy(gpath, curdev->path);
+      else strcpy(gpath, ggpath + 9);
+    }
+    else strcpy(gpath, curdev->path);
 
     hd=add_hd_entry(hd_data,__LINE__,0);
     add_res_entry(&hd->res,res);
@@ -166,7 +180,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     hd->device.id=MAKE_ID(TAG_SPECIAL,cutype);
     hd->sub_device.id=MAKE_ID(TAG_SPECIAL,devtype);
     hd->bus.id=bus_ccw;
-    hd->sysfs_device_link = new_str(hd_sysfs_id(curdev->path));
+    hd->sysfs_device_link = new_str(hd_sysfs_id(gpath));
     hd->sysfs_id = new_str(hd->sysfs_device_link);
     hd->sysfs_bus_id = new_str(strrchr(curdev->path,'/')+1);
     

@@ -1,3 +1,6 @@
+7/2/2007:	v12.41
+	- ensure network/hardware sysfs ID consistency (bug #168492)
+
 1/2/2007:	v12.40
 	- added IBM SurePOS display size (#227559)
 
