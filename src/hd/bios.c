@@ -94,6 +94,7 @@ static void add_panel_info(hd_data_t *hd_data, bios_info_t *bt);
 static void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt);
 static unsigned char crc(unsigned char *mem, unsigned len);
 static int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
+static unsigned parse_mpconfig_len(hd_data_t *hd_data, memory_range_t *mem);
 static void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
 static int get_bios32_info(hd_data_t *hd_data, memory_range_t *mem, bios32_info_t *bios32);
 
@@ -384,10 +385,16 @@ void hd_scan_bios(hd_data_t *hd_data)
 
   if(bt->smp.ok && bt->smp.mpconfig) {
     mem.start = bt->smp.mpconfig;
-    mem.size = 1 << 16;
+    mem.size = 0x40;
     mem.data = NULL;
     read_memory(hd_data, &mem);
-    parse_mpconfig(hd_data, &mem, &bt->smp);
+    u = parse_mpconfig_len(hd_data, &mem);
+    ADD2LOG("  MP config table size: %u\n", u);
+    if(u > 0x40) {
+      mem.size = u < (1 << 16) ? u : (1 << 16);
+      read_memory(hd_data, &mem);
+    }
+    if(u) parse_mpconfig(hd_data, &mem, &bt->smp);
     mem.data = free_mem(mem.data);
   }
   
@@ -964,6 +971,19 @@ int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
 #else
   return 0;
 #endif
+}
+
+
+unsigned parse_mpconfig_len(hd_data_t *hd_data, memory_range_t *mem)
+{
+  unsigned len = 0;
+
+  if(*(unsigned *) (mem->data) == 0x504d4350) {		/* "PCMP" */
+    len = mem->data[0x04] + (mem->data[0x05] << 8) +
+          mem->data[0x28] + (mem->data[0x29] << 8);
+  }
+
+  return len;
 }
 
 
