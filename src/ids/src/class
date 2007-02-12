@@ -40,7 +40,7 @@
 
  baseclass.id		0x001
 &subclass.id		0x80
-+subclass.name		Unknown mass storage controller
++subclass.name		Storage controller
 
  baseclass.id		0x002
 +baseclass.name		Network controller

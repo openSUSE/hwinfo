@@ -646,10 +646,25 @@
 +vendor.name		UML
 
 
-# Xen veth
+# Xen network & storage
  vendor.id		special 0x6011
 +vendor.name		Xen
 
+ vendor.id		special 0x6011
+&device.id		special 0x0001
++driver.module.modprobe	xennet
+
+ vendor.id		special 0x6011
+&device.id		special 0x0002
++driver.module.modprobe	xen-vnif
+
+ vendor.id		special 0x6011
+&device.id		special 0x1001
++driver.module.modprobe	xenblk
+
+ vendor.id		special 0x6011
+&device.id		special 0x1002
++driver.module.modprobe	xen-vbd
 
 # VirtualIron
  vendor.id		special 0x6012
