@@ -162,7 +162,10 @@ void get_block_devs(hd_data_t *hd_data)
     if(bus_id) bus_id++;
 
     bus_name = NULL;
-    if((s = hd_read_sysfs_link(sf_dev, "bus"))) {
+    if(
+      (s = hd_read_sysfs_link(sf_dev, "subsystem")) ||
+      (s = hd_read_sysfs_link(sf_dev, "bus"))
+    ) {
       bus_name = strrchr(s, '/');
       if(bus_name) bus_name++;
       bus_name = new_str(bus_name);
