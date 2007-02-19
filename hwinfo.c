@@ -48,7 +48,7 @@ void dump_db(hd_data_t *hd_data);
 void do_chroot(hd_data_t *hd_data, char *dir);
 void ask_db(hd_data_t *hd_data, char *query);
 void get_mapping(hd_data_t *hd_data);
-void get_mapping2(hd_data_t *hd_data);
+int get_mapping2(void);
 void write_udi(hd_data_t *hd_data, char *udi);
 
 void do_saveconfig(hd_data_t *hd_data, hd_t *hd, FILE *f);
@@ -56,6 +56,7 @@ void do_saveconfig(hd_data_t *hd_data, hd_t *hd, FILE *f);
 struct {
   unsigned db_idx;
   unsigned separate:1;
+  unsigned verbose:1;
   char *root;
 } opt;
 
@@ -66,6 +67,7 @@ struct option options[] = {
   { "version", 0, NULL, 400 },
   { "log", 1, NULL, 'l' },
   { "packages", 0, NULL, 'p' },
+  { "verbose", 0, NULL, 'v' },
   { "test", 0, NULL, 300 },
   { "format", 1, NULL, 301 },
   { "show-config", 1, NULL, 302 },
@@ -85,6 +87,7 @@ struct option options[] = {
   { "hddb-dir", 1, NULL, 316 },
   { "nowpa", 0, NULL, 317 },
   { "map2", 0, NULL, 318 },
+  { "hddb-dir-new", 1, NULL, 319 },
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -177,7 +180,7 @@ int main(int argc, char **argv)
 
     opterr = 0;
 
-    while((i = getopt_long(argc, argv, "hd:l:p", options, NULL)) != -1) {
+    while((i = getopt_long(argc, argv, "hd:l:pv", options, NULL)) != -1) {
       switch(i) {
         case 1:
           if(!strcmp(optarg, "braille")) {
@@ -206,6 +209,10 @@ int main(int argc, char **argv)
         case 'p':
           dump_packages(hd_data);
 	  break;
+
+        case 'v':
+          opt.verbose = 1;
+          break;
 
         case 300:
           do_test(hd_data);
@@ -283,7 +290,11 @@ int main(int argc, char **argv)
           break;
 
         case 318:
-          get_mapping2(hd_data);
+          return get_mapping2();
+          break;
+
+        case 319:
+          if(*optarg) setenv("LIBHD_HDDB_DIR_NEW", optarg, 1);
           break;
 
         case 400:
@@ -1566,20 +1577,135 @@ void do_saveconfig(hd_data_t *hd_data, hd_t *hd, FILE *f)
 }
 
 
-void get_mapping2(hd_data_t *hd_data)
+int get_mapping2()
 {
-  hd_t *hd_manual, *hd;
-  hd_hw_item_t hw_items[] = { hw_disk, 0 };
+  hd_data_t *hd_data, *hd_data_new;
+  hd_t *hd_manual, *hd, *hd_ctrl;
+  hd_hw_item_t hw_items[] = { hw_disk, hw_cdrom, hw_storage_ctrl, 0 };
+  hd_hw_item_t type;
+  struct {
+    hd_hw_item_t type;
+    char *dev;
+    char *dev_new;
+    char *id;
+    char *p_id;
+  } *map;
+  unsigned i, cnt, unassigned = 0;
+  int err = 0;
+  char *s;
 
-  hd_data->progress = NULL;
-
+  hd_data = calloc(1, sizeof *hd_data);
   hd_data->flags.list_all = 1;
+  hd_data->debug = -1;
 
-  hd_manual = hd_list2(hd_data, hw_items, 1);
-  for(hd = hd_manual; hd; hd = hd->next) {
-    hd_dump_entry(hd_data, hd, stdout);
+  hd_data_new = calloc(1, sizeof *hd_data_new);
+  hd_data_new->flags.list_all = 1;
+
+  hd_list(hd_data, hw_manual, 1, NULL);
+  hd_manual = hd_list2(hd_data, hw_items, 0);
+
+  for(cnt = 0, hd = hd_manual; hd; hd = hd->next) {
+    cnt++;
+    if(opt.verbose) {
+      hd_dump_entry(hd_data, hd, stderr);
+      fprintf(stderr, "\n");
+    }
   }
 
+  if(!cnt) return 0;
+
+  map = calloc(cnt, sizeof *map);
+
+  cnt = 0;
+
+  for(hd = hd_manual; hd; hd = hd->next) {
+    type = hw_none;
+    if(hd_is_hw_class(hd, hw_cdrom)) type = hw_cdrom;
+    if(hd_is_hw_class(hd, hw_disk)) type = hw_disk;
+
+    if(type == hw_none || !hd->unix_dev_name) continue;
+
+    // printf("%s: %s\n  %s\n  %s\n", hd->unix_dev_name, hd->model, hd->unique_id, hd->udi);
+    hd_ctrl = hd_get_device_by_idx(hd_data, hd->attached_to);
+    map[cnt].type = type;
+    map[cnt].dev = hd->unix_dev_name;
+    map[cnt].id = hd->unique_id;
+    if(hd_ctrl) {
+      map[cnt].p_id = hd_ctrl->unique_id;
+      // printf("    %s\n    %s\n", hd_ctrl->unique_id, hd_ctrl->udi);
+    }
+
+    cnt++;
+  }
+
+  if(!cnt) {
+    free(map);
+    return 0;
+  }
+
+  s = getenv("LIBHD_HDDB_DIR_NEW");
+  if(s) {
+    setenv("LIBHD_HDDB_DIR", s, 1);
+
+    hd_list(hd_data_new, hw_manual, 1, NULL);
+    hd_manual = hd_list2(hd_data_new, hw_items, 0);
+  }
+  else {
+    hd_data_new->flags.list_all = 0;
+    hd_manual = hd_list2(hd_data_new, hw_items, 1);
+  }
+
+  for(hd = hd_manual; hd; hd = hd->next) {
+    type = hw_none;
+    if(hd_is_hw_class(hd, hw_cdrom)) type = hw_cdrom;
+    if(hd_is_hw_class(hd, hw_disk)) type = hw_disk;
+
+    if(type == hw_none || !hd->unix_dev_name) continue;
+
+    hd_ctrl = hd_get_device_by_idx(hd_data_new, hd->attached_to);
+
+    if(hd_ctrl) {
+      for(i = 0; i < cnt; i++) {
+        if(
+          map[i].type == type &&
+          !map[i].dev_new &&
+          map[i].p_id &&
+          !strcmp(map[i].p_id, hd_ctrl->unique_id)
+        ) {
+          map[i].dev_new = hd->unix_dev_name;
+          break;
+        }
+      }
+      if(i == cnt) unassigned++;
+    }
+  }
+
+  for(i = 0; i < cnt; i++) {
+    if(!map[i].dev_new) {
+      unassigned++;
+      continue;
+    }
+    if(strcmp(map[i].dev_new, map[i].dev)) printf("%s\t%s\n", map[i].dev_new, map[i].dev);
+    if(opt.verbose) {
+      fprintf(stderr,
+        "%d: %s = %s (%s @ %s)\n",
+        map[i].type, map[i].dev_new, map[i].dev, map[i].id, map[i].p_id
+      );
+    }
+  }
+  if(opt.verbose) fprintf(stderr, "unassigned = %d\n", unassigned);
+
+  if(unassigned) err = 1;
+
+  free(map);
+
+  hd_free_hd_data(hd_data_new);
+  free(hd_data_new);
+
+  hd_free_hd_data(hd_data);
+  free(hd_data);
+
+  return err;
 }
 
 

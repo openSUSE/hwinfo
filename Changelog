@@ -1,5 +1,7 @@
+19/2/2007:	v13.22
 	- provide a bit more xen device info (#241564)
 	- sysfs: 'bus' is now called 'subsystem'
+	- support ehea devices (#243710)
 
 9/2/2007:	v13.21
 	- use dpt_i2o, not i2o (#176735)

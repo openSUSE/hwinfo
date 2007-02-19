@@ -31,6 +31,7 @@ static void read_devtree(hd_data_t *hd_data);
 static void add_pci_prom_devices(hd_data_t *hd_data, hd_t *hd_parent, devtree_t *parent);
 static void add_legacy_prom_devices(hd_data_t *hd_data, devtree_t *dt);
 static int add_prom_display(hd_data_t *hd_data, devtree_t *dt);
+static void add_prom_ehea(hd_data_t *hd_data, devtree_t *dt);
 static void add_devices(hd_data_t *hd_data);
 static void dump_devtree_data(hd_data_t *hd_data);
 
@@ -459,6 +460,8 @@ void add_legacy_prom_devices(hd_data_t *hd_data, devtree_t *dt)
 {
   if(dt->pci) return;
 
+  add_prom_ehea(hd_data, dt);
+
   if(add_prom_display(hd_data, dt)) return;
 }
 
@@ -506,6 +509,64 @@ int add_prom_display(hd_data_t *hd_data, devtree_t *dt)
   }
 
   return 0;
+}
+
+void add_prom_ehea(hd_data_t *hd_data, devtree_t *dt)
+{
+  hd_t *hd;
+  hd_res_t *res;
+  char *path = NULL;
+  unsigned char *hw_addr_bin = NULL;
+  char *hw_addr = NULL;
+  int slot;
+
+  if(
+    dt->device_type &&
+    dt->compatible &&
+    !strcmp(dt->device_type, "network") &&
+    !strcmp(dt->compatible, "IBM,lhea-ethernet")
+  ) {
+    str_printf(&path, 0, PROC_PROM "/%s", dt->path);
+
+    ADD2LOG("  ehea: %s\n", path);
+
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->bus.id = bus_none;
+    hd->base_class.id = bc_network;
+    hd->sub_class.id = 0;	/* ethernet */
+
+    hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);
+    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1003);
+    hd->rom_id = new_str(dt->path);
+
+    read_int(path, "ibm,hea-port-no", &slot);
+    hd->slot = slot;
+
+    read_str(path, "ibm,fw-adapter-name", &hd->device.name);
+    if(!hd->device.name) {
+      hd->device.name = new_str("IBM Host Ethernet Adapter");
+    }
+
+    // "mac-address" or "local-mac-address" ?
+    read_mem(path, "local-mac-address", &hw_addr_bin, 6);
+
+    if(hw_addr_bin) {
+      str_printf(
+        &hw_addr, 0, "%02x:%02x:%02x:%02x:%02x:%02x",
+        hw_addr_bin[0], hw_addr_bin[1],
+        hw_addr_bin[2], hw_addr_bin[3],
+        hw_addr_bin[4], hw_addr_bin[5]
+      );
+      res = new_mem(sizeof *res);
+      res->hwaddr.type = res_hwaddr;
+      res->hwaddr.addr = new_str(hw_addr);
+      add_res_entry(&hd->res, res);
+    }
+  }
+
+  free_mem(hw_addr_bin);
+  free_mem(hw_addr);
+  free_mem(path);
 }
 
 void add_devices(hd_data_t *hd_data)
