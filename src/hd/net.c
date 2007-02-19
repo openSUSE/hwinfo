@@ -123,8 +123,6 @@ void hd_scan_net(hd_data_t *hd_data)
       add_res_entry(&hd->res, res1);
     }
 
-    hw_addr = free_mem(hw_addr);
-
     hd->unix_dev_name = new_str(sf_cdev->name);
     hd->sysfs_id = new_str(hd_sysfs_id(sf_cdev->path));
 
@@ -134,6 +132,8 @@ void hd_scan_net(hd_data_t *hd_data)
     else if(hd->res) {
       get_driverinfo(hd_data, hd);
     }
+
+    hd_card = NULL;
 
     if(sf_dev) {
       hd->sysfs_device_link = new_str(hd_sysfs_id(sf_dev->path)); 
@@ -168,6 +168,29 @@ void hd_scan_net(hd_data_t *hd_data)
         add_if_name(hd_card, hd);
       }
     }
+
+    if(!hd_card && hw_addr) {
+      /* try to find card based on hwaddr (for prom-based cards) */
+
+      for(hd_card = hd_data->hd; hd_card; hd_card = hd_card->next) {
+        if(
+          hd_card->base_class.id != bc_network ||
+          hd_card->sub_class.id != 0
+        ) continue;
+        for(res = hd_card->res; res; res = res->next) {
+          if(
+            res->any.type == res_hwaddr &&
+            !strcmp(hw_addr, res->hwaddr.addr)
+          ) break;
+        }
+        if(res) {
+          hd->attached_to = hd_card->idx;
+          break;
+        }
+      }
+    }
+
+    hw_addr = free_mem(hw_addr);
 
 #if 0
     "ctc"	sc_nif_ctc
