@@ -147,6 +147,7 @@ struct option options[] = {
   { "smp", 0, NULL, 2002 },
   { "arch", 0, NULL, 2003 },
   { "uml", 0, NULL, 2004 },
+  { "xen", 0, NULL, 2005 },
   { }
 };
 
@@ -289,11 +290,7 @@ int main(int argc, char **argv)
             hw_item[hw_items++] = i - 1000;
           break;
 
-        case 2000:
-        case 2001:
-        case 2002:
-        case 2003:
-        case 2004:
+        case 2000 ... 2005:
           if(hw_items < (int) (sizeof hw_item / sizeof *hw_item) - 1)
             hw_item[hw_items++] = i;
           break;
@@ -462,7 +459,7 @@ int main(int argc, char **argv)
 void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
 {
   hd_t *hd, *hd0;
-  int smp = -1, uml = 0, i;
+  int smp = -1, uml = 0, xen = 0, i;
   char *s, *t;
   enum boot_arch b_arch;
   enum cpu_arch c_arch;
@@ -493,6 +490,10 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
 
     case 2004:
       uml = hd_is_uml(hd_data);
+      break;
+
+    case 2005:
+      xen = hd_is_xen(hd_data);
       break;
 
     default:
@@ -620,6 +621,9 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
   }
   else if(hw_item == 2004) {
     fprintf(f ? f : stdout, "UML: %s\n", uml ? "yes" : "no");
+  }
+  else if(hw_item == 2005) {
+    fprintf(f ? f : stdout, "Xen: %s\n", xen ? "yes" : "no");
   }
   else {
     if(is_short) {

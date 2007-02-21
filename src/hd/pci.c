@@ -43,6 +43,8 @@ static void dump_pci_data(hd_data_t *hd_data);
 static void hd_read_macio(hd_data_t *hd_data);
 static void hd_read_vio(hd_data_t *hd_data);
 static void hd_read_xen(hd_data_t *hd_data);
+static void add_xen_network(hd_data_t *hd_data);
+static void add_xen_storage(hd_data_t *hd_data);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
 {
@@ -847,20 +849,27 @@ void hd_read_vio(hd_data_t *hd_data)
 
 
 /*
- * Get xen (network) data from sysfs.
+ * Get xen (network & storage) data from sysfs.
  */
 void hd_read_xen(hd_data_t *hd_data)
 {
   char *s, *xen_type, *xen_node;
-  int eth_cnt = 0;
+  int eth_cnt = 0, blk_cnt = 0;
   hd_t *hd;
   str_list_t *sf_bus, *sf_bus_e;
-  char *sf_dev;
+  char *sf_dev, *drv, *module;
+  unsigned u;
 
   sf_bus = reverse_str_list(read_dir("/sys/bus/xen/devices", 'l'));
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: xen\n");
+
+    if(hd_is_xen(hd_data)) {
+      add_xen_network(hd_data);
+      add_xen_storage(hd_data);
+    }
+
     return;
   }
 
@@ -885,19 +894,51 @@ void hd_read_xen(hd_data_t *hd_data)
       ADD2LOG("    node = \"%s\"\n", xen_node);
     }
 
+    drv = new_str(hd_read_sysfs_link(sf_dev, "driver"));
+
+    s = new_str(hd_read_sysfs_link(drv, "module"));
+    module = new_str(s ? strrchr(s, '/') + 1 : NULL);
+    free_mem(s);
+
+    ADD2LOG("    module = \"%s\"\n", module);
+
     if(
       xen_type &&
-      !strcmp(xen_type, "vif")
+      (
+        !strcmp(xen_type, "vif") ||
+        !strcmp(xen_type, "vbd")
+      )
     ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
-
       hd->bus.id = bus_none;
-      hd->base_class.id = bc_network;
-      hd->sub_class.id = 0;	/* ethernet */
-      hd->slot = eth_cnt++;
+
       hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6011);	/* xen */
-      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
-      str_printf(&hd->device.name, 0, "Virtual Ethernet card %d", hd->slot);
+
+      if(!strcmp(xen_type, "vif")) {	/* network */
+        hd->base_class.id = bc_network;
+        hd->sub_class.id = 0;	/* ethernet */
+        hd->slot = eth_cnt++;
+        u = 3;
+        if(module) {
+          if(!strcmp(module, "xennet")) u = 1;
+          if(!strcmp(module, "xen_vnif")) u = 2;
+        }
+        hd->device.id = MAKE_ID(TAG_SPECIAL, u);
+        str_printf(&hd->device.name, 0, "Virtual Ethernet Card %d", hd->slot);
+      }
+      else {	/* storage */
+        hd->base_class.id = bc_storage;
+        hd->sub_class.id = sc_sto_other;
+        hd->slot = blk_cnt++;
+        u = 3;
+        if(module) {
+          if(!strcmp(module, "xenblk")) u = 1;
+          if(!strcmp(module, "xen_vbd")) u = 2;
+        }
+        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1000 + u);
+        str_printf(&hd->device.name, 0, "Virtual Storage %d", hd->slot);
+      }
+
       hd->rom_id = new_str(xen_node);
 
       hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
@@ -907,9 +948,47 @@ void hd_read_xen(hd_data_t *hd_data)
     }
 
     free_mem(sf_dev);
+    free_mem(drv);
+    free_mem(module);
   }
 
   free_str_list(sf_bus);
+
+  /* maybe only one of xen_vnif, xen_vbd was loaded */
+  if(!eth_cnt && !hd_module_is_active(hd_data, "xen_vnif")) add_xen_network(hd_data);
+  if(!blk_cnt && !hd_module_is_active(hd_data, "xen_vbd")) add_xen_storage(hd_data);
+}
+
+
+/*
+ * fake xen network device
+ */
+void add_xen_network(hd_data_t *hd_data)
+{
+  hd_t *hd;
+
+  hd = add_hd_entry(hd_data, __LINE__, 0);
+  hd->base_class.id = bc_network;
+  hd->sub_class.id = 0;	/* ethernet */
+  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6011);	/* xen */
+  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0002);	/* xen-vnif */
+  hd->device.name = new_str("Virtual Ethernet Card");
+}
+
+
+/*
+ * fake xen storage controller
+ */
+void add_xen_storage(hd_data_t *hd_data)
+{
+  hd_t *hd;
+
+  hd = add_hd_entry(hd_data, __LINE__, 0);
+  hd->base_class.id = bc_storage;
+  hd->sub_class.id = sc_sto_other;
+  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6011);	/* xen */
+  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1002);	/* xen-vbd */
+  hd->device.name = new_str("Virtual Storage");
 }
 
 
