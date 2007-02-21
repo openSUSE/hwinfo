@@ -3155,6 +3155,41 @@ int hd_is_iseries(hd_data_t *hd_data)
 
 
 /*
+ * check for xen hypervisor
+ */
+int hd_is_xen(hd_data_t *hd_data)
+{
+  char signature[13];
+  unsigned u, foo;
+
+  __asm__(
+#ifdef __i386__
+    "push %%ebx\n\t"
+    "cpuid\n\t"
+    "mov %%ebx,(%%esi)\n\t"
+    "mov %%ecx,4(%%esi)\n\t"
+    "mov %%edx,8(%%esi)\n\t"
+    "pop %%ebx"
+#else
+    "push %%rbx\n\t"
+    "cpuid\n\t"
+    "mov %%ebx,(%%rsi)\n\t"
+    "mov %%ecx,4(%%rsi)\n\t"
+    "mov %%edx,8(%%rsi)\n\t"
+    "pop %%rbx"
+#endif
+    : "=a" (u), "=c" (foo)
+    : "a" (0x40000000), "c" (0), "S" (signature)
+    : "%edx"
+  );
+
+  signature[12] = 0;
+
+  return u < 0x40000002 || strcmp(signature, "XenVMMXenVMM") ? 0 : 1;
+}
+
+
+/*
  * makes a (shallow) copy; does some magic fixes
  */
 void hd_copy(hd_t *dst, hd_t *src)

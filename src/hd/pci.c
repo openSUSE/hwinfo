@@ -50,6 +50,8 @@ static void dump_pci_data(hd_data_t *hd_data);
 static void hd_read_macio(hd_data_t *hd_data);
 static void hd_read_vio(hd_data_t *hd_data);
 static void hd_read_xen(hd_data_t *hd_data);
+static void add_xen_network(hd_data_t *hd_data);
+static void add_xen_storage(hd_data_t *hd_data);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
 {
@@ -742,6 +744,12 @@ void hd_read_xen(hd_data_t *hd_data)
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: xen\n");
+
+    if(hd_is_xen(hd_data)) {
+      add_xen_network(hd_data);
+      add_xen_storage(hd_data);
+    }
+
     return;
   }
 
@@ -796,7 +804,7 @@ void hd_read_xen(hd_data_t *hd_data)
           if(!strcmp(module, "xen_vnif")) u = 2;
         }
         hd->device.id = MAKE_ID(TAG_SPECIAL, u);
-        str_printf(&hd->device.name, 0, "Virtual Ethernet card %d", hd->slot);
+        str_printf(&hd->device.name, 0, "Virtual Ethernet Card %d", hd->slot);
       }
       else {	/* storage */
         hd->base_class.id = bc_storage;
@@ -825,6 +833,42 @@ void hd_read_xen(hd_data_t *hd_data)
   }
 
   free_str_list(sf_bus);
+
+  /* maybe only one of xen_vnif, xen_vbd was loaded */
+  if(!eth_cnt && !hd_module_is_active(hd_data, "xen_vnif")) add_xen_network(hd_data);
+  if(!blk_cnt && !hd_module_is_active(hd_data, "xen_vbd")) add_xen_storage(hd_data);
+}
+
+
+/*
+ * fake xen network device
+ */
+void add_xen_network(hd_data_t *hd_data)
+{
+  hd_t *hd;
+
+  hd = add_hd_entry(hd_data, __LINE__, 0);
+  hd->base_class.id = bc_network;
+  hd->sub_class.id = 0;	/* ethernet */
+  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6011);	/* xen */
+  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0002);	/* xen-vnif */
+  hd->device.name = new_str("Virtual Ethernet Card");
+}
+
+
+/*
+ * fake xen storage controller
+ */
+void add_xen_storage(hd_data_t *hd_data)
+{
+  hd_t *hd;
+
+  hd = add_hd_entry(hd_data, __LINE__, 0);
+  hd->base_class.id = bc_storage;
+  hd->sub_class.id = sc_sto_other;
+  hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6011);	/* xen */
+  hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1002);	/* xen-vbd */
+  hd->device.name = new_str("Virtual Storage");
 }
 
 
