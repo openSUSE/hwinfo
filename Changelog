@@ -1,3 +1,6 @@
+23/2/2007:	v13.24
+	- new xen code broke non-x86 archs
+
 21/2/2007:	v13.23
 	- removed most of prom parsing code (#220762)
 	- detect new xen stuff (#241564)
