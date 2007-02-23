@@ -3143,6 +3143,8 @@ int hd_is_iseries(hd_data_t *hd_data)
  */
 int hd_is_xen(hd_data_t *hd_data)
 {
+#if defined(__i386__) || defined(__x86_64__)
+
   char signature[13];
   unsigned u, foo;
 
@@ -3170,6 +3172,12 @@ int hd_is_xen(hd_data_t *hd_data)
   signature[12] = 0;
 
   return u < 0x40000002 || strcmp(signature, "XenVMMXenVMM") ? 0 : 1;
+
+#else
+
+  return 0;
+
+#endif
 }
 
 
