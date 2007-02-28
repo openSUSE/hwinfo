@@ -1724,7 +1724,7 @@ int get_mapping2()
 {
   hd_data_t *hd_data, *hd_data_new;
   hd_t *hd_manual, *hd;
-  hd_hw_item_t hw_items[] = { hw_disk, hw_cdrom, hw_storage_ctrl, 0 };
+  hd_hw_item_t hw_items[] = { hw_disk, hw_storage_ctrl, 0 };
   map_t *map, *map_old;
   unsigned cnt, map_len, map_old_len;
   int err = 0, i, j;
