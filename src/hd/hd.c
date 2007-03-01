@@ -1781,7 +1781,8 @@ void hd_scan(hd_data_t *hd_data)
     if(!hd_probe_feature(hd_data, pr_bios_crc)) hd_data->flags.nobioscrc = 1;
     if(hd_probe_feature(hd_data, pr_bios_vram)) hd_data->flags.biosvram = 1;
     hd_set_probe_feature(hd_data, pr_bios_acpi);
-    if(hd_probe_feature(hd_data, pr_modules_pata)) hd_data->flags.pata = 1;
+    hd_set_probe_feature(hd_data, pr_modules_pata);
+    hd_data->flags.pata = hd_probe_feature(hd_data, pr_modules_pata) ? 1 : 0;
   }
 
   /* get shm segment, if we didn't do it already */
