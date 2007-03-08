@@ -409,6 +409,7 @@
 &device.id		pci 0x4c57
 +device.name		Radeon LW
 +driver.xfree		4|radeon
++driver.xfree.config	Option "XAANoOffscreenPixmaps" "true"
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c58
@@ -984,7 +985,7 @@
  vendor.id		pci 0x1002
 &device.id		pci 0x5962
 +device.name		RV280 5962
-+driver.xfree		4|radeon
++driver.xfree		4|radeon||||usefbdev
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5964
@@ -1052,7 +1053,6 @@
 &device.id		pci 0x5b63
 +device.name		RADEON X550
 +driver.xfree		4|radeon
-+driver.xfree.config	ChipID 0x5B60
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5b64
@@ -1270,11 +1270,6 @@
 
  vendor.id		pci 0x1023
 +vendor.name		Trident Microsystems Inc.
-
- vendor.id		pci 0x1023
-&device.id		pci 0x2100
-+device.name		CyberBlade/xp4
-+driver.xfree		4|trident
 
  vendor.id		pci 0x1023
 &device.id		pci 0x8400
@@ -1851,6 +1846,13 @@
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
+&device.id		pci 0x00c0
+&subvendor.id		pci 0x1682
+&subdevice.id		pci 0x2178
++subdevice.name		GeForce 6800 GS (XFX)
++driver.xfree		4|fbdev
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x00c1
 +device.name		GeForce 6800 (0x00C1)
 +driver.xfree		4|nv
@@ -2296,7 +2298,7 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x01d7
-+device.name		GeForce Go 7300
++device.name		Quadro NVS 110M/GeForce Go 7300
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
@@ -2542,6 +2544,11 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x029b
 +device.name		Quadro FX 1500M
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x02e0
++device.name		GeForce 7600 GT (AGP)
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de

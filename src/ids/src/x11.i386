@@ -11,18 +11,19 @@
 &device.id		pci 0x3152
 +device.name		MOBILITY RADEON X300
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x3154
 +device.name		FireGL M24 GL 3154 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x3e50
 +device.name		Radeon X600 (RV380) 3E50 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x3e50
@@ -34,7 +35,7 @@
 &device.id		pci 0x3e54
 +device.name		FireGL V3200 (RV380) 3E54 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4136
@@ -52,87 +53,91 @@
 &device.id		pci 0x4144
 +device.name		R300 AD
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4145
 +device.name		E300 AE
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4146
 +device.name		R300 AF
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4147
 +device.name		R300 AG
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4148
 +device.name		R350 AH
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4149
 +device.name		R350 AI
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x414a
 +device.name		R350 AJ
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x414b
 +device.name		R350 AK
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4150
 +device.name		RV350 AP
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4151
 +device.name		RV350 AQ
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4152
 +device.name		RV350 AR
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4153
 +device.name		RV350 AS
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4154
 +device.name		RV350 AT
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4155
 +device.name		Radeon 9650
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4156
 +device.name		RV350 AV
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4237
@@ -299,84 +304,85 @@
 &device.id		pci 0x4a48
 +device.name		R420 JH
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4a49
 +device.name		R420 JI
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4a4a
 +device.name		R420 JJ
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4a4b
 +device.name		R420 JK
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4a4c
 +device.name		R420 JL
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4a4d
 +device.name		R420 JM
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4a4e
 +device.name		R420 JN
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4a4f
 +device.name		Radeon X800 SE (R420) (AGP)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4a50
 +device.name		R420 JP
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4a54
 +device.name		ATI Radeon AIW X800 VE (R420) JT (AGP)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4b49
 +device.name		Radeon X850 XT (R480) (AGP)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4b4a
 +device.name		Radeon X850 SE (R480) (AGP)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4b4b
 +device.name		Radeon X850 PRO (R480) (AGP)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4b4c
 +device.name		Radeon X850 XT PE (R480) (AGP)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c42
@@ -459,7 +465,9 @@
 &device.id		pci 0x4c57
 +device.name		Radeon LW
 +driver.xfree		4|radeon
++driver.xfree.config	Option "XAANoOffscreenPixmaps" "true"
 +driver.xfree		4|radeon|3d||dri||16
++driver.xfree.config	Option "XAANoOffscreenPixmaps" "true"
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c58
@@ -525,7 +533,7 @@
 &device.id		pci 0x4e45
 +device.name		R300 NE
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e46
@@ -549,61 +557,62 @@
 &device.id		pci 0x4e48
 +device.name		R350 NH
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e49
 +device.name		R350 NI
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e4a
 +device.name		R360 NJ
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e4b
 +device.name		R350 NK
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e50
 +device.name		RV350 NP
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e51
 +device.name		RV350 NQ
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e52
 +device.name		RV350 NR
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e53
 +device.name		RV350 NS
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e54
 +device.name		FireGL Mobility T2
 +driver.xfree		4|radeon
 +driver.xfree.config	Option "DynamicClocks" "on"
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e56
 +device.name		RV350 NV
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5041
@@ -777,6 +786,7 @@
 &device.id		pci 0x5148
 +device.name		fgl8x00
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5148
@@ -850,6 +860,7 @@
 &subdevice.id		pci 0x016c
 +subdevice.name		ATI Radeon VE (device 016c)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
@@ -857,6 +868,7 @@
 &subdevice.id		pci 0x016d
 +subdevice.name		ATI Radeon VE (device 016d)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
@@ -864,6 +876,7 @@
 &subdevice.id		pci 0x016e
 +subdevice.name		ATI Radeon VE (device 016e)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
@@ -871,6 +884,7 @@
 &subdevice.id		pci 0x016f
 +subdevice.name		ATI Radeon VE (device 016f)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
@@ -878,6 +892,7 @@
 &subdevice.id		pci 0x0170
 +subdevice.name		ATI Radeon VE (device 0170)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
@@ -885,6 +900,7 @@
 &subdevice.id		pci 0x017d
 +subdevice.name		ATI Radeon VE (device 017d)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
@@ -892,6 +908,7 @@
 &subdevice.id		pci 0x017e
 +subdevice.name		ATI Radeon VE (device 017e)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
@@ -899,6 +916,7 @@
 &subdevice.id		pci 0x0183
 +subdevice.name		ATI Radeon VE (device 0183)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
@@ -906,6 +924,7 @@
 &subdevice.id		pci 0x018a
 +subdevice.name		ATI Radeon VE (device 018a)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5159
@@ -913,6 +932,7 @@
 &subdevice.id		pci 0x019a
 +subdevice.name		ATI Radeon VE (device 019a)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x515a
@@ -935,6 +955,7 @@
 &device.id		pci 0x5246
 +device.name		Rage 128 RF
 +driver.xfree		4|ati|||||8,15,16,24
++driver.xfree		4|ati|3d||dri||16
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5247
@@ -1043,55 +1064,55 @@
 +device.name		Radeon Mobility M300 (M22) 5460 (PCIE)
 +driver.xfree		4|radeon
 +driver.xfree.config	Option "MonitorLayout" "LVDS,AUTO"
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5462
 +device.name		MOBILITY RADEON X600SE
 +driver.xfree		4|radeon
-+driver.xfree.config	ChipID 0x5460
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5464
 +device.name		FireGL M22 GL 5464 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5548
 +device.name		Radeon X800 (R423) UH (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5549
 +device.name		Radeon X800PRO (R423) UI (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x554a
 +device.name		Radeon X800LE (R423) UJ (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x554b
 +device.name		Radeon X800SE (R423) UK (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x554c
 +device.name		Radeon X800 XTP (R430) (PCIE)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x554d
 +device.name		Radeon X800 XL (R430) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x554d
@@ -1103,58 +1124,61 @@
 &device.id		pci 0x554e
 +device.name		Radeon X800 SE (R430) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x554f
 +device.name		Radeon X800 (R430) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5550
 +device.name		FireGL V7100 (R423) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5551
 +device.name		FireGL V7200 (R423) UQ (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5552
 +device.name		FireGL V5100 (R423) UR (PCIE)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5554
 +device.name		FireGL V7100 (R423) UT (PCIE)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x564a
 +device.name		Mobility FireGL V5000 564A (M26) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x564b
 +device.name		Mobility FireGL V5000 564B (M26) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x564f
 +device.name		ATI Radeon 7000 IGP (A4+) 4237
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5652
 +device.name		Mobility Radeon X700 5652 (M26) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5653
@@ -1182,13 +1206,13 @@
 &device.id		pci 0x5834
 +device.name		RS300 5834
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5835
 +device.name		RS300 5835
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5954
@@ -1290,14 +1314,13 @@
 &device.id		pci 0x5b62
 +device.name		Radeon X600 (RV370) 5B62 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5b63
 +device.name		RADEON X550
 +driver.xfree		4|radeon
-+driver.xfree.config	ChipID 0x5B60
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5b64
@@ -1309,7 +1332,7 @@
 &device.id		pci 0x5b65
 +device.name		FireGL D1100 (RV370) 5B65 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5c61
@@ -1327,106 +1350,103 @@
 &device.id		pci 0x5d48
 +device.name		Mobility Radeon X800 XT (M28) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5d49
 +device.name		Mobility FireGL V5100 (M28) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5d4a
 +device.name		Mobility Radeon X800 (M28) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5d4c
 +device.name		Radeon X850 5D4C (PCIE)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5d4d
 +device.name		Radeon X850 XT PE (R480) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5d4e
 +device.name		Radeon X850 SE (R480) (PCIE)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5d4f
 +device.name		Radeon X850 PRO (R480) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5d50
 +device.name		Radeon FireGL (R480) GL 5D50 (PCIE)
 +driver.xfree		4|radeon
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5d52
 +device.name		Radeon X850 XT (R480) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5d57
 +device.name		Radeon X800XT (R423) 5D57 (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5e48
 +device.name		FireGL V5000 (RV410) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5e4a
 +device.name		Radeon X700 XT (RV410) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5e4b
 +device.name		Radeon X700 PRO (RV410) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5e4c
 +device.name		Radeon X700 SE (RV410) 5E4C (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5e4d
 +device.name		Radeon X700 (RV410) (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x5e4f
 +device.name		Radeon X700 SE (RV410) 5E4F (PCIE)
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
-
- vendor.id		pci 0x1002
-&device.id		pci 0x71d4
-+device.name		FireGL v5250
-+driver.xfree		4|fbdev
-+driver.xfree.config	Option "ShadowFB" "off"
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x7834
 +device.name		Radeon 9100 PRO IGP 7834
 +driver.xfree		4|radeon
-+driver.xfree		4|fglrx|3d||dri
++driver.xfree		4|radeon|3d||dri
 
  vendor.id		pci 0x1002
 &device.id		pci 0x7835
@@ -1540,16 +1560,6 @@
 
  vendor.id		pci 0x1023
 +vendor.name		Trident Microsystems Inc.
-
- vendor.id		pci 0x1023
-&device.id		pci 0x2100
-+device.name		CyberBlade/xp4
-+driver.xfree		4|trident
-
- vendor.id		pci 0x1023
-&device.id		pci 0x2200
-+device.name		XP5
-+driver.xfree		4|trident
 
  vendor.id		pci 0x1023
 &device.id		pci 0x8400
@@ -2152,6 +2162,14 @@
 +driver.xfree		4|nvidia|3d
 
  vendor.id		pci 0x10de
+&device.id		pci 0x00c0
+&subvendor.id		pci 0x1682
+&subdevice.id		pci 0x2178
++subdevice.name		GeForce 6800 GS (XFX)
++driver.xfree		4|fbdev
++driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x00c1
 +device.name		GeForce 6800 (0x00C1)
 +driver.xfree		4|nv
@@ -2673,7 +2691,7 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x01d7
-+device.name		GeForce Go 7300
++device.name		Quadro NVS 110M/GeForce Go 7300
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d
 
@@ -2998,6 +3016,11 @@
 +device.name		Quadro FX 4500 X2
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x02e0
++device.name		GeForce 7600 GT (AGP)
++driver.xfree		4|nv
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0301
@@ -3730,70 +3753,88 @@
  vendor.id		pci 0x8086
 &device.id		pci 0x1132
 +device.name		I815
-+driver.xfree		4|i810|||||8,16,24
-+driver.xfree		4|i810|3d||dri||16
++driver.xfree		4|intel|||||8,16,24
++driver.xfree		4|intel|3d||dri||16
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2562
 +device.name		i845
-+driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri
++driver.xfree		4|intel
++driver.xfree		4|intel|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2572
 +device.name		865 G
-+driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri
++driver.xfree		4|intel
++driver.xfree		4|intel|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2572
 &subvendor.id		pci 0x1462
 &subdevice.id		pci 0x7650
 +subdevice.name		865 G
-+driver.xfree		4|i810||||Noaccel,SWcursor
++driver.xfree		4|intel||||Noaccel,SWcursor
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2582
 +device.name		915 G
-+driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri
++driver.xfree		4|intel
++driver.xfree		4|intel|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x258a
 +device.name		E7221
-+driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri
++driver.xfree		4|intel
++driver.xfree		4|intel|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2592
 +device.name		915 GM
-+driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri
++driver.xfree		4|intel
++driver.xfree		4|intel|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2592
 &subvendor.id		pci 0x1584
 &subdevice.id		pci 0x9800
 +subdevice.name		915 GM
-+driver.xfree		4|i810||||Noaccel,SWcursor
++driver.xfree		4|intel||||Noaccel,SWcursor
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2772
 +device.name		945G
-+driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri
++driver.xfree		4|intel
++driver.xfree		4|intel|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x27a2
 +device.name		945 GM
-+driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri
++driver.xfree		4|intel
++driver.xfree		4|intel|3d||dri
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x2972
++device.name		946GZ
++driver.xfree		4|intel
++driver.xfree		4|intel|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2982
 +device.name		965G-1
-+driver.xfree		4|i810beta
-+driver.xfree		4|i810beta|3d||dri
++driver.xfree		4|intel
++driver.xfree		4|intel|3d||dri
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x2992
++device.name		965Q
++driver.xfree		4|intel
++driver.xfree		4|intel|3d||dri
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x29a2
++device.name		965G
++driver.xfree		4|intel
++driver.xfree		4|intel|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3577
@@ -3817,20 +3858,20 @@
  vendor.id		pci 0x8086
 &device.id		pci 0x7121
 +device.name		82810 CGC [Chipset Graphics Controller]
-+driver.xfree		4|i810|||||8,16,24
-+driver.xfree		4|i810|3d||dri||16
++driver.xfree		4|intel|||||8,16,24
++driver.xfree		4|intel|3d||dri||16
 
  vendor.id		pci 0x8086
 &device.id		pci 0x7123
 +device.name		82810-DC100 CGC [Chipset Graphics Controller]
-+driver.xfree		4|i810|||||8,16,24
-+driver.xfree		4|i810|3d||dri||16
++driver.xfree		4|intel|||||8,16,24
++driver.xfree		4|intel|3d||dri||16
 
  vendor.id		pci 0x8086
 &device.id		pci 0x7125
 +device.name		82810E CGC [Chipset Graphics Controller]
-+driver.xfree		4|i810|||||8,16,24
-+driver.xfree		4|i810|3d||dri||16
++driver.xfree		4|intel|||||8,16,24
++driver.xfree		4|intel|3d||dri||16
 
  vendor.id		pci 0x8086
 &device.id		pci 0x7800
