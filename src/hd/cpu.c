@@ -96,10 +96,9 @@ void read_cpuinfo(hd_data_t *hd_data)
 #endif
 
 #ifdef __ia64__
-  char model_id[80], vendor_id[80], features[0x100];
-  unsigned mhz, stepping;
+  char model_id[0x100], vendor_id[80], features[0x100];
+  unsigned mhz, family, model, stepping;
   double bogo;
-  char *t0, *t;
 #endif
 
 #ifdef __alpha__
@@ -149,8 +148,8 @@ void read_cpuinfo(hd_data_t *hd_data)
   if(*model_id || *system_id) {	/* at least one of those */
     ct = new_mem(sizeof *ct);
     ct->architecture = arch_alpha;
-    if(model_id) ct->model_name = new_str(model_id);
-    if(system_id) ct->vend_name = new_str(system_id);
+    if(*model_id) ct->model_name = new_str(model_id);
+    if(*system_id) ct->vend_name = new_str(system_id);
     if(strncmp(serial_number, "MILO", 4) == 0)
       hd_data->boot = boot_milo;
     else
@@ -260,8 +259,8 @@ void read_cpuinfo(hd_data_t *hd_data)
 #ifdef __x86_64__
 	ct->architecture = arch_x86_64;
 #endif
-        if(model_id) ct->model_name = new_str(model_id);
-        if(vendor_id) ct->vend_name = new_str(vendor_id);
+        if(*model_id) ct->model_name = new_str(model_id);
+        if(*vendor_id) ct->vend_name = new_str(vendor_id);
         ct->family = family;
         ct->model = model;
         ct->stepping = stepping;
@@ -344,16 +343,14 @@ void read_cpuinfo(hd_data_t *hd_data)
       if(*model_id) {	/* at least one of those */
         ct = new_mem(sizeof *ct);
         ct->architecture = arch_ppc;
-        if(model_id) {
-          ct->model_name = new_str(model_id);
-        }
+        if(*model_id) ct->model_name = new_str(model_id);
 
         if(!uname(&un))
         	if(strstr(un.machine,"ppc64"))
         		ct->architecture = arch_ppc64;
 
-        if(vendor_id) ct->vend_name = new_str(vendor_id);
-        if(motherboard) ct->platform = new_str(motherboard);
+        if(*vendor_id) ct->vend_name = new_str(vendor_id);
+        if(*motherboard) ct->platform = new_str(motherboard);
         ct->family = family;
         ct->model = model;
         ct->stepping = stepping;
@@ -386,14 +383,16 @@ void read_cpuinfo(hd_data_t *hd_data)
 
 #ifdef __ia64__
   *model_id = *vendor_id = *features = 0;
-  mhz = stepping = 0;
+  mhz = family = model = stepping = 0;
   bogo = 0;
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
-    if(sscanf(sl->str, "family : %79[^\n]", model_id) == 1);
+    if(sscanf(sl->str, "model name : %255[^\n]", model_id) == 1);
     if(sscanf(sl->str, "vendor : %79[^\n]", vendor_id) == 1);
     if(sscanf(sl->str, "features : %255[^\n]", features) == 1);
     if(sscanf(sl->str, "cpu MHz : %u", &mhz) == 1);
+    if(sscanf(sl->str, "family : %u", &family) == 1);
+    if(sscanf(sl->str, "model : %u", &model) == 1);
     if(sscanf(sl->str, "revision : %u", &stepping) == 1);
     if(sscanf(sl->str, "BogoMIPS : %lg", &bogo) == 1);
 
@@ -401,8 +400,10 @@ void read_cpuinfo(hd_data_t *hd_data)
       if(*model_id || *vendor_id) {	/* at least one of those */
         ct = new_mem(sizeof *ct);
 	ct->architecture = arch_ia64;
-        if(model_id) ct->model_name = new_str(model_id);
-        if(vendor_id) ct->vend_name = new_str(vendor_id);
+        if(*model_id) ct->model_name = new_str(model_id);
+        if(*vendor_id) ct->vend_name = new_str(vendor_id);
+        ct->family = family;
+        ct->model = model;
         ct->stepping = stepping;
 	hd_data->boot = boot_elilo;
 
@@ -446,9 +447,7 @@ void read_cpuinfo(hd_data_t *hd_data)
         hd->detail->cpu.data = ct;
 
         if(*features) {
-          for(t0 = features; (t = strsep(&t0, " ")); ) {
-            add_str_list(&ct->features, t);
-          }
+          ct->features = hd_split(',', features);
         }
 
         *model_id = *vendor_id = 0;
@@ -480,7 +479,7 @@ void read_cpuinfo(hd_data_t *hd_data)
 #else
       ct->architecture = arch_s390;
 #endif
-      if(vendor_id) ct->vend_name = new_str(vendor_id);
+      if(*vendor_id) ct->vend_name = new_str(vendor_id);
       ct->stepping = u1;
       hd_data->boot = boot_s390;
       ct->bogo = bogo;

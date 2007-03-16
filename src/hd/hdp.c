@@ -1076,11 +1076,10 @@ void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
 
   if(ct->vend_name) dump_line("Vendor: \"%s\"\n", ct->vend_name);
  
-  if(ct->model_name)
-    dump_line(
-      "Model: %u.%u.%u \"%s\"\n",
-      ct->family, ct->model, ct->stepping, ct->model_name
-    );
+  dump_line(
+    "Model: %u.%u.%u \"%s\"\n",
+    ct->family, ct->model, ct->stepping, ct->model_name ?: ""
+  );
 
   if(ct->platform) dump_line("Platform: \"%s\"\n", ct->platform);
 
