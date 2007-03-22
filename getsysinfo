@@ -21,7 +21,6 @@ host=`hostname`
 mkdir -p "$dir/$host"
 
 for i in \
-  /proc/acpi \
   /proc/asound \
   /proc/bus/input \
   /proc/cpuinfo \
@@ -53,6 +52,9 @@ do
     echo "$i"
     cp -a --parents "$i" "$dir/$host" 2>/dev/null
     chmod -R u+w,a+r,a+X "$dir/$host"
+    for i in `( cd "$dir/$host" ; find proc -type f -size 0 )` ; do
+      cat "/$i" >"$dir/$host/$i"
+    done
   fi
 done
 

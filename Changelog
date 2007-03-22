@@ -1,3 +1,5 @@
+	- changed getsysinfo to avoid 'cp'
+
 16/3/2007:	v13.29
 	- better cpu detection (#252183)
 
