@@ -68,7 +68,8 @@ void hd_scan_net(hd_data_t *hd_data)
 
   PROGRESS(1, 0, "get network data");
 
-  sf_class = reverse_str_list(read_dir("/sys/class/net", 'd'));
+  sf_class = reverse_str_list(read_dir("/sys/class/net", 'l'));
+  if(!sf_class) sf_class = reverse_str_list(read_dir("/sys/class/net", 'd'));
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: net\n");
