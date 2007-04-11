@@ -1,3 +1,6 @@
+11/4/2007:	v12.46
+	- sndirsch: do not try to use Quadro FX 3500 with nv driver (#261056, comment #22)
+
 23/2/2007:	v12.45
 	- new xen code broke non-x86 archs
 
