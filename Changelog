@@ -1,3 +1,7 @@
+12/4/2007:	v13.32
+	- resolving symlinks in sysfs did not work properly
+	- updated X11 data
+
 28/3/2007:	v13.31
 	- changed network detection to work with latest sysfs
 

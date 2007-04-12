@@ -1117,6 +1117,13 @@
 +driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
+&device.id		pci 0x5a62
+&subvendor.id		pci 0x1179
+&subdevice.id		pci 0xff31
++subdevice.name		Radeon XPRESS 200M 5A62 (PCIE) - Toshiba
++driver.xfree		4|fbdev
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x5b60
 +device.name		Radeon X300 (RV370) 5B60 (PCIE)
 +driver.xfree		4|radeon
@@ -2371,6 +2378,26 @@
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
+&device.id		pci 0x0191
++device.name		GeForce 8800 GTX
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0193
++device.name		GeForce 8800 GTS
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x019d
++device.name		Quadro FX 5600
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x019e
++device.name		Quadro FX 4600
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x01a0
 +device.name		GeForce2 Integrated GPU
 +driver.xfree		4|nv
@@ -3446,6 +3473,11 @@
 &device.id		pci 0x29a2
 +device.name		965G
 +driver.xfree		4|i810beta
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x2a02
++device.name		965 GM
++driver.xfree		4|intel
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3577

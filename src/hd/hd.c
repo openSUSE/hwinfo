@@ -1,3 +1,4 @@
+#define _GNU_SOURCE		/* canonicalize_file_name() */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -2533,49 +2534,17 @@ str_list_t *read_dir(char *dir_name, int type)
 }
 
 
-char *hd_read_symlink(char *link_name)
-{
-  static char buf[256];
-  int i;
-
-  if(!link_name) {
-    *buf = 0;
-
-    return buf;
-  }
-
-  i = readlink(link_name, buf, sizeof buf);
-  buf[sizeof buf - 1] = 0;
-  if(i >= 0 && (unsigned) i < sizeof buf) buf[i] = 0;
-  if(i < 0) *buf = 0;
-
-  return buf;
-}
-
-
 char *hd_read_sysfs_link(char *base_dir, char *link_name)
 {
-  char *s = NULL, *l, *t;
+  char *s = NULL;
   static char *buf = NULL;
 
   if(!base_dir || !link_name) return NULL;
 
   str_printf(&s, 0, "%s/%s", base_dir, link_name);
-  l = hd_read_symlink(s);
-  if(!*l) return NULL;
 
   free_mem(buf);
-
-  buf = new_mem(strlen(base_dir) + strlen(l) + 2);
-
-  s[strlen(base_dir)] = 0;
-
-  while(!strncmp(l, "../", 3)) {
-    if((t = strrchr(s, '/'))) *t = 0;
-    l += 3;
-  }
-
-  sprintf(buf, "%s/%s", s, l);
+  buf = canonicalize_file_name(s);
 
   free_mem(s);
 
