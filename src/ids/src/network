@@ -66,11 +66,6 @@
 &device.id		pci 0x0112
 +driver.module.modprobe	hp100
 
-# net/pcnet32.c
- vendor.id		pci 0x1022
-&device.id		pci 0x2000+0x0002
-+driver.module.modprobe	pcnet32
-
 # net/amd8111e.c
  vendor.id		pci 0x1022
 &device.id		pci 0x7462

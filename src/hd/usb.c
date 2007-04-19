@@ -818,7 +818,7 @@ void get_serial_devs(hd_data_t *hd_data)
   for(sf_class_e = sf_class; sf_class_e; sf_class_e = sf_class_e->next) {
     if(strncmp(sf_class_e->str, "ttyUSB", 6)) continue;
 
-    str_printf(&sf_cdev, 0, "/sys/class/usb/%s", sf_class_e->str);
+    str_printf(&sf_cdev, 0, "/sys/class/tty/%s", sf_class_e->str);
 
     ADD2LOG(
       "  usb: name = %s, path = %s\n",

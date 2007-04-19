@@ -1,3 +1,5 @@
+	- braille detection can no longer block libhd (#266163)
+
 12/4/2007:	v13.32
 	- resolving symlinks in sysfs did not work properly
 	- updated X11 data
