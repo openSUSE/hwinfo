@@ -175,7 +175,9 @@ static void assign_hw_class(hd_data_t *hd_data, hd_t *hd);
 static void short_vendor(char *vendor);
 static void create_model_name(hd_data_t *hd_data, hd_t *hd);
 
+static void copy_log2shm(hd_data_t *hd_data);
 static void sigchld_handler(int);
+static void sigusr1_handler(int);
 static pid_t child_id;
 static volatile pid_t child;
 static char *hd_shm_add_str(hd_data_t *hd_data, char *str);
@@ -184,6 +186,7 @@ static str_list_t *hd_shm_add_str_list(hd_data_t *hd_data, str_list_t *sl);
 static hd_udevinfo_t *hd_free_udevinfo(hd_udevinfo_t *ui);
 static hd_sysfsdrv_t *hd_free_sysfsdrv(hd_sysfsdrv_t *sf);
 
+static hd_data_t *hd_data_sig;
 
 /*
  * Names of the probing modules.
@@ -5263,6 +5266,7 @@ void hd_fork(hd_data_t *hd_data, int timeout, int total_timeout)
   time_t stop_time;
   int updated, rem_time;
   sigset_t new_set, old_set;
+  int kill_sig[] = { SIGUSR1, SIGKILL };
 
   if(hd_data->flags.forked) return;
 
@@ -5316,12 +5320,14 @@ void hd_fork(hd_data_t *hd_data, int timeout, int total_timeout)
       }
 
       if(child_id != child) {
-        ADD2LOG("******  killed child process %d (%ds) ******\n", (int) child, rem_time);
-        kill(child, SIGKILL);
-        for(i = 10; i && !waitpid(child, NULL, WNOHANG); i--) {
-          wait_time.tv_sec = 0;
-          wait_time.tv_nsec = 10*1000000;
-          nanosleep(&wait_time, NULL);
+        ADD2LOG("******  killed child process %d (%ds)  ******\n", (int) child, rem_time);
+        for(i = 0; i < sizeof kill_sig / sizeof *kill_sig; i++) {
+          kill(child, kill_sig[i]);
+          for(j = 10; j && !waitpid(child, NULL, WNOHANG); j--) {
+            wait_time.tv_sec = 0;
+            wait_time.tv_nsec = 10*1000000;
+            nanosleep(&wait_time, NULL);
+          }
         }
       }
 
@@ -5344,6 +5350,10 @@ void hd_fork(hd_data_t *hd_data, int timeout, int total_timeout)
       hd_data->log = free_mem(hd_data->log);
 
       hd_data->flags.forked = 1;
+
+      hd_data_sig = hd_data;
+
+      signal(SIGUSR1, sigusr1_handler);
     }
   }
 
@@ -5356,11 +5366,22 @@ void hd_fork(hd_data_t *hd_data, int timeout, int total_timeout)
  */
 void hd_fork_done(hd_data_t *hd_data)
 {
+  if(!hd_data->flags.forked || hd_data->flags.nofork) return;
+
+  copy_log2shm(hd_data);
+
+  _exit(0);
+}
+
+
+/*
+ * Copy log to shm segment.
+ */
+void copy_log2shm(hd_data_t *hd_data)
+{
   int len;
   void *p;
   hd_data_t *hd_data_shm;
-
-  if(!hd_data->flags.forked || hd_data->flags.nofork) return;
 
   hd_data_shm = hd_data->shm.data;
 
@@ -5369,8 +5390,6 @@ void hd_fork_done(hd_data_t *hd_data)
     p = hd_shm_add(hd_data, hd_data->log, len);
     hd_data_shm->log = p;
   }
-
-  _exit(0);
 }
 
 
@@ -5382,6 +5401,21 @@ void sigchld_handler(int num)
   pid_t p = waitpid(child, NULL, WNOHANG);
 
   if(p && p == child) child_id = p;
+}
+
+
+/*
+ * SIGUSR1 handler - copy log to shm, then exit
+ */
+void sigusr1_handler(int num)
+{
+  hd_data_t *hd_data = hd_data_sig;
+
+  ADD2LOG("* got signal USR1 *\n");
+
+  copy_log2shm(hd_data);
+
+  _exit(0);
 }
 
 

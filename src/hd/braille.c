@@ -59,14 +59,12 @@ void hd_scan_braille(hd_data_t *hd_data)
 
         if(hd_probe_feature(hd_data, pr_braille_alva)) {
           PROGRESS(1, cnt, "alva");
-          ((hd_data_t *) (hd_data->shm.data))->shm.updated++;
           *vend = MAKE_ID(TAG_SPECIAL, 0x5001);
           *dev = do_alva(hd_data, hd->unix_dev_name, cnt);
         }
 
         if(!*dev && hd_probe_feature(hd_data, pr_braille_fhp)) {
           PROGRESS(1, cnt, "fhp_old");
-          ((hd_data_t *) (hd_data->shm.data))->shm.updated++;
           *vend = MAKE_ID(TAG_SPECIAL, 0x5002);
           *dev = do_fhp(hd_data, hd->unix_dev_name, B19200, cnt);
           if(!dev) {
@@ -77,14 +75,12 @@ void hd_scan_braille(hd_data_t *hd_data)
 
         if(!*dev && hd_probe_feature(hd_data, pr_braille_ht)) {
           PROGRESS(1, cnt, "ht");
-          ((hd_data_t *) (hd_data->shm.data))->shm.updated++;
           *vend = MAKE_ID(TAG_SPECIAL, 0x5003);
           *dev = do_ht(hd_data, hd->unix_dev_name, cnt);
         }
 
         if(!*dev && hd_probe_feature(hd_data, pr_braille_baum)) {
           PROGRESS(1, cnt, "baum");
-          ((hd_data_t *) (hd_data->shm.data))->shm.updated++;
           *vend = MAKE_ID(TAG_SPECIAL, 0x5004);
           *dev = do_baum(hd_data, hd->unix_dev_name, cnt);
         }
