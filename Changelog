@@ -1,4 +1,5 @@
 	- braille detection can no longer block libhd (#266163)
+	- get network interface link state from sysfs
 
 12/4/2007:	v13.32
 	- resolving symlinks in sysfs did not work properly
