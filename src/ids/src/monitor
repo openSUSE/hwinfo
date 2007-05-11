@@ -2390,6 +2390,9 @@
 +device.name		DATA SYSTEMS VISUAL SENSATION VS-19SN
 +driver.display		|50-120|30-95
 
+ vendor.id		LEN
++vendor.name		Lenovo
+
  vendor.id		LKM
 +vendor.name		AZALEA
 
