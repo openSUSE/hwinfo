@@ -50,6 +50,8 @@ static void dump_pci_data(hd_data_t *hd_data);
 static void hd_read_macio(hd_data_t *hd_data);
 static void hd_read_vio(hd_data_t *hd_data);
 static void hd_read_xen(hd_data_t *hd_data);
+static void hd_read_ps3_system_bus(hd_data_t *hd_data);
+static void hd_read_platform(hd_data_t *hd_data);
 static void add_xen_network(hd_data_t *hd_data);
 static void add_xen_storage(hd_data_t *hd_data);
 
@@ -85,6 +87,12 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
   PROGRESS(5, 0, "xen");
 
   hd_read_xen(hd_data);
+  PROGRESS(6, 0, "ps3");
+
+  hd_read_ps3_system_bus(hd_data);
+  
+  PROGRESS(7, 0, "platform");
+  hd_read_platform(hd_data);
 }
 
 
@@ -727,6 +735,134 @@ void hd_read_vio(hd_data_t *hd_data)
   free_str_list(sf_bus);
 }
 
+/*
+ * Get platform data from sysfs.
+ */
+void hd_read_platform(hd_data_t *hd_data)
+{
+  char *s, *platform_name, *platform_type;
+  int scsi_cnt = 0;
+  hd_t *hd;
+  str_list_t *sf_bus, *sf_bus_e;
+  char *sf_dev;
+
+  sf_bus = reverse_str_list(read_dir("/sys/bus/platform/devices", 'l'));
+
+  if(!sf_bus) {
+    ADD2LOG("sysfs: no such bus: platform\n");
+    return;
+  }
+
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/platform/devices", sf_bus_e->str));
+
+    ADD2LOG(
+      "  platform device: name = %s\n    path = %s\n",
+      sf_bus_e->str,
+      hd_sysfs_id(sf_dev)
+    );
+
+    platform_name = platform_type = NULL;
+
+    if((s = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
+      platform_type = canon_str(s, strlen(s));
+      ADD2LOG("    type = \"%s\"\n", platform_type);
+    }
+
+    if(
+      platform_type && ( !strcmp(platform_type, "ps3_storage") )
+    ) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->bus.id = bus_ps3_system_bus;
+
+      hd->vendor.id = MAKE_ID(TAG_PCI, 0x104d); /* Sony */
+
+      hd->base_class.id = bc_storage;
+      hd->sub_class.id = sc_sto_scsi;
+      hd->slot = scsi_cnt++;
+      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1000); /* PS3_DEV_TYPE_STOR_DISK */
+      str_printf(&hd->device.name, 0, "PS3 storage %d", hd->slot);
+
+      hd->rom_id = new_str(platform_name ? platform_name + 1 : 0);	/* skip leading '/' */
+
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+      hd->sysfs_bus_id = new_str(sf_bus_e->str);
+      s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+      if(s) add_str_list(&hd->drivers, s);
+    }
+
+    free_mem(sf_dev);
+  }
+
+  free_str_list(sf_bus);
+}
+
+
+
+/*
+ * Get ps3 data from sysfs.
+ */
+static void hd_read_ps3_system_bus(hd_data_t *hd_data)
+{
+  char *s, *ps3_name, *ps3_type;
+  int eth_cnt = 0; 
+  hd_t *hd;
+  str_list_t *sf_bus, *sf_bus_e;
+  char *sf_dev;
+
+  sf_bus = reverse_str_list(read_dir("/sys/bus/ps3_system_bus/devices", 'l'));
+
+  if(!sf_bus) {
+    ADD2LOG("sysfs: no such bus: ps3_system_bus\n");
+    return;
+  }
+
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/ps3_system_bus/devices", sf_bus_e->str));
+
+    ADD2LOG(
+      "  ps3 device: name = %s\n    path = %s\n",
+      sf_bus_e->str,
+      hd_sysfs_id(sf_dev)
+    );
+
+    ps3_name = ps3_type = NULL;
+
+    if((s = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
+      ps3_name = canon_str(s, strlen(s));
+      ADD2LOG("    modalias = \"%s\"\n", ps3_name);
+    }
+
+    if(
+      ps3_name && (
+        !strcmp(ps3_name, "ps3:3") ||
+        !strcmp(ps3_name, "gelic_net")
+      )
+    ) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->bus.id = bus_ps3_system_bus;
+
+      hd->vendor.id = MAKE_ID(TAG_PCI, 0x104d); /* Sony */
+
+        hd->base_class.id = bc_network;
+        hd->sub_class.id = 0;	/* ethernet */
+        hd->slot = eth_cnt++;
+        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1003); /* PS3_DEV_TYPE_SB_GELIC */
+        str_printf(&hd->device.name, 0, "PS3 Ethernet card %d", hd->slot);
+        
+      hd->rom_id = new_str(ps3_name ? ps3_name + 1 : 0);	/* skip leading '/' */
+
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+      hd->sysfs_bus_id = new_str(sf_bus_e->str);
+      s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+      if(s) add_str_list(&hd->drivers, s);
+    }
+
+    free_mem(sf_dev);
+  }
+
+  free_str_list(sf_bus);
+}
 
 /*
  * Get xen (network & storage) data from sysfs.

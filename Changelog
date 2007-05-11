@@ -1,3 +1,6 @@
+11/5/2007:	v13.34
+	- sassmann: added ps3 support (#273135)
+
 3/5/2007:	v13.33
 	- braille detection can no longer block libhd (#266163)
 	- get network interface link state from sysfs
