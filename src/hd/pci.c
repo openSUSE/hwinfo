@@ -740,7 +740,7 @@ void hd_read_vio(hd_data_t *hd_data)
  */
 void hd_read_platform(hd_data_t *hd_data)
 {
-  char *s, *platform_name, *platform_type;
+  char *s, *platform_type;
   int scsi_cnt = 0;
   hd_t *hd;
   str_list_t *sf_bus, *sf_bus_e;
@@ -762,7 +762,7 @@ void hd_read_platform(hd_data_t *hd_data)
       hd_sysfs_id(sf_dev)
     );
 
-    platform_name = platform_type = NULL;
+    platform_type = NULL;
 
     if((s = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
       platform_type = canon_str(s, strlen(s));
@@ -770,7 +770,7 @@ void hd_read_platform(hd_data_t *hd_data)
     }
 
     if(
-      platform_type && ( !strcmp(platform_type, "ps3_storage") )
+      platform_type && !strcmp(platform_type, "ps3_storage")
     ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->bus.id = bus_ps3_system_bus;
@@ -783,13 +783,15 @@ void hd_read_platform(hd_data_t *hd_data)
       hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1000); /* PS3_DEV_TYPE_STOR_DISK */
       str_printf(&hd->device.name, 0, "PS3 storage %d", hd->slot);
 
-      hd->rom_id = new_str(platform_name ? platform_name + 1 : 0);	/* skip leading '/' */
+      hd->modalias = new_str(platform_type);
 
       hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
       hd->sysfs_bus_id = new_str(sf_bus_e->str);
       s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
       if(s) add_str_list(&hd->drivers, s);
     }
+
+    platform_type = free_mem(platform_type);
 
     free_mem(sf_dev);
   }
@@ -804,7 +806,7 @@ void hd_read_platform(hd_data_t *hd_data)
  */
 static void hd_read_ps3_system_bus(hd_data_t *hd_data)
 {
-  char *s, *ps3_name, *ps3_type;
+  char *s, *ps3_name;
   int eth_cnt = 0; 
   hd_t *hd;
   str_list_t *sf_bus, *sf_bus_e;
@@ -826,7 +828,7 @@ static void hd_read_ps3_system_bus(hd_data_t *hd_data)
       hd_sysfs_id(sf_dev)
     );
 
-    ps3_name = ps3_type = NULL;
+    ps3_name = NULL;
 
     if((s = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
       ps3_name = canon_str(s, strlen(s));
@@ -844,19 +846,21 @@ static void hd_read_ps3_system_bus(hd_data_t *hd_data)
 
       hd->vendor.id = MAKE_ID(TAG_PCI, 0x104d); /* Sony */
 
-        hd->base_class.id = bc_network;
-        hd->sub_class.id = 0;	/* ethernet */
-        hd->slot = eth_cnt++;
-        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1003); /* PS3_DEV_TYPE_SB_GELIC */
-        str_printf(&hd->device.name, 0, "PS3 Ethernet card %d", hd->slot);
-        
-      hd->rom_id = new_str(ps3_name ? ps3_name + 1 : 0);	/* skip leading '/' */
+      hd->base_class.id = bc_network;
+      hd->sub_class.id = 0;	/* ethernet */
+      hd->slot = eth_cnt++;
+      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1003); /* PS3_DEV_TYPE_SB_GELIC */
+      str_printf(&hd->device.name, 0, "PS3 Ethernet card %d", hd->slot);
+
+      hd->modalias = new_str(ps3_name);
 
       hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
       hd->sysfs_bus_id = new_str(sf_bus_e->str);
       s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
       if(s) add_str_list(&hd->drivers, s);
     }
+
+    ps3_name = free_mem(ps3_name);
 
     free_mem(sf_dev);
   }
