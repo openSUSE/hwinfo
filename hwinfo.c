@@ -306,7 +306,6 @@ int main(int argc, char **argv)
           break;
 
         case 317:
-          hd_data->flags.nowpa = 1;
           break;
 
         case 318:

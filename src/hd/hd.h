@@ -2520,7 +2520,7 @@ typedef struct {
     unsigned keep_kmods:2;	/**< internal: don't reread kmods */
     unsigned nobioscrc:1;	/**< internal: don't check VBIOS crc */
     unsigned biosvram:1;	/**< internal: map Video BIOS RAM (128k at 0xa0000) */
-    unsigned nowpa:1;           /**< do not probe WPA capabilities */
+    unsigned nowpa:1;           /**< no longer used */
     unsigned pata:1;            /**< use new libata modules instead of classical ide modules */
   } flags;
 
