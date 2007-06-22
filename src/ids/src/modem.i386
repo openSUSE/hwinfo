@@ -47,7 +47,6 @@
 &device.id		pci 0x24d6
 |vendor.id		pci 0x8086
 &device.id		pci 0x7196
-+driver.module.modprobe	slamr
 +baseclass.id		0x102
 +subclass.id		0x04
 
