@@ -2241,6 +2241,11 @@
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
+&device.id		pci 0x016a
++device.name		Geforce 7100 GS (NV44)
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x0170
 +device.name		GeForce4 MX 460
 +driver.xfree		4|nv
@@ -2385,6 +2390,11 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x0193
 +device.name		GeForce 8800 GTS
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0194
++device.name		GeForce 8800 Ultra
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
@@ -3006,6 +3016,76 @@
 +device.name		Quadro FX 560
 +driver.xfree		4|nv
 
+ vendor.id		pci 0x10de
+&device.id		pci 0x0400
++device.name		GeForce 8600 GTS
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0402
++device.name		GeForce 8600 GT
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0407
++device.name		GeForce 8600M GT
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x040b
++device.name		Quadro NVS 320M
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0421
++device.name		GeForce 8500 GT
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0422
++device.name		GeForce 8400 GS
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0423
++device.name		GeForce 8300 GS
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0425
++device.name		GeForce 8600M GS
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0426
++device.name		GeForce 8400M GT
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0427
++device.name		GeForce 8400M GS
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0428
++device.name		GeForce 8400M G
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0429
++device.name		Quadro NVS 140M
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x042a
++device.name		Quadro NVS 130M
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x042b
++device.name		Quadro NVS 135M
++driver.xfree		4|nv
+
  vendor.id		pci 0x10e0
 +vendor.name		Imstt
 
@@ -3455,6 +3535,18 @@
 +driver.xfree		4|i810
 
  vendor.id		pci 0x8086
+&device.id		pci 0x27a2
+&subvendor.id		pci 0x1734
+&subdevice.id		pci 0x10ad
++subdevice.name		945 GM (FSC Amilo Si1520)
++driver.xfree		4|fbdev
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x27ae
++device.name		945 GME
++driver.xfree		4|intel
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x2972
 +device.name		946GZ
 +driver.xfree		4|i810beta
@@ -3475,26 +3567,46 @@
 +driver.xfree		4|i810beta
 
  vendor.id		pci 0x8086
+&device.id		pci 0x29b2
++device.name		Q35
++driver.xfree		4|intel
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x29c2
++device.name		G33
++driver.xfree		4|intel
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x29d2
++device.name		Q33
++driver.xfree		4|intel
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x2a02
 +device.name		965 GM
 +driver.xfree		4|intel
 
  vendor.id		pci 0x8086
+&device.id		pci 0x2a12
++device.name		965 GME/GLE
++driver.xfree		4|intel
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x3577
 +device.name		i830
-+driver.xfree		4|i810
++driver.xfree		4|intel
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3582
 +device.name		855 GM
-+driver.xfree		4|i810
++driver.xfree		4|intel
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3582
 &subvendor.id		pci 0x1584
 &subdevice.id		pci 0x9500
 +subdevice.name		855 GM
-+driver.xfree		4|i810||||Noaccel,SWcursor
++driver.xfree		4|intel||||Noaccel,SWcursor
 
  vendor.id		pci 0x8086
 &device.id		pci 0x7121
