@@ -140,7 +140,7 @@ typedef enum hw_item {
   hw_isapnp, hw_bridge, hw_hub, hw_scsi, hw_ide, hw_memory, hw_dvb,
   hw_pcmcia, hw_pcmcia_ctrl, hw_ieee1394, hw_ieee1394_ctrl, hw_hotplug,
   hw_hotplug_ctrl, hw_zip, hw_pppoe, hw_wlan, hw_redasd, hw_dsl, hw_block,
-  hw_tape, hw_vbe, hw_bluetooth,
+  hw_tape, hw_vbe, hw_bluetooth, hw_fingerprint,
   /** append new entries here */
   hw_unknown, hw_all				/**< hw_all must be last */
 } hd_hw_item_t;
@@ -162,7 +162,7 @@ typedef enum base_classes {
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,
   bc_storage_device, bc_network_interface, bc_keyboard, bc_printer,
   bc_hub, bc_braille, bc_scanner, bc_joystick, bc_chipcard, bc_camera,
-  bc_framebuffer, bc_dvb, bc_tv, bc_partition, bc_dsl, bc_bluetooth
+  bc_framebuffer, bc_dvb, bc_tv, bc_partition, bc_dsl, bc_bluetooth, bc_fingerprint
 } hd_base_classes_t;
 
 /** subclass values of bc_monitor */

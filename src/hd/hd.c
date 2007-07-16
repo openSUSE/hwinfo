@@ -823,6 +823,10 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_isdn);	// need pr_misc, too?
       break;
 
+    case hw_fingerprint:
+      hd_set_probe_feature(hd_data, pr_usb);
+      break;
+
     case hw_all:
       hd_set_probe_feature(hd_data, pr_default);
       break;
@@ -4659,6 +4663,10 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 
         case hw_bluetooth:
           base_class = bc_bluetooth;
+          break;
+
+        case hw_fingerprint:
+          base_class = bc_fingerprint;
           break;
 
         case hw_wlan:
