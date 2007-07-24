@@ -839,6 +839,8 @@ void int_wlan(hd_data_t *hd_data)
     "ipw2100",
     "ipw2200",
     "ipw3945",
+    "iwl3945",
+    "iwl4965",
     "netwave_cs",
     "orinoco_cs",
     "orinoco_pci",
