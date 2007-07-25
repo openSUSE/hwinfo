@@ -181,7 +181,8 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v, unsign
   unsigned char tmp[1024], s[64];
   unsigned i, l, u;
   unsigned modelist[0x100];
-  unsigned bpp, res_bpp, fb, clock;
+  unsigned bpp, fb, clock;
+  int res_bpp;
   vbe_mode_info_t *mi;
   int ax, bx, cx;
 
@@ -282,8 +283,9 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v, unsign
         break;
 
       case 6:
-        bpp = tmp[0x19] - tmp[0x25];
-        res_bpp = tmp[0x25];
+        bpp = tmp[0x1f] + tmp[0x21] + tmp[0x23];
+        res_bpp = tmp[0x19] - bpp;
+        if(res_bpp < 0) res_bpp = 0;
     }
 
     fb = 0;
@@ -309,7 +311,7 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v, unsign
         if(!vbe->fb_start) vbe->fb_start = mi->fb_start;
       }
       *s = 0;
-      if(res_bpp) sprintf(s, "+%u", res_bpp);
+      if(res_bpp) sprintf(s, "+%d", res_bpp);
       ADD2LOG(
         "  0x%04x[%02x]: %ux%u+%u, %u%s bpp",
         mi->number, mi->attributes, mi->width, mi->height, mi->bytes_p_line, mi->pixel_size, s

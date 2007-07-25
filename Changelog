@@ -1,4 +1,6 @@
+25/7/2007:	v13.39
 	- more wlan drivers (#291131)
+	- fixed framebuffer color depth calculation (#294334)
 
 16/7/2007:	v13.38
 	- add fingerprint reader support
