@@ -741,8 +741,10 @@ void hd_read_vio(hd_data_t *hd_data)
 void hd_read_platform(hd_data_t *hd_data)
 {
   char *s, *platform_type;
+#if 0
   int scsi_cnt = 0;
   hd_t *hd;
+#endif
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev;
 
@@ -769,6 +771,7 @@ void hd_read_platform(hd_data_t *hd_data)
       ADD2LOG("    type = \"%s\"\n", platform_type);
     }
 
+#if 0
     if(
       platform_type && !strcmp(platform_type, "ps3_storage")
     ) {
@@ -790,6 +793,7 @@ void hd_read_platform(hd_data_t *hd_data)
       s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
       if(s) add_str_list(&hd->drivers, s);
     }
+#endif  
 
     platform_type = free_mem(platform_type);
 
@@ -808,6 +812,7 @@ static void hd_read_ps3_system_bus(hd_data_t *hd_data)
 {
   char *s, *ps3_name;
   int eth_cnt = 0; 
+  int scsi_cnt = 0;
   hd_t *hd;
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev;
@@ -860,6 +865,46 @@ static void hd_read_ps3_system_bus(hd_data_t *hd_data)
       if(s) add_str_list(&hd->drivers, s);
     }
 
+    if ( ps3_name && !strcmp(ps3_name, "ps3:7")) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->bus.id = bus_ps3_system_bus;
+
+      hd->vendor.id = MAKE_ID(TAG_PCI, 0x104d); /* Sony */
+
+      hd->base_class.id = bc_storage;
+      hd->sub_class.id = sc_sto_other;	/* cdrom */
+      hd->slot = scsi_cnt++;
+      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1001); /* PS3_DEV_TYPE_STOR_ROM */
+      str_printf(&hd->device.name, 0, "PS3 CDROM");
+
+      hd->modalias = new_str(ps3_name);
+
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+      hd->sysfs_bus_id = new_str(sf_bus_e->str);
+      s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+      if(s) add_str_list(&hd->drivers, s);
+
+    }
+    if ( ps3_name && !strcmp(ps3_name, "ps3:6")) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->bus.id = bus_ps3_system_bus;
+
+      hd->vendor.id = MAKE_ID(TAG_PCI, 0x104d); /* Sony */
+
+      hd->base_class.id = bc_storage;
+      hd->sub_class.id = sc_sto_other;	
+      hd->slot = scsi_cnt++;
+      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1002); /* PS3_DEV_TYPE_STOR_DISK */
+      str_printf(&hd->device.name, 0, "PS3 Disk");
+
+      hd->modalias = new_str(ps3_name);
+
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+      hd->sysfs_bus_id = new_str(sf_bus_e->str);
+      s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+      if(s) add_str_list(&hd->drivers, s);
+
+    }
     ps3_name = free_mem(ps3_name);
 
     free_mem(sf_dev);
