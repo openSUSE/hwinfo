@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,6 +35,7 @@ static void add_devices(hd_data_t *hd_data);
 static void dump_devtree_data(hd_data_t *hd_data);
 
 static unsigned veth_cnt, vscsi_cnt;
+static unsigned snd_aoa_layout_id;
 
 int detect_smp_prom(hd_data_t *hd_data)
 {
@@ -49,10 +51,24 @@ int detect_smp_prom(hd_data_t *hd_data)
   return cpus > 1 ? cpus : 0;
 }
 
+static void prom_add_pmac_devices(hd_data_t *hd_data)
+{
+	hd_t *hd;
+	hd = add_hd_entry(hd_data, __LINE__, 0);
+	hd->bus.id = bus_none;
+	hd->base_class.id = bc_multimedia;
+	hd->sub_class.id = sc_multi_audio;
+	hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x401);
+	if (snd_aoa_layout_id)
+		hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0015);
+	else
+		hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0010);
+
+}
 void hd_scan_prom(hd_data_t *hd_data)
 {
   hd_t *hd;
-  unsigned char buf[16];
+  unsigned char buf[42];
   FILE *f;
   prom_info_t *pt;
 
@@ -89,6 +105,13 @@ void hd_scan_prom(hd_data_t *hd_data)
       ADD2LOG("color-code: 0x%04x\n", (buf[0] << 8) + buf[1]);
     }
 
+    fclose(f);
+  }
+  if((f = fopen(PROC_PROM "/compatible", "r"))) {
+    if(fread(buf, 1, sizeof(buf), f) > 2) {
+      if(memmem(buf, sizeof(buf),"MacRISC", 7))
+	      prom_add_pmac_devices(hd_data);
+    }
     fclose(f);
   }
 
@@ -182,6 +205,8 @@ void read_devtree_entry(hd_data_t *hd_data, devtree_t *parent, char *dirname)
   if((dir = opendir(path))) {
     while((de = readdir(dir))) {
       if(!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..")) continue;
+      if(!strcmp(de->d_name, "layout-id"))
+        snd_aoa_layout_id = 1;
       s = NULL;
       str_printf(&s, 0, "%s/%s", path, de->d_name);
       if(!lstat(s, &sbuf)) {

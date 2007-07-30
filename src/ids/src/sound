@@ -368,6 +368,11 @@
 +driver.module.modprobe	snd-powermac
 
 # ppc audio
+ vendor.id		special 0x0401
+&device.id		special 0x0015
++driver.module.modprobe	snd-aoa
+
+# ppc audio
  vendor.id		special 0x0402
 &device.id		special 0x0014
 +driver.module.modprobe	cs4232
