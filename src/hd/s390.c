@@ -24,6 +24,8 @@
 #define BUSNAME_GROUP "ccwgroup"
 #define BUSNAME_IUCV "iucv"
 
+//#define strtol(x...) (printf("strtolling at %d\n",__LINE__),fflush(stdout),strtol(x))
+
 static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
 {
   hd_t* hd;
@@ -53,16 +55,22 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
 
   if (!bus)
   {
-    ADD2LOG("unable to open" BUSNAME "bus");
+    ADD2LOG("unable to open" BUSNAME "bus\n");
     return;
   }
 
   /* build cutypes list */
   while((curdev = readdir(bus)))
   {
+    char* att;
     if(curdev->d_type == DT_DIR) continue;	// skip "." and ".."
     int channel=strtol(rindex(curdev->d_name,'.')+1,NULL,16);
-    cutypes[channel] = strtol(get_sysfs_attr(BUSNAME, curdev->d_name, "cutype"), NULL, 16);
+    att = get_sysfs_attr(BUSNAME, curdev->d_name, "cutype");
+    if(!att) {
+      ADD2LOG("CCW device %s has no cutype attribute\n", curdev->d_name);
+    } else {
+      cutypes[channel] = strtol(att, NULL, 16);
+    }
   }
   /* check for each channel if it must be skipped and identify virtual reader/punch */
   for(i=0;i<(1<<16);i++)
@@ -120,15 +128,21 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
   rewinddir(bus);
   while((curdev = readdir(bus)))
   {
+    char* att;
     int readonly=0;
     
     if(curdev->d_type == DT_DIR) continue;	// skip "." and ".."
     
     res=new_mem(sizeof *res);
 
+    att = get_sysfs_attr(BUSNAME, curdev->d_name, "cutype");
+    if(!att) {
+      ADD2LOG("CCW device %s has no cutype attribute, skipping\n", curdev->d_name);
+      continue;
+    }
+    cutype = strtol(att, NULL, 16);
+    cumod = strtol(index(att, '/') + 1, NULL, 16);
     res->io.enabled = atoi(get_sysfs_attr(BUSNAME, curdev->d_name, "online"));
-    cutype = strtol(get_sysfs_attr(BUSNAME, curdev->d_name, "cutype"), NULL, 16);
-    cumod = strtol(index(get_sysfs_attr(BUSNAME, curdev->d_name, "cutype"), '/') + 1, NULL, 16);
     devtype = strtol(get_sysfs_attr(BUSNAME, curdev->d_name, "devtype"), NULL, 16);
     devmod = strtol(index(get_sysfs_attr(BUSNAME, curdev->d_name, "devtype"), '/') + 1, NULL, 16);
     readonly = atoi(get_sysfs_attr(BUSNAME, curdev->d_name, "readonly")?:"0");
