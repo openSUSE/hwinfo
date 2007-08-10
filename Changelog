@@ -1,6 +1,8 @@
+	- updated X11 data
+
 8/8/2007:	v13.42
 	- s390: handle missing CCW device attributes
- 
+
 30/7/2007:	v13.41
 	- olh: add ppc sound card (#295614)
 

@@ -3404,6 +3404,13 @@
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3582
+&subvendor.id		pci 0x1025
+&subdevice.id		pci 0x0035
++subdevice.name		855 GM Travelmate 661
++driver.xfree		4|i810
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x3582
 &subvendor.id		pci 0x1584
 &subdevice.id		pci 0x9500
 +subdevice.name		855 GM
