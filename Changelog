@@ -1,4 +1,6 @@
+10/8/2007:	v13.43
 	- updated X11 data
+	- olh: generate fake EDID for known powermacs (#299202)
 
 8/8/2007:	v13.42
 	- s390: handle missing CCW device attributes

@@ -36,6 +36,82 @@ static void dump_devtree_data(hd_data_t *hd_data);
 
 static unsigned veth_cnt, vscsi_cnt;
 static unsigned snd_aoa_layout_id;
+static enum pmac_model model;
+static devtree_t *devtree_edid;
+
+static const struct pmac_mb_def pmac_mb[] = {
+#ifndef __powerpc64__
+	{ iMac_1,	"iMac,1" },	/* iMac (first generation) */
+	{ AAPL_3400,	"AAPL,3400/2400" },	/* PowerBook 3400 */
+	{ AAPL_3500,	"AAPL,3500" },	/* PowerBook 3500 */
+	{ AAPL_7200,	"AAPL,7200" },	/* PowerMac 7200 */
+	{ AAPL_7300,	"AAPL,7300" },	/* PowerMac 7200/7300 */
+	{ AAPL_7500,	"AAPL,7500" },	/* PowerMac 7500 */
+	{ AAPL_8500,	"AAPL,8500" },	/* PowerMac 8500/8600 */
+	{ AAPL_9500,	"AAPL,9500" },	/* PowerMac 9500/9600 */
+	{ AAPL_Gossamer,	"AAPL,Gossamer" },	/* PowerMac G3 (Gossamer) */
+	{ AAPL_PowerBook1998,	"AAPL,PowerBook1998" },	/* PowerBook Wallstreet */
+	{ AAPL_PowerMac_G3,	"AAPL,PowerMac G3" },	/* PowerMac G3 (Silk) */
+	{ AAPL_ShinerESB,	"AAPL,ShinerESB" },	/* Apple Network Server */
+	{ AAPL_e407,	"AAPL,e407" },	/* Alchemy */
+	{ AAPL_e411,	"AAPL,e411" },	/* Gazelle */
+	{ PowerBook1_1,	"PowerBook1,1" },	/* PowerBook 101 (Lombard) */
+	{ PowerBook2_1,	"PowerBook2,1" },	/* iBook (first generation) */
+	{ PowerBook2_2,	"PowerBook2,2" },	/* iBook FireWire */
+	{ PowerBook3_1,	"PowerBook3,1" },	/* PowerBook Pismo */
+	{ PowerBook3_2,	"PowerBook3,2" },	/* PowerBook Titanium */
+	{ PowerBook3_3,	"PowerBook3,3" },	/* PowerBook Titanium II */
+	{ PowerBook3_4,	"PowerBook3,4" },	/* PowerBook Titanium III */
+	{ PowerBook3_5,	"PowerBook3,5" },	/* PowerBook Titanium IV */
+	{ PowerBook4_1,	"PowerBook4,1" },	/* iBook 2 */
+	{ PowerBook4_2,	"PowerBook4,2" },	/* iBook 2 */
+	{ PowerBook4_3,	"PowerBook4,3" },	/* iBook 2 rev. 2 */
+	{ PowerBook5_1,	"PowerBook5,1" },	/* PowerBook G4 17" */
+	{ PowerBook5_2,	"PowerBook5,2" },	/* PowerBook G4 15" */
+	{ PowerBook5_3,	"PowerBook5,3" },	/* PowerBook G4 17" */
+	{ PowerBook5_4,	"PowerBook5,4" },	/* PowerBook G4 15" */
+	{ PowerBook5_5,	"PowerBook5,5" },	/* PowerBook G4 17" */
+	{ PowerBook5_6,	"PowerBook5,6" },	/* PowerBook G4 15" */
+	{ PowerBook5_7,	"PowerBook5,7" },	/* PowerBook G4 17" */
+	{ PowerBook5_8,	"PowerBook5,8" },	/* PowerBook G4 15" */
+	{ PowerBook5_9,	"PowerBook5,9" },	/* PowerBook G4 17" */
+	{ PowerBook6_1,	"PowerBook6,1" },	/* PowerBook G4 12" */
+	{ PowerBook6_2,	"PowerBook6,2" },	/* PowerBook G4 */
+	{ PowerBook6_3,	"PowerBook6,3" },	/* iBook G4 */
+	{ PowerBook6_4,	"PowerBook6,4" },	/* PowerBook G4 12" */
+	{ PowerBook6_5,	"PowerBook6,5" },	/* iBook G4 */
+	{ PowerBook6_7,	"PowerBook6,7" },	/* iBook G4 */
+	{ PowerBook6_8,	"PowerBook6,8" },	/* PowerBook G4 12" */
+	{ PowerMac1_1,	"PowerMac1,1" },	/* Blue&White G3 */
+	{ PowerMac1_2,	"PowerMac1,2" },	/* PowerMac G4 PCI Graphics */
+	{ PowerMac2_1,	"PowerMac2,1" },	/* iMac FireWire */
+	{ PowerMac2_2,	"PowerMac2,2" },	/* iMac FireWire */
+	{ PowerMac3_1,	"PowerMac3,1" },	/* PowerMac G4 AGP Graphics */
+	{ PowerMac3_2,	"PowerMac3,2" },	/* PowerMac G4 AGP Graphics */
+	{ PowerMac3_3,	"PowerMac3,3" },	/* PowerMac G4 AGP Graphics */
+	{ PowerMac3_4,	"PowerMac3,4" },	/* PowerMac G4 Silver */
+	{ PowerMac3_5,	"PowerMac3,5" },	/* PowerMac G4 Silver */
+	{ PowerMac3_6,	"PowerMac3,6" },	/* PowerMac G4 Windtunnel */
+	{ PowerMac4_1,	"PowerMac4,1" },	/* iMac "Flower Power" */
+	{ PowerMac4_2,	"PowerMac4,2" },	/* Flat panel iMac */
+	{ PowerMac4_4,	"PowerMac4,4" },	/* eMac */
+	{ PowerMac5_1,	"PowerMac5,1" },	/* PowerMac G4 Cube */
+	{ PowerMac6_1,	"PowerMac6,1" },	/* Flat panel iMac */
+	{ PowerMac6_3,	"PowerMac6,3" },	/* Flat panel iMac */
+	{ PowerMac6_4,	"PowerMac6,4" },	/* eMac */
+	{ RackMac1_1,	"RackMac1,1" },	/* XServe */
+	{ RackMac1_2,	"RackMac1,2" },	/* XServe rev. 2 */
+#endif /* __powerpc64__ */
+	{ PowerMac7_2,	"PowerMac7,2" },	/* PowerMac G5 */
+	{ PowerMac7_3,	"PowerMac7,3" },	/* PowerMac G5 */
+	{ PowerMac8_1,	"PowerMac8,1" },	/* iMac G5 */
+	{ PowerMac9_1,	"PowerMac9,1" },	/* PowerMac G5 */
+	{ PowerMac10_1,	"PowerMac10,1" },	/* Mac mini */
+	{ PowerMac11_2,	"PowerMac11,2" },	/* PowerMac G5 Dual Core */
+	{ PowerMac12_1,	"PowerMac12,1" },	/* iMac G5 (iSight) */
+	{ RackMac3_1,	"RackMac3,1" },	/* XServe G5 */
+	{ }
+};
 
 int detect_smp_prom(hd_data_t *hd_data)
 {
@@ -51,8 +127,211 @@ int detect_smp_prom(hd_data_t *hd_data)
   return cpus > 1 ? cpus : 0;
 }
 
-static void prom_add_pmac_devices(hd_data_t *hd_data)
+#define HSYNCP (( 1 << 1 ))
+#define HSYNCM (( 1 << 2 ))
+#define VSYNCP (( 1 << 3 ))
+#define VSYNCM (( 1 << 4 ))
+
+struct modelist {
+	unsigned short clock;
+	unsigned short width, height;
+	unsigned short hblank, hsync_ofs, hsync;
+	unsigned short vblank, vsync_ofs, vsync;
+	unsigned short flags;
+	unsigned char e0x23, e0x24;
+	unsigned char min_hsync, max_hsync;
+	unsigned char min_vsync, max_vsync;
+};
+
+static const struct modelist mode_800x600_60 = {
+	.clock = 39955 / 10,
+	.width = 800,
+	.height = 600,
+	.hblank = 256,
+	.hsync_ofs = 56,
+	.hsync = 128,
+	.vblank = 23,
+	.vsync_ofs = 1,
+	.vsync = 4,
+	.e0x23 = (1 << 0),
+};
+static const struct modelist mode_1024x768_60 = {
+	.clock = 65000 / 10,
+	.width = 1024,
+	.height = 768,
+	.hblank = 320,
+	.hsync_ofs = 40,
+	.hsync = 136,
+	.vblank = 29,
+	.vsync_ofs = 3,
+	.vsync = 6,
+	.e0x24 = (1 << 3),
+};
+/* Modeline "1024x768-74" 80.71  1024 1080 1192 1360  768 769 772 802 +hsync +vsync */
+static const struct modelist mode_1024x768_75 = {
+	.clock = 80711 / 10,
+	.width = 1024,
+	.height = 768,
+	.hblank = 336,
+	.hsync_ofs = 56,
+	.hsync = 112,
+	.vblank = 34,
+	.vsync_ofs = 1,
+	.vsync = 3,
+	.flags = VSYNCP | HSYNCP,
+	.e0x24 = (1 << 1),
+	.min_vsync = 74,
+	.max_vsync = 116,
+	.min_hsync = 59,
+	.max_hsync = 60,
+};
+/* Modeline "800x600-94" 63.89  800 848 936 1072  600 601 604 634 +vsync +hsync */
+static const struct modelist mode_800x600_94 = {
+	.clock = 63890 / 10,
+	.width = 800,
+	.height = 600,
+	.hblank = 272,
+	.hsync_ofs = 48,
+	.hsync = 88,
+	.vblank = 34,
+	.vsync_ofs = 1,
+	.vsync = 3,
+	.flags = VSYNCP | HSYNCP,
+};
+/* Modeline "640x480-116" 50.56  640 680 744 848  480 481 484 514 +vsync +hsync */
+static const struct modelist mode_640x480_116 = {
+	.clock = 50560 / 10,
+	.width = 640,
+	.height = 480,
+	.hblank = 208,
+	.hsync_ofs = 20,
+	.hsync = 64,
+	.vblank = 34,
+	.vsync_ofs = 1,
+	.vsync = 3,
+	.flags = VSYNCP | HSYNCP,
+};
+
+static void prom_add_first_detailed_timing(unsigned char *e, unsigned short width_mm, unsigned short height_mm, const struct modelist *m)
 {
+	unsigned char i;
+	i = 0x36;
+	e[i + 0] = e[i + 1] = e[i + 2] = 0;
+	e[i + 3] = 0xfd;
+	e[i + 5] = m->min_vsync;
+	e[i + 6] = m->max_vsync;
+	e[i + 7] = m->min_hsync;
+	e[i + 8] = m->max_hsync;
+}
+static void prom_add_detailed_timing(int num, unsigned char *e, unsigned short width_mm, unsigned short height_mm, const struct modelist *m)
+{
+	unsigned char i;
+	i = 0x36 + (num * 0x12);
+	e[i + 0] = (m->clock) & 0x00ff;
+	e[i + 1] = ((m->clock) & 0xff00) >> 8;
+	e[i + 2] = m->width & 0x00ff;
+	e[i + 4] |= ((m->width & 0x0f00) >> 8) << 4;
+	e[i + 5] = m->height & 0x00ff;
+	e[i + 7] |= ((m->height & 0x0f00) >> 8) << 4;
+	e[i + 12] |= width_mm & 0x00ff;
+	e[i + 14] |= ((width_mm & 0x0f00) >> 8) << 4;
+	e[i + 13] |= height_mm & 0x00ff;
+	e[i + 14] |= (height_mm & 0x0f00) >> 8;
+	e[i + 3] = m->hblank & 0x00ff;
+	e[i + 4] |= (m->hblank & 0x0f01) >> 8;
+	e[i + 8] = m->hsync_ofs & 0x00ff;
+	e[i + 11] |= ((m->hsync_ofs & 0x0300) >> 8) << 2;
+	e[i + 9] = m->hsync & 0x00ff;
+	e[i + 11] |= (m->hsync & 0x0300) >> 8;
+	e[i + 6] = m->vblank & 0x00ff;
+	e[i + 7] |= (m->vblank & 0x0f00) >> 8;
+	e[i + 10] |= (m->vsync_ofs & 0x000f) << 4;
+	e[i + 11] |= ((m->vsync_ofs & 0x0030) >> 4) << 2;
+	e[i + 10] |= m->vsync & 0x000f;
+	e[i + 11] |= (m->vsync & 0x0030) >> 4;
+	if (m->flags) {
+		e[i + 17] |= 3 << 3;
+		if (m->flags & HSYNCP)
+			e[i + 17] |= 0x4;
+		if (m->flags & HSYNCM)
+			e[i + 17] &= ~0x4;
+		if (m->flags & VSYNCP)
+			e[i + 17] |= 0x2;
+		if (m->flags & VSYNCM)
+			e[i + 17] &= ~0x2;
+	}
+}
+
+static void prom_add_edid_data(int model)
+{
+	unsigned char e[0x80];
+	unsigned short width_mm, height_mm, crt_imac;
+	const struct modelist *m;
+	memset(e, 0, sizeof(e));
+	width_mm = height_mm = crt_imac = 0;
+	m = NULL;
+	switch (model) {
+	case PowerBook2_1:	/* mach64 */
+	case PowerBook2_2:	/* r128 */
+		width_mm = 247;
+		height_mm = 186;
+		m = &mode_800x600_60;
+		break;
+	case AAPL_PowerBook1998:	/* mach64 */
+	case PowerBook1_1:	/* r128 */
+	case PowerBook3_1:	/* r128 */
+		width_mm = 286;
+		height_mm = 214;
+		m = &mode_1024x768_60;
+		break;
+	case iMac_1:		/* mach64 */
+	case PowerMac2_1:	/* r128 */
+	case PowerMac2_2:	/* r128 */
+	case PowerMac4_1:	/* r128 */
+		crt_imac = 1;
+		width_mm = 286;
+		height_mm = 212;
+		m = &mode_1024x768_75;
+		break;
+	case AAPL_3400:	/* 800x600 chipsfb */
+	case AAPL_3500:	/* 800x600 chipsfb */
+	default:
+		return;
+	};
+	e[0x12] = 0x01;
+	e[0x13] = 0x03;
+	e[0x08] = 0x06;		/* high vendor Apple */
+	e[0x09] = 0x10;		/* low */
+	e[0x0a] = (unsigned char)model;	/* low */
+	e[0x0b] = 0x42;		/* high device */
+	if (m->e0x23)
+		e[0x23] = m->e0x23;
+	if (m->e0x24)
+		e[0x24] = m->e0x24;
+	prom_add_first_detailed_timing(e, width_mm, height_mm, m);
+	prom_add_detailed_timing(1, e, width_mm, height_mm, m);
+	if (crt_imac && 0) {
+		prom_add_detailed_timing(2, e, width_mm, height_mm, &mode_800x600_94);
+		prom_add_detailed_timing(3, e, width_mm, height_mm, &mode_640x480_116);
+	}
+	if (!devtree_edid->edid)
+		devtree_edid->edid = malloc(sizeof(e));
+	memcpy(devtree_edid->edid, e, sizeof(e));
+}
+
+static void prom_add_pmac_devices(hd_data_t *hd_data, const unsigned char *buf)
+{
+	const struct pmac_mb_def *m = pmac_mb;
+
+	while (m->string) {
+		if (strcmp(buf, m->string) == 0) {
+			model = m->model;
+			break;
+		}
+		m++;
+	}
+	if (model)
+		prom_add_edid_data(model);
 	hd_t *hd;
 	hd = add_hd_entry(hd_data, __LINE__, 0);
 	hd->bus.id = bus_none;
@@ -85,6 +364,13 @@ void hd_scan_prom(hd_data_t *hd_data)
   PROGRESS(1, 0, "devtree");
 
   read_devtree(hd_data);
+  if((f = fopen(PROC_PROM "/compatible", "r"))) {
+    if(fread(buf, 1, sizeof(buf), f) > 2) {
+      if(memmem(buf, sizeof(buf),"MacRISC", 7))
+         prom_add_pmac_devices(hd_data, buf);
+    }
+    fclose(f);
+  }
   if(hd_data->debug) dump_devtree_data(hd_data);
   add_devices(hd_data);
 
@@ -105,13 +391,6 @@ void hd_scan_prom(hd_data_t *hd_data)
       ADD2LOG("color-code: 0x%04x\n", (buf[0] << 8) + buf[1]);
     }
 
-    fclose(f);
-  }
-  if((f = fopen(PROC_PROM "/compatible", "r"))) {
-    if(fread(buf, 1, sizeof(buf), f) > 2) {
-      if(memmem(buf, sizeof(buf),"MacRISC", 7))
-	      prom_add_pmac_devices(hd_data);
-    }
     fclose(f);
   }
 
@@ -240,6 +519,8 @@ void read_devtree_entry(hd_data_t *hd_data, devtree_t *parent, char *dirname)
   read_int(path, "subsystem-id", &devtree->subdevice_id);
   read_int(path, "revision-id", &devtree->revision_id);
 
+  if(devtree_edid == NULL && devtree->device_type && strcmp(devtree->device_type, "display") == 0)
+    devtree_edid = devtree;
   read_mem(path, "EDID", &devtree->edid, 0x80);
   if(!devtree->edid) read_mem(path, "DFP,EDID", &devtree->edid, 0x80);
   if(!devtree->edid) read_mem(path, "LCD,EDID", &devtree->edid, 0x80);

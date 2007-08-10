@@ -1181,6 +1181,83 @@ typedef struct devtree_s {
   unsigned char *edid;                  /**< 128 bytes */
 } devtree_t;
 
+enum pmac_model {
+	AAPL_3400,
+	AAPL_3500,
+	AAPL_7200,
+	AAPL_7300,
+	AAPL_7500,
+	AAPL_8500,
+	AAPL_9500,
+	AAPL_Gossamer,
+	AAPL_PowerBook1998,
+	AAPL_PowerMac_G3,
+	AAPL_ShinerESB,
+	AAPL_e407,
+	AAPL_e411,
+	PowerBook1_1,
+	PowerBook2_1,
+	PowerBook2_2,
+	PowerBook3_1,
+	PowerBook3_2,
+	PowerBook3_3,
+	PowerBook3_4,
+	PowerBook3_5,
+	PowerBook4_1,
+	PowerBook4_2,
+	PowerBook4_3,
+	PowerBook5_1,
+	PowerBook5_2,
+	PowerBook5_3,
+	PowerBook5_4,
+	PowerBook5_5,
+	PowerBook5_6,
+	PowerBook5_7,
+	PowerBook5_8,
+	PowerBook5_9,
+	PowerBook6_1,
+	PowerBook6_2,
+	PowerBook6_3,
+	PowerBook6_4,
+	PowerBook6_5,
+	PowerBook6_7,
+	PowerBook6_8,
+	PowerMac1_1,
+	PowerMac1_2,
+	PowerMac10_1,
+	PowerMac11_2,
+	PowerMac12_1,
+	PowerMac2_1,
+	PowerMac2_2,
+	PowerMac3_1,
+	PowerMac3_2,
+	PowerMac3_3,
+	PowerMac3_4,
+	PowerMac3_5,
+	PowerMac3_6,
+	PowerMac4_1,
+	PowerMac4_2,
+	PowerMac4_4,
+	PowerMac5_1,
+	PowerMac6_1,
+	PowerMac6_3,
+	PowerMac6_4,
+	PowerMac7_2,
+	PowerMac7_3,
+	PowerMac8_1,
+	PowerMac9_1,
+	RackMac1_1,
+	RackMac1_2,
+	RackMac3_1,
+	iMac_1,
+};
+/**
+ * @brief PowerMac model matching
+ */
+struct pmac_mb_def {
+  enum pmac_model model;
+  const char *string;
+};
 
 /**
  * @brief Device/CU model numbers for S/390
