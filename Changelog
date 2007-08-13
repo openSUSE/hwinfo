@@ -1,3 +1,5 @@
+	- adjusted help text (#299770)
+
 10/8/2007:	v13.43
 	- updated X11 data
 	- olh: generate fake EDID for known powermacs (#299202)
