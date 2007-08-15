@@ -52,6 +52,7 @@ static void hd_read_vio(hd_data_t *hd_data);
 static void hd_read_xen(hd_data_t *hd_data);
 static void hd_read_ps3_system_bus(hd_data_t *hd_data);
 static void hd_read_platform(hd_data_t *hd_data);
+static void hd_read_of_platform(hd_data_t *hd_data);
 static void add_xen_network(hd_data_t *hd_data);
 static void add_xen_storage(hd_data_t *hd_data);
 
@@ -93,6 +94,9 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
   
   PROGRESS(7, 0, "platform");
   hd_read_platform(hd_data);
+
+  PROGRESS(8, 0, "of_platform");
+  hd_read_of_platform(hd_data);
 }
 
 
@@ -803,7 +807,100 @@ void hd_read_platform(hd_data_t *hd_data)
   free_str_list(sf_bus);
 }
 
+/*
+ * Get platform data from sysfs.
+ */
+void hd_read_of_platform(hd_data_t *hd_data)
+{
+  char *s, *modalias;
+  str_list_t *sf_bus, *sf_bus_e;
+  hd_t *hd;
+  char *sf_dev;
 
+  sf_bus = reverse_str_list(read_dir("/sys/bus/of_platform/devices", 'l'));
+
+  if(!sf_bus) {
+    ADD2LOG("sysfs: no such bus: of_platform\n");
+    return;
+  }
+
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/of_platform/devices", sf_bus_e->str));
+    ADD2LOG(
+      "  of_platform device: name = %s\n    path = %s\n",
+      sf_bus_e->str, hd_sysfs_id(sf_dev)
+    );
+    if((modalias = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
+      int len = strlen(modalias);
+      if (len > 0 && modalias[len - 1] == '\n')
+	      modalias[len - 1] = '\0';
+      ADD2LOG("    modalias = \"%s\"\n", modalias);
+      if (0) ;
+      else if (strstr(modalias, "Cmpc5200-fec")) {
+		/* EFIKA52K network */
+          hd = add_hd_entry(hd_data, __LINE__, 0);
+
+          hd->vendor.id = MAKE_ID(TAG_PCI, 0x1957); /* Freescale */
+          hd->base_class.id = bc_network;
+          hd->sub_class.id = 0;	/* ethernet */
+          str_printf(&hd->device.name, 0, "mpc5200 Ethernet %d", hd->slot);
+
+          hd->modalias = new_str(modalias);
+
+          hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+          hd->sysfs_bus_id = new_str(sf_bus_e->str);
+          s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+          if(s) add_str_list(&hd->drivers, s);
+      } else if (strstr(modalias, "Cmpc5200-ata")) {
+		/* EFIKA52K SATA */
+          hd = add_hd_entry(hd_data, __LINE__, 0);
+
+          hd->vendor.id = MAKE_ID(TAG_PCI, 0x1957); /* Freescale */
+          hd->base_class.id = bc_storage;
+          hd->sub_class.id = sc_sto_ide;	/* 2.5" disk */
+          str_printf(&hd->device.name, 0, "mpc5200 SATA %d", hd->slot);
+
+          hd->modalias = new_str(modalias);
+
+          hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+          hd->sysfs_bus_id = new_str(sf_bus_e->str);
+          s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+          if(s) add_str_list(&hd->drivers, s);
+      } else if (strstr(modalias, "Cmpc5200-psc-ac97")) {
+		/* EFIKA52K sound */
+          hd = add_hd_entry(hd_data, __LINE__, 0);
+
+          hd->vendor.id = MAKE_ID(TAG_PCI, 0x1957); /* Freescale */
+          hd->base_class.id = bc_multimedia;
+          hd->sub_class.id = sc_multi_audio;
+          str_printf(&hd->device.name, 0, "mpc5200 AC97 %d", hd->slot);
+
+          hd->modalias = new_str(modalias);
+
+          hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+          hd->sysfs_bus_id = new_str(sf_bus_e->str);
+          s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+          if(s) add_str_list(&hd->drivers, s);
+      } else if (strstr(modalias, "Cmpc5200-usb")) {
+		/* EFIKA52K USB */
+          hd = add_hd_entry(hd_data, __LINE__, 0);
+
+          hd->vendor.id = MAKE_ID(TAG_PCI, 0x1957); /* Freescale */
+          hd->base_class.id = bc_serial;
+          str_printf(&hd->device.name, 0, "mpc5200 USB %d", hd->slot);
+
+          hd->modalias = new_str(modalias);
+
+          hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+          hd->sysfs_bus_id = new_str(sf_bus_e->str);
+          s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+          if(s) add_str_list(&hd->drivers, s);
+      }
+    }
+    free_mem(sf_dev);
+  }
+  free_str_list(sf_bus);
+}
 
 /*
  * Get ps3 data from sysfs.
