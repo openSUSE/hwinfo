@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <inttypes.h>
@@ -152,77 +153,6 @@ void hd_scan_net(hd_data_t *hd_data)
       get_driverinfo(hd_data, hd);
     }
 
-    hd_card = NULL;
-
-    if(sf_dev) {
-      hd->sysfs_device_link = new_str(hd_sysfs_id(sf_dev)); 
-
-      hd_card = hd_find_sysfs_id(hd_data, hd_sysfs_id(sf_dev));
-      if(hd_card) {
-        hd->attached_to = hd_card->idx;
-
-        /* for cards with strange pci classes */
-        hd_set_hw_class(hd_card, hw_network_ctrl);
-
-        /* add hw addr to network card */
-        if(res1) {
-          u = 0;
-          for(res = hd_card->res; res; res = res->next) {
-            if(
-              res->any.type == res_hwaddr &&
-              !strcmp(res->hwaddr.addr, res1->hwaddr.addr)
-            ) {
-              u = 1;
-              break;
-            }
-          }
-          if(!u) {
-            res = new_mem(sizeof *res);
-            res->hwaddr.type = res_hwaddr;
-            res->hwaddr.addr = new_str(res1->hwaddr.addr);
-            add_res_entry(&hd_card->res, res);
-          }
-        }
-        /* add interface names */
-        add_if_name(hd_card, hd);
-      }
-    }
-
-    if(!hd_card && hw_addr) {
-      /* try to find card based on hwaddr (for prom-based cards) */
-
-      for(hd_card = hd_data->hd; hd_card; hd_card = hd_card->next) {
-        if(
-          hd_card->base_class.id != bc_network ||
-          hd_card->sub_class.id != 0
-        ) continue;
-        for(res = hd_card->res; res; res = res->next) {
-          if(
-            res->any.type == res_hwaddr &&
-            !strcmp(hw_addr, res->hwaddr.addr)
-          ) break;
-        }
-        if(res) {
-          hd->attached_to = hd_card->idx;
-          break;
-        }
-      }
-    }
-
-    hw_addr = free_mem(hw_addr);
-
-#if 0
-    "ctc"	sc_nif_ctc
-    "iucv"	sc_nif_iucv
-    "hsi"	sc_nif_hsi
-    "qeth"	sc_nif_qeth
-    "escon"	sc_nif_escon
-    "myri"	sc_nif_myrinet
-    "wlan"	sc_nif_wlan
-    "xp"	sc_nif_xp
-    "usb"	sc_nif_usb
-#endif
-
     switch(if_type) {
       case ARPHRD_ETHER:	/* eth */
         hd->sub_class.id = sc_nif_ethernet;
@@ -244,6 +174,8 @@ void hd_scan_net(hd_data_t *hd_data)
         hd->sub_class.id = sc_nif_fc;
         break;
 #endif
+      default:
+        hd->sub_class.id = sc_nif_other;
     }
 
     if(!strcmp(hd->unix_dev_name, "lo")) {
@@ -302,8 +234,73 @@ void hd_scan_net(hd_data_t *hd_data)
       hd->slot = u;
     }
     /* ##### add more interface names here */
+    else {
+      for(s = hd->unix_dev_name; *s; s++) if(isdigit(*s)) break;
+      if(*s && (u = strtoul(s, &s, 10), !*s)) {
+        hd->slot = u;
+      }
+    }
 
     hd->bus.id = bus_none;
+
+    hd_card = NULL;
+
+    if(sf_dev) {
+      hd->sysfs_device_link = new_str(hd_sysfs_id(sf_dev)); 
+
+      hd_card = hd_find_sysfs_id(hd_data, hd_sysfs_id(sf_dev));
+      if(hd_card) {
+        hd->attached_to = hd_card->idx;
+
+        /* for cards with strange pci classes */
+        hd_set_hw_class(hd_card, hw_network_ctrl);
+
+        /* add hw addr to network card */
+        if(res1) {
+          u = 0;
+          for(res = hd_card->res; res; res = res->next) {
+            if(
+              res->any.type == res_hwaddr &&
+              !strcmp(res->hwaddr.addr, res1->hwaddr.addr)
+            ) {
+              u = 1;
+              break;
+            }
+          }
+          if(!u) {
+            res = new_mem(sizeof *res);
+            res->hwaddr.type = res_hwaddr;
+            res->hwaddr.addr = new_str(res1->hwaddr.addr);
+            add_res_entry(&hd_card->res, res);
+          }
+        }
+        /* add interface names */
+        add_if_name(hd_card, hd);
+      }
+    }
+
+    if(!hd_card && hw_addr) {
+      /* try to find card based on hwaddr (for prom-based cards) */
+
+      for(hd_card = hd_data->hd; hd_card; hd_card = hd_card->next) {
+        if(
+          hd_card->base_class.id != bc_network ||
+          hd_card->sub_class.id != 0
+        ) continue;
+        for(res = hd_card->res; res; res = res->next) {
+          if(
+            res->any.type == res_hwaddr &&
+            !strcmp(hw_addr, res->hwaddr.addr)
+          ) break;
+        }
+        if(res) {
+          hd->attached_to = hd_card->idx;
+          break;
+        }
+      }
+    }
+
+    hw_addr = free_mem(hw_addr);
 
     /* fix card type */
     if(hd_card) {
@@ -731,12 +728,23 @@ void add_kma(hd_data_t *hd_data)
  */
 void add_if_name(hd_t *hd_card, hd_t *hd)
 {
+  str_list_t *sl0;
+
   if(hd->unix_dev_name) {
     if(!search_str_list(hd_card->unix_dev_names, hd->unix_dev_name)) {
-      add_str_list(&hd_card->unix_dev_names, hd->unix_dev_name);
-    }
-    if(!hd_card->unix_dev_name) {
-      hd_card->unix_dev_name = new_str(hd->unix_dev_name);
+      if(hd->sub_class.id == sc_nif_other) {
+        /* add at end */
+        add_str_list(&hd_card->unix_dev_names, hd->unix_dev_name);
+      }
+      else {
+        /* add at top */
+        sl0 = new_mem(sizeof *sl0);
+        sl0->next = hd_card->unix_dev_names;
+        sl0->str = new_str(hd->unix_dev_name);
+        hd_card->unix_dev_names = sl0;
+      }
+      free_mem(hd_card->unix_dev_name);
+      hd_card->unix_dev_name = new_str(hd_card->unix_dev_names->str);
     }
   }
 }
