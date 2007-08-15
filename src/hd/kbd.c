@@ -148,13 +148,19 @@ void add_serial_console(hd_data_t *hd_data)
       ADD2LOG(DEV_CONSOLE ": major %u, minor %u\n", tty_major, tty_minor);
     }
 
-    if(tty_major == 229 /* iseries hvc */) {
+    if (0)
+	    ;
+#ifdef __powerpc__
+    else if(tty_major == 229 /* iseries hvc */) {
       if (tty_minor >= 128) {
         str_printf(&dev, 0, "hvsi%u", tty_minor-128);
       } else {
         str_printf(&dev, 0, "hvc%u", tty_minor);
       }
+    } else if (tty_major == 204 /* SERIAL_PSC_MAJOR */ && tty_minor == 148 /* SERIAL_PSC_MINOR */) {
+        str_printf(&dev, 0, "ttyPSC0"); /* EFIKA5K2 */
     }
+#endif /* __powerpc__ */
     else if(!ioctl(fd, TIOCGSERIAL, &ser_info)) {
       ADD2LOG("serial console at line %d\n", ser_info.line);
       str_printf(&dev, 0, "ttyS%d", ser_info.line);

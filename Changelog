@@ -1,5 +1,7 @@
+15/8/2007:	v13.44
 	- adjusted help text (#299770)
 	- get wlan interfaces right (#298365)
+	- ppc: support ttyPSC0 console (#259923)
 
 10/8/2007:	v13.43
 	- updated X11 data
