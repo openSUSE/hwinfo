@@ -358,6 +358,7 @@ void hd_scan_prom(hd_data_t *hd_data)
   /* some clean-up */
   remove_hd_entries(hd_data);
   hd_data->devtree = free_devtree(hd_data);
+  devtree_edid = NULL;
 
   veth_cnt = vscsi_cnt = 0;
 
