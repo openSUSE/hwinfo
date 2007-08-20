@@ -347,7 +347,7 @@ static void prom_add_pmac_devices(hd_data_t *hd_data, const unsigned char *buf)
 void hd_scan_prom(hd_data_t *hd_data)
 {
   hd_t *hd;
-  unsigned char buf[42];
+  unsigned char buf[256];
   FILE *f;
   prom_info_t *pt;
 
@@ -365,9 +365,9 @@ void hd_scan_prom(hd_data_t *hd_data)
 
   read_devtree(hd_data);
   if((f = fopen(PROC_PROM "/compatible", "r"))) {
-    if(fread(buf, 1, sizeof(buf), f) > 2) {
-      if(memmem(buf, sizeof(buf),"MacRISC", 7))
-         prom_add_pmac_devices(hd_data, buf);
+    if(fread(buf, 1, sizeof buf - 1, f) > 2) {
+      buf[sizeof buf - 1] = 0;
+      if(memmem(buf, sizeof buf - 1, "MacRISC", 7)) prom_add_pmac_devices(hd_data, buf);
     }
     fclose(f);
   }

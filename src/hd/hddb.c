@@ -329,10 +329,11 @@ int match_modinfo(hd_data_t *hd_data, modinfo_t *db, modinfo_t *match)
         if(!strncmp(db->module, "pata_", sizeof "pata_" - 1)) {
           prio += hd_data->flags.pata ? 1 : -1;
         }
-        if(!strcmp(db->module, "piix")) {	/* ata_piix vs. piix */
+        if(!strcmp(db->module, "piix")) {		/* ata_piix vs. piix */
           prio += hd_data->flags.pata ? -1 : 1;
         }
         if(!strcmp(db->module, "generic")) prio -= 2;
+        if(!strcmp(db->module, "sk98lin")) prio -= 1;	/* deprecate sk98lin (#298724) */
       }
       break;
 

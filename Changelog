@@ -1,3 +1,7 @@
+20/8/2007	v13.45
+	- deprecate sk98in (#298724)
+	- fix ppc buffer overrun (#301752)
+
 15/8/2007:	v13.44
 	- adjusted help text (#299770)
 	- get wlan interfaces right (#298365)
