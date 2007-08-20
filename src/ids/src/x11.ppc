@@ -2584,6 +2584,11 @@
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
+&device.id		pci 0x029d
++device.name		Quadro FX 3500
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x02e0
 +device.name		GeForce 7600 GT (AGP)
 +driver.xfree		4|nv
