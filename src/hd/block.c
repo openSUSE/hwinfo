@@ -97,6 +97,7 @@ void get_block_devs(hd_data_t *hd_data)
   char *sf_cdev = NULL, *sf_dev = NULL, *sf_dev_ide;
   char *sf_drv_name, *sf_drv, *bus_id, *bus_name, *ide_bus_id;
   str_list_t *sf_bus, *sf_bus_e;
+  char *sf_block_dir;
 
   sf_bus = reverse_str_list(read_dir("/sys/bus/ide/devices", 'l'));
 
@@ -112,7 +113,18 @@ void get_block_devs(hd_data_t *hd_data)
     }
   }
 
-  sf_class = reverse_str_list(read_dir("/sys/block", 'd'));
+  sf_block_dir = "/sys/subsystem/block";
+  sf_class = reverse_str_list(read_dir(sf_block_dir, 'l'));
+
+  if (!sf_class) {
+    sf_block_dir = "/sys/class/block";
+    sf_class = reverse_str_list(read_dir(sf_block_dir, 'l'));
+  }
+
+  if (!sf_class) {
+    sf_block_dir = "/sys/block";
+    sf_class = reverse_str_list(read_dir(sf_block_dir, 'd'));
+  }
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: block\n");
@@ -120,8 +132,7 @@ void get_block_devs(hd_data_t *hd_data)
   }
 
   for(sf_class_e = sf_class; sf_class_e; sf_class_e = sf_class_e->next) {
-    str_printf(&sf_cdev, 0, "/sys/block/%s", sf_class_e->str);
-
+    str_printf(&sf_cdev, 0, "%s/%s", sf_block_dir, sf_class_e->str);
     ADD2LOG(
       "  block: name = %s, path = %s\n",
       sf_class_e->str,
