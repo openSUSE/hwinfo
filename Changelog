@@ -1,4 +1,5 @@
 	- prepare for upcoming sysfs change (#299685)
+	- updated X11 data
 
 20/8/2007:	v13.45
 	- deprecate sk98in (#298724)

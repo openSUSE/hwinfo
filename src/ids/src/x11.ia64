@@ -3082,11 +3082,6 @@
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
-&device.id		pci 0x0429
-+device.name		Quadro NVS 140M
-+driver.xfree		4|nv
-
- vendor.id		pci 0x10de
 &device.id		pci 0x042a
 +device.name		Quadro NVS 130M
 +driver.xfree		4|nv
