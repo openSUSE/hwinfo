@@ -372,6 +372,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
   str_list_t *sl, *sl1, *sl2;
   isdn_parm_t *ip;
   monitor_info_t *mi;
+  hd_detail_monitor_t *mdetail;
   static char *geo_type_str[] = { "Physical", "Logical", "BIOS EDD", "BIOS Legacy" };
 
   if(h->model) dump_line("Model: \"%s\"\n", h->model);
@@ -802,27 +803,31 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     h->detail->type == hd_detail_monitor &&
     (mi = h->detail->monitor.data)
   ) {
-    if(mi->htotal && mi->vtotal) {
-      dump_line_str("Detailed Timings:\n");
-      dump_line("   Resolution: %ux%u\n", mi->width, mi->height);
-      dump_line(
-        "   Horizontal: %4u %4u %4u %4u (+%u +%u +%u) %chsync\n",
-        mi->hdisp, mi->hsyncstart, mi->hsyncend, mi->htotal,
-        mi->hsyncstart - mi->hdisp, mi->hsyncend - mi->hdisp, mi->htotal - mi->hdisp,
-        mi->hflag
-      );
-      dump_line(
-        "     Vertical: %4u %4u %4u %4u (+%u +%u +%u) %cvsync\n",
-        mi->vdisp, mi->vsyncstart, mi->vsyncend, mi->vtotal,
-        mi->vsyncstart - mi->vdisp, mi->vsyncend - mi->vdisp, mi->vtotal - mi->vdisp,
-        mi->vflag
-      );
-      dump_line(
-        "  Frequencies: %.2f MHz, %.2f kHz, %.2f Hz\n",
-        (double) mi->clock / 1000,
-        (double) mi->clock / mi->htotal,
-        (double) mi->clock / mi->htotal / mi->vtotal * 1000
-      );
+    for(i = 0, mdetail = &h->detail->monitor; mdetail; i++, mdetail = mdetail->next) {
+      mi  = mdetail->data;
+
+      if(mi->htotal && mi->vtotal) {
+        dump_line("Detailed Timings #%d:\n", i);
+        dump_line("   Resolution: %ux%u\n", mi->width, mi->height);
+        dump_line(
+          "   Horizontal: %4u %4u %4u %4u (+%u +%u +%u) %chsync\n",
+          mi->hdisp, mi->hsyncstart, mi->hsyncend, mi->htotal,
+          mi->hsyncstart - mi->hdisp, mi->hsyncend - mi->hdisp, mi->htotal - mi->hdisp,
+          mi->hflag
+        );
+        dump_line(
+          "     Vertical: %4u %4u %4u %4u (+%u +%u +%u) %cvsync\n",
+          mi->vdisp, mi->vsyncstart, mi->vsyncend, mi->vtotal,
+          mi->vsyncstart - mi->vdisp, mi->vsyncend - mi->vdisp, mi->vtotal - mi->vdisp,
+          mi->vflag
+        );
+        dump_line(
+          "  Frequencies: %.2f MHz, %.2f kHz, %.2f Hz\n",
+          (double) mi->clock / 1000,
+          (double) mi->clock / mi->htotal,
+          (double) mi->clock / mi->htotal / mi->vtotal * 1000
+        );
+      }
     }
   }
 

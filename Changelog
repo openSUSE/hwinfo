@@ -1,5 +1,7 @@
+22/8/2007:	v13.46
 	- prepare for upcoming sysfs change (#299685)
 	- updated X11 data
+	- monitor detection: handle >1 detailed timing info block
 
 20/8/2007:	v13.45
 	- deprecate sk98in (#298724)

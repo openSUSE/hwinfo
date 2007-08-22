@@ -2074,9 +2074,10 @@ typedef struct {
   prom_info_t *data;
 } hd_detail_prom_t;
 
-typedef struct {
+typedef struct hd_detail_monitor_s {
   enum hd_detail_type type;
   monitor_info_t *data;
+  struct hd_detail_monitor_s *next;
 } hd_detail_monitor_t;
 
 typedef struct {

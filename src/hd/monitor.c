@@ -32,6 +32,7 @@ static void add_old_mac_monitor(hd_data_t *hd_data);
 static void add_monitor(hd_data_t *hd_data, devtree_t *dt);
 static int chk_edid_info(hd_data_t *hd_data, unsigned char *edid);
 static void add_lcd_info(hd_data_t *hd_data, hd_t *hd, bios_info_t *bt);
+static int mi_cmp(monitor_info_t **mi0, monitor_info_t **mi1);
 static void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid);
 static void add_monitor_res(hd_t *hd, unsigned x, unsigned y, unsigned hz, unsigned il);
 static void fix_edid_info(hd_data_t *hd_data, unsigned char *edid);
@@ -288,19 +289,27 @@ void add_lcd_info(hd_data_t *hd_data, hd_t *hd, bios_info_t *bt)
 }
 
 
+int mi_cmp(monitor_info_t **mi0, monitor_info_t **mi1)
+{
+  return (*mi0)->hdisp * (*mi0)->vdisp - (*mi1)->hdisp * (*mi1)->vdisp;
+}
+
+
 void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
 {
   hd_res_t *res;
-  monitor_info_t *mi = NULL;
+  hd_detail_monitor_t *mdetail;
+  monitor_info_t *mi_list[4], *mi;
+  unsigned mi_cnt = 0;
   int i;
   unsigned u, u1, u2, tag;
   char *s;
-  unsigned width_mm = 0, height_mm = 0;
+  unsigned width_mm = 0, height_mm = 0, manu_year = 0;
+  unsigned min_vsync = 0, max_vsync = 0, min_hsync = 0, max_hsync = 0;
   unsigned hblank, hsync_ofs, hsync, vblank, vsync_ofs, vsync;
+  char *vendor = NULL, *serial = NULL, *name = NULL;
 
   fix_edid_info(hd_data, edid);
-
-  mi = new_mem(sizeof *mi);
 
   if(edid[0x14] & 0x80) {
     /* digital signal -> assume lcd */
@@ -316,8 +325,8 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
   }
 
   if(edid[0x15] > 0 && edid[0x16] > 0) {
-    mi->width_mm = width_mm = edid[0x15] * 10;
-    mi->height_mm = height_mm = edid[0x16] * 10;
+    width_mm = edid[0x15] * 10;
+    height_mm = edid[0x16] * 10;
   }
 
   u = edid[0x23];
@@ -352,10 +361,11 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
     if(u) add_monitor_res(hd, u1, u, (u2 & 0x3f) + 60, 0);
   }
 
-  mi->manu_year = 1990 + edid[0x11];
+  manu_year = 1990 + edid[0x11];
 
   ADD2LOG("  detailed timings:\n");
 
+  /* max. 4 mi_list[] entries */
   for(i = 0x36; i < 0x36 + 4 * 0x12; i += 0x12) {
     tag = (edid[i] << 24) + (edid[i + 1] << 16) + (edid[i + 2] << 8) + edid[i + 3];
 
@@ -367,7 +377,7 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
       case 0xfc:
         if(edid[i + 5]) {
           /* name entry is splitted some times */
-          str_printf(&mi->name, -1, "%s%s", mi->name ? " " : "", canon_str(edid + i + 5, 0xd));
+          str_printf(&name, -1, "%s%s", name ? " " : "", canon_str(edid + i + 5, 0xd));
         }
         break;
 
@@ -376,30 +386,30 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
         u1 = edid[i + 5];
         u2 = edid[i + 6];
         if(u1 > u2 || !u1) u = 1;
-        mi->min_vsync = u1;
-        mi->max_vsync = u2;
+        min_vsync = u1;
+        max_vsync = u2;
         u1 = edid[i + 7];
         u2 = edid[i + 8];
         if(u1 > u2 || !u1) u = 1;
-        mi->min_hsync = u1;
-        mi->max_hsync = u2;
+        min_hsync = u1;
+        max_hsync = u2;
         if(u) {
-          mi->min_vsync = mi->max_vsync = mi->min_hsync = mi->max_hsync = 0;
+          min_vsync = max_vsync = min_hsync = max_hsync = 0;
           ADD2LOG("  ddc oops: invalid freq data\n");
         }
         break;
 
       case 0xfe:
-        if(!mi->vendor && edid[i + 5]) {
-          mi->vendor = canon_str(edid + i + 5, 0xd);
-          for(s = mi->vendor; *s; s++) if(*s < ' ') *s = ' ';
+        if(!vendor && edid[i + 5]) {
+          vendor = canon_str(edid + i + 5, 0xd);
+          for(s = vendor; *s; s++) if(*s < ' ') *s = ' ';
         }
         break;
 
       case 0xff:
-        if(!mi->serial && edid[i + 5]) {
-          mi->serial = canon_str(edid + i + 5, 0xd);
-          for(s = mi->serial; *s; s++) if(*s < ' ') *s = ' ';
+        if(!serial && edid[i + 5]) {
+          serial = canon_str(edid + i + 5, 0xd);
+          for(s = serial; *s; s++) if(*s < ' ') *s = ' ';
         }
         break;
 
@@ -408,6 +418,24 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
           ADD2LOG("  unknown tag 0x%02x\n", tag);
         }
         else {
+          /* check for duplicates */
+
+          for(u1 = 1, u = 0x36; u < i; u += 0x12) {
+            u1 = memcmp(edid + u, edid + i, 0x12);
+            if(!u1) break;
+          }
+
+          if(!u1) {
+            ADD2LOG("    duplicate of #%d - skipped\n", (u - 0x36)/0x12);
+            break;
+          }
+
+          mi_list[mi_cnt++] = mi = new_mem(sizeof *mi);
+
+          mi->width_mm = width_mm;
+          mi->height_mm = height_mm;
+          mi->manu_year = manu_year;
+
           u = (edid[i + 0] + (edid[i + 1] << 8)) * 10;	/* pixel clock in kHz */
           if(!u) break;
           mi->clock = u;
@@ -476,55 +504,79 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
     }
   }
 
-  if(mi) {
-    hd->detail = new_mem(sizeof *hd->detail);
-    hd->detail->type = hd_detail_monitor;
-    hd->detail->monitor.data = mi;
+  for(u = 0; u < mi_cnt; u++) {
+    mi = mi_list[u];
 
-    hd->serial = new_str(mi->serial);
-    hd->vendor.name = new_str(mi->vendor);
-    hd->device.name = new_str(mi->name);
+    mi->min_vsync = min_vsync;
+    mi->max_vsync = max_vsync;
+    mi->min_hsync = min_hsync;
+    mi->max_hsync = max_hsync;
 
-    if(mi->width && mi->height) {
-      for(res = hd->res; res; res = res->next) {
-        if(
-          res->any.type == res_monitor &&
-          res->monitor.width == mi->width &&
-          res->monitor.height == mi->height
-        ) break;
-      }
-      /* actually we could calculate the vsync value */
-      if(!res) add_monitor_res(hd, mi->width, mi->height, 60, 0);
+    mi->name = new_str(name);
+    mi->vendor = new_str(vendor);
+    mi->serial = new_str(serial);
+  }
 
-      /* do some sanity checks on display size, see bugs 155096, 186096, 213630 */
-      if(mi->width_mm && mi->height_mm) {
-        u = (mi->width_mm * mi->height * 16) / (mi->height_mm * mi->width);
-        u1 = width_mm ? (width_mm * 16) / mi->width_mm : 16;
-        u2 = height_mm ? (height_mm * 16) / mi->height_mm : 16;
-        if(
-          u <= 8 || u >= 32 ||		/* allow 1:2 distortion */
-          u1 <= 8 || u1 >= 32 ||	/* width cm & mm values disagree by factor >2 --> use cm values */
-          u2 <= 8 || u2 >= 32 ||	/* dto, height */
-          mi->width_mm < 100 ||		/* too small to be true... */
-          mi->height_mm < 100
-        ) {
-          ADD2LOG("  ddc: strange size data (%ux%u mm^2), trying cm values\n", mi->width_mm, mi->height_mm);
-          /* ok, try cm values */
-          if(width_mm && height_mm) {
-            u = (width_mm * mi->height * 16) / (height_mm * mi->width);
-            if(u > 8 && u < 32 && width_mm >= 100 && height_mm >= 100) {
-              mi->width_mm = width_mm;
-              mi->height_mm = height_mm;
+  if(mi_cnt) {
+    qsort(mi_list, mi_cnt, sizeof *mi_list, (int (*)(const void *, const void *)) mi_cmp);
+
+    for(i = 0; i < mi_cnt; i++) {
+      mi = mi_list[i];
+
+      mdetail = hd->detail && hd->detail->type == hd_detail_monitor ? &hd->detail->monitor : NULL;
+
+      hd->detail = new_mem(sizeof *hd->detail);
+      hd->detail->type = hd_detail_monitor;
+      hd->detail->monitor.data = mi;
+      hd->detail->monitor.next = mdetail;
+
+      hd->serial = new_str(mi->serial);
+      hd->vendor.name = new_str(mi->vendor);
+      hd->device.name = new_str(mi->name);
+
+      if(mi->width && mi->height) {
+        for(res = hd->res; res; res = res->next) {
+          if(
+            res->any.type == res_monitor &&
+            res->monitor.width == mi->width &&
+            res->monitor.height == mi->height
+          ) break;
+        }
+        /* actually we could calculate the vsync value */
+        if(!res) add_monitor_res(hd, mi->width, mi->height, 60, 0);
+
+        /* do some sanity checks on display size, see bugs 155096, 186096, 213630 */
+        if(mi->width_mm && mi->height_mm) {
+          u = (mi->width_mm * mi->height * 16) / (mi->height_mm * mi->width);
+          u1 = width_mm ? (width_mm * 16) / mi->width_mm : 16;
+          u2 = height_mm ? (height_mm * 16) / mi->height_mm : 16;
+          if(
+            u <= 8 || u >= 32 ||		/* allow 1:2 distortion */
+            u1 <= 8 || u1 >= 32 ||	/* width cm & mm values disagree by factor >2 --> use cm values */
+            u2 <= 8 || u2 >= 32 ||	/* dto, height */
+            mi->width_mm < 100 ||		/* too small to be true... */
+            mi->height_mm < 100
+          ) {
+            ADD2LOG("  ddc: strange size data (%ux%u mm^2), trying cm values\n", mi->width_mm, mi->height_mm);
+            /* ok, try cm values */
+            if(width_mm && height_mm) {
+              u = (width_mm * mi->height * 16) / (height_mm * mi->width);
+              if(u > 8 && u < 32 && width_mm >= 100 && height_mm >= 100) {
+                mi->width_mm = width_mm;
+                mi->height_mm = height_mm;
+              }
             }
-          }
-          /* could not fix, clear */
-          if(u <= 8 || u >= 32 || mi->width_mm < 100 || mi->height_mm < 100) {
-            ADD2LOG("  ddc: cm values (%ux%u mm^2) didn't work either - giving up\n", width_mm, height_mm);
-            mi->width_mm = mi->height_mm = 0;
+            /* could not fix, clear */
+            if(u <= 8 || u >= 32 || mi->width_mm < 100 || mi->height_mm < 100) {
+              ADD2LOG("  ddc: cm values (%ux%u mm^2) didn't work either - giving up\n", width_mm, height_mm);
+              mi->width_mm = mi->height_mm = 0;
+            }
           }
         }
       }
     }
+
+    mi = mi_list[0];
 
     if(mi->width_mm && mi->height_mm) {
       res = add_res_entry(&hd->res, new_mem(sizeof *res));
@@ -566,6 +618,10 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
       ADD2LOG("----- DDC info end -----\n");
     }
   }
+
+  free_mem(serial);
+  free_mem(vendor);
+  free_mem(name);
 }
 
 void add_monitor_res(hd_t *hd, unsigned width, unsigned height, unsigned vfreq, unsigned il)

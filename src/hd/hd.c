@@ -1226,13 +1226,21 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
 
     case hd_detail_monitor:
       {
-        monitor_info_t *m = d->monitor.data;
+        monitor_info_t *m;
+        hd_detail_monitor_t *mdetail, *next;
 
-        free_mem(m->vendor);
-        free_mem(m->name);
-        free_mem(m->serial);
+        for(mdetail = &d->monitor; mdetail; mdetail = next) {
+          next = mdetail->next;
+          m = mdetail->data;
 
-        free_mem(m);
+          free_mem(m->vendor);
+          free_mem(m->name);
+          free_mem(m->serial);
+
+          free_mem(m);
+
+          if(mdetail != &d->monitor) free_mem(mdetail);
+        }
       }
       break;
 
@@ -1259,9 +1267,9 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
       /* is freed with hd_data->dev_tree */
       break;
 
-  case hd_detail_ccw:
-	  free_mem(d->ccw.data);
-	  break;
+    case hd_detail_ccw:
+      free_mem(d->ccw.data);
+      break;
   }
 
   free_mem(d);
