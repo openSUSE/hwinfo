@@ -148,6 +148,9 @@ void hd_scan_wlan(hd_data_t *hd_data)
       }
       ADD2LOG("*** device %s is wireless ***\n", hd->unix_dev_name);
       hd->is.wlan = 1;
+
+      hd->sub_class.id = 0x82;			/* wlan */
+
       res = new_mem(sizeof *res);
       res->any.type = res_wlan;
 

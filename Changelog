@@ -2,6 +2,7 @@
 	- rework iseries handling (#302667)
 	- handle ahci/ata_piix issue (#304134)
 	- update forcedeth info (#297606)
+	- change subclass id for wlan cards (#288450)
 
 22/8/2007:	v13.46
 	- prepare for upcoming sysfs change (#299685)
