@@ -417,8 +417,17 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
         if(
           di2->any.type == di_module &&
           di2->any.hddb0 &&
-          di2->any.hddb0->str &&
-          !hd_mod_cmp(di2->any.hddb0->str, modinfo_db->module)
+          (
+            (
+              di2->any.hddb0->str &&
+              !hd_mod_cmp(di2->any.hddb0->str, modinfo_db->module)
+            ) ||
+            (
+              di2->any.hddb0->next &&
+              di2->any.hddb0->next->str &&
+              !hd_mod_cmp(di2->any.hddb0->next->str, modinfo_db->module)
+            )
+          )
         ) break;
       }
 

@@ -412,7 +412,7 @@
 +driver.module.modprobe	ipw2100
 
 
-# make it an ethernet card explicitly (#65852, #116394)
+# make it an ethernet card explicitly (#65852, #116394, #297606)
  vendor.id		pci 0x10de
 &device.id		pci 0x0037+0x0002
 |vendor.id		pci 0x10de
@@ -435,6 +435,14 @@
 &device.id		pci 0x0268+0x0002
 |vendor.id		pci 0x10de
 &device.id		pci 0x0372+0x0002
+|vendor.id		pci 0x10de
+&device.id		pci 0x03e5+0x0002
+|vendor.id		pci 0x10de
+&device.id		pci 0x03ee+0x0002
+|vendor.id		pci 0x10de
+&device.id		pci 0x0450+0x0004
+|vendor.id		pci 0x10de
+&device.id		pci 0x054c+0x0004
 +baseclass.id		0x002
 +subclass.id		0x00
 +driver.module.modprobe	forcedeth
