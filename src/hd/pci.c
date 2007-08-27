@@ -665,8 +665,8 @@ void hd_read_macio(hd_data_t *hd_data)
  */
 void hd_read_vio(hd_data_t *hd_data)
 {
-  char *s, *vio_name, *vio_type;
-  int eth_cnt = 0, scsi_cnt = 0;
+  char *s, *vio_devspec, *vio_name, *vio_modalias;
+  int eth_cnt = 0, scsi_cnt = 0, dasd_cnt = 0, cd_cnt = 0;
   hd_t *hd;
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev;
@@ -687,45 +687,61 @@ void hd_read_vio(hd_data_t *hd_data)
       hd_sysfs_id(sf_dev)
     );
 
-    vio_name = vio_type = NULL;
+    vio_devspec = vio_name = vio_modalias = NULL;
 
     if((s = get_sysfs_attr_by_path(sf_dev, "devspec"))) {
-      vio_name = canon_str(s, strlen(s));
-      ADD2LOG("    name = \"%s\"\n", vio_name);
+      vio_devspec = canon_str(s, strlen(s));
+      ADD2LOG("    name = \"%s\"\n", vio_devspec);
     }
 
     if((s = get_sysfs_attr_by_path(sf_dev, "name"))) {
-      vio_type = canon_str(s, strlen(s));
-      ADD2LOG("    type = \"%s\"\n", vio_type);
+      vio_name = canon_str(s, strlen(s));
+      ADD2LOG("    type = \"%s\"\n", vio_name);
+    }
+
+    if((s = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
+      vio_modalias = canon_str(s, strlen(s));
+      ADD2LOG("    modalias = \"%s\"\n", vio_modalias);
     }
 
     if(
-      vio_type && (
-        !strcmp(vio_type, "l-lan") ||
-        !strcmp(vio_type, "v-scsi")
+      vio_name && (
+        !strcmp(vio_name, "l-lan") || /* pseries && iseries */
+        !strcmp(vio_name, "viodasd") || /* iseries */
+        !strcmp(vio_name, "viocd") || /* iseries */
+        !strcmp(vio_name, "v-scsi" /* pseries */)
       )
     ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->bus.id = bus_vio;
+      if(vio_modalias) hd->modalias = new_str(vio_modalias);
 
       hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);
 
-      if(!strcmp(vio_type, "l-lan")) {
+      if(!strcmp(vio_name, "l-lan")) {
         hd->base_class.id = bc_network;
         hd->sub_class.id = 0;	/* ethernet */
         hd->slot = eth_cnt++;
-        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1002);
         str_printf(&hd->device.name, 0, "Virtual Ethernet card %d", hd->slot);
+      } else if(!strcmp(vio_name, "viodasd")) {
+        hd->base_class.id = bc_storage;
+        hd->sub_class.id = sc_sto_other;
+        hd->slot = dasd_cnt++;
+        str_printf(&hd->device.name, 0, "Virtual DASD %d", hd->slot);
+      } else if(!strcmp(vio_name, "viocd")) {
+        hd->base_class.id = bc_storage;
+        hd->sub_class.id = sc_sto_other;
+        hd->slot = cd_cnt++;
+        str_printf(&hd->device.name, 0, "Virtual CD %d", hd->slot);
       }
       else { /* scsi */
         hd->base_class.id = bc_storage;
         hd->sub_class.id = sc_sto_scsi;
         hd->slot = scsi_cnt++;
-        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1001);
         str_printf(&hd->device.name, 0, "Virtual SCSI %d", hd->slot);
       }
 
-      hd->rom_id = new_str(vio_name ? vio_name + 1 : 0);	/* skip leading '/' */
+      hd->rom_id = new_str(vio_devspec ? vio_devspec + 1 : 0);	/* skip leading '/' */
 
       hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
       hd->sysfs_bus_id = new_str(sf_bus_e->str);

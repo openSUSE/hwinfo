@@ -38,7 +38,6 @@ static void get_driverinfo(hd_data_t *hd_data, hd_t *hd);
 static void get_linkstate(hd_data_t *hd_data, hd_t *hd);
 static void add_xpnet(hd_data_t *hdata);
 static void add_mv(hd_data_t *hdata);
-static void add_iseries(hd_data_t *hdata);
 static void add_uml(hd_data_t *hdata);
 static void add_kma(hd_data_t *hdata);
 static void add_if_name(hd_t *hd_card, hd_t *hd);
@@ -329,7 +328,6 @@ void hd_scan_net(hd_data_t *hd_data)
   sf_class = free_str_list(sf_class);
 
   if(hd_is_sgi_altix(hd_data)) add_xpnet(hd_data);
-  if(hd_is_iseries(hd_data)) add_iseries(hd_data);
   add_uml(hd_data);
   add_kma(hd_data);
   add_mv(hd_data);
@@ -566,77 +564,6 @@ void add_mv(hd_data_t *hd_data)
 }
 
 
-/*
- * iSeries veth devices.
- */
-void add_iseries(hd_data_t *hd_data)
-{
-  hd_t *hd, *hd_card;
-  hd_res_t *res, *res2;
-  unsigned i, cardmask = 0, card_cnt = 0;
-  str_list_t *sl0, *sl;
-
-  for(hd = hd_data->hd ; hd; hd = hd->next) {
-    if(
-      hd->module == hd_data->module &&
-      hd->base_class.id == bc_network_interface &&
-      (
-        search_str_list(hd->drivers, "veth") ||
-        search_str_list(hd->drivers, "iseries_veth")
-      )
-    ) {
-      hd_card = add_hd_entry(hd_data, __LINE__, 0);
-      hd_card->base_class.id = bc_network;
-      hd_card->sub_class.id = 0x00;
-      hd_card->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);	// IBM
-      hd_card->device.id = MAKE_ID(TAG_SPECIAL, 0x1000);
-      add_str_list(&hd_card->drivers, "iseries_veth");
-      hd_card->slot = card_cnt++;
-      str_printf(&hd_card->device.name, 0, "Virtual Ethernet card");
-      hd->attached_to = hd_card->idx;
-
-      for(res = hd->res; res; res = res->next) {
-        if(res->any.type == res_hwaddr) break;
-      }
-
-      if(res) {
-        unsigned int slotno;
-
-        res2 = new_mem(sizeof *res2);
-        res2->hwaddr.type = res_hwaddr;
-        res2->hwaddr.addr = new_str(res->hwaddr.addr);
-        add_res_entry(&hd_card->res, res2);
-        if (sscanf(res->hwaddr.addr, "02:01:ff:%x:ff:", &slotno)) {
-          hd_card->slot = slotno;
-          str_printf(&hd_card->device.name, 0, "Virtual Ethernet card %d", hd_card->slot);
-	}
-      }
-
-      add_if_name(hd_card, hd);
-    }
-  }
-
-  if(!card_cnt) {
-    sl0 = read_file("/proc/iSeries/config", 0, 0);
-    for(sl = sl0; sl; sl = sl->next) {
-      if(sscanf(sl->str, "AVAILABLE_VETH=%x", &cardmask) == 1)
-     	 break;
-    }
-    free_str_list(sl0);
-
-    for (i = 0; i < 16; i++) {
-      if ((0x8000 >> i) & cardmask) {
-	hd_card = add_hd_entry(hd_data, __LINE__, 0);
-	hd_card->base_class.id = bc_network;
-	hd_card->sub_class.id = 0x00;
-	hd_card->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);	// IBM
-	hd_card->device.id = MAKE_ID(TAG_SPECIAL, 0x1000);
-	hd_card->slot = i;
-	str_printf(&hd_card->device.name, 0, "Virtual Ethernet card %d", i);
-      }
-    }
-  }
-}
 
 
 /*

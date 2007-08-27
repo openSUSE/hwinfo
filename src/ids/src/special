@@ -623,24 +623,6 @@
 &device.id		special 0x3004
 +device.name		MyriCOM MyriNET Gigabit Ethernet
 
-
-# iSeries network
- vendor.id		special 0x6001
-&device.id		special 0x1000
-+driver.module.modprobe	iseries_veth
-
-# IBM vscsi
- vendor.id		special 0x6001
-&device.id		special 0x1001
-+driver.module.modprobe	ibmvscsic
-
-
-# IBM veth
- vendor.id		special 0x6001
-&device.id		special 0x1002
-+driver.module.modprobe	ibmveth
-
-
 # IBM ehea
  vendor.id		special 0x6001
 &device.id		special 0x1003

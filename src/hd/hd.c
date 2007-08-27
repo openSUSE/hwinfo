@@ -3131,12 +3131,6 @@ int hd_is_sgi_altix(hd_data_t *hd_data)
 }
 
 
-int hd_is_iseries(hd_data_t *hd_data)
-{
-  struct stat sbuf;
-
-  return stat(PROC_ISERIES, &sbuf) ? 0 : 1;
-}
 
 
 /*

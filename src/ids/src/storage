@@ -542,6 +542,11 @@
 +driver.module.modprobe	qla4xxx
 +requires		qlogic-firmware
 
+# ahci/ata_piix (#304134)
+ vendor.id		pci 0x8086
+&device.id		pci 0x2652+0x0002
++driver.module.modprobe ahci|ata_piix
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # usb controller

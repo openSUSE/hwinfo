@@ -23,8 +23,6 @@
 #define PROC_MEMINFO		"/proc/meminfo"
 #define PROC_VERSION		"/proc/version"
 #define PROC_ISAPNP		"/proc/isapnp"
-#define PROC_ISERIES		"/proc/iSeries"
-#define PROC_ISERIES_VETH	"/proc/iSeries/veth"
 #define PROC_PARTITIONS		"/proc/partitions"
 #define PROC_APM		"/proc/apm"
 
@@ -224,7 +222,6 @@ str_list_t *hd_module_list(hd_data_t *hd_data, unsigned id);
 char* get_sysfs_attr(const char* bus, const char* device, const char* attr);
 char* get_sysfs_attr_by_path(const char* path, const char* attr);
 
-int hd_is_iseries(hd_data_t *hd_data);
 hal_device_t *hd_free_hal_devices(hal_device_t *dev);
 void hd_pci_complete_data(hd_t *hd);
 void hd_pci_read_data(hd_data_t *hd_data);
