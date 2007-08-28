@@ -154,38 +154,36 @@ void hd_scan_wlan(hd_data_t *hd_data)
       res = new_mem(sizeof *res);
       res->any.type = res_wlan;
 
-      if(range.num_frequency > 0) {
-        char buff[20];
-        for(k = 0; k < range.num_frequency; k++) {
-          snprintf(buff, 19, "%i", range.freq[k].i);
-          add_str_list(&res->wlan.channels, buff);
-          snprintf(buff, 19, "%g", (float)iw_freq2float(&(range.freq[k]))/1000000000);
-          add_str_list(&res->wlan.frequencies, buff);
-        }
-        for(k = 0; k < range.num_bitrates; k++) {
-          snprintf(buff, 19, "%g", (float)range.bitrate[k]/1000000);
-          add_str_list(&res->wlan.bitrates, buff);
-        }
-        for(k = 0; k < range.num_encoding_sizes; k++) {
-          snprintf(buff, 19, "WEP%i", range.encoding_size[k]*8);
-          add_str_list(&res->wlan.enc_modes, buff);
-        }
+      char buff[20];
+      for(k = 0; k < range.num_frequency; k++) {
+        snprintf(buff, 19, "%i", range.freq[k].i);
+        add_str_list(&res->wlan.channels, buff);
+        snprintf(buff, 19, "%g", (float)iw_freq2float(&(range.freq[k]))/1000000000);
+        add_str_list(&res->wlan.frequencies, buff);
+      }
+      for(k = 0; k < range.num_bitrates; k++) {
+        snprintf(buff, 19, "%g", (float)range.bitrate[k]/1000000);
+        add_str_list(&res->wlan.bitrates, buff);
+      }
+      for(k = 0; k < range.num_encoding_sizes; k++) {
+        snprintf(buff, 19, "WEP%i", range.encoding_size[k]*8);
+        add_str_list(&res->wlan.enc_modes, buff);
+      }
 
-        /* open mode is always supported */
-        add_str_list(&res->wlan.auth_modes, "open");
-        /* if WEP is supported, we assume shared key auth support */
-        if(range.num_encoding_sizes) {
-          add_str_list(&res->wlan.auth_modes, "sharedkey");
-        }
+      /* open mode is always supported */
+      add_str_list(&res->wlan.auth_modes, "open");
+      /* if WEP is supported, we assume shared key auth support */
+      if(range.num_encoding_sizes) {
+        add_str_list(&res->wlan.auth_modes, "sharedkey");
+      }
 
-        if (range.enc_capa & (IW_ENC_CAPA_WPA | IW_ENC_CAPA_WPA2)) {
-          add_str_list(&res->wlan.auth_modes, "wpa-psk");
-          add_str_list(&res->wlan.auth_modes, "wpa-eap");
-          if (range.enc_capa & IW_ENC_CAPA_CIPHER_TKIP)
-            add_str_list(&res->wlan.enc_modes, "TKIP");
-          if (range.enc_capa & IW_ENC_CAPA_CIPHER_CCMP)
-            add_str_list(&res->wlan.enc_modes, "CCMP");
-        }
+      if (range.enc_capa & (IW_ENC_CAPA_WPA | IW_ENC_CAPA_WPA2)) {
+        add_str_list(&res->wlan.auth_modes, "wpa-psk");
+        add_str_list(&res->wlan.auth_modes, "wpa-eap");
+        if (range.enc_capa & IW_ENC_CAPA_CIPHER_TKIP)
+          add_str_list(&res->wlan.enc_modes, "TKIP");
+        if (range.enc_capa & IW_ENC_CAPA_CIPHER_CCMP)
+          add_str_list(&res->wlan.enc_modes, "CCMP");
       }
       add_res_entry(&hd->res, res);
     }

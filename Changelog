@@ -1,3 +1,6 @@
+28/8/2007:	v13.48
+	- fix wlan detection (#302045)
+
 23/8/2007:	v13.47
 	- rework iseries handling (#302667)
 	- handle ahci/ata_piix issue (#304134)
