@@ -1,5 +1,6 @@
 28/8/2007:	v13.48
 	- fix wlan detection (#302045)
+	- detect ps3 sound card (#305913)
 
 23/8/2007:	v13.47
 	- rework iseries handling (#302667)

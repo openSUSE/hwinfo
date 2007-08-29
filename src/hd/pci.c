@@ -1018,6 +1018,25 @@ static void hd_read_ps3_system_bus(hd_data_t *hd_data)
       if(s) add_str_list(&hd->drivers, s);
 
     }
+    if ( ps3_name && !strcmp(ps3_name, "ps3:9")) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->bus.id = bus_ps3_system_bus;
+
+      hd->vendor.id = MAKE_ID(TAG_PCI, 0x104d); /* Sony */
+
+      hd->base_class.id = bc_multimedia;
+      hd->sub_class.id = sc_multi_audio;
+      hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1004);
+      str_printf(&hd->device.name, 0, "PS3 Soundcard");
+
+      hd->modalias = new_str(ps3_name);
+
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+      hd->sysfs_bus_id = new_str(sf_bus_e->str);
+      s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+      if(s) add_str_list(&hd->drivers, s);
+
+    }
     ps3_name = free_mem(ps3_name);
 
     free_mem(sf_dev);
