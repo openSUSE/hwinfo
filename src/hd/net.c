@@ -37,7 +37,6 @@
 static void get_driverinfo(hd_data_t *hd_data, hd_t *hd);
 static void get_linkstate(hd_data_t *hd_data, hd_t *hd);
 static void add_xpnet(hd_data_t *hdata);
-static void add_mv(hd_data_t *hdata);
 static void add_uml(hd_data_t *hdata);
 static void add_kma(hd_data_t *hdata);
 static void add_if_name(hd_t *hd_card, hd_t *hd);
@@ -330,7 +329,6 @@ void hd_scan_net(hd_data_t *hd_data)
   if(hd_is_sgi_altix(hd_data)) add_xpnet(hd_data);
   add_uml(hd_data);
   add_kma(hd_data);
-  add_mv(hd_data);
 
   /* add link status info */
   for(hd = hd_data->hd ; hd; hd = hd->next) {
@@ -480,88 +478,6 @@ void add_xpnet(hd_data_t *hd_data)
 }
 
 
-/*
- * Marvell Gigabit Ethernet thing
- */
-void add_mv(hd_data_t *hd_data)
-{
-  hd_t *hd, *hd_card;
-  hd_res_t *res, *res2;
-  struct stat sbuf;
-  char *s, *sf_dev, *sf_dev_name, *module;
-
-  /*
-   * Actually there are two (.0 & .1), but only one seems to be used - so we
-   * don't care.
-   */
-  sf_dev = "/sys/devices/platform/mv643xx_eth.0";
-  sf_dev_name = "mv643xx_eth.0";
-  module = "mv643xx_eth";
-
-  if(stat(sf_dev, &sbuf) || !S_ISDIR(sbuf.st_mode)) return;
-
-  for(hd = hd_data->hd ; hd; hd = hd->next) {
-    if(
-      hd->vendor.id == MAKE_ID(TAG_PCI, 0x11ab) &&
-      hd->device.id == MAKE_ID(TAG_PCI, 0x6460)
-    ) break;
-  }
-
-  hd_card = add_hd_entry(hd_data, __LINE__, 0);
-  hd_card->base_class.id = bc_network;
-  hd_card->sub_class.id = 0;
-
-  hd_card->sysfs_id = new_str(hd_sysfs_id(sf_dev));
-  hd_card->sysfs_bus_id = new_str(sf_dev_name);
-
-  if((s = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
-    hd_card->modalias = canon_str(s, strlen(s));
-    ADD2LOG("    modalias = \"%s\"\n", hd_card->modalias);
-  }
-  else {
-    hd_card->modalias = new_str(module);
-  }
-
-  if(hd) {
-    hd_card->attached_to = hd->idx;
-    hd_card->vendor.id = hd->vendor.id;
-    hd_card->device.id = hd->device.id;
-  }
-  else {
-    hd_card->vendor.name = new_str("Marvell");
-    hd_card->device.name = new_str("Gigabit Ethernet");
-  }
-
-  if(hd_module_is_active(hd_data, module)) {
-    add_str_list(&hd_card->drivers, module);
-  }
-
-  for(hd = hd_data->hd ; hd; hd = hd->next) {
-    if(
-      hd->module == hd_data->module &&
-      hd->base_class.id == bc_network_interface &&
-      hd->sub_class.id == sc_nif_ethernet &&
-      search_str_list(hd->drivers, "mv643xx_eth")
-    ) {
-      hd->attached_to = hd_card->idx;
-
-      for(res = hd->res; res; res = res->next) {
-        if(res->any.type == res_hwaddr) break;
-      }
-
-      if(res) {
-        res2 = new_mem(sizeof *res2);
-        res2->hwaddr.type = res_hwaddr;
-        res2->hwaddr.addr = new_str(res->hwaddr.addr);
-        add_res_entry(&hd_card->res, res2);
-      }
-
-      add_if_name(hd_card, hd);
-
-      break;
-    }
-  }
-}
 
 
 
