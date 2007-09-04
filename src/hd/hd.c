@@ -2506,7 +2506,12 @@ str_list_t *read_dir(char *dir_name, int type)
   struct dirent *de;
   struct stat sbuf;
   char *s;
-  int dir_type;
+  int dir_type, link_allowed = 0;
+
+  if(type == 'D') {
+    type = 'd';
+    link_allowed = 1;
+  }
 
   if(dir_name && (dir = opendir(dir_name))) {
     while((de = readdir(dir))) {
@@ -2532,7 +2537,7 @@ str_list_t *read_dir(char *dir_name, int type)
         s = free_mem(s);
       }
 
-      if(dir_type == type) {
+      if(dir_type == type || (link_allowed && dir_type == 'l')) {
         sl = new_mem(sizeof *sl);
         sl->str = new_str(de->d_name);
         if(sl_start)

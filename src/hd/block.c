@@ -1342,7 +1342,7 @@ void get_scsi_tape(hd_data_t *hd_data)
   char *sf_cdev = NULL, *sf_dev = NULL;
   char *sf_drv_name, *sf_drv, *bus_id;
 
-  sf_class = reverse_str_list(read_dir("/sys/class/scsi_tape", 'd'));
+  sf_class = reverse_str_list(read_dir("/sys/class/scsi_tape", 'D'));
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: scsi_tape\n");
@@ -1478,7 +1478,7 @@ void get_generic_scsi_devs(hd_data_t *hd_data)
   char *sf_cdev = NULL, *sf_dev = NULL;
   char *sf_drv_name, *sf_drv, *bus_id;
 
-  sf_class = reverse_str_list(read_dir("/sys/class/scsi_generic", 'd'));
+  sf_class = reverse_str_list(read_dir("/sys/class/scsi_generic", 'D'));
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: scsi_generic\n");

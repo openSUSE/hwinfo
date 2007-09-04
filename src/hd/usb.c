@@ -640,7 +640,7 @@ void get_printer_devs(hd_data_t *hd_data)
   char *sf_cdev = NULL, *sf_dev;
   char *sf_drv_name, *sf_drv, *bus_id, *bus_name;
 
-  sf_class = reverse_str_list(read_dir("/sys/class/usb", 'd'));
+  sf_class = reverse_str_list(read_dir("/sys/class/usb", 'D'));
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: usb\n");
@@ -808,7 +808,7 @@ void get_serial_devs(hd_data_t *hd_data)
   char *sf_cdev = NULL, *sf_dev;
   char *sf_drv_name, *sf_drv, *bus_id, *bus_name;
 
-  sf_class = reverse_str_list(read_dir("/sys/class/tty", 'd'));
+  sf_class = reverse_str_list(read_dir("/sys/class/tty", 'D'));
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: tty\n");
