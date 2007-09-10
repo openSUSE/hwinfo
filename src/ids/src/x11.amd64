@@ -3404,6 +3404,11 @@
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
+&device.id		pci 0x03d1
++device.name		GeForce 6100 nForce 405
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x0400
 +device.name		GeForce 8600 GTS
 +driver.xfree		4|nv
