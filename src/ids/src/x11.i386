@@ -3419,13 +3419,48 @@
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
+&device.id		pci 0x0404
++device.name		GeForce 8400 GS (0x0404)
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x0407
 +device.name		GeForce 8600M GT
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
+&device.id		pci 0x0409
++device.name		GeForce 8700M GT
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x040a
++device.name		Quadro FX 370
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x040b
 +device.name		Quadro NVS 320M
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x040c
++device.name		Quadro FX 570M
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x040d
++device.name		Quadro FX 1600M
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x040e
++device.name		Quadro FX 570
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x040f
++device.name		Quadro FX 1700
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
@@ -3471,6 +3506,16 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x042b
 +device.name		Quadro NVS 135M
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x042d
++device.name		Quadro FX 360M
++driver.xfree		4|nsc
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x042f
++device.name		Quadro NVS 290
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10e0
