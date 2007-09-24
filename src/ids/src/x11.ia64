@@ -140,7 +140,7 @@
  vendor.id		pci 0x1002
 &device.id		pci 0x4337
 +device.name		RS200 4337
-+driver.xfree		4|radeon
++driver.xfree		4|radeonold
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4354
@@ -3571,6 +3571,12 @@
 &device.id		pci 0x2592
 +device.name		915 GM
 +driver.xfree		4|i810
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x2592
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x0582
++subdevice.name		915 GM - IBM
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2592
