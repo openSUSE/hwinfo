@@ -815,8 +815,8 @@ void hd_read_platform(hd_data_t *hd_data)
       platform_type = canon_str(s, strlen(s));
       ADD2LOG("    type = \"%s\"\n", platform_type);
       if(
-        !mv643xx_eth_seen++ &&
-        !strcmp(platform_type, "mv643xx_eth")
+        !strcmp(platform_type, "mv643xx_eth") &&
+        !mv643xx_eth_seen++
       ) {
         add_mv643xx_eth(hd_data, platform_type);
       }

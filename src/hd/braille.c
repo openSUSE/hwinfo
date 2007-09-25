@@ -67,7 +67,7 @@ void hd_scan_braille(hd_data_t *hd_data)
           PROGRESS(1, cnt, "fhp_old");
           *vend = MAKE_ID(TAG_SPECIAL, 0x5002);
           *dev = do_fhp(hd_data, hd->unix_dev_name, B19200, cnt);
-          if(!dev) {
+          if(!*dev) {
             PROGRESS(1, cnt, "fhp_el");
             *dev = do_fhp(hd_data, hd->unix_dev_name, B38400, cnt);
           }
@@ -345,12 +345,12 @@ unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt)
     )
   ) {
     /* Pause to let them take effect */
-    usleep(500);
+    usleep(12000);
 
     PROGRESS(3, cnt, "ht init ok");
 
     write(fd, &code, 1);	/* reset brl */
-    usleep(5000);		/* wait for reset */
+    usleep(12000);		/* wait for reset */
 
     PROGRESS(4, cnt, "ht write ok");
 
@@ -360,7 +360,7 @@ unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt)
     PROGRESS(5, cnt, "ht read done");
 
     if(buf[0] == 0xfe) {	/* resetok now read id */
-      usleep(5000);
+      usleep(12000);
       read(fd, buf + 1, 1);
       i = 2;
 
