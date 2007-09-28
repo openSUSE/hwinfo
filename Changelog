@@ -1,3 +1,5 @@
+***  this is *not* 10.3  ***
+
 25/9/2007:	v13.57
 	- braille: fix el2d detection; wait longer in ht code
 	- fix mv643xx detection (#300613)
