@@ -1,3 +1,7 @@
+26/9/2007:	v12.47
+	- get i2o driver right (#327360)
+	- add fingerprint reader support (feat. 302658)
+
 11/4/2007:	v12.46
 	- sndirsch: do not try to use Quadro FX 3500 with nv driver (#261056, comment #22)
 

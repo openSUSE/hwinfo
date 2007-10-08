@@ -317,23 +317,6 @@
 &device.id		special 0x0040
 +driver.module.modprobe	swim3
 
-# modalias, #129301, #176735
- baseclass.id		0x00e
-&subclass.id		0x00
-|vendor.id		pci 0x8086
-&device.id		pci 0x1962
-&subvendor.id		pci 0x105a
-+driver.module.modprobe	i2o_block
-
- vendor.id		pci 0x1044
-&device.id		pci 0xa501
-+driver.module.modprobe	dpt_i2o
-
- vendor.id		pci 0x1044
-&device.id		pci 0xa511
-+driver.module.modprobe	dpt_i2o
-+driver.module.modprobe	i2o_block
-
 # scsi/aacraid/linit.c
  vendor.id		pci 0x1028
 &device.id		pci 0x0001

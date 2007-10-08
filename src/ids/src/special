@@ -723,3 +723,12 @@
 +device.name		Cross Partition Network adapter
 +driver.module.modprobe	xpnet
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# fingerprint reader
+
+ vendor.id		usb 0x0483
+&device.id		usb 0x2016
++baseclass.id		0x116
++subclass.id		0x00
+

@@ -195,6 +195,8 @@ modinfo_t *parse_modinfo(str_list_t *file)
       if(!(s = get_mi_field(s, "i", 2, &m->pci.prog_if, &u))) continue;
       m->pci.has.prog_if = u;
 
+      if(!strcmp(module, "i2o_core")) strcpy(module, "i2o_block");	/* map i2o module */
+
       m->module = new_str(module);
       m->alias = new_str(alias);
       m++->type = mi_pci;
@@ -341,6 +343,7 @@ int match_modinfo(hd_data_t *hd_data, modinfo_t *db, modinfo_t *match)
           prio += hd_data->flags.pata ? -1 : 1;
         }
         if(!strcmp(db->module, "generic")) prio -= 2;
+        if(!strcmp(db->module, "i2o_block")) prio -= 1;
       }
       break;
 

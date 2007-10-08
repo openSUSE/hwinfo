@@ -142,6 +142,7 @@ struct option options[] = {
   { "tape", 0, NULL, 1000 + hw_tape },
   { "vbe", 0, NULL, 1000 + hw_vbe },
   { "bluetooth", 0, NULL, 1000 + hw_bluetooth },
+  { "fingerprint", 0, NULL, 1000 + hw_fingerprint },
   { "all", 0, NULL, 2000 },
   { "reallyall", 0, NULL, 2001 },
   { "smp", 0, NULL, 2002 },

@@ -958,3 +958,6 @@
  baseclass.id		0x115
 +baseclass.name		Bluetooth Device
 
+ baseclass.id		0x116
++baseclass.name		Fingerprint Reader
+
