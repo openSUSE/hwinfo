@@ -52,7 +52,7 @@ void hd_scan_manual(hd_data_t *hd_data)
   int i, j;
   hd_t *hd, *hd1, *next, *hdm, **next2;
   char *s;
-  char *udi_dir[] = { "/org/freedesktop/Hal/devices", "" };
+  char *udi_dir[] = { "/org/freedesktop/Hal/devices", "", "" };
 
   if(!hd_probe_feature(hd_data, pr_manual)) return;
 
@@ -72,7 +72,7 @@ void hd_scan_manual(hd_data_t *hd_data)
 
   s = NULL;
   for(j = 0; j < sizeof udi_dir / sizeof *udi_dir; j++) {
-    str_printf(&s, 0, "udi%s", udi_dir[j]);
+    str_printf(&s, 0, "%s%s", j == 2 ? "unique-keys" : "udi", udi_dir[j]);
     if((dir = opendir(hd_get_hddb_path(s)))) {
       i = 0;
       while((de = readdir(dir))) {
@@ -104,10 +104,12 @@ void hd_scan_manual(hd_data_t *hd_data)
       hd->status = hdm->status;
       if(hd->status.available != status_unknown) hd->status.available = status_yes;
 
-      hd->config_string = new_str(hdm->config_string);
+      if(hdm->config_string) hd->config_string = new_str(hdm->config_string);
 
-      hd->persistent_prop = hdm->persistent_prop;
-      hdm->persistent_prop = NULL;
+      if(hdm->persistent_prop) {
+        hd->persistent_prop = hdm->persistent_prop;
+        hdm->persistent_prop = NULL;
+      }
     }
     else {
       /* add new entry */

@@ -1,4 +1,5 @@
-***  this is *not* 10.3  ***
+11/10/2007:	v13.58
+	- look at ancient unique-keys directory, too
 
 25/9/2007:	v13.57
 	- braille: fix el2d detection; wait longer in ht code
