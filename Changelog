@@ -1,3 +1,6 @@
+11/10/2007:	v12.48
+	- backport of sl 11.0 disk name mapping code (#332520)
+
 26/9/2007:	v12.47
 	- get i2o driver right (#327360)
 	- add fingerprint reader support (feat. 302658)

@@ -11,6 +11,21 @@
 #include "hd.h"
 #include "hd_int.h"
 
+typedef struct {
+  hd_hw_item_t type;
+  char *dev;
+  char *dev_old;
+  char *serial;
+  char *model;
+  uint64_t size;
+  char *id;
+  char *p_id;
+  unsigned model_ok:1;   
+  unsigned serial_ok:1; 
+  unsigned size_ok:1;
+  unsigned assigned:1;
+} map_t;
+
 static int get_probe_flags(int, char **, hd_data_t *);
 static void progress2(char *, char *);
 
@@ -47,14 +62,20 @@ void dump_db_raw(hd_data_t *hd_data);
 void dump_db(hd_data_t *hd_data);
 void do_chroot(hd_data_t *hd_data, char *dir);
 void ask_db(hd_data_t *hd_data, char *query);
-void get_mapping(hd_data_t *hd_data);
+// void get_mapping(hd_data_t *hd_data);
+int get_mapping2(void); 
 void write_udi(hd_data_t *hd_data, char *udi);
 
 void do_saveconfig(hd_data_t *hd_data, hd_t *hd, FILE *f);
 
+int map_cmp(const void *p0, const void *p1);
+unsigned map_fill(map_t *map, hd_data_t *hd_data, hd_t *hd_manual);
+void map_dump(map_t *map, unsigned map_len);
+
 struct {
   unsigned db_idx;
   unsigned separate:1;
+  unsigned verbose:1;
   char *root;
 } opt;
 
@@ -65,6 +86,7 @@ struct option options[] = {
   { "version", 0, NULL, 400 },
   { "log", 1, NULL, 'l' },
   { "packages", 0, NULL, 'p' },
+  { "verbose", 0, NULL, 'v' },
   { "test", 0, NULL, 300 },
   { "format", 1, NULL, 301 },
   { "show-config", 1, NULL, 302 },
@@ -83,6 +105,7 @@ struct option options[] = {
   { "write-udi", 1, NULL, 315 },
   { "hddb-dir", 1, NULL, 316 },
   { "nowpa", 0, NULL, 317 },
+  { "hddb-dir-new", 1, NULL, 319 }, 
   { "cdrom", 0, NULL, 1000 + hw_cdrom },
   { "floppy", 0, NULL, 1000 + hw_floppy },
   { "disk", 0, NULL, 1000 + hw_disk },
@@ -177,7 +200,7 @@ int main(int argc, char **argv)
 
     opterr = 0;
 
-    while((i = getopt_long(argc, argv, "hd:l:p", options, NULL)) != -1) {
+    while((i = getopt_long(argc, argv, "hd:l:pv", options, NULL)) != -1) {
       switch(i) {
         case 1:
           if(!strcmp(optarg, "braille")) {
@@ -206,6 +229,10 @@ int main(int argc, char **argv)
         case 'p':
           dump_packages(hd_data);
 	  break;
+
+        case 'v':
+          opt.verbose = 1;
+          break;
 
         case 300:
           do_test(hd_data);
@@ -263,7 +290,7 @@ int main(int argc, char **argv)
           break;
 
         case 313:
-          get_mapping(hd_data);
+          get_mapping2();
           break;
 
         case 314:
@@ -280,6 +307,10 @@ int main(int argc, char **argv)
 
         case 317:
           hd_data->flags.nowpa = 1;
+          break;
+
+        case 319:
+          if(*optarg) setenv("LIBHD_HDDB_DIR_NEW", optarg, 1);
           break;
 
         case 400:
@@ -2033,7 +2064,7 @@ int is_same_block_dev(hd_t *hd1, hd_t *hd2)
     if(
       !hd1->revision.name ||
       !hd2->revision.name ||
-      strcmp(hd1->revision.name, hd2->revision.name)
+      strncmp(hd1->revision.name, hd2->revision.name, 4)
     ) return 0;
   }
 
@@ -2164,4 +2195,260 @@ void do_saveconfig(hd_data_t *hd_data, hd_t *hd, FILE *f)
   }
 #endif
 }
+
+
+int map_cmp(const void *p0, const void *p1)
+{
+  const map_t *m0, *m1;
+
+  m0 = p0;
+  m1 = p1;
+
+  if(!m0->dev && !m1->dev) return 0;
+  if(!m0->dev && m1->dev) return 1;
+  if(m0->dev && !m1->dev) return -1;
+
+  return strcmp(m0->dev, m1->dev);
+}
+
+
+unsigned map_fill(map_t *map, hd_data_t *hd_data, hd_t *hd_manual)
+{
+  hd_t *hd, *hd_ctrl;
+  hd_hw_item_t type;
+  hd_res_t *res;
+  unsigned map_len = 0;
+  int i, j;
+
+  if(!map) return 0;
+
+  for(hd = hd_manual; hd; hd = hd->next) {
+    type = hw_none;
+    if(hd_is_hw_class(hd, hw_cdrom)) type = hw_cdrom;
+    if(hd_is_hw_class(hd, hw_disk)) type = hw_disk;
+
+    if(type == hw_none || !hd->unix_dev_name) continue;
+
+    if(hd->status.available_orig == status_no) continue;
+
+    hd_ctrl = hd_get_device_by_idx(hd_data, hd->attached_to);
+    map[map_len].type = type;
+    map[map_len].dev = hd->unix_dev_name;
+    map[map_len].id = hd->unique_id;
+    if(hd_ctrl) map[map_len].p_id = hd_ctrl->unique_id;
+    if(hd->serial && *hd->serial) map[map_len].serial = hd->serial;
+    if(hd->model) map[map_len].model = hd->model;
+
+    for(res = hd->res; res; res = res->next) {
+      if(
+        res->any.type == res_size &&
+        res->size.unit == size_unit_sectors
+      ) {
+        map[map_len].size = res->size.val1;
+        break;
+      }
+    }
+
+    map_len++;
+  }
+
+  if(map_len) qsort(map, map_len, sizeof *map, map_cmp);
+
+  /* check whether model, serial and size are unique */
+
+  for(i = 0; i < map_len; i++) {
+    if(map[i].model) {
+      map[i].model_ok = 1;
+      for(j = i + 1; j < map_len; j++) {
+        if(map[j].model && !strcmp(map[i].model, map[j].model)) {
+          map[i].model_ok = 0;
+          break;
+        }
+      }
+    }
+
+    if(map[i].serial) {
+      map[i].serial_ok = 1;
+      for(j = i + 1; j < map_len; j++) {
+        if(map[j].serial && !strcmp(map[i].serial, map[j].serial)) {
+          map[i].serial_ok = 0;
+          break;
+        }
+      }
+    }
+
+    if(map[i].size) {
+      map[i].size_ok = 1;
+      for(j = i + 1; j < map_len; j++) {
+        if(map[i].size == map[j].size) {
+          map[i].size_ok = 0;
+          break;
+        }
+      }
+    }
+  }
+
+  return map_len;
+}
+
+
+void map_dump(map_t *map, unsigned map_len)
+{
+  int i;
+
+  for(i = 0; i < map_len; i++) {
+    fprintf(stderr,
+      "%s: %s = %s\n\t%smodel \"%s\", %sserial \"%s\"\n\t%ssize %"PRIu64" sectors\n\t%s @ %s\n\n",
+      map[i].type == hw_disk ? " disk" : "cdrom",
+      map[i].dev, map[i].dev_old,
+      map[i].model_ok ? "*" : "",
+      map[i].model,
+      map[i].serial_ok ? "*" : "",
+      map[i].serial,
+      map[i].size_ok ? "*" : "",
+      map[i].size,
+      map[i].id, map[i].p_id
+    );
+  }
+}
+
+
+int get_mapping2()
+{
+  hd_data_t *hd_data, *hd_data_new;
+  hd_t *hd_manual, *hd;
+  hd_hw_item_t hw_items[] = { hw_disk, hw_storage_ctrl, 0 };
+  map_t *map, *map_old;
+  unsigned cnt, map_len, map_old_len;
+  int err = 0, i, j;
+  char *s;
+
+  hd_data = calloc(1, sizeof *hd_data);
+  hd_data->flags.list_all = 1;
+
+  hd_data_new = calloc(1, sizeof *hd_data_new);
+  hd_data_new->flags.list_all = 1;
+  hd_data_new->debug = -1;
+
+  /* first, old data */
+
+  hd_list(hd_data, hw_manual, 1, NULL);
+  hd_manual = hd_list2(hd_data, hw_items, 0);
+
+  for(cnt = 0, hd = hd_manual; hd; hd = hd->next) cnt++;
+  map_old = cnt ? calloc(cnt, sizeof *map_old) : NULL;
+  map_old_len = map_fill(map_old, hd_data, hd_manual);
+
+  /* now, new data */
+
+  s = getenv("LIBHD_HDDB_DIR_NEW");
+  if(s) {
+    setenv("LIBHD_HDDB_DIR", s, 1);
+
+    hd_list(hd_data_new, hw_manual, 1, NULL);
+    hd_manual = hd_list2(hd_data_new, hw_items, 0);
+  }
+  else {
+    hd_data_new->flags.list_all = 0;
+    hd_manual = hd_list2(hd_data_new, hw_items, 1);
+  }
+
+  for(cnt = 0, hd = hd_manual; hd; hd = hd->next) cnt++;
+  map = cnt ? calloc(cnt, sizeof *map) : NULL;
+  map_len = map_fill(map, hd_data_new, hd_manual);
+
+  if(map_len) {
+
+    /* try based on serial... */
+    for(i = 0; i < map_len; i++) {
+      if(map[i].assigned || !map[i].serial_ok) continue;
+      for(j = 0; j < map_old_len; j++) {
+        if(map_old[j].assigned || !map_old[j].serial_ok) continue;
+        if(!strcmp(map[i].serial, map_old[j].serial)) {
+          map[i].dev_old = map_old[j].dev;
+          map[i].assigned = map_old[j].assigned = 1;
+        }
+      }
+    }
+
+    /* ... then based on model... */
+    for(i = 0; i < map_len; i++) {
+      if(map[i].assigned || !map[i].model_ok) continue;
+      for(j = 0; j < map_old_len; j++) {
+        if(map_old[j].assigned || !map_old[j].model_ok) continue;
+        if(!strcmp(map[i].model, map_old[j].model)) {
+          map[i].dev_old = map_old[j].dev;
+          map[i].assigned = map_old[j].assigned = 1;
+        }
+      }
+    }
+
+    /* ... and finally based on disk size */
+    for(i = 0; i < map_len; i++) {
+      if(map[i].assigned || !map[i].size_ok) continue;
+      for(j = 0; j < map_old_len; j++) {
+        if(map_old[j].assigned || !map_old[j].size_ok) continue;
+        if(map[i].size == map_old[j].size) {
+          map[i].dev_old = map_old[j].dev;
+          map[i].assigned = map_old[j].assigned = 1;
+        }
+      }
+    }
+
+    if(opt.verbose) {
+      map_dump(map_old, map_old_len);
+      fprintf(stderr, "- - - - - - - - - - - - - - - - - - - -\n");
+      map_dump(map, map_len);
+    }
+
+    for(i = 0; i < map_len; i++) {
+      if(map[i].dev_old && strcmp(map[i].dev, map[i].dev_old)) {
+        printf("%s\t%s\n", map[i].dev, map[i].dev_old);
+      }
+    }
+
+  }
+
+#if 0
+
+  // based on controller
+
+  for(hd = hd_manual; hd; hd = hd->next) {
+    type = hw_none;
+    if(hd_is_hw_class(hd, hw_cdrom)) type = hw_cdrom;
+    if(hd_is_hw_class(hd, hw_disk)) type = hw_disk;
+
+    if(type == hw_none || !hd->unix_dev_name) continue;
+
+    hd_ctrl = hd_get_device_by_idx(hd_data_new, hd->attached_to);
+
+    if(hd_ctrl) {
+      for(i = 0; i < map_len; i++) {
+        if(
+          map[i].type == type &&
+          !map[i].dev_new &&
+          map[i].p_id &&
+          !strcmp(map[i].p_id, hd_ctrl->unique_id)
+        ) {
+          map[i].dev_new = hd->unix_dev_name;
+          break;
+        }
+      }
+      if(i == map_len) unassigned++;
+    }
+  }
+#endif
+
+  free(map);
+  free(map_old);
+
+  hd_free_hd_data(hd_data_new);
+  free(hd_data_new);
+
+  hd_free_hd_data(hd_data);
+  free(hd_data);
+
+  return err;
+}
+
 

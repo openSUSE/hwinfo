@@ -48,9 +48,10 @@ void hd_scan_manual(hd_data_t *hd_data)
 {
   DIR *dir;
   struct dirent *de;
-  int i;
+  int i, j;
   hd_t *hd, *hd1, *next, *hdm, **next2;
   char *s;
+  char *udi_dir[] = { "/org/freedesktop/Hal/devices", "", "" };
 
   if(!hd_probe_feature(hd_data, pr_manual)) return;
 
@@ -68,23 +69,26 @@ void hd_scan_manual(hd_data_t *hd_data)
 
   next2 = &hd_data->manual;
 
-  if((dir = opendir(hd_get_hddb_path("udi/org/freedesktop/Hal/devices")))) {
-    i = 0;
-    s = NULL;
-    while((de = readdir(dir))) {
-      if(*de->d_name == '.') continue;
-      PROGRESS(1, ++i, "read");
-      str_printf(&s, 0, "/org/freedesktop/Hal/devices/%s", de->d_name);
-      if((hd = hd_read_config(hd_data, s))) {
-        if(hd->status.available != status_unknown) hd->status.available = status_no;
-        ADD2LOG("  got %s\n", hd->unique_id);
-        *next2 = hd;
-        next2 = &hd->next;
+  s = NULL;
+  for(j = 0; j < sizeof udi_dir / sizeof *udi_dir; j++) {
+    str_printf(&s, 0, "%s%s", j == 2 ? "unique-keys" : "udi", udi_dir[j]);
+    if((dir = opendir(hd_get_hddb_path(s)))) {
+      i = 0;
+      while((de = readdir(dir))) {
+        if(*de->d_name == '.') continue;
+        PROGRESS(1, ++i, "read");
+        str_printf(&s, 0, "%s%s%s", udi_dir[j], *udi_dir[j] ? "/" : "", de->d_name);
+        if((hd = hd_read_config(hd_data, s))) {
+          if(hd->status.available != status_unknown) hd->status.available = status_no;
+          ADD2LOG("  got %s\n", hd->unique_id);
+          *next2 = hd;
+          next2 = &hd->next;
+        }
       }
+      closedir(dir);
     }
-    s = free_mem(s);
-    closedir(dir);
   }
+  s = free_mem(s);
 
   hd_data->flags.keep_kmods = 1;
   for(hdm = hd_data->manual; hdm; hdm = next) {
@@ -99,10 +103,12 @@ void hd_scan_manual(hd_data_t *hd_data)
       hd->status = hdm->status;
       if(hd->status.available != status_unknown) hd->status.available = status_yes;
 
-      hd->config_string = new_str(hdm->config_string);
+      if(hdm->config_string) hd->config_string = new_str(hdm->config_string);
 
-      hd->persistent_prop = hdm->persistent_prop;
-      hdm->persistent_prop = NULL;
+      if(hdm->persistent_prop) {
+        hd->persistent_prop = hdm->persistent_prop;
+        hdm->persistent_prop = NULL;
+      }
     }
     else {
       /* add new entry */
