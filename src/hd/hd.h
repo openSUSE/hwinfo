@@ -1479,8 +1479,10 @@ typedef struct {
   unsigned ext_edd:1;
   unsigned ext_64bit:1;
   unsigned assigned:1;
+  unsigned valid:1;
   char *sysfs_id;
   unsigned hd_idx;
+  unsigned signature;
 } edd_info_t;
 
 /** @} */

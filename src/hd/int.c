@@ -9,6 +9,7 @@
 #include "hd.h"
 #include "hd_int.h"
 #include "int.h"
+#include "edd.h"
 
 /**
  * @defgroup LIBHDint Internal utilities
@@ -69,7 +70,10 @@ void hd_scan_int(hd_data_t *hd_data)
   int_floppy(hd_data);
 
 #if defined(__i386__) || defined (__x86_64__)
-  PROGRESS(5, 0, "bios");
+  PROGRESS(5, 0, "edd");
+  assign_edd_info(hd_data);
+
+  PROGRESS(5, 1, "bios");
   int_bios(hd_data);
 #endif
 
@@ -489,6 +493,11 @@ void int_media_check(hd_data_t *hd_data)
       PROGRESS(4, ++j, hd->unix_dev_name);
       hd->block0 = read_block0(hd_data, hd->unix_dev_name, &i);
       hd->is.notready = hd->block0 ? 0 : 1;
+#if defined(__i386__) || defined(__x86_64__)
+      if(hd->block0) {
+        ADD2LOG("  mbr sig: 0x%08x\n", edd_disk_signature(hd));
+      }
+#endif
     }
   }
 }

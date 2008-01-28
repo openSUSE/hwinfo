@@ -21,7 +21,11 @@
 
 #if defined(__i386__) || defined(__x86_64__)
 
-static void get_edd_info(hd_data_t *hd_data);
+static void read_edd_info(hd_data_t *hd_data);
+static int does_match(edd_info_t *ei, hd_t *hd, unsigned type);
+static int does_match0(edd_info_t *ei, edd_info_t *ei0, unsigned type);
+static int is_disk(hd_t *hd);
+static uint64_t disk_size(hd_t *hd);
 
 void hd_scan_sysfs_edd(hd_data_t *hd_data)
 {
@@ -41,21 +45,17 @@ void hd_scan_sysfs_edd(hd_data_t *hd_data)
 
   PROGRESS(2, 0, "edd info");
 
-  get_edd_info(hd_data);
+  read_edd_info(hd_data);
 }
 
 
-void get_edd_info(hd_data_t *hd_data)
+void read_edd_info(hd_data_t *hd_data)
 {
-  hd_t *hd;
-  hd_res_t *res;
-  unsigned u, u1, u2, edd_cnt = 0, lba;
+  unsigned u;
   uint64_t ul0;
-  str_list_t *sl;
-  bios_info_t *bt;
   edd_info_t *ei;
-  str_list_t *sf_dir, *sf_dir_e;
-  char *sf_edd = NULL, *sf_link;
+  str_list_t *sl, *sf_dir, *sf_dir_e;
+  char *sf_edd = NULL;
 
   for(u = 0; u < sizeof hd_data->edd / sizeof *hd_data->edd; u++) {
     free_mem(hd_data->edd[u].sysfs_id);
@@ -73,11 +73,11 @@ void get_edd_info(hd_data_t *hd_data)
       u >= 0x80 &&
       u <= 0xff
     ) {
-      edd_cnt++;
-
       u -= 0x80;
 
       ei = hd_data->edd + u;
+
+      ei->valid = 1;
 
       if(hd_attr_uint(get_sysfs_attr_by_path(sf_edd, "sectors"), &ul0, 0)) {
         ei->sectors = ul0;
@@ -111,12 +111,8 @@ void get_edd_info(hd_data_t *hd_data)
         ei->edd.cyls = ei->sectors / (ei->edd.heads * ei->edd.sectors);
       }
 
-      sf_link = hd_read_sysfs_link(sf_edd, "pci_dev");
-      if(sf_link) {
-        hd_data->edd[u].sysfs_id = new_str(hd_sysfs_id(sf_link));
-        if((hd = hd_find_sysfs_id(hd_data, hd_data->edd[u].sysfs_id))) {
-          hd_data->edd[u].hd_idx = hd->idx;
-        }
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_edd, "mbr_signature"), &ul0, 0)) {
+        ei->signature = ul0;
       }
 
       sl = hd_attr_list(get_sysfs_attr_by_path(sf_edd, "extensions"));
@@ -126,8 +122,9 @@ void get_edd_info(hd_data_t *hd_data)
       if(search_str_list(sl, "64-bit extensions")) hd_data->edd[u].ext_64bit = 1;
 
       ADD2LOG(
-        "edd: 0x%02x\n  size: %"PRIu64"\n  chs default: %u/%u/%u\n  chs legacy: %u/%u/%u\n  caps: %s%s%s%s\n  attached: #%u %s\n",
+        "edd: 0x%02x\n  mbr sig: 0x%08x\n  size: %"PRIu64"\n  chs default: %u/%u/%u\n  chs legacy: %u/%u/%u\n  caps: %s%s%s%s\n",
         u + 0x80,
+        ei->signature,
         ei->sectors,
         ei->edd.cyls,
         ei->edd.heads,
@@ -138,78 +135,59 @@ void get_edd_info(hd_data_t *hd_data)
         ei->ext_fixed_disk ? "fixed " : "",
         ei->ext_lock_eject ? "lock " : "",
         ei->ext_edd ? "edd " : "",
-        ei->ext_64bit ? "64bit " : "",
-        ei->hd_idx,
-        ei->sysfs_id ?: ""
+        ei->ext_64bit ? "64bit " : ""
       );
     }
   }
 
   free_mem(sf_edd);
   free_str_list(sf_dir);
+}
 
-  if(!edd_cnt) return;
+
+void assign_edd_info(hd_data_t *hd_data)
+{
+  hd_t *hd, *match_hd;
+  unsigned u, u1, u2, lba, matches, match_edd, type;
+  bios_info_t *bt;
+  edd_info_t *ei;
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
-    if(
-      hd->base_class.id == bc_storage_device &&
-      hd->sub_class.id == sc_sdev_disk
-    ) {
-      hd->rom_id = free_mem(hd->rom_id);
-    }
+    if(is_disk(hd)) hd->rom_id = free_mem(hd->rom_id);
   }
 
   /* add BIOS drive ids to disks */
+  for(type = 0; type < 3; type++) {
+    for(u = 0; u < sizeof hd_data->edd / sizeof *hd_data->edd; u++) {
+      ei = hd_data->edd + u;
+      if(!ei->valid || ei->assigned) continue;
 
-  /* first, check sysfs link */
-  for(u = 0; u < sizeof hd_data->edd / sizeof *hd_data->edd; u++) {
-    if(!hd_data->edd[u].hd_idx) continue;
-    for(hd = hd_data->hd; hd; hd = hd->next) {
-      if(
-        hd->base_class.id == bc_storage_device &&
-        hd->sub_class.id == sc_sdev_disk &&
-        hd->attached_to == hd_data->edd[u].hd_idx &&
-        !hd->rom_id
-      ) {
-        str_printf(&hd->rom_id, 0, "0x%02x", u + 0x80);
-        hd_data->flags.edd_used = 1;
-        hd_data->edd[u].assigned = 1;
-        break;
+      for(u1 = u2 = 0; u1 < sizeof hd_data->edd / sizeof *hd_data->edd; u1++) {
+        if(does_match0(ei, hd_data->edd + u1, type)) u2++;
       }
-    }
-  }
 
-  /* try based on disk size */
-  for(u = 0; u < sizeof hd_data->edd / sizeof *hd_data->edd; u++) {
-    if(hd_data->edd[u].assigned) continue;
-    if(!(ul0 = hd_data->edd[u].sectors)) continue;
-    for(u1 = u2 = 0; u1 < sizeof hd_data->edd / sizeof *hd_data->edd; u1++) {
-      if(ul0 == hd_data->edd[u1].sectors) u2++;
-    }
+      /* not unique */
+      if(u2 != 1) continue;
 
-    /* more than one disk with this size */
-    if(u2 != 1) continue;
+      matches = 0;
+      match_hd = 0;
+      match_edd = 0;
 
-    for(hd = hd_data->hd; hd; hd = hd->next) {
-      if(
-        hd->base_class.id == bc_storage_device &&
-        hd->sub_class.id == sc_sdev_disk &&
-        !hd->rom_id
-      ) {
-        for(res = hd->res; res; res = res->next) {
-          if(
-            res->any.type == res_size &&
-            res->size.unit == size_unit_sectors &&
-            res->size.val1 == ul0
-          ) break;
+      for(hd = hd_data->hd; hd; hd = hd->next) {
+        if(!is_disk(hd) || hd->rom_id) continue;
+
+        if(does_match(ei, hd, type)) {
+          matches++;
+          match_edd = u;
+          match_hd = hd;
         }
+      }
 
-        if(!res) continue;
-
-        str_printf(&hd->rom_id, 0, "0x%02x", u + 0x80);
+      if(matches == 1) {
+        str_printf(&match_hd->rom_id, 0, "0x%02x", match_edd + 0x80);
         hd_data->flags.edd_used = 1;
-        hd_data->edd[u].assigned = 1;
-        break;
+        hd_data->edd[match_edd].assigned = 1;
+        ADD2LOG("  %s = %s (match %d)\n", match_hd->unix_dev_name, match_hd->rom_id, type);
       }
     }
   }
@@ -235,8 +213,89 @@ void get_edd_info(hd_data_t *hd_data)
       }
     }
   }
-
 }
+
+
+int does_match(edd_info_t *ei, hd_t *hd, unsigned type)
+{
+  int i = 0;
+
+  switch(type) {
+    case 0:
+      i = ei->signature == edd_disk_signature(hd) && ei->sectors == disk_size(hd);
+      break;
+
+    case 1:
+      i = ei->signature == edd_disk_signature(hd);
+      break;
+
+    case 2:
+      i = ei->sectors == disk_size(hd);
+      break;
+  }
+
+  return i;
+}
+
+
+int does_match0(edd_info_t *ei, edd_info_t *ei0, unsigned type)
+{
+  int i = 0;
+
+  switch(type) {
+    case 0:
+      i = ei->signature == ei0->signature && ei->sectors == ei0->sectors;
+      break;
+
+    case 1:
+      i = ei->signature == ei0->signature;
+      break;
+
+    case 2:
+      i = ei->sectors == ei0->sectors;
+      break;
+  }
+
+  return i;
+}
+
+
+int is_disk(hd_t *hd)
+{
+  return
+    hd->base_class.id == bc_storage_device &&
+    hd->sub_class.id == sc_sdev_disk;
+}
+
+
+uint64_t disk_size(hd_t *hd)
+{
+  hd_res_t *res;
+  uint64_t ul = 0;
+
+  for(res = hd->res; res; res = res->next) {
+    if(
+      res->any.type == res_size &&
+      res->size.unit == size_unit_sectors
+    ) {
+      ul = res->size.val1;
+      break;
+    }
+  }
+
+  return ul;
+}
+
+
+unsigned edd_disk_signature(hd_t *hd)
+{
+  unsigned char *s = hd->block0;
+
+  if(!s) return 0;
+
+  return s[0x1b8] + (s[0x1b9] << 8) + (s[0x1ba] << 16) + (s[0x1bb] << 24);
+}
+
 
 #endif /* defined(__i386__) || defined(__x86_64__) */
 

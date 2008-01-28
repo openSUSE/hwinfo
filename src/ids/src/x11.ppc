@@ -135,7 +135,7 @@
  vendor.id		pci 0x1002
 &device.id		pci 0x4337
 +device.name		RS200 4337
-+driver.xfree		4|radeonold
++driver.xfree		4|radeon
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4354
@@ -507,13 +507,6 @@
 &device.id		pci 0x4e50
 +device.name		RV350 NP
 +driver.xfree		4|radeon
-
- vendor.id		pci 0x1002
-&device.id		pci 0x4e50
-&subvendor.id		pci 0x1558
-&subdevice.id		pci 0x4701
-+subdevice.name		RV350 NP (1558:4701)
-+driver.xfree		4|radeonold
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4e51
@@ -2962,6 +2955,11 @@
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de
+&device.id		pci 0x0429
++device.name		Quadro NVS 140M
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x042a
 +device.name		Quadro NVS 130M
 +driver.xfree		4|nv
@@ -3191,11 +3189,6 @@
 +driver.xfree		4|s3virge
 
  vendor.id		pci 0x5333
-&device.id		pci 0x8811
-+device.name		86c764/765 [Trio32/64/64V+]
-+driver.xfree		4|s3
-
- vendor.id		pci 0x5333
 &device.id		pci 0x8812
 +device.name		86cM65 [Aurora64V+]
 +driver.xfree		4|s3
@@ -3209,11 +3202,6 @@
 &device.id		pci 0x883d
 +device.name		86c988 [ViRGE/VX]
 +driver.xfree		4|s3virge
-
- vendor.id		pci 0x5333
-&device.id		pci 0x8901
-+device.name		Trio 64V2/DX or /GX
-+driver.xfree		4|s3
 
  vendor.id		pci 0x5333
 &device.id		pci 0x8904
@@ -3427,13 +3415,6 @@
 &device.id		pci 0x27a2
 +device.name		945 GM
 +driver.xfree		4|i810
-
- vendor.id		pci 0x8086
-&device.id		pci 0x27a2
-&subvendor.id		pci 0x1734
-&subdevice.id		pci 0x10ad
-+subdevice.name		945 GM (FSC Amilo Si1520)
-+driver.xfree		4|fbdev
 
  vendor.id		pci 0x8086
 &device.id		pci 0x27ae

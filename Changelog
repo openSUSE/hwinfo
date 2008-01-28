@@ -1,3 +1,7 @@
+28/1/2008:	v13.59
+	- rewrote BIOS disk id assignment
+	- updated X11 data
+
 11/10/2007:	v13.58
 	- look at ancient unique-keys directory, too
 
