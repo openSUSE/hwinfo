@@ -97,14 +97,34 @@
 +driver.any		brlwave
 
  vendor.id		special 0x5003
+&device.id		special 0x0036
++device.name		evo64
++driver.any		evo64
+
+ vendor.id		special 0x5003
+&device.id		special 0x0038
++device.name		evo88
++driver.any		evo88
+
+ vendor.id		special 0x5003
 &device.id		special 0x0044
 +device.name		vario40-ht
 +driver.any		vario40-ht
 
  vendor.id		special 0x5003
+&device.id		special 0x0072
++device.name		brllino
++driver.any		brllino
+
+ vendor.id		special 0x5003
 &device.id		special 0x0074
 +device.name		brlstar40
 +driver.any		brlstar40
+
+ vendor.id		special 0x5003
+&device.id		special 0x0078
++device.name		brlstar80
++driver.any		brlstar80
 
  vendor.id		special 0x5003
 &device.id		special 0x0080

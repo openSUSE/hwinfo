@@ -369,8 +369,12 @@ unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt)
       switch(buf[1]) {
   	case 0x05:
   	case 0x09:
+  	case 0x36:
+  	case 0x38:
   	case 0x44:
+  	case 0x72:
   	case 0x74:
+  	case 0x78:
   	case 0x80:
   	case 0x84:
   	case 0x88:
