@@ -157,7 +157,7 @@ void assign_edd_info(hd_data_t *hd_data)
   }
 
   /* add BIOS drive ids to disks */
-  for(type = 0; type < 3; type++) {
+  for(type = 0; type < 4; type++) {
     for(u = 0; u < sizeof hd_data->edd / sizeof *hd_data->edd; u++) {
       ei = hd_data->edd + u;
       if(!ei->valid || ei->assigned) continue;
@@ -219,6 +219,7 @@ void assign_edd_info(hd_data_t *hd_data)
 int does_match(edd_info_t *ei, hd_t *hd, unsigned type)
 {
   int i = 0;
+  uint64_t u64;
 
   switch(type) {
     case 0:
@@ -231,6 +232,13 @@ int does_match(edd_info_t *ei, hd_t *hd, unsigned type)
 
     case 2:
       i = ei->sectors == disk_size(hd);
+      break;
+
+    case 3:
+      u64 = ei->edd.heads * ei->edd.sectors;
+      if(u64) {
+        i = ei->edd.cyls == disk_size(hd) / u64;
+      }
       break;
   }
 
@@ -253,6 +261,10 @@ int does_match0(edd_info_t *ei, edd_info_t *ei0, unsigned type)
 
     case 2:
       i = ei->sectors == ei0->sectors;
+      break;
+
+    case 3:
+      i = ei->edd.cyls == ei0->edd.cyls;
       break;
   }
 

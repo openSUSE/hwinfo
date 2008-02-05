@@ -3531,6 +3531,11 @@
 +device.name		Quadro NVS 290
 +driver.xfree		4|nv
 
+ vendor.id		pci 0x10de
+&device.id		pci 0x061a
++device.name		Quadro FX 3700
++driver.xfree		4|nv
+
  vendor.id		pci 0x10e0
 +vendor.name		Imstt
 
@@ -3543,27 +3548,6 @@
 &device.id		pci 0x9135
 +device.name		Imstt3D
 +driver.xfree		4|imstt
-
- vendor.id		pci 0x1106
-+vendor.name		VIA Technologies, Inc.
-
- vendor.id		pci 0x1106
-&device.id		pci 0x3122
-+device.name		CLE266
-+driver.xfree		4|via|||dri
-
- vendor.id		pci 0x1106
-&device.id		pci 0x7205
-+device.name		KM400
-+driver.xfree		4|via|||dri
-
- vendor.id		pci 0x1106
-&device.id		pci 0x7205
-&subvendor.id		pci 0x1025
-&subdevice.id		pci 0x0033
-+subdevice.name		Aspire 1353LC KM400
-+driver.xfree		4|via|||dri
-+driver.xfree.config	Option "VBEModes" "true"
 
  vendor.id		pci 0x1142
 +vendor.name		Alliance Semiconductor Corporation
@@ -4056,8 +4040,8 @@
  vendor.id		pci 0x8086
 &device.id		pci 0x3577
 +device.name		i830
-+driver.xfree		4|intel
-+driver.xfree		4|intel|3d||dri
++driver.xfree		4|i810
++driver.xfree		4|i810|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3582
