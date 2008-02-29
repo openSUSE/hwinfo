@@ -674,6 +674,8 @@ void int_mouse(hd_data_t *hd_data)
 {
   hd_t *hd;
   bios_info_t *bt = NULL;
+
+#if 0
   str_list_t *sl;
   int is_mouse;
 
@@ -711,6 +713,7 @@ void int_mouse(hd_data_t *hd_data)
       hd->compat_device.id = 0;
     }
   }
+#endif
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(

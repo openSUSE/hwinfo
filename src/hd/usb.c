@@ -518,6 +518,13 @@ void add_input_dev(hd_data_t *hd_data, char *name)
   sf_dev = new_str(hd_read_sysfs_link(name, "device"));
 
   if(sf_dev) {
+    /* new kernel (2.6.24): one more level */
+    s = new_str(hd_read_sysfs_link(sf_dev, "device"));
+    if(s) {
+      free_mem(sf_dev);
+      sf_dev = s;
+    }
+
     bus_id = sf_dev ? strrchr(sf_dev, '/') : NULL;
     if(bus_id) bus_id++;
 
@@ -641,6 +648,7 @@ void get_printer_devs(hd_data_t *hd_data)
   char *sf_drv_name, *sf_drv, *bus_id, *bus_name;
 
   sf_class = reverse_str_list(read_dir("/sys/class/usb", 'D'));
+  if(!sf_class) sf_class = reverse_str_list(read_dir("/sys/class/usb_endpoint", 'l'));
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: usb\n");
