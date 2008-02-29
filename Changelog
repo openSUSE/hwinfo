@@ -1,3 +1,11 @@
+29/2/2008:	v14.2
+	- adjust mouse detection to work with mice that do not use
+	  /dev/input/mice but work via event dev (#266002)
+	- change input device code to use kernel device ids for input devices
+	- adjust to latest sysfs changes
+	- work around some strange pci subdevice names (#183188)
+	- update pci device name database
+
 5/2/2008:	v14.1
 	- updated X11 data
 	- even better BIOS disk id handling

@@ -1,4 +1,4 @@
-#define _GNU_SOURCE		/* canonicalize_file_name() */
+#define _GNU_SOURCE		/* canonicalize_file_name(), strcasestr() */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -4025,9 +4025,9 @@ void hd_scan_xtra(hd_data_t *hd_data)
 {
   str_list_t *sl;
   hd_t *hd, *hd_tmp;
-  unsigned u0, u1, u2, tag;
+  unsigned u0, u1, u2, u4 = 0, u5 = 0, tag;
   int i, err;
-  char buf0[10], buf1[10], buf2[10], buf3[64], *s, k;
+  char buf0[10], buf1[10], buf2[10], buf3[64], buf4[10], buf5[10], *s, k;
 
   hd_data->module = mod_xtra;
 
@@ -4042,9 +4042,11 @@ void hd_scan_xtra(hd_data_t *hd_data)
       default: k = 2;
     }
     if(
+      (i = sscanf(s, "%8[^:]:%8[^:]:%8[^:]:%8[^:]:%8[^:]:%60s", buf0, buf1, buf2, buf4, buf5, buf3)) >= 5 ||
       (i = sscanf(s, "%8[^:]:%8[^:]:%8[^:]:%60s", buf0, buf1, buf2, buf3)) >= 3
     ) {
-      if(i < 4) *buf3 = 0;
+      if(i == 5 || i == 3) *buf3 = 0;
+      if(i <= 4) *buf4 = *buf5 = 0;
 
       u0 = strtoul(buf0, &s, 16);
       if(*s) err |= 1;
@@ -4068,6 +4070,14 @@ void hd_scan_xtra(hd_data_t *hd_data)
       u2 = strtoul(buf2, &s, 16);
       if(*s) err |= 4;
       u2 = MAKE_ID(ID_TAG(u1), ID_VALUE(u2));
+      if(i > 4) {
+        u4 = strtoul(buf4, &s, 16);
+        if(*s) err |= 8;
+        u4 = MAKE_ID(ID_TAG(u1), ID_VALUE(u4));
+        u5 = strtoul(buf5, &s, 16);
+        if(*s) err |= 16;
+        u5 = MAKE_ID(ID_TAG(u1), ID_VALUE(u5));
+      }
       if((err & 1) && !strcmp(buf0, "*")) {
         u0 = -1;
         err &= ~1;
@@ -4079,6 +4089,14 @@ void hd_scan_xtra(hd_data_t *hd_data)
       if((err & 4) && !strcmp(buf2, "*")) {
         u2 = 0;
         err &= ~4;
+      }
+      if((err & 8) && !strcmp(buf4, "*")) {
+        u4 = 0;
+        err &= ~8;
+      }
+      if((err & 16) && !strcmp(buf5, "*")) {
+        u5 = 0;
+        err &= ~16;
       }
       if(!err) {
         if(k) {
@@ -4097,6 +4115,8 @@ void hd_scan_xtra(hd_data_t *hd_data)
           hd->sub_class.id = u0 & 0xff;
           hd->vendor.id = u1;
           hd->device.id = u2;
+          hd->sub_vendor.id = u4;
+          hd->sub_device.id = u5;
           if(ID_TAG(hd->vendor.id) == TAG_PCI) hd->bus.id = bus_pci;
           if(ID_TAG(hd->vendor.id) == TAG_USB) hd->bus.id = bus_usb;
           if(ID_TAG(hd->vendor.id) == TAG_PCMCIA) {
@@ -4869,9 +4889,25 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
 
     dev = new_str(hd->sub_device.name);
 
-    if(!vend) vend = new_str(hd->vendor.name);
+    /* catch strange subdevice names */
+    if(
+      dev &&
+      (
+        (strcasestr(dev, "motherboard") && !strcasestr(dev, "on motherboard")) ||
+        strcasestr(dev, "mainboard") ||
+        strcasestr(dev, "primergy") ||
+        strcasestr(dev, "poweredge")
+      )
+    ) {
+      dev = free_mem(dev);
+    }
 
-    if(!dev) dev = new_str(hd->device.name);
+    if(!vend || !dev) {
+      vend = free_mem(vend);
+      dev = free_mem(dev);
+      vend = new_str(hd->vendor.name);
+      dev = new_str(hd->device.name);
+    }
 
     if(dev) {
       if(vend) {
