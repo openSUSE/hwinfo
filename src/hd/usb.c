@@ -541,8 +541,10 @@ void add_input_dev(hd_data_t *hd_data, char *name)
         str_printf(&t, 0, "/dev/input/%s", sf_cdev->name);
 
         if(strncmp(sf_cdev->name, "mouse", sizeof "mouse" - 1)) {
-          hd->unix_dev_name = t;
-          hd->unix_dev_num = dev_num;
+          if(!hd->unix_dev_name) {
+            hd->unix_dev_name = t;
+            hd->unix_dev_num = dev_num;
+          }
         }
         else {
           hd->unix_dev_name2 = t;

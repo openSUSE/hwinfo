@@ -1,3 +1,7 @@
+29/2/2008:	v12.52
+	- adjust mouse detection to work with mice that do not use
+	  /dev/input/mice but work via event dev (#266002)
+
 18/2/2008:	v12.51
 	- handle ahci/ata_piix issue (#355983, #304134)
 

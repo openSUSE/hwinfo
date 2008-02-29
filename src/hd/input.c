@@ -54,7 +54,7 @@ void get_input_devices(hd_data_t *hd_data)
   hd_t *hd;
   str_list_t *input, *sl, *sl1;
   char *s;
-  unsigned ok, u;
+  unsigned ok, u, is_mouse;
   unsigned bus, vendor, product, version;
   unsigned mouse_buttons, mouse_wheels;
   char *name = NULL, *handlers = NULL, *key = NULL, *rel = NULL, *abso = NULL;
@@ -97,6 +97,13 @@ void get_input_devices(hd_data_t *hd_data)
       if(ok && handlers) {
         handler_list = hd_split(' ', handlers);
 
+        is_mouse = strstr(handlers, "mouse") ? 1 : 0;
+        if(	// HP Virtual Management Device
+          vendor == 0x03f0 &&
+          product == 0x1126 &&
+          mouse_buttons >= 3
+        ) is_mouse = 1;
+
         if(bus == BUS_USB) {
           s = NULL;
           for(sl1 = handler_list; sl1; sl1 = sl1->next) {
@@ -105,20 +112,35 @@ void get_input_devices(hd_data_t *hd_data)
               break;
             }
           }
-          
+          if(!s && is_mouse) for(sl1 = handler_list; sl1; sl1 = sl1->next) {
+            if(sscanf(sl1->str, "event%u", &u) == 1) {
+              str_printf(&s, 0, "/dev/input/event%u", u);
+              break;
+            }
+          }
+
           if(s) {
             for(hd = hd_data->hd; hd; hd = hd->next) {
-              if(hd->unix_dev_name2 && !strcmp(hd->unix_dev_name2, s)) {
+              if(
+                (hd->unix_dev_name2 && !strcmp(hd->unix_dev_name2, s)) ||
+                (hd->unix_dev_name && !strcmp(hd->unix_dev_name, s))
+              ) {
+                if(!hd->base_class.id) {
+                  hd->base_class.id = bc_mouse;
+                  hd->sub_class.id = sc_mou_usb;
+                }
+                hd_set_hw_class(hd, hw_mouse);
+
                 hd->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0210);
                 hd->compat_device.id = MAKE_ID(TAG_SPECIAL, (mouse_wheels << 4) + mouse_buttons);
 
-                add_str_list(&hd->unix_dev_names, hd->unix_dev_name);
-                add_str_list(&hd->unix_dev_names, hd->unix_dev_name2);
+                if(hd->unix_dev_name) add_str_list(&hd->unix_dev_names, hd->unix_dev_name);
+                if(hd->unix_dev_name2) add_str_list(&hd->unix_dev_names, hd->unix_dev_name2);
 
                 for(sl1 = handler_list; sl1; sl1 = sl1->next) {
                   if(sscanf(sl1->str, "event%u", &u) == 1) {
                     str_printf(&s, 0, "/dev/input/event%u", u);
-                    add_str_list(&hd->unix_dev_names, s);
+                    if(!search_str_list(hd->unix_dev_names, s)) add_str_list(&hd->unix_dev_names, s);
                     s = free_mem(s);
                     break;
                   }
@@ -153,7 +175,7 @@ void get_input_devices(hd_data_t *hd_data)
               }
             }
           }
-          else if(strstr(handlers, "mouse")) {
+          else if(is_mouse) {
             hd = add_hd_entry(hd_data, __LINE__, 0);
 
             hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x0210);
