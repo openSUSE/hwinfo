@@ -1,3 +1,4 @@
+#define _GNU_SOURCE			/* strcasestr() */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -4873,9 +4874,25 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
 
     dev = new_str(hd->sub_device.name);
 
-    if(!vend) vend = new_str(hd->vendor.name);
+    /* catch strange subdevice names */
+    if(
+      dev &&
+      (
+        (strcasestr(dev, "motherboard") && !strcasestr(dev, "on motherboard")) ||
+        strcasestr(dev, "mainboard") ||
+        strcasestr(dev, "primergy") ||
+        strcasestr(dev, "poweredge")
+      )
+    ) {
+      dev = free_mem(dev);
+    }
 
-    if(!dev) dev = new_str(hd->device.name);
+    if(!vend || !dev) {
+      vend = free_mem(vend);
+      dev = free_mem(dev);
+      vend = new_str(hd->vendor.name);
+      dev = new_str(hd->device.name);
+    }
 
     if(dev) {
       if(vend) {
