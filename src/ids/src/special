@@ -668,6 +668,13 @@
 +driver.module.modprobe	usbscanner
 +driver.module.modprobe	microtek
 
+# VirtualBox things
+ vendor.id		special 0x80ee
++vendor.name		VirtualBox
+
+ vendor.id		special 0x80ee
+&device.id		special 0x0100
++device.name		Mouse
 
 # internal: special notebook packages
 # see int.c::int_system()

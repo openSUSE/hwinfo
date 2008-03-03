@@ -348,7 +348,7 @@ void add_pci(hd_data_t *hd_data)
 
   for(dev = hd_data->hal ; dev; dev = dev->next) {
     if(dev->used) continue;
-    if(!hal_match_str(dev->prop, "info.bus", "pci")) continue;
+    if(!hal_match_str(dev->prop, "info.subsystem", "pci")) continue;
     dev->used = 1;
 
     hd = add_hd_entry(hd_data, __LINE__, 0);

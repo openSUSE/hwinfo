@@ -1,3 +1,7 @@
+3/3/2008:	v14.3
+	- hal: info.bus -> info.subsystem
+	- detect virtualbox mouse (bnc #358460)
+
 29/2/2008:	v14.2
 	- adjust mouse detection to work with mice that do not use
 	  /dev/input/mice but work via event dev (#266002)

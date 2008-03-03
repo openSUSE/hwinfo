@@ -2602,6 +2602,7 @@ typedef struct {
     unsigned biosvram:1;	/**< internal: map Video BIOS RAM (128k at 0xa0000) */
     unsigned nowpa:1;           /**< no longer used */
     unsigned pata:1;            /**< use new libata modules instead of classical ide modules */
+    unsigned vbox:1;		/**< running in virtual box  */
   } flags;
 
 

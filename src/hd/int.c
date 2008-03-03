@@ -715,6 +715,24 @@ void int_mouse(hd_data_t *hd_data)
   }
 #endif
 
+  if(hd_data->flags.vbox) {
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      if(
+        hd->base_class.id == bc_mouse &&
+        hd->sub_class.id == sc_mou_ps2 &&
+        hd->vendor.id == 2 &&
+        hd->device.id == 6
+      ) {
+        hd->vendor.name = free_mem(hd->vendor.name);
+        hd->device.name = free_mem(hd->device.name);
+        hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x80ee);
+        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0100);
+
+        new_id(hd_data, hd);
+      }
+    }
+  }
+
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
       hd->detail &&

@@ -92,6 +92,7 @@ static void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *b
 static void add_panel_info(hd_data_t *hd_data, bios_info_t *bt);
 #endif
 static void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt);
+static void chk_vbox(hd_data_t *hd_data);
 static unsigned char crc(unsigned char *mem, unsigned len);
 static int get_smp_info(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp);
 static unsigned parse_mpconfig_len(hd_data_t *hd_data, memory_range_t *mem);
@@ -355,6 +356,7 @@ void hd_scan_bios(hd_data_t *hd_data)
     add_panel_info(hd_data, bt);
 #endif
     add_mouse_info(hd_data, bt);
+    chk_vbox(hd_data);
   }
 
   PROGRESS(3, 0, "smp");
@@ -935,6 +937,21 @@ void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt)
   bt->mouse.bus = bus;
   bt->mouse.compat_vend = compat_vend;
   bt->mouse.compat_dev = compat_dev;
+}
+
+
+void chk_vbox(hd_data_t *hd_data)
+{
+  hd_smbios_t *sm;
+
+  for(sm = hd_data->smbios; sm; sm = sm->next) {
+    if(
+      sm->any.type == sm_sysinfo &&
+      !strcmp(sm->sysinfo.product, "VirtualBox")
+    ) {
+      hd_data->flags.vbox = 1;
+    }
+  }
 }
 
 
