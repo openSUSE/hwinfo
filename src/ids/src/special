@@ -676,6 +676,14 @@
 &device.id		special 0x0100
 +device.name		Mouse
 
+# VMware things
+ vendor.id		special 0x15ad
++vendor.name		VMware
+
+ vendor.id		special 0x15ad
+&device.id		special 0x0100
++device.name		Mouse
+
 # internal: special notebook packages
 # see int.c::int_system()
  vendor.id		special 0xf001

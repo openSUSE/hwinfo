@@ -2603,6 +2603,7 @@ typedef struct {
     unsigned nowpa:1;           /**< no longer used */
     unsigned pata:1;            /**< use new libata modules instead of classical ide modules */
     unsigned vbox:1;		/**< running in virtual box  */
+    unsigned vmware:1;		/**< running in vmware  */
   } flags;
 
 
@@ -2651,7 +2652,6 @@ typedef struct {
   str_list_t *xtra_hd;		/**< (Internal) fake hd entries (for testing) */
   devtree_t *devtree;		/**< (Internal) prom device tree on ppc */
   unsigned kernel_version;	/**< (Internal) kernel version */
-  int in_vmware;		/**< (Internal) running in vmware */
   hd_t *manual;			/**< (Internal) hardware config info */
   str_list_t *disks;		/**< (Internal) disks according to /proc/partitions */
   str_list_t *partitions;	/**< (Internal) dto, partitions */

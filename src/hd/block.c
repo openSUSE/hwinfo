@@ -823,7 +823,7 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
     hd_report_this(hd_data, hd) &&
     hd->unix_dev_name &&
     hd->sub_class.id == sc_sdev_cdrom &&
-    hd_data->in_vmware != 1		/* VMWare doesn't like it */
+    !hd_data->flags.vmware		/* VMWare doesn't like it */
   ) {
     PROGRESS(5, 0, hd->unix_dev_name);
     fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK);

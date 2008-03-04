@@ -21,7 +21,7 @@
  * @{
  */
 
-#if defined(__i386__)
+#if defined(__i386__) || defined(__x86_64__)
 static void sigsegv_handler(int signum);
 static void chk_vmware(hd_data_t *hd_data, sys_info_t *st);
 #endif
@@ -113,7 +113,7 @@ void hd_scan_sys(hd_data_t *hd_data)
   chk_vaio(hd_data, st);
 #endif
 
-#if defined(__i386__)
+#if defined(__i386__) || defined(__x86_64__)
   chk_vmware(hd_data, st);
 #endif
 
@@ -126,7 +126,7 @@ void hd_scan_sys(hd_data_t *hd_data)
   }
 }
 
-#if defined(__i386__)
+#if defined(__i386__) || defined(__x86_64__)
 void sigsegv_handler(int signum) { _exit(77); }
 
 void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
@@ -174,10 +174,10 @@ void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
     st->model = new_str("VMWare");
   }
 
-  hd_data->in_vmware = is_vmware;
+  hd_data->flags.vmware = is_vmware;
 }
 
-#endif	/* __i386__ */
+#endif	/* __i386__ || __x86_64__ */
 
 
 #if defined(__i386__) || defined(__x86_64__)
