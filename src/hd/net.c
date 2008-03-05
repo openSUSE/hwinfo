@@ -50,7 +50,7 @@ void hd_scan_net(hd_data_t *hd_data)
   unsigned u;
   int if_type, if_carrier;
   hd_t *hd, *hd_card;
-  char *s, *hw_addr;
+  char *s, *t, *hw_addr;
   hd_res_t *res, *res1, *res2;
   uint64_t ul0;
   str_list_t *sf_class, *sf_class_e;
@@ -244,9 +244,22 @@ void hd_scan_net(hd_data_t *hd_data)
     hd_card = NULL;
 
     if(sf_dev) {
-      hd->sysfs_device_link = new_str(hd_sysfs_id(sf_dev)); 
+      s = new_str(hd_sysfs_id(sf_dev));
 
-      hd_card = hd_find_sysfs_id(hd_data, hd_sysfs_id(sf_dev));
+      hd->sysfs_device_link = new_str(s);
+
+      hd_card = hd_find_sysfs_id(hd_data, s);
+
+      // try one above, if not found
+      if(!hd_card) {
+        t = strrchr(s, '/');
+        if(t) {
+          *t = 0;
+          hd_card = hd_find_sysfs_id(hd_data, s);
+        }
+      }
+      s = free_mem(s);
+
       if(hd_card) {
         hd->attached_to = hd_card->idx;
 
