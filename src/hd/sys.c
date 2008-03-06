@@ -142,6 +142,7 @@ void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
     if(child == 0) {
       signal(SIGSEGV, sigsegv_handler);
 
+#ifdef __i386__
       asm(
         "push %ebx\n"
         "\tpush %edx\n"
@@ -156,6 +157,22 @@ void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
         "\tpop %edx\n"
         "\tpop %ebx\n"
       );
+#else
+      asm(
+        "push %rbx\n"
+        "\tpush %rdx\n"
+        "\tpush %rax\n"
+        "\tpush %rcx\n"
+        "\tmov $0x564d5868,%eax\n"
+        "\tmov $0xa,%ecx\n"
+        "\tmov $0x5658,%edx\n"
+        "\tin (%dx),%eax\n"
+        "\tpop %rcx\n"
+        "\tpop %rax\n"
+        "\tpop %rdx\n"
+        "\tpop %rbx\n"
+      );
+#endif
 
       _exit(66);
     }
