@@ -947,6 +947,7 @@ void chk_vbox(hd_data_t *hd_data)
   for(sm = hd_data->smbios; sm; sm = sm->next) {
     if(
       sm->any.type == sm_sysinfo &&
+      sm->sysinfo.product &&
       !strcmp(sm->sysinfo.product, "VirtualBox")
     ) {
       hd_data->flags.vbox = 1;
