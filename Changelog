@@ -1,5 +1,5 @@
 10/3/2008:	v14.7
-	- wlan detection sometimes missed network cards (bnc #349623)
+	- wlan detection sometimes missed network cards (bnc #368442)
 
 6/3/2008:	v14.6
 	- fix compilation on x86_64
