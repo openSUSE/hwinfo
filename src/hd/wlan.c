@@ -139,8 +139,12 @@ void hd_scan_wlan(hd_data_t *hd_data)
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
-      hd->base_class.id == bc_network &&
-      hd->unix_dev_name ) {
+      (
+        hd_is_hw_class(hd, hw_network_ctrl) ||
+        hd->base_class.id == bc_network
+      ) &&
+      hd->unix_dev_name
+    ) {
       /* Get list of frequencies / channels */
       if(iw_get_range_info(skfd, hd->unix_dev_name, &range) < 0) {
         /* this failed, maybe device does not support wireless extensions */
@@ -149,6 +153,7 @@ void hd_scan_wlan(hd_data_t *hd_data)
       ADD2LOG("*** device %s is wireless ***\n", hd->unix_dev_name);
       hd->is.wlan = 1;
 
+      hd->base_class.id = bc_network;
       hd->sub_class.id = 0x82;			/* wlan */
 
       res = new_mem(sizeof *res);
