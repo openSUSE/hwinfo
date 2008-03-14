@@ -1,3 +1,6 @@
+12/3/2008:	v12.55
+	- support MS virtual network devs (bnc #359261)
+
 6/3/2008:	v12.54
 	- change subclass id for wlan cards (bnc #288450)
 
