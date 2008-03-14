@@ -957,7 +957,7 @@ void int_udev(hd_data_t *hd_data)
           }
         }
 
-        if(!hd->unix_dev_name) {
+        if(!hd->unix_dev_name || hd_data->flags.udev) {
           sl = hd->unix_dev_names;
 
           if(hd_data->flags.udev) {

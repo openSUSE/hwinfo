@@ -54,7 +54,8 @@ void hd_scan_sysfs_block(hd_data_t *hd_data)
 
   if(hd_probe_feature(hd_data, pr_block_mods)) {
     PROGRESS(1, 0, "block modules");
-    load_module(hd_data, "ide-cd");
+    // load_module(hd_data, "ide-cd");
+    load_module(hd_data, "ide-cd_mod");
     load_module(hd_data, "ide-disk");
     load_module(hd_data, "sr_mod");
     load_module(hd_data, "sd_mod");

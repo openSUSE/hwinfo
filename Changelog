@@ -1,3 +1,8 @@
+11/3/2008:	v14.8
+	- ide-cd module name changed
+	- make hwprobe=+udev work again
+	- support MS virtual network devs (bnc #359261)
+
 10/3/2008:	v14.7
 	- wlan detection sometimes missed network cards (bnc #368442)
 

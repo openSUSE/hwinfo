@@ -662,6 +662,14 @@
 &device.id		special 0x0001
 +driver.module.modprobe	kveth2
 
+# vm network & storage
+ vendor.id		special 0x6013
++vendor.name		Virtual
+
+ vendor.id		special 0x6013
+&device.id		special 0x0001
++driver.module.modprobe	netvsc
+
 # internal: usb scanner driver list
  vendor.id		special 0xf000
 &device.id		special 0x0001
