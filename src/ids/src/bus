@@ -75,3 +75,7 @@
 
  bus.id			0x8d
 +bus.name		IUCV
+
+ bus.id			0x8e
++bus.name		PS3
+

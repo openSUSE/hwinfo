@@ -1,3 +1,7 @@
+17/3/2008:	v14.9
+	- fix mv643xx detection (bnc #359867)
+	- updated ps3 network card detection (bnc #370850)
+
 11/3/2008:	v14.8
 	- ide-cd module name changed
 	- make hwprobe=+udev work again

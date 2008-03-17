@@ -5754,6 +5754,30 @@ hd_t *hd_find_sysfs_id(hd_data_t *hd_data, char *id)
 }
 
 
+hd_t *hd_find_sysfs_id_devname(hd_data_t *hd_data, char *id, char *devname)
+{
+  hd_t *hd;
+
+  if(id && *id && devname) {
+    for(hd = hd_data->hd; hd; hd = hd->next) {
+      if(
+        hd->sysfs_id &&
+        !strcmp(hd->sysfs_id, id) &&
+        (
+          !hd->unix_dev_name ||
+          (
+            hd->unix_dev_name &&
+            !strcmp(hd->unix_dev_name, devname)
+          )
+        )
+      ) return hd;
+    }
+  }
+
+  return NULL;
+}
+
+
 hd_sysfsdrv_t *hd_free_sysfsdrv(hd_sysfsdrv_t *sf)
 {
   hd_sysfsdrv_t *next;
