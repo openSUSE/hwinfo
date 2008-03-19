@@ -1,3 +1,6 @@
+19/3/2008:	v14.10
+	- fix bios id assignment with multipath disks
+
 17/3/2008:	v14.9
 	- fix mv643xx detection (bnc #359867)
 	- updated ps3 network card detection (bnc #370850)

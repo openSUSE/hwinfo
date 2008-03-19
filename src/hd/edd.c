@@ -26,6 +26,7 @@ static int does_match(edd_info_t *ei, hd_t *hd, unsigned type);
 static int does_match0(edd_info_t *ei, edd_info_t *ei0, unsigned type);
 static int is_disk(hd_t *hd);
 static uint64_t disk_size(hd_t *hd);
+static int identical_disks(hd_t *hd1, hd_t *hd2);
 
 void hd_scan_sysfs_edd(hd_data_t *hd_data)
 {
@@ -148,7 +149,7 @@ void read_edd_info(hd_data_t *hd_data)
 void assign_edd_info(hd_data_t *hd_data)
 {
   hd_t *hd, *match_hd;
-  unsigned u, u1, u2, lba, matches, match_edd, type;
+  unsigned u, u1, u2, lba, matches, real_matches, match_edd, type;
   bios_info_t *bt;
   edd_info_t *ei;
 
@@ -169,7 +170,7 @@ void assign_edd_info(hd_data_t *hd_data)
       /* not unique */
       if(u2 != 1) continue;
 
-      matches = 0;
+      matches = real_matches = 0;
       match_hd = 0;
       match_edd = 0;
 
@@ -177,17 +178,37 @@ void assign_edd_info(hd_data_t *hd_data)
         if(!is_disk(hd) || hd->rom_id) continue;
 
         if(does_match(ei, hd, type)) {
+          if(!matches) {
+            match_edd = u;
+            match_hd = hd;
+          }
+          else {
+            if(identical_disks(hd, match_hd)) real_matches--;
+          }
           matches++;
-          match_edd = u;
-          match_hd = hd;
+          real_matches++;
         }
       }
 
-      if(matches == 1) {
-        str_printf(&match_hd->rom_id, 0, "0x%02x", match_edd + 0x80);
+      ADD2LOG("  %02x: matches %d (%d)\n", u + 0x80, real_matches, matches);
+
+      if(real_matches == 1) {
         hd_data->flags.edd_used = 1;
         hd_data->edd[match_edd].assigned = 1;
-        ADD2LOG("  %s = %s (match %d)\n", match_hd->unix_dev_name, match_hd->rom_id, type);
+
+        if(matches == 1) {
+          str_printf(&match_hd->rom_id, 0, "0x%02x", match_edd + 0x80);
+          ADD2LOG("  %s = %s (match %d)\n", match_hd->unix_dev_name, match_hd->rom_id, type);
+        }
+        else {
+          for(hd = hd_data->hd; hd; hd = hd->next) {
+            if(!is_disk(hd) || hd->rom_id) continue;
+            if(does_match(ei, hd, type)) {
+              str_printf(&hd->rom_id, 0, "0x%02x", match_edd + 0x80);
+              ADD2LOG("  %s = %s (match %d)\n", hd->unix_dev_name, hd->rom_id, type);
+            }
+          }
+        }
       }
     }
   }
@@ -306,6 +327,34 @@ unsigned edd_disk_signature(hd_t *hd)
   if(!s) return 0;
 
   return s[0x1b8] + (s[0x1b9] << 8) + (s[0x1ba] << 16) + (s[0x1bb] << 24);
+}
+
+
+int identical_disks(hd_t *hd1, hd_t *hd2)
+{
+  char *s1 = NULL, *s2 = NULL;
+  str_list_t *sl;
+
+  for(sl = hd1->unix_dev_names; sl; sl = sl->next) {
+    if(!strncmp(sl->str, "/dev/disk/by-id/", sizeof "/dev/disk/by-id/" - 1)) {
+      s1 = sl->str;
+      break;
+    }
+  }
+
+  for(sl = hd2->unix_dev_names; sl; sl = sl->next) {
+    if(!strncmp(sl->str, "/dev/disk/by-id/", sizeof "/dev/disk/by-id/" - 1)) {
+      s2 = sl->str;
+      break;
+    }
+  }
+
+  if(!s1) s1 = hd1->serial;
+  if(!s2) s2 = hd1->serial;
+
+  if(s1 && s2 && !strcmp(s1, s2)) return 1;
+
+  return 0;
 }
 
 
