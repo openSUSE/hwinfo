@@ -261,8 +261,9 @@ void hd_scan_net(hd_data_t *hd_data)
 
       /* if one card has several interfaces (as with PS3), check interface names, too */
       if(
-        hd->unix_dev_name &&
+        hd_card &&
         hd_card->unix_dev_name &&
+        hd->unix_dev_name &&
         strcmp(hd->unix_dev_name, hd_card->unix_dev_name)
       ) {
         hd_card = hd_find_sysfs_id_devname(hd_data, s, hd->unix_dev_name);
