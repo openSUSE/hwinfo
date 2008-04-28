@@ -75,6 +75,7 @@ static struct {
   { 246, 185, 1024,  768, "FUJITSU SIEMENS", "LifeBook T Series", NULL },
   { 304, 190, 1400, 1050, "Hewlett-Packard", "HP Compaq nc6000 (PN887PA#ABG)", "F.0F" },
   { 332, 208, 1280,  800, "MICRO-STAR INT'L CO.,LTD.", "MS-1011", "0101" },
+  { 302, 189, 1440,  900, "Dell Inc.", "Latitude D630C", NULL },
 };
 
 #define BIOS_TEST

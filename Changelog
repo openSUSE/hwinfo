@@ -1,3 +1,7 @@
+28/4/2008:	v14.13
+	- add some more fingerprint sensors (bnc #382273)
+	- monitors added (bnc #373997)
+
 14/4/2008:	v14.12
 	- disable old isa isdn card detection (bnc #359175)
 
