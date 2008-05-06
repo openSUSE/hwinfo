@@ -1044,8 +1044,8 @@ typedef struct s_pci_t {
   char *sysfs_id;				/**< sysfs path */
   char *sysfs_bus_id;				/**< sysfs bus id */
   char *modalias;				/**< module alias */
-  unsigned edid_len;				/**< edid record length */
-  unsigned char edid[0x80];			/**< edid record */
+  unsigned edid_len[4];				/**< edid record length */
+  unsigned char edid_data[4][0x80];		/**< edid record */
 } pci_t;
 
 /**

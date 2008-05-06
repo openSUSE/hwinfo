@@ -44,6 +44,7 @@ void hd_scan_monitor(hd_data_t *hd_data)
   devtree_t *dt;
   pci_t *pci;
   int found;
+  unsigned u;
 
   if(!hd_probe_feature(hd_data, pr_monitor)) return;
 
@@ -115,15 +116,18 @@ void hd_scan_monitor(hd_data_t *hd_data)
       hd &&
       hd->detail &&
       hd->detail->type == hd_detail_pci &&
-      (pci = hd->detail->pci.data) &&
-      pci->edid_len >= 0x80 &&
-      chk_edid_info(hd_data, pci->edid)
+      (pci = hd->detail->pci.data)
     ) {
-      hd2 = add_hd_entry(hd_data, __LINE__, 0);
-      hd2->base_class.id = bc_monitor;
-      hd2->attached_to = hd->idx;
-      add_edid_info(hd_data, hd2, pci->edid);
-      found = 1;
+      for(u = 0; u < sizeof pci->edid_len / sizeof *pci->edid_len; u++) {
+        if(pci->edid_len[u] >= 0x80 && chk_edid_info(hd_data, pci->edid_data[u])) {
+          hd2 = add_hd_entry(hd_data, __LINE__, 0);
+          hd2->base_class.id = bc_monitor;
+          hd2->slot = u;
+          hd2->attached_to = hd->idx;
+          add_edid_info(hd_data, hd2, pci->edid_data[u]);
+          found = 1;
+        }
+      }
     }
   }
 

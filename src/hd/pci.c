@@ -252,21 +252,29 @@ void hd_pci_read_data(hd_data_t *hd_data)
       close(fd);
     }
 
-    str_printf(&s, 0, "%s/edid1", sf_dev);
-    if((fd = open(s, O_RDONLY)) != -1) {
-      pci->edid_len = read(fd, pci->edid, sizeof pci->edid);
+    for(u = 0; u < sizeof pci->edid_len / sizeof *pci->edid_len; u++) {
+      str_printf(&s, 0, "%s/edid%u", sf_dev, u + 1);
+      if((fd = open(s, O_RDONLY)) != -1) {
+        pci->edid_len[u] = read(fd, pci->edid_data[u], sizeof pci->edid_data[u]);
 
-      ADD2LOG("    edid[%u]\n", pci->edid_len);
+        ADD2LOG("    edid%u[%u]\n", u + 1, pci->edid_len[u]);
 
-      if(pci->edid_len > 0) {
-        for(i = 0; i < sizeof pci->edid; i += 0x10) {
-          ADD2LOG("      ");
-          hexdump(&hd_data->log, 1, 0x10, pci->edid + i);
-          ADD2LOG("\n");
+        if(pci->edid_len[u] > 0) {
+          for(i = 0; i < sizeof pci->edid_data[u]; i += 0x10) {
+            ADD2LOG("      ");
+            hexdump(&hd_data->log, 1, 0x10, pci->edid_data[u] + i);
+            ADD2LOG("\n");
+          }
         }
-      }
+        else {
+          pci->edid_len[u] = 0;
+        }
 
-      close(fd);
+        close(fd);
+      }
+      else {
+        pci->edid_len[u] = 0;
+      }
     }
 
     s = free_mem(s);
