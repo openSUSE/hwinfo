@@ -1,3 +1,6 @@
+9/5/2008:	v14.15
+	- another go at mv643xx (bnc #359867)
+
 9/5/2008:	v14.14
 	- read up to 4 ddc records from sysfs tree (bnc #387064)
 	- not everything is a mouse (bnc #373177)

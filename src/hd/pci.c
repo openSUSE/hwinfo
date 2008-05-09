@@ -52,7 +52,7 @@ static void hd_read_vio(hd_data_t *hd_data);
 static void hd_read_xen(hd_data_t *hd_data);
 static void hd_read_ps3_system_bus(hd_data_t *hd_data);
 static void hd_read_vm(hd_data_t *hd_data);
-static void add_mv643xx_eth(hd_data_t *hd_data, char *platform_type);
+static void add_mv643xx_eth(hd_data_t *hd_data, char *entry, char *platform_type);
 static void hd_read_platform(hd_data_t *hd_data);
 static void hd_read_of_platform(hd_data_t *hd_data);
 static void add_xen_network(hd_data_t *hd_data);
@@ -769,28 +769,26 @@ void hd_read_vio(hd_data_t *hd_data)
 /*
  * Marvell Gigabit Ethernet in Pegasos2
  */
-void add_mv643xx_eth(hd_data_t *hd_data, char *platform_type)
+void add_mv643xx_eth(hd_data_t *hd_data, char *entry, char *platform_type)
 {
   hd_t *hd;
-  char *sf_dev, *sf_dev_name;
+  char *sf_dev = NULL;
 
-  /*
-   * Actually there are two (.0 & .1), but only one seems to be used - so we
-   * don't care.
-   */
-  sf_dev = "/sys/devices/platform/mv643xx_eth.0";
-  sf_dev_name = "mv643xx_eth.0";
+  str_printf(&sf_dev, 0, "%s/%s", "/sys/devices/platform", entry);
+  ADD2LOG("  platform device: adding %s\n", entry);
 
   hd = add_hd_entry(hd_data, __LINE__, 0);
   hd->base_class.id = bc_network;
   hd->sub_class.id = 0;
 
   hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
-  hd->sysfs_bus_id = new_str(sf_dev_name);
+  hd->sysfs_bus_id = new_str(entry);
   hd->modalias = new_str(platform_type);
 
   hd->vendor.id = MAKE_ID(TAG_PCI, 0x11ab);
-  hd->device.id = MAKE_ID(TAG_PCI, 0x11ab);
+  hd->device.id = MAKE_ID(TAG_PCI, 0x6460);
+
+  free_mem(sf_dev);
 }
 
 
@@ -800,8 +798,8 @@ void add_mv643xx_eth(hd_data_t *hd_data, char *platform_type)
 void hd_read_platform(hd_data_t *hd_data)
 {
   char *s, *platform_type;
-  str_list_t *sf_bus, *sf_bus_e;
-  char *sf_dev;
+  str_list_t *sf_bus, *sf_bus_e, *sf_eth_dev = NULL;
+  char *sf_dev, *sf_eth_net;
   int mv643xx_eth_seen = 0;
 
   sf_bus = reverse_str_list(read_dir("/sys/bus/platform/devices", 'l'));
@@ -823,13 +821,20 @@ void hd_read_platform(hd_data_t *hd_data)
     if((s = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
       platform_type = canon_str(s, strlen(s));
       ADD2LOG("    type = \"%s\"\n", platform_type);
-      if(
+      sf_eth_net = new_str(hd_read_sysfs_link(sf_dev, "net"));
+      sf_eth_dev = read_dir(sf_eth_net, 'd');
+      ADD2LOG("  platform device: sf_eth_net = %s sf_eth_dev = %p\n", sf_eth_net, sf_eth_dev);
+      if (
+        /* there is 'mv643xx_eth.0', 'mv643xx_eth.1' and 'mv643xx_eth_shared.' */
+        sf_eth_dev && sf_eth_net &&
         strstr(platform_type, "mv643xx_eth") &&
         !mv643xx_eth_seen++
       ) {
-        add_mv643xx_eth(hd_data, platform_type);
+        add_mv643xx_eth(hd_data, sf_bus_e->str, platform_type);
       }
       free_mem(platform_type);
+      free_mem(sf_eth_net);
+      free_str_list(sf_eth_dev);
     }
 
     free_mem(sf_dev);
