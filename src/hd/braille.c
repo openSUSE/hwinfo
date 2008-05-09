@@ -557,9 +557,9 @@ unsigned do_fhp_new(hd_data_t *hd_data, char *dev_name, int cnt)
 
     /* papenmeir new serial and usb device IDs */
     switch(id) {
-      case 85:
-      case 87:
-      case 88:
+      case 0x55:
+      case 0x57:
+      case 0x58:
         id = MAKE_ID(TAG_SPECIAL, id);
         break;
 
