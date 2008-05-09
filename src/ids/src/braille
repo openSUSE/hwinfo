@@ -86,6 +86,21 @@
 +device.name		el40p
 +driver.any		el40p
 
+ vendor.id		special 0x5002
+&device.id		special 0x0085
++device.name		el40s
++driver.any		el40s
+
+ vendor.id		special 0x5002
+&device.id		special 0x0087
++device.name		el66s
++driver.any		el66s
+
+ vendor.id		special 0x5002
+&device.id		special 0x0088
++device.name		el80s
++driver.any		el80s
+
  vendor.id		special 0x5003
 +vendor.name		Handy Tech
 

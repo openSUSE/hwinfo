@@ -2128,7 +2128,7 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0165
-+device.name		0x0165
++device.name		Quadro NVS 285
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10de

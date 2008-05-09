@@ -1,4 +1,8 @@
+9/5/2008:	v14.14
 	- read up to 4 ddc records from sysfs tree (bnc #387064)
+	- not everything is a mouse (bnc #373177)
+	- updated X11 data (bnc #387880)
+	- detect more braille devices
 
 28/4/2008:	v14.13
 	- add some more fingerprint sensors (bnc #382273)

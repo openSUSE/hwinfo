@@ -393,6 +393,7 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
       if(sub == 1 && prot == 2) {
         if(!(
           (usb->vendor == 0x056a && usb->device == 0x0022)	/* Wacom Tablet */
+          || (usb->vendor == 0x147a && usb->device == 0xe001)	/* eDio USB Multi Remote Controlle */
 //          || (usb->vendor == 0x08ca && usb->device == 0x0020)	/* AIPTEK APT-6000U tablet */
         )) {
           hd->base_class.id = bc_mouse;

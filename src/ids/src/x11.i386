@@ -2497,7 +2497,7 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0165
-+device.name		0x0165
++device.name		Quadro NVS 285
 +driver.xfree		4|nv
 +driver.xfree		4|nvidia|3d
 
@@ -3534,6 +3534,11 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x061a
 +device.name		Quadro FX 3700
++driver.xfree		4|nv
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0622
++device.name		GeForce 9600 GT
 +driver.xfree		4|nv
 
  vendor.id		pci 0x10e0

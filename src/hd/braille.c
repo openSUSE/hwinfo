@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <sys/ioctl.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -21,6 +22,7 @@
 
 static unsigned do_alva(hd_data_t *hd_data, char *dev_name, int cnt);
 static unsigned do_fhp(hd_data_t *hd_data, char *dev_name, unsigned baud, int cnt);
+static unsigned do_fhp_new(hd_data_t *hd_data, char *dev_name, int cnt);
 static unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt);
 static unsigned do_baum(hd_data_t *hd_data, char *dev_name, int cnt);
 
@@ -83,6 +85,12 @@ void hd_scan_braille(hd_data_t *hd_data)
           PROGRESS(1, cnt, "baum");
           *vend = MAKE_ID(TAG_SPECIAL, 0x5004);
           *dev = do_baum(hd_data, hd->unix_dev_name, cnt);
+        }
+
+        if(!*dev && hd_probe_feature(hd_data, pr_braille_fhp)) {
+          PROGRESS(1, cnt, "fhp new");
+          *vend = MAKE_ID(TAG_SPECIAL, 0x5002);
+          *dev = do_fhp_new(hd_data, hd->unix_dev_name, cnt);
         }
 
       }
@@ -438,7 +446,7 @@ unsigned do_baum(hd_data_t *hd_data, char *dev_name, int cnt)
   /* no input parity check, no XON/XOFF */
   curtio.c_iflag &= ~(INPCK | ~IXOFF);
 
-  curtio.c_cc[VTIME] = 1;	/* 0.1s timeout between chars on input */
+  curtio.c_cc[VTIME] = 2;	/* 0.1s timeout between chars on input */
   curtio.c_cc[VMIN] = 0;	/* no minimum input */
 
   tcsetattr(fd, TCSAFLUSH, &curtio);
@@ -447,7 +455,7 @@ unsigned do_baum(hd_data_t *hd_data, char *dev_name, int cnt)
   write(fd, device_id, sizeof device_id);
 
   /* wait for response */
-  usleep(100000);
+  usleep(250000);
 
   PROGRESS(3, cnt, "baum write ok");
 
@@ -465,10 +473,108 @@ unsigned do_baum(hd_data_t *hd_data, char *dev_name, int cnt)
   tcsetattr(fd, TCSAFLUSH, &oldtio);
   close(fd);
 
-  if(!strcmp(buf + 2, "Baum Vario40")) return 1;
-  if(!strcmp(buf + 2, "Baum Vario80")) return 2;
+  if(!strcmp(buf + 2, "Baum Vario40")) return MAKE_ID(TAG_SPECIAL, 1);
+  if(!strcmp(buf + 2, "Baum Vario80")) return MAKE_ID(TAG_SPECIAL, 2);
 
   return 0;
+}
+
+
+unsigned do_fhp_new(hd_data_t *hd_data, char *dev_name, int cnt)
+{
+  int i, fd, status = 0;
+  unsigned id;
+  unsigned char retstr[50] = "";
+  unsigned char brlauto[] = { 2, 0x42, 0x50, 0x50, 3 };
+  struct termios oldtio, tiodata = { };
+
+  PROGRESS(2, cnt, "fhp2 open");
+
+  fd = open(dev_name, O_RDWR | O_NONBLOCK | O_NOCTTY);
+  if(fd < 0) return 0;
+
+  fcntl(fd, F_SETFL, 0);	// remove O_NONBLOCK
+
+  tcgetattr(fd, &oldtio);
+
+  /* Set bps, and 8n1, enable reading */
+  tiodata.c_cflag = (CLOCAL | CREAD | CS8);
+  tiodata.c_iflag = IGNPAR;
+  tiodata.c_lflag = 0;
+  tiodata.c_cc[VMIN] = 0;
+  tiodata.c_cc[VTIME] = 0;
+
+  if(
+    cfsetispeed(&tiodata, B0) ||
+    cfsetospeed(&tiodata, B0) ||
+    tcsetattr(fd, TCSANOW, &tiodata) ||
+    tcflush(fd, TCIOFLUSH) ||
+    cfsetispeed(&tiodata, B57600) ||
+    cfsetospeed(&tiodata, B57600) ||
+    tcsetattr(fd, TCSANOW, &tiodata)
+  ) {
+     /* init error */
+
+    tcflush(fd, TCIOFLUSH);
+    tcsetattr(fd, TCSAFLUSH, &oldtio);
+    close(fd);
+
+    return 0;
+  }
+
+  tcflush(fd, TCIOFLUSH);
+  usleep(100 * 1000);
+
+  /* get status of inteface */
+  ioctl(fd, TIOCMGET, &status);
+
+  /* clear dtr-line */
+  status &= ~TIOCM_DTR;
+
+  /* set new status */
+  ioctl(fd, TIOCMSET, &status);
+
+  usleep(100 * 1000);
+
+  write(fd, brlauto, sizeof brlauto);
+
+  PROGRESS(3, cnt, "fhp2 write ok");
+
+  usleep(100 * 1000);
+
+  i = read(fd, retstr, 20);
+
+  PROGRESS(4, cnt, "fhp2 read done");
+
+  ADD2LOG("fhp2@%s[%d]: ", dev_name, i);
+  if(i > 0) hexdump(&hd_data->log, 1, i, retstr);
+  ADD2LOG("\n");
+
+  id = 0;
+
+  if(i == 10 && retstr[1] == 'J') {
+    id = retstr[3];
+
+    /* papenmeir new serial and usb device IDs */
+    switch(id) {
+      case 85:
+      case 87:
+      case 88:
+        id = MAKE_ID(TAG_SPECIAL, id);
+        break;
+
+      default:
+        ADD2LOG("unknown id %d\n", id);
+        id = 0;
+    }
+  }
+
+  /* reset serial lines */
+  tcflush(fd, TCIOFLUSH);
+  tcsetattr(fd, TCSAFLUSH, &oldtio);
+  close(fd);
+
+  return id;
 }
 
 
