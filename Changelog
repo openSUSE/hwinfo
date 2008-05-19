@@ -1,3 +1,7 @@
+19/5/2008:	v14.17
+	- braille: ht detection needs longer timeouts
+	- adjusted panel size (bnc #373997)
+
 9/5/2008:	v14.16
 	- fixed typo in recent braille code change
 

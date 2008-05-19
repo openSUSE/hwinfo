@@ -352,13 +352,13 @@ unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt)
       tcsetattr(fd, TCSANOW, &newtio)
     )
   ) {
-    /* Pause to let them take effect */
-    usleep(12000);
+    /* Pause 20ms to let them take effect */
+    usleep(20 * 1000);
 
     PROGRESS(3, cnt, "ht init ok");
 
     write(fd, &code, 1);	/* reset brl */
-    usleep(12000);		/* wait for reset */
+    usleep(40 * 1000);		/* wait for reset */
 
     PROGRESS(4, cnt, "ht write ok");
 
@@ -368,7 +368,7 @@ unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt)
     PROGRESS(5, cnt, "ht read done");
 
     if(buf[0] == 0xfe) {	/* resetok now read id */
-      usleep(12000);
+      usleep(80 * 1000);
       read(fd, buf + 1, 1);
       i = 2;
 
