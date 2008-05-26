@@ -924,6 +924,9 @@ void hd_read_of_platform(hd_data_t *hd_data)
 
           hd->vendor.id = MAKE_ID(TAG_PCI, 0x1957); /* Freescale */
           hd->base_class.id = bc_serial;
+          hd->sub_class.id = sc_ser_usb;
+          hd->prog_if.id = pif_usb_ohci;
+
           str_printf(&hd->device.name, 0, "mpc5200 USB %d", hd->slot);
 
           hd->modalias = new_str(modalias);
