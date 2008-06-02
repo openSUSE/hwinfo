@@ -386,8 +386,12 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
 
     case 3:
       if(sub == 1 && prot == 1) {
-        hd->base_class.id = bc_keyboard;
-        hd->sub_class.id = sc_keyboard_kbd;
+        if(!(
+          (usb->vendor == 0x05ac && usb->device == 0x1000)	/* MacBook, bnc #374101 */
+        )) {
+          hd->base_class.id = bc_keyboard;
+          hd->sub_class.id = sc_keyboard_kbd;
+        }
         break;
       }
       if(sub == 1 && prot == 2) {
