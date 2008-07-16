@@ -937,6 +937,8 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
 
   hd_data->hal = hd_free_hal_devices(hd_data->hal);
 
+  hd_data->lsscsi = free_str_list(hd_data->lsscsi);
+
   hd_data->last_idx = 0;
 
   hd_shm_done(hd_data);
@@ -1678,6 +1680,18 @@ hd_res_t *free_res_list(hd_res_t *res)
 
     if(res->any.type == res_hwaddr) {
       free_mem(res->hwaddr.addr);
+    }
+
+    if(res->any.type == res_wlan) {
+      free_str_list(res->wlan.channels);
+      free_str_list(res->wlan.frequencies);
+      free_str_list(res->wlan.bitrates);
+      free_str_list(res->wlan.auth_modes);
+      free_str_list(res->wlan.enc_modes);
+    }
+
+    if(res->any.type == res_fc) {
+      free_mem(res->fc.controller_id);
     }
 
     free_mem(res);

@@ -100,6 +100,15 @@ void get_block_devs(hd_data_t *hd_data)
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_block_dir;
 
+  hd_data->lsscsi = free_str_list(hd_data->lsscsi);
+  hd_data->lsscsi = read_file("|/usr/bin/lsscsi -t 2>/dev/null", 0, 0);
+
+  ADD2LOG("-----  lsscsi -----\n");
+  for(sl = hd_data->lsscsi; sl; sl = sl->next) {
+    ADD2LOG("  %s", sl->str);
+  }
+  ADD2LOG("-----  lsscsi end -----\n");
+
   sf_bus = reverse_str_list(read_dir("/sys/bus/ide/devices", 'l'));
 
   if(sf_bus) {
@@ -679,6 +688,9 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
   scsi_t *scsi;
   hd_res_t *geo, *size;
   uint64_t ul0;
+  str_list_t *sl;
+  char buf[16];
+  hd_res_t *res;
 
   if(!hd_report_this(hd_data, hd)) return;
 
@@ -786,13 +798,33 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
           break;
       }
     }
+  }
 
+  res = new_mem(sizeof *res);
+  res->any.type = res_fc;
+
+  if(hd->sysfs_bus_id) {
+    for(sl = hd_data->lsscsi; sl; sl = sl->next) {
+      if(
+        sscanf(sl->str, "[%15[^]]] %*s fc:%"SCNx64" , %x ", buf, &ul0, &u0) == 3 &&
+        !strcmp(hd->sysfs_bus_id, buf)
+      ) {
+        ADD2LOG("    lsscsi: wwpn = 0x%llx, port_id = 0x%x\n", ul0, u0);
+        res->fc.wwpn = ul0;
+        res->fc.wwpn_ok = 1;
+        res->fc.port_id = u0;
+        res->fc.port_id_ok = 1;
+      }
+    }
   }
 
   /* s390: wwpn & fcp lun */
   if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "wwpn"), &ul0, 0)) {
     ADD2LOG("    wwpn = 0x%016"PRIx64"\n", ul0);
+    res->fc.wwpn = ul0;
+    res->fc.wwpn_ok = 1;
     scsi->wwpn = ul0;
+    scsi->wwpn_ok = 1;
 
     /* it's a bit of a hack, actually */
     t = new_str(hd_sysfs_id(sf_dev));
@@ -803,6 +835,7 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
       if((s = strrchr(t, '/'))) *s = 0;
       if((s = strrchr(t, '/'))) {
         scsi->controller_id = new_str(s + 1);
+        res->fc.controller_id = new_str(s + 1);
       }
     }
     t = free_mem(t);
@@ -810,7 +843,17 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
 
   if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "fcp_lun"), &ul0, 0)) {
     ADD2LOG("    fcp_lun = 0x%016"PRIx64"\n", ul0);
+    res->fc.fcp_lun = ul0;
+    res->fc.fcp_lun_ok = 1;
     scsi->fcp_lun = ul0;
+    scsi->fcp_lun_ok = 1;
+  }
+
+  if(res->fc.wwpn_ok || res->fc.port_id_ok || res->fc.fcp_lun_ok || res->fc.controller_id) {
+    add_res_entry(&hd->res, res);
+  }
+  else {
+    free_res_list(res);
   }
 
   /* ppc: get rom id */

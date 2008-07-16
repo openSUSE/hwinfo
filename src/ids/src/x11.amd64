@@ -3516,7 +3516,7 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x042d
 +device.name		Quadro FX 360M
-+driver.xfree		4|nsc
++driver.xfree		4|nv
 
  vendor.id		pci 0x10de
 &device.id		pci 0x042f
@@ -3931,14 +3931,6 @@
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2592
-&subvendor.id		pci 0x1014
-&subdevice.id		pci 0x0582
-+subdevice.name		915 GM - IBM
-+driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri
-
- vendor.id		pci 0x8086
-&device.id		pci 0x2592
 &subvendor.id		pci 0x1584
 &subdevice.id		pci 0x9800
 +subdevice.name		915 GM
@@ -3955,14 +3947,6 @@
 +device.name		945 GM
 +driver.xfree		4|intel
 +driver.xfree		4|intel|3d||dri
-
- vendor.id		pci 0x8086
-&device.id		pci 0x27a2
-&subvendor.id		pci 0x10cf
-&subdevice.id		pci 0x137a
-+subdevice.name		945 GM FSC Lifebook E8110
-+driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x27ae
@@ -4035,14 +4019,6 @@
 +device.name		855 GM
 +driver.xfree		4|intel
 +driver.xfree		4|intel|3d||dri
-
- vendor.id		pci 0x8086
-&device.id		pci 0x3582
-&subvendor.id		pci 0x1025
-&subdevice.id		pci 0x0035
-+subdevice.name		855 GM Travelmate 661
-+driver.xfree		4|i810
-+driver.xfree		4|i810|3d
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3582

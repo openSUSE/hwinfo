@@ -271,23 +271,12 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("Attached to: #%u (%s)\n", h->attached_to, s ?: "?");
   }
 
-  if(h->detail && h->detail->ccw.type==hd_detail_ccw)
+  if(h->detail && h->detail->ccw.type == hd_detail_ccw)
   {
     dump_line("LCSS: %x.%x\n",h->detail->ccw.data->lcss >> 8, h->detail->ccw.data->lcss & 0xf);
     dump_line("CU Model: 0x%x\n",h->detail->ccw.data->cu_model);
     dump_line("Device Model: 0x%x\n",h->detail->ccw.data->dev_model);
   }
-
-#if defined(__s390__) || defined(__s390x__)
-  if(h->detail && h->detail->scsi.type==hd_detail_scsi)
-  {
-    if(h->detail->scsi.data->wwpn != (uint64_t)-1)
-      dump_line("WWPN: 0x%llx\n",(unsigned long long)h->detail->scsi.data->wwpn);
-    if(h->detail->scsi.data->wwpn != (uint64_t)-1)
-      dump_line("FCP LUN: 0x%llx\n",(unsigned long long)h->detail->scsi.data->fcp_lun);
-    dump_line("SCSI Host CCW ID: %s\n",h->detail->scsi.data->controller_id);
-  }
-#endif
 
   if(
     h->base_class.id == bc_storage_device &&
@@ -780,6 +769,12 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 	}
         break;
 
+     case res_fc:
+       if(res->fc.wwpn_ok) dump_line("WWPN: 0x%016"PRIx64"\n", res->fc.wwpn);
+       if(res->fc.fcp_lun_ok) dump_line("FCP LUN: 0x%"PRIx64"\n", res->fc.fcp_lun);
+       if(res->fc.port_id_ok) dump_line("Port ID: 0x%06x\n", res->fc.port_id);
+       if(res->fc.controller_id) dump_line("SCSI Host CCW ID: %s\n", res->fc.controller_id);
+       break;
 
       default:
         dump_line("Unknown resource type %d\n", res->any.type);

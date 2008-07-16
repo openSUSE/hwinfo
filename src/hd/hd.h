@@ -19,7 +19,7 @@ extern "C" {
  */
 
 /** Interface version */
-#define HD_VERSION	14
+#define HD_VERSION	15
 
 /**
  * @defgroup DEBUGpub Debug flags
@@ -1138,6 +1138,8 @@ typedef struct scsi_s {
   unsigned deleted:1;
   unsigned generic:1;
   unsigned fake:1;
+  unsigned wwpn_ok:1;
+  unsigned fcp_lun_ok:1;
   char *dev_name;
   char *guessed_dev_name;
   int generic_dev;
@@ -1616,7 +1618,7 @@ typedef struct hal_device_s {
 typedef enum resource_types {
   res_any, res_phys_mem, res_mem, res_io, res_irq, res_dma, res_monitor,
   res_size, res_disk_geo, res_cache, res_baud, res_init_strings, res_pppd_option,
-  res_framebuffer, res_hwaddr, res_link, res_wlan
+  res_framebuffer, res_hwaddr, res_link, res_wlan, res_fc
 } hd_resource_types_t;
 
 
@@ -1788,6 +1790,18 @@ typedef struct {
   str_list_t *enc_modes;   /**< WEP40, WEP104, WEP128, WEP232, TKIP, CCMP */
 } res_wlan_t;
 
+typedef struct {
+  union u_hd_res_t *next;
+  enum resource_types type;
+  unsigned wwpn_ok:1;
+  unsigned fcp_lun_ok:1;
+  unsigned port_id_ok:1;
+  uint64_t wwpn;
+  uint64_t fcp_lun;
+  unsigned port_id;
+  char *controller_id;
+} res_fc_t;
+
 /** libhd resource union */
 typedef union u_hd_res_t {
   union u_hd_res_t *next;  
@@ -1808,6 +1822,7 @@ typedef union u_hd_res_t {
   res_hwaddr_t hwaddr;
   res_link_t link;
   res_wlan_t wlan;
+  res_fc_t fc;
 } hd_res_t;
 
 /** @} */
@@ -2672,6 +2687,7 @@ typedef struct {
   str_list_t *scanner_db;	/**< (Internal) list of scanner modules */
   edd_info_t edd[0x80];		/**< (Internal) enhanced disk drive data */
   hal_device_t *hal;		/**< (Internal) HAL data (if any) */
+  str_list_t *lsscsi;		/**< (Internal) lsscsi result (if any) */
 } hd_data_t;
 
 

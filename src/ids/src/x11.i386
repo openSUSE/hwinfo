@@ -260,7 +260,7 @@
  vendor.id		pci 0x1002
 &device.id		pci 0x4756
 +device.name		3D Rage IIC 215IIC [Mach64 GT IIC]
-+driver.xfree		4|fbdev
++driver.xfree		4|ati
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4757
@@ -1950,24 +1950,6 @@
 +device.name		Revolution 4
 +driver.xfree		4|i128
 
- vendor.id		pci 0x1078
-+vendor.name		Cyrix Corporation
-
- vendor.id		pci 0x1078
-&device.id		pci 0x0000
-+device.name		5510
-+driver.xfree		4|cyrix
-
- vendor.id		pci 0x1078
-&device.id		pci 0x0002
-+device.name		5520 [Cognac]
-+driver.xfree		4|cyrix
-
- vendor.id		pci 0x1078
-&device.id		pci 0x0104
-+device.name		5530 Video [Kahlua]
-+driver.xfree		4|cyrix
-
  vendor.id		pci 0x10c8
 +vendor.name		Neomagic Corporation
 
@@ -3524,7 +3506,7 @@
  vendor.id		pci 0x10de
 &device.id		pci 0x042d
 +device.name		Quadro FX 360M
-+driver.xfree		4|nsc
++driver.xfree		4|nv
 
  vendor.id		pci 0x10de
 &device.id		pci 0x042f
@@ -3540,19 +3522,6 @@
 &device.id		pci 0x0622
 +device.name		GeForce 9600 GT
 +driver.xfree		4|nv
-
- vendor.id		pci 0x10e0
-+vendor.name		Imstt
-
- vendor.id		pci 0x10e0
-&device.id		pci 0x9128
-+device.name		Imstt128
-+driver.xfree		4|imstt
-
- vendor.id		pci 0x10e0
-&device.id		pci 0x9135
-+device.name		Imstt3D
-+driver.xfree		4|imstt
 
  vendor.id		pci 0x1142
 +vendor.name		Alliance Semiconductor Corporation
@@ -3949,14 +3918,6 @@
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2592
-&subvendor.id		pci 0x1014
-&subdevice.id		pci 0x0582
-+subdevice.name		915 GM - IBM
-+driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri
-
- vendor.id		pci 0x8086
-&device.id		pci 0x2592
 &subvendor.id		pci 0x1584
 &subdevice.id		pci 0x9800
 +subdevice.name		915 GM
@@ -3973,14 +3934,6 @@
 +device.name		945 GM
 +driver.xfree		4|intel
 +driver.xfree		4|intel|3d||dri
-
- vendor.id		pci 0x8086
-&device.id		pci 0x27a2
-&subvendor.id		pci 0x10cf
-&subdevice.id		pci 0x137a
-+subdevice.name		945 GM FSC Lifebook E8110
-+driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x27ae
@@ -4045,22 +3998,14 @@
  vendor.id		pci 0x8086
 &device.id		pci 0x3577
 +device.name		i830
-+driver.xfree		4|i810
-+driver.xfree		4|i810|3d||dri
++driver.xfree		4|intel
++driver.xfree		4|intel|3d||dri
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3582
 +device.name		855 GM
 +driver.xfree		4|intel
 +driver.xfree		4|intel|3d||dri
-
- vendor.id		pci 0x8086
-&device.id		pci 0x3582
-&subvendor.id		pci 0x1025
-&subdevice.id		pci 0x0035
-+subdevice.name		855 GM Travelmate 661
-+driver.xfree		4|i810
-+driver.xfree		4|i810|3d
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3582
