@@ -897,6 +897,14 @@ void get_serial_devs(hd_data_t *hd_data)
           hd->base_class.id = bc_comm;
           hd->sub_class.id = sc_com_ser;
           hd->prog_if.id = 0x80;
+
+          // bnc #408715 (T-Balancer BigNG)
+          if(
+            hd->vendor.id == MAKE_ID(TAG_USB, 0x0403) &&
+            hd->device.id == MAKE_ID(TAG_USB, 0x6001)
+          ) {
+            hd->tag.ser_skip = 1;
+          }
         }
       }
     }

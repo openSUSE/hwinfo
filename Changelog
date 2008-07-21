@@ -1,5 +1,8 @@
+21/7/2008:	v15.2
+	- skip T-Balancer BigNG (bnc #408715)
+
 18/7/2008:	v15.1
-	- support virtio devices (#404803)
+	- support virtio devices (bnc #404803)
 	- detect virtio mouse
 
 16/7/2008:	v15.0
