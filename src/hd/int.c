@@ -715,7 +715,7 @@ void int_mouse(hd_data_t *hd_data)
   }
 #endif
 
-  if(hd_data->flags.vbox || hd_data->flags.vmware) {
+  if(hd_data->flags.vbox || hd_data->flags.vmware_mouse) {
     for(hd = hd_data->hd; hd; hd = hd->next) {
       if(
         hd->base_class.id == bc_mouse &&
@@ -732,6 +732,14 @@ void int_mouse(hd_data_t *hd_data)
         else if(hd_data->flags.vmware && hd->device.id == 5) {
           hd->vendor.name = free_mem(hd->vendor.name);
           hd->device.name = free_mem(hd->device.name);
+          hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x15ad);
+          hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0100);
+          new_id(hd_data, hd);
+        }
+        else if(hd_data->flags.vmware_mouse && hd->device.id == 6) {
+          hd->vendor.name = free_mem(hd->vendor.name);
+          hd->device.name = free_mem(hd->device.name);
+          // hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6014);
           hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x15ad);
           hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0100);
           new_id(hd_data, hd);

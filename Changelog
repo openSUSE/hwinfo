@@ -1,3 +1,7 @@
+18/7/2008:	v15.1
+	- support virtio devices (#404803)
+	- detect virtio mouse
+
 16/7/2008:	v15.0
 	- updated X11 data
 	- add fibre channel resource

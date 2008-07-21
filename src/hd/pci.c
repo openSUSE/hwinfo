@@ -57,6 +57,7 @@ static void hd_read_platform(hd_data_t *hd_data);
 static void hd_read_of_platform(hd_data_t *hd_data);
 static void add_xen_network(hd_data_t *hd_data);
 static void add_xen_storage(hd_data_t *hd_data);
+static void hd_read_virtio(hd_data_t *hd_data);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
 {
@@ -99,6 +100,9 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
 
   PROGRESS(9, 0, "vm");
   hd_read_vm(hd_data);
+
+  PROGRESS(10, 0, "virtio");
+  hd_read_virtio(hd_data);
 }
 
 
@@ -1280,6 +1284,95 @@ void hd_read_vm(hd_data_t *hd_data)
       hd->sysfs_bus_id = new_str(sf_bus_e->str);
       if(drv_name) add_str_list(&hd->drivers, drv_name);
     }
+
+    free_mem(sf_dev);
+    free_mem(drv);
+  }
+
+  free_str_list(sf_bus);
+}
+
+
+/*
+ * virtio
+ */
+void hd_read_virtio(hd_data_t *hd_data)
+{
+  int net_cnt = 0, blk_cnt = 0;
+  unsigned dev;
+  uint64_t ul0; 
+  hd_t *hd;
+  str_list_t *sf_bus, *sf_bus_e;
+  char *sf_dev, *drv, *drv_name, *modalias;
+
+  sf_bus = reverse_str_list(read_dir("/sys/bus/virtio/devices", 'l'));
+
+  if(!sf_bus) {
+    ADD2LOG("sysfs: no such bus: virtio\n");
+    return;
+  }
+
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/virtio/devices", sf_bus_e->str));
+
+    ADD2LOG(
+      "  virtio device: name = %s\n    path = %s\n",
+      sf_bus_e->str,
+      hd_sysfs_id(sf_dev)
+    );
+
+    drv_name = NULL;
+    drv = new_str(hd_read_sysfs_link(sf_dev, "driver"));
+    if(drv) {
+      drv_name = strrchr(drv, '/');
+      if(drv_name) drv_name++;
+    }
+
+    ADD2LOG("    driver = \"%s\"\n", drv_name);
+
+    if((modalias = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
+      modalias = canon_str(modalias, strlen(modalias));
+      ADD2LOG("    modalias = \"%s\"\n", modalias);
+    }
+
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "device"), &ul0, 0)) {
+      dev = ul0;
+      ADD2LOG("    device = %u\n", dev);
+    }
+    else {
+      dev = 0;
+    }
+
+    if(dev) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6014);	/* virtio */
+      hd->device.id = MAKE_ID(TAG_SPECIAL, dev);
+
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+      hd->sysfs_bus_id = new_str(sf_bus_e->str);
+      if(drv_name) add_str_list(&hd->drivers, drv_name);
+      if(modalias) { hd->modalias = modalias; modalias = NULL; }
+
+      switch(dev) {
+        case 1:	/* network */
+          hd->bus.id = bus_virtio;
+          hd->base_class.id = bc_network;
+          hd->sub_class.id = 0;	/* ethernet */
+          hd->slot = net_cnt++;
+          str_printf(&hd->device.name, 0, "Ethernet Card %d", hd->slot);
+          break;
+
+        case 2:	/* storage */
+          hd->bus.id = bus_virtio;
+          hd->base_class.id = bc_storage;
+          hd->sub_class.id = sc_sto_other;
+          hd->slot = blk_cnt++;
+          str_printf(&hd->device.name, 0, "Storage %d", hd->slot);
+          break;
+      }
+    }
+
+    free_mem(modalias);
 
     free_mem(sf_dev);
     free_mem(drv);

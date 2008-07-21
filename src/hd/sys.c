@@ -8,6 +8,7 @@
 
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/io.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -23,6 +24,7 @@
 
 #if defined(__i386__) || defined(__x86_64__)
 static void sigsegv_handler(int signum);
+static int vmware_mouse(int set_iopl);
 static void chk_vmware(hd_data_t *hd_data, sys_info_t *st);
 #endif
 
@@ -127,64 +129,94 @@ void hd_scan_sys(hd_data_t *hd_data)
 }
 
 #if defined(__i386__) || defined(__x86_64__)
+
 void sigsegv_handler(int signum) { _exit(77); }
+
+int vmware_mouse(int set_iopl)
+{
+  int vm_ok = -1;
+  int child, status;
+  uint32_t res, version;
+
+  child = fork();
+
+  if(child == 0) {
+    signal(SIGSEGV, sigsegv_handler);
+
+    if(set_iopl && iopl(3) < 0) _exit(0);
+
+#ifdef __i386__
+    asm(
+      "push %%ebx\n"
+      "\tpush %%edx\n"
+      "\tpush %%eax\n"
+      "\tpush %%ecx\n"
+      "\tmov $0x564d5868,%%eax\n"
+      "\tmov $0xa,%%ecx\n"
+      "\txor %%ebx,%%ebx\n"
+      "\tmov $0x5658,%%edx\n"
+      "\tin (%%dx),%%eax\n"
+      "\tmov %%eax,%%esi\n"
+      "\tmov %%ebx,%%edi\n"
+      "\tpop %%ecx\n"
+      "\tpop %%eax\n"
+      "\tpop %%edx\n"
+      "\tpop %%ebx\n"
+      "\tmov %%esi,%[version]\n"
+      "\tmov %%edi,%[res]\n"
+    : [version] "=m" (version), [res] "=m" (res) : : "esi", "edi", "memory" );
+#else
+    asm(
+      "push %%rbx\n"
+      "\tpush %%rdx\n"
+      "\tpush %%rax\n"
+      "\tpush %%rcx\n"
+      "\tmov $0x564d5868,%%eax\n"
+      "\tmov $0xa,%%ecx\n"
+      "\tmov $0x5658,%%edx\n"
+      "\txor %%rbx,%%rbx\n"
+      "\tin (%%dx),%%eax\n"
+      "\tmov %%rax,%%rsi\n"
+      "\tmov %%rbx,%%rdi\n"
+      "\tpop %%rcx\n"
+      "\tpop %%rax\n"
+      "\tpop %%rdx\n"
+      "\tpop %%rbx\n"
+      "\tmov %%esi,%[version]\n"
+      "\tmov %%edi,%[res]\n"
+    : [version] "=m" (version), [res] "=m" (res) : : "rsi", "rdi", "memory" );
+#endif
+
+    // fprintf(stderr, "res = 0x%x, version = %d\n", res, version);
+
+    _exit(res == 0x564d5868 && version != -1 ? 66 : 77);
+  }
+  else {
+    if(waitpid(child, &status, 0) == child) {
+      status = WEXITSTATUS(status);
+      if(status == 66) vm_ok = 1;
+      if(status == 77) vm_ok = 0;
+    }
+  }
+
+  return vm_ok;
+}
+
 
 void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
 {
-  static int is_vmware = -1;
-  int child, status;
+  int vm_1, vm_2;
+  static int is_vmware = -1, has_vmware_mouse = -1;	/* check only once */
 
-  /* do the check only once */
   if(is_vmware < 0) {
+    vm_1 = vmware_mouse(0);
+    vm_2 = vmware_mouse(1);
 
-    child = fork();
+    is_vmware = vm_1 > 0 ? 1 : 0;
+    has_vmware_mouse = is_vmware || vm_2 > 0 ? 1 : 0;
 
-    if(child == 0) {
-      signal(SIGSEGV, sigsegv_handler);
-
-#ifdef __i386__
-      asm(
-        "push %ebx\n"
-        "\tpush %edx\n"
-        "\tpush %eax\n"
-        "\tpush %ecx\n"
-        "\tmov $0x564d5868,%eax\n"
-        "\tmov $0xa,%ecx\n"
-        "\tmov $0x5658,%edx\n"
-        "\tin (%dx),%eax\n"
-        "\tpop %ecx\n"
-        "\tpop %eax\n"
-        "\tpop %edx\n"
-        "\tpop %ebx\n"
-      );
-#else
-      asm(
-        "push %rbx\n"
-        "\tpush %rdx\n"
-        "\tpush %rax\n"
-        "\tpush %rcx\n"
-        "\tmov $0x564d5868,%eax\n"
-        "\tmov $0xa,%ecx\n"
-        "\tmov $0x5658,%edx\n"
-        "\tin (%dx),%eax\n"
-        "\tpop %rcx\n"
-        "\tpop %rax\n"
-        "\tpop %rdx\n"
-        "\tpop %rbx\n"
-      );
-#endif
-
-      _exit(66);
-    }
-    else {
-      if(waitpid(child, &status, 0) == child) {
-        status = WEXITSTATUS(status);
-        if(status == 66) is_vmware = 1;
-        if(status == 77) is_vmware = 0;
-      }
-    }
-
-    ADD2LOG("  vmware check: %d\n", is_vmware);
+    ADD2LOG("  vm check: vm_1 = %d, vm_2 = %d\n", vm_1, vm_2);
+    ADD2LOG("  is_vmware = %d, has_vmware_mouse = %d\n", is_vmware, has_vmware_mouse);
   }
 
   if(is_vmware == 1) {
@@ -192,6 +224,7 @@ void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
   }
 
   hd_data->flags.vmware = is_vmware;
+  hd_data->flags.vmware_mouse = has_vmware_mouse;
 }
 
 #endif	/* __i386__ || __x86_64__ */
