@@ -8,7 +8,9 @@
 
 #include <sys/types.h>
 #include <sys/wait.h>
+#if defined(__i386__) || defined (__x86_64__)
 #include <sys/io.h>
+#endif
 
 #include "hd.h"
 #include "hd_int.h"

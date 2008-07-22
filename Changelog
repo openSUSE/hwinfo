@@ -1,3 +1,6 @@
+22/7/2008:	v15.3
+	- fixed compiling on s390
+
 21/7/2008:	v15.2
 	- skip T-Balancer BigNG (bnc #408715)
 
