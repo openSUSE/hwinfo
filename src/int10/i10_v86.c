@@ -34,6 +34,22 @@
 #include "v86bios.h"
 #include "AsmMacros.h"
 
+#ifndef IF_MASK
+#define IF_MASK X86_EFLAGS_IF
+#endif
+#ifndef VIF_MASK
+#define VIF_MASK X86_EFLAGS_VIF
+#endif
+#ifndef TF_MASK
+#define TF_MASK X86_EFLAGS_TF
+#endif
+#ifndef VIP_MASK
+#define VIP_MASK X86_EFLAGS_VIP
+#endif
+#ifndef NT_MASK
+#define NT_MASK X86_EFLAGS_NT
+#endif
+
 extern int emu_vm86(struct vm86_struct *vm, unsigned debug);
 
 #define INT2PTR(a)	((a) + (unsigned char *) 0)

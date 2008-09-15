@@ -5692,7 +5692,8 @@ void read_udevinfo(hd_data_t *hd_data)
   hd_udevinfo_t **uip, *ui;
   char *s = NULL, buf[256];
 
-  udevinfo = read_file("| " PROG_UDEVINFO " -e 2>/dev/null", 0, 0);
+  udevinfo = read_file("| " PROG_UDEVADM " info -e 2>/dev/null", 0, 0);
+  if(!udevinfo) udevinfo = read_file("| " PROG_UDEVINFO " -e 2>/dev/null", 0, 0);
 
   ADD2LOG("-----  udevinfo -----\n");
   for(sl = udevinfo; sl; sl = sl->next) {

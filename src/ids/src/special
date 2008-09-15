@@ -623,12 +623,6 @@
 &device.id		special 0x3004
 +device.name		MyriCOM MyriNET Gigabit Ethernet
 
-# IBM ehea
- vendor.id		special 0x6001
-&device.id		special 0x1003
-+driver.module.modprobe	ehea
-
-
 # UML veth
  vendor.id		special 0x6010
 +vendor.name		UML
