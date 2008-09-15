@@ -1,3 +1,6 @@
+	- s390: added dualport flag for OSA devices (currently unused until
+	  we know what devices support it; fate #304080)
+
 15/9/2008:	v15.4
 	- fix build on x86 with 2.6.67 kernel includes
 	- add inital POWER6 ibmebus support for ehea network (bnc#394602 -LTC44938)

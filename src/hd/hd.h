@@ -2465,6 +2465,7 @@ typedef struct s_hd_t {
     unsigned wlan:1;		/**< WLAN card */
     unsigned with_acpi:1;	/**< acpi works fine */
     unsigned hotpluggable:1;	/**< hotpluggable storage device */
+    unsigned dualport:1;	/**< OSA Express device with two ports (S/390) */
   } is;
 
   struct tag_s {		/**< this struct is for internal purposes only */
