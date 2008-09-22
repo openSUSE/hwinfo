@@ -1,3 +1,4 @@
+22/9/2008:	v15.5
 	- s390: added dualport flag for OSA devices (currently unused until
 	  we know what devices support it; fate #304080)
 
