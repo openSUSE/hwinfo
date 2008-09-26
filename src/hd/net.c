@@ -354,12 +354,30 @@ void hd_scan_net(hd_data_t *hd_data)
   add_uml(hd_data);
   add_kma(hd_data);
 
-  /* add link status info */
+  /* add link status info & dump eeprom */
   for(hd = hd_data->hd ; hd; hd = hd->next) {
     if(
       hd->module == hd_data->module &&
       hd->base_class.id == bc_network_interface
     ) {
+      char *buf = NULL;
+      str_list_t *sl0, *sl;
+
+      if(hd_probe_feature(hd_data, pr_net_eeprom) && hd->unix_dev_name) {
+        PROGRESS(2, 0, "eeprom dump");
+
+        str_printf(&buf, 0, "|/usr/sbin/ethtool -e %s 2>/dev/null", hd->unix_dev_name);
+        if((sl0 = read_file(buf, 0, 0))) {
+          ADD2LOG("----- %s %s -----\n", hd->unix_dev_name, "EEPROM dump");
+          for(sl = sl0; sl; sl = sl->next) {
+            ADD2LOG("%s", sl->str);
+          }
+          ADD2LOG("----- %s end -----\n", "EEPROM dump");
+          free_str_list(sl0);
+        }
+        free(buf);
+      }
+
       for(res = hd->res; res; res = res->next) {
         if(res->any.type == res_link) break;
       }

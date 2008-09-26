@@ -259,6 +259,7 @@ static struct s_pr_flags {
   { pr_isapnp_mod,    0,              4    , "isapnp.mod"    },
   { pr_isapnp,        0,                  0, "pnpdump"       },	/* alias for isapnp */
   { pr_net,           0,            8|4|2|1, "net"           },
+  { pr_net_eeprom,    0,                  0, "net.eeprom"    },
   { pr_floppy,        0,            8|4|2|1, "floppy"        },
   { pr_misc,          pr_bios,      8|4|2|1, "misc"          },	// ugly hack!
   { pr_misc_serial,   pr_misc,      8|4|2|1, "misc.serial"   },
@@ -1812,6 +1813,7 @@ void hd_scan(hd_data_t *hd_data)
     if(hd_probe_feature(hd_data, pr_bios_vram)) hd_data->flags.biosvram = 1;
     hd_set_probe_feature(hd_data, pr_bios_acpi);
     hd_set_probe_feature(hd_data, pr_modules_pata);
+    hd_set_probe_feature(hd_data, pr_net_eeprom);
     hd_data->flags.pata = hd_probe_feature(hd_data, pr_modules_pata) ? 1 : 0;
   }
 
