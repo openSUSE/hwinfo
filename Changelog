@@ -1,5 +1,9 @@
-26/9/2008:	v15.6
+26/9/2008:	v15.7
 	- dump network card eeprom to log (bnc #430170)
+
+26/9/2008:	v15.6
+	- s390: dual port OSA Express devices are not detectable; fixing
+	  dualport flag to 1 (fate #304080)
 
 22/9/2008:	v15.5
 	- s390: added dualport flag for OSA devices (currently unused until
