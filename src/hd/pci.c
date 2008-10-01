@@ -128,7 +128,7 @@ void hd_pci_read_data(hd_data_t *hd_data)
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev;
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/pci/devices", 'l'));
+  sf_bus = read_dir("/sys/bus/pci/devices", 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: pci\n");
@@ -585,7 +585,7 @@ void hd_read_macio(hd_data_t *hd_data)
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev;
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/macio/devices", 'l'));
+  sf_bus = read_dir("/sys/bus/macio/devices", 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: macio\n");
@@ -689,7 +689,7 @@ void hd_read_vio(hd_data_t *hd_data)
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev;
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/vio/devices", 'l'));
+  sf_bus = read_dir("/sys/bus/vio/devices", 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: vio\n");
@@ -810,7 +810,7 @@ void hd_read_platform(hd_data_t *hd_data)
   char *sf_dev, *sf_eth_net;
   int mv643xx_eth_seen = 0;
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/platform/devices", 'l'));
+  sf_bus = read_dir("/sys/bus/platform/devices", 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: platform\n");
@@ -862,7 +862,7 @@ void hd_read_of_platform(hd_data_t *hd_data)
   hd_t *hd;
   char *sf_dev;
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/of_platform/devices", 'l'));
+  sf_bus = read_dir("/sys/bus/of_platform/devices", 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: of_platform\n");
@@ -962,7 +962,7 @@ void hd_read_ps3_system_bus(hd_data_t *hd_data)
   str_list_t *sf_bus, *sf_bus_e, *sf_eth_dev, *sf_eth_dev_e;
   char *sf_dev, *sf_eth_net, *sf_eth_wireless;
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/ps3_system_bus/devices", 'l'));
+  sf_bus = read_dir("/sys/bus/ps3_system_bus/devices", 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: ps3_system_bus\n");
@@ -1095,7 +1095,7 @@ void hd_read_ibmebus(hd_data_t *hd_data)
   str_list_t *sf_bus, *sf_bus_e;
   hd_t *hd;
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/ibmebus/devices", 'l'));
+  sf_bus = read_dir("/sys/bus/ibmebus/devices", 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: ibmebus\n");
@@ -1176,7 +1176,7 @@ void hd_read_xen(hd_data_t *hd_data)
   char *sf_dev, *drv, *module;
   unsigned u;
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/xen/devices", 'l'));
+  sf_bus = read_dir("/sys/bus/xen/devices", 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: xen\n");
@@ -1318,7 +1318,7 @@ void hd_read_vm(hd_data_t *hd_data)
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev, *drv, *drv_name;
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/vmbus/devices", 'l'));
+  sf_bus = read_dir("/sys/bus/vmbus/devices", 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: vm\n");
@@ -1383,7 +1383,7 @@ void hd_read_virtio(hd_data_t *hd_data)
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev, *drv, *drv_name, *modalias;
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/virtio/devices", 'l'));
+  sf_bus = read_dir("/sys/bus/virtio/devices", 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: virtio\n");

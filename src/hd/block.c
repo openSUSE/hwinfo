@@ -109,7 +109,7 @@ void get_block_devs(hd_data_t *hd_data)
   }
   ADD2LOG("-----  lsscsi end -----\n");
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/ide/devices", 'l'));
+  sf_bus = read_dir("/sys/bus/ide/devices", 'l');
 
   if(sf_bus) {
     for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
@@ -124,16 +124,16 @@ void get_block_devs(hd_data_t *hd_data)
   }
 
   sf_block_dir = "/sys/subsystem/block";
-  sf_class = reverse_str_list(read_dir(sf_block_dir, 'l'));
+  sf_class = read_dir(sf_block_dir, 'l');
 
   if (!sf_class) {
     sf_block_dir = "/sys/class/block";
-    sf_class = reverse_str_list(read_dir(sf_block_dir, 'l'));
+    sf_class = read_dir(sf_block_dir, 'l');
   }
 
   if (!sf_class) {
     sf_block_dir = "/sys/block";
-    sf_class = reverse_str_list(read_dir(sf_block_dir, 'd'));
+    sf_class = read_dir(sf_block_dir, 'd');
   }
 
   if(!sf_class) {
@@ -1386,7 +1386,7 @@ void get_scsi_tape(hd_data_t *hd_data)
   char *sf_cdev = NULL, *sf_dev = NULL;
   char *sf_drv_name, *sf_drv, *bus_id;
 
-  sf_class = reverse_str_list(read_dir("/sys/class/scsi_tape", 'D'));
+  sf_class = read_dir("/sys/class/scsi_tape", 'D');
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: scsi_tape\n");
@@ -1522,7 +1522,7 @@ void get_generic_scsi_devs(hd_data_t *hd_data)
   char *sf_cdev = NULL, *sf_dev = NULL;
   char *sf_drv_name, *sf_drv, *bus_id;
 
-  sf_class = reverse_str_list(read_dir("/sys/class/scsi_generic", 'D'));
+  sf_class = read_dir("/sys/class/scsi_generic", 'D');
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: scsi_generic\n");

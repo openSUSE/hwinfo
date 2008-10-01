@@ -1,3 +1,6 @@
+1/10/2008:	v15.8
+	- re-reverse hardware item lists (bnc #388754, #414717)
+
 26/9/2008:	v15.7
 	- dump network card eeprom to log (bnc #430170)
 

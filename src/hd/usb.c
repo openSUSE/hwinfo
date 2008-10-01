@@ -91,7 +91,7 @@ void get_usb_devs(hd_data_t *hd_data)
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev, *sf_dev_2;
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/usb/devices", 'l'));
+  sf_bus = read_dir("/sys/bus/usb/devices", 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: usb\n");
@@ -614,9 +614,9 @@ void get_input_devs(hd_data_t *hd_data)
    * A bit tricky: if there are links, assume newer sysfs layout with compat
    * symlinks; if not, assume old layout with directories.
    */
-  sf_dir = reverse_str_list(read_dir("/sys/class/input", 'l'));
+  sf_dir = read_dir("/sys/class/input", 'l');
   if(!sf_dir) {
-    sf_dir = reverse_str_list(read_dir("/sys/class/input", 'd'));
+    sf_dir = read_dir("/sys/class/input", 'd');
     is_dir = 1;
   }
   
@@ -652,8 +652,8 @@ void get_printer_devs(hd_data_t *hd_data)
   char *sf_cdev = NULL, *sf_dev;
   char *sf_drv_name, *sf_drv, *bus_id, *bus_name;
 
-  sf_class = reverse_str_list(read_dir("/sys/class/usb", 'D'));
-  if(!sf_class) sf_class = reverse_str_list(read_dir("/sys/class/usb_endpoint", 'l'));
+  sf_class = read_dir("/sys/class/usb", 'D');
+  if(!sf_class) sf_class = read_dir("/sys/class/usb_endpoint", 'l');
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: usb\n");
@@ -821,7 +821,7 @@ void get_serial_devs(hd_data_t *hd_data)
   char *sf_cdev = NULL, *sf_dev;
   char *sf_drv_name, *sf_drv, *bus_id, *bus_name;
 
-  sf_class = reverse_str_list(read_dir("/sys/class/tty", 'D'));
+  sf_class = read_dir("/sys/class/tty", 'D');
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: tty\n");

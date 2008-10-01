@@ -63,7 +63,7 @@ void pcmcia_read_data(hd_data_t *hd_data)
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev;
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/pcmcia/devices", 'l'));
+  sf_bus = read_dir("/sys/bus/pcmcia/devices", 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: pcmcia\n");
@@ -211,7 +211,7 @@ void pcmcia_ctrl_read_data(hd_data_t *hd_data)
   str_list_t *sf_class, *sf_class_e;
   char *sf_cdev = NULL, *sf_dev;
 
-  sf_class = reverse_str_list(read_dir("/sys/class/pcmcia_socket", 'd'));
+  sf_class = read_dir("/sys/class/pcmcia_socket", 'd');
 
   if(!sf_class) {
     ADD2LOG("sysfs: no such class: pcmcia_socket\n");

@@ -119,7 +119,7 @@ void get_pnp_devs(hd_data_t *hd_data)
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev, *sf_dev2;
 
-  sf_bus = reverse_str_list(read_dir("/sys/bus/pnp/devices", 'l'));
+  sf_bus = read_dir("/sys/bus/pnp/devices", 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: pnp\n");

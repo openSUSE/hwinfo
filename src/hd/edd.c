@@ -64,7 +64,7 @@ void read_edd_info(hd_data_t *hd_data)
 
   memset(hd_data->edd, 0, sizeof hd_data->edd);
 
-  sf_dir = reverse_str_list(read_dir("/sys/firmware/edd", 'd'));
+  sf_dir = read_dir("/sys/firmware/edd", 'd');
 
   for(sf_dir_e = sf_dir; sf_dir_e; sf_dir_e = sf_dir_e->next) {
     str_printf(&sf_edd, 0, "/sys/firmware/edd/%s", sf_dir_e->str);
