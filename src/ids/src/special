@@ -740,6 +740,8 @@
 &device.id		usb 0x2015
 |vendor.id		usb 0x08ff
 &device.id		usb 0x5501
+|vendor.id		usb 0x08ff
+&device.id		usb 0x1600
 |vendor.id		usb 0x1162
 &device.id		usb 0x0300
 |vendor.id		usb 0x08ff
