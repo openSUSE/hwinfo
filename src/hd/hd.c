@@ -6051,6 +6051,7 @@ char *hd_sysfs_id(char *path)
 {
   if(!path || !*path) return NULL;
 
+  //fprintf(stderr, "hd_sysfs_id %s\n",path);
   return strchr(path + 1, '/');
 }
 

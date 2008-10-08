@@ -1,3 +1,8 @@
+8/10/2008:	v15.10
+        - s390: dual port OSA Express devices are not detectable; fixing
+          dualport flag to 1 (fate #304080)
+	- s390: adapt to change in sysfs symlink structure (bnc #431533)
+
 6/10/2008:	v15.9
 	- one more fingerprint sensor
 

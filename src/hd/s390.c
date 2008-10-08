@@ -172,14 +172,21 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     
     if(res->io.range > 1) {
       sprintf(attrname, "/sys/bus/" BUSNAME "/devices/%s/group_device", curdev->d_name);
+      //fprintf(stderr,"trying %s\n",attrname);
       memset(linkname,0,128);
       if(readlink(attrname, linkname, 127) == -1) {
         sprintf(attrname, "/sys/bus/" BUSNAME "/devices/%s", curdev->d_name);
+        //fprintf(stderr,"not read link -> %s (+6)\n",attrname);
         linkstrip = 6;
-      } else linkstrip = 9;
+      } else {
+        sprintf(attrname, "/sys/devices/%s", linkname + 9);
+        //fprintf(stderr,"read link, setting to %s\n",attrname);
+        linkstrip = 6;
+      }
     } else {
       linkstrip = 6;
       sprintf(attrname, "/sys/bus/" BUSNAME "/devices/%s", curdev->d_name);
+      //fprintf(stderr,"no group dev -> %s (+6)\n",attrname);
     }
 
     hd=add_hd_entry(hd_data,__LINE__,0);
@@ -193,10 +200,14 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
        is consistent with earlier versions of this code. in the grouped device case it is necessary to obtain a sysfs id that
        is consistent with net.c which resolves /sys/class/net/<ifname>/device. */
     memset(linkname, 0, 128);
-    if(readlink(attrname,linkname,127) == -1)
+    if(readlink(attrname,linkname,127) == -1) {
+      //fprintf(stderr,"eins %s\n",attrname);
       hd->sysfs_device_link = new_str(hd_sysfs_id(attrname));
-    else
+    }
+    else {
+      //fprintf(stderr,"zwei %s, %s\n",linkname,linkname+linkstrip);
       hd->sysfs_device_link = new_str(hd_sysfs_id(linkname+linkstrip));
+    }
     
     hd->sysfs_id = new_str(hd->sysfs_device_link);
     hd->sysfs_bus_id = new_str(curdev->d_name);
@@ -218,6 +229,11 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     hd->detail->ccw.data->cu_model=cumod;
     hd->detail->ccw.data->dev_model=devmod;
     hd->detail->ccw.data->lcss=(strtol(curdev->d_name,0,16) << 8) + strtol(curdev->d_name+2,0,16);
+
+    /* OSA Express devices with more than one port are not detectable, so we
+       have to set dualport for all OSA Express network interfaces */
+    if(cutype == 0x1731 && cumod == 1) hd->is.dualport = 1;
+
     hddb_add_info(hd_data,hd);
   }
   closedir(bus);
