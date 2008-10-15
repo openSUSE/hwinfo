@@ -342,26 +342,13 @@ void hd_scan_misc2(hd_data_t *hd_data)
         have_common_res(hd->res, res)
       ) break;
     }
-    if(!hd) {
-      /* eg. non-PCI IDE controller */
-      hd = add_hd_entry(hd_data, __LINE__, 0);
-      hd->base_class.id = bc_storage;
-      hd->sub_class.id = sc_sto_ide;
-      hd->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0x3000);
-      hd->compat_device.id = MAKE_ID(TAG_SPECIAL, 0x1000);
-      /* use join_res to join the i/o ranges of ide0/1 */
-      join_res_io(&hd->res, res);
-      join_res_irq(&hd->res, res);
-      join_res_dma(&hd->res, res);
-      free_res_list(res);
-    }
-    else {
+    if(hd) {
       /* eg. PCI IDE controller, add resources */
       join_res_io(&hd->res, res);
       join_res_irq(&hd->res, res);
       join_res_dma(&hd->res, res);
-      free_res_list(res);
     }
+    free_res_list(res);
   }
 
   /* VGA */
