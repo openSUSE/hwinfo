@@ -82,3 +82,6 @@
  bus.id			0x8f
 +bus.name		Virtio
 
+ bus.id			0x90
++bus.name		IBMEBUS
+

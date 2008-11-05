@@ -1,3 +1,6 @@
+5/11/2008:	v15.12
+	- fix ehea detection (bnc #436954)
+
 15/10/2008:	v15.11
 	- removed ancient refs to ide-generic (bnc #433105)
 

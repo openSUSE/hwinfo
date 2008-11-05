@@ -1093,7 +1093,8 @@ void hd_read_ibmebus(hd_data_t *hd_data)
 {
   char *sf_dev, *s, *modalias;
   str_list_t *sf_bus, *sf_bus_e;
-  hd_t *hd;
+  hd_t *hd, *hd_ehea_base = NULL;
+  int ehea_active = 0;
 
   sf_bus = read_dir("/sys/bus/ibmebus/devices", 'l');
 
@@ -1101,6 +1102,7 @@ void hd_read_ibmebus(hd_data_t *hd_data)
     ADD2LOG("sysfs: no such bus: ibmebus\n");
     return;
   }
+
   for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
     sf_dev = new_str(hd_read_sysfs_link("/sys/bus/ibmebus/devices", sf_bus_e->str));
 
@@ -1111,9 +1113,7 @@ void hd_read_ibmebus(hd_data_t *hd_data)
     );
 
     if((modalias = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
-      int len = strlen(modalias);
-      if (len > 0 && modalias[len - 1] == '\n')
-	      modalias[len - 1] = '\0';
+      modalias = canon_str(modalias, strlen(modalias));
 
       ADD2LOG("    modalias = \"%s\"\n", modalias);
 
@@ -1123,7 +1123,7 @@ void hd_read_ibmebus(hd_data_t *hd_data)
 	 * of:NlheaT<NULL>CIBM,lhea
 	 * ehea
 	 */
-        hd = add_hd_entry(hd_data, __LINE__, 0);
+        hd = hd_ehea_base = add_hd_entry(hd_data, __LINE__, 0);
 
         hd->bus.id = bus_ibmebus;
         hd->vendor.id = MAKE_ID(TAG_PCI, 0x1014); /* IBM */
@@ -1144,6 +1144,8 @@ void hd_read_ibmebus(hd_data_t *hd_data)
 	 * eth1
 	 */
         hd = add_hd_entry(hd_data, __LINE__, 0);
+        ehea_active = 1;
+        hd->bus.id = bus_ibmebus;
         hd->modalias = new_str(modalias);
         hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
         hd->sysfs_bus_id = new_str(sf_bus_e->str);
@@ -1159,8 +1161,15 @@ void hd_read_ibmebus(hd_data_t *hd_data)
         s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
         if(s) add_str_list(&hd->drivers, s);
       }
+
+      modalias = free_mem(modalias);
     }
     free_mem(sf_dev);
+  }
+
+  if(hd_ehea_base && ehea_active) {
+    // remove it if we have the real devices
+    hd_ehea_base->base_class.id = bc_none;
   }
 }
 
