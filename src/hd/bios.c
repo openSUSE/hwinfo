@@ -76,6 +76,9 @@ static struct {
   { 304, 190, 1400, 1050, "Hewlett-Packard", "HP Compaq nc6000 (PN887PA#ABG)", "F.0F" },
   { 332, 208, 1280,  800, "MICRO-STAR INT'L CO.,LTD.", "MS-1011", "0101" },
   { 304, 189, 1440,  900, "Dell Inc.", "Latitude D630C", NULL },
+  {   0,   0, 1024,  768, "IBM CORPORATION", "4840573", NULL },
+  {   0,   0, 1024,  768, "IBM CORPORATION", "4800723", NULL },
+  {   0,   0, 1024,  768, "IBM CORPORATION", "4836135", NULL },
 };
 
 #define BIOS_TEST
