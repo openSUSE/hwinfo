@@ -300,9 +300,7 @@ void hd_scan_net(hd_data_t *hd_data)
          * add interface names...
          * but not wmasterX (bnc #441778)
          */
-        if(hd->unix_dev_name && strncmp(hd->unix_dev_name, "wmaster", sizeof "wmaster" - 1)) {
-          add_if_name(hd_card, hd);
-        }
+        if(if_type != 801) add_if_name(hd_card, hd);
       }
     }
 
