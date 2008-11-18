@@ -1810,6 +1810,7 @@ void hd_scan(hd_data_t *hd_data)
     if(hd_probe_feature(hd_data, pr_cpuemu)) hd_data->flags.cpuemu = 1;
     if(hd_probe_feature(hd_data, pr_udev)) hd_data->flags.udev = 1;
     if(!hd_probe_feature(hd_data, pr_bios_crc)) hd_data->flags.nobioscrc = 1;
+    hd_set_probe_feature(hd_data, pr_bios_vram);
     if(hd_probe_feature(hd_data, pr_bios_vram)) hd_data->flags.biosvram = 1;
     hd_set_probe_feature(hd_data, pr_bios_acpi);
     hd_set_probe_feature(hd_data, pr_modules_pata);

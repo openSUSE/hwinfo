@@ -1,3 +1,6 @@
+18/11/2008:	v15.16
+	- map video memory for vbe calls (bnc #441802)
+
 17/11/2008:	v15.15
 	- fix wlan detection (bnc #441778)
 
