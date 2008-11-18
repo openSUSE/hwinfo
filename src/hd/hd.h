@@ -2472,7 +2472,9 @@ typedef struct s_hd_t {
     unsigned remove:1;		/**< schedule for removal */
     unsigned freeit:1;		/**< for internal memory management */
     unsigned fixed:1;		/**< fixed, do no longer modify this entry */
-    unsigned ser_skip:1;	/**< if serial line, don't scan for devices */
+    unsigned skip_mouse:1;	/**< if serial line, don't scan for mice */
+    unsigned skip_modem:1;	/**< if serial line, don't scan for modems */
+    unsigned skip_braille:1;	/**< if serial line, don't scan for braille devices */
     unsigned ser_device:2;	/**< if != 0: info about attached serial device; see serial.c */
   } tag;
 

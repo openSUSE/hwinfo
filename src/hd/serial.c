@@ -83,7 +83,7 @@ void hd_scan_serial(hd_data_t *hd_data)
     str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%u", ser->line);
     for(i = 0; i < (int) skip_devs; i++) {
       if(!strcmp(skip_dev[i], hd->unix_dev_name)) {
-        hd->tag.ser_skip = 1;
+        hd->tag.skip_mouse = hd->tag.skip_modem = hd->tag.skip_braille = 1;
         break;
       }
     }
@@ -127,7 +127,7 @@ void hd_scan_serial(hd_data_t *hd_data)
             ser->port >= res2->io.base &&
             ser->port < res2->io.base + res2->io.range
           ) {
-            hd->tag.ser_skip = 1;
+            hd->tag.skip_mouse = hd->tag.skip_modem = hd->tag.skip_braille = 1;
           }
         }
       }

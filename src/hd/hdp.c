@@ -506,8 +506,13 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 #endif
   }
 
-  if(h->tag.ser_skip) {
-    dump_line_str("Tags: ser_skip\n");
+  if(h->tag.skip_mouse || h->tag.skip_modem || h->tag.skip_braille) {
+    dump_line_str("Tags:");
+    i = 0;
+    if(h->tag.skip_mouse) dump_line0("%s mouse", i++ ? "," : "");
+    if(h->tag.skip_modem) dump_line0("%s modem", i++ ? "," : "");
+    if(h->tag.skip_braille) dump_line0("%s braille", i++ ? "," : "");
+    dump_line0("\n");
   }
 
   if(

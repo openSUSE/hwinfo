@@ -1,3 +1,6 @@
+18/11/2008:	v15.17
+	- only avoid mouse/modem detection on usb->serial adapter (bnc #408715)
+
 18/11/2008:	v15.16
 	- map video memory for vbe calls (bnc #441802)
 

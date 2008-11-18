@@ -391,7 +391,7 @@ void get_serial_mouse(hd_data_t *hd_data)
       hd->base_class.id == bc_comm &&
       hd->sub_class.id == sc_com_ser &&
       hd->unix_dev_name &&
-      !hd->tag.ser_skip &&
+      !hd->tag.skip_mouse &&
       !has_something_attached(hd_data, hd)
     ) {
       if((fd = open(hd->unix_dev_name, O_RDWR | O_NONBLOCK)) >= 0) {

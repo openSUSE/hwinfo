@@ -903,7 +903,7 @@ void get_serial_devs(hd_data_t *hd_data)
             hd->vendor.id == MAKE_ID(TAG_USB, 0x0403) &&
             hd->device.id == MAKE_ID(TAG_USB, 0x6001)
           ) {
-            hd->tag.ser_skip = 1;
+            hd->tag.skip_mouse = hd->tag.skip_modem = 1;
           }
         }
       }
