@@ -1,3 +1,6 @@
+21/11/2008:	v15.18
+	- another ibm display (bnc #446699)
+
 18/11/2008:	v15.17
 	- only avoid mouse/modem detection on usb->serial adapter (bnc #408715)
 
