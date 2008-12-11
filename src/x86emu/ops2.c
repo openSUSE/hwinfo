@@ -50,17 +50,105 @@ op1 - Instruction op code
 REMARKS:
 Handles illegal opcodes.
 ****************************************************************************/
-static void x86emuOp2_illegal_op(
-	u8 op2)
+static void x86emuOp2_illegal_op(u8 op2)
 {
-	START_OF_INSTR();
-	DECODE_PRINTF("ILLEGAL EXTENDED X86 OPCODE\n");
-	TRACE_REGS();
-	printk("%04x:%04x: %02X ILLEGAL EXTENDED X86 OPCODE!\n",
-		M.x86.R_CS, M.x86.R_IP-2,op2);
-    HALT_SYS();
-    END_OF_INSTR();
+  START_OF_INSTR();
+  DECODE_PRINTF("ILLEGAL EXTENDED X86 OPCODE\n");
+  TRACE_REGS();
+  printk("%04x:%04x: %02X ILLEGAL EXTENDED X86 OPCODE!\n", M.x86.R_CS, M.x86.R_IP-2,op2);
+  HALT_SYS();
+  END_OF_INSTR();
 }
+
+/****************************************************************************
+REMARKS:
+Handles opcode 0x0f,0x01
+****************************************************************************/
+static void x86emuOp2_opc_01(u8 op2)
+{
+  int mod, rl, rh;
+  u16 *destreg;
+
+  /* dummy implementation: smsw always returns 0 */
+
+  START_OF_INSTR();
+  FETCH_DECODE_MODRM(mod, rh, rl);
+
+  if(rh == 4 && mod == 3) {
+    DECODE_PRINTF("SMSW\t");
+    destreg = DECODE_RM_WORD_REGISTER(rl);
+    DECODE_PRINTF("\n");
+    *destreg = 0;
+    TRACE_AND_STEP();
+    DECODE_CLEAR_SEGOVR();
+  }
+  else {
+    DECODE_PRINTF("ILLEGAL EXTENDED X86 OPCODE\n");
+    TRACE_REGS();
+    printk("%04x:%04x: %02X ILLEGAL EXTENDED X86 OPCODE!\n", M.x86.R_CS, M.x86.R_IP-2,op2);
+    HALT_SYS();
+  }
+
+  END_OF_INSTR();
+}
+
+/****************************************************************************
+REMARKS:
+Handles opcode 0x0f,0x08
+****************************************************************************/
+static void x86emuOp2_invd(u8 op2)
+{
+  START_OF_INSTR();
+  DECODE_PRINTF("INVD\n");
+  TRACE_AND_STEP();
+  DECODE_CLEAR_SEGOVR();
+  END_OF_INSTR();
+}
+
+/****************************************************************************
+REMARKS:
+Handles opcode 0x0f,0x09
+****************************************************************************/
+static void x86emuOp2_wbinvd(u8 op2)
+{
+  START_OF_INSTR();
+  DECODE_PRINTF("WBINVD\n");
+  TRACE_AND_STEP();
+  DECODE_CLEAR_SEGOVR();
+  END_OF_INSTR();
+}
+
+/****************************************************************************
+REMARKS:
+Handles opcode 0x0f,0x30
+****************************************************************************/
+static void x86emuOp2_wrmsr(u8 op2)
+{
+  /* dummy implementation, does nothing */
+
+  START_OF_INSTR();
+  DECODE_PRINTF("WRMSR\n");
+  TRACE_AND_STEP();
+  DECODE_CLEAR_SEGOVR();
+  END_OF_INSTR();
+}
+
+/****************************************************************************
+REMARKS:
+Handles opcode 0x0f,0x32
+****************************************************************************/
+static void x86emuOp2_rdmsr(u8 op2)
+{
+  /* dummy implementation, always return 0 */
+
+  START_OF_INSTR();
+  DECODE_PRINTF("RDMSR\n");
+  TRACE_AND_STEP();
+  M.x86.R_EDX = 0;
+  M.x86.R_EAX = 0;
+  DECODE_CLEAR_SEGOVR();
+  END_OF_INSTR();
+}  
 
 #define xorl(a,b)   ((a) && !(b)) || (!(a) && (b))
 
@@ -2532,15 +2620,15 @@ static void x86emuOp2_movsx_word_R_RM(u8 X86EMU_UNUSED(op2))
 void (*x86emu_optab2[256])(u8) =
 {
 /*  0x00 */ x86emuOp2_illegal_op,  /* Group F (ring 0 PM)      */
-/*  0x01 */ x86emuOp2_illegal_op,  /* Group G (ring 0 PM)      */
+/*  0x01 */ x86emuOp2_opc_01,      /* Group G (ring 0 PM)      */
 /*  0x02 */ x86emuOp2_illegal_op,  /* lar (ring 0 PM)          */
 /*  0x03 */ x86emuOp2_illegal_op,  /* lsl (ring 0 PM)          */
 /*  0x04 */ x86emuOp2_illegal_op,
 /*  0x05 */ x86emuOp2_illegal_op,  /* loadall (undocumented)   */
 /*  0x06 */ x86emuOp2_illegal_op,  /* clts (ring 0 PM)         */
 /*  0x07 */ x86emuOp2_illegal_op,  /* loadall (undocumented)   */
-/*  0x08 */ x86emuOp2_illegal_op,  /* invd (ring 0 PM)         */
-/*  0x09 */ x86emuOp2_illegal_op,  /* wbinvd (ring 0 PM)       */
+/*  0x08 */ x86emuOp2_invd,        /* invd (ring 0 PM)         */
+/*  0x09 */ x86emuOp2_wbinvd,      /* wbinvd (ring 0 PM)       */
 /*  0x0a */ x86emuOp2_illegal_op,
 /*  0x0b */ x86emuOp2_illegal_op,
 /*  0x0c */ x86emuOp2_illegal_op,
@@ -2582,9 +2670,9 @@ void (*x86emu_optab2[256])(u8) =
 /*  0x2e */ x86emuOp2_illegal_op,
 /*  0x2f */ x86emuOp2_illegal_op,
 
-/*  0x30 */ x86emuOp2_illegal_op,
+/*  0x30 */ x86emuOp2_wrmsr,
 /*  0x31 */ x86emuOp2_illegal_op,
-/*  0x32 */ x86emuOp2_illegal_op,
+/*  0x32 */ x86emuOp2_rdmsr,
 /*  0x33 */ x86emuOp2_illegal_op,
 /*  0x34 */ x86emuOp2_illegal_op,
 /*  0x35 */ x86emuOp2_illegal_op,

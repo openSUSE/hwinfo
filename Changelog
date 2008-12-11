@@ -1,3 +1,6 @@
+11/12/2008:	v15.21
+	- add some more instructions to the x86 emulation (bnc #406804)
+
 24/11/2008:	v15.20
 	- more ibm displays (bnc #446699)
 
