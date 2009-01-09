@@ -1,3 +1,6 @@
+9/1/2009:	v15.22
+	- fix input device detection (bnc #457834)
+
 11/12/2008:	v15.21
 	- add some more instructions to the x86 emulation (bnc #406804)
 

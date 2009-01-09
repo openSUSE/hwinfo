@@ -519,6 +519,10 @@ void add_input_dev(hd_data_t *hd_data, char *name)
     }
     ADD2LOG("    dev = %u:%u\n", u1, u2);
   }
+  else {
+    ADD2LOG("    no dev - ignored\n");
+    return;
+  }
 
   sf_dev = new_str(hd_read_sysfs_link(name, "device"));
 
@@ -541,7 +545,7 @@ void add_input_dev(hd_data_t *hd_data, char *name)
     }
 
     bus_name = NULL;
-    if((s = hd_read_sysfs_link(sf_dev, "bus"))) {
+    if((s = hd_read_sysfs_link(sf_dev, "subsystem"))) {
       bus_name = strrchr(s, '/');
       if(bus_name) bus_name++;
       bus_name = new_str(bus_name);
