@@ -5819,7 +5819,7 @@ void hd_sysfs_driver_list(hd_data_t *hd_data)
   hd_sysfsdrv_t **sfp, *sf;
   str_list_t *sl, *sl0;
   uint64_t id = 0;
-  char *drv_dir = NULL, *drv = NULL, *module;
+  char *drv_dir = NULL, *drv = NULL, *module, *s;
   str_list_t *sf_bus, *sf_bus_e, *sf_drv, *sf_drv_e, *sf_drv2, *sf_drv2_e;
 
   for(sl = sl0 = read_file(PROC_MODULES, 0, 0); sl; sl = sl->next) {
@@ -5852,7 +5852,8 @@ void hd_sysfs_driver_list(hd_data_t *hd_data)
 
       for(sf_drv2_e = sf_drv2; sf_drv2_e; sf_drv2_e = sf_drv2_e->next) {
         if(!strcmp(sf_drv2_e->str, "module")) {
-          module = strrchr(hd_read_sysfs_link(drv, sf_drv2_e->str), '/');
+          s = hd_read_sysfs_link(drv, sf_drv2_e->str);
+          module = s ? strrchr(s, '/') : NULL;
           if(module) {
             sf = *sfp = new_mem(sizeof **sfp);
             sfp = &(*sfp)->next;

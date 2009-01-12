@@ -1,3 +1,6 @@
+12/1/2009:	v15.23
+	- avoid segfault with broken sysfs data (bnc #461161)
+
 9/1/2009:	v15.22
 	- fix input device detection (bnc #457834)
 
