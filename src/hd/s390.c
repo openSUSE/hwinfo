@@ -272,6 +272,19 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
             hd->sysfs_device_link = new_str(hd_sysfs_id(attrname));
             hd->sysfs_id = new_str(hd->sysfs_device_link);
             hd->sysfs_bus_id = new_str(strrchr(attrname,'/')+1);
+            
+            /* try to determine the network IF name */
+            strcat(attrname, "/net");
+            DIR* netdevdir = opendir(attrname);
+            if(netdevdir) {
+              struct dirent* nd;
+              while((nd = readdir(netdevdir))) {
+                if(nd->d_name[0] == '.') continue;
+                hd->unix_dev_name = new_str(nd->d_name);
+                break;
+              }
+              closedir(netdevdir);
+            }
             hddb_add_info(hd_data,hd);
           }
   	  closedir(bus);

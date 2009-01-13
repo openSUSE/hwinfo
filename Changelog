@@ -1,3 +1,6 @@
+13/1/2009:	v15.24
+	- determine unix_dev_name for IUCV interfaces (bnc #457537)
+
 12/1/2009:	v15.23
 	- avoid segfault with broken sysfs data (bnc #461161)
 
