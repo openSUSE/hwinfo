@@ -89,6 +89,7 @@ static struct {
   { 337, 270, 1280, 1024, "IBM CORPORATION", "4838137", NULL },
   { 337, 270, 1280, 1024, "IBM CORPORATION", "48381Z7", NULL },
   { 337, 270, 1280, 1024, "IBM CORPORATION", "48381z7", NULL },
+  { 367, 230, 1440,  900, "Hewlett-Packard", "HP Pavilion dv7 Notebook PC", "F.12" },
 };
 
 #define BIOS_TEST
