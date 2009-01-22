@@ -1152,6 +1152,9 @@ void hd_read_ibmebus(hd_data_t *hd_data)
         hd->vendor.id = MAKE_ID(TAG_PCI, 0x1014); /* IBM */
         hd->base_class.id = bc_network;
         hd->sub_class.id = 0;	/* ethernet */
+        // to get proper module info
+        hd->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0403);
+        hd->compat_device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
 	s = strpbrk(hd->sysfs_bus_id, "0123456789");
 	if(s) {
           hd->slot = strtol(s, NULL, 10);
@@ -1159,7 +1162,7 @@ void hd_read_ibmebus(hd_data_t *hd_data)
 	}
 
         s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
-        if(s) add_str_list(&hd->drivers, s);
+        add_str_list(&hd->drivers, s ?: "ehea");
       }
 
       modalias = free_mem(modalias);

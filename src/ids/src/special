@@ -298,6 +298,14 @@
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# special ehea thing
+
+ vendor.id		special 0x0403
+&device.id		special 0x0001
++driver.module.modprobe	ehea
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # parport zip controller
 
  vendor.id		special 0x1800
