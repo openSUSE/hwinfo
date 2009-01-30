@@ -413,7 +413,18 @@ copy_sys_bios(hd_data_t *hd_data)
 
 static int copy_bios_ram(hd_data_t *hd_data)
 {
-  return hd_read_mmap(hd_data, MEM_FILE, (unsigned char *) 0, 0, 0x1000);
+  int i;
+
+  i = hd_read_mmap(hd_data, MEM_FILE, (unsigned char *) 0, 0, 0x1000);
+
+  /*
+   * bnc #469863
+   * setup dummy int 0x15
+   */
+  *(uint32_t *) (0x15*4) = 0x00600000;		// avoid seg 0 (due to stupid check in run_bios_int())
+  *(uint8_t *) 0x600 = 0xcf;
+
+  return i;
 }
 
 void loadCodeToMem(unsigned char *ptr, CARD8 *code)
