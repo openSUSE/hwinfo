@@ -173,7 +173,7 @@ uint64_t klog_mem2(hd_data_t *hd_data)
     if(strstr(sl->str, "<6>BIOS-provided physical RAM map:") == sl->str) {
       for(sl = sl->next ; sl; sl = sl->next) {
         ADD2LOG(" -- %s", sl->str);
-        if(sscanf(sl->str, "<4> BIOS-e820: %"SCNx64" - %"SCNx64" (%63s", &u0, &u1, buf) != 3) break;
+        if(sscanf(sl->str, "<%*d> BIOS-e820: %"SCNx64" - %"SCNx64" (%63s", &u0, &u1, buf) != 3) break;
         if(strcmp(buf, "usable)")) continue;
         if(u1 < u0) break;
         mem += u1 - u0;
