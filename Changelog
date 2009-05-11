@@ -1,3 +1,4 @@
+11/5/2009:	v15.27
 	- setup dummy int 0x15 for BIOS emulation (bnc #469863)
 	- fix memory size detection (bnc #500410)
 
