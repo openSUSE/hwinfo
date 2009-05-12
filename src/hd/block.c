@@ -809,7 +809,7 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
         sscanf(sl->str, "[%15[^]]] %*s fc:%"SCNx64" , %x ", buf, &ul0, &u0) == 3 &&
         !strcmp(hd->sysfs_bus_id, buf)
       ) {
-        ADD2LOG("    lsscsi: wwpn = 0x%llx, port_id = 0x%x\n", ul0, u0);
+        ADD2LOG("    lsscsi: wwpn = 0x%"PRIx64", port_id = 0x%x\n", ul0, u0);
         res->fc.wwpn = ul0;
         res->fc.wwpn_ok = 1;
         res->fc.port_id = u0;

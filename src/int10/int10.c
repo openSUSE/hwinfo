@@ -96,10 +96,9 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
   /* notebooks like to have it at port 3 */
   if((is.dell || is.nvidia) && is.notebook) vbe->ddc_ports = 3;
 
-  if(hd_probe_feature(hd_data, pr_bios_ddc_ports_1)) vbe->ddc_ports = 1;
-  if(hd_probe_feature(hd_data, pr_bios_ddc_ports_2)) vbe->ddc_ports = 2;
-  if(hd_probe_feature(hd_data, pr_bios_ddc_ports_3)) vbe->ddc_ports = 3;
-  if(hd_probe_feature(hd_data, pr_bios_ddc_ports_4)) vbe->ddc_ports = 4;
+  i = get_probe_val_int(hd_data, pr_bios_ddc_ports);
+  if(i > sizeof vbe->ddc_port / sizeof *vbe->ddc_port) i = sizeof vbe->ddc_port / sizeof *vbe->ddc_port;
+  if(i) vbe->ddc_ports = i;
 
   if(hd_probe_feature(hd_data, pr_bios_ddc)) {
     PROGRESS(4, 3, "ddc info");

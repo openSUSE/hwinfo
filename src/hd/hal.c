@@ -337,6 +337,16 @@ hal_prop_t *hal_get_list(hal_prop_t *prop, const char *key)
 }
 
 
+hal_prop_t *hal_add_new(hal_prop_t **prop)
+{
+  while(*prop) prop = &(*prop)->next;
+  *prop = new_mem(sizeof **prop);
+  hal_invalidate(*prop);
+
+  return *prop;
+}
+
+
 void add_pci(hd_data_t *hd_data)
 {
   hd_t *hd;

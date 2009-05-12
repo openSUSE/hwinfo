@@ -151,7 +151,15 @@ typedef struct disk_s {
   unsigned char *data;
 } disk_t;
 
-static struct s_pr_flags *get_pr_flags(enum probe_feature feature);
+typedef struct {
+  enum probe_feature val, parent;
+  unsigned mask;	/* bit 0: default, bit 1: all, bit 2: max, bit 3: linuxrc */
+  char *name;
+  hal_prop_type_t type;
+} pr_flags_t;
+
+static pr_flags_t *pr_flags_by_name(char *name);
+static pr_flags_t *pr_flags_by_id(enum probe_feature feature);
 static void fix_probe_features(hd_data_t *hd_data);
 static void set_probe_feature(hd_data_t *hd_data, enum probe_feature feature, unsigned val);
 static void free_old_hd_entries(hd_data_t *hd_data);
@@ -240,124 +248,180 @@ static struct s_mod_names {
  * Names for the probe flags. Used for debugging and command line parsing in
  * hw.c. Cf. enum probe_feature, hd_data_t.probe.
  */
-static struct s_pr_flags {
-  enum probe_feature val, parent;
-  unsigned mask;	/* bit 0: default, bit 1: all, bit 2: max, bit 3: linuxrc */
-  char *name;
-} pr_flags[] = {
-  { pr_default,      -1,                  1, "default"       },
-  { pr_all,          -1,                2  , "all"           },
-  { pr_max,          -1,              4    , "max"           },
-  { pr_lxrc,         -1,            8      , "lxrc"          },
-  { pr_memory,        0,            8|4|2|1, "memory"        },
-  { pr_pci,           0,            8|4|2|1, "pci"           },
-  { pr_s390,          0,            8|4|2|1, "s390"          },
-  { pr_s390disks,     0,                  0, "s390disks"     },
-  { pr_isapnp,        0,              4|2|1, "isapnp"        },
-  { pr_isapnp_old,    pr_isapnp,          0, "isapnp.old"    },
-  { pr_isapnp_new,    pr_isapnp,          0, "isapnp.new"    },
-  { pr_isapnp_mod,    0,              4    , "isapnp.mod"    },
-  { pr_isapnp,        0,                  0, "pnpdump"       },	/* alias for isapnp */
-  { pr_net,           0,            8|4|2|1, "net"           },
-  { pr_net_eeprom,    0,                  0, "net.eeprom"    },
-  { pr_floppy,        0,            8|4|2|1, "floppy"        },
-  { pr_misc,          pr_bios,      8|4|2|1, "misc"          },	// ugly hack!
-  { pr_misc_serial,   pr_misc,      8|4|2|1, "misc.serial"   },
-  { pr_misc_par,      pr_misc,        4|2|1, "misc.par"      },
-  { pr_misc_floppy,   pr_misc,      8|4|2|1, "misc.floppy"   },
-  { pr_bios,          0,            8|4|2|1, "bios"          },
-  { pr_bios_vesa,     pr_bios,        4|2|1, "bios.vesa"     },
-  { pr_bios_ddc,      pr_bios_vesa,       0, "bios.ddc"      },
-  { pr_bios_ddc_ports_1,  pr_bios_ddc,        0, "bios.ddc.ports=1"  }, // probe 1 ddc port
-  { pr_bios_ddc_ports_2,  pr_bios_ddc,        0, "bios.ddc.ports=2"  }, // probe 2 ddc ports
-  { pr_bios_ddc_ports_3,  pr_bios_ddc,        0, "bios.ddc.ports=3"  }, // probe 3 ddc ports
-  { pr_bios_ddc_ports_4,  pr_bios_ddc,        0, "bios.ddc.ports=4"  }, // probe 4 ddc ports
-  { pr_bios_fb,       pr_bios_vesa,       0, "bios.fb"       },
-  { pr_bios_mode,     pr_bios_vesa,       0, "bios.mode"     },
-  { pr_bios_vbe,      pr_bios_mode,       0, "bios.vbe"      }, // just an alias
-  { pr_bios_crc,      0,                  0, "bios.crc"      }, // require bios crc check to succeed
-  { pr_bios_vram,     0,                  0, "bios.vram"     }, // map video bios ram
-  { pr_bios_acpi,     0,                  0, "bios.acpi"     }, // dump acpi data
-  { pr_cpu,           0,            8|4|2|1, "cpu"           },
-  { pr_monitor,       0,            8|4|2|1, "monitor"       },
-  { pr_serial,        0,              4|2|1, "serial"        },
-#if defined(__sparc__)
-  /* Probe for mouse on SPARC */
-  { pr_mouse,         0,            8|4|2|1, "mouse"         },
-#else
-  { pr_mouse,         0,              4|2|1, "mouse"         },
-#endif
-  { pr_scsi,          0,            8|4|2|1, "scsi"          },
-  { pr_scsi_noserial, 0,                  0, "scsi.noserial" },
-  { pr_usb,           0,            8|4|2|1, "usb"           },
-  { pr_usb_mods,      0,              4    , "usb.mods"      },
-  { pr_modem,         0,              4|2|1, "modem"         },
-  { pr_modem_usb,     pr_modem,       4|2|1, "modem.usb"     },
-  { pr_parallel,      0,              4|2|1, "parallel"      },
-  { pr_parallel_lp,   pr_parallel,    4|2|1, "parallel.lp"   },
-  { pr_parallel_zip,  pr_parallel,    4|2|1, "parallel.zip"  },
-  { pr_parallel_imm,  0,                  0, "parallel.imm"  },
-  { pr_isa,           0,                  0, "isa"           },
-  { pr_isa_isdn,      pr_isa,             0, "isa.isdn"      },
-  { pr_isdn,          0,              4|2|1, "isdn"          },
-  { pr_kbd,           0,            8|4|2|1, "kbd"           },
-  { pr_prom,          0,            8|4|2|1, "prom"          },
-  { pr_sbus,          0,            8|4|2|1, "sbus"          },
-  { pr_int,           0,            8|4|2|1, "int"           },
+
+static pr_flags_t pr_flags[] = {
+  { pr_default,      -1,                  1, "default",      p_bool },
+  { pr_all,          -1,                2  , "all",          p_bool },
+  { pr_max,          -1,              4    , "max",          p_bool },
+  { pr_lxrc,         -1,            8      , "lxrc",         p_bool },
+  { pr_memory,        0,            8|4|2|1, "memory",       p_bool },
+  { pr_pci,           0,            8|4|2|1, "pci",          p_bool },
+  { pr_s390,          0,            8|4|2|1, "s390",         p_bool },
+  { pr_s390disks,     0,                  0, "s390disks",    p_bool },
+  { pr_isapnp,        0,              4|2|1, "isapnp",       p_bool },
+  { pr_isapnp_old,    pr_isapnp,          0, "isapnp.old",   p_bool },
+  { pr_isapnp_new,    pr_isapnp,          0, "isapnp.new",   p_bool },
+  { pr_isapnp_mod,    0,              4    , "isapnp.mod",   p_bool },
+  { pr_isapnp,        0,                  0, "pnpdump",      p_bool },	/* alias for isapnp */
+  { pr_net,           0,            8|4|2|1, "net",          p_bool },
+  { pr_net_eeprom,    0,                  0, "net.eeprom",   p_bool },
+  { pr_floppy,        0,            8|4|2|1, "floppy",       p_bool },
+  { pr_misc,          pr_bios,      8|4|2|1, "misc",         p_bool },	// ugly hack!
+  { pr_misc_serial,   pr_misc,      8|4|2|1, "misc.serial",  p_bool },
+  { pr_misc_par,      pr_misc,        4|2|1, "misc.par",     p_bool },
+  { pr_misc_floppy,   pr_misc,      8|4|2|1, "misc.floppy",  p_bool },
+  { pr_bios,          0,            8|4|2|1, "bios",         p_bool },
+  { pr_bios_vesa,     pr_bios,        4|2|1, "bios.vesa",    p_bool },
+  { pr_bios_ddc,      pr_bios_vesa,       0, "bios.ddc",     p_bool },
+  { pr_bios_ddc_ports, pr_bios_ddc,       0, "bios.ddc.ports", p_int32 },
+  { pr_bios_fb,       pr_bios_vesa,       0, "bios.fb",      p_bool },
+  { pr_bios_mode,     pr_bios_vesa,       0, "bios.mode",    p_bool },
+  { pr_bios_vbe,      pr_bios_mode,       0, "bios.vbe",     p_bool }, // just an alias
+  { pr_bios_crc,      0,                  0, "bios.crc",     p_bool }, // require bios crc check to succeed
+  { pr_bios_vram,     0,                  0, "bios.vram",    p_bool }, // map video bios ram
+  { pr_bios_acpi,     0,                  0, "bios.acpi",    p_bool }, // dump acpi data
+  { pr_cpu,           0,            8|4|2|1, "cpu",          p_bool },
+  { pr_monitor,       0,            8|4|2|1, "monitor",      p_bool },
+  { pr_serial,        0,              4|2|1, "serial",       p_bool },
+  { pr_mouse,         0,              4|2|1, "mouse",        p_bool },
+  { pr_scsi,          0,            8|4|2|1, "scsi",         p_bool },
+  { pr_scsi_noserial, 0,                  0, "scsi.noserial", p_bool },
+  { pr_usb,           0,            8|4|2|1, "usb",          p_bool },
+  { pr_usb_mods,      0,              4    , "usb.mods",     p_bool },
+  { pr_modem,         0,              4|2|1, "modem",        p_bool },
+  { pr_modem_usb,     pr_modem,       4|2|1, "modem.usb",    p_bool },
+  { pr_parallel,      0,              4|2|1, "parallel",     p_bool },
+  { pr_parallel_lp,   pr_parallel,    4|2|1, "parallel.lp",  p_bool },
+  { pr_parallel_zip,  pr_parallel,    4|2|1, "parallel.zip", p_bool },
+  { pr_parallel_imm,  0,                  0, "parallel.imm", p_bool },
+  { pr_isa,           0,                  0, "isa",          p_bool },
+  { pr_isa_isdn,      pr_isa,             0, "isa.isdn",     p_bool },
+  { pr_isdn,          0,              4|2|1, "isdn",         p_bool },
+  { pr_kbd,           0,            8|4|2|1, "kbd",          p_bool },
+  { pr_prom,          0,            8|4|2|1, "prom",         p_bool },
+  { pr_sbus,          0,            8|4|2|1, "sbus",         p_bool },
+  { pr_int,           0,            8|4|2|1, "int",          p_bool },
 #if defined(__i386__) || defined (__x86_64__)
-  { pr_braille,       0,              4|2|1, "braille"       },
-  { pr_braille_alva,  pr_braille,     4|2|1, "braille.alva"  },
-  { pr_braille_fhp,   pr_braille,     4|2|1, "braille.fhp"   },
-  { pr_braille_ht,    pr_braille,     4|2|1, "braille.ht"    },
-  { pr_braille_baum,  pr_braille,     4|2|1, "braille.baum"  },
+  { pr_braille,       0,              4|2|1, "braille",      p_bool },
+  { pr_braille_alva,  pr_braille,     4|2|1, "braille.alva", p_bool },
+  { pr_braille_fhp,   pr_braille,     4|2|1, "braille.fhp",  p_bool },
+  { pr_braille_ht,    pr_braille,     4|2|1, "braille.ht",   p_bool },
+  { pr_braille_baum,  pr_braille,     4|2|1, "braille.baum", p_bool },
 #else
-  { pr_braille,       0,              4|2  , "braille"       },
-  { pr_braille_alva,  pr_braille,         0, "braille.alva"  },
-  { pr_braille_fhp,   pr_braille,     4|2  , "braille.fhp"   },
-  { pr_braille_ht,    pr_braille,     4|2  , "braille.ht"    },
-  { pr_braille_baum,  pr_braille,     4|2  , "braille.baum"  },
+  { pr_braille,       0,              4|2  , "braille",      p_bool },
+  { pr_braille_alva,  pr_braille,         0, "braille.alva", p_bool },
+  { pr_braille_fhp,   pr_braille,     4|2  , "braille.fhp",  p_bool },
+  { pr_braille_ht,    pr_braille,     4|2  , "braille.ht",   p_bool },
+  { pr_braille_baum,  pr_braille,     4|2  , "braille.baum", p_bool },
 #endif
-  { pr_ignx11,        0,                  0, "ignx11"        },
-  { pr_sys,           0,            8|4|2|1, "sys"           },
-  { pr_manual,        0,                  0, "manual"        },
-  { pr_fb,            0,            8|4|2|1, "fb"            },
-  { pr_pppoe,         0,            8|4|2|1, "pppoe"         },
+  { pr_ignx11,        0,                  0, "ignx11",       p_bool },
+  { pr_sys,           0,            8|4|2|1, "sys",          p_bool },
+  { pr_manual,        0,                  0, "manual",       p_bool },
+  { pr_fb,            0,            8|4|2|1, "fb",           p_bool },
+  { pr_pppoe,         0,            8|4|2|1, "pppoe",        p_bool },
   /* dummy, used to turn off hwscan */
-  { pr_scan,          0,                  0, "scan"          },
-  { pr_pcmcia,        0,            8|4|2|1, "pcmcia"        },
-  { pr_fork,          0,                  0, "fork"          },
-  { pr_cpuemu,        0,                  0, "cpuemu"        },
-  { pr_cpuemu_debug,  pr_cpuemu,          0, "cpuemu.debug"  },
-  { pr_sysfs,         0,                  0, "sysfs"         },
-  { pr_udev,          0,            8|4|2|1, "udev"          },
-  { pr_block,         0,            8|4|2|1, "block"         },
-  { pr_block_cdrom,   pr_block,     8|4|2|1, "block.cdrom"   },
-  { pr_block_part,    pr_block,     8|4|2|1, "block.part"    },
-  { pr_block_mods,    pr_block,     8|4|2|1, "block.mods"    },
-  { pr_edd,           0,            8|4|2|1, "edd"           },
-  { pr_edd_mod,       pr_edd,       8|4|2|1, "edd.mod"       },
-  { pr_input,         0,            8|4|2|1, "input"         },
-  { pr_wlan,          0,            8|4|2|1, "wlan"          },
-  { pr_hal,           0,                  0, "hal"           },
-  { pr_modules_pata,  0,                  0, "modules.pata"  }
+  { pr_scan,          0,                  0, "scan",         p_bool },
+  { pr_pcmcia,        0,            8|4|2|1, "pcmcia",       p_bool },
+  { pr_fork,          0,                  0, "fork",         p_bool },
+  { pr_cpuemu,        0,                  0, "cpuemu",       p_bool },
+  { pr_cpuemu_debug,  pr_cpuemu,          0, "cpuemu.debug", p_bool },
+  { pr_sysfs,         0,                  0, "sysfs",        p_bool },
+  { pr_udev,          0,            8|4|2|1, "udev",         p_bool },
+  { pr_block,         0,            8|4|2|1, "block",        p_bool },
+  { pr_block_cdrom,   pr_block,     8|4|2|1, "block.cdrom",  p_bool },
+  { pr_block_part,    pr_block,     8|4|2|1, "block.part",   p_bool },
+  { pr_block_mods,    pr_block,     8|4|2|1, "block.mods",   p_bool },
+  { pr_edd,           0,            8|4|2|1, "edd",          p_bool },
+  { pr_edd_mod,       pr_edd,       8|4|2|1, "edd.mod",      p_bool },
+  { pr_input,         0,            8|4|2|1, "input",        p_bool },
+  { pr_wlan,          0,            8|4|2|1, "wlan",         p_bool },
+  { pr_hal,           0,                  0, "hal",          p_bool },
+  { pr_modules_pata,  0,                  0, "modules.pata", p_bool },
+  { pr_x86emu,        0,                  0, "x86emu",       p_list },
 };
 
-struct s_pr_flags *get_pr_flags(enum probe_feature feature)
-{
-  int i;
 
-  for(i = 0; (unsigned) i < sizeof pr_flags / sizeof *pr_flags; i++) {
-    if(feature == pr_flags[i].val) return pr_flags + i;
+/*
+ * Returns pointer to probe feature struct for name.
+ * If name is not a valid probe feature, NULL is returned.
+ *
+ */
+pr_flags_t *pr_flags_by_name(char *name)
+{
+  unsigned u;
+
+  if(!name) return NULL;
+
+  for(u = 0; u < sizeof pr_flags / sizeof *pr_flags; u++) {
+    if(!strcmp(name, pr_flags[u].name)) return pr_flags + u;
   }
 
   return NULL;
 }
 
+
+pr_flags_t *pr_flags_by_id(enum probe_feature feature)
+{
+  unsigned u;
+
+  for(u = 0; u < sizeof pr_flags / sizeof *pr_flags; u++) {
+    if(feature == pr_flags[u].val) return pr_flags + u;
+  }
+
+  return NULL;
+}
+
+
+int get_probe_val_int(hd_data_t *hd_data, enum probe_feature feature)
+{
+  pr_flags_t *flags;
+  hal_prop_t *prop;
+
+  flags = pr_flags_by_id(feature);
+  if(flags) {
+    prop = hal_get_int32(hd_data->probe_val, flags->name);
+    if(prop) return prop->val.int32;
+  }
+
+  return 0;
+}
+
+
+char *get_probe_val_str(hd_data_t *hd_data, enum probe_feature feature)
+{
+  pr_flags_t *flags;
+  hal_prop_t *prop;
+
+  flags = pr_flags_by_id(feature);
+  if(flags) {
+    prop = hal_get_str(hd_data->probe_val, flags->name);
+    if(prop) return prop->val.str;
+  }
+
+  return NULL;
+}
+
+
+str_list_t *get_probe_val_list(hd_data_t *hd_data, enum probe_feature feature)
+{
+  pr_flags_t *flags;
+  hal_prop_t *prop;
+
+  flags = pr_flags_by_id(feature);
+  if(flags) {
+    prop = hal_get_list(hd_data->probe_val, flags->name);
+    if(prop) return prop->val.list;
+  }
+
+  return NULL;
+}
+
+
 void fix_probe_features(hd_data_t *hd_data)
 {
   int i;
 
-  for(i = 0; (unsigned) i < sizeof hd_data->probe; i++) {
+  for(i = 0; i < sizeof hd_data->probe; i++) {
     hd_data->probe[i] |= hd_data->probe_set[i];
     hd_data->probe[i] &= ~hd_data->probe_clr[i];
   }
@@ -367,9 +431,9 @@ void set_probe_feature(hd_data_t *hd_data, enum probe_feature feature, unsigned 
 {
   unsigned ofs, bit, mask;
   int i;
-  struct s_pr_flags *pr;
+  pr_flags_t *pr;
 
-  if(!(pr = get_pr_flags(feature))) return;
+  if(!(pr = pr_flags_by_id(feature))) return;
 
   if(pr->parent == -1u) {
     mask = pr->mask;
@@ -400,7 +464,7 @@ void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
   unsigned ofs, bit, mask;
   int i;
-  struct s_pr_flags *pr;
+  pr_flags_t *pr;
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -409,7 +473,7 @@ void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
   }
 #endif
 
-  if(!(pr = get_pr_flags(feature))) return;
+  if(!(pr = pr_flags_by_id(feature))) return;
 
   if(pr->parent == -1u) {
     mask = pr->mask;
@@ -432,7 +496,7 @@ void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
   unsigned ofs, bit, mask;
   int i;
-  struct s_pr_flags *pr;
+  pr_flags_t *pr;
 
 #ifdef LIBHD_MEMCHECK
   {
@@ -441,7 +505,7 @@ void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
   }
 #endif
 
-  if(!(pr = get_pr_flags(feature))) return;
+  if(!(pr = pr_flags_by_id(feature))) return;
 
   if(pr->parent == -1u) {
     mask = pr->mask;
@@ -939,6 +1003,8 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->hal = hd_free_hal_devices(hd_data->hal);
 
   hd_data->lsscsi = free_str_list(hd_data->lsscsi);
+
+  hd_data->probe_val = hd_free_hal_properties(hd_data->probe_val);
 
   hd_data->last_idx = 0;
 
@@ -1744,6 +1810,7 @@ void hd_scan(hd_data_t *hd_data)
   hd_t *hd, *hd2;
   uint64_t irqs;
   str_list_t *sl, *sl0;
+  pr_flags_t *pf;
 
 #ifdef LIBHD_MEMCHECK
   if(!libhd_log) {
@@ -1789,8 +1856,28 @@ void hd_scan(hd_data_t *hd_data)
     s = free_mem(s);
 
     for(i = 1; i < pr_default; i++) {		/* 1 because of pr_memory */
-      if((s = hd_probe_feature_by_value(i))) {
-        ADD2LOG("%s%c%s", i == 1 ? "" : " ", hd_probe_feature(hd_data, i) ? '+' : '-', s);
+      pf = pr_flags_by_id(i);
+      if(pf) {
+        j = hd_probe_feature(hd_data, i);
+        ADD2LOG("%s%c%s", i == 1 ? "" : " ", j ? '+' : '-', pf->name);
+        if(j) switch(pf->type) {
+          case p_int32:
+            ADD2LOG("=%d", get_probe_val_int(hd_data, i));
+            break;
+
+          case p_string:
+            ADD2LOG("=%s", get_probe_val_str(hd_data, i) ?: "");
+            break;
+
+          case p_list:
+            s = hd_join(":", get_probe_val_list(hd_data, i));
+            ADD2LOG("=%s", s ?: "");
+            s = free_mem(s);
+            break;
+
+          default:
+            break;
+        }
       }
     }
 
@@ -2623,19 +2710,11 @@ void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg)
  */
 enum probe_feature hd_probe_feature_by_name(char *name)
 {
-  unsigned u;
+  pr_flags_t *flags;
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_probe_feature_by_name, name), name);
-  }
-#endif
+  flags = pr_flags_by_name(name);
 
-  for(u = 0; u < sizeof pr_flags / sizeof *pr_flags; u++)
-    if(!strcmp(name, pr_flags[u].name)) return pr_flags[u].val;
-
-  return 0;
+  return flags ? flags->val : 0;
 }
 
 
@@ -2645,19 +2724,11 @@ enum probe_feature hd_probe_feature_by_name(char *name)
  */
 char *hd_probe_feature_by_value(enum probe_feature feature)
 {
-  unsigned u;
+  pr_flags_t *flags;
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%u\n", __FUNCTION__, CALLED_FROM(hd_probe_feature_by_value, feature), feature);
-  }
-#endif
+  flags = pr_flags_by_id(feature);
 
-  for(u = 0; u < sizeof pr_flags / sizeof *pr_flags; u++)
-    if(feature == pr_flags[u].val) return pr_flags[u].name;
-
-  return NULL;
+  return flags ? flags->name : NULL;
 }
 
 
@@ -3992,10 +4063,12 @@ int cmp_hd(hd_t *hd1, hd_t *hd2)
 
 void get_probe_env(hd_data_t *hd_data)
 {
-  char *s, *t, *env;
+  char *s, *t, *env, *t2, *t3;
   str_list_t *cmd = NULL;
   int j, k;
   char buf[10];
+  hal_prop_t *prop;
+  pr_flags_t *flags;
 
   env = getenv("hwprobe");
   if(!env) {
@@ -4019,12 +4092,55 @@ void get_probe_env(hd_data_t *hd_data)
     }
     else {
       k = 2;
-//      ADD2LOG("hwprobe: +/- missing before \"%s\"\n", t);
-//      return;
     }
 
-    if((j = hd_probe_feature_by_name(t))) {
-      set_probe_feature(hd_data, j, k ? 1 : 0);
+    if((t2 = strchr(t, '=')) && t2 != t) *t2++ = 0;
+
+    if((flags = pr_flags_by_name(t))) {
+      if(flags->type == p_bool) {
+        set_probe_feature(hd_data, j, k ? 1 : 0);
+      }
+      else {
+        prop = hal_get_any(hd_data->probe_val, t);
+        if(!prop) {
+          prop = hal_add_new(&hd_data->probe_val);
+        }
+        else {
+          hal_invalidate(prop);
+        }
+        switch(flags->type) {
+          case p_int32:
+            j = strtol(t2, &t3, 0);
+            if(!*t3) {
+              prop->type = flags->type;
+              prop->key = new_str(t);
+              prop->val.int32 = j;
+              set_probe_feature(hd_data, flags->val, j ? 1 : 0);
+            }
+            break;
+
+          case p_string:
+            if(t2) {
+              prop->type = flags->type;
+              prop->key = new_str(t);
+              prop->val.str = new_str(t2);
+              set_probe_feature(hd_data, flags->val, *t2 ? 1 : 0);
+            }
+            break;
+
+          case p_list:
+            if(t2) {
+              prop->type = flags->type;
+              prop->key = new_str(t);
+              prop->val.list = hd_split(':', t2);
+              set_probe_feature(hd_data, flags->val, prop->val.list ? 1 : 0);
+            }
+            break;
+
+          default:
+            break;
+        }
+      }
     }
     else if(sscanf(t, "%8[^:]:%8[^:]:%8[^:]", buf, buf, buf) == 3) {
       add_str_list(&hd_data->xtra_hd, t - (k == 2 ? 0 : 1));

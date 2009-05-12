@@ -313,7 +313,7 @@ char *all_bits(char *str)
   sl = sl0 = hd_split(' ', str);
   for(; sl; sl = sl->next) {
     u = strtoul(sl->str, NULL, 16);
-    str_printf(&s, -1, "%0*lx", sizeof (unsigned long) * 2, u);
+    str_printf(&s, -1, "%0*lx", (int) sizeof (unsigned long) * 2, u);
   }
   free_str_list(sl0);
   free_mem(str);

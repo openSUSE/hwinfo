@@ -240,11 +240,17 @@ hal_prop_t *hal_get_list(hal_prop_t *prop, const char *key);
 char *hal_get_useful_str(hal_prop_t *prop, const char *key);       
 
 hal_device_t *hal_find_device(hd_data_t *hd_data, char *udi);
+hal_prop_t *hal_add_new(hal_prop_t **prop);
 
 char *hd_get_hddb_dir(void);
 char *hd_get_hddb_path(char *sub);
 
 int hd_mod_cmp(char *str1, char *str2);
+
+int get_probe_val_int(hd_data_t *hd_data, enum probe_feature feature);
+char *get_probe_val_str(hd_data_t *hd_data, enum probe_feature feature);
+str_list_t *get_probe_val_list(hd_data_t *hd_data, enum probe_feature feature);
+
 
 
 #ifdef __cplusplus

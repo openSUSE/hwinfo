@@ -19,7 +19,7 @@ extern "C" {
  */
 
 /** Interface version */
-#define HD_VERSION	15
+#define HD_VERSION	16
 
 /**
  * @defgroup DEBUGpub Debug flags
@@ -117,8 +117,8 @@ typedef enum probe_feature {
   pr_block, pr_block_cdrom, pr_block_part, pr_edd, pr_edd_mod, pr_bios_ddc,
   pr_bios_fb, pr_bios_mode, pr_input, pr_block_mods, pr_bios_vesa,
   pr_cpuemu_debug, pr_scsi_noserial, pr_wlan, pr_bios_crc, pr_hal,
-  pr_bios_vram, pr_bios_acpi, pr_bios_ddc_ports_1, pr_bios_ddc_ports_2,
-  pr_bios_ddc_ports_3, pr_bios_ddc_ports_4, pr_modules_pata, pr_net_eeprom,
+  pr_bios_vram, pr_bios_acpi, pr_bios_ddc_ports, pr_modules_pata,
+  pr_net_eeprom, pr_x86emu,
   pr_max, pr_lxrc, pr_default, 
   pr_all		/**< pr_all must be last */
 } hd_probe_feature_t;
@@ -2639,6 +2639,7 @@ typedef struct {
   unsigned char probe[(pr_all + 7) / 8];	/**< (Internal) bitmask of probing features. */
   unsigned char probe_set[(pr_all + 7) / 8];	/**< (Iternal) bitmask of probing features that will always be set. */
   unsigned char probe_clr[(pr_all + 7) / 8];	/**< (Internal) bitmask of probing features that will always be reset. */
+  hal_prop_t *probe_val;	/**< (Internal) probing features with arbitrary values */
   unsigned last_idx;		/**< (Internal) index of the last hd entry generated */
   unsigned module;		/**< (Internal) the current probing module we are in */
   enum boot_arch boot;		/**< (Internal) boot method */
