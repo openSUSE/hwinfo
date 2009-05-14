@@ -1,3 +1,8 @@
+14/5/2009:	v16.0
+	- 'hwprobe' variables can now have values (int, string, list) instead of
+	  being just flags
+	- fix some compiler warnings
+
 11/5/2009:	v15.27
 	- setup dummy int 0x15 for BIOS emulation (bnc #469863)
 	- fix memory size detection (bnc #500410)
