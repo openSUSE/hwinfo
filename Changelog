@@ -1,3 +1,6 @@
+3/9/2008:	v12.56
+	- braille detection can no longer block libhd (bnc #266163, bnc #422296)
+
 12/3/2008:	v12.55
 	- support MS virtual network devs (bnc #359261)
 
