@@ -58,7 +58,7 @@
 #endif
 
 #define PROGRESS(a, b, c) progress(hd_data, a, b, c)
-#define ADD2LOG(a...) str_printf(&hd_data->log, -2, a)
+#define ADD2LOG(a...) hd_log_printf(hd_data, a)
 
 #undef LIBHD_MEMCHECK
 
@@ -128,6 +128,10 @@ unsigned name2eisa_id(char *);
 char *canon_str(char *, int);
 
 int hex(char *string, int digits);
+
+void hd_log(hd_data_t *hd_data, char *buf, ssize_t len);
+void hd_log_printf(hd_data_t *hd_data, char *format, ...) __attribute__ ((format (printf, 2, 3)));            
+void hd_log_hex(hd_data_t *hd_data, int with_ascii, unsigned data_len, unsigned char *data);
 
 void str_printf(char **buf, int offset, char *format, ...) __attribute__ ((format (printf, 3, 4)));
 void hexdump(char **buf, int with_ascii, unsigned data_len, unsigned char *data);

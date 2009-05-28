@@ -2370,6 +2370,58 @@ char *mod_name_by_idx(unsigned idx)
 }
 
 
+void hd_log(hd_data_t *hd_data, char *buf, ssize_t len)
+{
+  ssize_t new_size;
+  char *p;
+
+  if(len <= 0 || !buf) return;
+
+  if(hd_data->log_size + len + 1 > hd_data->log_max) {
+    new_size = hd_data->log_max + len + (1 << 20);
+    p = realloc(hd_data->log, new_size);
+    if(p) {
+      hd_data->log = p;
+      hd_data->log_max = new_size;
+    }
+  }
+
+  if(hd_data->log) {
+    memcpy(hd_data->log + hd_data->log_size, buf, len);
+    hd_data->log_size += len;
+    hd_data->log[hd_data->log_size] = 0;
+  }
+}
+
+
+void hd_log_printf(hd_data_t *hd_data, char *format, ...)
+{
+  ssize_t l;
+  char *s = NULL;
+  va_list args;
+
+  va_start(args, format);
+  l = vasprintf(&s, format, args);
+  va_end(args);
+
+  hd_log(hd_data, s, l);
+
+  free(s);
+}
+
+
+void hd_log_hex(hd_data_t *hd_data, int with_ascii, unsigned data_len, unsigned char *data)
+{
+  char *buf = NULL;
+
+  hexdump(&buf, with_ascii, data_len, data);
+
+  if(buf) hd_log(hd_data, buf, strlen(buf));
+
+  free(buf);
+}
+
+
 /*
  * Print to a string.
  * Note: *buf must point to a malloc'd memory area (or be NULL).
@@ -2389,12 +2441,6 @@ void str_printf(char **buf, int offset, char *format, ...)
   int len, use_cache;
   char b[0x10000];
   va_list args;
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log) fprintf(libhd_log, ">%p\n", CALLED_FROM(str_printf, buf));
-  }
-#endif
 
   use_cache = offset == -2 ? 1 : 0;
 
@@ -2424,12 +2470,6 @@ void str_printf(char **buf, int offset, char *format, ...)
     last_buf = *buf;
     last_len = len;
   }
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log) fprintf(libhd_log, "<%p\n", CALLED_FROM(str_printf, buf));
-  }
-#endif
 }
 
 
@@ -3899,7 +3939,7 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
     ADD2LOG("----- MBR -----\n");
     for(j = 0; j < 512; j += 0x10) {
       ADD2LOG("  %03x  ", j);
-      hexdump(&hd_data->log, 1, 0x10, dl1->data + j);
+      hd_log_hex(hd_data, 1, 0x10, dl1->data + j);
       ADD2LOG("\n");
     }
     ADD2LOG("----- MBR end -----\n");
@@ -5515,13 +5555,7 @@ void hd_fork(hd_data_t *hd_data, int timeout, int total_timeout)
         }
       }
 
-      i = hd_data->log ? strlen(hd_data->log) : 0;
-
-      if(hd_data_shm->log) {
-        j = strlen(hd_data_shm->log);
-        hd_data->log = resize_mem(hd_data->log, i + j + 1);
-        memcpy(hd_data->log + i, hd_data_shm->log, j + 1);
-      }
+      hd_log(hd_data, hd_data_shm->log, hd_data_shm->log_size);
 
       ADD2LOG("******  stopped child process %d (%ds)  ******\n", (int) child, rem_time);
     }
@@ -5532,6 +5566,7 @@ void hd_fork(hd_data_t *hd_data, int timeout, int total_timeout)
       libhd_log = NULL;
 #endif
       hd_data->log = free_mem(hd_data->log);
+      hd_data->log_size = hd_data->log_max = 0;
 
       hd_data->flags.forked = 1;
 
@@ -5563,16 +5598,14 @@ void hd_fork_done(hd_data_t *hd_data)
  */
 void copy_log2shm(hd_data_t *hd_data)
 {
-  int len;
-  void *p;
   hd_data_t *hd_data_shm;
 
   hd_data_shm = hd_data->shm.data;
 
   if(hd_data->log) {
-    len = strlen(hd_data->log) + 1;
-    p = hd_shm_add(hd_data, hd_data->log, len);
-    hd_data_shm->log = p;
+    hd_data_shm->log_size = hd_data->log_size;
+    hd_data_shm->log_max = hd_data->log_size + 1;
+    hd_data_shm->log = hd_shm_add(hd_data, hd_data->log, hd_data_shm->log_max);
   }
 }
 

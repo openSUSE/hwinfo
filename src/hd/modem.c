@@ -716,7 +716,7 @@ void at_cmd(hd_data_t *hd_data, char *at, int raw, int log_it)
       ADD2LOG("%s@%u: %s\n", sm->dev_name, sm->cur_baud, at);
       if(raw) {
         ADD2LOG("  ");
-        hexdump(&hd_data->log, 1, sm->buf_len, sm->buf);
+        hd_log_hex(hd_data, 1, sm->buf_len, sm->buf);
         ADD2LOG("\n");
       }
       else {
@@ -1048,19 +1048,19 @@ void dump_ser_modem_data(hd_data_t *hd_data)
 
     if(sm->garbage) {
       ADD2LOG("  pre_garbage[%u]: ", sm->garbage);
-      hexdump(&hd_data->log, 1, sm->garbage, sm->buf);
+      hd_log_hex(hd_data, 1, sm->garbage, sm->buf);
       ADD2LOG("\n");  
     }
 
     if(sm->pnp) {
       ADD2LOG("  pnp[%u]: ", sm->pnp);
-      hexdump(&hd_data->log, 1, sm->pnp, sm->buf + sm->garbage);
+      hd_log_hex(hd_data, 1, sm->pnp, sm->buf + sm->garbage);
       ADD2LOG("\n");
     }
 
     if((j = sm->buf_len - (sm->garbage + sm->pnp))) {
       ADD2LOG("  post_garbage[%u]: ", j);
-      hexdump(&hd_data->log, 1, j, sm->buf + sm->garbage + sm->pnp);
+      hd_log_hex(hd_data, 1, j, sm->buf + sm->garbage + sm->pnp);
       ADD2LOG("\n");
     }
 

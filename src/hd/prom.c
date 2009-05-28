@@ -583,7 +583,7 @@ void dump_devtree_data(hd_data_t *hd_data)
       ADD2LOG("    EDID record:\n");
       for(u = 0; u < 0x80; u += 0x10) {
         ADD2LOG("    %02x  ", u);
-        hexdump(&hd_data->log, 1, 0x10, devtree->edid + u);
+        hd_log_hex(hd_data, 1, 0x10, devtree->edid + u);
         ADD2LOG("\n");
       }
     }

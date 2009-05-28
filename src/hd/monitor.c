@@ -374,7 +374,7 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
     tag = (edid[i] << 24) + (edid[i + 1] << 16) + (edid[i + 2] << 8) + edid[i + 3];
 
     ADD2LOG("  #%d: ", (i - 0x36)/0x12);
-    hexdump(&hd_data->log, 1, 0x12, edid + i);
+    hd_log_hex(hd_data, 1, 0x12, edid + i);
     ADD2LOG("\n");
 
     switch(tag) {

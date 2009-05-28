@@ -270,7 +270,7 @@ void hd_pci_read_data(hd_data_t *hd_data)
         if(pci->edid_len[u] > 0) {
           for(i = 0; i < sizeof pci->edid_data[u]; i += 0x10) {
             ADD2LOG("      ");
-            hexdump(&hd_data->log, 1, 0x10, pci->edid_data[u] + i);
+            hd_log_hex(hd_data, 1, 0x10, pci->edid_data[u] + i);
             ADD2LOG("\n");
           }
         }
@@ -563,7 +563,7 @@ void dump_pci_data(hd_data_t *hd_data)
     for(i = 0; (unsigned) i < pci->data_ext_len; i += 0x10) {
       ADD2LOG("  %02x: ", i);
       j = pci->data_ext_len - i;
-      hexdump(&hd_data->log, 1, j > 0x10 ? 0x10 : j, pci->data + i);
+      hd_log_hex(hd_data, 1, j > 0x10 ? 0x10 : j, pci->data + i);
       ADD2LOG("\n");
     }
 

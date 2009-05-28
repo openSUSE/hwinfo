@@ -608,7 +608,7 @@ void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, char *labe
   ADD2LOG("----- %s 0x%05x - 0x%05x -----\n", label, mem->start, mem->start + mem->size - 1);
   for(u = 0; u < mem->size; u += step) {
     ADD2LOG("  %03x  ", u + mem->start);
-    hexdump(&hd_data->log, 1, mem->size - u > 0x10 ? 0x10 : mem->size - u, mem->data + u);
+    hd_log_hex(hd_data, 1, mem->size - u > 0x10 ? 0x10 : mem->size - u, mem->data + u);
     ADD2LOG("\n");
   }
   ADD2LOG("----- %s end -----\n", label);
@@ -719,7 +719,7 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
     memcpy(sm->any.data, memory.data + ofs, slen);
     sm->any.handle = memory.data[ofs + 2] + (memory.data[ofs + 3] << 8);
     ADD2LOG("  type 0x%02x [0x%04x]: ", type, sm->any.handle);
-    if(slen) hexdump(&hd_data->log, 0, slen, sm->any.data);
+    if(slen) hd_log_hex(hd_data, 0, slen, sm->any.data);
     ADD2LOG("\n");
     if(type == sm_end) break;
     ofs += slen;
@@ -1062,7 +1062,7 @@ void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
       len = type == 0 ? 20 : type <= 4 ? 8 : 16;
       ADD2LOG("  %stype %u, len %u\n    ", type > 4 ? "unknown ": "", type, len);
       if(len + u > cfg_len) len = cfg_len - u;
-      hexdump(&hd_data->log, 1, len, mem->data + u);
+      hd_log_hex(hd_data, 1, len, mem->data + u);
       ADD2LOG("\n");
       if(type > 4) break;
       if(type == 0) {
@@ -1082,7 +1082,7 @@ void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
       len = mem->data[u + cfg_len + 1];
       ADD2LOG("  type %u, len %u\n    ", type, len);
       if(len + u > xcfg_len) len = xcfg_len - u;
-      hexdump(&hd_data->log, 1, len, mem->data + cfg_len + u);
+      hd_log_hex(hd_data, 1, len, mem->data + cfg_len + u);
       ADD2LOG("\n");
       if(len < 2) {
         ADD2LOG("  oops: invalid record lenght\n");

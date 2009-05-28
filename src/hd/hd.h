@@ -59,6 +59,8 @@ extern "C" {
 #include <termios.h>
 #include <sys/types.h>
 
+//typedef struct vm_s vm_t;
+
 /**
  * libhd's directory
  */
@@ -2694,6 +2696,9 @@ typedef struct {
   edd_info_t edd[0x80];		/**< (Internal) enhanced disk drive data */
   hal_device_t *hal;		/**< (Internal) HAL data (if any) */
   str_list_t *lsscsi;		/**< (Internal) lsscsi result (if any) */
+  struct vm_s *vm;		/**< (Internal) x86emu vm */
+  size_t log_size;		/**< (Internal) current log size (including final 0) */
+  size_t log_max;		/**< (Internal) log buffer size */
 } hd_data_t;
 
 

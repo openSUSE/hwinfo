@@ -194,7 +194,7 @@ unsigned do_alva(hd_data_t *hd_data, char *dev_name, int cnt)
     }
   }
   ADD2LOG("alva.%d@%s[%d]: ", timeout, dev_name, i);
-  if(i > 0) hexdump(&hd_data->log, 1, i, buffer);
+  if(i > 0) hd_log_hex(hd_data, 1, i, buffer);
   ADD2LOG("\n");
 
   PROGRESS(5, cnt, "alva read done");
@@ -274,7 +274,7 @@ unsigned do_fhp(hd_data_t *hd_data, char *dev_name, unsigned baud, int cnt)
   PROGRESS(5, cnt, "fhp read done");
 
   ADD2LOG("fhp@%s[%d]: ", dev_name, i);
-  if(i > 0) hexdump(&hd_data->log, 1, i, buf);
+  if(i > 0) hd_log_hex(hd_data, 1, i, buf);
   ADD2LOG("\n");
 
   dev = 0;
@@ -395,7 +395,7 @@ unsigned do_ht(hd_data_t *hd_data, char *dev_name, int cnt)
   }
 
   ADD2LOG("ht@%s[%d]: ", dev_name, i);
-  if(i > 0) hexdump(&hd_data->log, 1, i, buf);
+  if(i > 0) hd_log_hex(hd_data, 1, i, buf);
   ADD2LOG("\n");
 
   if(!dev) ADD2LOG("no ht display: 0x%02x\n", buf[1]);
@@ -465,7 +465,7 @@ unsigned do_baum(hd_data_t *hd_data, char *dev_name, int cnt)
   PROGRESS(4, cnt, "baum read done");
 
   ADD2LOG("baum@%s[%d]: ", dev_name, i);
-  if(i > 0) hexdump(&hd_data->log, 1, i, buf);
+  if(i > 0) hd_log_hex(hd_data, 1, i, buf);
   ADD2LOG("\n");
 
   /* reset serial lines */
@@ -547,7 +547,7 @@ unsigned do_fhp_new(hd_data_t *hd_data, char *dev_name, int cnt)
   PROGRESS(4, cnt, "fhp2 read done");
 
   ADD2LOG("fhp2@%s[%d]: ", dev_name, i);
-  if(i > 0) hexdump(&hd_data->log, 1, i, retstr);
+  if(i > 0) hd_log_hex(hd_data, 1, i, retstr);
   ADD2LOG("\n");
 
   id = 0;

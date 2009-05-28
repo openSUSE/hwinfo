@@ -115,7 +115,7 @@ unsigned read_data(hd_data_t *hd_data, int fd, unsigned char *buf, unsigned buf_
 
   if((hd_data->debug & HD_DEB_MOUSE)) {
     ADD2LOG("ps/2[%d]: ", len);
-    hexdump(&hd_data->log, 1, len, buf);
+    hd_log_hex(hd_data, 1, len, buf);
     ADD2LOG("\n");
   }
 
@@ -747,25 +747,25 @@ void dump_ser_mouse_data(hd_data_t *hd_data)
 
     if(sm->garbage) {
       ADD2LOG("  garbage[%u]: ", sm->garbage);
-      hexdump(&hd_data->log, 1, sm->garbage, sm->buf);
+      hd_log_hex(hd_data, 1, sm->garbage, sm->buf);
       ADD2LOG("\n");
     }
 
     if(sm->non_pnp) {
       ADD2LOG("  non-pnp[%u]: ", sm->non_pnp);
-      hexdump(&hd_data->log, 1, sm->non_pnp, sm->buf + sm->garbage);
+      hd_log_hex(hd_data, 1, sm->non_pnp, sm->buf + sm->garbage);
       ADD2LOG("\n");
     }
 
     if(sm->pnp) {
       ADD2LOG("  pnp[%u]: ", sm->pnp);
-      hexdump(&hd_data->log, 1, sm->pnp, sm->buf + sm->garbage + sm->non_pnp);
+      hd_log_hex(hd_data, 1, sm->pnp, sm->buf + sm->garbage + sm->non_pnp);
       ADD2LOG("\n");
     }
 
     if((j = sm->buf_len - (sm->garbage + sm->non_pnp + sm->pnp))) {
       ADD2LOG("  moves[%u]: ", j);
-      hexdump(&hd_data->log, 1, j, sm->buf + sm->garbage + sm->non_pnp + sm->pnp);
+      hd_log_hex(hd_data, 1, j, sm->buf + sm->garbage + sm->non_pnp + sm->pnp);
       ADD2LOG("\n");
     }
 

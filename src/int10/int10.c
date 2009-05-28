@@ -117,7 +117,7 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
         ADD2LOG("edid record (port %d):\n", port);
         for(i = 0; i < sizeof *vbe->ddc_port / sizeof **vbe->ddc_port; i += 0x10) {
           ADD2LOG("  ");
-          hexdump(&hd_data->log, 1, 0x10, vbe->ddc_port[port] + i);
+          hd_log_hex(hd_data, 1, 0x10, vbe->ddc_port[port] + i);
           ADD2LOG("\n");
         }
       } else {
@@ -337,11 +337,9 @@ void read_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe, unsigned char *v, unsign
 void log_err(char *format, ...)
 {
   va_list args;
-  char buf[1024];
 
   va_start(args, format);
-  vsnprintf(buf, sizeof buf, format, args);
-  str_printf(&log_hd_data->log, -2, "%s", buf);
+  hd_log_printf(log_hd_data, format, args);
   va_end(args);
 }
 
