@@ -1,3 +1,6 @@
+2/6/2009:	v12.57
+	- disable old isa isdn card detection (bnc #359175, bnc #394992)
+
 3/9/2008:	v12.56
 	- braille detection can no longer block libhd (bnc #266163, bnc #422296)
 
