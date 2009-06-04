@@ -103,9 +103,7 @@ static void dump_memory(hd_data_t *hd_data, memory_range_t *mem, int sparse, cha
 static void get_pnp_support_status(memory_range_t *mem, bios_info_t *bt);
 static void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt);
 static void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt);
-#ifndef LIBHD_TINY
 static void add_panel_info(hd_data_t *hd_data, bios_info_t *bt);
-#endif
 static void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt);
 static void chk_vbox(hd_data_t *hd_data);
 static unsigned char crc(unsigned char *mem, unsigned len);
@@ -168,12 +166,10 @@ void hd_scan_bios(hd_data_t *hd_data)
   unsigned u, u1;
   memory_range_t mem;
   unsigned smp_ok;
-#ifndef LIBHD_TINY
   vbe_info_t *vbe;
   vbe_mode_info_t *mi;
   hd_res_t *res;
   str_list_t *sl, *sl0;
-#endif
 
   if(!hd_probe_feature(hd_data, pr_bios)) return;
 
@@ -367,9 +363,7 @@ void hd_scan_bios(hd_data_t *hd_data)
     get_pnp_support_status(&hd_data->bios_rom, bt);
     smbios_get_info(hd_data, &hd_data->bios_rom, bt);
     get_fsc_info(hd_data, &hd_data->bios_rom, bt);
-#ifndef LIBHD_TINY
     add_panel_info(hd_data, bt);
-#endif
     add_mouse_info(hd_data, bt);
     chk_vbox(hd_data);
   }
@@ -439,7 +433,6 @@ void hd_scan_bios(hd_data_t *hd_data)
     }
   }
 
-#ifndef LIBHD_TINY
   if(hd_probe_feature(hd_data, pr_bios_vesa)) {
     PROGRESS(4, 0, "vbe");
 
@@ -454,7 +447,12 @@ void hd_scan_bios(hd_data_t *hd_data)
       }
     }
 
-    get_vbe_info(hd_data, vbe);
+    if(hd_probe_feature(hd_data, pr_x86emu)) {
+      get_vbe_info_new(hd_data, vbe);
+    }
+    else {
+      get_vbe_info(hd_data, vbe);
+    }
 
     if(vbe->ok) {
       bt->vbe_ver = vbe->version;
@@ -466,12 +464,6 @@ void hd_scan_bios(hd_data_t *hd_data)
       hd->sub_class.id = sc_fb_vesa;
 
       hd_set_hw_class(hd, hw_vbe);
-
-#if 0
-      hd->detail = new_mem(sizeof *hd->detail);
-      hd->detail->type = hd_detail_bios;
-      hd->detail->bios.data = bt = new_mem(sizeof *bt);
-#endif
 
       hd->vendor.name = new_str(vbe->vendor_name);
       hd->device.name = new_str(vbe->product_name);
@@ -507,25 +499,8 @@ void hd_scan_bios(hd_data_t *hd_data)
           }
         }
       }
-
-#if 0
-      if(
-        hd->vend_name &&
-        !strcmp(hd->vend_name, "Matrox") &&
-        hd->device.name &&
-        (
-          strstr(hd->dev_name, "G200") ||
-          strstr(hd->dev_name, "G400") ||
-          strstr(hd->dev_name, "G450")
-        )
-      ) {
-        hd->broken = 1;
-      }
-#endif
-
     }
   }
-#endif	/* LIBHD_TINY */
 
   PROGRESS(5, 0, "32");
 
@@ -840,7 +815,6 @@ void get_fsc_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
 }
 
 
-#ifndef LIBHD_TINY
 void add_panel_info(hd_data_t *hd_data, bios_info_t *bt)
 {
   unsigned width, height, xsize = 0, ysize = 0;
@@ -895,7 +869,7 @@ void add_panel_info(hd_data_t *hd_data, bios_info_t *bt)
     }
   }
 }
-#endif
+
 
 void add_mouse_info(hd_data_t *hd_data, bios_info_t *bt)
 {
@@ -1168,6 +1142,12 @@ int tp_lookup(char *key_str, unsigned *width, unsigned *height, unsigned *xsize,
   }
 
   return 1;
+}
+
+void get_vbe_info_new(hd_data_t *hd_data, vbe_info_t *vbe)
+{
+  ADD2LOG("***  get_vbe_info_new()  ***\n");
+  get_vbe_info(hd_data, vbe);
 }
 
 #endif /* defined(__i386__) || defined (__x86_64__) */

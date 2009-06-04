@@ -160,6 +160,7 @@ typedef struct {
 
 static pr_flags_t *pr_flags_by_name(char *name);
 static pr_flags_t *pr_flags_by_id(enum probe_feature feature);
+static int set_probe_val(hd_data_t *hd_data, enum probe_feature feature, char *val);
 static void fix_probe_features(hd_data_t *hd_data);
 static void set_probe_feature(hd_data_t *hd_data, enum probe_feature feature, unsigned val);
 static void free_old_hd_entries(hd_data_t *hd_data);
@@ -417,6 +418,58 @@ str_list_t *get_probe_val_list(hd_data_t *hd_data, enum probe_feature feature)
 }
 
 
+int set_probe_val(hd_data_t *hd_data, enum probe_feature feature, char *val)
+{
+  hal_prop_t *prop;
+  pr_flags_t *flags;
+  char *s;
+  int i, is_set = 0;
+
+  if(!val) val = "";
+
+  flags = pr_flags_by_id(feature);
+  if(flags && flags->type != p_bool) {
+    prop = hal_get_any(hd_data->probe_val, flags->name);
+    if(!prop) {
+      prop = hal_add_new(&hd_data->probe_val);
+    }
+    else {
+      hal_invalidate(prop);
+    }
+    switch(flags->type) {
+      case p_int32:
+        i = strtol(val, &s, 0);
+        if(!*s) {
+          prop->type = flags->type;
+          prop->key = new_str(flags->name);
+          prop->val.int32 = i;
+          is_set = i ? 1 : 0;
+        }
+        break;
+
+      case p_string:
+        prop->type = flags->type;
+        prop->key = new_str(flags->name);
+        prop->val.str = new_str(val);
+        is_set = *val ? 1 : 0;
+        break;
+
+      case p_list:
+        prop->type = flags->type;
+        prop->key = new_str(flags->name);
+        prop->val.list = *val ? hd_split(':', val) : NULL;
+        is_set = prop->val.list ? 1 : 0;
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  return is_set;
+}
+
+
 void fix_probe_features(hd_data_t *hd_data)
 {
   int i;
@@ -426,6 +479,7 @@ void fix_probe_features(hd_data_t *hd_data)
     hd_data->probe[i] &= ~hd_data->probe_clr[i];
   }
 }
+
 
 void set_probe_feature(hd_data_t *hd_data, enum probe_feature feature, unsigned val)
 {
@@ -460,50 +514,40 @@ void set_probe_feature(hd_data_t *hd_data, enum probe_feature feature, unsigned 
   fix_probe_features(hd_data);
 }
 
+
 void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
   unsigned ofs, bit, mask;
   int i;
   pr_flags_t *pr;
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_set_probe_feature, hd_data), hd_data);
-  }
-#endif
-
   if(!(pr = pr_flags_by_id(feature))) return;
 
   if(pr->parent == -1u) {
     mask = pr->mask;
-    for(i = 0; (unsigned) i < sizeof pr_flags / sizeof *pr_flags; i++) {
-      if(pr_flags[i].parent != -1u && (pr_flags[i].mask & mask))
+    for(i = 0; i < sizeof pr_flags / sizeof *pr_flags; i++) {
+      if(pr_flags[i].parent != -1u && (pr_flags[i].mask & mask)) {
         hd_set_probe_feature(hd_data, pr_flags[i].val);
+      }
     }
   }
   else {
     ofs = feature >> 3; bit = feature & 7;
-    if(ofs < sizeof hd_data->probe)
+    if(ofs < sizeof hd_data->probe) {
       hd_data->probe[ofs] |= 1 << bit;
+    }
     if(pr->parent) hd_set_probe_feature(hd_data, pr->parent);
   }
 
   fix_probe_features(hd_data);
 }
 
+
 void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
   unsigned ofs, bit, mask;
   int i;
   pr_flags_t *pr;
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_clear_probe_feature, hd_data), hd_data);
-  }
-#endif
 
   if(!(pr = pr_flags_by_id(feature))) return;
 
@@ -521,15 +565,9 @@ void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
   }
 }
 
+
 int hd_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_probe_feature, hd_data), hd_data);
-  }
-#endif
-
   if(feature < 0 || feature >= pr_default) return 0;
 
   return hd_data->probe[feature >> 3] & (1 << (feature & 7)) ? 1 : 0;
@@ -1846,6 +1884,31 @@ void hd_scan(hd_data_t *hd_data)
     get_probe_env(hd_data);
   }
 
+  /* init driver info database */
+  hddb_init(hd_data);
+
+  /* only first time */
+  if(hd_data->last_idx == 0) {
+    hd_set_probe_feature(hd_data, pr_fork);
+    if(!hd_probe_feature(hd_data, pr_fork)) hd_data->flags.nofork = 1;
+//    hd_set_probe_feature(hd_data, pr_sysfs);
+    if(!hd_probe_feature(hd_data, pr_sysfs)) hd_data->flags.nosysfs = 1;
+    hd_set_probe_feature(hd_data, pr_cpuemu);
+    if(hd_probe_feature(hd_data, pr_cpuemu)) hd_data->flags.cpuemu = 1;
+    if(hd_probe_feature(hd_data, pr_udev)) hd_data->flags.udev = 1;
+    if(!hd_probe_feature(hd_data, pr_bios_crc)) hd_data->flags.nobioscrc = 1;
+    hd_set_probe_feature(hd_data, pr_bios_vram);
+    if(hd_probe_feature(hd_data, pr_bios_vram)) hd_data->flags.biosvram = 1;
+    hd_set_probe_feature(hd_data, pr_bios_acpi);
+    hd_set_probe_feature(hd_data, pr_modules_pata);
+    hd_set_probe_feature(hd_data, pr_net_eeprom);
+    hd_data->flags.pata = hd_probe_feature(hd_data, pr_modules_pata) ? 1 : 0;
+    hd_set_probe_feature(hd_data, pr_x86emu);
+    if(!get_probe_val_list(hd_data, pr_x86emu)) {
+      set_probe_val(hd_data, pr_x86emu, "dump");
+    }
+  }
+
   fix_probe_features(hd_data);
 
   if(hd_data->debug && !hd_data->flags.internal) {
@@ -1860,7 +1923,7 @@ void hd_scan(hd_data_t *hd_data)
       if(pf) {
         j = hd_probe_feature(hd_data, i);
         ADD2LOG("%s%c%s", i == 1 ? "" : " ", j ? '+' : '-', pf->name);
-        if(j) switch(pf->type) {
+        switch(pf->type) {
           case p_int32:
             ADD2LOG("=%d", get_probe_val_int(hd_data, i));
             break;
@@ -1884,27 +1947,6 @@ void hd_scan(hd_data_t *hd_data)
     ADD2LOG(")\n");
   }
 
-  /* init driver info database */
-  hddb_init(hd_data);
-
-  /* only first time */
-  if(hd_data->last_idx == 0) {
-    hd_set_probe_feature(hd_data, pr_fork);
-    if(!hd_probe_feature(hd_data, pr_fork)) hd_data->flags.nofork = 1;
-//    hd_set_probe_feature(hd_data, pr_sysfs);
-    if(!hd_probe_feature(hd_data, pr_sysfs)) hd_data->flags.nosysfs = 1;
-    hd_set_probe_feature(hd_data, pr_cpuemu);
-    if(hd_probe_feature(hd_data, pr_cpuemu)) hd_data->flags.cpuemu = 1;
-    if(hd_probe_feature(hd_data, pr_udev)) hd_data->flags.udev = 1;
-    if(!hd_probe_feature(hd_data, pr_bios_crc)) hd_data->flags.nobioscrc = 1;
-    hd_set_probe_feature(hd_data, pr_bios_vram);
-    if(hd_probe_feature(hd_data, pr_bios_vram)) hd_data->flags.biosvram = 1;
-    hd_set_probe_feature(hd_data, pr_bios_acpi);
-    hd_set_probe_feature(hd_data, pr_modules_pata);
-    hd_set_probe_feature(hd_data, pr_net_eeprom);
-    hd_data->flags.pata = hd_probe_feature(hd_data, pr_modules_pata) ? 1 : 0;
-  }
-
   /* get shm segment, if we didn't do it already */
   hd_shm_init(hd_data);
 
@@ -1919,14 +1961,12 @@ void hd_scan(hd_data_t *hd_data)
     s = free_mem(s);
   }
 
-#ifndef LIBHD_TINY
   /*
    * There might be old 'manual' entries left from an earlier scan. Remove
    * them, they will confuse us.
    */
   hd_data->module = mod_manual;
   remove_hd_entries(hd_data);
-#endif
 
   hd_scan_with_hal(hd_data);
 
@@ -4103,11 +4143,10 @@ int cmp_hd(hd_t *hd1, hd_t *hd2)
 
 void get_probe_env(hd_data_t *hd_data)
 {
-  char *s, *t, *env, *t2, *t3;
+  char *s, *t, *env, *t2;
   str_list_t *cmd = NULL;
-  int j, k;
+  int i, k;
   char buf[10];
-  hal_prop_t *prop;
   pr_flags_t *flags;
 
   env = getenv("hwprobe");
@@ -4138,48 +4177,11 @@ void get_probe_env(hd_data_t *hd_data)
 
     if((flags = pr_flags_by_name(t))) {
       if(flags->type == p_bool) {
-        set_probe_feature(hd_data, j, k ? 1 : 0);
+        set_probe_feature(hd_data, flags->val, k ? 1 : 0);
       }
       else {
-        prop = hal_get_any(hd_data->probe_val, t);
-        if(!prop) {
-          prop = hal_add_new(&hd_data->probe_val);
-        }
-        else {
-          hal_invalidate(prop);
-        }
-        switch(flags->type) {
-          case p_int32:
-            j = strtol(t2, &t3, 0);
-            if(!*t3) {
-              prop->type = flags->type;
-              prop->key = new_str(t);
-              prop->val.int32 = j;
-              set_probe_feature(hd_data, flags->val, j ? 1 : 0);
-            }
-            break;
-
-          case p_string:
-            if(t2) {
-              prop->type = flags->type;
-              prop->key = new_str(t);
-              prop->val.str = new_str(t2);
-              set_probe_feature(hd_data, flags->val, *t2 ? 1 : 0);
-            }
-            break;
-
-          case p_list:
-            if(t2) {
-              prop->type = flags->type;
-              prop->key = new_str(t);
-              prop->val.list = hd_split(':', t2);
-              set_probe_feature(hd_data, flags->val, prop->val.list ? 1 : 0);
-            }
-            break;
-
-          default:
-            break;
-        }
+        i = set_probe_val(hd_data, flags->val, t2);
+        set_probe_feature(hd_data, flags->val, k != 2 ? k : i);
       }
     }
     else if(sscanf(t, "%8[^:]:%8[^:]:%8[^:]", buf, buf, buf) == 3) {

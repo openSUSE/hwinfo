@@ -6,3 +6,4 @@
 
 void hd_scan_bios(hd_data_t *hd_data);
 void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe);
+void get_vbe_info_new(hd_data_t *hd_data, vbe_info_t *vbe);
