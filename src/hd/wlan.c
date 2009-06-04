@@ -211,9 +211,6 @@ void hd_scan_wlan(hd_data_t *hd_data)
 	  if (wpa_drv->set_wpa(hd->unix_dev_name, 1) == 0) {
 	    add_str_list(&res->wlan.auth_modes, "wpa-psk");
 	    add_str_list(&res->wlan.auth_modes, "wpa-eap");
-	    if (wpa_drv->set_auth_alg && 
-		wpa_drv->set_auth_alg(hd->unix_dev_name, AUTH_ALG_LEAP)==0)
-	      add_str_list(&res->wlan.auth_modes, "wpa-leap");
 	    if (wpa_drv->set_key(hd->unix_dev_name, WPA_ALG_TKIP, "ff:ff:ff:ff:ff:ff",
 				 0, 0, 0, 0,
 				 "00000000000000000000000000000000", 32) ==0)

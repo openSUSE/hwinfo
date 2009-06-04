@@ -1,3 +1,6 @@
+4/6/2009:	v12.58
+	- don't probe for LEAP (bnc #380671)
+
 2/6/2009:	v12.57
 	- disable old isa isdn card detection (bnc #359175, bnc #394992)
 
