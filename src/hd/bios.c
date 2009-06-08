@@ -447,12 +447,7 @@ void hd_scan_bios(hd_data_t *hd_data)
       }
     }
 
-    if(hd_probe_feature(hd_data, pr_x86emu)) {
-      get_vbe_info_new(hd_data, vbe);
-    }
-    else {
-      get_vbe_info(hd_data, vbe);
-    }
+    get_vbe_info(hd_data, vbe);
 
     if(vbe->ok) {
       bt->vbe_ver = vbe->version;
@@ -1142,12 +1137,6 @@ int tp_lookup(char *key_str, unsigned *width, unsigned *height, unsigned *xsize,
   }
 
   return 1;
-}
-
-void get_vbe_info_new(hd_data_t *hd_data, vbe_info_t *vbe)
-{
-  ADD2LOG("***  get_vbe_info_new()  ***\n");
-  get_vbe_info(hd_data, vbe);
 }
 
 #endif /* defined(__i386__) || defined (__x86_64__) */

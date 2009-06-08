@@ -5,10 +5,18 @@ CLEANFILES	= hwinfo hwinfo.pc hwinfo.static hwscan hwscan.static hwscand hwscanq
 LIBDIR		= /usr/lib
 ULIBDIR		= $(LIBDIR)
 LIBS		= -lhd
-SLIBS		= -lhd -ldbus-1 -lhal
-TLIBS		= -lhd_tiny -ldbus-1 -lhal
-SO_LIBS		= -ldbus-1 -lhal
-TSO_LIBS	= -ldbus-1 -lhal
+SLIBS		= -lhd -ldbus-1 -lhal -lx86emu
+TLIBS		= -lhd_tiny -ldbus-1 -lhal -lx86emu
+SO_LIBS		= -ldbus-1 -lhal -lx86emu
+TSO_LIBS	= -ldbus-1 -lhal -lx86emu
+
+# ia64
+ifneq "$(findstring $(ARCH), i386 x86_64)" ""
+SLIBS		+= -lx86emu
+TLIBS		+= -lx86emu
+SO_LIBS		+= -lx86emu
+TSO_LIBS	+= -lx86emu
+endif
 
 export SO_LIBS
 

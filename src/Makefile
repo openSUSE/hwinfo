@@ -7,12 +7,6 @@ CLEANFILES	= $(LIBHD) $(LIBHD_D) $(LIBHD_SO) *.so *.so.* *.a
 
 include $(TOPDIR)/Makefile.common
 
-ifneq "$(findstring $(ARCH), i386 x86_64 ia64)" ""
-ifneq ($(LIBHD_BASE), libhd_tiny)
-SUBDIRS	+= x86emu int10
-endif
-endif
-
 #ifeq "$(findstring $(ARCH), i386 alpha)" ""
 #SUBDIRS	:= $(filter-out pnpdump, $(SUBDIRS))
 #endif

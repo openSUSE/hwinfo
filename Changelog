@@ -1,3 +1,5 @@
+	- rewrite monitor detection to use libx86emu
+
 14/5/2009:	v16.0
 	- 'hwprobe' variables can now have values (int, string, list) instead of
 	  being just flags
