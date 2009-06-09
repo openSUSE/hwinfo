@@ -98,11 +98,6 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
   vm->hd_data = hd_data;
   hd_data->vm = vm;
 
-  if(!vm_prepare(vm)) {
-    ADD2LOG("x86emu: could not init vm\n");
-    return;
-  }
-
   for(sl = get_probe_val_list(hd_data, pr_x86emu); sl && (t = sl->str); sl = sl->next) {
     err = 0;
     u = 1;
@@ -147,6 +142,12 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
         }
       }
     }
+  }
+
+  if(!vm_prepare(vm)) {
+    ADD2LOG("x86emu: could not init vm\n");
+
+    return;
   }
 
   vm->ports = 3;

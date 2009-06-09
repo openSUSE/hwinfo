@@ -656,7 +656,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_prom);
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_bios_ddc);
-      hd_set_probe_feature(hd_data, pr_bios_fb);
+      // hd_set_probe_feature(hd_data, pr_bios_fb);
       hd_set_probe_feature(hd_data, pr_fb);
       hd_set_probe_feature(hd_data, pr_monitor);
       break;
@@ -957,13 +957,6 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   modinfo_t *p;
   unsigned u;
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_free_hd_data, hd_data), hd_data);
-  }
-#endif
-
   add_hd_entry2(&hd_data->old_hd, hd_data->hd); hd_data->hd = NULL;
   hd_data->log = free_mem(hd_data->log);
   free_old_hd_entries(hd_data);		/* hd_data->old_hd */
@@ -1100,13 +1093,6 @@ driver_info_t *free_driver_info(driver_info_t *di)
 {
   driver_info_t *next;
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(free_driver_info, di), di);
-  }
-#endif
-
   for(; di; di = next) {
     next = di->next;
 
@@ -1194,13 +1180,6 @@ int exists_hd_entry(hd_data_t *hd_data, hd_t *old_hd, hd_t *hd_ex)
 hd_t *hd_free_hd_list(hd_t *hd)
 {
   hd_t *h;
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_free_hd_list, hd), hd);
-  }
-#endif
 
   /* Note: hd->next should better be NULL! */
   if(hd && hd->tag.freeit) {
@@ -1542,12 +1521,6 @@ void *new_mem(size_t size)
 
   p = calloc(size, 1);
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", CALLED_FROM(new_mem, size), p, size);
-  }
-#endif
-
   if(p) return p;
 
   fprintf(stderr, "memory oops 1\n");
@@ -1558,19 +1531,7 @@ void *new_mem(size_t size)
 
 void *resize_mem(void *p, size_t n)
 {
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log && p) fprintf(libhd_log, "%p\t%p\n", CALLED_FROM(resize_mem, p), p);
-  }
-#endif
-
   p = realloc(p, n);
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", CALLED_FROM(resize_mem, p), p, n);
-  }
-#endif
 
   if(!p) {
     fprintf(stderr, "memory oops 7\n");
@@ -1582,19 +1543,7 @@ void *resize_mem(void *p, size_t n)
 
 void *add_mem(void *p, size_t elem_size, size_t n)
 {
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log && p) fprintf(libhd_log, "%p\t%p\n", CALLED_FROM(add_mem, p), p);
-  }
-#endif
-
   p = realloc(p, (n + 1) * elem_size);
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", CALLED_FROM(add_mem, p), p, (n + 1) * elem_size);
-  }
-#endif
 
   if(!p) {
     fprintf(stderr, "memory oops 7\n");
@@ -1614,12 +1563,6 @@ char *new_str(const char *s)
 
   t = strdup(s);
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log) fprintf(libhd_log, "%p\t%p\t0x%x\n", CALLED_FROM(new_str, s), t, strlen(t) + 1);
-  }
-#endif
-
   if(t) return t;
 
   fprintf(stderr, "memory oops 2\n");
@@ -1631,12 +1574,6 @@ char *new_str(const char *s)
 
 void *free_mem(void *p)
 {
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log && p) fprintf(libhd_log, "%p\t%p\n", CALLED_FROM(free_mem, p), p);
-  }
-#endif
-
   if(p) free(p);
 
   return NULL;
@@ -1849,24 +1786,6 @@ void hd_scan(hd_data_t *hd_data)
   uint64_t irqs;
   str_list_t *sl, *sl0;
   pr_flags_t *pf;
-
-#ifdef LIBHD_MEMCHECK
-  if(!libhd_log) {
-    char *s = getenv("LIBHD_MEMCHECK");
-
-    if(s && *s) {
-      libhd_log = fopen(s, "w");
-      if(libhd_log) setlinebuf(libhd_log);
-    }
-  }
-#endif
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_scan, hd_data), hd_data);
-  }
-#endif
 
   if(!hd_data->flags.internal) {
   /* log debug & probe flags */
@@ -2252,12 +2171,6 @@ char *canon_str(char *s, int len)
   char *m2, *m1, *m0;
   int i;
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log) fprintf(libhd_log, ">%p\n", CALLED_FROM(canon_str, s));
-  }
-#endif
-
   if(len < 0) len = 0;		/* just to be safe */
 
   m0 = new_mem(len + 1);
@@ -2273,12 +2186,6 @@ char *canon_str(char *s, int len)
 
   m2 = new_str(m0);
   free_mem(m0);
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log) fprintf(libhd_log, "<%p\n", CALLED_FROM(canon_str, s));
-  }
-#endif
 
   return m2;
 }
@@ -2362,13 +2269,6 @@ hd_t *hd_get_device_by_idx(hd_data_t *hd_data, unsigned idx)
 {
   hd_t *hd;
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_get_device_by_idx, hd_data), hd_data);
-  }
-#endif
-
   if(!idx) return NULL;		/* early out: idx is always != 0 */
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
@@ -2419,6 +2319,7 @@ void hd_log(hd_data_t *hd_data, char *buf, ssize_t len)
 
   if(hd_data->log_size + len + 1 > hd_data->log_max) {
     new_size = hd_data->log_max + len + (1 << 20);
+    new_size += new_size / 2;
     p = realloc(hd_data->log, new_size);
     if(p) {
       hd_data->log = p;
@@ -2554,22 +2455,10 @@ str_list_t *search_str_list(str_list_t *sl, char *str)
  */
 str_list_t *add_str_list(str_list_t **sl, char *str)
 {
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log) fprintf(libhd_log, ">%p\n", CALLED_FROM(add_str_list, sl));
-  }
-#endif
-
   while(*sl) sl = &(*sl)->next;
 
   *sl = new_mem(sizeof **sl);
   (*sl)->str = new_str(str);
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log) fprintf(libhd_log, "<%p\n", CALLED_FROM(add_str_list, sl));
-  }
-#endif
 
   return *sl;
 }
@@ -2619,31 +2508,15 @@ str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines)
   int pipe = 0;
   str_list_t *sl_start = NULL, *sl_end = NULL, *sl;
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log) fprintf(libhd_log, ">%p\n", CALLED_FROM(read_file, file_name));
-  }
-#endif
-
   if(*file_name == '|') {
     pipe = 1;
     file_name++;
     if(!(f = popen(file_name, "r"))) {
-#ifdef LIBHD_MEMCHECK
-      {
-        if(libhd_log) fprintf(libhd_log, "<%p\n", CALLED_FROM(read_file, file_name));
-      }
-#endif
       return NULL;
     }
   }
   else {
     if(!(f = fopen(file_name, "r"))) {
-#ifdef LIBHD_MEMCHECK
-      {
-        if(libhd_log) fprintf(libhd_log, "<%p\n", CALLED_FROM(read_file, file_name));
-      }
-#endif
       return NULL;
     }
   }
@@ -2669,12 +2542,6 @@ str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines)
     pclose(f);
   else
     fclose(f);
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log) fprintf(libhd_log, "<%p\n", CALLED_FROM(read_file, file_name));
-  }
-#endif
 
   return sl_start;
 }
@@ -2864,13 +2731,6 @@ int hd_module_is_active(hd_data_t *hd_data, char *mod)
   char *s1, *s2;
 #endif
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_module_is_active, hd_data), hd_data);
-  }
-#endif
-
   mod = new_str(mod);
 
   /* convert '-' to '_' */
@@ -2951,13 +2811,6 @@ int hd_apm_enabled(hd_data_t *hd_data)
 {
   hd_t *hd;
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_apm_enabled, hd_data), hd_data);
-  }
-#endif
-
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
       hd->base_class.id == bc_internal &&
@@ -2978,13 +2831,6 @@ int hd_usb_support(hd_data_t *hd_data)
 {
   hd_t *hd;
   hd_res_t *res;
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_usb_support, hd_data), hd_data);
-  }
-#endif
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class.id == bc_serial && hd->sub_class.id == sc_ser_usb) {
@@ -3007,13 +2853,6 @@ int hd_smp_support(hd_data_t *hd_data)
 #if defined(__i386__) || defined (__x86_64__)
   unsigned cpu_threads = 0;
   cpu_info_t *ct;
-#endif
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_smp_support, hd_data), hd_data);
-  }
 #endif
 
   u = hd_data->flags.internal;
@@ -3086,13 +2925,6 @@ int hd_color(hd_data_t *hd_data)
   }
 #endif
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_color, hd_data), hd_data);
-  }
-#endif
-
   if(hd_data->color_code) return hd_data->color_code & 0xffff;
 
   return -1;
@@ -3101,13 +2933,6 @@ int hd_color(hd_data_t *hd_data)
 
 int hd_mac_color(hd_data_t *hd_data)
 {
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_mac_color, hd_data), hd_data);
-  }
-#endif
-
   return hd_color(hd_data);
 }
 
@@ -3118,13 +2943,6 @@ unsigned hd_display_adapter(hd_data_t *hd_data)
   driver_info_t *di;
   unsigned disp, disp_sbus, disp_pci, disp_any, disp_di;
   unsigned disp_cnt, disp_any_cnt;
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_display_adapter, hd_data), hd_data);
-  }
-#endif
 
   /* if we know exactly where our primary display is, return it */
   if(hd_get_device_by_idx(hd_data, hd_data->display)) return hd_data->display;
@@ -3185,13 +3003,6 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 {
   hd_t *hd;
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_cpu_arch, hd_data), hd_data);
-  }
-#endif
-
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
       hd->base_class.id == bc_internal &&
@@ -3242,13 +3053,6 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 
 enum boot_arch hd_boot_arch(hd_data_t *hd_data)
 {
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_boot_arch, hd_data), hd_data);
-  }
-#endif
-
   return hd_data->boot;
 }
 
@@ -3383,15 +3187,6 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
   unsigned char probe_save[sizeof hd_data->probe];
   unsigned fast_save;
 
-#ifdef LIBHD_MEMCHECK
-#ifndef __PPC__
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\t%u\t%u\t%p\n", __FUNCTION__, CALLED_FROM(hd_list, hd_data), hd_data, item, rescan, hd_old);
-  }
-#endif
-#endif
-
   if(rescan) {
     memcpy(probe_save, hd_data->probe, sizeof probe_save);
     fast_save = hd_data->flags.fast;
@@ -3451,15 +3246,6 @@ hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t sta
 {
   hd_t *hd, *hd1, *hd_list = NULL;
   unsigned char probe_save[sizeof hd_data->probe];
-
-#ifdef LIBHD_MEMCHECK
-#ifndef __PPC__
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\t%u\n", __FUNCTION__, CALLED_FROM(hd_list_with_status, hd_data), hd_data, item);
-  }
-#endif
-#endif
 
   memcpy(probe_save, hd_data->probe, sizeof probe_save);
   hd_clear_probe_feature(hd_data, pr_all);
@@ -3610,25 +3396,7 @@ hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
   hd_t *hd, *hd1, *hd_list = NULL;
 //  hd_t *bridge_hd;
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_base_class_list, hd_data), hd_data);
-  }
-#endif
-
   for(hd = hd_data->hd; hd; hd = hd->next) {
-
-#if 0
-    /* ###### fix later: card bus magic */
-    if((bridge_hd = hd_get_device_by_idx(hd_data, hd->attached_to))) {
-      if(
-        bridge_hd->base_class.id == bc_bridge &&
-        bridge_hd->sub_class.id == sc_bridge_cardbus
-      ) continue;
-    }
-#endif
-
     /* add multimedia/sc_multi_video to display */
     if(
       hd->base_class.id == base_class ||
@@ -3650,13 +3418,6 @@ hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_cl
 {
   hd_t *hd, *hd1, *hd_list = NULL;
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_sub_class_list, hd_data), hd_data);
-  }
-#endif
-
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->base_class.id == base_class && hd->sub_class.id == sub_class) {
       hd1 = add_hd_entry2(&hd_list, new_mem(sizeof *hd_list));
@@ -3670,13 +3431,6 @@ hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_cl
 hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_bus_list, hd_data), hd_data);
-  }
-#endif
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(hd->bus.id == bus) {
@@ -3729,12 +3483,6 @@ int hd_timeout(void(*func)(void *), void *arg, int timeout)
   }
   else {
     /* fork again */
-
-#ifdef LIBHD_MEMCHECK
-    /* stop logging in child process */
-    if(libhd_log) fclose(libhd_log);
-    libhd_log = NULL;
-#endif
 
     child2 = fork();
     if(child2 == -1) return -1;
@@ -3917,13 +3665,6 @@ unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
   char *s;
   int i, j;
   disk_t *dl, *dl0 = NULL, *dl1 = NULL;
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_boot_disk, hd_data), hd_data);
-  }
-#endif
 
   if(matches) *matches = 0;
 
@@ -5562,11 +5303,6 @@ void hd_fork(hd_data_t *hd_data, int timeout, int total_timeout)
       ADD2LOG("******  stopped child process %d (%ds)  ******\n", (int) child, rem_time);
     }
     else {
-#ifdef LIBHD_MEMCHECK
-      /* stop logging in child process */
-      if(libhd_log) fclose(libhd_log);
-      libhd_log = NULL;
-#endif
       hd_data->log = free_mem(hd_data->log);
       hd_data->log_size = hd_data->log_max = 0;
 

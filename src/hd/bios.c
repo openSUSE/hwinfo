@@ -541,24 +541,12 @@ void read_memory(hd_data_t *hd_data, memory_range_t *mem)
   char *s = getenv("LIBHD_MEM");
 #endif
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log) fprintf(libhd_log, ">%p\n", CALLED_FROM(read_memory, mem));
-  }
-#endif
-
   if(mem->data) free_mem(mem->data);
   mem->data = new_mem(mem->size);
 #ifdef BIOS_TEST
   hd_read_mmap(hd_data, s ?: DEV_MEM, mem->data, mem->start, mem->size);
 #else
   hd_read_mmap(hd_data, DEV_MEM, mem->data, mem->start, mem->size);
-#endif
-
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log) fprintf(libhd_log, "<%p\n", CALLED_FROM(read_memory, mem));
-  }
 #endif
 }
 

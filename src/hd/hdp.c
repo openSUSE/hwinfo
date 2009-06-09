@@ -52,13 +52,6 @@ void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
   str_list_t *sl;
   hal_prop_t *prop;
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_dump_entry, hd_data), hd_data);
-  }
-#endif
-
   if(!h) return;
 
   s = "";

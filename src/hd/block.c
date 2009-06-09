@@ -1078,13 +1078,6 @@ cdrom_info_t *hd_read_cdrom_info(hd_data_t *hd_data, hd_t *hd)
   unsigned et;
   unsigned u0, u1, u2;
 
-#ifdef LIBHD_MEMCHECK
-  {
-    if(libhd_log)
-      fprintf(libhd_log, "; %s\t%p\t%p\n", __FUNCTION__, CALLED_FROM(hd_read_cdrom_info, hd_data), hd_data);
-  }
-#endif
-
   /* free existing entry */
   if(hd->detail && hd->detail->type != hd_detail_cdrom) {
     hd->detail = free_hd_detail(hd->detail);
