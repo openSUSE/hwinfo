@@ -53,6 +53,11 @@ typedef struct vm_s {
   unsigned trace_flags;
   unsigned dump_flags;
 
+  int trace_only;
+  int dump_only;
+
+  int exec_count;
+
   hd_data_t *hd_data;
 } vm_t;
 
@@ -120,6 +125,16 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
     else if(!strcmp(t, "dump.io"))      dbits = X86EMU_DUMP_IO;
     else if(!strcmp(t, "dump.ints"))    dbits = X86EMU_DUMP_INTS;
     else if(!strcmp(t, "dump.time"))    dbits = X86EMU_DUMP_TIME;
+    else if(!strncmp(t, "timeout=", sizeof "timeout=" - 1)) {
+      i = strtol(t + sizeof "timeout=" - 1, NULL, 0);
+      if(i) vm->timeout = i;
+    }
+    else if(!strncmp(t, "trace.only=", sizeof "trace.only=" - 1)) {
+      vm->trace_only = strtol(t + sizeof "trace.only=" - 1, NULL, 0);
+    }
+    else if(!strncmp(t, "dump.only=", sizeof "dump.only=" - 1)) {
+      vm->dump_only = strtol(t + sizeof "dump.only=" - 1, NULL, 0);
+    }
     else err = 5;
     if(err) {
       ADD2LOG("x86emu: invalid flag '%s'\n", t);
@@ -269,6 +284,9 @@ vm_t *vm_new()
   x86emu_set_log(vm->emu, 200000000, flush_log);
   x86emu_set_intr_handler(vm->emu, do_int);
 
+  vm->trace_only = -1;
+  vm->dump_only = -1;
+
   return vm;
 }
 
@@ -288,9 +306,16 @@ unsigned vm_run(x86emu_t *emu, double *t)
   vm_t *vm = emu->private;
   unsigned err;
 
-  x86emu_log(emu, "=== emulation log ===\n");
+  x86emu_log(emu, "=== emulation log %d ===\n", vm->exec_count);
 
   *t = get_time();
+
+  if(vm->trace_only == -1 || vm->trace_only == vm->exec_count) {
+    emu->log.trace = vm->trace_flags;
+  }
+  else {
+    emu->log.trace = 0;
+  }
 
   x86emu_reset_access_stats(emu);
 
@@ -300,15 +325,20 @@ unsigned vm_run(x86emu_t *emu, double *t)
 
   *t = get_time() - *t;
 
-  if(vm->dump_flags) {
+  if(
+    vm->dump_flags &&
+    (vm->dump_only == -1 || vm->dump_only == vm->exec_count)
+  ) {
     x86emu_log(emu, "\n; - - - final state\n");
     x86emu_dump(emu, vm->dump_flags);
     x86emu_log(emu, "; - - -\n");
   }
 
-  x86emu_log(emu, "=== emulation log end ===\n");
+  x86emu_log(emu, "=== emulation log %d end ===\n", vm->exec_count);
 
   x86emu_clear_log(emu, 1);
+
+  vm->exec_count++;
 
   return err;
 }
@@ -370,8 +400,6 @@ int vm_prepare(vm_t *vm)
 
   // stack & buffer space
   x86emu_set_perm(vm->emu, VBE_BUF, 0xffff, X86EMU_PERM_RW);
-
-  vm->emu->log.trace = vm->trace_flags;
 
   if(vm->timeout) vm->emu->timeout = vm->timeout ?: 20;
 
