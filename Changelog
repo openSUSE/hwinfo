@@ -1,3 +1,6 @@
+15/6/2009:	v16.2
+	- fix build on non-x86 archs
+
 9/6/2009:	v16.1
 	- rewrite monitor detection to use libx86emu
 

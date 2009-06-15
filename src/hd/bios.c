@@ -447,7 +447,9 @@ void hd_scan_bios(hd_data_t *hd_data)
       }
     }
 
+#if defined(__i386__) || defined (__x86_64__)
     get_vbe_info(hd_data, vbe);
+#endif
 
     if(vbe->ok) {
       bt->vbe_ver = vbe->version;

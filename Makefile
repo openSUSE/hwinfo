@@ -5,22 +5,22 @@ CLEANFILES	= hwinfo hwinfo.pc hwinfo.static hwscan hwscan.static hwscand hwscanq
 LIBDIR		= /usr/lib
 ULIBDIR		= $(LIBDIR)
 LIBS		= -lhd
-SLIBS		= -lhd -ldbus-1 -lhal -lx86emu
-TLIBS		= -lhd_tiny -ldbus-1 -lhal -lx86emu
-SO_LIBS		= -ldbus-1 -lhal -lx86emu
-TSO_LIBS	= -ldbus-1 -lhal -lx86emu
+SLIBS		= -lhd -ldbus-1 -lhal
+TLIBS		= -lhd_tiny -ldbus-1 -lhal
+SO_LIBS		= -ldbus-1 -lhal
+TSO_LIBS	= -ldbus-1 -lhal
+
+export SO_LIBS
+
+include Makefile.common
 
 # ia64
-ifneq "$(findstring $(ARCH), i386 x86_64)" ""
+ifneq ($(filter i386 x86_64, $(ARCH)),)
 SLIBS		+= -lx86emu
 TLIBS		+= -lx86emu
 SO_LIBS		+= -lx86emu
 TSO_LIBS	+= -lx86emu
 endif
-
-export SO_LIBS
-
-include Makefile.common
 
 SHARED_FLAGS	=
 OBJS_NO_TINY	= names.o parallel.o modem.o

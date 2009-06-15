@@ -1,3 +1,5 @@
+#if defined(__i386__) || defined (__x86_64__)
+
 #define _GNU_SOURCE
 
 #include <stdio.h>
@@ -782,3 +784,4 @@ void get_video_mode(vm_t *vm, vbe_info_t *vbe)
 }
 
 
+#endif	/* defined(__i386__) || defined (__x86_64__) */
