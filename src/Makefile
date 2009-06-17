@@ -17,9 +17,9 @@ $(LIBHD): $(OBJS)
 
 ifdef SHARED_FLAGS
 $(LIBHD_SO): $(LIBHD)
-	$(CC) -shared $(SO_LIBS) -Wl,--whole-archive $(LIBHD) -Wl,--no-whole-archive \
+	$(CC) -shared -Wl,--whole-archive $(LIBHD) -Wl,--no-whole-archive \
 		-Wl,-soname=$(LIBHD_SONAME) \
-		-o $(LIBHD_SO) 
+		-o $(LIBHD_SO) $(SO_LIBS) 
 	ln -snf $(LIBHD_NAME) $(LIBHD_SONAME)
 	ln -snf $(LIBHD_SONAME) $(LIBHD_BASE).so
 else
