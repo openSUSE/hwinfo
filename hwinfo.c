@@ -322,13 +322,15 @@ int main(int argc, char **argv)
 	  break;
 
         case 1000 ... 1100:
-          if(hw_items < (int) (sizeof hw_item / sizeof *hw_item) - 1)
+          if(hw_items < sizeof hw_item / sizeof *hw_item - 1) {
             hw_item[hw_items++] = i - 1000;
+          }
           break;
 
         case 2000 ... 2005:
-          if(hw_items < (int) (sizeof hw_item / sizeof *hw_item) - 1)
+          if(hw_items < sizeof hw_item / sizeof *hw_item - 1) {
             hw_item[hw_items++] = i;
+          }
           break;
 
         default:
@@ -337,7 +339,7 @@ int main(int argc, char **argv)
       }
     }
 
-    if(!hw_items && is_short) hw_item[hw_items++] = 2000;	/* all */
+    if(!hw_items) hw_item[hw_items++] = 2000;	/* all */
 
     if(hw_items >= 0 || showconfig || saveconfig) {
       if(*log_file) {
