@@ -1,4 +1,6 @@
+24/6/2009:	v16.3
 	- --log without other options assumes --all (bnc #243103)
+	- rewrote man page, help text & README (bnc #178662)
 
 15/6/2009:	v16.2
 	- fix build on non-x86 archs

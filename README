@@ -1,5 +1,15 @@
-1. Usage
-========
+See hwinfo man page for general usage instructions.
+
+This document describes some legacy features and the "hwprobe" environment variable.
+
+
+1. Legacy
+=========
+
+***  Note: please do not do this, this is only kept to assist debugging.  ***
+
+Legacy mode is activated when no option starting with "--" is given. In this case hwinfo
+works as follows:
 
   hwinfo [debug=deb_flag] [log=log_file] [list[+]=hw_item] [[+|-]probe_option1] [[+|-]probe_option2] ...
 
@@ -16,50 +26,34 @@ Examples:
       *** Please don't use "hwinfo >some_log 2>&1" to store the output into a
       log file! ***
 
-  hwinfo -all +ide
-    - probe for ide drives only
+  hwinfo -all +pci +int
+    - probe for pci devices
 
-  hwinfo +all -isapnp -floppy
-    - probe for everything *except* isapnp and floppies
+Note that "int" should almost always be active.
 
 Some probing flags do not stand for complete modules but enable additional
-features; e.g. "pci.range" or "cdrom.info".
+features; e.g. "bios.vesa" or "block.cdrom".
 
 Example:
-  hwinfo -all +cdrom
-  gives a list of all cdrom's
+  hwinfo -all +block +int
+  gives a list of all block devs
 
-  hwinfo -all +cdrom.info
+  hwinfo -all +block.cdrom +int
   additionally reads the iso9660 info
 
-To get a list of all supported probing flags, call 'hwinfo -all'.
+The list of supported flags varies from version to version. To get a list of
+the actual set of probing flags, call "hwinfo -all" and look at the top of
+the log.
 
 
-2. Environment variables/kernel cmdline parameters
-==================================================
+2. Environment variable/kernel cmdline parameter
+================================================
 
 You can control the hardware probing using the environment variable
-"hwprobe" and the kernel cmdline parameters "hwprobe" & "x11".
+"hwprobe" and the kernel cmdline parameter "hwprobe".
 
 If "hwprobe" is set on the kernel cmdline, the environment variable
 "hwprobe" is ignored. Otherwise, the meaning of both is exactly the same.
-
-  x11
-    - Controls the X server/X version to prefer. It is either "3" or "4" or the
-      name of the X server/X server module to use (XF3: server name without
-      the leading "XF86_", XF4: the server module name).
-
-      Examples:
-        x11=3
-          o prefer XFree86 3.x over 4.x (if possible)
-
-        x11=SVGA
-          o use the XF86_SVGA server (*** Even if the server does not
-            support the card! ***)
-
-        x11=nv
-          o use the XF4 nv_drv.o driver (*** Even if the module does not
-            support the card! ***)
 
   hwprobe
     - Controls which probing flags should *always* be set/cleared. (These
