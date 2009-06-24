@@ -1,92 +1,111 @@
-.\" Michal Svec <msvec@suse.cz>
-.\"
-.\" Process this file with
-.\" groff -man -Tascii foo.1
-.\"
-.\"
-.TH HWINFO 8 "January 2003" "hwinfo" "System configuration"
-.\"
+.TH HWINFO 8 "June 2009" "hwinfo" "System configuration"
 .\"
 .SH NAME
 hwinfo \- probe for hardware
 .\"
-.\"
 .SH SYNOPSIS
 .B hwinfo [
-.I options
+.I OPTIONS
 .B ]
-.\"
 .\"
 .SH DESCRIPTION
 .B hwinfo
-is used to probe for the hardware present in the system. It can be used
-to generate a system overview log which can be later used for support.
-.\"
+is used to probe for the hardware present in the system. It can be used to
+generate a system overview log which can be later used for support.
 .\"
 .SH OPTIONS
-.\"
+Note that running \fBhwinfo\fR without any options is roughly equivalent
+to 'hwinfo --all --log=-'.
 .TP
-.BI --debug " " level
-Set debug
-.B level.
-The debug info is shown only in the log file. If you specify a log file,
-the debug level is implicitly set to a reasonable value.
-.\"
+\fB--<\f[BI]HARDWARE_ITEM\fB>\fR
+This option can be given more than once.
+Probe for a particular \fIHARDWARE_ITEM\fR. Available hardware items are:
+
+all, arch, bios, block, bluetooth, braille, bridge, camera, cdrom, chipcard,
+cpu, disk, dsl, dvb, fingerprint, floppy, framebuffer, gfxcard, hub, ide, 
+isapnp, isdn, joystick, keyboard, memory, modem, monitor, mouse, netcard,
+network, partition, pci, pcmcia, pcmcia-ctrl, pppoe, printer, redasd,
+reallyall, scanner, scsi, smp, sound, storage-ctrl, sys, tape, tv, uml, usb,
+usb-ctrl, vbe, wlan, xen, zip
 .TP
-.BI --dump-db " " n
-Dump hardware data base,
-.B n
-is either
-.B 0
-for the external data base, or
-.B 1
-for the internal data base.
-.\"
+\fB--short\fR
+Show only a summary. Use this option in addition to a hardware probing
+option.   
 .TP
-.BI --help
-Print a usage and exit.
-.\"
+\fB--listmd\fR
+Normally hwinfo does not report RAID devices. Add this option to see them.
 .TP
-.BI --log " " logfile
-Write info to
-.B logfile.
-.\"
+\fB--only \fIDEVNAME\fR
+This option can be given more than once. If you add this option, only data
+about devices with \fIDEVNAME\fR will be shown.
 .TP
-.BI --short
-Just a short listing.
-.\"
+\fB--save-config \fISPEC\fR
+Store config for a particular device below /var/lib/hardware. \fISPEC\fR
+can be a device name, an UDI, or 'all'. This option must be given in addition to
+a hardware probing option.
 .TP
-.BI --version
-Show libhd version.
-.\"
+\fB--show-config \fIUDI\fR
+Show saved config data for a particular device.
 .TP
-.BI --<hwitem>
-Probe for the particular hardware item. Available hardware items are:
-.B all, bios, block, bluetooth, braille, bridge, camera, cdrom, chipcard, cpu,
-.B disk, dsl, dvb, fingerprint, floppy, framebuffer, gfxcard, hub, ide, isapnp, isdn,
-.B joystick, keyboard, memory, modem, monitor, mouse, netcard, network,
-.B partition, pci, pcmcia, pcmcia-ctrl, pppoe, printer, scanner, scsi, smp,
-.B sound, storage-ctrl, sys, tape, tv, usb, usb-ctrl, vbe, wlan,
-and
-.B zip.
+\fB--map\fR
+If disk names have changed (e.g. after a kernel update) this prints a list
+of disk name mappings. Note that you must have used --save-config at some
+point before for this can work.
+.TP
+\fB--debug \fIN\fR
+Set debug level to \fIN\fR. The debug info is shown only in the log file.
+If you specify a log file, the debug level is implicitly set to a reasonable value.
+.TP
+\fB--verbose\fR
+Increase verbosity. Only together with --map.
+.TP
+\fB--log \fIFILE\fR
+Write log info to \fIFILE\fR.
+.TP
+\fB--dump-db \fIN\fR
+Dump hardware data base. \fIN\fR is either 0 for the external data base in
+/var/lib/hardware, or 1 for the internal data base.
+.TP
+\fB--version\fR
+Print libhd version.
+.TP
+\fB--help\fR
+Print usage.
 .\"
+.SH ENVIRONMENT
+\fBhwprobe\fR can hold a comma-separated list of probing flags preceded by '+'
+or '-' to be turned on or off. To get a complete list of supported flags, 
+run 'hwinfo -all' (note: not '--all') and look at the top of the output.  
+
+hwinfo also looks at /proc/cmdline for a \fBhwprobe\fR option.
+.\"
+.SH EXAMPLES
+.TP
+- show all disks
+hwinfo --disk
+.TP
+- just an overview
+hwinfo --short --block 
+.TP
+- show a particular disk
+hwinfo --disk --only /dev/sdb
+.TP
+- save disk config state
+hwinfo --disk --save-config=all
 .\"
 .SH FILES
-.B /var/lib/hardware/*
-.\"
+.TP
+\fB/var/lib/hardware/hd.ids\fR
+External hardware data base (in readable text form). Try the --dump-db option to see the format.
+.TP
+\fB/var/lib/hardware/udi\fR
+Directory where persistent config data are stored (see --save-config option).
 .\"
 .SH BUGS
 Not all hardware can be detected.
 .\"
-.\"
-.SH AUTHOR
-.nf
-Steffen Winterfeldt <snwint@suse.de> - hwinfo
-Michal Svec <msvec@suse.cz> - manual page
-.fi
-.\"
-.\"
 .SH "SEE ALSO"
-Documentation in /usr/share/doc/packages/hwinfo.
+More documentation in /usr/share/doc/packages/hwinfo.
+.br
+Source repository: git://git.opensuse.org/projects/hwinfo.git.
 .\"
-.\" EOF
