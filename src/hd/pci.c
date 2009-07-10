@@ -727,6 +727,7 @@ void hd_read_vio(hd_data_t *hd_data)
         !strcmp(vio_name, "l-lan") || /* pseries && iseries */
         !strcmp(vio_name, "viodasd") || /* iseries */
         !strcmp(vio_name, "viocd") || /* iseries */
+        !strcmp(vio_name, "vfc-client") || /* ibmvfc */
         !strcmp(vio_name, "v-scsi" /* pseries */)
       )
     ) {
@@ -751,6 +752,11 @@ void hd_read_vio(hd_data_t *hd_data)
         hd->sub_class.id = sc_sto_other;
         hd->slot = cd_cnt++;
         str_printf(&hd->device.name, 0, "Virtual CD %d", hd->slot);
+      } else if(!strcmp(vio_name, "vfc-client")) {
+        hd->base_class.id = bc_storage;
+        hd->sub_class.id = sc_sto_scsi;
+        hd->slot = scsi_cnt++;
+        str_printf(&hd->device.name, 0, "Virtual FC %d", hd->slot);
       }
       else { /* scsi */
         hd->base_class.id = bc_storage;
