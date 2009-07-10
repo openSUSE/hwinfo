@@ -817,6 +817,7 @@ void hd_read_vio(hd_data_t *hd_data)
     if(
       vio_type && (
         !strcmp(vio_type, "l-lan") ||
+        !strcmp(vio_type, "vfc-client") ||
         !strcmp(vio_type, "v-scsi")
       )
     ) {
@@ -831,8 +832,13 @@ void hd_read_vio(hd_data_t *hd_data)
         hd->slot = eth_cnt++;
         hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1002);
         str_printf(&hd->device.name, 0, "Virtual Ethernet card %d", hd->slot);
-      }
-      else { /* scsi */
+      } else if (!strcmp(vio_type, "vfc-client")) {
+        hd->base_class.id = bc_storage;
+        hd->sub_class.id = sc_sto_scsi;
+        hd->slot = scsi_cnt++;
+        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x1004);
+        str_printf(&hd->device.name, 0, "Virtual FC %d", hd->slot);
+      } else { /* scsi */
         hd->base_class.id = bc_storage;
         hd->sub_class.id = sc_sto_scsi;
         hd->slot = scsi_cnt++;

@@ -646,6 +646,11 @@
 &device.id		special 0x1003
 +driver.module.modprobe	ehea
 
+# IBM vfc
+ vendor.id		special 0x6001
+&device.id		special 0x1004
++driver.module.modprobe	ibmvfc
+
 
 # UML veth
  vendor.id		special 0x6010
