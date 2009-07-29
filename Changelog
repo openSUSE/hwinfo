@@ -1,4 +1,6 @@
+29/7/2009:	v16.4
 	- support NPIV (bnc #501312)
+	- added some ISDN devices (bnc #234529)
 
 24/6/2009:	v16.3
 	- --log without other options assumes --all (bnc #243103)
