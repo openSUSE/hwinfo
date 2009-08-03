@@ -1,3 +1,7 @@
+3/8/2009:	v16.5
+	- revert --log patch from v16.3; leads to all kinds of
+	  problems (bnc #525223)
+
 29/7/2009:	v16.4
 	- support NPIV (bnc #501312)
 	- added some ISDN devices (bnc #234529)

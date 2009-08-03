@@ -339,7 +339,7 @@ int main(int argc, char **argv)
       }
     }
 
-    if(!hw_items) hw_item[hw_items++] = 2000;	/* all */
+    if(!hw_items && is_short) hw_item[hw_items++] = 2000;	/* all */
 
     if(hw_items >= 0 || showconfig || saveconfig) {
       if(*log_file) {
