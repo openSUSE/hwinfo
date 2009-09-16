@@ -45,7 +45,7 @@ typedef struct vm_s {
   unsigned char *video_mem;
 
   unsigned ports;
-  unsigned verbose;
+  unsigned force:1;
   unsigned timeout;
 
   unsigned all_modes:1;
@@ -127,6 +127,7 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
     else if(!strcmp(t, "dump.io"))      dbits = X86EMU_DUMP_IO;
     else if(!strcmp(t, "dump.ints"))    dbits = X86EMU_DUMP_INTS;
     else if(!strcmp(t, "dump.time"))    dbits = X86EMU_DUMP_TIME;
+    else if(!strcmp(t, "force")) vm->force = u;
     else if(!strncmp(t, "timeout=", sizeof "timeout=" - 1)) {
       i = strtol(t + sizeof "timeout=" - 1, NULL, 0);
       if(i) vm->timeout = i;
@@ -682,6 +683,44 @@ void probe_all(vm_t *vm, vbe_info_t *vbe)
     d1 = d2 = 0;
 
     for(cnt = 0; cnt < 2 && get_time() <= timeout; cnt++) {
+      if(!vm->force) {
+        emu = x86emu_done(emu);
+        emu = x86emu_clone(vm->emu);
+
+        emu->x86.R_EAX = 0x4f15;
+        emu->x86.R_EBX = 0;
+        emu->x86.R_ECX = port;
+        emu->x86.R_EDX = 0;
+        emu->x86.R_EDI = 0;
+        emu->x86.R_ES = 0;
+
+        err = vm_run(emu, &d1);
+        d2 += d1;
+
+        LPRINTF("=== port %u, try %u: %s (time %.3fs, eax 0x%x, err = 0x%x)\n",
+          port,
+          cnt,
+          emu->x86.R_AX == 0x4f ? "ok" : "failed",
+          d1,
+          emu->x86.R_EAX,
+          err
+        );
+
+        if(err || emu->x86.R_AX != 0x4f) continue;
+
+        LPRINTF("=== port %u, try %u: bh = %d, bl = 0x%02x\n",
+          port,
+          cnt,
+          emu->x86.R_BH,
+          emu->x86.R_BL
+        );
+
+        if(!(emu->x86.R_BL & 3)) {
+          err = -1;
+          continue;
+        }
+      }
+
       emu = x86emu_done(emu);
       emu = x86emu_clone(vm->emu);
 

@@ -1,3 +1,6 @@
+31/8/2009:	v16.6
+	- check for ddc capabilities before issuing a ddc call (suggested by Anssi Hannula)
+
 3/8/2009:	v16.5
 	- revert --log patch from v16.3; leads to all kinds of
 	  problems (bnc #525223)
