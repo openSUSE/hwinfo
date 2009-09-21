@@ -164,6 +164,7 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 
   if(!vm_prepare(vm)) {
     ADD2LOG("x86emu: could not init vm\n");
+    vm_free(vm);
 
     return;
   }
