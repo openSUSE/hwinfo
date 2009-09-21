@@ -1,6 +1,8 @@
 18/9/2009:	v16.7
 	- map video memory writable (bnc #539227)
 	- fix memory leak when run as non-root (bnc #519015)
+	- updated dvb & tv card info (bnc #465139)
+	- updated pci ids
 
 31/8/2009:	v16.6
 	- check for ddc capabilities before issuing a ddc call (suggested by Anssi Hannula)

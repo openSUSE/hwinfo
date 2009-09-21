@@ -1172,6 +1172,19 @@ sub read_modinfo_file
         push @hd, [ "$file_name($line)", [ $key ], $val ];
       }
     }
+    elsif($spec =~ /^v($f)p($f)d($f)dc($f)dsc($f)dp($f)ic($f)isc($f)ip($f)$/ ) {
+
+      if(
+        $3 == '*' && $4 == '*' && $5 == '*' &&
+        $6 == '*' && $7 == '*' && $8 == '*' &&
+        $9 == '*'
+      ) {
+        $key->[$he_vendor_id] = [ $flag_id, $tag, hex $1 ] if $1 ne '*';
+        $key->[$he_device_id] = [ $flag_id, $tag, hex $2 ] if $2 ne '*';
+
+        push @hd, [ "$file_name($line)", [ $key ], $val ];
+      }
+    }
     elsif($spec =~ /^[c|d](\S{3})([0-9a-fA-FX]{4})/ ) {
       $t1 = $1;
       $t2 = $2;

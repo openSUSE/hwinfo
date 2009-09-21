@@ -14,7 +14,7 @@ include $(TOPDIR)/Makefile.common
 # endif
 
 IDFILES	+= src/bus src/class src/extra src/special src/scanner src/network \
-	  src/usb src/usb2 src/isapnp src/monitor src/camera src/tv src/dvb \
+	  src/usb src/usb2 src/isapnp src/monitor src/camera src/tv2 src/tv src/dvb2 src/dvb \
 	  src/chipcard src/modem src/pcmcia src/s390
 
 ifeq "$(ARCH)" "i386"
