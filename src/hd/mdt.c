@@ -79,7 +79,7 @@ static unsigned vm_run(x86emu_t *emu, double *t);
 static int vm_prepare(vm_t *vm);
 
 static double get_time(void);
-static void *map_mem(vm_t *vm, unsigned start, unsigned size);
+static void *map_mem(vm_t *vm, unsigned start, unsigned size, int rw);
 
 void print_vbe_info(vm_t *vm, x86emu_t *emu, unsigned mode);
 
@@ -355,7 +355,7 @@ int vm_prepare(vm_t *vm)
 
   LPRINTF("=== bios setup ===\n");
 
-  p1 = map_mem(vm, 0, 0x1000);
+  p1 = map_mem(vm, 0, 0x1000, 0);
   if(!p1) {
     LPRINTF("failed to read /dev/mem\n");
     return ok;
@@ -366,7 +366,7 @@ int vm_prepare(vm_t *vm)
 
   munmap(p1, 0x1000);
 
-  p2 = map_mem(vm, VBIOS_ROM, VBIOS_ROM_SIZE);
+  p2 = map_mem(vm, VBIOS_ROM, VBIOS_ROM_SIZE, 0);
   if(!p2 || p2[0] != 0x55 || p2[1] != 0xaa || p2[2] == 0) {
     if(p2) munmap(p2, VBIOS_ROM_SIZE);
     LPRINTF("error: no video bios\n");
@@ -384,7 +384,7 @@ int vm_prepare(vm_t *vm)
   );
 
   // video memory
-  vm->video_mem = map_mem(vm, VBIOS_MEM, VBIOS_MEM_SIZE);
+  vm->video_mem = map_mem(vm, VBIOS_MEM, VBIOS_MEM_SIZE, 1);
 
   if(vm->video_mem) {
     x86emu_set_perm(vm->emu, VBIOS_MEM, VBIOS_MEM + VBIOS_MEM_SIZE - 1, X86EMU_PERM_RW);
@@ -427,18 +427,18 @@ double get_time()
 }
 
 
-void *map_mem(vm_t *vm, unsigned start, unsigned size)
+void *map_mem(vm_t *vm, unsigned start, unsigned size, int rw)
 {
   int fd;
   void *p;
 
   if(!size) return NULL;
 
-  fd = open("/dev/mem", O_RDONLY);
+  fd = open("/dev/mem", rw ? O_RDWR : O_RDONLY);
 
   if(fd == -1) return NULL;
 
-  p = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, start);
+  p = mmap(NULL, size, rw ? PROT_READ | PROT_WRITE : PROT_READ, MAP_PRIVATE, fd, start);
 
   if(p == MAP_FAILED) {
     LPRINTF("error: [0x%x, %u]: mmap failed: %s\n", start, size, strerror(errno));
