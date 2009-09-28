@@ -1,3 +1,6 @@
+28/9/2009:	v16.8
+	- fix video memory mapping (bnc #539227)
+
 18/9/2009:	v16.7
 	- map video memory writable (bnc #539227)
 	- fix memory leak when run as non-root (bnc #519015)

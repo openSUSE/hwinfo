@@ -439,7 +439,7 @@ void *map_mem(vm_t *vm, unsigned start, unsigned size, int rw)
 
   if(fd == -1) return NULL;
 
-  p = mmap(NULL, size, rw ? PROT_READ | PROT_WRITE : PROT_READ, MAP_PRIVATE, fd, start);
+  p = mmap(NULL, size, rw ? PROT_READ | PROT_WRITE : PROT_READ, MAP_SHARED, fd, start);
 
   if(p == MAP_FAILED) {
     LPRINTF("error: [0x%x, %u]: mmap failed: %s\n", start, size, strerror(errno));
