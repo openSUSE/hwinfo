@@ -1,3 +1,6 @@
+30/9/2009:	v15.28
+	- skip interfaces that have the SLAVE flag set for pppoe (bnc #541242)
+
 30/1/2009:	v15.27
 	- setup dummy int 0x15 for BIOS emulation (bnc #469863)
 
