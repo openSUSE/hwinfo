@@ -227,8 +227,19 @@ open_interfaces (int n, PPPoEConnection* conns)
 	    goto error;
 	}
 	if (ifr.ifr_mtu < ETH_DATA_LEN) {
-	    ADD2LOG ("%s: Interface has to low MTU\n", conn->ifname);
+	    ADD2LOG ("%s: Interface has too low MTU\n", conn->ifname);
 	    goto error;
+	}
+
+	/* Skip interfaces that have the SLAVE flag set */
+	strncpy (ifr.ifr_name, conn->ifname, sizeof (ifr.ifr_name));
+	if (ioctl (conn->fd, SIOCGIFFLAGS, &ifr) < 0) {
+		ADD2LOG ("%s: ioctl (SIOCGIFFLAGS) failed: %m\n", conn->ifname);
+		goto error;
+	}
+	if (ifr.ifr_ifru.ifru_flags & IFF_SLAVE) {
+		ADD2LOG ("%s: Interface has SLAVE flag set\n", conn->ifname);
+		goto error;
 	}
 
 	/* Get interface index */
