@@ -719,6 +719,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_isapnp);
       hd_set_probe_feature(hd_data, pr_isapnp_mod);
+      hd_set_probe_feature(hd_data, pr_usb);
       hd_set_probe_feature(hd_data, pr_sbus);
       hd_set_probe_feature(hd_data, pr_prom);
       break;

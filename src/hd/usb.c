@@ -374,6 +374,10 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
   }
 
   switch(cls) {
+    case 1:
+      hd->base_class.id = bc_multimedia;
+      hd->sub_class.id = sc_multi_audio;
+      break;
     case 2:
       if(usb->i_sub == 6 && usb->i_prot == 0) {
         hd->base_class.id = bc_network;
@@ -445,6 +449,10 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
 
     case 9:
       hd->base_class.id = bc_hub;
+      break;
+
+    case 0x0b:
+      hd->base_class.id = bc_chipcard;
       break;
 
     case 0xe0:

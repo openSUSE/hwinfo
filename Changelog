@@ -1,3 +1,6 @@
+30/9/2009:	v16.9
+	- recognize usb auto & smartcard devices (bnc #290279)
+
 28/9/2009:	v16.8
 	- fix video memory mapping (bnc #539227)
 
