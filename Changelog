@@ -1,3 +1,6 @@
+9/10/2009:	v16.10
+	- made kernel log parser aware of time stamps (bnc #544269)
+
 30/9/2009:	v16.9
 	- recognize usb auto & smartcard devices (bnc #290279)
 	- skip interfaces that have the SLAVE flag set for pppoe (bnc #541242)

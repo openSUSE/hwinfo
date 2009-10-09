@@ -17,6 +17,7 @@
 
 static int str_ok(str_list_t *sl);
 static int str_list_cmp(str_list_t *sl1, str_list_t *sl2);
+static void _read_klog(hd_data_t *hd_data);
 
 
 /*
@@ -41,10 +42,39 @@ int str_list_cmp(str_list_t *sl1, str_list_t *sl2)
   return 0;
 }
 
+
+/*
+ * Read kernel log info. Combine with /var/log/boot.msg.
+ * Remove time stamps.
+ */
+void read_klog(hd_data_t *hd_data)
+{
+  str_list_t *sl, **sl_new;
+  char *str, *s;
+
+  _read_klog(hd_data);
+
+  free_str_list(hd_data->klog_raw);
+  hd_data->klog_raw = hd_data->klog;
+  hd_data->klog = NULL;
+
+  for(sl = hd_data->klog_raw, sl_new = &hd_data->klog; sl; sl = sl->next, sl_new = &(*sl_new)->next) {
+    str = add_str_list(sl_new, sl->str)->str;
+    if(str[0] == '<' && str[1] && str[2] == '>' && str[3] == '[') {
+      s = str + 4;
+      while(*s && *s != ']') s++;
+      if(*s) s++;
+      if(*s) s++;	// skip space
+      strcpy(str + 3, s);
+    }
+  }
+}
+
+
 /*
  * Read kernel log info. Combine with /var/log/boot.msg.
  */
-void read_klog(hd_data_t *hd_data)
+void _read_klog(hd_data_t *hd_data)
 {
   char buf[0x2000 + 1], *s;
   int i, j, len, n;
@@ -148,7 +178,7 @@ void dump_klog(hd_data_t *hd_data)
   str_list_t *sl;
 
   ADD2LOG("----- kernel log -----\n");
-  for(sl = hd_data->klog; sl; sl = sl->next) {
+  for(sl = hd_data->klog_raw; sl; sl = sl->next) {
     ADD2LOG("  %s", sl->str);
   }
   ADD2LOG("----- kernel log end -----\n");

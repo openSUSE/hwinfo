@@ -91,6 +91,7 @@
 #include "input.h"
 #include "wlan.h"
 #include "hal.h"
+#include "klog.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -974,6 +975,7 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   /* hd_data->ser_modem is always NULL */
   hd_data->cpu = free_str_list(hd_data->cpu);
   hd_data->klog = free_str_list(hd_data->klog);
+  hd_data->klog_raw = free_str_list(hd_data->klog_raw);
   hd_data->proc_usb = free_str_list(hd_data->proc_usb);
   /* hd_data->usb is always NULL */
 
@@ -1938,6 +1940,10 @@ void hd_scan(hd_data_t *hd_data)
   for(hd = hd_data->hd; hd; hd = hd->next) hd->tag.fixed = 1;
 
   hd_data->module = mod_none;
+
+  if(hd_data->debug && !hd_data->flags.internal && hd_data->klog) {
+    dump_klog(hd_data);
+  }
 
   if(
     hd_data->debug &&

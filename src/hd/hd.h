@@ -2699,6 +2699,7 @@ typedef struct {
   struct vm_s *vm;		/**< (Internal) x86emu vm */
   size_t log_size;		/**< (Internal) current log size (including final 0) */
   size_t log_max;		/**< (Internal) log buffer size */
+  str_list_t *klog_raw;		/**< (Internal) unmodified kernel log */
 } hd_data_t;
 
 
