@@ -80,7 +80,12 @@ void hd_scan_serial(hd_data_t *hd_data)
     }
     hd->device.name = new_str(ser->name);
     hd->func = ser->line;
-    str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%u", ser->line);
+    if(ser->name && !strcmp(ser->name, "AgereModem")) {
+      str_printf(&hd->unix_dev_name, 0, "/dev/ttyAGS%u", ser->line);
+    }
+    else {
+      str_printf(&hd->unix_dev_name, 0, "/dev/ttyS%u", ser->line);
+    }
     for(i = 0; i < (int) skip_devs; i++) {
       if(!strcmp(skip_dev[i], hd->unix_dev_name)) {
         hd->tag.skip_mouse = hd->tag.skip_modem = hd->tag.skip_braille = 1;
@@ -163,7 +168,7 @@ void get_serial_info(hd_data_t *hd_data)
   unsigned u3;
 #endif
   int i;
-  str_list_t *sl, *sl0;
+  str_list_t *sl, *sl0, **sll;
   serial_t *ser;
 
 #if !defined(__PPC__)
@@ -173,6 +178,11 @@ void get_serial_info(hd_data_t *hd_data)
    * limit. That may be dropped later.
    */
   sl0 = read_file(PROC_DRIVER_SERIAL, 1, 44);
+  sll = &sl0;
+  while(*sll) sll = &(*sll)->next;
+  // append Agere modem devices
+  *sll = read_file("/proc/tty/driver/agrserial", 1, 17);
+
 
   // ########## FIX !!!!!!!! ########
   if(sl0) {
@@ -187,7 +197,7 @@ void get_serial_info(hd_data_t *hd_data)
          */
         ser = add_serial_entry(&hd_data->serial, new_mem(sizeof *ser));
         ser->line = u0;
-        ser->port = u1;
+        if(u1 >= 0x100) ser->port = u1;		// Agere modem does not use real port numbers
         ser->irq = u2;
         if(!i) ser->baud = u3;
         ser->name = new_str(buf);

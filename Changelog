@@ -1,3 +1,6 @@
+12/2/2010:	v16.12
+	- recognize agere modem lines (bnc #578286)
+
 12/2/2010:	v16.11
 	- fix device renaming detection (bnc #574442)
 	- more cpu features (bnc #578994)
