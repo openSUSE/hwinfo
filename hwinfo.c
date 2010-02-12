@@ -1699,8 +1699,8 @@ unsigned map_fill(map_t *map, hd_data_t *hd_data, hd_t *hd_manual)
   for(i = 0; i < map_len; i++) {
     if(map[i].model) {
       map[i].model_ok = 1;
-      for(j = i + 1; j < map_len; j++) {
-        if(map[j].model && !strcmp(map[i].model, map[j].model)) {
+      for(j = 0; j < map_len; j++) {
+        if(j != i && map[j].model && !strcmp(map[i].model, map[j].model)) {
           map[i].model_ok = 0;
           break;
         }
@@ -1709,8 +1709,8 @@ unsigned map_fill(map_t *map, hd_data_t *hd_data, hd_t *hd_manual)
 
     if(map[i].serial) {
       map[i].serial_ok = 1;
-      for(j = i + 1; j < map_len; j++) {
-        if(map[j].serial && !strcmp(map[i].serial, map[j].serial)) {
+      for(j = 0; j < map_len; j++) {
+        if(j != i && map[j].serial && !strcmp(map[i].serial, map[j].serial)) {
           map[i].serial_ok = 0;
           break;
         }
@@ -1719,8 +1719,8 @@ unsigned map_fill(map_t *map, hd_data_t *hd_data, hd_t *hd_manual)
 
     if(map[i].size) {
       map[i].size_ok = 1;
-      for(j = i + 1; j < map_len; j++) {
-        if(map[i].size == map[j].size) {
+      for(j = 0; j < map_len; j++) {
+        if(j != i && map[i].size == map[j].size) {
           map[i].size_ok = 0;
           break;
         }

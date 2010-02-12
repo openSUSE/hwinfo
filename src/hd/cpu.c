@@ -89,14 +89,14 @@ void read_cpuinfo(hd_data_t *hd_data)
   str_list_t *sl;
 
 #if defined(__i386__) || defined (__x86_64__)
-  char model_id[80], vendor_id[80], features[0x100];
+  char model_id[80], vendor_id[80], features[0x400];
   unsigned mhz, cache, family, model, stepping;
   double bogo;
   char *t0, *t;
 #endif
 
 #ifdef __ia64__
-  char model_id[0x100], vendor_id[80], features[0x100];
+  char model_id[0x100], vendor_id[80], features[0x400];
   unsigned mhz, family, model, stepping;
   double bogo;
 #endif
@@ -241,7 +241,7 @@ void read_cpuinfo(hd_data_t *hd_data)
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(sscanf(sl->str, "model name : %79[^\n]", model_id) == 1);
     if(sscanf(sl->str, "vendor_id : %79[^\n]", vendor_id) == 1);
-    if(sscanf(sl->str, "flags : %255[^\n]", features) == 1);
+    if(sscanf(sl->str, "flags : %1023[^\n]", features) == 1);
     if(sscanf(sl->str, "bogomips : %lg", &bogo) == 1);
     if(sscanf(sl->str, "cpu MHz : %u", &mhz) == 1);
     if(sscanf(sl->str, "cache size : %u KB", &cache) == 1);
@@ -389,7 +389,7 @@ void read_cpuinfo(hd_data_t *hd_data)
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(sscanf(sl->str, "model name : %255[^\n]", model_id) == 1);
     if(sscanf(sl->str, "vendor : %79[^\n]", vendor_id) == 1);
-    if(sscanf(sl->str, "features : %255[^\n]", features) == 1);
+    if(sscanf(sl->str, "features : %1023[^\n]", features) == 1);
     if(sscanf(sl->str, "cpu MHz : %u", &mhz) == 1);
     if(sscanf(sl->str, "family : %u", &family) == 1);
     if(sscanf(sl->str, "model : %u", &model) == 1);

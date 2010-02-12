@@ -1,3 +1,7 @@
+12/2/2010:	v16.11
+	- fix device renaming detection (bnc #574442)
+	- more cpu features (bnc #578994)
+
 9/10/2009:	v16.10
 	- made kernel log parser aware of time stamps (bnc #544269)
 
