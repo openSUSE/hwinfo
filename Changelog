@@ -1,3 +1,7 @@
+11/2/2010:	v12.61
+	- get net interface link state from sysfs, too (bnc #561012)
+	- fix device renaming detection (bnc #574442)
+
 10/7/2009:	v12.60
 	- support NPIV (bnc #501312)
 

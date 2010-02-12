@@ -45,7 +45,7 @@ static void add_if_name(hd_t *hd_card, hd_t *hd);
 void hd_scan_net(hd_data_t *hd_data)
 {
   unsigned u;
-  int if_type;
+  int if_type, if_carrier;
   hd_t *hd, *hd_card;
   char *s, *hw_addr;
   hd_res_t *res, *res1;
@@ -91,6 +91,12 @@ void hd_scan_net(hd_data_t *hd_data)
       ADD2LOG("    type = %d\n", if_type);
     }
 
+    if_carrier = -1;
+    if(hd_attr_uint(sysfs_get_classdev_attr(sf_cdev, "carrier"), &ul0, 0)) {
+      if_carrier = ul0;
+      ADD2LOG("    carrier = %d\n", if_carrier);
+    }
+
     hw_addr = NULL;
     if((s = hd_attr_str(sysfs_get_classdev_attr(sf_cdev, "address")))) {
       hw_addr = canon_str(s, strlen(s));
@@ -121,6 +127,13 @@ void hd_scan_net(hd_data_t *hd_data)
       res1->hwaddr.type = res_hwaddr;
       res1->hwaddr.addr = new_str(hw_addr);
       add_res_entry(&hd->res, res1);
+    }
+
+    if(if_carrier >= 0) {
+      res = new_mem(sizeof *res);
+      res->link.type = res_link;
+      res->link.state = if_carrier ? 1 : 0;
+      add_res_entry(&hd->res, res);
     }
 
     hd->unix_dev_name = new_str(sf_cdev->name);
@@ -320,7 +333,11 @@ void hd_scan_net(hd_data_t *hd_data)
       hd->module == hd_data->module &&
       hd->base_class.id == bc_network_interface
     ) {
-      get_linkstate(hd_data, hd);
+      for(res = hd->res; res; res = res->next) {
+        if(res->any.type == res_link) break;
+      }
+
+      if(!res) get_linkstate(hd_data, hd);
 
       if(!(hd_card = hd_get_device_by_idx(hd_data, hd->attached_to))) continue;
 
