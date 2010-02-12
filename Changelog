@@ -1,3 +1,7 @@
+12/2/2010:	v15.29
+	- fix device renaming detection (bnc #574442)
+	- more cpu features (bnc #578994)
+
 30/9/2009:	v15.28
 	- skip interfaces that have the SLAVE flag set for pppoe (bnc #541242)
 
