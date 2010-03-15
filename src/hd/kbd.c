@@ -11,6 +11,10 @@
 #include <sys/ioctl.h>
 #include <linux/serial.h>
 
+#ifndef TIOCGDEV
+#define TIOCGDEV      _IOR('T', 0x32, unsigned int)
+#endif
+
 /**
  * @defgroup KDBint Keyboard devices
  * @ingroup libhdDEVint
