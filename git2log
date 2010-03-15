@@ -1,0 +1,139 @@
+#! /usr/bin/perl
+
+use Getopt::Long;
+
+sub usage;
+
+usage 0 if !@ARGV;
+
+GetOptions(
+  'help'    => sub { usage 0 },
+  'version' => \$opt_version,
+  'log'     => \$opt_log,
+) || usage 1;
+
+usage 1 if @ARGV || !($opt_log || $opt_version);
+
+die "no git repo\n" unless -d ".git";
+
+for (`git branch`) {
+  if(/^\*\s+(\S+)/) {
+    $branch = $1;
+    last;
+  }
+}
+
+die "no branch?\n" unless $branch;
+
+# print STDERR "writing log for branch $branch\n";
+
+@tags = `git tag`;
+
+chomp @tags;
+
+for (@tags) {
+  if(/^\d/) {
+    s/(\d+)/sprintf "%04d", $1/eg;
+    push @ntags, $_;
+  }
+  elsif(s/^$branch\-//) {
+    s/(\d+)/sprintf "%04d", $1/eg;
+    push @ntags, "$branch-$_";
+  }
+}
+
+@tags = sort @ntags;
+
+die "no tags?\n" unless @tags;
+
+if($opt_version) {
+  $t = $tags[-1];
+  $t =~ s/(\d+)/$1 + 0/eg;
+
+  if(`git log --pretty=medium --date=iso '$t..HEAD'`) {
+    $t =~ s/(\d+)$/$1 + 1/e;
+  }
+
+  $t =~ s/^$branch\-//;
+
+  print "$t\n";
+
+  exit 0;
+}
+
+if($branch ne 'master') {
+  for ($i = 0; $i < @tags; $i++) {
+    if($tags[$i] =~ /^$branch\-(\S+)/) {
+      $i2 = $i;
+      $bi = $1;
+      last;
+    }
+  }
+
+  # print STDERR ">> $branch-$bi\n";
+
+  die "no tags in this branch?\n" unless $bi;
+
+  for ($i = 0; $i < $i2; $i++) {
+    if($tags[$i] eq $bi) {
+      $i1 = $i;
+      last;
+    }
+  }
+
+  splice @tags, $i1, $i2 - $i1;
+}
+
+map { s/(\d+)/$1 + 0/eg } @tags;
+
+# for (@tags) { print "$_\n"; }
+
+push @tags, "HEAD";
+
+for ($i = @tags - 1; $i > 0; $i--) {
+  $date = undef;
+  @t = `git log --pretty=medium --date=iso '$tags[$i-1]..$tags[$i]'`;
+  chomp @t;
+  for (@t) {
+    if(/^Date:\s*(\S+)/) {
+      $date = $1;
+      last;
+    }
+  }
+  @t = grep { !/^(commit|Author:|Date:|Merge:|\s*$)|created.*tag/ } @t;
+  if(@t) {
+    # rewrite a bit to have it look more consistent
+    map { s/(fate|bnc)#/$1 #/g } @t;
+    map { s/\(#/(bnc #/g } @t;
+    map { s/bug\s*#/bnc #/g } @t;
+    map { s/feat(\.|ure)?\s*#?(\d+)/fate #$2/g } @t;
+    map { s/^ {4}// } @t;
+    map { s/^ {8}// } @t;
+    map { s/^([^-\s])/- $1/ } @t;
+    map { s/^- - /- / } @t;
+    map { s/^- \+\s+(- )?/- / } @t;
+    map { s/^/\t/ } @t;
+    $t = $tags[$i];
+    $t = "${branch}-$t" if $branch ne 'master' && $t eq "HEAD";
+    print "$date:\t$t\n";
+    print join("\n", @t), "\n\n";
+  }
+}
+
+
+sub usage
+{
+  my $err = shift;
+
+  print <<"  usage";
+Usage: git2log [OPTIONS]
+Create changelog and project version from git repo.
+  --log         Print changelog file.
+  --version     Print version number.
+  --help        Write this help text.
+  usage
+
+  exit $err;
+}
+
+

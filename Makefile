@@ -1,6 +1,6 @@
 TOPDIR		= $(CURDIR)
 SUBDIRS		= src
-TARGETS		= hwinfo hwinfo.pc
+TARGETS		= hwinfo hwinfo.pc changelog
 CLEANFILES	= hwinfo hwinfo.pc hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~
 LIBDIR		= /usr/lib
 ULIBDIR		= $(LIBDIR)
@@ -11,6 +11,8 @@ SO_LIBS		= -ldbus-1 -lhal
 TSO_LIBS	= -ldbus-1 -lhal
 
 export SO_LIBS
+
+GIT2LOG = $(shell [ -x ./git2log ] && echo ./git2log )
 
 include Makefile.common
 
@@ -27,6 +29,14 @@ OBJS_NO_TINY	= names.o parallel.o modem.o
 
 .PHONY:	fullstatic static shared tiny doc diet tinydiet uc tinyuc
 
+ifneq ($(GIT2LOG),)
+changelog: .git/HEAD .git/refs/heads .git/refs/tags
+	$(GIT2LOG) --log >changelog
+
+VERSION: .git/HEAD .git/refs/heads .git/refs/tags
+	$(GIT2LOG) --version >VERSION
+endif
+
 hwscan: hwscan.o $(LIBHD)
 	$(CC) hwscan.o $(LDFLAGS) $(LIBS) -o $@
 
@@ -39,7 +49,7 @@ hwscand: hwscand.o
 hwscanqueue: hwscanqueue.o
 	$(CC) $< $(LDFLAGS) -o $@
 
-hwinfo.pc: hwinfo.pc.in
+hwinfo.pc: hwinfo.pc.in VERSION
 	VERSION=`cat VERSION`; \
 	sed -e "s,@VERSION@,$${VERSION},g" -e 's,@LIBDIR@,$(ULIBDIR),g;s,@LIBS@,$(LIBS),g' $< > $@.tmp && mv $@.tmp $@
 
