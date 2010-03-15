@@ -1,3 +1,6 @@
+15/3/2010:	v15.31
+	- fix memory size detection (bnc #588028, bnc #500410)
+
 12/2/2010:	v15.30
 	- recognize agere modem lines (bnc #578286)
 
