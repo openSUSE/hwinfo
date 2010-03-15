@@ -47,14 +47,19 @@ void hd_scan_memory(hd_data_t *hd_data)
 
   msize0 = meminfo > klog ? meminfo : klog;
   if(!msize0) msize0 = kcore;
+  msize1 = msize0;
 
   exact = 0;
+  /* trust kcore value if it's approx. msize0 */
   if(msize0 && kcore >= msize0 && ((kcore - msize0) << 4) / msize0 == 0) {
-    /* trust kcore value if it's approx. msize0 */
+    /* be a bit more restrictive here */
+    if(((kcore - msize0) << 6) / msize0 == 0) {
+      msize1 = kcore;
+      exact = 1;
+    }
     msize0 = kcore;
-    exact = 1;
   }
-  msize1 = msize0;
+
   if(meminfo > msize1) { msize1 = meminfo; exact = 0; }
   if(klog_alt > msize0) msize0 = klog_alt;
 
