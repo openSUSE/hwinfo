@@ -11,12 +11,18 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 
+// #define WITH_HAL 1
+
+#if WITH_HAL
+
 #ifndef DBUS_API_SUBJECT_TO_CHANGE
   #define DBUS_API_SUBJECT_TO_CHANGE 1
 #endif
 
 #include <dbus/dbus.h>
 #include <hal/libhal.h>
+
+#endif
 
 #include "hd.h"
 #include "hd_int.h"
@@ -95,6 +101,7 @@ void hd_scan_hal_basic(hd_data_t *hd_data)
 
 void read_hal(hd_data_t *hd_data)
 {
+#if WITH_HAL
   DBusError error;
   DBusConnection *conn;
   LibHalContext *hal_ctx;
@@ -220,6 +227,7 @@ void read_hal(hd_data_t *hd_data)
   dbus_connection_unref(conn);
 
   dbus_error_free(&error);
+#endif	/* WITH_HAL */
 }
 
 

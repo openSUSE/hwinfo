@@ -9,12 +9,14 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <linux/iso_fs.h>
+#include <linux/cdrom.h>
 #include <scsi/sg.h>
 
 #include "hd.h"
 #include "hd_int.h"
 #include "hddb.h"
 #include "block.h"
+#include "dvd.h"
 
 /**
  * @defgroup BLOCKint Block devices
@@ -423,6 +425,7 @@ void add_partitions(hd_data_t *hd_data, hd_t *hd, char *path)
 void add_cdrom_info(hd_data_t *hd_data, hd_t *hd)
 {
   cdrom_info_t *ci, **prev;
+  int fd, caps, caps2;
 
   hd->detail = free_hd_detail(hd->detail);
   hd->detail = new_mem(sizeof *hd->detail);
@@ -438,42 +441,52 @@ void add_cdrom_info(hd_data_t *hd_data, hd_t *hd)
   }
 
   if((ci = hd->detail->cdrom.data)) {
-    /* update prog_if: cdr, cdrw, ... */
-    if(
-      /* ###### FIXME: dosn't work anyway: ide-scsi doesn't support sysfs */
-      hd->bus.id == bus_scsi &&
-      !search_str_list(hd->drivers, "ide-scsi")		/* could be ide, though */
-    ) {
-      /* scsi devs lie */
-      if(ci->dvd && (ci->cdrw || ci->dvdr || ci->dvdram)) {
-        ci->dvd = ci->dvdr = ci->dvdram = 0;
+    fd = open(hd->unix_dev_name, O_RDONLY | O_NONBLOCK);
+    caps = caps2 = 0;
+    if(fd >= 0) {
+      caps = ioctl(fd, CDROM_GET_CAPABILITY, 0);
+      ADD2LOG("  cdrom caps(%s): 0x%x\n", hd->unix_dev_name, caps);
+      if(caps >= 0) {
+        if(caps & CDC_CD_R) hd->is.cdr = 1;
+        if(caps & CDC_CD_RW) hd->is.cdrw = 1;
+        if(caps & CDC_DVD_R) hd->is.dvdr = 1;
+        if(caps & CDC_DVD_RAM) hd->is.dvdram = 1;
+        if(caps & CDC_MO_DRIVE) hd->is.mo = 1;
+        if(caps & CDC_MRW) hd->is.mrw = 1;
+        if(caps & CDC_MRW_W) hd->is.mrww = 1;
+        if(caps & CDC_DVD) {
+          hd->is.dvd = 1;
+          caps2 = get_dvd_profile(fd);
+          ADD2LOG("  dvd caps(%s): 0x%x\n", hd->unix_dev_name, caps2);
+          if(caps2 & DRIVE_CDROM_CAPS_DVDRW) hd->is.dvdrw = 1;
+          if(caps2 & DRIVE_CDROM_CAPS_DVDRDL) hd->is.dvdrdl = 1;
+          if(caps2 & DRIVE_CDROM_CAPS_DVDPLUSR) hd->is.dvdpr = 1;
+          if(caps2 & DRIVE_CDROM_CAPS_DVDPLUSRW) hd->is.dvdprw = 1;
+          if(caps2 & DRIVE_CDROM_CAPS_DVDPLUSRWDL) hd->is.dvdprwdl = 1;
+          if(caps2 & DRIVE_CDROM_CAPS_DVDPLUSRDL) hd->is.dvdprdl = 1;
+          if(caps2 & DRIVE_CDROM_CAPS_BDROM) hd->is.bd = 1;
+          if(caps2 & DRIVE_CDROM_CAPS_BDR) hd->is.bdr = 1;
+          if(caps2 & DRIVE_CDROM_CAPS_BDRE) hd->is.bdre = 1;
+          if(caps2 & DRIVE_CDROM_CAPS_HDDVDROM) hd->is.hd = 1;
+          if(caps2 & DRIVE_CDROM_CAPS_HDDVDR) hd->is.hdr = 1;
+          if(caps2 & DRIVE_CDROM_CAPS_HDDVDRW) hd->is.hdrw = 1;
+        }
       }
-      ci->dvdr = ci->dvdram = 0;
-      ci->cdr = ci->cdrw = 0;
-      if(hd->prog_if.id == pif_cdr) ci->cdr = 1;
+      close(fd);
+      if(caps <= 0) {
+        if(ci->cdr) hd->is.cdr = 1;
+        if(ci->cdrw) hd->is.cdrw = 1;
+        if(ci->dvd) hd->is.dvd = 1;
+        if(ci->dvdr) hd->is.dvdr = 1;
+        if(ci->dvdram) hd->is.dvdram = 1;
+      }
     }
 
-    /* trust ide info */
-    if(ci->dvd) {
-      hd->is.dvd = 1;
-      hd->prog_if.id = pif_dvd;
-    }
-    if(ci->cdr) {
-      hd->is.cdr = 1;
-      hd->prog_if.id = pif_cdr;
-    }
-    if(ci->cdrw) {
-      hd->is.cdrw = 1;
-      hd->prog_if.id = pif_cdrw;
-    }
-    if(ci->dvdr) {
-      hd->is.dvdr = 1;
-      hd->prog_if.id = pif_dvdr;
-    }
-    if(ci->dvdram) {
-      hd->is.dvdram = 1;
-      hd->prog_if.id = pif_dvdram;
-    }
+    if(hd->is.dvd) hd->prog_if.id = pif_dvd;
+    if(hd->is.cdr) hd->prog_if.id = pif_cdr;
+    if(hd->is.cdrw) hd->prog_if.id = pif_cdrw;
+    if(hd->is.dvdr) hd->prog_if.id = pif_dvdr;
+    if(hd->is.dvdram) hd->prog_if.id = pif_dvdram;
   }
 
   if(

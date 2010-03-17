@@ -1614,7 +1614,6 @@ typedef struct hal_device_s {
   hal_prop_t *prop;
 } hal_device_t;
 
-
 /**
  * resource types: see @ref RESOURCEpub
  */
@@ -2459,10 +2458,21 @@ typedef struct s_hd_t {
     unsigned dvd:1;		/**< DVD */
     unsigned dvdr:1;		/**< DVD-R */
     unsigned dvdrw:1;		/**< DVD-RW */
+    unsigned dvdrdl:1;		/**< DVD-R DL */
     unsigned dvdpr:1;		/**< DVD+R */
     unsigned dvdprw:1;		/**< DVD+RW */
-    unsigned dvdprdl:1;		/**< DVD+RDL */
+    unsigned dvdprdl:1;		/**< DVD+R DL */
+    unsigned dvdprwdl:1;	/**< DVD+RW DL */
+    unsigned bd:1;		/**< BD */
+    unsigned bdr:1;		/**< BD-R */
+    unsigned bdre:1;		/**< BD-RE */
+    unsigned hd:1;		/**< HD */
+    unsigned hdr:1;		/**< HD-R */
+    unsigned hdrw:1;		/**< HD-RW */
     unsigned dvdram:1;		/**< DVDRAM */
+    unsigned mo:1;		/**< MO */
+    unsigned mrw:1;		/**< MRW */
+    unsigned mrww:1;		/**< MRW-W */
     unsigned pppoe:1;		/**< PPPOE modem connected */
     unsigned wlan:1;		/**< WLAN card */
     unsigned with_acpi:1;	/**< acpi works fine */

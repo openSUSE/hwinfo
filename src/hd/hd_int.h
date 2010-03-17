@@ -202,10 +202,10 @@ str_list_t *hd_module_list(hd_data_t *hd_data, unsigned id);
 char* get_sysfs_attr(const char* bus, const char* device, const char* attr);
 char* get_sysfs_attr_by_path(const char* path, const char* attr);
 
-hal_device_t *hd_free_hal_devices(hal_device_t *dev);
 void hd_pci_complete_data(hd_t *hd);
 void hd_pci_read_data(hd_data_t *hd_data);
 
+hal_device_t *hd_free_hal_devices(hal_device_t *dev);
 char *hd_hal_print_prop(hal_prop_t *prop);
 
 void hal_invalidate(hal_prop_t *prop);
