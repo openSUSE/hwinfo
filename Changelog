@@ -1,3 +1,6 @@
+25/3/2010:	v15.32
+	- update pci ids (bnc #569314)
+
 15/3/2010:	v15.31
 	- fix memory size detection (bnc #588028, bnc #500410)
 
