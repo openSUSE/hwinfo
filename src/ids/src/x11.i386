@@ -3614,7 +3614,7 @@
 +driver.xfree		4|nv|||||15,24
 
  vendor.id		pci 0x15ad
-+vendor.name		VMWare Inc
++vendor.name		VMware Inc
 
  vendor.id		pci 0x15ad
 &device.id		pci 0x0405

@@ -222,7 +222,7 @@ void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
   }
 
   if(is_vmware == 1) {
-    st->model = new_str("VMWare");
+    st->model = new_str("VMware");
   }
 
   hd_data->flags.vmware = is_vmware;

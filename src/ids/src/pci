@@ -84469,7 +84469,7 @@
 +device.name		PCI Event Channel Controller
 
  vendor.id		pci 0xfffe
-+vendor.name		VMWare Inc (temporary ID)
++vendor.name		VMware Inc (temporary ID)
 
  vendor.id		pci 0xfffe
 &device.id		pci 0x0710
