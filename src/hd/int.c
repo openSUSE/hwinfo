@@ -1082,6 +1082,7 @@ void int_system(hd_data_t *hd_data)
   } is = { };
   char *s;
   struct stat sbuf;
+  sys_info_t *st;
 
   for(hd_sys = hd_data->hd; hd_sys; hd_sys = hd_sys->next) {
     if(
@@ -1091,6 +1092,8 @@ void int_system(hd_data_t *hd_data)
   }
 
   if(!hd_sys) return;
+
+  st = hd_sys->detail && hd_sys->detail->type == hd_detail_sys ? hd_sys->detail->sys.data : NULL;
 
   if(
     hd_sys->vendor.name &&
@@ -1170,6 +1173,10 @@ void int_system(hd_data_t *hd_data)
       "",
     is.notebook ? " notebook" : ""
   );
+
+  if(!st->formfactor) {
+    st->formfactor = new_str(is.notebook ? "laptop" : "desktop");
+  }
 
   if(is.notebook && is.vendor) {
     hd_sys->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0xf001);
