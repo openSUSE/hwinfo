@@ -1174,7 +1174,7 @@ void int_system(hd_data_t *hd_data)
     is.notebook ? " notebook" : ""
   );
 
-  if(!st->formfactor) {
+  if(st && !st->formfactor) {
     st->formfactor = new_str(is.notebook ? "laptop" : "desktop");
   }
 
