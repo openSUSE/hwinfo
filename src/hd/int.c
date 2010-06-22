@@ -1163,6 +1163,18 @@ void int_system(hd_data_t *hd_data)
     ) {
       is.notebook = 1;
     }
+
+    /*
+     * bnc #591703
+     * in case chassis info is missing: assume it's a notebook if
+     * it has track point or touch pad
+     */
+    if(
+      sm->any.type == sm_mouse &&
+      (sm->mouse.mtype.id == 5 || sm->mouse.mtype.id == 7)
+    ) {
+      is.notebook = 1;
+    }
   }
 
   ADD2LOG(
