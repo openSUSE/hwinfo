@@ -229,6 +229,7 @@ int get_probe_val_int(hd_data_t *hd_data, enum probe_feature feature);
 char *get_probe_val_str(hd_data_t *hd_data, enum probe_feature feature);
 str_list_t *get_probe_val_list(hd_data_t *hd_data, enum probe_feature feature);
 
+str_list_t *sort_str_list(str_list_t *sl0, int (*cmp_func)(const void *, const void *));
 
 
 #ifdef __cplusplus

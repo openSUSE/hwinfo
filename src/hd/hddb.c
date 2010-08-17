@@ -1,3 +1,5 @@
+#define _GNU_SOURCE	/* asprintf */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,6 +40,7 @@ typedef struct line_s {
   prefix_t prefix;
   hddb_entry_t key;
   char *value;
+  char *raw;
 } line_t;
 
 typedef struct {
@@ -74,6 +77,7 @@ static void hddb_init_pci(hd_data_t *hd_data);
 static char *get_mi_field(char *str, char *tag, int field_len, unsigned *value, unsigned *has_value);
 static modinfo_t *parse_modinfo(str_list_t *file);
 static driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd, driver_info_t *drv_info);
+static int cmp_dir_entry_s(const void *p0, const void *p1);
 static void hddb_init_external(hd_data_t *hd_data);
 
 static line_t *parse_line(char *str);
@@ -471,6 +475,18 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+/* wrapper for qsort */
+int cmp_dir_entry_s(const void *p0, const void *p1)
+{
+  str_list_t **sl0, **sl1;
+
+  sl0 = (str_list_t **) p0;
+  sl1 = (str_list_t **) p1;
+
+  return -strcmp((*sl0)->str, (*sl1)->str);	/* first files win */
+}
+
+
 void hddb_init(hd_data_t *hd_data)
 {
   hddb_init_pci(hd_data);
@@ -488,7 +504,7 @@ void hddb_init(hd_data_t *hd_data)
 
 void hddb_init_external(hd_data_t *hd_data)
 {
-  str_list_t *sl, *sl0;
+  str_list_t *sl, *sl0, *sl1, *sl2, *id_dir;
   line_t *l;
   unsigned l_start, l_end /* end points _past_ last element */;
   unsigned u, ent, l_nr = 1;
@@ -497,6 +513,7 @@ void hddb_init_external(hd_data_t *hd_data)
   int state;
   hddb_list_t dbl = {};
   hddb2_data_t *hddb2;
+  char *s;
 
   if(hd_data->hddb2[0]) return;
 
@@ -504,28 +521,48 @@ void hddb_init_external(hd_data_t *hd_data)
 
   sl0 = read_file(hd_get_hddb_path("hd.ids"), 0, 0);
 
+  if(sl0) ADD2LOG("id file: hd.ids\n");
+
+  id_dir = read_dir(hd_get_hddb_path("ids"), 0);
+
+  if(id_dir) {
+    id_dir = sort_str_list(id_dir, cmp_dir_entry_s);
+
+    for(sl = id_dir; sl; sl = sl->next) {
+      asprintf(&s, "ids/%s", sl->str);
+      ADD2LOG("id file: %s\n", s);
+      sl1 = sl2 = read_file(hd_get_hddb_path(s), 0, 0);
+      free(s);
+      if(sl1) {
+        while(sl1->next) sl1 = sl1->next;
+        sl1->next = sl0;
+        sl0 = sl2;
+      }
+    }
+  }
+
   l_start = l_end = 0;
   state = 0;
 
   for(sl = sl0; sl; sl = sl->next, l_nr++) {
     l = parse_line(sl->str);
     if(!l) {
-      ADD2LOG("hd.ids line %d: invalid line\n", l_nr);
+      ADD2LOG("id line %d: invalid line\n", l_nr);
       state = 4;
-      break;
+      goto error;
     };
     if(l->prefix == pref_empty) continue;
     switch(l->prefix) {
       case pref_new:
         if((state == 2 && !entry_mask) || state == 1) {
-          ADD2LOG("hd.ids line %d: new item not allowed\n", l_nr);
+          ADD2LOG("id line %d: new item not allowed\n", l_nr);
           state = 4;
           break;
         }
         if(state == 2 && entry_mask) {
           ent = store_entry(hddb2, tmp_entry);
           if(ent == -1u) {
-            ADD2LOG("hd.ids line %d: internal hddb oops 1\n", l_nr);
+            ADD2LOG("id line %d: internal hddb oops 1\n", l_nr);
             state = 4;
             break;
           }
@@ -545,7 +582,7 @@ void hddb_init_external(hd_data_t *hd_data)
 
       case pref_and:
         if(state != 1) {
-          ADD2LOG("hd.ids line %d: must start item first\n", l_nr);
+          ADD2LOG("id line %d: must start item first\n", l_nr);
           state = 4;
           break;
         }
@@ -553,13 +590,13 @@ void hddb_init_external(hd_data_t *hd_data)
 
       case pref_or:
         if(state != 1 || !entry_mask || l_end <= l_start || l_end < 1) {
-          ADD2LOG("hd.ids line %d: must start item first\n", l_nr);
+          ADD2LOG("id line %d: must start item first\n", l_nr);
           state = 4;
           break;
         }
         ent = store_entry(hddb2, tmp_entry);
         if(ent == -1u) {
-          ADD2LOG("hd.ids line %d: internal hddb oops 2\n", l_nr);
+          ADD2LOG("id line %d: internal hddb oops 2\n", l_nr);
           state = 4;
           break;
         }
@@ -569,7 +606,7 @@ void hddb_init_external(hd_data_t *hd_data)
         clear_entry(tmp_entry);
         u = store_list(hddb2, &dbl);
         if(u != l_end) {
-          ADD2LOG("hd.ids line %d: internal hddb oops 2\n", l_nr);
+          ADD2LOG("id line %d: internal hddb oops 2\n", l_nr);
           state = 4;
           break;
         }
@@ -578,14 +615,14 @@ void hddb_init_external(hd_data_t *hd_data)
 
       case pref_add:
         if(state == 1 && !entry_mask) {
-          ADD2LOG("hd.ids line %d: driver info not allowed\n", l_nr);
+          ADD2LOG("id line %d: driver info not allowed\n", l_nr);
           state = 4;
           break;
         }
         if(state == 1 && l_end > l_start) {
           ent = store_entry(hddb2, tmp_entry);
           if(ent == -1u) {
-            ADD2LOG("hd.ids line %d: internal hddb oops 3\n", l_nr);
+            ADD2LOG("id line %d: internal hddb oops 3\n", l_nr);
             state = 4;
             break;
           }
@@ -596,7 +633,7 @@ void hddb_init_external(hd_data_t *hd_data)
           state = 2;
         }
         if(state != 2 || l_end == 0) {
-          ADD2LOG("hd.ids line %d: driver info not allowed\n", l_nr);
+          ADD2LOG("id line %d: driver info not allowed\n", l_nr);
           state = 4;
           break;
         }
@@ -612,19 +649,31 @@ void hddb_init_external(hd_data_t *hd_data)
         entry_mask |= u;
       }
       else {
-        ADD2LOG("hd.ids line %d: invalid info\n", l_nr);
+        ADD2LOG("id line %d: invalid info\n", l_nr);
         state = 4;
       }
     }
 
-    if(state == 4) break;	/* error */
+    error:
+
+    if(state == 4) {	/* error */
+      state = 0;
+      u = 10;	/* log max 10 lines context */
+      while(sl->next && *sl->str != '\n') {
+        if(u) {
+          ADD2LOG("  %s", sl->str);
+          u--;
+        }
+        sl = sl->next;
+      }
+    }
   }
 
   /* finalize last item */
   if(state == 2 && entry_mask) {
     ent = store_entry(hddb2, tmp_entry);
     if(ent == -1u) {
-      ADD2LOG("hd.ids line %d: internal hddb oops 4\n", l_nr);
+      ADD2LOG("id line %d: internal hddb oops 4\n", l_nr);
       state = 4;
     }
     else if(l_end && l_end > l_start) {
@@ -653,6 +702,9 @@ line_t *parse_line(char *str)
   static line_t l;
   char *s;
   int i;
+
+  free_mem(l.raw);
+  str = l.raw = new_str(str);
 
   /* drop leading spaces */
   while(isspace(*str)) str++;
