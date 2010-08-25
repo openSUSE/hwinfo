@@ -735,18 +735,20 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # fingerprint reader
 
- vendor.id		usb 0x0483
-&device.id		usb 0x2016
-|vendor.id		usb 0x0483
-&device.id		usb 0x2015
-|vendor.id		usb 0x08ff
-&device.id		usb 0x5501
-|vendor.id		usb 0x08ff
+ vendor.id		usb 0x08ff
 &device.id		usb 0x1600
-|vendor.id		usb 0x1162
-&device.id		usb 0x0300
+|vendor.id		usb 0x08ff
+&device.id		usb 0x2500
 |vendor.id		usb 0x08ff
 &device.id		usb 0x2580
+|vendor.id		usb 0x08ff
+&device.id		usb 0x5501
+|vendor.id		usb 0x147e
+&device.id		usb 0x2016
+|vendor.id		usb 0x147e
+&device.id		usb 0xbeef
+|vendor.id		usb 0x0483
+&device.id		usb 0x2016
 |vendor.id		usb 0x045e
 &device.id		usb 0x00bb
 |vendor.id		usb 0x045e
@@ -758,13 +760,15 @@
 |vendor.id		usb 0x05ba
 &device.id		usb 0x0007
 |vendor.id		usb 0x05ba
+&device.id		usb 0x0008
+|vendor.id		usb 0x05ba
 &device.id		usb 0x000a
 |vendor.id		usb 0x061a
 &device.id		usb 0x0110
+|vendor.id		usb 0x1162
+&device.id		usb 0x0300
 |vendor.id		usb 0x061a
 &device.id		usb 0x0200
-|vendor.id		usb 0x147e
-&device.id		usb 0x2016
 +baseclass.id		0x116
 +subclass.id		0x00
 
