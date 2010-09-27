@@ -1,3 +1,6 @@
+27/9/2010:	v12.62
+	- skip interfaces that have the SLAVE flag set for pppoe (bnc #541242)
+
 11/2/2010:	v12.61
 	- get net interface link state from sysfs, too (bnc #561012)
 	- fix device renaming detection (bnc #574442)
