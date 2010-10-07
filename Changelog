@@ -1,3 +1,6 @@
+7/10/2010:	v12.63
+	- recognize InfiniBand controller (bnc #644299, #639807)
+
 27/9/2010:	v12.62
 	- skip interfaces that have the SLAVE flag set for pppoe (bnc #541242)
 

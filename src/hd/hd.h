@@ -197,7 +197,7 @@ typedef enum sc_input {
 /* subclass values of bc_serial */
 typedef enum sc_serial {
   sc_ser_fire, sc_ser_access, sc_ser_ssa, sc_ser_usb, sc_ser_fiber,
-  sc_ser_smbus, sc_ser_other = 0x80
+  sc_ser_smbus, sc_ser_infiniband, sc_ser_other = 0x80
 } hd_sc_serial_t;
 
 /* internal sub class values (bc_internal) */
