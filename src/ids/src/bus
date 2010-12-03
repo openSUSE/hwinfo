@@ -75,3 +75,12 @@
 
  bus.id			0x8d
 +bus.name		IUCV
+
+ bus.id			0x8e
++bus.name		PS3
+
+ bus.id			0x8f
++bus.name		Virtio
+
+ bus.id			0x90
++bus.name		IBMEBUS

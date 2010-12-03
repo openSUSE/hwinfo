@@ -693,6 +693,14 @@
 &device.id		special 0x0001
 +driver.module.modprobe	netvsc
 
+# virtio
+ vendor.id		special 0x6014
++vendor.name		Virtio
+
+ vendor.id		special 0x6014
+&device.id		special 0x0100
++device.name		Mouse
+
 # internal: usb scanner driver list
  vendor.id		special 0xf000
 &device.id		special 0x0001

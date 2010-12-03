@@ -1,3 +1,6 @@
+2/12/2010:	v12.64
+	- support virtio devices (bnc #649760, bnc #404803)
+
 7/10/2010:	v12.63
 	- recognize InfiniBand controller (bnc #644299, #639807)
 

@@ -227,6 +227,7 @@ int hd_report_this(hd_data_t *hd_data, hd_t *hd);
 str_list_t *hd_module_list(hd_data_t *hd_data, unsigned id);
 
 char* get_sysfs_attr_by_path(const char* path, const char* attr);
+int hd_attr_uint_new(char* attr, uint64_t* u, int base);
 
 int hd_is_iseries(hd_data_t *hd_data);
 hal_device_t *hd_free_hal_devices(hal_device_t *dev);
