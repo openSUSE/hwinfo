@@ -1,3 +1,5 @@
+#define _GNU_SOURCE	/* asprintf */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +12,14 @@
 #include "hddb.h"
 #include "isdn.h"
 #include "hddb_int.h"
+
+/**
+ * @defgroup HDDBint Hardware DB (HDDB)
+ * @ingroup libhdInternals
+ * @brief Hardware DB functions
+ *
+ * @{
+ */
 
 extern hddb2_data_t hddb_internal;
 
@@ -30,14 +40,18 @@ typedef struct line_s {
   prefix_t prefix;
   hddb_entry_t key;
   char *value;
+  char *raw;
 } line_t;
 
 typedef struct {
   int len;
-  unsigned val[32];	/* arbitrary (approx. max. number of modules/xf86 config lines) */
+  unsigned val[32];	/**< arbitrary (approx. max. number of modules/xf86 config lines) */
 } tmp_entry_t;
 
-/* except for driver, all strings are static and _must not_ be freed */
+/**
+ * Hardware DB search struct.
+ * @note except for driver, all strings are static and _must not_ be freed
+ */
 typedef struct {
   hddb_entry_mask_t key;
   hddb_entry_mask_t value;
@@ -58,12 +72,12 @@ typedef struct {
   unsigned hwclass;
 } hddb_search_t;
 
-
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 static void hddb_init_pci(hd_data_t *hd_data);
 static char *get_mi_field(char *str, char *tag, int field_len, unsigned *value, unsigned *has_value);
 static modinfo_t *parse_modinfo(str_list_t *file);
 static driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd, driver_info_t *drv_info);
+static int cmp_dir_entry_s(const void *p0, const void *p1);
 static void hddb_init_external(hd_data_t *hd_data);
 
 static line_t *parse_line(char *str);
@@ -163,7 +177,7 @@ modinfo_t *parse_modinfo(str_list_t *file)
   unsigned u;
   char alias[256], module[256];
 
-  /* lenght + 1! */
+  /* length + 1! */
   for(len = 1, sl = file; sl; sl = sl->next) len++;
 
   modinfo = new_mem(len * sizeof *modinfo);
@@ -171,8 +185,14 @@ modinfo_t *parse_modinfo(str_list_t *file)
   for(m = modinfo, sl = file; sl; sl = sl->next) {
     if(sscanf(sl->str, "alias %255s %255s", alias, module) != 2) continue;
 
+    m->module = new_str(module);
+    m->alias = new_str(alias);
+    m->type = mi_other;
+
     if(!strncmp(alias, "pci:", sizeof "pci:" - 1)) {
       s = alias + sizeof "pci:" - 1;
+
+      m->type = mi_pci;
 
       if(!(s = get_mi_field(s, "v", 8, &m->pci.vendor, &u))) continue;
       m->pci.has.vendor = u;
@@ -194,36 +214,9 @@ modinfo_t *parse_modinfo(str_list_t *file)
 
       if(!(s = get_mi_field(s, "i", 2, &m->pci.prog_if, &u))) continue;
       m->pci.has.prog_if = u;
-
-      if(!strcmp(module, "i2o_core")) strcpy(module, "i2o_block");	/* map i2o module */
-
-      m->module = new_str(module);
-      m->alias = new_str(alias);
-      m++->type = mi_pci;
-
-      continue;
     }
 
-    if(!strncmp(alias, "usb:", sizeof "usb:" - 1)) {
-      s = alias + sizeof "usb:" - 1;
-
-      m->module = new_str(module);
-      m->alias = new_str(alias);
-      m++->type = mi_usb;
-
-      continue;
-    }
-
-    if(!strncmp(alias, "pcmcia:", sizeof "pcmcia:" - 1)) {
-      s = alias + sizeof "pcmcia:" - 1;
-
-      m->module = new_str(module);
-      m->alias = new_str(alias);
-      m++->type = mi_pcmcia;
-
-      continue;
-    }
-
+    m++;
   }
 
   /* note: list stops at first entry with m->type == mi_none */
@@ -233,8 +226,8 @@ modinfo_t *parse_modinfo(str_list_t *file)
   for(m = modinfo; m->type; m++) {
     switch(m->type) {
       case mi_pci:
-        fprintf(stderr, "%s:%d, %s\n  v 0x%x:%u, d 0x%x:%u, sv 0x%x:%u, sd 0x%x:%u, bc 0x%x:%u, sc 0x%x:%u, i 0x%x:%u\n",
-          m->module, m->type, m->alias,
+        fprintf(stderr, "%s: %s\n  v 0x%x:%u, d 0x%x:%u, sv 0x%x:%u, sd 0x%x:%u, bc 0x%x:%u, sc 0x%x:%u, i 0x%x:%u\n",
+          m->module, m->alias,
           m->pci.vendor, m->pci.has.vendor,
           m->pci.device, m->pci.has.device,
           m->pci.sub_vendor, m->pci.has.sub_vendor,
@@ -245,10 +238,9 @@ modinfo_t *parse_modinfo(str_list_t *file)
         );
         break;
 
-      case mi_usb:
-      case mi_pcmcia:
-        fprintf(stderr, "%s:%d, %s\n",
-          m->module, m->type, m->alias
+      case mi_other:
+        fprintf(stderr, "%s: %s\n",
+          m->module, m->alias
         );
         break;
 
@@ -262,7 +254,9 @@ modinfo_t *parse_modinfo(str_list_t *file)
 }
 
 
-/* return prio, 0: no match */
+/**
+ *  return prio, 0: no match 
+ */
 int match_modinfo(hd_data_t *hd_data, modinfo_t *db, modinfo_t *match)
 {
   int prio = 0;
@@ -339,16 +333,15 @@ int match_modinfo(hd_data_t *hd_data, modinfo_t *db, modinfo_t *match)
         if(!strncmp(db->module, "pata_", sizeof "pata_" - 1)) {
           prio += hd_data->flags.pata ? 1 : -1;
         }
-        if(!strcmp(db->module, "piix")) {	/* ata_piix vs. piix */
+        if(!strcmp(db->module, "piix")) {		/* ata_piix vs. piix */
           prio += hd_data->flags.pata ? -1 : 1;
         }
         if(!strcmp(db->module, "generic")) prio -= 2;
-        if(!strcmp(db->module, "i2o_block")) prio -= 1;
+        if(!strcmp(db->module, "sk98lin")) prio -= 1;	/* deprecate sk98lin (#298724) */
       }
       break;
 
-    case mi_usb:
-    case mi_pcmcia:
+    case mi_other:
       if(match->alias && db->alias) {
         if(!fnmatch(db->alias, match->alias, 0)) {
           s = strchr(db->alias, '*');
@@ -369,34 +362,16 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
 {
   driver_info_t **di = NULL, *di2;
   pci_t *pci;
-  char *mod_list[16 /* arbitrary */];
+  char *mod_list[16 /* arbitrary, > 0 */];
   int mod_prio[sizeof mod_list / sizeof *mod_list];
   int i, prio, mod_list_len;
   modinfo_t match = { };
 
   if(!modinfo_db) return drv_info;
 
-  if(
-    ID_TAG(hd->vendor.id) == TAG_PCI ||
-    ID_TAG(hd->device.id) == TAG_PCI
-  ) {
-    match.type = mi_pci;
-  }
-  else if(
-    ID_TAG(hd->vendor.id) == TAG_USB ||
-    ID_TAG(hd->device.id) == TAG_USB
-  ) {
-    match.type = mi_usb;
-  }
-  else if(
-    ID_TAG(hd->vendor.id) == TAG_PCMCIA ||
-    ID_TAG(hd->device.id) == TAG_PCMCIA ||
-    (hd->modalias && !strncmp(hd->modalias, "pcmcia:", sizeof "pcmcia:" - 1))
-  ) {
-    match.type = mi_pcmcia;
-  }
-
   match.alias = hd->modalias;
+
+  match.type = match.alias && !strncmp(match.alias, "pci:", 4) ? mi_pci : mi_other;
   
   if(!match.type) return drv_info;
 
@@ -446,8 +421,17 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
         if(
           di2->any.type == di_module &&
           di2->any.hddb0 &&
-          di2->any.hddb0->str &&
-          !strcmp(di2->any.hddb0->str, modinfo_db->module)
+          (
+            (
+              di2->any.hddb0->str &&
+              !hd_mod_cmp(di2->any.hddb0->str, modinfo_db->module)
+            ) ||
+            (
+              di2->any.hddb0->next &&
+              di2->any.hddb0->next->str &&
+              !hd_mod_cmp(di2->any.hddb0->next->str, modinfo_db->module)
+            )
+          )
         ) break;
       }
 
@@ -469,6 +453,11 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
     }
   }
 
+  if(!mod_list_len && hd->modalias && !strchr(hd->modalias, ':')) {
+    mod_prio[mod_list_len] = 0;
+    mod_list[mod_list_len++] = hd->modalias;
+  }
+
   for(prio = 256; prio >= 0; prio--) {
     for(i = 0; i < mod_list_len; i++) {
       if(mod_prio[i] == prio) {
@@ -486,6 +475,18 @@ driver_info_t *hd_modinfo_db(hd_data_t *hd_data, modinfo_t *modinfo_db, hd_t *hd
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+/* wrapper for qsort */
+int cmp_dir_entry_s(const void *p0, const void *p1)
+{
+  str_list_t **sl0, **sl1;
+
+  sl0 = (str_list_t **) p0;
+  sl1 = (str_list_t **) p1;
+
+  return -strcmp((*sl0)->str, (*sl1)->str);	/* first files win */
+}
+
+
 void hddb_init(hd_data_t *hd_data)
 {
   hddb_init_pci(hd_data);
@@ -503,7 +504,7 @@ void hddb_init(hd_data_t *hd_data)
 
 void hddb_init_external(hd_data_t *hd_data)
 {
-  str_list_t *sl, *sl0;
+  str_list_t *sl, *sl0, *sl1, *sl2, *id_dir;
   line_t *l;
   unsigned l_start, l_end /* end points _past_ last element */;
   unsigned u, ent, l_nr = 1;
@@ -512,6 +513,7 @@ void hddb_init_external(hd_data_t *hd_data)
   int state;
   hddb_list_t dbl = {};
   hddb2_data_t *hddb2;
+  char *s;
 
   if(hd_data->hddb2[0]) return;
 
@@ -519,28 +521,48 @@ void hddb_init_external(hd_data_t *hd_data)
 
   sl0 = read_file(hd_get_hddb_path("hd.ids"), 0, 0);
 
+  if(sl0) ADD2LOG("id file: hd.ids\n");
+
+  id_dir = read_dir(hd_get_hddb_path("ids"), 0);
+
+  if(id_dir) {
+    id_dir = sort_str_list(id_dir, cmp_dir_entry_s);
+
+    for(sl = id_dir; sl; sl = sl->next) {
+      asprintf(&s, "ids/%s", sl->str);
+      ADD2LOG("id file: %s\n", s);
+      sl1 = sl2 = read_file(hd_get_hddb_path(s), 0, 0);
+      free(s);
+      if(sl1) {
+        while(sl1->next) sl1 = sl1->next;
+        sl1->next = sl0;
+        sl0 = sl2;
+      }
+    }
+  }
+
   l_start = l_end = 0;
   state = 0;
 
   for(sl = sl0; sl; sl = sl->next, l_nr++) {
     l = parse_line(sl->str);
     if(!l) {
-      ADD2LOG("hd.ids line %d: invalid line\n", l_nr);
+      ADD2LOG("id line %d: invalid line\n", l_nr);
       state = 4;
-      break;
+      goto error;
     };
     if(l->prefix == pref_empty) continue;
     switch(l->prefix) {
       case pref_new:
         if((state == 2 && !entry_mask) || state == 1) {
-          ADD2LOG("hd.ids line %d: new item not allowed\n", l_nr);
+          ADD2LOG("id line %d: new item not allowed\n", l_nr);
           state = 4;
           break;
         }
         if(state == 2 && entry_mask) {
           ent = store_entry(hddb2, tmp_entry);
           if(ent == -1u) {
-            ADD2LOG("hd.ids line %d: internal hddb oops 1\n", l_nr);
+            ADD2LOG("id line %d: internal hddb oops 1\n", l_nr);
             state = 4;
             break;
           }
@@ -560,7 +582,7 @@ void hddb_init_external(hd_data_t *hd_data)
 
       case pref_and:
         if(state != 1) {
-          ADD2LOG("hd.ids line %d: must start item first\n", l_nr);
+          ADD2LOG("id line %d: must start item first\n", l_nr);
           state = 4;
           break;
         }
@@ -568,13 +590,13 @@ void hddb_init_external(hd_data_t *hd_data)
 
       case pref_or:
         if(state != 1 || !entry_mask || l_end <= l_start || l_end < 1) {
-          ADD2LOG("hd.ids line %d: must start item first\n", l_nr);
+          ADD2LOG("id line %d: must start item first\n", l_nr);
           state = 4;
           break;
         }
         ent = store_entry(hddb2, tmp_entry);
         if(ent == -1u) {
-          ADD2LOG("hd.ids line %d: internal hddb oops 2\n", l_nr);
+          ADD2LOG("id line %d: internal hddb oops 2\n", l_nr);
           state = 4;
           break;
         }
@@ -584,7 +606,7 @@ void hddb_init_external(hd_data_t *hd_data)
         clear_entry(tmp_entry);
         u = store_list(hddb2, &dbl);
         if(u != l_end) {
-          ADD2LOG("hd.ids line %d: internal hddb oops 2\n", l_nr);
+          ADD2LOG("id line %d: internal hddb oops 2\n", l_nr);
           state = 4;
           break;
         }
@@ -593,14 +615,14 @@ void hddb_init_external(hd_data_t *hd_data)
 
       case pref_add:
         if(state == 1 && !entry_mask) {
-          ADD2LOG("hd.ids line %d: driver info not allowed\n", l_nr);
+          ADD2LOG("id line %d: driver info not allowed\n", l_nr);
           state = 4;
           break;
         }
         if(state == 1 && l_end > l_start) {
           ent = store_entry(hddb2, tmp_entry);
           if(ent == -1u) {
-            ADD2LOG("hd.ids line %d: internal hddb oops 3\n", l_nr);
+            ADD2LOG("id line %d: internal hddb oops 3\n", l_nr);
             state = 4;
             break;
           }
@@ -611,7 +633,7 @@ void hddb_init_external(hd_data_t *hd_data)
           state = 2;
         }
         if(state != 2 || l_end == 0) {
-          ADD2LOG("hd.ids line %d: driver info not allowed\n", l_nr);
+          ADD2LOG("id line %d: driver info not allowed\n", l_nr);
           state = 4;
           break;
         }
@@ -627,19 +649,31 @@ void hddb_init_external(hd_data_t *hd_data)
         entry_mask |= u;
       }
       else {
-        ADD2LOG("hd.ids line %d: invalid info\n", l_nr);
+        ADD2LOG("id line %d: invalid info\n", l_nr);
         state = 4;
       }
     }
 
-    if(state == 4) break;	/* error */
+    error:
+
+    if(state == 4) {	/* error */
+      state = 0;
+      u = 10;	/* log max 10 lines context */
+      while(sl->next && *sl->str != '\n') {
+        if(u) {
+          ADD2LOG("  %s", sl->str);
+          u--;
+        }
+        sl = sl->next;
+      }
+    }
   }
 
   /* finalize last item */
   if(state == 2 && entry_mask) {
     ent = store_entry(hddb2, tmp_entry);
     if(ent == -1u) {
-      ADD2LOG("hd.ids line %d: internal hddb oops 4\n", l_nr);
+      ADD2LOG("id line %d: internal hddb oops 4\n", l_nr);
       state = 4;
     }
     else if(l_end && l_end > l_start) {
@@ -668,6 +702,9 @@ line_t *parse_line(char *str)
   static line_t l;
   char *s;
   int i;
+
+  free_mem(l.raw);
+  str = l.raw = new_str(str);
 
   /* drop leading spaces */
   while(isspace(*str)) str++;
@@ -3054,4 +3091,6 @@ char *hid_tag_name2(int tag)
 {
   return (unsigned) tag < sizeof hid_tag_names2 / sizeof *hid_tag_names2 ? hid_tag_names2[tag] : "";
 }
+
+/** @} */
 

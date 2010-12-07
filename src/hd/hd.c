@@ -5960,3 +5960,54 @@ int hd_attr_uint_new(char* attr, uint64_t* u, int base)
   return ok;
 }
 
+
+/*
+ * Compare module names.
+ */
+int hd_mod_cmp(char *str1, char *str2)
+{
+  char *s;
+  int i;
+
+  str1 = strdup(str1);
+  str2 = strdup(str2);
+
+  for(s = str1; *s; s++) if(*s == '-') *s = '_';
+  for(s = str2; *s; s++) if(*s == '-') *s = '_';
+
+  i = strcmp(str1, str2);  
+
+  free(str1);
+  free(str2);
+
+  return i;
+}
+
+
+str_list_t *sort_str_list(str_list_t *sl0, int (*cmp_func)(const void *, const void *))
+{
+  int i, list_len;
+  str_list_t *sl1 = NULL, *sl, **ssl;
+  str_list_t **str_list_array;
+
+  for(list_len = 0, sl = sl0; sl; sl = sl->next) list_len++;
+  if(list_len < 2) return sl0;
+
+  str_list_array = malloc(list_len * sizeof *str_list_array);
+
+  for(i = 0, sl = sl0; sl; sl = sl->next) str_list_array[i++] = sl;
+
+  qsort(str_list_array, list_len, sizeof *str_list_array, cmp_func);
+
+  for(i = 0, ssl = &sl1; i < list_len; i++) {
+    *ssl = str_list_array[i];
+    ssl = &str_list_array[i]->next;
+  }
+  *ssl = NULL;
+
+  free(str_list_array);
+
+  return sl1;
+}
+
+

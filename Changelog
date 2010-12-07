@@ -1,3 +1,7 @@
+7/12/2010:	v12.65
+	- backport more general modalias matching needed for virtio
+	  (bnc #649760, bnc #199112)
+
 2/12/2010:	v12.64
 	- support virtio devices (bnc #649760, bnc #404803)
 
