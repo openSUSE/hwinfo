@@ -694,6 +694,14 @@
 +driver.module.modprobe	netvsc
 
 # virtio
+ vendor.id		special 0x6013
+&device.id		special 0x0002
++driver.module.modprobe	storvsc
+
+ vendor.id		special 0x6013
+&device.id		special 0x0003
++driver.module.modprobe	blkvsc
+
  vendor.id		special 0x6014
 +vendor.name		Virtio
 

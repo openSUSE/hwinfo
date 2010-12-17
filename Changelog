@@ -1,3 +1,6 @@
+17/12/2010:	v12.66
+	- add vmbus storage controllers (bnc #659419, backport of bnc #654959)
+
 7/12/2010:	v12.65
 	- backport more general modalias matching needed for virtio
 	  (bnc #649760, bnc #199112)

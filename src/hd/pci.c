@@ -1013,7 +1013,7 @@ void add_xen_storage(hd_data_t *hd_data)
  */
 void hd_read_vm(hd_data_t *hd_data)
 {
-  int eth_cnt = 0;
+  int eth_cnt = 0, blk_cnt = 0;
   hd_t *hd;
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev, *drv, *drv_name;
@@ -1057,6 +1057,25 @@ void hd_read_vm(hd_data_t *hd_data)
       hd->slot = eth_cnt++;
       hd->device.id = MAKE_ID(TAG_SPECIAL, 1);
       str_printf(&hd->device.name, 0, "Virtual Ethernet Card %d", hd->slot);
+
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+      hd->sysfs_bus_id = new_str(sf_bus_e->str);
+      if(drv_name) add_str_list(&hd->drivers, drv_name);
+    }
+    else if(
+      drv_name &&
+      (!strcmp(drv_name, "storvsc") || !strcmp(drv_name, "blkvsc"))
+    ) {
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->bus.id = bus_none;
+
+      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6013);	/* virtual */
+
+      hd->base_class.id = bc_storage;
+      hd->sub_class.id = sc_sto_other;
+      hd->slot = blk_cnt++;
+      hd->device.id = MAKE_ID(TAG_SPECIAL, strcmp(drv_name, "storvsc") ? 3 : 2);
+      str_printf(&hd->device.name, 0, "Storage %d", hd->slot);
 
       hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
       hd->sysfs_bus_id = new_str(sf_bus_e->str);
