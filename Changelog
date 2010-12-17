@@ -1,3 +1,6 @@
+7/12/2010:	v15.36
+	- add vmbus storage controllers (bnc #654959)
+
 3/12/2010:	v15.34
 	- recognize InfiniBand controller (bnc #645877, bnc #644299, bnc #639807)
 
