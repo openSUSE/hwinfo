@@ -1,3 +1,6 @@
+16/2/2011:	v15.37
+	- support Validity fingerprint sensor (bnc #644149)
+
 16/2/2011:	v15.36
 	- report InfiniBand controller as network controller (bnc #645877, bnc #644299)
 
