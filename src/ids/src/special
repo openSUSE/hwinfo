@@ -777,6 +777,12 @@
 &device.id		usb 0x0300
 |vendor.id		usb 0x061a
 &device.id		usb 0x0200
+|vendor.id		usb 0x138a
+&device.id		usb 0x0003
+|vendor.id		usb 0x138a
+&device.id		usb 0x0007
+|vendor.id		usb 0x138a
+&device.id		usb 0x003c
 +baseclass.id		0x116
 +subclass.id		0x00
 
