@@ -4764,13 +4764,16 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
           hd->base_class.id == bc_i2o
         )
         ||
-        ( /* add fibre channel and infiniband to storage ctrl list */
+        ( /* add fibre channel to storage ctrl list */
           item == hw_storage_ctrl &&
           hd->base_class.id == bc_serial &&
-          (
-            hd->sub_class.id == sc_ser_fiber ||
-            hd->sub_class.id == sc_ser_infiniband
-          )
+          hd->sub_class.id == sc_ser_fiber
+        )
+        ||
+        ( /* add infiniband to network ctrl list */
+          item == hw_network_ctrl &&
+          hd->base_class.id == bc_serial &&
+          hd->sub_class.id == sc_ser_infiniband
         )
       ) {
         hd_set_hw_class(hd, item);

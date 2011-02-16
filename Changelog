@@ -1,3 +1,6 @@
+16/2/2011:	v15.36
+	- report InfiniBand controller as network controller (bnc #645877, bnc #644299)
+
 7/12/2010:	v15.35
 	- add vmbus storage controllers (bnc #654959)
 
