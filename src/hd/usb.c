@@ -516,7 +516,7 @@ void add_input_dev(hd_data_t *hd_data, char *name)
     hd_sysfs_id(name)
   );
 
-  if(!strncmp(sf_cdev_name, "ts", sizeof "ts" - 1)) return;
+  if(!sf_cdev_name || !strncmp(sf_cdev_name, "ts", sizeof "ts" - 1)) return;
 
   if((s = get_sysfs_attr_by_path(name, "dev"))) {
     if(sscanf(s, "%u:%u", &u1, &u2) == 2) {
