@@ -80,6 +80,9 @@ void hd_scan_int(hd_data_t *hd_data)
   PROGRESS(6, 0, "mouse");
   int_mouse(hd_data);
 
+  /* data already needed in int_system() */
+  hd_sysfs_driver_list(hd_data);
+
 #if defined(__i386__) || defined (__x86_64__)
   PROGRESS(15, 0, "system info");
   int_system(hd_data);
@@ -1083,6 +1086,7 @@ void int_system(hd_data_t *hd_data)
   char *s;
   struct stat sbuf;
   sys_info_t *st;
+  hd_sysfsdrv_t *sf;
 
   for(hd_sys = hd_data->hd; hd_sys; hd_sys = hd_sys->next) {
     if(
@@ -1177,6 +1181,16 @@ void int_system(hd_data_t *hd_data)
     }
   }
 
+  /* check for battery, too (bnc #678456) */
+  if(!is.notebook) {
+    for(sf = hd_data->sysfsdrv; sf; sf = sf->next) {
+      if(sf->driver && !strcmp(sf->driver, "battery")) {
+        is.notebook = 1;
+        break;
+      }
+    }
+  }
+
   ADD2LOG(
     "  system type:%s%s\n",
     is.vendor == v_ibm ? " ibm" :
@@ -1267,8 +1281,6 @@ void int_find_parent(hd_data_t *hd_data)
 void int_add_driver_modules(hd_data_t *hd_data)
 {
   hd_t *hd;
-
-  hd_sysfs_driver_list(hd_data);
 
   for(hd = hd_data->hd; hd; hd = hd->next) {
     int_update_driver_data(hd_data, hd);
