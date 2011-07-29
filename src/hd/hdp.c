@@ -662,12 +662,20 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
               snprintf(b0, sizeof b0 - 1, "%"PRIu64, res->size.val1);
               snprintf(b1, sizeof b1 - 1, "%"PRIu64, res->size.val2);
           }
-          if(!res->size.val2)
+          if(!res->size.val2) {
             dump_line("Size: %s %s\n", b0, s);
-          else if(res->size.unit == size_unit_sectors)
+          }
+          else if(res->size.unit == size_unit_sectors) {
             dump_line("Size: %s %s a %s bytes\n", b0, s, b1);
-          else
+	    dump_line(
+	      "Capacity: %" PRIu64 " GB (%" PRIu64 " bytes)\n",
+	      (res->size.val1 * res->size.val2) >> 30,
+	      res->size.val1 * res->size.val2
+	    );
+	  }
+          else {
             dump_line("Size: %sx%s %s\n", b0, b1, s);
+          }
         }
         break;
 
