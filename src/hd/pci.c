@@ -58,6 +58,7 @@ static void hd_read_of_platform(hd_data_t *hd_data);
 static void add_xen_network(hd_data_t *hd_data);
 static void add_xen_storage(hd_data_t *hd_data);
 static void hd_read_virtio(hd_data_t *hd_data);
+static void hd_read_uisvirtpci(hd_data_t *hd_data);
 static void hd_read_ibmebus(hd_data_t *hd_data);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
@@ -107,6 +108,9 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
 
   PROGRESS(11, 0, "ibmebus");
   hd_read_ibmebus(hd_data);
+  
+  PROGRESS(12, 0, "uisvirtpci");
+  hd_read_uisvirtpci(hd_data);
 }
 
 
@@ -1490,6 +1494,73 @@ void hd_read_virtio(hd_data_t *hd_data)
   free_str_list(sf_bus);
 }
 
+/*
+ * uisvirtpci
+ */
+void hd_read_uisvirtpci(hd_data_t *hd_data)
+{
+  uint64_t ul0; 
+  hd_t *hd;
+  str_list_t *sf_bus, *sf_bus_e;
+  char *sf_dev, *drv, *drv_name;
+  
+  sf_bus = read_dir("/sys/bus/uisvirtpci/devices", 'l');
 
+  if(!sf_bus) {
+    ADD2LOG("sysfs: no such bus: uisvirtpci\n");
+    return;
+  }
+
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/uisvirtpci/devices", sf_bus_e->str));
+
+    ADD2LOG(
+      "  uisvirtpci device: name = %s\n    path = %s\n",
+      sf_bus_e->str,
+      hd_sysfs_id(sf_dev)
+    );
+ 
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->vendor.id = MAKE_ID(TAG_PCI, 0xA0F1);	/* Unisys */
+
+    drv_name = NULL;
+    drv = new_str(hd_read_sysfs_link(sf_dev, "driver"));
+    if(drv) {
+        drv_name = strrchr(drv, '/');
+        if(drv_name) {
+            drv_name++;
+            ADD2LOG("    driver = \"%s\"\n", drv_name);
+
+    	    if(!strcmp(drv_name,"uisvirtnic")) {
+                hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0002);
+    	        hd->base_class.id = bc_network;
+    	    } else if(!strcmp(drv_name,"uisvirthba")) {
+                hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0003);
+    	        hd->base_class.id = bc_storage;
+    	    } else {
+                hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0000);
+    	        hd->base_class.id = bc_other;
+            }
+        }
+    } else {
+        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
+        hd->base_class.id = bc_bridge;
+    }
+ 
+   if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "device"), &ul0, 0)) {
+       hd->device.id = MAKE_ID(TAG_SPECIAL, ul0 );    
+       ADD2LOG("    device = %lu\n", ul0);
+    }
+
+    hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+    hd->sysfs_bus_id = new_str(sf_bus_e->str);
+    if(drv_name) add_str_list(&hd->drivers, drv_name);
+
+    free_mem(sf_dev);
+    free_mem(drv);
+  }
+
+  free_str_list(sf_bus);
+}
 /** @} */
 

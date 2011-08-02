@@ -1,3 +1,6 @@
+2/8/2011:	v15.38
+	- add unisys hypervisor bus info (bnc #678966)
+
 16/2/2011:	v15.37
 	- support Validity fingerprint sensor (bnc #644149)
 
