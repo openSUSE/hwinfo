@@ -1,3 +1,14 @@
+14/9/2011:	v15.40
+	- update vmbus device detection (bnc #716708)
+	  Use new and correct sysfs driver names:
+	  o hv_storvsc instead of storvsc
+	  o hv_netvsc instead of netvsc
+	  Remove blkvsc, the driver was merged into hv_storvsc
+
+14/9/2011:	v15.39
+	- fix network detection if several interfaces are attached to a
+	  single pci function (bnc #xxxxx)
+
 2/8/2011:	v15.38
 	- add unisys hypervisor bus info (bnc #678966)
 

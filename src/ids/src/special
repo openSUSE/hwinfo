@@ -663,15 +663,11 @@
 
  vendor.id		special 0x6013
 &device.id		special 0x0001
-+driver.module.modprobe	netvsc
++driver.module.modprobe	hv_netvsc
 
  vendor.id		special 0x6013
 &device.id		special 0x0002
-+driver.module.modprobe	storvsc
-
- vendor.id		special 0x6013
-&device.id		special 0x0003
-+driver.module.modprobe	blkvsc
++driver.module.modprobe	hv_storvsc
 
 # virtio
  vendor.id		special 0x6014
