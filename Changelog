@@ -7,7 +7,7 @@
 
 14/9/2011:	v15.39
 	- fix network detection if several interfaces are attached to a
-	  single pci function (bnc #xxxxx)
+	  single pci function (bnc #693090)
 
 2/8/2011:	v15.38
 	- add unisys hypervisor bus info (bnc #678966)
