@@ -56,7 +56,7 @@ void get_input_devices(hd_data_t *hd_data)
   hd_t *hd;
   str_list_t *input, *sl, *sl1;
   char *s;
-  unsigned ok, u, is_mouse;
+  unsigned ok, u, is_mouse, is_joystick;
   unsigned bus, vendor, product, version;
   unsigned mouse_buttons, mouse_wheels;
   char *name = NULL, *handlers = NULL, *key = NULL, *rel = NULL, *abso = NULL;
@@ -100,11 +100,16 @@ void get_input_devices(hd_data_t *hd_data)
         handler_list = hd_split(' ', handlers);
 
         is_mouse = strstr(handlers, "mouse") ? 1 : 0;
+        is_joystick = strstr(handlers, "js") ? 1 : 0;
+
         if(	// HP Virtual Management Device
           vendor == 0x03f0 &&
           product == 0x1126 &&
           mouse_buttons >= 3
         ) is_mouse = 1;
+
+        ADD2LOG("  is_mouse = %u\n", is_mouse);
+        ADD2LOG("  is_joystick = %u\n", is_joystick);
 
         if(bus == BUS_USB) {
           s = NULL;
@@ -114,13 +119,14 @@ void get_input_devices(hd_data_t *hd_data)
               break;
             }
           }
-          if(!s && is_mouse) for(sl1 = handler_list; sl1; sl1 = sl1->next) {
+
+          if(!s && (is_mouse || is_joystick)) for(sl1 = handler_list; sl1; sl1 = sl1->next) {
             if(sscanf(sl1->str, "event%u", &u) == 1) {
               str_printf(&s, 0, "/dev/input/event%u", u);
               break;
             }
           }
-          
+
           if(s) {
             for(hd = hd_data->hd; hd; hd = hd->next) {
               if(
@@ -128,13 +134,27 @@ void get_input_devices(hd_data_t *hd_data)
                 (hd->unix_dev_name && !strcmp(hd->unix_dev_name, s))
               ) {
                 if(!hd->base_class.id) {
-                  hd->base_class.id = bc_mouse;
-                  hd->sub_class.id = sc_mou_usb;
+		  if (is_mouse)
+		  {
+		    hd->base_class.id = bc_mouse;
+		    hd->sub_class.id = sc_mou_usb;
+		  }
+		  else if (is_joystick)
+		  {
+		    hd->base_class.id = bc_joystick;
+		  }
                 }
-                hd_set_hw_class(hd, hw_mouse);
 
-                hd->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0210);
-                hd->compat_device.id = MAKE_ID(TAG_SPECIAL, (mouse_wheels << 4) + mouse_buttons);
+		if (is_joystick)
+		{
+		  hd_set_hw_class(hd, hw_joystick);
+		}
+		else if (is_mouse)
+		{
+		  hd_set_hw_class(hd, hw_mouse);
+                  hd->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0210);
+                  hd->compat_device.id = MAKE_ID(TAG_SPECIAL, (mouse_wheels << 4) + mouse_buttons);
+		}
 
                 if(hd->unix_dev_name) add_str_list(&hd->unix_dev_names, hd->unix_dev_name);
                 if(hd->unix_dev_name2) add_str_list(&hd->unix_dev_names, hd->unix_dev_name2);
@@ -144,8 +164,16 @@ void get_input_devices(hd_data_t *hd_data)
                     str_printf(&s, 0, "/dev/input/event%u", u);
                     if(!search_str_list(hd->unix_dev_names, s)) add_str_list(&hd->unix_dev_names, s);
                     s = free_mem(s);
-                    break;
                   }
+		  /* add /dev/input/jsN joystick device name */
+		  else if (is_joystick)
+		  {
+		    if(sscanf(sl1->str, "js%u", &u) == 1) {
+		      str_printf(&s, 0, "/dev/input/js%u", u);
+		      if(!search_str_list(hd->unix_dev_names, s)) add_str_list(&hd->unix_dev_names, s);
+		      s = free_mem(s);
+		    }
+		  }
                 }
 
                 break;
