@@ -1,0 +1,6 @@
+ISDN.CDB.hwdb
+ISDN.CDB.txt
+isdn_cdb
+isdn_cdb.h
+lex.yy.c
+mk_isdnhwdb
