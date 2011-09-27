@@ -2323,6 +2323,7 @@ char *mod_name_by_idx(unsigned idx)
 
 void hd_log(hd_data_t *hd_data, char *buf, ssize_t len)
 {
+  if (!hd_data) return;
   ssize_t new_size;
   char *p;
 
@@ -2639,6 +2640,8 @@ char *hd_read_sysfs_link(char *base_dir, char *link_name)
  */
 void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg)
 {
+  if (!hd_data) return;
+
   char buf1[32], buf2[32], buf3[128], *fn;
 
   if(hd_data->shm.ok && hd_data->flags.forked) {
