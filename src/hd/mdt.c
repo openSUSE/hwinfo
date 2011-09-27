@@ -464,7 +464,7 @@ void list_modes(vm_t *vm, vbe_info_t *vbe)
   unsigned char buf2[0x100], tmp[0x100];
   unsigned u, ml;
   unsigned modelist[0x100];
-  unsigned bpp, fb, clock;
+  unsigned bpp;
   int res_bpp;
   vbe_mode_info_t *mi;
   char s[64];
@@ -614,12 +614,10 @@ void list_modes(vm_t *vm, vbe_info_t *vbe)
           if(res_bpp < 0) res_bpp = 0;
       }
 
-      fb = 0;
       if(vbe->version >= 0x0200) {
         mi->fb_start = tmp[0x28] + (tmp[0x29] << 8) + (tmp[0x2a] << 16) + (tmp[0x2b] << 24);
       }
 
-      clock = 0;
       if(vbe->version >= 0x0300) {
         mi->pixel_clock = tmp[0x3e] + (tmp[0x3f] << 8) + (tmp[0x40] << 16) + (tmp[0x41] << 24);
       }

@@ -763,7 +763,6 @@ void read_usb_lp(hd_data_t *hd_data, hd_t *hd)
   char *s;
   char buf[1024];
   int fd, two_ints[2];
-  unsigned bus;
   str_list_t *sl0, *sl;
   char *vend, *prod, *serial, *descr;
 
@@ -775,7 +774,6 @@ void read_usb_lp(hd_data_t *hd_data, hd_t *hd)
   }
   
   ADD2LOG("  usb/lp: bus = %d, dev_nr = %d\n", two_ints[0], two_ints[1]);
-  bus = ((two_ints[0] & 0xff) << 8) + (two_ints[1] & 0xff);
 
   if(ioctl(fd, LPIOC_GET_VID_PID(sizeof two_ints), two_ints) != -1) {
     /* just for the record */

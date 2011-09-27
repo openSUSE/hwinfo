@@ -572,10 +572,10 @@ int _setspeed(int fd, int old, int new, int needtowrite, unsigned short flags)
 
 void setspeed(int fd, int new, int needtowrite, unsigned short flags)
 {
-  int i, err;
+  int i;
 
   for(i = 9600; i >= 1200; i >>= 1) {
-    err = _setspeed(fd, i, new, needtowrite, flags);
+    _setspeed(fd, i, new, needtowrite, flags);
 #if 0
     if(err) {
       fprintf(stderr, "%d, %d ", i, err);

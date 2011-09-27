@@ -51,7 +51,7 @@ void hd_scan_net(hd_data_t *hd_data)
   int if_type, if_carrier;
   hd_t *hd, *hd_card;
   char *s, *t, *hw_addr;
-  hd_res_t *res, *res1, *res2;
+  hd_res_t *res, *res1;
   uint64_t ul0;
   str_list_t *sf_class, *sf_class_e;
   char *sf_cdev = NULL, *sf_dev = NULL;
@@ -133,7 +133,6 @@ void hd_scan_net(hd_data_t *hd_data)
       add_res_entry(&hd->res, res1);
     }
 
-    res2 = NULL;
     if(if_carrier >= 0) {
       res = new_mem(sizeof *res);
       res->link.type = res_link;
