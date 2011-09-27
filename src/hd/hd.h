@@ -1273,6 +1273,13 @@ typedef struct ccw_s {
   unsigned char dev_model;
 } ccw_t;
 
+/**
+ * @brief Joystick details
+ */
+typedef struct joystick_s {
+  unsigned char buttons;
+  unsigned char axes;
+} joystick_t;
 
 /**
  * @brief special CDROM entry
@@ -2050,7 +2057,7 @@ typedef enum hd_detail_type {
   hd_detail_pci, hd_detail_usb, hd_detail_isapnp, hd_detail_cdrom,
   hd_detail_floppy, hd_detail_bios, hd_detail_cpu, hd_detail_prom,
   hd_detail_monitor, hd_detail_sys, hd_detail_scsi, hd_detail_devtree,
-  hd_detail_ccw
+  hd_detail_ccw, hd_detail_joystick
 } hd_detail_type_t;
 
 typedef struct {
@@ -2119,6 +2126,11 @@ typedef struct {
   ccw_t *data;
 } hd_detail_ccw_t;
 
+typedef struct {
+  enum hd_detail_type type;
+  joystick_t *data;
+} hd_detail_joystick_t;
+
 typedef union {
   enum hd_detail_type type;
   hd_detail_pci_t pci;
@@ -2134,6 +2146,7 @@ typedef union {
   hd_detail_scsi_t scsi;
   hd_detail_devtree_t devtree;
   hd_detail_ccw_t ccw;
+  hd_detail_joystick_t joystick;
 } hd_detail_t;
 
 /** @} */

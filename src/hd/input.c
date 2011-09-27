@@ -145,15 +145,37 @@ void get_input_devices(hd_data_t *hd_data)
 		  }
                 }
 
-		if (is_joystick)
-		{
-		  hd_set_hw_class(hd, hw_joystick);
-		}
-		else if (is_mouse)
+		if (is_mouse)
 		{
 		  hd_set_hw_class(hd, hw_mouse);
                   hd->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0210);
                   hd->compat_device.id = MAKE_ID(TAG_SPECIAL, (mouse_wheels << 4) + mouse_buttons);
+		}
+		else if (is_joystick)
+		{
+		  hd_set_hw_class(hd, hw_joystick);
+
+		  /* add buttons and axis details */
+		  hd->detail = new_mem(sizeof *hd->detail);
+		  hd->detail->type = hd_detail_joystick;
+
+		  joystick_t *jt = new_mem(sizeof *jt);
+
+		  if(key) {
+		    for(u = BTN_JOYSTICK; u < BTN_JOYSTICK + 16; u++) {
+		      if(test_bit(key, u)) jt->buttons++;
+		    }
+		  }
+		  ADD2LOG("  joystick buttons = %u\n", jt->buttons);
+
+		  if(abso) {
+		    for(u = ABS_X; u < ABS_VOLUME; u++) {
+		      if(test_bit(abso, u)) jt->axes++;
+		    }
+		  }
+		  ADD2LOG("  joystick axes = %u\n", jt->axes);
+
+		  hd->detail->joystick.data = jt;
 		}
 
                 if(hd->unix_dev_name) add_str_list(&hd->unix_dev_names, hd->unix_dev_name);

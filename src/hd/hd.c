@@ -1359,6 +1359,10 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
     case hd_detail_ccw:
       free_mem(d->ccw.data);
       break;
+
+    case hd_detail_joystick:
+      free_mem(d->joystick.data);
+      break;
   }
 
   free_mem(d);

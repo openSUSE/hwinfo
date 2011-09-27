@@ -810,6 +810,15 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("Module Alias: \"%s\"\n", h->modalias);
   }
 
+  // print joystick details
+  if(h->detail && h->detail->type == hd_detail_joystick)
+  {
+    joystick_t *jt = h->detail->joystick.data;
+
+    dump_line("Buttons: %hhd\n", jt->buttons);
+    dump_line("Axes: %hhd\n", jt->axes);
+  }
+
   if(
     h->detail &&
     h->detail->type == hd_detail_monitor &&
