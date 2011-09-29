@@ -19,7 +19,7 @@ extern "C" {
  */
 
 /** Interface version */
-#define HD_VERSION	18
+#define HD_VERSION	19
 
 /**
  * @defgroup DEBUGpub Debug flags
@@ -296,7 +296,7 @@ typedef enum bus_types {
   /** outside the range of the PCI values */
   bus_ps2 = 0x80, bus_serial, bus_parallel, bus_floppy, bus_scsi, bus_ide, bus_usb,
   bus_adb, bus_raid, bus_sbus, bus_i2o, bus_vio, bus_ccw, bus_iucv, bus_ps3_system_bus,
-  bus_virtio, bus_ibmebus
+  bus_virtio, bus_ibmebus, bus_gameport
 } hd_bus_types_t;
 
 /** @} */

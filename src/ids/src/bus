@@ -85,3 +85,6 @@
  bus.id			0x90
 +bus.name		IBMEBUS
 
+ bus.id			0x91
++bus.name		Gameport
+

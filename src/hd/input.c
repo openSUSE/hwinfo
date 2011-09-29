@@ -22,7 +22,7 @@
 
 static void get_input_devices(hd_data_t *hd_data);
 static char *all_bits(char *str);
-static int test_bit(char *str, unsigned bit);
+static int test_bit(const char *str, unsigned bit);
 
 void hd_scan_input(hd_data_t *hd_data)
 {
@@ -44,6 +44,35 @@ void hd_scan_input(hd_data_t *hd_data)
   get_input_devices(hd_data);
 }
 
+// note: hd_data parameter is needed for ADD2LOG macro
+void add_joystick_details(hd_data_t *hd_data, hd_t *h, const char *key, const char *abso)
+{
+  // NULL or details already present
+  if (!h || h->detail) return;
+
+  // add buttons and axis details
+  h->detail = new_mem(sizeof *h->detail);
+  h->detail->type = hd_detail_joystick;
+
+  joystick_t *jt = new_mem(sizeof jt);
+  unsigned u;
+
+  if(key) {
+    for(u = BTN_JOYSTICK; u < BTN_JOYSTICK + 16; u++) {
+      if(test_bit(key, u)) jt->buttons++;
+    }
+  }
+  ADD2LOG("  joystick buttons = %u\n", jt->buttons);
+
+  if(abso) {
+    for(u = ABS_X; u < ABS_VOLUME; u++) {
+      if(test_bit(abso, u)) jt->axes++;
+    }
+  }
+  ADD2LOG("  joystick axes = %u\n", jt->axes);
+
+  h->detail->joystick.data = jt;
+}
 
 #define INP_NAME	"N: Name="
 #define INP_HANDLERS	"H: Handlers="
@@ -156,26 +185,7 @@ void get_input_devices(hd_data_t *hd_data)
 		  hd_set_hw_class(hd, hw_joystick);
 
 		  /* add buttons and axis details */
-		  hd->detail = new_mem(sizeof *hd->detail);
-		  hd->detail->type = hd_detail_joystick;
-
-		  joystick_t *jt = new_mem(sizeof *jt);
-
-		  if(key) {
-		    for(u = BTN_JOYSTICK; u < BTN_JOYSTICK + 16; u++) {
-		      if(test_bit(key, u)) jt->buttons++;
-		    }
-		  }
-		  ADD2LOG("  joystick buttons = %u\n", jt->buttons);
-
-		  if(abso) {
-		    for(u = ABS_X; u < ABS_VOLUME; u++) {
-		      if(test_bit(abso, u)) jt->axes++;
-		    }
-		  }
-		  ADD2LOG("  joystick axes = %u\n", jt->axes);
-
-		  hd->detail->joystick.data = jt;
+		  add_joystick_details(hd_data, hd, key, abso);
 		}
 
                 if(hd->unix_dev_name) add_str_list(&hd->unix_dev_names, hd->unix_dev_name);
@@ -207,6 +217,7 @@ void get_input_devices(hd_data_t *hd_data)
 
         }
         else {
+	  // keyboard
           if(search_str_list(handler_list, "kbd") && test_bit(key, KEY_1)) {
             hd = add_hd_entry(hd_data, __LINE__, 0);
             hd->base_class.id = bc_keyboard;
@@ -229,6 +240,7 @@ void get_input_devices(hd_data_t *hd_data)
               }
             }
           }
+	  // mouse
           else if(is_mouse) {
             hd = add_hd_entry(hd_data, __LINE__, 0);
 
@@ -291,6 +303,49 @@ void get_input_devices(hd_data_t *hd_data)
               }
             }
           }
+	  // joystick
+          else if(is_joystick) {
+            hd = add_hd_entry(hd_data, __LINE__, 0);
+
+            hd->vendor.id = MAKE_ID(0, vendor);
+            hd->device.id = MAKE_ID(0, product);
+
+	    hd_set_hw_class(hd, hw_joystick);
+            hd->base_class.id = bc_joystick;
+            hd->device.name = new_str(name);
+
+	    // gameport? (see <linux/input.h>)
+	    if (bus == BUS_GAMEPORT) hd->bus.id = bus_gameport;
+
+	    /* add buttons and axis details */
+	    add_joystick_details(hd_data, hd, key, abso);
+
+	    // add eventX device
+            for(sl1 = handler_list; sl1; sl1 = sl1->next) {
+              if(sscanf(sl1->str, "event%u", &u) == 1) {
+                str_printf(&hd->unix_dev_name, 0, "/dev/input/event%u", u);
+                dev_num.major = 13;
+                dev_num.minor = 64 + u;
+                hd->unix_dev_num = dev_num;
+                break;
+              }
+            }
+
+	    // add jsX device
+            for(sl1 = handler_list; sl1; sl1 = sl1->next) {
+              if(sscanf(sl1->str, "js%u", &u) == 1) {
+                str_printf(&hd->unix_dev_name2, 0, "/dev/input/js%u", u);
+                break;
+              }
+            }
+
+            add_str_list(&hd->unix_dev_names, hd->unix_dev_name);
+            add_str_list(&hd->unix_dev_names, hd->unix_dev_name2);
+	  }
+	  else
+	  {
+	    ADD2LOG("unknown non-USB input device\n");
+	  }
         }
 
         handler_list = free_str_list(handler_list);
@@ -372,7 +427,7 @@ char *all_bits(char *str)
 }
 
 
-int test_bit(char *str, unsigned bit)
+int test_bit(const char *str, unsigned bit)
 {
   size_t len, ofs;
   unsigned u, mask;
