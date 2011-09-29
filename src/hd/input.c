@@ -47,8 +47,11 @@ void hd_scan_input(hd_data_t *hd_data)
 // note: hd_data parameter is needed for ADD2LOG macro
 void add_joystick_details(hd_data_t *hd_data, hd_t *h, const char *key, const char *abso)
 {
-  // NULL or details already present
-  if (!h || h->detail) return;
+  // replace existing details
+  if (h->detail)
+  {
+    free_hd_detail(hd->detail);
+  }
 
   // add buttons and axis details
   h->detail = new_mem(sizeof *h->detail);
@@ -203,6 +206,7 @@ void get_input_devices(hd_data_t *hd_data)
 		    if(sscanf(sl1->str, "js%u", &u) == 1) {
 		      str_printf(&s, 0, "/dev/input/js%u", u);
 		      if(!search_str_list(hd->unix_dev_names, s)) add_str_list(&hd->unix_dev_names, s);
+		      if(!hd->unix_dev_name2) hd->unix_dev_name2 = new_str(s);
 		      s = free_mem(s);
 		    }
 		  }
