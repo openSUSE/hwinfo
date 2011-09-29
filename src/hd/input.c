@@ -50,7 +50,7 @@ void add_joystick_details(hd_data_t *hd_data, hd_t *h, const char *key, const ch
   // replace existing details
   if (h->detail)
   {
-    free_hd_detail(hd->detail);
+    free_hd_detail(h->detail);
   }
 
   // add buttons and axis details
