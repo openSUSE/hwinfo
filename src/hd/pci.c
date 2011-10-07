@@ -310,6 +310,7 @@ void add_pci_data(hd_data_t *hd_data)
   pci_t *pci, *pnext;
   unsigned u;
   char *s, *t;
+  str_list_t *net_ifs;
 
   PROGRESS(4, 0, "build list");
 
@@ -333,6 +334,40 @@ void add_pci_data(hd_data_t *hd_data)
       hd->base_class.id = u >> 8;
       hd->sub_class.id = u & 0xff;
     }
+
+    /*
+     * If there are several network interfaces attached to a single
+     * function, just replicate entries.
+     */
+
+    s = NULL;
+    str_printf(&s, 0, "/sys%s/net", hd->sysfs_id);
+    net_ifs = read_dir(s, 'D');
+    s = free_mem(s);
+
+    if(net_ifs) {
+      hd->unix_dev_name = new_str(net_ifs->str);
+      net_ifs = net_ifs->next;
+
+      for(; net_ifs; net_ifs = net_ifs->next) {
+        hd2 = add_hd_entry(hd_data, __LINE__, 0);
+        hd2->sysfs_id = new_str(hd->sysfs_id);
+        if(hd->drivers) {
+          add_str_list(&hd2->drivers, hd->drivers->str);
+        }
+        hd2->unix_dev_name = new_str(net_ifs->str);
+        hd2->detail = hd->detail;
+        hd_pci_complete_data(hd2);
+        hd2->detail = NULL;
+
+        if((u = device_class(hd_data, hd2->vendor.id, hd2->device.id))) {
+          hd2->base_class.id = u >> 8;
+          hd2->sub_class.id = u & 0xff;
+        }
+      }
+    }
+
+    free_str_list(net_ifs);
   }
 
   hd_data->pci = NULL;
