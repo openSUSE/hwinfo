@@ -19,7 +19,7 @@ extern "C" {
  */
 
 /** Interface version */
-#define HD_VERSION	18
+#define HD_VERSION	19
 
 /**
  * @defgroup DEBUGpub Debug flags
