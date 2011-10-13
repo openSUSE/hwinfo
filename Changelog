@@ -1,3 +1,6 @@
+13/101/2011:	v15.41
+	- add id to Validity fingerprint sensor (bnc #719202)
+
 14/9/2011:	v15.40
 	- update vmbus device detection (bnc #716708)
 	  Use new and correct sysfs driver names:
