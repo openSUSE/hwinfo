@@ -519,7 +519,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     h->is.zip ||
     h->is.cdr || h->is.cdrw || h->is.dvd || h->is.dvdr || h->is.dvdrw ||
     h->is.dvdpr || h->is.dvdprw || h->is.dvdprdl || h->is.dvdram ||
-    h->is.pppoe || h->is.wlan || h->is.hotpluggable
+    h->is.pppoe || h->is.wlan || h->is.hotpluggable || h->is.fcoe
   ) {
     dump_line_str("Features:");
     i = 0;
@@ -535,6 +535,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     if(h->is.dvdram) dump_line0("%s DVDRAM", i++ ? "," : "");
     if(h->is.pppoe) dump_line0("%s PPPOE", i++ ? "," : "");
     if(h->is.wlan) dump_line0("%s WLAN", i++ ? "," : "");
+    if(h->is.fcoe) dump_line0("%s FCoE", i++ ? "," : "");
     if(h->is.hotpluggable) dump_line0("%s Hotpluggable", i++ ? "," : "");
     dump_line0("\n");
   }

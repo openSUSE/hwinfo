@@ -1,3 +1,6 @@
+28/10/2011:	v15.43
+	- detect fcoe disks (bnc #725134)
+
 20/10/2011:	v15.42
 	- s390: recognize model 2 OSA Express interfaces (bnc#720082)
 

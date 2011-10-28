@@ -814,6 +814,7 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
         res->fc.wwpn_ok = 1;
         res->fc.port_id = u0;
         res->fc.port_id_ok = 1;
+        if(hd->sysfs_device_link && strstr(hd->sysfs_device_link, "/net/")) hd->is.fcoe = 1;
       }
     }
   }
