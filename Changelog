@@ -1,4 +1,7 @@
-13/101/2011:	v15.41
+20/10/2011:	v15.42
+	- s390: recognize model 2 OSA Express interfaces (bnc#720082)
+
+13/10/2011:	v15.41
 	- add id to Validity fingerprint sensor (bnc #719202)
 
 14/9/2011:	v15.40
