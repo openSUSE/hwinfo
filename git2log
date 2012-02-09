@@ -6,15 +6,31 @@ sub usage;
 
 usage 0 if !@ARGV;
 
+@deps = qw ( .git/HEAD .git/refs/heads .git/refs/tags );
+
 GetOptions(
-  'help'    => sub { usage 0 },
-  'version' => \$opt_version,
-  'log'     => \$opt_log,
+  'help'          => sub { usage 0 },
+  'version'       => \$opt_version,
+  'update'        => \$opt_update,
+  'log|changelog' => \$opt_log,
 ) || usage 1;
 
-usage 1 if @ARGV || !($opt_log || $opt_version);
+usage 1 if @ARGV > 1 || !($opt_log || $opt_version);
+$opt_file = @ARGV ? shift : '-';
 
 die "no git repo\n" unless -d ".git";
+
+if($opt_update && $opt_file ne '-' && -f($opt_file)) {
+  $ok = 1;
+
+  $t = (stat $opt_file)[9];
+
+  for (@deps) {
+    $ok = 0 if (stat)[9] > $t;
+  }
+
+  exit 0 if $ok;
+}
 
 for (`git branch`) {
   if(/^\*\s+(\S+)/) {
@@ -22,6 +38,8 @@ for (`git branch`) {
     last;
   }
 }
+
+$branch = "master" if $branch eq '(no';
 
 die "no branch?\n" unless $branch;
 
@@ -56,7 +74,9 @@ if($opt_version) {
 
   $t =~ s/^$branch\-//;
 
-  print "$t\n";
+  open F, ">$opt_file";
+  print F "$t\n";
+  close F;
 
   exit 0;
 }
@@ -90,6 +110,8 @@ map { s/(\d+)/$1 + 0/eg } @tags;
 
 push @tags, "HEAD";
 
+open F, ">$opt_file";
+
 for ($i = @tags - 1; $i > 0; $i--) {
   $date = undef;
   @t = `git log --pretty=medium --date=iso '$tags[$i-1]..$tags[$i]'`;
@@ -115,22 +137,24 @@ for ($i = @tags - 1; $i > 0; $i--) {
     map { s/^/\t/ } @t;
     $t = $tags[$i];
     $t = "${branch}-$t" if $branch ne 'master' && $t eq "HEAD";
-    print "$date:\t$t\n";
-    print join("\n", @t), "\n\n";
+    print F "$date:\t$t\n";
+    print F join("\n", @t), "\n\n";
   }
 }
 
+close F;
 
 sub usage
 {
   my $err = shift;
 
   print <<"  usage";
-Usage: git2log [OPTIONS]
+Usage: git2log [OPTIONS] [FILE]
 Create changelog and project version from git repo.
-  --log         Print changelog file.
-  --version     Print version number.
-  --help        Write this help text.
+  --changelog   Write changelog to FILE.
+  --version     Write version number to FILE.
+  --update      Write changelog or version only if FILE is outdated.
+  --help        Print this help text.
   usage
 
   exit $err;

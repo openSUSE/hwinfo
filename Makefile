@@ -12,7 +12,10 @@ TSO_LIBS	=
 
 export SO_LIBS
 
-GIT2LOG = $(shell [ -x ./git2log ] && echo ./git2log )
+GIT2LOG := $(shell if [ -x ./git2log ] ; then echo ./git2log --update ; else echo true ; fi)
+GITDEPS := $(shell [ -d .git ] && echo .git/HEAD .git/refs/heads .git/refs/tags)
+
+VERSION := $(shell $(GIT2LOG) --version VERSION ; cat VERSION)
 
 include Makefile.common
 
@@ -29,13 +32,8 @@ OBJS_NO_TINY	= names.o parallel.o modem.o
 
 .PHONY:	fullstatic static shared tiny doc diet tinydiet uc tinyuc
 
-ifneq ($(GIT2LOG),)
-changelog: .git/HEAD .git/refs/heads .git/refs/tags
-	$(GIT2LOG) --log >changelog
-
-VERSION: .git/HEAD .git/refs/heads .git/refs/tags
-	$(GIT2LOG) --version >VERSION
-endif
+changelog: $(GITDEPS)
+	$(GIT2LOG) --changelog changelog
 
 hwscan: hwscan.o $(LIBHD)
 	$(CC) hwscan.o $(LDFLAGS) $(LIBS) -o $@
