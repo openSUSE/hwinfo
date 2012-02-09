@@ -1398,7 +1398,7 @@ void hd_read_vm(hd_data_t *hd_data)
 
     if(
       drv_name &&
-      !strcmp(drv_name, "netvsc")
+      !strcmp(drv_name, "hv_netvsc")
     ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->bus.id = bus_none;
@@ -1417,7 +1417,7 @@ void hd_read_vm(hd_data_t *hd_data)
     }
     else if(
       drv_name &&
-      (!strcmp(drv_name, "storvsc") || !strcmp(drv_name, "blkvsc"))
+      !strcmp(drv_name, "hv_storvsc")
     ) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->bus.id = bus_none;
@@ -1427,7 +1427,7 @@ void hd_read_vm(hd_data_t *hd_data)
       hd->base_class.id = bc_storage;
       hd->sub_class.id = sc_sto_other;
       hd->slot = blk_cnt++;
-      hd->device.id = MAKE_ID(TAG_SPECIAL, strcmp(drv_name, "storvsc") ? 3 : 2);
+      hd->device.id = MAKE_ID(TAG_SPECIAL, 2);
       str_printf(&hd->device.name, 0, "Storage %d", hd->slot);
 
       hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
