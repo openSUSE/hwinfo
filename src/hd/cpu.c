@@ -107,6 +107,14 @@ void read_cpuinfo(hd_data_t *hd_data)
   cpu_info_t *ct1;
 #endif
 
+#ifdef __arm__
+  char model_id[80], system_id[80], serial_number[80], features[0x400];
+  unsigned cpu_variation, cpu_revision, vendor_id;
+  unsigned u;
+  double bogo;
+  char *t0, *t;
+#endif
+
 #ifdef __PPC__
   char model_id[80], vendor_id[80], motherboard[80];
   unsigned mhz, cache, family, model, stepping;
@@ -188,6 +196,71 @@ void read_cpuinfo(hd_data_t *hd_data)
 
   }
 #endif	/* __alpha__ */
+
+#ifdef __arm__
+  *model_id = *system_id = *serial_number = 0;
+  cpu_variation = cpu_revision = 0;
+  ct = 0; bogo = 0;
+
+  hd_data->boot = boot_uboot;
+
+  for(sl = hd_data->cpu; sl; sl = sl->next) {
+    if(sscanf(sl->str, "Processor       : %79[^\n]", model_id) == 1) continue;
+    if(sscanf(sl->str, "Hardware        : %79[^\n]", system_id) == 1) continue;
+    if(sscanf(sl->str, "Features        : %1000[^\n]", features) == 1) continue;
+    if(sscanf(sl->str, "CPU variant     : 0x%x", &cpu_variation) == 1) continue;
+    if(sscanf(sl->str, "CPU implementer : 0x%x", &vendor_id) == 1) continue;
+    if(sscanf(sl->str, "CPU revision    : %d", &cpu_revision) == 1) continue;
+    if(!bogo && sscanf(sl->str, "BogoMIPS        : %lg", &bogo) == 1);
+    if(strstr(sl->str, "processor\t: ") == sl->str) cpus++;
+  }
+
+  /* if we didn't find any cpus, we might be running under qemu.
+     So simulate just one CPU to make the rest happy. */
+  if(!cpus) cpus = 1;
+  for(u = 0; u < cpus; u++) {
+    ct = new_mem(sizeof *ct);
+    ct->architecture = arch_arm;
+    ct->family = cpu_variation;
+    ct->model = cpu_revision;
+    ct->stepping = 0;
+    ct->cache = 0;
+    ct->clock = 0;
+    ct->bogo = bogo;
+    ct->platform = 0;
+    if(*system_id) ct->platform = new_str(system_id);
+    if(*model_id) ct->model_name = new_str(model_id);
+
+    switch (vendor_id) {
+    case 0x41: ct->vend_name = new_str("ARM Limited"); break;
+    case 0x44: ct->vend_name = new_str("Digital Equipment Corporation"); break;
+    case 0x4d: ct->vend_name = new_str("Motorola, Freescale Semiconductor Inc."); break;
+    case 0x51: ct->vend_name = new_str("QUALCOMM Inc."); break;
+    case 0x56: ct->vend_name = new_str("Marvell Semiconductor Inc."); break;
+    case 0x69: ct->vend_name = new_str("Intel Corporation."); break;
+    default:
+     {
+       char buf[80];
+       sprintf(buf, "unknown (%x)", vendor_id);
+       ct->vend_name = new_str(buf);
+     }
+    }
+
+    if(*features) {
+      for(t0 = features; (t = strsep(&t0, " ")); ) {
+        add_str_list(&ct->features, new_str(t));
+      }
+    }
+
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->base_class.id = bc_internal;
+    hd->sub_class.id = sc_int_cpu;
+    hd->slot = u;
+    hd->detail = new_mem(sizeof *hd->detail);
+    hd->detail->type = hd_detail_cpu;
+    hd->detail->cpu.data = ct;
+  }
+#endif	/* __arm__ */
 
 
 #ifdef __sparc__

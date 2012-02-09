@@ -3053,7 +3053,11 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 #ifdef __x86_64__
   return arch_x86_64;
 #else
+#ifdef __arm__
+  return arch_arm;
+#else
   return arch_unknown;
+#endif
 #endif
 #endif
 #endif

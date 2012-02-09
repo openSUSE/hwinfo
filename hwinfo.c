@@ -653,6 +653,9 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
       case boot_grub:
         t = "grub";
         break;
+      case boot_uboot:
+        t = "uboot";
+        break;
     }
 
     fprintf(f ? f : stdout, "Arch: %s/%s\n", s, t);

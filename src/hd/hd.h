@@ -1446,7 +1446,7 @@ typedef enum cpu_arch {
 typedef enum boot_arch {
   boot_unknown = 0,
   boot_lilo, boot_milo, boot_aboot, boot_silo, boot_ppc, boot_elilo, boot_s390,
-  boot_mips, boot_grub
+  boot_mips, boot_grub, boot_uboot,
 } hd_boot_arch_t;
 
 
