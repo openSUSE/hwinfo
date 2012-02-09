@@ -1797,7 +1797,7 @@ void hd_scan(hd_data_t *hd_data)
   if(!hd_data->flags.internal) {
   /* log debug & probe flags */
     if(hd_data->debug) {
-      ADD2LOG("libhd version %s%s (%s)\n", HD_VERSION_STRING, getuid() ? "u" : "", HD_ARCH);
+      ADD2LOG("libhd version %s%s (%s) [%ld]\n", HD_VERSION_STRING, getuid() ? "u" : "", HD_ARCH, sizeof (hd_data_t));
     }
 
     ADD2LOG("using %s\n", hd_get_hddb_dir());
@@ -6017,10 +6017,21 @@ char* get_sysfs_attr(const char* bus, const char* device, const char* attr)
 /*
  * must be able to read more than one line
  */
-char *get_sysfs_attr_by_path(const char* path, const char* attr)
+char *get_sysfs_attr_by_path(const char *path, const char *attr)
+{
+  return get_sysfs_attr_by_path2(path, attr, NULL);
+}  
+
+
+/*
+ * binary data version; return data length, too
+ */
+char *get_sysfs_attr_by_path2(const char *path, const char *attr, unsigned *len)
 {
   static char buf[1024];
   int i, fd;
+
+  if(len) *len = 0;
 
   sprintf(buf, "%s/%s", path, attr);
   fd = open(buf, O_RDONLY);
@@ -6028,6 +6039,7 @@ char *get_sysfs_attr_by_path(const char* path, const char* attr)
     i = read(fd, buf, sizeof buf - 1);
     close(fd);
     if(i >= 0) {
+      if(len) *len = i;
       buf[i] = 0;
     }
     else {

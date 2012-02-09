@@ -512,7 +512,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     h->is.zip ||
     h->is.cdr || h->is.cdrw || h->is.dvd || h->is.dvdr || h->is.dvdrw ||
     h->is.dvdpr || h->is.dvdprw || h->is.dvdprdl || h->is.dvdram ||
-    h->is.pppoe || h->is.wlan || h->is.hotpluggable
+    h->is.pppoe || h->is.wlan || h->is.hotpluggable || h->is.fcoe
   ) {
     dump_line_str("Features:");
     i = 0;
@@ -539,6 +539,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     if(h->is.mrww) dump_line0("%s MRW-W", i++ ? "," : "");
     if(h->is.pppoe) dump_line0("%s PPPOE", i++ ? "," : "");
     if(h->is.wlan) dump_line0("%s WLAN", i++ ? "," : "");
+    if(h->is.fcoe) dump_line0("%s FCoE", i++ ? "," : "");
     if(h->is.hotpluggable) dump_line0("%s Hotpluggable", i++ ? "," : "");
     dump_line0("\n");
   }
@@ -834,13 +835,13 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
           "   Horizontal: %4u %4u %4u %4u (+%u +%u +%u) %chsync\n",
           mi->hdisp, mi->hsyncstart, mi->hsyncend, mi->htotal,
           mi->hsyncstart - mi->hdisp, mi->hsyncend - mi->hdisp, mi->htotal - mi->hdisp,
-          mi->hflag
+          mi->hflag ?: ' '
         );
         dump_line(
           "     Vertical: %4u %4u %4u %4u (+%u +%u +%u) %cvsync\n",
           mi->vdisp, mi->vsyncstart, mi->vsyncend, mi->vtotal,
           mi->vsyncstart - mi->vdisp, mi->vsyncend - mi->vdisp, mi->vtotal - mi->vdisp,
-          mi->vflag
+          mi->vflag ?: ' '
         );
         dump_line(
           "  Frequencies: %.2f MHz, %.2f kHz, %.2f Hz\n",

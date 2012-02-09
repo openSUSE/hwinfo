@@ -1492,6 +1492,8 @@ typedef struct {
   unsigned ext_64bit:1;
   unsigned assigned:1;
   unsigned valid:1;
+  unsigned ext_fibre:1;
+  unsigned ext_net:1;
   char *sysfs_id;
   unsigned hd_idx;
   unsigned signature;
@@ -2491,6 +2493,7 @@ typedef struct s_hd_t {
     unsigned with_acpi:1;	/**< acpi works fine */
     unsigned hotpluggable:1;	/**< hotpluggable storage device */
     unsigned dualport:1;	/**< OSA Express device with two ports (S/390) */
+    unsigned fcoe:1;		/**< fcoe device */
   } is;
 
   struct tag_s {		/**< this struct is for internal purposes only */

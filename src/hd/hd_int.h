@@ -200,7 +200,8 @@ int hd_report_this(hd_data_t *hd_data, hd_t *hd);
 str_list_t *hd_module_list(hd_data_t *hd_data, unsigned id);
 
 char* get_sysfs_attr(const char* bus, const char* device, const char* attr);
-char* get_sysfs_attr_by_path(const char* path, const char* attr);
+char *get_sysfs_attr_by_path(const char *path, const char *attr);
+char *get_sysfs_attr_by_path2(const char *path, const char *attr, unsigned *len);
 
 void hd_pci_complete_data(hd_t *hd);
 void hd_pci_read_data(hd_data_t *hd_data);

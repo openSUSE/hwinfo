@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <endian.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -52,11 +53,13 @@ void hd_scan_sysfs_edd(hd_data_t *hd_data)
 
 void read_edd_info(hd_data_t *hd_data)
 {
-  unsigned u;
-  uint64_t ul0;
+  unsigned u, u1;
+  uint64_t ul0, edd_dev_path1, edd_dev_path2;
   edd_info_t *ei;
-  str_list_t *sl, *sf_dir, *sf_dir_e;
-  char *sf_edd = NULL;
+  str_list_t *sl, *sf_dir, *sf_dir_e, *sf_dir2;
+  char *sf_edd = NULL, *net_link = NULL;
+  unsigned char *edd_raw;
+  char *edd_bus, *edd_interface, *edd_link;
 
   for(u = 0; u < sizeof hd_data->edd / sizeof *hd_data->edd; u++) {
     free_mem(hd_data->edd[u].sysfs_id);
@@ -122,8 +125,32 @@ void read_edd_info(hd_data_t *hd_data)
       if(search_str_list(sl, "Enhanced Disk Drive support")) hd_data->edd[u].ext_edd = 1;
       if(search_str_list(sl, "64-bit extensions")) hd_data->edd[u].ext_64bit = 1;
 
+      edd_bus = edd_interface = NULL;
+      edd_dev_path1 = edd_dev_path2 = 0;
+
+      edd_raw = get_sysfs_attr_by_path2(sf_edd, "raw_data", &u1);
+      if(u1 >= 40) edd_bus = canon_str(edd_raw + 36, 4);
+      if(u1 >= 48) {
+        edd_interface = canon_str(edd_raw + 40, 8);
+        if(!strcmp(edd_interface, "FIBRE")) ei->ext_fibre = 1;
+      }
+      if(u1 >= 72) {
+        memcpy(&edd_dev_path1, edd_raw + 56, 8);
+        memcpy(&edd_dev_path2, edd_raw + 64, 8);
+
+        edd_dev_path1 = be64toh(edd_dev_path1);		// wwid for fc
+      }
+
+      edd_link = hd_read_sysfs_link(sf_edd, "pci_dev");
+      if(edd_link) {
+        str_printf(&net_link, 0, "%s/net", edd_link);
+        sf_dir2 =  read_dir("/sys/firmware/edd", 'D');
+        if(sf_dir2) ei->ext_net = 1;
+        free_str_list(sf_dir2);
+      }
+
       ADD2LOG(
-        "edd: 0x%02x\n  mbr sig: 0x%08x\n  size: %"PRIu64"\n  chs default: %u/%u/%u\n  chs legacy: %u/%u/%u\n  caps: %s%s%s%s\n",
+        "edd: 0x%02x\n  mbr sig: 0x%08x\n  size: %"PRIu64"\n  chs default: %u/%u/%u\n  chs legacy: %u/%u/%u\n  caps: %s%s%s%s%s%s\n",
         u + 0x80,
         ei->signature,
         ei->sectors,
@@ -136,12 +163,19 @@ void read_edd_info(hd_data_t *hd_data)
         ei->ext_fixed_disk ? "fixed " : "",
         ei->ext_lock_eject ? "lock " : "",
         ei->ext_edd ? "edd " : "",
-        ei->ext_64bit ? "64bit " : ""
+        ei->ext_64bit ? "64bit " : "",
+        ei->ext_fibre ? "fibre " : "",
+        ei->ext_net ? "net " : ""
       );
+      ADD2LOG("  bus: %s\n  interface: %s\n  dev path: %016"PRIx64" %016"PRIx64"\n", edd_bus, edd_interface, edd_dev_path1, edd_dev_path2);
+
+      free_mem(edd_bus);
+      free_mem(edd_interface);
     }
   }
 
   free_mem(sf_edd);
+  free_mem(net_link);
   free_str_list(sf_dir);
 }
 
