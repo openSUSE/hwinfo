@@ -41,6 +41,8 @@
 #include "AsmMacros.h"
 #include "vbios.h"
 
+#define MAP_SYS_BIOS 1
+
 void log_err(char *format, ...) __attribute__ ((format (printf, 1, 2)));
 
 #define SIZE 0x100000
