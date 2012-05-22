@@ -1,3 +1,7 @@
+22/5/2012:	v12.68
+	- fix network detection if several interfaces are attached to
+	  a single pci function (bnc #693090, bnc #739368)
+
 13/1/2011:	v12.67
 	- report InfiniBand controller as network controller (bnc #644299)
 

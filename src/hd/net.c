@@ -152,6 +152,17 @@ void hd_scan_net(hd_data_t *hd_data)
       hd->sysfs_device_link = new_str(hd_sysfs_id(sf_dev->path)); 
 
       hd_card = hd_find_sysfs_id(hd_data, hd_sysfs_id(sf_dev->path));
+
+      /* if one card has several interfaces check interface names, too */
+      if(
+        hd_card &&
+        hd_card->unix_dev_name &&
+        hd->unix_dev_name &&
+        strcmp(hd->unix_dev_name, hd_card->unix_dev_name)
+      ) {
+        hd_card = hd_find_sysfs_id_devname(hd_data, hd_sysfs_id(sf_dev->path), hd->unix_dev_name);
+      }
+
       if(hd_card) {
         hd->attached_to = hd_card->idx;
 
