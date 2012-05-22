@@ -50,7 +50,7 @@ for i in \
 do
   if [ -e "$i" ] ; then
     echo "$i"
-    cp -a --parents "$i" "$dir/$host" 2>/dev/null
+    cp -x -a --parents "$i" "$dir/$host" 2>/dev/null
     chmod -R u+w,a+r,a+X "$dir/$host"
     for i in `( cd "$dir/$host" ; find proc -type f -size 0 )` ; do
       cat "/$i" >"$dir/$host/$i"
@@ -61,6 +61,7 @@ done
 echo /proc/mounts
 perl -nl -e 'print unless (split)[0] =~ /none|automount|:/' /proc/mounts >"$dir/$host/proc/mounts"
 
+mkdir "$dir/$host/var/log"
 echo -e "\n------  dmesg start  ------\n" >>"$dir/$host/var/log/boot.msg"
 dmesg >>"$dir/$host/var/log/boot.msg"
 

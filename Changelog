@@ -1,3 +1,6 @@
+22/5/2012:	v15.45
+	- use 'cp -x' in getsysinfo (bnc #760240)
+
 27/3/2012:	v15.44
 	- map system bios (bnc #748993)
 
