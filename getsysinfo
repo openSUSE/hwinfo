@@ -61,7 +61,7 @@ done
 echo /proc/mounts
 perl -nl -e 'print unless (split)[0] =~ /none|automount|:/' /proc/mounts >"$dir/$host/proc/mounts"
 
-mkdir "$dir/$host/var/log"
+mkdir -p "$dir/$host/var/log"
 echo -e "\n------  dmesg start  ------\n" >>"$dir/$host/var/log/boot.msg"
 dmesg >>"$dir/$host/var/log/boot.msg"
 
