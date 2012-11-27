@@ -1,3 +1,6 @@
+27/11/2012:	v15.47
+	- make kernel log parser aware of time stamps (bnc #544269, bnc #791200)
+
 23/5/2012:	v15.46
 	- minor correction to last fix
 
