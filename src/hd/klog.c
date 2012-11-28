@@ -54,7 +54,6 @@ void read_klog(hd_data_t *hd_data)
 
   _read_klog(hd_data);
 
-  hd_data->klog = free_str_list(hd_data->klog);
   klog_raw = hd_data->klog;
   hd_data->klog = NULL;
 
