@@ -1,0 +1,84 @@
+.TH CHECK_HD "1" "User Commands"
+.SH NAME
+manual page for check_hd
+.SH SYNOPSIS
+.B check_hd
+[\fIoptions\fR] \fIfiles\fR
+.SH DESCRIPTION
+Try to put hardware data into a consistent form.
+.TP
+\fB\-\-check\fR
+do a lot of checks and remove unnecessary data
+.TP
+\fB\-\-sort\fR
+sort data
+.TP
+\fB\-\-reverse\fR
+reverse sorting order
+.TP
+\fB\-\-split\fR
+write separate entries for each key
+.TP
+\fB\-\-with\-source\fR
+add comment to each item indicating info source
+.TP
+\fB\-\-mini\fR
+minimal data base (basically driver info only)
+.TP
+\fB\-\-join\-keys\-first\fR
+when combining similar items, join entries with
+common keys first (default is common values first)
+.TP
+\fB\-\-cfile\fR file
+create C file to be included in libhd
+.TP
+\fB\-\-no\-compact\fR
+don't try to make C version as small as possible
+.TP
+\fB\-\-out\fR file
+write results to file, default is "hd.ids"
+.TP
+\fB\-\-log\fR file
+write log info to file, default is "hd.log"
+.IP
+Note: check_hd works with libhd/hwinfo internal format only;
+to convert to other formats, use convert_hd
+.PP
+Try to put hardware data into a consistent form.
+.TP
+\fB\-\-check\fR
+do a lot of checks and remove unnecessary data
+.TP
+\fB\-\-sort\fR
+sort data
+.TP
+\fB\-\-reverse\fR
+reverse sorting order
+.TP
+\fB\-\-split\fR
+write separate entries for each key
+.TP
+\fB\-\-with\-source\fR
+add comment to each item indicating info source
+.TP
+\fB\-\-mini\fR
+minimal data base (basically driver info only)
+.TP
+\fB\-\-join\-keys\-first\fR
+when combining similar items, join entries with
+common keys first (default is common values first)
+.TP
+\fB\-\-cfile\fR file
+create C file to be included in libhd
+.TP
+\fB\-\-no\-compact\fR
+don't try to make C version as small as possible
+.TP
+\fB\-\-out\fR file
+write results to file, default is "hd.ids"
+.TP
+\fB\-\-log\fR file
+write log info to file, default is "hd.log"
+.IP
+Note: check_hd works with libhd/hwinfo internal format only;
+to convert to other formats, use convert_hd

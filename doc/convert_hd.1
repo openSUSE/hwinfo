@@ -1,0 +1,29 @@
+.TH CONVERT_HD "1"  "User Commands"
+.SH NAME
+convert_hd
+.SH SYNOPSIS
+.B convert_hd
+[\fIoptions\fR] \fIfiles\fR
+.SH DESCRIPTION
+Convert various hardware info to libhd/hwinfo internal format or to XML.
+.TP
+\fB\-\-ids\fR
+write internal format (default) to "hd.ids"
+.TP
+\fB\-\-no\-ids\fR
+do not write internal format
+.TP
+\fB\-\-xml\fR
+write XML to "hd.xml", DTD to "hd.dtd"
+.TP
+\fB\-\-no\-xml\fR
+do not write XML (default)
+.TP
+\fB\-\-with\-source\fR
+add comment to each item indicating info source
+.TP
+\fB\-\-internal\-dtd\fR
+generate internal dtd
+.IP
+Note: for more sophisticated operations on hardware data use check_hd.
+.IP
