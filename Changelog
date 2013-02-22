@@ -1,3 +1,6 @@
+22/2/2013:	v15.48
+	- adding fingerprint reader (bnc #793928)
+
 27/11/2012:	v15.47
 	- make kernel log parser aware of time stamps (bnc #544269, bnc #791200)
 
