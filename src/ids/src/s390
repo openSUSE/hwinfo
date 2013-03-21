@@ -166,6 +166,13 @@
 +progif.id		1
 +driver.module.modprobe dasd_eckd_mod
 
+ vendor.id              special 0x6001
+&device.id              special 0x3832
++device.name            VirtIO Block Device
++baseclass.id           0x106
++subclass.id            0
++driver.module.modprobe virtio_blk
+
  vendor.id		special 0x6001
 &device.id		special 0x3705
 &device.id		special 0x3725

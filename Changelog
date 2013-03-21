@@ -1,3 +1,6 @@
+21/3/2013:	v15.49
+	- s390: add virtio block device IDs (bnc#807532)
+
 22/2/2013:	v15.48
 	- adding fingerprint reader (bnc #793928)
 
