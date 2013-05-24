@@ -1,3 +1,6 @@
+24/5/2013:	v15.50
+	- s390: add more virtio device IDs (bnc #807532)
+
 21/3/2013:	v15.49
 	- s390: add virtio block device IDs (bnc#807532)
 

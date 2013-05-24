@@ -168,10 +168,26 @@
 
  vendor.id              special 0x6001
 &device.id              special 0x3832
-+device.name            VirtIO Block Device
+&detail.ccw.data.cu_model 1
++device.name            VirtIO Ethernet CCW Device
++baseclass.id           0x107
++subclass.id		0x01
++driver.module.modprobe virtio_net
+
+ vendor.id              special 0x6001
+&device.id              special 0x3832
+&detail.ccw.data.cu_model 2
++device.name            VirtIO Block CCW Device
 +baseclass.id           0x106
 +subclass.id            0
 +driver.module.modprobe virtio_blk
+
+ vendor.id		special 0x6001
+&device.id              special 0x3832
+&detail.ccw.data.cu_model 5
++device.name            VirtIO Memory Balloon
++baseclass.id           0x005
++driver.module.modprobe virtio_balloon
 
  vendor.id		special 0x6001
 &device.id		special 0x3705
