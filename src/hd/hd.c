@@ -1480,7 +1480,7 @@ scsi_t *free_scsi(scsi_t *scsi, int free_all)
 
     if(!free_all) {
       next = scsi->next;
-      memset(scsi, 0, sizeof scsi);
+      memset(scsi, 0, sizeof *scsi);
       scsi->next = next;
       break;
     }
