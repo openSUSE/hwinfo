@@ -1437,7 +1437,8 @@ typedef enum cpu_arch {
   arch_s390, arch_s390x,
   arch_arm,
   arch_mips,
-  arch_x86_64
+  arch_x86_64,
+  arch_aarch64
 } hd_cpu_arch_t;
 
 /**

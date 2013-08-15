@@ -621,6 +621,9 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
       case arch_x86_64:
         s = "X86_64";
         break;
+      case arch_aarch64:
+        s = "AArch64";
+        break;
     }
 
     switch(b_arch) {
