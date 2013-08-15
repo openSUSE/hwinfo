@@ -131,6 +131,10 @@
 #define HD_ARCH "arm"
 #endif
 
+#ifdef __aarch64__
+#define HD_ARCH "aarch64"
+#endif
+
 #ifdef __mips__
 #define HD_ARCH "mips"
 #endif
@@ -1480,7 +1484,7 @@ scsi_t *free_scsi(scsi_t *scsi, int free_all)
 
     if(!free_all) {
       next = scsi->next;
-      memset(scsi, 0, sizeof scsi);
+      memset(scsi, 0, sizeof *scsi);
       scsi->next = next;
       break;
     }
@@ -3056,7 +3060,11 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 #ifdef __arm__
   return arch_arm;
 #else
+#ifdef __aarch64__
+  return arch_aarch64;
+#else
   return arch_unknown;
+#endif
 #endif
 #endif
 #endif

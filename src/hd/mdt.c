@@ -460,7 +460,7 @@ void list_modes(vm_t *vm, vbe_info_t *vbe)
 {
   x86emu_t *emu = NULL;
   int err = 0, i;
-  double d1, d2, timeout;
+  double d1, d2;
   unsigned char buf2[0x100], tmp[0x100];
   unsigned u, ml;
   unsigned modelist[0x100];
@@ -470,8 +470,6 @@ void list_modes(vm_t *vm, vbe_info_t *vbe)
   char s[64];
 
   LPRINTF("=== running bios\n");
-
-  timeout = get_time() + (vm->timeout ?: 20);
 
   emu = x86emu_clone(vm->emu);
 
@@ -788,11 +786,9 @@ void get_video_mode(vm_t *vm, vbe_info_t *vbe)
 {
   x86emu_t *emu = NULL;
   int err = 0;
-  double d, timeout;
+  double d;
 
   LPRINTF("=== running bios\n");
-
-  timeout = get_time() + (vm->timeout ?: 20);
 
   emu = x86emu_clone(vm->emu);
 

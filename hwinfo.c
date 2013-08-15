@@ -621,6 +621,9 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
       case arch_x86_64:
         s = "X86_64";
         break;
+      case arch_aarch64:
+        s = "AArch64";
+        break;
     }
 
     switch(b_arch) {
@@ -1120,7 +1123,6 @@ int x11_install_info(hd_data_t *hd_data)
   driver_info_t *di;
   char *x11i;
   int fb_mode, kbd_ok = 0;
-  unsigned yast2_color = 0;
   char *xkbrules = NULL, *xkbmodel = NULL, *xkblayout = NULL;
   char *xserver, *version, *busid;
   driver_info_t *x11_driver;
@@ -1150,24 +1152,6 @@ int x11_install_info(hd_data_t *hd_data)
   }
 
   xserver = get_xserver(hd_data, &version, &busid, &x11_driver);
-
-  switch(hd_mac_color(hd_data)) {
-    case 0x01:
-      yast2_color = 0x5a4add;
-      break;
-    case 0x04:
-      yast2_color = 0x32cd32;
-      break;
-    case 0x05:
-      yast2_color = 0xff7f50;
-      break;
-    case 0x07:
-      yast2_color = 0x000000;
-      break;
-    case 0xff:
-      yast2_color = 0x7f7f7f;
-      break;
-  }
 
   if(hd_data->progress) {
     printf("\r%64s\r", "");
