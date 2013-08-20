@@ -1096,6 +1096,9 @@ void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
       case arch_x86_64:
 	dump_line0 ("X86-64\n");
 	break;
+      case arch_aarch64:
+	dump_line0 ("AArch64\n");
+	break;
       default:
 	dump_line0 ("**UNKNWON**\n");
 	break;
