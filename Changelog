@@ -1,3 +1,6 @@
+13/11/2013:	v15.51
+	- update pci id list (bnc #813172)
+
 24/5/2013:	v15.50
 	- s390: add more virtio device IDs (bnc #807532)
 
