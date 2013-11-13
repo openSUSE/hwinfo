@@ -142,6 +142,12 @@ void read_cpuinfo(hd_data_t *hd_data)
   unsigned u0, u1, u2, u3;
 #endif
 
+#ifdef __m68k__
+  char cpu[32], mmu[32], fpu[32];
+  unsigned mhz;
+  double bogo;
+#endif
+
   hd_data->cpu = read_file(PROC_CPUINFO, 0, 0);
   if((hd_data->debug & HD_DEB_CPU)) dump_cpu_data(hd_data);
   if(!hd_data->cpu) return;
@@ -641,6 +647,36 @@ void read_cpuinfo(hd_data_t *hd_data)
     }
   }
 #endif /* defined(__s390__) || defined(__s390x__) */
+
+#ifdef __m68k__
+  *cpu = *mmu = *fpu = 0;
+  mhz = 0;
+  bogo = 0;
+
+  for (sl = hd_data->cpu; sl; sl = sl->next) {
+    if (sscanf(sl->str, "CPU:            %31[^\n]", cpu) == 1);
+    if (sscanf(sl->str, "MMU:            %31[^\n]", mmu) == 1);
+    if (sscanf(sl->str, "FPU:            %31[^\n]", fpu) == 1);
+    if (sscanf(sl->str, "Clocking:       %u", &mhz) == 1);
+    if (sscanf(sl->str, "BogoMips:       %lg", &bogo) == 1);
+  }
+
+  if (*cpu) {
+    ct = new_mem(sizeof *ct);
+    ct->architecture = arch_68k;
+    ct->model_name = new_str(cpu);
+    ct->clock = mhz;
+    ct->bogo = bogo;
+
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->base_class.id = bc_internal;
+    hd->sub_class.id = sc_int_cpu;
+    hd->slot = 0;
+    hd->detail = new_mem(sizeof *hd->detail);
+    hd->detail->type = hd_detail_cpu;
+    hd->detail->cpu.data = ct;
+  }
+#endif	/* __m68k__ */
 }
 
 /*

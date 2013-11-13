@@ -147,6 +147,10 @@
 #define HD_ARCH "hppa"
 #endif
 
+#ifdef __m68k__
+#define HD_ARCH "68k"
+#endif
+
 typedef struct disk_s {
   struct disk_s *next;
   unsigned crc;
@@ -3062,6 +3066,8 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 #else
 #ifdef __aarch64__
   return arch_aarch64;
+#elif defined __m68k__
+  return arch_68k;
 #else
   return arch_unknown;
 #endif
