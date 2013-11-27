@@ -34,6 +34,7 @@
  * @{
  */
 
+static void get_ethtool_priv(hd_data_t *hd_data, hd_t *hd);
 static void get_driverinfo(hd_data_t *hd_data, hd_t *hd);
 static void get_linkstate(hd_data_t *hd_data, hd_t *hd);
 static void add_xpnet(hd_data_t *hdata);
@@ -149,6 +150,8 @@ void hd_scan_net(hd_data_t *hd_data)
     else if(hd->res) {
       get_driverinfo(hd_data, hd);
     }
+
+    get_ethtool_priv(hd_data, hd);
 
     switch(if_type) {
       case ARPHRD_ETHER:	/* eth */
@@ -403,8 +406,89 @@ void hd_scan_net(hd_data_t *hd_data)
           add_res_entry(&hd_card->res, res1);
         }
       }
+
+      hd_card->is.fcoe_offload = hd->is.fcoe_offload;
+      hd_card->is.iscsi_offload = hd->is.iscsi_offload;
+      hd_card->is.storage_only = hd->is.storage_only;
     }
   }
+}
+
+
+/*
+ * Get private flags via ethtool.
+ */
+void get_ethtool_priv(hd_data_t *hd_data, hd_t *hd)
+{
+  int fd, err = 0;
+  unsigned u, len = 0;
+  struct ifreq ifr = {};
+  struct {
+    struct ethtool_sset_info hdr;
+    uint32_t buf[1];
+  } sset_info = { hdr:{ cmd:ETHTOOL_GSSET_INFO, sset_mask:1ULL << ETH_SS_PRIV_FLAGS } };
+  struct ethtool_gstrings *strings = NULL;
+  struct ethtool_value flags = { cmd:ETHTOOL_GPFLAGS };
+
+  if(!hd->unix_dev_name) return;
+
+  if(strlen(hd->unix_dev_name) > sizeof ifr.ifr_name - 1) return;
+  strcpy(ifr.ifr_name, hd->unix_dev_name);
+
+  if((fd = socket(PF_INET, SOCK_DGRAM, 0)) == -1) return;
+
+  ifr.ifr_data = &sset_info;
+  if(ioctl(fd, SIOCETHTOOL, &ifr) == 0) {
+    len = sset_info.hdr.sset_mask ? sset_info.hdr.data[0] : 0;
+    ADD2LOG("    ethtool private flags: %u\n", len);
+  }
+  else {
+    ADD2LOG("    GSSET_INFO ethtool error: %s\n", strerror(errno));
+    err = 1;
+  }
+
+  if(len) strings = calloc(1, sizeof *strings + len * ETH_GSTRING_LEN);
+
+  if(!strings) err = 1;
+
+  if(!err) {
+    strings->cmd = ETHTOOL_GSTRINGS;
+    strings->string_set = ETH_SS_PRIV_FLAGS;
+    strings->len = len;
+
+    ifr.ifr_data = strings;
+    if(ioctl(fd, SIOCETHTOOL, &ifr) == 0) {
+      for(u = 0; u < len; u++) strings->data[(u + 1) * ETH_GSTRING_LEN - 1] = 0;
+    }
+    else {
+      ADD2LOG("    GSTRINGS ethtool error: %s\n", strerror(errno));
+      err = 1;
+    }
+  }
+
+  if(len > 32) len = 32;
+
+  if(!err) {
+    ifr.ifr_data = &flags;
+    if(ioctl(fd, SIOCETHTOOL, &ifr) == 0) {
+      for(u = 0; u < len; u++) {
+        char *key = strings->data + u * ETH_GSTRING_LEN;
+        unsigned val = (flags.data >> u) & 1;
+        ADD2LOG("    %s = %u\n", key, val);
+        if(!strcmp(key, "FCoE offload support")) hd->is.fcoe_offload = val;
+        if(!strcmp(key, "iSCSI offload support")) hd->is.iscsi_offload = val;
+        if(!strcmp(key, "Storage only interface")) hd->is.storage_only = val;
+      }
+    }
+    else {
+      ADD2LOG("    GPFLAGS ethtool error: %s\n", strerror(errno));
+      err = 1;
+    }
+  }
+
+  free(strings);
+
+  close(fd);
 }
 
 

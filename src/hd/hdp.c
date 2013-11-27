@@ -512,7 +512,8 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     h->is.zip ||
     h->is.cdr || h->is.cdrw || h->is.dvd || h->is.dvdr || h->is.dvdrw ||
     h->is.dvdpr || h->is.dvdprw || h->is.dvdprdl || h->is.dvdram ||
-    h->is.pppoe || h->is.wlan || h->is.hotpluggable || h->is.fcoe
+    h->is.pppoe || h->is.wlan || h->is.hotpluggable || h->is.fcoe ||
+    h->is.fcoe_offload || h->is.iscsi_offload || h->is.storage_only
   ) {
     dump_line_str("Features:");
     i = 0;
@@ -540,6 +541,9 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     if(h->is.pppoe) dump_line0("%s PPPOE", i++ ? "," : "");
     if(h->is.wlan) dump_line0("%s WLAN", i++ ? "," : "");
     if(h->is.fcoe) dump_line0("%s FCoE", i++ ? "," : "");
+    if(h->is.fcoe_offload) dump_line0("%s FCoEOffload", i++ ? "," : "");
+    if(h->is.iscsi_offload) dump_line0("%s iSCSIOffload", i++ ? "," : "");
+    if(h->is.storage_only) dump_line0("%s StorageOnly", i++ ? "," : "");
     if(h->is.hotpluggable) dump_line0("%s Hotpluggable", i++ ? "," : "");
     dump_line0("\n");
   }
