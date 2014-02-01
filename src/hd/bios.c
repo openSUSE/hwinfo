@@ -1044,7 +1044,7 @@ void parse_mpconfig(hd_data_t *hd_data, memory_range_t *mem, smp_info_t *smp)
       hd_log_hex(hd_data, 1, len, mem->data + cfg_len + u);
       ADD2LOG("\n");
       if(len < 2) {
-        ADD2LOG("  oops: invalid record lenght\n");
+        ADD2LOG("  oops: invalid record length\n");
         break;
       }
     }
