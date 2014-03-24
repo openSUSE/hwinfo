@@ -53,7 +53,7 @@ int x11_install_info(hd_data_t *hd_data);
 int oem_install_info(hd_data_t *hd_data);
 void dump_packages(hd_data_t *hd_data);
 
-void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item);
+void do_hw(hd_data_t *hd_data, FILE *f, int hw_item);
 void do_hw_multi(hd_data_t *hd_data, FILE *f, hd_hw_item_t *hw_items);
 void do_short(hd_data_t *hd_data, hd_t *hd, FILE *f);
 void do_test(hd_data_t *hd_data);
@@ -494,7 +494,11 @@ int main(int argc, char **argv)
 }
 
 
-void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
+/*
+ * hw_item might be either a 'real' hd_hw_item_t or some number >= 2000 used
+ * for some special probe runs.
+ */
+void do_hw(hd_data_t *hd_data, FILE *f, int hw_item)
 {
   hd_t *hd, *hd0;
   int smp = -1, uml = 0, xen = 0, i;
@@ -513,7 +517,7 @@ void do_hw(hd_data_t *hd_data, FILE *f, hd_hw_item_t hw_item)
     case 2001:
     case 2003:
       i = -1;
-      switch((int) hw_item) {
+      switch(hw_item) {
         case 2000: i = pr_default; break;
         case 2001: i = pr_all; break;
         case 2003: i = pr_cpu; break;
