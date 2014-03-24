@@ -781,6 +781,8 @@
 &device.id		usb 0x003c
 |vendor.id		usb 0x138a
 &device.id		usb 0x003d
+|vendor.id		usb 0x138a
+&device.id		usb 0x003f
 +baseclass.id		0x116
 +subclass.id		0x00
 
