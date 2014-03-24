@@ -196,6 +196,11 @@ void hd_pci_read_data(hd_data_t *hd_data)
       pci->irq = ul0;
     }
 
+    if((s = get_sysfs_attr_by_path(sf_dev, "label"))) {
+      pci->label = canon_str(s, strlen(s));
+      ADD2LOG("    label = \"%s\"\n", pci->label);
+    }
+
     sl = hd_attr_list(get_sysfs_attr_by_path(sf_dev, "resource"));
     for(u = 0; sl; sl = sl->next, u++) {
       if(
@@ -434,6 +439,11 @@ void hd_pci_complete_data(hd_t *hd)
   if(pci->modalias && *pci->modalias) {
     hd->modalias = pci->modalias;
     pci->modalias = NULL;
+  }
+
+  if(pci->label && *pci->label) {
+    hd->label = pci->label;
+    pci->label = NULL;
   }
 
   hd->slot = pci->slot + (pci->bus << 8);

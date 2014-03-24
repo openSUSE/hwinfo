@@ -357,6 +357,8 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
   hd_detail_monitor_t *mdetail;
   static char *geo_type_str[] = { "Physical", "Logical", "BIOS EDD", "BIOS Legacy" };
 
+  if(h->label) dump_line("Device Name: \"%s\"\n", h->label);
+
   if(h->model) dump_line("Model: \"%s\"\n", h->model);
 
   s = NULL;
