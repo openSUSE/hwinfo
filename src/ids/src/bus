@@ -88,3 +88,6 @@
  bus.id			0x91
 +bus.name		Gameport
 
+ bus.id			0x92
++bus.name		UISVIRTPCI
+
