@@ -65,7 +65,7 @@ void read_klog(hd_data_t *hd_data)
       while(*s && *s != ']') s++;
       if(*s) s++;
       if(*s) s++;	// skip space
-      strcpy(str + 3, s);
+      for(str += 3; (*str++ = *s++););
     }
   }
 }
