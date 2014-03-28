@@ -25,6 +25,7 @@
 #define PROC_ISAPNP		"/proc/isapnp"
 #define PROC_PARTITIONS		"/proc/partitions"
 #define PROC_APM		"/proc/apm"
+#define PROC_XEN_BALLOON	"/proc/xen/balloon"
 
 #define DEV_NVRAM		"/dev/nvram"
 #define DEV_PSAUX		"/dev/psaux"

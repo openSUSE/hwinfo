@@ -21,11 +21,12 @@ uint64_t kcore_mem(hd_data_t *hd_data);
 uint64_t klog_mem(hd_data_t *hd_data, uint64_t *alt);
 uint64_t klog_mem2(hd_data_t *hd_data);
 uint64_t meminfo_mem(hd_data_t *hd_data);
+uint64_t meminfo_xen(hd_data_t *hd_data);
 
 void hd_scan_memory(hd_data_t *hd_data)
 {
   hd_t *hd;
-  uint64_t kcore, klog, klog_alt, klog2, meminfo, msize0, msize1, u;
+  uint64_t kcore, klog, klog_alt, klog2, meminfo, msize0, msize1, memxen, u;
   hd_res_t *res;
   int i;
   int exact;
@@ -44,6 +45,7 @@ void hd_scan_memory(hd_data_t *hd_data)
   klog2 = klog_mem2(hd_data);
   if(klog2 > klog) klog = klog2;
   meminfo = meminfo_mem(hd_data);
+  memxen = meminfo_xen(hd_data);
 
   msize0 = meminfo > klog ? meminfo : klog;
   if(!msize0) msize0 = kcore;
@@ -62,6 +64,12 @@ void hd_scan_memory(hd_data_t *hd_data)
 
   if(meminfo > msize1) { msize1 = meminfo; exact = 0; }
   if(klog_alt > msize0) msize0 = klog_alt;
+
+  // if we are in a xen vm, trust this value
+  if(memxen) {
+    msize0 = msize1 = memxen;
+    exact = 1;
+  }
 
   hd = add_hd_entry(hd_data, __LINE__, 0);
   hd->base_class.id = bc_internal;
@@ -206,6 +214,24 @@ uint64_t meminfo_mem(hd_data_t *hd_data)
   free_str_list(sl);
 
   ADD2LOG("  meminfo:    0x%"PRIx64"\n", u);
+
+  return u;
+}
+
+uint64_t meminfo_xen(hd_data_t *hd_data)
+{
+  uint64_t u = 0, u0;
+  str_list_t *sl;
+
+  sl = read_file(PROC_XEN_BALLOON, 0, 1);
+
+  if(sl && sscanf(sl->str, "Current allocation: %"SCNu64"", &u0) == 1) {
+    u = u0 << 10;
+  }
+
+  free_str_list(sl);
+
+  ADD2LOG("  xen balloon:    0x%"PRIx64"\n", u);
 
   return u;
 }
