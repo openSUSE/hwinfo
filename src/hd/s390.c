@@ -91,7 +91,6 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
   if(bus_group) while((curdev = readdir(bus_group)))
   {
     DIR* d;
-    struct dlist* dl;
     struct dirent* cl;
     
     if(curdev->d_type == DT_DIR) continue;	// skip "." and ".."
@@ -241,24 +240,19 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
 
   if(virtual_machine)
   {
-  	/* add an unactivated IUCV device */
-  	hd=add_hd_entry(hd_data,__LINE__,0);
-  	hd->vendor.id=MAKE_ID(TAG_SPECIAL,0x6001); /* IBM */
-  	hd->device.id=MAKE_ID(TAG_SPECIAL,0x0005); /* IUCV */
-  	hd->bus.id=bus_iucv;
-  	hd->base_class.id=bc_network;
-  	hd->status.active=status_no;
-  	hd->status.available=status_yes;
-  	hddb_add_info(hd_data,hd);
-  	
-  	/* add activated IUCV devices */
+  	/* add an unactivated IUCV device (by finding /sys/bus/iucv/devices/netiucv/ */
+  	/* and any activated IUCV devices (by finding /sys/bus/iucv/devices/netiucv??/ */
 	bus = opendir("/sys/bus/" BUSNAME_IUCV "/devices");
 	
 	if(bus)
 	{
           while((curdev = readdir(bus)))
           {
-            if(curdev->d_type == DT_DIR) continue;	// skip "." and ".."
+            // skip ".", "..", and any entries that aren't "netiucv"
+            if(
+               curdev->d_type == DT_DIR ||
+               strncmp(curdev->d_name, "netiucv", sizeof "netiucv" -1)
+            ) continue;
             hd=add_hd_entry(hd_data,__LINE__,0);
             hd->vendor.id=MAKE_ID(TAG_SPECIAL,0x6001); /* IBM */
             hd->device.id=MAKE_ID(TAG_SPECIAL,0x0005); /* IUCV */
