@@ -1,3 +1,6 @@
+27/3/2014:	v15.52
+	- xen vm: use memory settings from /proc/xen/balloon (bnc #867915)
+
 13/11/2013:	v15.51
 	- update pci id list (bnc #813172)
 
