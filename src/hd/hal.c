@@ -123,15 +123,14 @@ void read_hal(hd_data_t *hd_data)
     return;
   }
 
-
-  dbus_error_init(&error);
+  dbus_error_free(&error);
 
   if((device_names = libhal_get_all_devices(hal_ctx, &num_devices, &error))) {
     ADD2LOG("----- hal device list -----\n");
     for(i = 0; i < num_devices; i++) {
       if(!(props = libhal_device_get_all_properties(hal_ctx, device_names[i], &error))) {
         ADD2LOG("  hal: %s: %s\n", error.name, error.message);
-        dbus_error_init(&error);
+        dbus_error_free(&error);
         continue;
       }
 
@@ -205,13 +204,12 @@ void read_hal(hd_data_t *hd_data)
     ADD2LOG("----- hal device list end -----\n");
 
     libhal_free_string_array(device_names);
-
-    dbus_error_free(&error);
   }
   else {
     ADD2LOG("  hal: empty device list\n");
   }
 
+  dbus_error_free(&error);
 
   libhal_ctx_shutdown(hal_ctx, &error);
 
