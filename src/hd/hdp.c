@@ -497,7 +497,7 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("PROM id: %s\n", h->rom_id);
 #endif
 #if defined(__s390__) || defined(__s390x__)
-    dump_line("IUCV user: %s\n", h->rom_id);
+    dump_line("IUCV user: %s", h->rom_id);
 #endif
   }
 
