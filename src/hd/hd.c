@@ -1835,7 +1835,6 @@ void hd_scan(hd_data_t *hd_data)
     if(hd_probe_feature(hd_data, pr_bios_vram)) hd_data->flags.biosvram = 1;
     hd_set_probe_feature(hd_data, pr_bios_acpi);
     hd_set_probe_feature(hd_data, pr_modules_pata);
-    hd_set_probe_feature(hd_data, pr_net_eeprom);
     hd_data->flags.pata = hd_probe_feature(hd_data, pr_modules_pata) ? 1 : 0;
     hd_set_probe_feature(hd_data, pr_x86emu);
     if(!get_probe_val_list(hd_data, pr_x86emu)) {
