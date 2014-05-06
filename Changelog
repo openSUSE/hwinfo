@@ -1,3 +1,6 @@
+31/3/2014:	v15.53
+	- fix dbus usage (bnc #870660)
+
 27/3/2014:	v15.52
 	- xen vm: use memory settings from /proc/xen/balloon (bnc #867915)
 
