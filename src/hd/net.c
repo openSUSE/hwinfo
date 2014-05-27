@@ -475,9 +475,10 @@ void get_ethtool_priv(hd_data_t *hd_data, hd_t *hd)
         char *key = strings->data + u * ETH_GSTRING_LEN;
         unsigned val = (flags.data >> u) & 1;
         ADD2LOG("    %s = %u\n", key, val);
-        if(!strcmp(key, "FCoE offload support")) hd->is.fcoe_offload = val;
-        if(!strcmp(key, "iSCSI offload support")) hd->is.iscsi_offload = val;
-        if(!strcmp(key, "Storage only interface")) hd->is.storage_only = val;
+        // add 1 to get tri-state flags: 0 = unset, 1 = false, 2 = true
+        if(!strcmp(key, "FCoE offload support")) hd->is.fcoe_offload = val + 1;
+        if(!strcmp(key, "iSCSI offload support")) hd->is.iscsi_offload = val + 1;
+        if(!strcmp(key, "Storage only interface")) hd->is.storage_only = val + 1;
       }
     }
     else {

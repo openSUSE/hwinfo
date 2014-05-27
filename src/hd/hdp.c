@@ -543,9 +543,9 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     if(h->is.pppoe) dump_line0("%s PPPOE", i++ ? "," : "");
     if(h->is.wlan) dump_line0("%s WLAN", i++ ? "," : "");
     if(h->is.fcoe) dump_line0("%s FCoE", i++ ? "," : "");
-    if(h->is.fcoe_offload) dump_line0("%s FCoEOffload", i++ ? "," : "");
-    if(h->is.iscsi_offload) dump_line0("%s iSCSIOffload", i++ ? "," : "");
-    if(h->is.storage_only) dump_line0("%s StorageOnly", i++ ? "," : "");
+    if(h->is.fcoe_offload) dump_line0("%s FCoEOffload = %s", i++ ? "," : "", h->is.fcoe_offload == 1 ? "off" : "on");
+    if(h->is.iscsi_offload) dump_line0("%s iSCSIOffload = %s", i++ ? "," : "", h->is.iscsi_offload == 1 ? "off" : "on");
+    if(h->is.storage_only) dump_line0("%s StorageOnly = %s", i++ ? "," : "", h->is.storage_only == 1 ? "off" : "on");
     if(h->is.hotpluggable) dump_line0("%s Hotpluggable", i++ ? "," : "");
     dump_line0("\n");
   }
