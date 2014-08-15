@@ -116,7 +116,14 @@ void hd_scan_floppy(hd_data_t *hd_data)
         floppy_ctrls++;
       }
 
-      if(floppy_ctrls && !(floppy_created & (1 << u))) {
+      struct stat sbuf;
+      unsigned floppy_exists = 0;
+      char *floppy_name = NULL;
+      str_printf(&floppy_name, 0, "/dev/fd%u", u);
+      floppy_exists = stat(floppy_name, &sbuf) ? 0 : 1;
+      free_mem(floppy_name);
+
+      if(floppy_ctrls && !(floppy_created & (1 << u)) && floppy_exists) {
         hd = add_hd_entry(hd_data, __LINE__, 0);
         hd->base_class.id = bc_storage_device;
         hd->sub_class.id = sc_sdev_floppy;
