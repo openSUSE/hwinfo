@@ -1,7 +1,7 @@
 TOPDIR		= $(CURDIR)
 SUBDIRS		= src
 TARGETS		= hwinfo hwinfo.pc changelog
-CLEANFILES	= hwinfo hwinfo.pc hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~
+CLEANFILES	= hwinfo hwinfo.pc hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~ VERSION changelog
 LIBDIR		?= /usr/lib
 ULIBDIR		= $(LIBDIR)
 LIBS		= -lhd
@@ -12,10 +12,13 @@ TSO_LIBS	=
 
 export SO_LIBS
 
+ifdef HWINFO_VERSION
+VERSION := $(shell echo ${HWINFO_VERSION} > VERSION; cat VERSION)
+else
 GIT2LOG := $(shell if [ -x ./git2log ] ; then echo ./git2log --update ; else echo true ; fi)
 GITDEPS := $(shell [ -d .git ] && echo .git/HEAD .git/refs/heads .git/refs/tags)
-
 VERSION := $(shell $(GIT2LOG) --version VERSION ; cat VERSION)
+endif
 
 include Makefile.common
 
@@ -32,8 +35,13 @@ OBJS_NO_TINY	= names.o parallel.o modem.o
 
 .PHONY:	fullstatic static shared tiny doc diet tinydiet uc tinyuc
 
+ifdef HWINFO_VERSION
+changelog:
+	@true
+else
 changelog: $(GITDEPS)
 	$(GIT2LOG) --changelog changelog
+endif
 
 hwscan: hwscan.o $(LIBHD)
 	$(CC) hwscan.o $(LDFLAGS) $(CFLAGS) $(LIBS) -o $@
