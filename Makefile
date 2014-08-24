@@ -2,7 +2,7 @@ TOPDIR		= $(CURDIR)
 SUBDIRS		= src
 TARGETS		= hwinfo hwinfo.pc changelog
 CLEANFILES	= hwinfo hwinfo.pc hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~
-LIBDIR		= /usr/lib
+LIBDIR		?= /usr/lib
 ULIBDIR		= $(LIBDIR)
 LIBS		= -lhd
 SLIBS		= -lhd
@@ -36,16 +36,16 @@ changelog: $(GITDEPS)
 	$(GIT2LOG) --changelog changelog
 
 hwscan: hwscan.o $(LIBHD)
-	$(CC) hwscan.o $(LDFLAGS) $(LIBS) -o $@
+	$(CC) hwscan.o $(LDFLAGS) $(CFLAGS) $(LIBS) -o $@
 
 hwinfo: hwinfo.o $(LIBHD)
-	$(CC) hwinfo.o $(LDFLAGS) $(LIBS) -o $@
+	$(CC) hwinfo.o $(LDFLAGS) $(CFLAGS) $(LIBS) -o $@
 
 hwscand: hwscand.o
-	$(CC) $< $(LDFLAGS) -o $@
+	$(CC) $< $(LDFLAGS) $(CFLAGS) -o $@
 
 hwscanqueue: hwscanqueue.o
-	$(CC) $< $(LDFLAGS) -o $@
+	$(CC) $< $(LDFLAGS) $(CFLAGS) -o $@
 
 hwinfo.pc: hwinfo.pc.in VERSION
 	VERSION=`cat VERSION`; \
