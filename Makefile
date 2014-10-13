@@ -14,8 +14,9 @@ export SO_LIBS
 
 GIT2LOG := $(shell if [ -x ./git2log ] ; then echo ./git2log --update ; else echo true ; fi)
 GITDEPS := $(shell [ -d .git ] && echo .git/HEAD .git/refs/heads .git/refs/tags)
-
 VERSION := $(shell $(GIT2LOG) --version VERSION ; cat VERSION)
+BRANCH  := $(shell git branch | perl -ne 'print $$_ if s/^\*\s*//')
+PREFIX  := hwinfo-$(VERSION)
 
 include Makefile.common
 
@@ -106,4 +107,10 @@ install:
 	install -d -m 755 $(DESTDIR)/usr/share/hwinfo
 	install -m 644 src/isdn/cdb/ISDN.CDB.txt $(DESTDIR)/usr/share/hwinfo
 	install -m 644 src/isdn/cdb/ISDN.CDB.hwdb $(DESTDIR)/usr/share/hwinfo
+
+archive: changelog
+	mkdir -p package
+	git archive --prefix=$(PREFIX)/ $(BRANCH) > package/$(PREFIX).tar
+	tar -r -f package/$(PREFIX).tar --mode=0664 --owner=root --group=root --mtime="`git show -s --format=%ci`" --transform='s:^:$(PREFIX)/:' VERSION changelog
+	xz -f package/$(PREFIX).tar
 

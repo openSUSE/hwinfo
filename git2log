@@ -2,6 +2,11 @@
 
 use Getopt::Long;
 
+use Data::Dumper;
+$Data::Dumper::Sortkeys = 1;
+$Data::Dumper::Terse = 1;
+$Data::Dumper::Indent = 1;
+
 sub usage;
 
 usage 0 if !@ARGV;
@@ -62,20 +67,20 @@ for (@tags) {
 
 @tags = sort @ntags;
 
-die "no tags?\n" unless @tags;
+die "no tags at all?\n" unless @tags;
+
+$current_version = $tags[-1];
+$current_version =~ s/(\d+)/$1 + 0/eg;
+
+if(`git log --pretty=medium --date=iso '$current_version..HEAD'`) {
+  $current_version =~ s/(\d+)$/$1 + 1/e;
+}
+
+$current_version =~ s/^$branch\-//;
 
 if($opt_version) {
-  $t = $tags[-1];
-  $t =~ s/(\d+)/$1 + 0/eg;
-
-  if(`git log --pretty=medium --date=iso '$t..HEAD'`) {
-    $t =~ s/(\d+)$/$1 + 1/e;
-  }
-
-  $t =~ s/^$branch\-//;
-
   open F, ">$opt_file";
-  print F "$t\n";
+  print F "$current_version\n";
   close F;
 
   exit 0;
@@ -92,11 +97,16 @@ if($branch ne 'master') {
 
   # print STDERR ">> $branch-$bi\n";
 
-  die "no tags in this branch?\n" unless $bi;
+  warn "no tags in this branch yet\n" unless $bi;
 
   for ($i = 0; $i < $i2; $i++) {
-    if($tags[$i] eq $bi) {
-      $i1 = $i;
+    if($tags[$i] ge $bi) {
+      if($tags[$i] eq $bi) {
+        $i1 = $i;
+      }
+      elsif($i > 0) {
+        $i1 = $i - 1;
+      }
       last;
     }
   }
@@ -106,15 +116,43 @@ if($branch ne 'master') {
 
 map { s/(\d+)/$1 + 0/eg } @tags;
 
-# for (@tags) { print "$_\n"; }
-
 push @tags, "HEAD";
+
+# print Dumper(\@tags);
 
 open F, ">$opt_file";
 
 for ($i = @tags - 1; $i > 0; $i--) {
   $date = undef;
   @t = `git log --pretty=medium --date=iso '$tags[$i-1]..$tags[$i]'`;
+
+  # print "\n--- $tags[$i-1]..$tags[$i] ---\n", @t, "---\n";
+
+  undef @t2;
+  $merge = 0;
+  for (@t) {
+    $merge = 1 if /^Merge: /;
+    $merge = 0 if /^commit /;
+    push @t2, $_ if !$merge;
+  }
+  @t = @t2;
+
+  undef @t2;
+  $detail = 0;
+  for (@t) {
+    $detail = 1 if /^    $/;
+    $detail = 0 if /^commit /;
+    if($detail && /^    [^\-\s]/) {
+      # push @t2, "# $_";
+    }
+    else {
+      push @t2, $_;
+    }
+  }
+  @t = @t2;
+
+  # print "\n--- $tags[$i-1]..$tags[$i] ---\n", @t;
+
   chomp @t;
   for (@t) {
     if(/^Date:\s*(\S+)/) {
@@ -131,12 +169,17 @@ for ($i = @tags - 1; $i > 0; $i--) {
     map { s/feat(\.|ure)?\s*#?(\d+)/fate #$2/g } @t;
     map { s/^ {4}// } @t;
     map { s/^ {8}// } @t;
-    map { s/^([^-\s])/- $1/ } @t;
-    map { s/^- - /- / } @t;
-    map { s/^- \+\s+(- )?/- / } @t;
+    map { s/^ +/  / } @t;
+    map { s/^\s*[+\-][\-\s]*/- / } @t;
+    map { s/^([^ \-])/- $1/ } @t;
     map { s/^/\t/ } @t;
+    map { s/\\'/'/ } @t;
+
+#    print "\n--- $tags[$i-1]..$tags[$i] ---\n", join("\n", @t);
+
     $t = $tags[$i];
     $t = "${branch}-$t" if $branch ne 'master' && $t eq "HEAD";
+    $t =~ s/HEAD/$current_version/;
     print F "$date:\t$t\n";
     print F join("\n", @t), "\n\n";
   }
@@ -159,5 +202,4 @@ Create changelog and project version from git repo.
 
   exit $err;
 }
-
 

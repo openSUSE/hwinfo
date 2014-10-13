@@ -54,6 +54,7 @@ endif
 
 clean: subdirs
 	@rm -rf $(OBJS) .depend $(CLEANFILES) *~
+	@rm -rf package
 
 distclean: subdirs
 	@rm -rf $(OBJS) .depend $(CLEANFILES) $(DISTCLEANFILES) *~
