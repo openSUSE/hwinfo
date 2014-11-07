@@ -62,7 +62,9 @@ echo /proc/mounts
 perl -nl -e 'print unless (split)[0] =~ /none|automount|:/' /proc/mounts >"$dir/$host/proc/mounts"
 
 mkdir -p "$dir/$host/var/log"
-echo -e "\n------  dmesg start  ------\n" >>"$dir/$host/var/log/boot.msg"
+echo "
+------  dmesg start  ------
+" >>"$dir/$host/var/log/boot.msg"
 dmesg >>"$dir/$host/var/log/boot.msg"
 
 if [ -x /usr/bin/lshal ] ; then
@@ -85,5 +87,5 @@ ln -nf "$dir/$file" "/tmp/$file"
 
 rm -rf "$dir"
 
-echo -e "\nSystem data written to: /tmp/$file"
-
+echo "
+System data written to: /tmp/$file"
