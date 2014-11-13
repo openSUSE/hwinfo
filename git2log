@@ -163,7 +163,9 @@ for ($i = @tags - 1; $i > 0; $i--) {
   @t = grep { !/^(commit|Author:|Date:|Merge:|\s*$)|created.*tag/ } @t;
   if(@t) {
     # rewrite a bit to have it look more consistent
-    map { s/(fate|bnc)#/$1 #/g } @t;
+    $t[0] =~ s/^\s*//;
+    map { s/(fate|bnc|bsc)#/$1 #/g } @t;
+    map { s/(fate|bnc|bsc)\s*(\d{4})/$1 #$2/g } @t;
     map { s/\(#/(bnc #/g } @t;
     map { s/bug\s*#/bnc #/g } @t;
     map { s/feat(\.|ure)?\s*#?(\d+)/fate #$2/g } @t;
@@ -175,7 +177,7 @@ for ($i = @tags - 1; $i > 0; $i--) {
     map { s/^/\t/ } @t;
     map { s/\\'/'/ } @t;
 
-#    print "\n--- $tags[$i-1]..$tags[$i] ---\n", join("\n", @t);
+    # print "\n--- $tags[$i-1]..$tags[$i] ---\n", join("\n", @t);
 
     $t = $tags[$i];
     $t = "${branch}-$t" if $branch ne 'master' && $t eq "HEAD";
