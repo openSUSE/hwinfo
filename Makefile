@@ -1,6 +1,6 @@
 TOPDIR		= $(CURDIR)
 SUBDIRS		= src
-TARGETS		= hwinfo hwinfo.pc
+TARGETS		= hwinfo hwinfo.pc changelog
 CLEANFILES	= hwinfo hwinfo.pc hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~
 LIBDIR		= /usr/lib
 ULIBDIR		= $(LIBDIR)
@@ -12,12 +12,21 @@ TSO_LIBS	= -ldbus-1 -lhal
 
 export SO_LIBS
 
+GIT2LOG := $(shell if [ -x ./git2log ] ; then echo ./git2log --update ; else echo true ; fi)
+GITDEPS := $(shell [ -d .git ] && echo .git/HEAD .git/refs/heads .git/refs/tags)
+VERSION := $(shell $(GIT2LOG) --version VERSION ; cat VERSION)
+BRANCH  := $(shell [ -d .git ] && git branch | perl -ne 'print $$_ if s/^\*\s*//')
+PREFIX  := hwinfo-$(VERSION)
+
 include Makefile.common
 
 SHARED_FLAGS	=
 OBJS_NO_TINY	= names.o parallel.o modem.o
 
 .PHONY:	fullstatic static shared tiny doc diet tinydiet uc tinyuc
+
+changelog: $(GITDEPS)
+	$(GIT2LOG) --changelog changelog
 
 hwscan: hwscan.o $(LIBHD)
 	$(CC) hwscan.o $(LDFLAGS) $(LIBS) -o $@
@@ -90,4 +99,11 @@ install:
 	install -d -m 755 $(DESTDIR)/usr/share/hwinfo
 	install -m 644 src/isdn/cdb/ISDN.CDB.txt $(DESTDIR)/usr/share/hwinfo
 	install -m 644 src/isdn/cdb/ISDN.CDB.hwdb $(DESTDIR)/usr/share/hwinfo
+
+archive: changelog
+	@if [ ! -d .git ] ; then echo no git repo ; false ; fi
+	mkdir -p package
+	git archive --prefix=$(PREFIX)/ $(BRANCH) > package/$(PREFIX).tar
+	tar -r -f package/$(PREFIX).tar --mode=0664 --owner=root --group=root --mtime="`git show -s --format=%ci`" --transform='s:^:$(PREFIX)/:' VERSION changelog
+	xz -f package/$(PREFIX).tar
 

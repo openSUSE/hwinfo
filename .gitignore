@@ -1,0 +1,7 @@
+changelog
+Changelog
+VERSION
+*.o
+.depend
+hwinfo
+hwinfo.pc
