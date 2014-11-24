@@ -878,10 +878,12 @@ void add_mv643xx_eth(hd_data_t *hd_data, char *entry, char *platform_type)
  */
 void hd_read_platform(hd_data_t *hd_data)
 {
-  char *s, *platform_type;
+  char *s, *platform_type, *device_type = NULL;
   str_list_t *sf_bus, *sf_bus_e, *sf_eth_dev = NULL;
   char *sf_dev, *sf_eth_net;
   int mv643xx_eth_seen = 0;
+  int is_net, is_storage, is_usb;
+  hd_t *hd;
 
   sf_bus = read_dir("/sys/bus/platform/devices", 'l');
 
@@ -901,21 +903,70 @@ void hd_read_platform(hd_data_t *hd_data)
 
     if((s = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
       platform_type = canon_str(s, strlen(s));
-      ADD2LOG("    type = \"%s\"\n", platform_type);
+      device_type = free_mem(device_type);
+      if((s = get_sysfs_attr_by_path(sf_dev, "uevent"))) {
+        char *t, *t2;
+        if((t = strstr(s, "OF_NAME="))) {
+          t += sizeof "OF_NAME=" - 1;
+          if((t2 = strchr(t, '\n'))) *t2 = 0;
+          device_type = strdup(t);
+        }
+      }
+      ADD2LOG("    type = \"%s\", modalias = \"%s\"\n", device_type, platform_type);
+      is_net = 0;
       sf_eth_net = new_str(hd_read_sysfs_link(sf_dev, "net"));
       sf_eth_dev = read_dir(sf_eth_net, 'd');
-      ADD2LOG("  platform device: sf_eth_net = %s sf_eth_dev = %p\n", sf_eth_net, sf_eth_dev);
-      if (
+      is_net = sf_eth_net && sf_eth_dev;
+      is_storage = device_type && !strcmp(device_type, "sata");
+      is_usb = device_type && !strcmp(device_type, "usb");
+      if(is_net) ADD2LOG("    is net: sf_eth_net = %s\n", sf_eth_net);
+      if(is_storage) ADD2LOG("    is storage\n");
+      if(is_usb) ADD2LOG("    is usb\n");
+      free_mem(sf_eth_net);
+      free_str_list(sf_eth_dev);
+      if(
         /* there is 'mv643xx_eth.0', 'mv643xx_eth.1' and 'mv643xx_eth_shared.' */
-        sf_eth_dev && sf_eth_net &&
+        is_net &&
         strstr(platform_type, "mv643xx_eth") &&
         !mv643xx_eth_seen++
       ) {
         add_mv643xx_eth(hd_data, sf_bus_e->str, platform_type);
       }
+      else if(is_net) {
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+        hd->base_class.id = bc_network;
+        hd->sub_class.id = 0;
+        str_printf(&hd->device.name, 0, "ARM Ethernet %d", hd->slot);
+        hd->modalias = new_str(platform_type);
+        hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+        hd->sysfs_bus_id = new_str(sf_bus_e->str);
+        s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+        if(s) add_str_list(&hd->drivers, s);
+      }
+      else if(is_storage) {
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+        hd->base_class.id = bc_storage;
+        hd->sub_class.id = sc_sto_ide;
+        str_printf(&hd->device.name, 0, "ARM SATA %d", hd->slot);
+        hd->modalias = new_str(platform_type);
+        hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+        hd->sysfs_bus_id = new_str(sf_bus_e->str);
+        s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+        if(s) add_str_list(&hd->drivers, s);
+      }
+      else if(is_usb) {
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+        hd->base_class.id = bc_serial;
+        hd->sub_class.id = sc_ser_usb;
+
+        str_printf(&hd->device.name, 0, "ARM USB %d", hd->slot);
+        hd->modalias = new_str(platform_type);
+        hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+        hd->sysfs_bus_id = new_str(sf_bus_e->str);
+        s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+        if(s) add_str_list(&hd->drivers, s);
+      }
       free_mem(platform_type);
-      free_mem(sf_eth_net);
-      free_str_list(sf_eth_dev);
     }
 
     free_mem(sf_dev);
@@ -1563,6 +1614,7 @@ void hd_read_virtio(hd_data_t *hd_data)
   free_str_list(sf_bus);
 }
 
+
 /*
  * uisvirtpci
  */
@@ -1634,5 +1686,6 @@ void hd_read_uisvirtpci(hd_data_t *hd_data)
 
   free_str_list(sf_bus);
 }
+
 /** @} */
 
