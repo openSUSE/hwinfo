@@ -58,6 +58,7 @@ clean: subdirs
 
 distclean: subdirs
 	@rm -rf $(OBJS) .depend $(CLEANFILES) $(DISTCLEANFILES) *~
+	@rm -rf package
 
 ifneq "$(CFILES)" ""
 ifeq ($(findstring $(MAKECMDGOALS), clean distclean),)
