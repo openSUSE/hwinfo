@@ -88,6 +88,9 @@ void hd_scan_sys(hd_data_t *hd_data)
       else if(strstr(buf0, "CHRP")) {
         st->system_type = new_str(/* is_64 ? "CHRP64" : */ "CHRP");
       }
+      else if(strstr(buf0, "PowerNV")) {
+        st->system_type = new_str("PowerNV");
+      }
       else if(strstr(buf0, "iSeries")) {
         st->system_type = new_str("iSeries");
         hd_data->flags.iseries = 1;
