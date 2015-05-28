@@ -129,8 +129,9 @@ void hd_pci_read_data(hd_data_t *hd_data)
   char *s;
   pci_t *pci;
   int fd, i;
-  str_list_t *sf_bus, *sf_bus_e;
-  char *sf_dev;
+  str_list_t *sf_bus, *sf_bus_e, *sf_drm_dirs, *sf_drm_dir, *sf_drm_subdirs,
+    *sf_drm_subdir;
+  char *sf_dev, *sf_drm, *sf_drm_subpath, *sf_drm_edid;
 
   sf_bus = read_dir("/sys/bus/pci/devices", 'l');
 
@@ -293,6 +294,52 @@ void hd_pci_read_data(hd_data_t *hd_data)
         pci->edid_len[u] = 0;
       }
     }
+
+    /* try searching for data in <PCI_dev>/drm/x/x/edid file */
+    if (pci->edid_len[0] == 0) {
+      sf_drm = NULL;
+      str_printf(&sf_drm, 0, "%s/drm", sf_dev);
+      
+      u = 0;
+
+      sf_drm_dirs = read_dir(sf_drm, 'd');
+      for(sf_drm_dir = sf_drm_dirs; sf_drm_dir; sf_drm_dir = sf_drm_dir->next) {
+
+        sf_drm_subpath = NULL;
+        str_printf(&sf_drm_subpath, 0, "%s/drm/%s", sf_dev, sf_drm_dir->str);
+
+        sf_drm_subdirs = read_dir(sf_drm_subpath, 'd');
+        for(sf_drm_subdir = sf_drm_subdirs; sf_drm_subdir; sf_drm_subdir = sf_drm_subdir->next) {
+          sf_drm_edid = NULL;
+          str_printf(&sf_drm_edid, 0, "%s/%s/edid", sf_drm_subpath, sf_drm_subdir->str);
+
+          if((fd = open(sf_drm_edid, O_RDONLY)) != -1) {
+            /* FIXME: check for max 'u' index  */
+            pci->edid_len[u] = read(fd, pci->edid_data[u], sizeof pci->edid_data[u]);
+            ADD2LOG("    found edid file at %s (size: %d)\n", sf_drm_edid, pci->edid_len[u]);
+
+            if(pci->edid_len[u] > 0) {
+              for(i = 0; i < sizeof pci->edid_data[u]; i += 0x10) {
+                ADD2LOG("      ");
+                hd_log_hex(hd_data, 1, 0x10, pci->edid_data[u] + i);
+                ADD2LOG("\n");
+              }
+              u = u + 1;
+            }
+            close(fd);
+          }
+            
+          free_mem(sf_drm_edid);
+        }
+
+        free_str_list(sf_drm_subdirs);
+        free_mem(sf_drm_subpath);
+      }
+
+      free_str_list(sf_drm_dirs);
+      free_mem(sf_drm);
+    }
+
 
     s = free_mem(s);
 
