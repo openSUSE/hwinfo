@@ -834,6 +834,8 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     for(i = 0, mdetail = &h->detail->monitor; mdetail; i++, mdetail = mdetail->next) {
       mi  = mdetail->data;
 
+      dump_line("Year of Manufacture: %d\n", mi->manu_year);
+
       if(mi->htotal && mi->vtotal) {
         dump_line("Detailed Timings #%d:\n", i);
         dump_line("   Resolution: %ux%u\n", mi->width, mi->height);
