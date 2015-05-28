@@ -2,8 +2,6 @@ TOPDIR		= $(CURDIR)
 SUBDIRS		= src
 TARGETS		= hwinfo hwinfo.pc changelog
 CLEANFILES	= hwinfo hwinfo.pc hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~
-LIBDIR		= /usr/lib
-ULIBDIR		= $(LIBDIR)
 LIBS		= -lhd
 SLIBS		= -lhd
 TLIBS		= -lhd_tiny
@@ -19,6 +17,13 @@ BRANCH  := $(shell git branch | perl -ne 'print $$_ if s/^\*\s*//')
 PREFIX  := hwinfo-$(VERSION)
 
 include Makefile.common
+
+ifeq "$(ARCH)" "x86_64"
+LIBDIR		= /usr/lib64
+else
+LIBDIR		= /usr/lib
+endif
+ULIBDIR		= $(LIBDIR)
 
 # ia64
 ifneq ($(filter i386 x86_64, $(ARCH)),)
