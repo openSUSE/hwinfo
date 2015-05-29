@@ -60,6 +60,7 @@ static void add_xen_storage(hd_data_t *hd_data);
 static void hd_read_virtio(hd_data_t *hd_data);
 static void hd_read_uisvirtpci(hd_data_t *hd_data);
 static void hd_read_ibmebus(hd_data_t *hd_data);
+static void add_edid_from_file(const char *file, pci_t *pci, int index, hd_data_t *hd_data);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
 {
@@ -128,10 +129,10 @@ void hd_pci_read_data(hd_data_t *hd_data)
   str_list_t *sl;
   char *s;
   pci_t *pci;
-  int fd, i;
+  int fd;
   str_list_t *sf_bus, *sf_bus_e, *sf_drm_dirs, *sf_drm_dir, *sf_drm_subdirs,
     *sf_drm_subdir;
-  char *sf_dev, *sf_drm, *sf_drm_subpath, *sf_drm_edid;
+  char *sf_dev, *sf_drm = NULL, *sf_drm_subpath = NULL, *sf_drm_edid = NULL;
 
   sf_bus = read_dir("/sys/bus/pci/devices", 'l');
 
@@ -270,78 +271,43 @@ void hd_pci_read_data(hd_data_t *hd_data)
       close(fd);
     }
 
+    /* FIXME: stil valid? */
     for(u = 0; u < sizeof pci->edid_len / sizeof *pci->edid_len; u++) {
       str_printf(&s, 0, "%s/edid%u", sf_dev, u + 1);
-      if((fd = open(s, O_RDONLY)) != -1) {
-        pci->edid_len[u] = read(fd, pci->edid_data[u], sizeof pci->edid_data[u]);
-
-        ADD2LOG("    edid%u[%u]\n", u + 1, pci->edid_len[u]);
-
-        if(pci->edid_len[u] > 0) {
-          for(i = 0; i < sizeof pci->edid_data[u]; i += 0x10) {
-            ADD2LOG("      ");
-            hd_log_hex(hd_data, 1, 0x10, pci->edid_data[u] + i);
-            ADD2LOG("\n");
-          }
-        }
-        else {
-          pci->edid_len[u] = 0;
-        }
-
-        close(fd);
-      }
-      else {
-        pci->edid_len[u] = 0;
-      }
+      add_edid_from_file(s, pci, u, hd_data);
     }
+    s = free_mem(s);
 
-    /* try searching for data in <PCI_dev>/drm/x/x/edid file */
+    /* try searching the monitor data in <PCI_dev>/drm/x/x/edid files if no data found*/
     if (pci->edid_len[0] == 0) {
-      sf_drm = NULL;
       str_printf(&sf_drm, 0, "%s/drm", sf_dev);
-      
       u = 0;
 
+      /* get <PCI_dev>/drm/x listing */
       sf_drm_dirs = read_dir(sf_drm, 'd');
       for(sf_drm_dir = sf_drm_dirs; sf_drm_dir; sf_drm_dir = sf_drm_dir->next) {
-
-        sf_drm_subpath = NULL;
         str_printf(&sf_drm_subpath, 0, "%s/drm/%s", sf_dev, sf_drm_dir->str);
 
+        /* get <PCI_dev>/drm/x/x listing */
         sf_drm_subdirs = read_dir(sf_drm_subpath, 'd');
         for(sf_drm_subdir = sf_drm_subdirs; sf_drm_subdir; sf_drm_subdir = sf_drm_subdir->next) {
-          sf_drm_edid = NULL;
+          /* try loading <PCI_dev>/drm/x/x/edid file */
           str_printf(&sf_drm_edid, 0, "%s/%s/edid", sf_drm_subpath, sf_drm_subdir->str);
+          add_edid_from_file(sf_drm_edid, pci, u, hd_data);
 
-          if((fd = open(sf_drm_edid, O_RDONLY)) != -1) {
-            /* FIXME: check for max 'u' index  */
-            pci->edid_len[u] = read(fd, pci->edid_data[u], sizeof pci->edid_data[u]);
-            ADD2LOG("    found edid file at %s (size: %d)\n", sf_drm_edid, pci->edid_len[u]);
-
-            if(pci->edid_len[u] > 0) {
-              for(i = 0; i < sizeof pci->edid_data[u]; i += 0x10) {
-                ADD2LOG("      ");
-                hd_log_hex(hd_data, 1, 0x10, pci->edid_data[u] + i);
-                ADD2LOG("\n");
-              }
-              u = u + 1;
-            }
-            close(fd);
+          if (pci->edid_len[u] > 0) {
+            u = u + 1;
           }
-            
-          free_mem(sf_drm_edid);
         }
 
         free_str_list(sf_drm_subdirs);
-        free_mem(sf_drm_subpath);
       }
 
+      sf_drm_subpath = free_mem(sf_drm_subpath);
+      sf_drm_edid = free_mem(sf_drm_edid);
+      sf_drm = free_mem(sf_drm);
       free_str_list(sf_drm_dirs);
-      free_mem(sf_drm);
     }
-
-
-    s = free_mem(s);
 
     pci->rev = pci->data[PCI_REVISION_ID];
 
@@ -359,6 +325,32 @@ void hd_pci_read_data(hd_data_t *hd_data)
   free_str_list(sf_bus);
 }
 
+void add_edid_from_file(const char *file, pci_t *pci, int index, hd_data_t *hd_data) {
+  int fd, i;
+
+  if((fd = open(file, O_RDONLY)) != -1) {
+    if (index < sizeof pci->edid_len / sizeof *pci->edid_len) {
+      pci->edid_len[index] = read(fd, pci->edid_data[index], sizeof pci->edid_data[index]);
+      ADD2LOG("    found edid file at %s (size: %d)\n", file, pci->edid_len[index]);
+
+      if(pci->edid_len[index] > 0) {
+        for(i = 0; i < sizeof pci->edid_data[index]; i += 0x10) {
+          ADD2LOG("      ");
+          hd_log_hex(hd_data, 1, 0x10, pci->edid_data[index] + i);
+          ADD2LOG("\n");
+        }
+      }
+    }
+    else {
+      ADD2LOG("    monitor list full, ignoring monitor data %s\n", file);
+      fprintf(stderr, "* WARNING: Monitor list full, ignoring the monitor data at %s\n", file);
+    }
+    close(fd);
+  }
+  else {
+    pci->edid_len[index] = 0;
+  }
+}
 
 void add_pci_data(hd_data_t *hd_data)
 {
