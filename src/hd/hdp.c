@@ -834,7 +834,13 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     for(i = 0, mdetail = &h->detail->monitor; mdetail; i++, mdetail = mdetail->next) {
       mi  = mdetail->data;
 
-      dump_line("Year of Manufacture: %d\n", mi->manu_year);
+      if (mi->manu_week == 255) {
+        dump_line("The Model Year: %d\n", mi->manu_year);
+      }
+      else {
+        dump_line("Year of Manufacture: %d\n", mi->manu_year);
+        dump_line("Week of Manufacture: %d\n", mi->manu_week);
+      }
 
       if(mi->htotal && mi->vtotal) {
         dump_line("Detailed Timings #%d:\n", i);

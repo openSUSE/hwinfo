@@ -1408,6 +1408,7 @@ typedef struct {
  */
 typedef struct {
   unsigned manu_year;
+  unsigned manu_week;
   unsigned min_vsync, max_vsync;	/**< vsync range */
   unsigned min_hsync, max_hsync;	/**< hsync range */
   unsigned clock;			/**< pixel clock in kHz */
