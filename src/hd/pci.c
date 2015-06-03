@@ -343,7 +343,6 @@ void add_edid_from_file(const char *file, pci_t *pci, int index, hd_data_t *hd_d
     }
     else {
       ADD2LOG("    monitor list full, ignoring monitor data %s\n", file);
-      fprintf(stderr, "* WARNING: Monitor list full, ignoring the monitor data at %s\n", file);
     }
     close(fd);
   }
