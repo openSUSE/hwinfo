@@ -92,6 +92,7 @@
 #include "wlan.h"
 #include "hal.h"
 #include "klog.h"
+#include "drm.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * various functions commmon to all probing modules
@@ -661,12 +662,15 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_monitor:
-      hd_set_probe_feature(hd_data, pr_misc);
-      hd_set_probe_feature(hd_data, pr_prom);
+      /* if KMS is not active the data need to be read from BIOS */
+      if (!is_kms_active(hd_data)) {
+        hd_set_probe_feature(hd_data, pr_misc);
+        hd_set_probe_feature(hd_data, pr_prom);
+        hd_set_probe_feature(hd_data, pr_bios_ddc);
+        // hd_set_probe_feature(hd_data, pr_bios_fb);
+        hd_set_probe_feature(hd_data, pr_fb);
+      }
       hd_set_probe_feature(hd_data, pr_pci);
-      hd_set_probe_feature(hd_data, pr_bios_ddc);
-      // hd_set_probe_feature(hd_data, pr_bios_fb);
-      hd_set_probe_feature(hd_data, pr_fb);
       hd_set_probe_feature(hd_data, pr_monitor);
       break;
 

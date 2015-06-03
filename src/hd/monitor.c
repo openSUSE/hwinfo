@@ -11,6 +11,8 @@
  * @defgroup MONITORint Monitor (DDC) information
  * @ingroup libhdINFOint
  * @brief Monitor information functions
+ * @see http://en.wikipedia.org/wiki/Extended_Display_Identification_Data#EDID_1.3_data_format
+ *   for the detailed EDID data structure description
  *
  * @{
  */
@@ -308,7 +310,7 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
   int i;
   unsigned u, u1, u2, tag;
   char *s;
-  unsigned width_mm = 0, height_mm = 0, manu_year = 0;
+  unsigned width_mm = 0, height_mm = 0, manu_year = 0, manu_week = 0;
   unsigned min_vsync = 0, max_vsync = 0, min_hsync = 0, max_hsync = 0;
   unsigned hblank, hsync_ofs, hsync, vblank, vsync_ofs, vsync;
   char *vendor = NULL, *serial = NULL, *name = NULL;
@@ -366,6 +368,7 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
   }
 
   manu_year = 1990 + edid[0x11];
+  manu_week = edid[0x10];
 
   ADD2LOG("  detailed timings:\n");
 
@@ -439,6 +442,7 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
           mi->width_mm = width_mm;
           mi->height_mm = height_mm;
           mi->manu_year = manu_year;
+          mi->manu_week = manu_week;
 
           u = (edid[i + 0] + (edid[i + 1] << 8)) * 10;	/* pixel clock in kHz */
           if(!u) break;
