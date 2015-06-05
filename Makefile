@@ -1,7 +1,7 @@
 TOPDIR		= $(CURDIR)
 SUBDIRS		= src
 TARGETS		= hwinfo hwinfo.pc changelog
-CLEANFILES	= hwinfo hwinfo.pc hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~
+CLEANFILES	= hwinfo hwinfo.pc hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~ VERSION changelog
 LIBS		= -lhd
 SLIBS		= -lhd
 TLIBS		= -lhd_tiny
@@ -12,16 +12,20 @@ export SO_LIBS
 
 GIT2LOG := $(shell if [ -x ./git2log ] ; then echo ./git2log --update ; else echo true ; fi)
 GITDEPS := $(shell [ -d .git ] && echo .git/HEAD .git/refs/heads .git/refs/tags)
+BRANCH  := $((shell [ -d .git ] && git branch | perl -ne 'print $$_ if s/^\*\s*//')
+ifdef HWINFO_VERSION
+VERSION := $(shell echo ${HWINFO_VERSION} > VERSION; cat VERSION)
+else
 VERSION := $(shell $(GIT2LOG) --version VERSION ; cat VERSION)
-BRANCH  := $(shell git branch | perl -ne 'print $$_ if s/^\*\s*//')
+endif
 PREFIX  := hwinfo-$(VERSION)
 
 include Makefile.common
 
 ifeq "$(ARCH)" "x86_64"
-LIBDIR		= /usr/lib64
+LIBDIR		?= /usr/lib64
 else
-LIBDIR		= /usr/lib
+LIBDIR		?= /usr/lib
 endif
 ULIBDIR		= $(LIBDIR)
 
@@ -38,20 +42,25 @@ OBJS_NO_TINY	= names.o parallel.o modem.o
 
 .PHONY:	fullstatic static shared tiny doc diet tinydiet uc tinyuc
 
+ifdef HWINFO_VERSION
+changelog:
+	@true
+else
 changelog: $(GITDEPS)
 	$(GIT2LOG) --changelog changelog
+endif
 
 hwscan: hwscan.o $(LIBHD)
-	$(CC) hwscan.o $(LDFLAGS) $(LIBS) -o $@
+	$(CC) hwscan.o $(LDFLAGS) $(CFLAGS) $(LIBS) -o $@
 
 hwinfo: hwinfo.o $(LIBHD)
-	$(CC) hwinfo.o $(LDFLAGS) $(LIBS) -o $@
+	$(CC) hwinfo.o $(LDFLAGS) $(CFLAGS) $(LIBS) -o $@
 
 hwscand: hwscand.o
-	$(CC) $< $(LDFLAGS) -o $@
+	$(CC) $< $(LDFLAGS) $(CFLAGS) -o $@
 
 hwscanqueue: hwscanqueue.o
-	$(CC) $< $(LDFLAGS) -o $@
+	$(CC) $< $(LDFLAGS) $(CFLAGS) -o $@
 
 hwinfo.pc: hwinfo.pc.in VERSION
 	VERSION=`cat VERSION`; \
@@ -114,6 +123,7 @@ install:
 	install -m 644 src/isdn/cdb/ISDN.CDB.hwdb $(DESTDIR)/usr/share/hwinfo
 
 archive: changelog
+	@if [ ! -d .git ] ; then echo no git repo ; false ; fi
 	mkdir -p package
 	git archive --prefix=$(PREFIX)/ $(BRANCH) > package/$(PREFIX).tar
 	tar -r -f package/$(PREFIX).tar --mode=0664 --owner=root --group=root --mtime="`git show -s --format=%ci`" --transform='s:^:$(PREFIX)/:' VERSION changelog
