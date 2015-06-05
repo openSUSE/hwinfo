@@ -4,8 +4,6 @@ CLEANFILES	= version.h
 
 include $(TOPDIR)/Makefile.common
 
-CFLAGS		+= $(shell pkg-config --cflags dbus-1)
-
 version.h: $(TOPDIR)/VERSION
 	@echo "#define HD_VERSION_STRING \"`cat $(TOPDIR)/VERSION`\"" >$@
 
