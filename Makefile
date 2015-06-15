@@ -1,7 +1,7 @@
 TOPDIR		= $(CURDIR)
 SUBDIRS		= src
 TARGETS		= hwinfo hwinfo.pc changelog
-CLEANFILES	= hwinfo hwinfo.pc hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~ VERSION changelog
+CLEANFILES	= hwinfo hwinfo.pc hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~
 LIBS		= -lhd
 SLIBS		= -lhd
 TLIBS		= -lhd_tiny
