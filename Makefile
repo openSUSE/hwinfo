@@ -12,7 +12,7 @@ export SO_LIBS
 
 GIT2LOG := $(shell if [ -x ./git2log ] ; then echo ./git2log --update ; else echo true ; fi)
 GITDEPS := $(shell [ -d .git ] && echo .git/HEAD .git/refs/heads .git/refs/tags)
-BRANCH  := $((shell [ -d .git ] && git branch | perl -ne 'print $$_ if s/^\*\s*//')
+BRANCH  := $(shell [ -d .git ] && git branch | perl -ne 'print $$_ if s/^\*\s*//')
 ifdef HWINFO_VERSION
 VERSION := $(shell echo ${HWINFO_VERSION} > VERSION; cat VERSION)
 else
