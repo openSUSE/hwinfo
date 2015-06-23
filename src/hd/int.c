@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/pci.h>
+#include <linux/pci.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 

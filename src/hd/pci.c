@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/pci.h>
+#include <linux/pci.h>
 
 #include "hd.h"
 #include "hd_int.h"
