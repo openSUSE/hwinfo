@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <ctype.h>
+#include <limits.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
