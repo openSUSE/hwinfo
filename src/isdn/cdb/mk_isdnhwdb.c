@@ -205,25 +205,25 @@ char **argv;
 	int	l;
 	time_t	tim;
 	if (argc<2) {
-		if (!(stdin=freopen(CDBISDN_CDB_FILE,"rb", stdin))) {
+		if (!freopen(CDBISDN_CDB_FILE,"rb", stdin)) {
 			fprintf(stderr, "Cannot open %s as stdin\n", CDBISDN_CDB_FILE);
 			exit(2);
 		}
 	} else {
-		if (!(stdin=freopen(argv[1],"rb", stdin))) {
+		if (!freopen(argv[1],"rb", stdin)) {
 			fprintf(stderr, "Cannot open %s as stdin\n", argv[1]);
 			exit(2);
 		}
 	}
 	if (argc >2) {
 		if (strcmp(argv[2], "-")) { /* - := stdout */
-			if (!(stdout=freopen(argv[2],"w", stdout))) {
+			if (!freopen(argv[2],"w", stdout)) {
 				fprintf(stderr, "Cannot open %s as stdout\n", argv[2]);
 				exit(3);
 			}
 		}
 	} else { /* default: CDBISDN_HWDB_FILE */
-		if (!(stdout=freopen(CDBISDN_HWDB_FILE,"w", stdout))) {
+		if (!freopen(CDBISDN_HWDB_FILE,"w", stdout)) {
 			fprintf(stderr, "Cannot open %s as stdout\n", CDBISDN_HWDB_FILE);
 			exit(3);
 		}

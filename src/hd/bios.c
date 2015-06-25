@@ -9,7 +9,7 @@
 #if defined(__i386__) || defined (__x86_64__) || defined(__ia64__)
 #include <sys/io.h>
 #endif
-#include <sys/pci.h>
+#include <linux/pci.h>
 
 #include "hd.h"
 #include "hd_int.h"

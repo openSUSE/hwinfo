@@ -172,12 +172,12 @@ char **argv;
 		fprintf(stderr, "Error no filename\n");
 		exit(1);
 	}
-	if (!(stdin=freopen(argv[1],"rb", stdin))) {
+	if (!freopen(argv[1],"rb", stdin)) {
 		fprintf(stderr, "Cannot open %s as stdin\n", argv[1]);
 		exit(2);
 	}
 	if (argc >2) {
-		if (!(stdout=freopen(argv[2],"w", stdout))) {
+		if (!freopen(argv[2],"w", stdout)) {
 			fprintf(stderr, "Cannot open %s as stdout\n", argv[2]);
 			exit(3);
 		}

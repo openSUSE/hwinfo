@@ -1,4 +1,4 @@
-#define _GNU_SOURCE		/* canonicalize_file_name(), strcasestr() */
+#define _GNU_SOURCE		/* strcasestr() */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -2638,7 +2638,7 @@ char *hd_read_sysfs_link(char *base_dir, char *link_name)
   str_printf(&s, 0, "%s/%s", base_dir, link_name);
 
   free_mem(buf);
-  buf = canonicalize_file_name(s);
+  buf = realpath(s, NULL);
 
   free_mem(s);
 
