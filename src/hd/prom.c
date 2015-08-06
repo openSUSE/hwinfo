@@ -506,6 +506,12 @@ void read_devtree_entry(hd_data_t *hd_data, devtree_t *parent, char *dirname)
   read_str(path, "model", &devtree->model);
   read_str(path, "device_type", &devtree->device_type);
   read_str(path, "compatible", &devtree->compatible);
+  read_str(path, "ccin", &devtree->ccin);
+  read_str(path, "fru-number", &devtree->fru_number);
+  read_str(path, "ibm,loc-code", &devtree->loc_code);
+  read_str(path, "serial-number", &devtree->serial_number);
+  read_str(path, "part-number", &devtree->part_number);
+  read_str(path, "description", &devtree->description);
 
   read_int(path, "interrupts", &devtree->interrupt);
   read_int(path, "AAPL,interrupts", &devtree->interrupt);
@@ -560,6 +566,18 @@ void dump_devtree_data(hd_data_t *hd_data)
       devtree->model ? devtree->model : "",
       devtree->device_type ? devtree->device_type : "",
       devtree->compatible ? devtree->compatible : ""
+    );
+
+    if (strstr(devtree->path, "vpd") == devtree->path)
+      ADD2LOG(
+        "    ccin \"%s\", fru-number \"%s\", location-code \"%s\", serial-number \"%s\", part-number \"%s,\"\n"
+        "    description \"%s\"\n",
+        devtree->ccin ? devtree->ccin : "",
+        devtree->fru_number ? devtree->fru_number : "",
+        devtree->loc_code ? devtree->loc_code : "",
+        devtree->serial_number ? devtree->serial_number : "",
+        devtree->part_number ? devtree->part_number : "",
+        devtree->description ? devtree->description : ""
     );
 
     if(
