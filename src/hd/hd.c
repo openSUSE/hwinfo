@@ -4309,6 +4309,12 @@ devtree_t *free_devtree(hd_data_t *hd_data)
     free_mem(dt->device_type);
     free_mem(dt->compatible);
     free_mem(dt->edid);
+    free_mem(dt->ccin);
+    free_mem(dt->fru_number);
+    free_mem(dt->loc_code);
+    free_mem(dt->serial_number);
+    free_mem(dt->part_number);
+    free_mem(dt->description);
 
     free_mem(dt);
   }

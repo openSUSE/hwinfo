@@ -1181,6 +1181,8 @@ typedef struct devtree_s {
   char *path, *filename;
   unsigned pci:1;
   char *name, *model, *device_type, *compatible;
+  char *ccin, *fru_number, *loc_code, *serial_number, *part_number;
+  char *description;
   int class_code;                       /**< class : sub_class : prog-if */
   int vendor_id, device_id, subvendor_id, subdevice_id;
   int revision_id, interrupt;
