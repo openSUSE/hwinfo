@@ -718,14 +718,37 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
     hd->func = u3;
   }
 
-  if((s = get_sysfs_attr_by_path(sf_dev, "vendor"))) {
-    cs = canon_str(s, strlen(s));
-    ADD2LOG("    vendor = %s\n", cs);
-    if(*cs) {
-      hd->vendor.name = cs;
+  if(hd->bus.id == bus_pci) {
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "vendor"), &ul0, 0)) {
+      ADD2LOG("    vendor = 0x%x\n", (unsigned) ul0);
+      hd->vendor.id = MAKE_ID(TAG_PCI, ul0 & 0xffff);
     }
-    else {
-      free_mem(cs);
+
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "device"), &ul0, 0)) {
+      ADD2LOG("    device = 0x%x\n", (unsigned) ul0);
+      hd->device.id = MAKE_ID(TAG_PCI, ul0 & 0xffff);
+    }
+
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "subsystem_vendor"), &ul0, 0)) {
+      ADD2LOG("    subvendor = 0x%x\n", (unsigned) ul0);
+      hd->sub_vendor.id = MAKE_ID(TAG_PCI, ul0 & 0xffff);
+    }
+
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "subsystem_device"), &ul0, 0)) {
+      ADD2LOG("    subdevice = 0x%x\n", (unsigned) ul0);
+      hd->sub_device.id = MAKE_ID(TAG_PCI, ul0 & 0xffff);
+    }
+  }
+  else {
+    if((s = get_sysfs_attr_by_path(sf_dev, "vendor"))) {
+      cs = canon_str(s, strlen(s));
+      ADD2LOG("    vendor = %s\n", cs);
+      if(*cs) {
+        hd->vendor.name = cs;
+      }
+      else {
+        free_mem(cs);
+      }
     }
   }
 
