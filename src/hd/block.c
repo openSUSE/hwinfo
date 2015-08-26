@@ -978,6 +978,71 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
         }
       }
 
+      str_printf(&pr_str, 0, "%s model", hd->unix_dev_name);
+      PROGRESS(5, 3, pr_str);
+
+      memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
+      memset(&hdr, 0, sizeof(hdr));
+
+      hdr.interface_id = 'S';
+      hdr.cmd_len = 6;
+      hdr.dxfer_direction = SG_DXFER_FROM_DEV;
+      hdr.dxferp = scsi_cmd_buf + 8 + 6;
+      hdr.dxfer_len = 0x60;
+      hdr.cmdp = scsi_cmd_buf + 8;
+      hdr.cmdp[0] = 0x12;
+      hdr.cmdp[4] = 0x60;
+
+      k = ioctl(fd, SG_IO, &hdr);
+
+      if(k) {
+        ADD2LOG("%s status(0x12) 0x%x\n", scsi->dev_name, k);
+      }
+      else {
+        unsigned u, len;
+        unsigned char *ptr = hdr.dxferp;
+
+        len = ptr[4] + 5;
+        ADD2LOG("  inq resp len: %u\n", len);
+
+        for(u = 0; u < len; u += 0x10) {
+          ADD2LOG("    ");
+          hd_log_hex(hd_data, 1, len - u >= 0x10 ? 0x10 : len - u, ptr + u);
+          ADD2LOG("\n");
+        }
+
+        if(len >= 36) {
+          // extract vendor, device, revision
+          char *v = canon_str(ptr + 8, 8);
+          char *d = canon_str(ptr + 16, 16);
+          char *r = canon_str(ptr + 32, 4);
+
+          ADD2LOG("  vendor = \"%s\", device = \"%s\", rev = \"%s\"\n", v, d, r);
+
+          // set values unless we already have them
+          if(!hd->vendor.name && *v && strcmp(v, "ATA")) {
+            hd->vendor.name = v;
+          }
+          else {
+            free_mem(v);
+          }
+
+          if(!hd->device.name && *d) {
+            hd->device.name = d;
+          }
+          else {
+            free_mem(d);
+          }
+
+          if(!hd->revision.name && *r) {
+            hd->revision.name = r;
+          }
+          else {
+            free_mem(r);
+          }
+        }
+      }
+
       close(fd);
     }
   }
