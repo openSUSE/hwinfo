@@ -273,6 +273,7 @@ void get_block_devs(hd_data_t *hd_data)
       if(bus_name) {
         if(!strcmp(bus_name, "ide")) hd->bus.id = bus_ide;
         else if(!strcmp(bus_name, "scsi")) hd->bus.id = bus_scsi;
+        else if(!strcmp(bus_name, "pci")) hd->bus.id = bus_pci;
       }
       hd->sysfs_bus_id = new_str(bus_id);
 
@@ -330,7 +331,7 @@ void get_block_devs(hd_data_t *hd_data)
       if(hd->bus.id == bus_ide) {
         add_ide_sysfs_info(hd_data, hd);
       }
-      else if(hd->bus.id == bus_scsi) {
+      else if(hd->bus.id == bus_scsi || hd->bus.id == bus_pci) {
         add_scsi_sysfs_info(hd_data, hd, sf_dev);
       }
       else {
