@@ -1014,8 +1014,8 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
       hdr.dxferp = scsi_cmd_buf + 8 + 6;
       hdr.dxfer_len = 0x60;
       hdr.cmdp = scsi_cmd_buf + 8;
-      hdr.cmdp[0] = 0x12;
-      hdr.cmdp[4] = 0x60;
+      hdr.cmdp[0] = 0x12;	// inquiry cmd
+      hdr.cmdp[4] = 0x60;	// max transfer len
 
       k = ioctl(fd, SG_IO, &hdr);
 
