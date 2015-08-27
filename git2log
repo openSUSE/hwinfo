@@ -1,5 +1,15 @@
 #! /usr/bin/perl
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# This script is maintained at https://github.com/openSUSE/ssob
+#
+# If you're in another project, this is just a copy.
+# You may update it to the latest version from time to time...
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
 use strict;
 
 use Getopt::Long;

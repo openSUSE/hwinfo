@@ -273,6 +273,7 @@ void get_block_devs(hd_data_t *hd_data)
       if(bus_name) {
         if(!strcmp(bus_name, "ide")) hd->bus.id = bus_ide;
         else if(!strcmp(bus_name, "scsi")) hd->bus.id = bus_scsi;
+        else if(!strcmp(bus_name, "pci")) hd->bus.id = bus_pci;
       }
       hd->sysfs_bus_id = new_str(bus_id);
 
@@ -330,7 +331,7 @@ void get_block_devs(hd_data_t *hd_data)
       if(hd->bus.id == bus_ide) {
         add_ide_sysfs_info(hd_data, hd);
       }
-      else if(hd->bus.id == bus_scsi) {
+      else if(hd->bus.id == bus_scsi || hd->bus.id == bus_pci) {
         add_scsi_sysfs_info(hd_data, hd, sf_dev);
       }
       else {
@@ -717,14 +718,37 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
     hd->func = u3;
   }
 
-  if((s = get_sysfs_attr_by_path(sf_dev, "vendor"))) {
-    cs = canon_str(s, strlen(s));
-    ADD2LOG("    vendor = %s\n", cs);
-    if(*cs) {
-      hd->vendor.name = cs;
+  if(hd->bus.id == bus_pci) {
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "vendor"), &ul0, 0)) {
+      ADD2LOG("    vendor = 0x%x\n", (unsigned) ul0);
+      hd->vendor.id = MAKE_ID(TAG_PCI, ul0 & 0xffff);
     }
-    else {
-      free_mem(cs);
+
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "device"), &ul0, 0)) {
+      ADD2LOG("    device = 0x%x\n", (unsigned) ul0);
+      hd->device.id = MAKE_ID(TAG_PCI, ul0 & 0xffff);
+    }
+
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "subsystem_vendor"), &ul0, 0)) {
+      ADD2LOG("    subvendor = 0x%x\n", (unsigned) ul0);
+      hd->sub_vendor.id = MAKE_ID(TAG_PCI, ul0 & 0xffff);
+    }
+
+    if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "subsystem_device"), &ul0, 0)) {
+      ADD2LOG("    subdevice = 0x%x\n", (unsigned) ul0);
+      hd->sub_device.id = MAKE_ID(TAG_PCI, ul0 & 0xffff);
+    }
+  }
+  else {
+    if((s = get_sysfs_attr_by_path(sf_dev, "vendor"))) {
+      cs = canon_str(s, strlen(s));
+      ADD2LOG("    vendor = %s\n", cs);
+      if(*cs) {
+        hd->vendor.name = cs;
+      }
+      else {
+        free_mem(cs);
+      }
     }
   }
 
@@ -975,6 +999,71 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
 
         if((hd->serial = canon_str(ptr + 4, ptr[3]))) {
           if(!*hd->serial) hd->serial = free_mem(hd->serial);
+        }
+      }
+
+      str_printf(&pr_str, 0, "%s model", hd->unix_dev_name);
+      PROGRESS(5, 3, pr_str);
+
+      memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
+      memset(&hdr, 0, sizeof(hdr));
+
+      hdr.interface_id = 'S';
+      hdr.cmd_len = 6;
+      hdr.dxfer_direction = SG_DXFER_FROM_DEV;
+      hdr.dxferp = scsi_cmd_buf + 8 + 6;
+      hdr.dxfer_len = 0x60;
+      hdr.cmdp = scsi_cmd_buf + 8;
+      hdr.cmdp[0] = 0x12;	// inquiry cmd
+      hdr.cmdp[4] = 0x60;	// max transfer len
+
+      k = ioctl(fd, SG_IO, &hdr);
+
+      if(k) {
+        ADD2LOG("%s status(0x12) 0x%x\n", scsi->dev_name, k);
+      }
+      else {
+        unsigned u, len;
+        unsigned char *ptr = hdr.dxferp;
+
+        len = ptr[4] + 5;
+        ADD2LOG("  inq resp len: %u\n", len);
+
+        for(u = 0; u < len; u += 0x10) {
+          ADD2LOG("    ");
+          hd_log_hex(hd_data, 1, len - u >= 0x10 ? 0x10 : len - u, ptr + u);
+          ADD2LOG("\n");
+        }
+
+        if(len >= 36) {
+          // extract vendor, device, revision
+          char *v = canon_str(ptr + 8, 8);
+          char *d = canon_str(ptr + 16, 16);
+          char *r = canon_str(ptr + 32, 4);
+
+          ADD2LOG("  vendor = \"%s\", device = \"%s\", rev = \"%s\"\n", v, d, r);
+
+          // set values unless we already have them
+          if(!hd->vendor.name && *v && strcmp(v, "ATA")) {
+            hd->vendor.name = v;
+          }
+          else {
+            free_mem(v);
+          }
+
+          if(!hd->device.name && *d) {
+            hd->device.name = d;
+          }
+          else {
+            free_mem(d);
+          }
+
+          if(!hd->revision.name && *r) {
+            hd->revision.name = r;
+          }
+          else {
+            free_mem(r);
+          }
         }
       }
 
