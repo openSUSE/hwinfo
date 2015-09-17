@@ -274,6 +274,7 @@ void get_block_devs(hd_data_t *hd_data)
         if(!strcmp(bus_name, "ide")) hd->bus.id = bus_ide;
         else if(!strcmp(bus_name, "scsi")) hd->bus.id = bus_scsi;
         else if(!strcmp(bus_name, "pci")) hd->bus.id = bus_pci;
+        else if(!strcmp(bus_name, "nvme")) hd->bus.id = bus_pci;
       }
       hd->sysfs_bus_id = new_str(bus_id);
 
@@ -332,7 +333,25 @@ void get_block_devs(hd_data_t *hd_data)
         add_ide_sysfs_info(hd_data, hd);
       }
       else if(hd->bus.id == bus_scsi || hd->bus.id == bus_pci) {
-        add_scsi_sysfs_info(hd_data, hd, sf_dev);
+        /*
+         * In case there's no data in the 'device' subdir but in
+         * 'device/device', try one level deeper (for some capricious
+         * drivers).
+         */
+        if(
+          !get_sysfs_attr_by_path(sf_dev, "vendor") &&
+          get_sysfs_attr_by_path(sf_dev, "device/vendor")
+        ) {
+          char *x_dev = NULL;
+
+          str_printf(&x_dev, 0, "%s/device", sf_dev);
+          add_scsi_sysfs_info(hd_data, hd, x_dev);
+
+          free_mem(x_dev);
+        }
+        else {
+          add_scsi_sysfs_info(hd_data, hd, sf_dev);
+        }
       }
       else {
         add_other_sysfs_info(hd_data, hd);
