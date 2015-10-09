@@ -992,33 +992,82 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
       str_printf(&pr_str, 0, "%s serial", hd->unix_dev_name);
       PROGRESS(5, 2, pr_str);
 
+      char *serial_buf = NULL;
+      unsigned serial_buf_len = 0;
       memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
-      memset(&hdr, 0, sizeof(hdr));
 
-      hdr.interface_id = 'S';
-      hdr.cmd_len = 6;
-      hdr.dxfer_direction = SG_DXFER_FROM_DEV;
-      hdr.dxferp = scsi_cmd_buf + 8 + 6;
-      hdr.dxfer_len = 0x24;
-      hdr.cmdp = scsi_cmd_buf + 8;
-      hdr.cmdp[0] = 0x12;
-      hdr.cmdp[1] = 0x01;
-      hdr.cmdp[2] = 0x80;
-      hdr.cmdp[4] = 0x24;
- 
-      k = ioctl(fd, SG_IO, &hdr);
+      // get the page from sysfs, if it's there already
+      if(hd->sysfs_device_link) {
+        char *path = NULL;
 
-      if(k) {
-        ADD2LOG("%s status(0x12) 0x%x\n", scsi->dev_name, k);
+        str_printf(&path, 0, "/sys/%s/vpd_pg80", hd->sysfs_device_link);
+
+        int fd = open(path, O_RDONLY);
+        if(fd >= 0) {
+          serial_buf = scsi_cmd_buf;
+          int i = read(fd, scsi_cmd_buf, sizeof scsi_cmd_buf - 1);
+          close(fd);
+          if(i > 0) serial_buf_len = i;
+        }
+
+        path = free_mem(path);
+      }
+
+      // ... else go and fetch it
+      if(!serial_buf) {
+        memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
+        memset(&hdr, 0, sizeof(hdr));
+
+        hdr.interface_id = 'S';
+        hdr.cmd_len = 6;
+        hdr.dxfer_direction = SG_DXFER_FROM_DEV;
+        hdr.dxferp = scsi_cmd_buf + 8 + 6;
+        hdr.dxfer_len = 0x24;
+        hdr.cmdp = scsi_cmd_buf + 8;
+        hdr.cmdp[0] = 0x12;
+        hdr.cmdp[1] = 0x01;
+        hdr.cmdp[2] = 0x80;
+        hdr.cmdp[4] = 0x24;
+
+        k = ioctl(fd, SG_IO, &hdr);
+
+        if(k) {
+          ADD2LOG("%s status(0x12) 0x%x\n", scsi->dev_name, k);
+        }
+        else {
+          serial_buf = hdr.dxferp;
+          serial_buf_len = serial_buf[3] + 4;
+        }
       }
       else {
-        unsigned char *ptr = hdr.dxferp;
+        ADD2LOG("  got it from vpd_pg80\n");
+      }
 
-        ADD2LOG("  serial id len: %u\n", ptr[3]);
+      // sanity check: serial_buf[3] holds the lenght of user data starting at offset 4
+      if(serial_buf_len < 4 || serial_buf_len < serial_buf[3] + 4) serial_buf = NULL;
 
-        if((hd->serial = canon_str(ptr + 4, ptr[3]))) {
-          if(!*hd->serial) hd->serial = free_mem(hd->serial);
+      if(serial_buf) {
+        unsigned u;
+
+        ADD2LOG("  serial id len: %u\n", serial_buf[3]);
+
+        for(u = 0; u < serial_buf_len; u += 0x10) {
+          ADD2LOG("    ");
+          hd_log_hex(hd_data, 1, serial_buf_len - u >= 0x10 ? 0x10 : serial_buf_len - u, serial_buf + u);
+          ADD2LOG("\n");
         }
+
+        if((hd->serial = canon_str(serial_buf + 4, serial_buf[3]))) {
+          if(!*hd->serial) {
+            hd->serial = free_mem(hd->serial);
+          }
+          else {
+            ADD2LOG("  serial id: \"%s\"\n", hd->serial);
+          }
+        }
+      }
+      else {
+        ADD2LOG("  no serial id\n");
       }
 
       str_printf(&pr_str, 0, "%s model", hd->unix_dev_name);
