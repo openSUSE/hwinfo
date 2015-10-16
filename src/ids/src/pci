@@ -59154,7 +59154,7 @@
 
  vendor.id		pci 0x1139
 &device.id		pci 0x0001
-+device.name		VGA Compatable 3D Graphics
++device.name		VGA Compatible 3D Graphics
 
  vendor.id		pci 0x113a
 +vendor.name		FWB Inc
@@ -124536,7 +124536,7 @@
 
  vendor.id		pci 0x8800
 &device.id		pci 0x2008
-+device.name		Video assistent component
++device.name		Video assistant component
 
  vendor.id		pci 0x8866
 +vendor.name		T-Square Design Inc.

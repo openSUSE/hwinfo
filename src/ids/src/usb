@@ -8035,7 +8035,7 @@
 
  vendor.id		usb 0x045e
 &device.id		usb 0x00e1
-+device.name		Wireless Laser Mouse 6000 Reciever
++device.name		Wireless Laser Mouse 6000 Receiver
 
  vendor.id		usb 0x045e
 &device.id		usb 0x00f4
@@ -10121,7 +10121,7 @@
 
  vendor.id		usb 0x046d
 &device.id		usb 0xc211
-+device.name		iTouch Cordless Reciever
++device.name		iTouch Cordless Receiver
 
  vendor.id		usb 0x046d
 &device.id		usb 0xc212
@@ -32996,7 +32996,7 @@
 
  vendor.id		usb 0x0714
 &device.id		usb 0x0003
-+device.name		ADB to USB convertor
++device.name		ADB to USB converter
 
  vendor.id		usb 0x0717
 +vendor.name		ZNK Corp.
