@@ -472,7 +472,7 @@ static char *smbios_memdevice_form_[] = {
   NULL, "Other", "Unknown", "SIMM",
   "SIP", "Chip", "DIP", "ZIP",
   "Proprietary Card", "DIMM", "TSOP", "Row of Chips",
-  "RIMM", "SODIMM", "SRIMM"
+  "RIMM", "SODIMM", "SRIMM", "FB-DIMM"
 };
 SMBIOS_DEF_MAP(smbios_memdevice_form);
 
@@ -992,6 +992,9 @@ void smbios_parse(hd_data_t *hd_data)
           sm->memdevice.serial = get_string(sl_any, sm_data[0x18]);
           sm->memdevice.asset = get_string(sl_any, sm_data[0x19]);
           sm->memdevice.part = get_string(sl_any, sm_data[0x1a]);
+        }
+        if(data_len >= 0x20 && sm->memdevice.size == (0x7fff << 10)) {
+          sm->memdevice.size = (READ_MEM32(sm_data + 0x1c) & 0x7fffffff) << 10;
         }
         break;
 
