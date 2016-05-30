@@ -992,7 +992,7 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
       str_printf(&pr_str, 0, "%s serial", hd->unix_dev_name);
       PROGRESS(5, 2, pr_str);
 
-      char *serial_buf = NULL;
+      unsigned char *serial_buf = NULL;
       unsigned serial_buf_len = 0;
       memset(scsi_cmd_buf, 0, sizeof scsi_cmd_buf);
 
