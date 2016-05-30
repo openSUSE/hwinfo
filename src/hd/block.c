@@ -708,6 +708,15 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd)
 
 /*
  * assumes hd->drivers aleady includes scsi device drivers (like 'sd')
+ *
+ * The following code uses ioctl() calls to issue some SCSI commands
+ * directly (namely the INQUIRY command).
+ *
+ * For reference, and to understand the layout of the ioctl() calls below,
+ * google for a document named 'SCSI Primary Commands 3 (SPC-3)' (or the
+ * more recent versions 4 or 5 - it doesn't matter for our purpose).
+ *
+ * The document is freely available but not directly downloadable.
  */
 void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
 {
