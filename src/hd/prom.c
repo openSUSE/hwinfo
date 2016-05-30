@@ -570,7 +570,7 @@ void dump_devtree_data(hd_data_t *hd_data)
 
     if (strstr(devtree->path, "vpd") == devtree->path)
       ADD2LOG(
-        "    ccin \"%s\", fru-number \"%s\", location-code \"%s\", serial-number \"%s\", part-number \"%s,\"\n"
+        "    ccin \"%s\", fru-number \"%s\", location-code \"%s\", serial-number \"%s\", part-number \"%s\",\n"
         "    description \"%s\"\n",
         devtree->ccin ? devtree->ccin : "",
         devtree->fru_number ? devtree->fru_number : "",
