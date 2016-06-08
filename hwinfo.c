@@ -150,12 +150,16 @@ struct option options[] = {
   { "memory", 0, NULL, 1000 + hw_memory },
   { "manual", 0, NULL, 1000 + hw_manual },
   { "pcmcia", 0, NULL, 1000 + hw_pcmcia },
+  { "pcmcia-ctrl", 0, NULL, 1000 + hw_pcmcia_ctrl },
   { "pcmcia_ctrl", 0, NULL, 1000 + hw_pcmcia_ctrl },
   { "ieee1394", 0, NULL, 1000 + hw_ieee1394 },
+  { "ieee1394-ctrl", 0, NULL, 1000 + hw_ieee1394_ctrl },
   { "ieee1394_ctrl", 0, NULL, 1000 + hw_ieee1394_ctrl },
   { "firewire", 0, NULL, 1000 + hw_ieee1394 },
+  { "firewire-ctrl", 0, NULL, 1000 + hw_ieee1394_ctrl },
   { "firewire_ctrl", 0, NULL, 1000 + hw_ieee1394_ctrl },
   { "hotplug", 0, NULL, 1000 + hw_hotplug },
+  { "hotplug-ctrl", 0, NULL, 1000 + hw_hotplug_ctrl },
   { "hotplug_ctrl", 0, NULL, 1000 + hw_hotplug_ctrl },
   { "zip", 0, NULL, 1000 + hw_zip },
   { "pppoe", 0, NULL, 1000 + hw_pppoe },
@@ -817,8 +821,10 @@ void help()
     "        Normally hwinfo does not report RAID devices. Add this option to\n"
     "        see them.\n"
     "    --only DEVNAME\n"
-    "        This option can be given more than once. If you add this option,\n"
-    "        only data about devices with DEVNAME will be shown.\n"
+    "        This option can be given more than once. If you add this option\n"
+    "        only entries in the device list matching DEVNAME will be shown.\n"
+    "        Note that you also have to specify --<HARDWARE_ITEM> to trigger\n"
+    "        any device probing.\n"
     "    --save-config SPEC\n"
     "        Store config  for a particular device below /var/lib/hardware.\n"
     "        SPEC can be a device name, an UDI, or 'all'. This option must be\n"
@@ -832,11 +838,13 @@ void help()
     "    --debug N\n"
     "        Set debug level to N. The debug info is shown only in the log\n"
     "        file. If you specify a log file, the debug level is implicitly\n"
-    "        set to a reasonable value.\n"
+    "        set to a reasonable value (N is a bitmask of individual flags).\n"
     "    --verbose\n"
     "        Increase verbosity. Only together with --map.\n"
     "    --log FILE\n"
     "        Write log info to FILE.\n"
+    "        Don't forget to also specify --<HARDWARE_ITEM> to trigger any\n"
+    "        device probing.\n"
     "    --dump-db N\n"
     "        Dump hardware data base. N is either 0 for the external data\n"
     "        base in /var/lib/hardware, or 1 for the internal data base.\n"
