@@ -1,5 +1,6 @@
-.TH HWINFO 8 "June 2009" "hwinfo" "System configuration"
+.TH HWINFO 8 "June 2016" "hwinfo" "System configuration"
 .\"
+.nh
 .SH NAME
 hwinfo \- probe for hardware
 .\"
@@ -27,6 +28,8 @@ isapnp, isdn, joystick, keyboard, memory, modem, monitor, mouse, netcard,
 network, partition, pci, pcmcia, pcmcia-ctrl, pppoe, printer, redasd,
 reallyall, scanner, scsi, smp, sound, storage-ctrl, sys, tape, tv, uml, usb,
 usb-ctrl, vbe, wlan, xen, zip
+
+Note that if this option is missing, no hardware probing will be done!
 .TP
 \fB--short\fR
 Show only a summary. Use this option in addition to a hardware probing
@@ -36,8 +39,10 @@ option.
 Normally hwinfo does not report RAID devices. Add this option to see them.
 .TP
 \fB--only \fIDEVNAME\fR
-This option can be given more than once. If you add this option, only data
-about devices with \fIDEVNAME\fR will be shown.
+This option can be given more than once. If you add this option
+only entries in the device list matching \fIDEVNAME\fR will be shown.
+Note that you also have to specify --<\fIHARDWARE_ITEM\fR> to trigger
+any device probing.
 .TP
 \fB--save-config \fISPEC\fR
 Store config for a particular device below /var/lib/hardware. \fISPEC\fR
@@ -54,13 +59,15 @@ point before for this can work.
 .TP
 \fB--debug \fIN\fR
 Set debug level to \fIN\fR. The debug info is shown only in the log file.
-If you specify a log file, the debug level is implicitly set to a reasonable value.
+If you specify a log file, the debug level is implicitly set to a reasonable value
+(N is a bitmask of individual flags).
 .TP
 \fB--verbose\fR
 Increase verbosity. Only together with --map.
 .TP
 \fB--log \fIFILE\fR
 Write log info to \fIFILE\fR.
+Don't forget to also specify --<\fIHARDWARE_ITEM\fR> to trigger any device probing.
 .TP
 \fB--dump-db \fIN\fR
 Dump hardware data base. \fIN\fR is either 0 for the external data base in
