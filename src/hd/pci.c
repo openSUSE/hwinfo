@@ -1572,9 +1572,9 @@ void hd_read_virtio(hd_data_t *hd_data)
   int net_cnt = 0, blk_cnt = 0;
   unsigned dev;
   uint64_t ul0; 
-  hd_t *hd;
+  hd_t *hd, *hd2;
   str_list_t *sf_bus, *sf_bus_e;
-  char *sf_dev, *drv, *drv_name, *modalias;
+  char *sf_dev, *drv, *drv_name, *modalias, *s, *t;
 
   sf_bus = read_dir("/sys/bus/virtio/devices", 'l');
 
@@ -1641,6 +1641,27 @@ void hd_read_virtio(hd_data_t *hd_data)
           str_printf(&hd->device.name, 0, "Storage %d", hd->slot);
           break;
       }
+
+      /*
+       * virtio devs are kind of 'subdevices' to real pci devices; but
+       * the supposedly 'real' devices mess up our device list :-(
+       *
+       * here we track down the 'real' devices and disable them in any
+       * future device listing by classifying them right now as 'unknown'
+       *
+       * this works because devices will never be re-classified
+       */
+      s = new_str(hd->sysfs_id);	// get a writable copy
+
+      if((t = strrchr(s, '/'))) {
+        *t = 0;				// cut out last path element
+        if((hd2 = hd_find_sysfs_id(hd_data, s))) {
+          hd->attached_to = hd2->idx;
+          if(!hd2->hw_class) hd2->hw_class = hw_unknown;
+        }
+      }
+
+      free_mem(s);
     }
 
     free_mem(modalias);
