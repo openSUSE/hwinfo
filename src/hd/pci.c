@@ -1657,7 +1657,13 @@ void hd_read_virtio(hd_data_t *hd_data)
         *t = 0;				// cut out last path element
         if((hd2 = hd_find_sysfs_id(hd_data, s))) {
           hd->attached_to = hd2->idx;
-          if(!hd2->hw_class) hd2->hw_class = hw_unknown;
+          // hasn't been classified yet and has the same base class
+          if(
+            !hd2->hw_class &&
+            hd->base_class.id == hd2->base_class.id
+          ) {
+            hd2->hw_class = hw_unknown;
+          }
         }
       }
 
