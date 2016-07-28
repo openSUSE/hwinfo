@@ -569,41 +569,48 @@ void add_input_dev(hd_data_t *hd_data, char *name)
       s
     );
 
-    for(hd = hd_data->hd; hd; hd = hd->next) {
-      if(
-        hd->module == hd_data->module &&
-        hd->sysfs_id &&
-        s &&
-        !strcmp(s, hd->sysfs_id)
-      ) {
-        t = NULL;
-        str_printf(&t, 0, "/dev/input/%s", sf_cdev_name);
+    /* find device (matching sysfs path) */
+    hd = hd_find_sysfs_id(hd_data, s);
 
-        if(strncmp(sf_cdev_name, "mouse", sizeof "mouse" - 1)) {
-          if(!hd->unix_dev_name) {
-            hd->unix_dev_name = t;
-            hd->unix_dev_num = dev_num;
-          }
-        }
-        else {
-          free_mem(hd->unix_dev_name);
-          free_mem(hd->unix_dev_name2);
+    /* not found? - retry one level up */
+    if(!hd) {
+      char *ns = new_str(s), *nt;
+      if((nt = strrchr(ns, '/'))) {
+        *nt = 0;
+        hd = hd_find_sysfs_id(hd_data, ns);
+      }
+      free_mem(ns);
+    }
 
-          hd->unix_dev_name2 = t;
-          hd->unix_dev_num2 = dev_num;
+    /* when we have it, add input device name */
+    if(hd) {
+      t = NULL;
+      str_printf(&t, 0, "/dev/input/%s", sf_cdev_name);
 
-          dev_num.major = 13;
-          dev_num.minor = 63;
-          hd->unix_dev_name = new_str(DEV_MICE);
+      if(strncmp(sf_cdev_name, "mouse", sizeof "mouse" - 1)) {
+        if(!hd->unix_dev_name) {
+          hd->unix_dev_name = t;
           hd->unix_dev_num = dev_num;
+        }
+      }
+      else {
+        free_mem(hd->unix_dev_name);
+        free_mem(hd->unix_dev_name2);
 
-          // make it a mouse, #216091
-          if(hd->base_class.id == bc_none) {
-            hd->base_class.id = bc_mouse;
-            hd->sub_class.id = sc_mou_usb;
-            hd->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0200);
-            hd->compat_device.id = MAKE_ID(TAG_SPECIAL, 0x001);
-          }
+        hd->unix_dev_name2 = t;
+        hd->unix_dev_num2 = dev_num;
+
+        dev_num.major = 13;
+        dev_num.minor = 63;
+        hd->unix_dev_name = new_str(DEV_MICE);
+        hd->unix_dev_num = dev_num;
+
+        // make it a mouse, #216091
+        if(hd->base_class.id == bc_none) {
+          hd->base_class.id = bc_mouse;
+          hd->sub_class.id = sc_mou_usb;
+          hd->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0x0200);
+          hd->compat_device.id = MAKE_ID(TAG_SPECIAL, 0x001);
         }
       }
     }
