@@ -161,6 +161,8 @@ struct option options[] = {
   { "hotplug", 0, NULL, 1000 + hw_hotplug },
   { "hotplug-ctrl", 0, NULL, 1000 + hw_hotplug_ctrl },
   { "hotplug_ctrl", 0, NULL, 1000 + hw_hotplug_ctrl },
+  { "mmc-ctrl", 0, NULL, 1000 + hw_mmc_ctrl },
+  { "mmc_ctrl", 0, NULL, 1000 + hw_mmc_ctrl },
   { "zip", 0, NULL, 1000 + hw_zip },
   { "pppoe", 0, NULL, 1000 + hw_pppoe },
   { "dsl", 0, NULL, 1000 + hw_dsl },
@@ -810,7 +812,7 @@ void help()
     "        all, arch, bios, block, bluetooth, braille, bridge, camera,\n"
     "        cdrom, chipcard, cpu, disk, dsl, dvb, fingerprint, floppy,\n"
     "        framebuffer, gfxcard, hub, ide, isapnp, isdn, joystick, keyboard,\n"
-    "        memory, modem, monitor, mouse, netcard, network, partition,\n"
+    "        memory, mmc-ctrl, modem, monitor, mouse, netcard, network, partition,\n"
     "        pci, pcmcia, pcmcia-ctrl, pppoe, printer, redasd,\n"
     "        reallyall, scanner, scsi, smp, sound, storage-ctrl, sys, tape,\n"
     "        tv, uml, usb, usb-ctrl, vbe, wlan, xen, zip\n"
@@ -1412,6 +1414,7 @@ void ask_db(hd_data_t *hd_data, char *query)
     if(!strcmp(sl->str, "isapnp")) { tag = TAG_EISA; continue; }
     if(!strcmp(sl->str, "special")) { tag = TAG_SPECIAL; continue; }
     if(!strcmp(sl->str, "pcmcia")) { tag = TAG_PCMCIA; continue; }
+    if(!strcmp(sl->str, "sdio")) { tag = TAG_SDIO; continue; }
 
     if(sscanf(sl->str, "class=%i%n", &u, &cnt) >= 1 && !sl->str[cnt]) {
       hd->base_class.id = u >> 16;

@@ -677,6 +677,11 @@
 &device.id		special 0x0100
 +device.name		Mouse
 
+# mmc
+ vendor.id		special 0x6015
+&device.id		special 0x0000
++device.name		MMC Controller
+
 # internal: usb scanner driver list
  vendor.id		special 0xf000
 &device.id		special 0x0001

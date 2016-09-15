@@ -31,6 +31,7 @@ typedef enum hw_item {
 #define TAG_USB		3	/* usb ids */
 #define TAG_SPECIAL	4	/* internally used ids */
 #define TAG_PCMCIA	5	/* pcmcia ids */
+#define TAG_SDIO	6	/* sdio ids */
 
 #define ID_VALUE(id)		((id) & 0xffff)
 #define ID_TAG(id)		(((id) >> 16) & 0xf)
@@ -799,6 +800,7 @@ int parse_id(char *str, unsigned *id, unsigned *tag, unsigned *range, unsigned *
     else if(!strcmp(s, "eisa")) *tag = TAG_EISA;
     else if(!strcmp(s, "isapnp")) *tag = TAG_EISA;
     else if(!strcmp(s, "pcmcia")) *tag = TAG_PCMCIA;
+    else if(!strcmp(s, "sdio")) *tag = TAG_SDIO;
     else {
       str = s;
       if(t) *t = c;	/* restore */
@@ -1114,7 +1116,7 @@ void write_ent_name(FILE *f, hid_t *hid, char pre, hddb_entry_t ent)
 
 void write_id(FILE *f, hddb_entry_t ent, hid_t *hid)
 {
-  static char *tag_name[6] = { "", "pci ", "eisa ", "usb ", "special ", "pcmcia " };
+  static char *tag_name[7] = { "", "pci ", "eisa ", "usb ", "special ", "pcmcia ", "sdio " };
   int tag;
   unsigned u;
   char c, *s;
