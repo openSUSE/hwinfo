@@ -1,0 +1,261 @@
+ vendor.id		sdio 0x0020
++vendor.name		ST-Ericsson
+
+ vendor.id		sdio 0x0020
+&device.id		sdio 0x2280
++device.name		CW1200
+
+ vendor.id		sdio 0x0089
++vendor.name		Intel Corp.
+
+ vendor.id		sdio 0x0092
++vendor.name		C-guys, Inc.
+
+ vendor.id		sdio 0x0092
+&device.id		sdio 0x0001
++device.name		SD-Link11b WiFi Card (TI ACX100)
+
+ vendor.id		sdio 0x0092
+&device.id		sdio 0x0004
++device.name		EW-CG1102GC
+
+ vendor.id		sdio 0x0092
+&device.id		sdio 0x0005
++device.name		SD FM Radio 2
+
+ vendor.id		sdio 0x0092
+&device.id		sdio 0x5544
++device.name		SD FM Radio
+
+ vendor.id		sdio 0x0097
++vendor.name		Texas Instruments, Inc.
+
+ vendor.id		sdio 0x0097
+&device.id		sdio 0x4076
++device.name		WL1271
+
+ vendor.id		sdio 0x0098
++vendor.name		Toshiba Corp.
+
+ vendor.id		sdio 0x0098
+&device.id		sdio 0x0001
++device.name		SD BT Card 1
+
+ vendor.id		sdio 0x0098
+&device.id		sdio 0x0002
++device.name		SD BT Card 2
+
+ vendor.id		sdio 0x0098
+&device.id		sdio 0x0003
++device.name		SD BT Card 3
+
+ vendor.id		sdio 0x0104
++vendor.name		Socket Communications, Inc.
+
+ vendor.id		sdio 0x0104
+&device.id		sdio 0x005e
++device.name		SD Scanner
+
+ vendor.id		sdio 0x0104
+&device.id		sdio 0x00c5
++device.name		Bluetooth SDIO Card
+
+ vendor.id		sdio 0x0271
++vendor.name		Atheros Communications, Inc.
+
+ vendor.id		sdio 0x0271
+&device.id		sdio 0x0108
++device.name		AR6001
+
+ vendor.id		sdio 0x0271
+&device.id		sdio 0x0109
++device.name		AR6001
+
+ vendor.id		sdio 0x0271
+&device.id		sdio 0x010a
++device.name		AR6001
+
+ vendor.id		sdio 0x0271
+&device.id		sdio 0x010b
++device.name		AR6001
+
+ vendor.id		sdio 0x0296
++vendor.name		GCT Semiconductor, Inc.
+
+ vendor.id		sdio 0x0296
+&device.id		sdio 0x5347
++device.name		GDM72xx WiMAX
+
+ vendor.id		sdio 0x02d0
++vendor.name		Broadcom Corp.
+
+ vendor.id		sdio 0x02d0
+&device.id		sdio 0x044b
++device.name		Nintendo Wii WLAN daughter card
+
+ vendor.id		sdio 0x02d0
+&device.id		sdio 0xa887
++device.name		BCM43143 WLAN card
+
+ vendor.id		sdio 0x02d0
+&device.id		sdio 0x4324
++device.name		BCM43241 WLAN card
+
+ vendor.id		sdio 0x02d0
+&device.id		sdio 0x4329
++device.name		BCM4329 WLAN card
+
+ vendor.id		sdio 0x02d0
+&device.id		sdio 0x4330
++device.name		BCM4330 WLAN card
+
+ vendor.id		sdio 0x02d0
+&device.id		sdio 0x4334
++device.name		BCM4334 WLAN card
+
+ vendor.id		sdio 0x02d0
+&device.id		sdio 0xa94c
++device.name		BCM43340 WLAN card
+
+ vendor.id		sdio 0x02d0
+&device.id		sdio 0xa94d
++device.name		BCM43341 WLAN card
+
+ vendor.id		sdio 0x02d0
+&device.id		sdio 0x4335
++device.name		BCM4335/BCM4339 WLAN card
+
+ vendor.id		sdio 0x02d0
+&device.id		sdio 0xa962
++device.name		BCM43362 WLAN card
+
+ vendor.id		sdio 0x02d0
+&device.id		sdio 0x4354
++device.name		BCM4354 WLAN card
+
+ vendor.id		sdio 0x02d0
+&device.id		sdio 0xa9a6
++device.name		BCM43430 WLAN card
+
+ vendor.id		sdio 0x02d0
+&device.id		sdio 0x4345
++device.name		BCM43455 WLAN card
+
+ vendor.id		sdio 0x02db
++vendor.name		SyChip Inc.
+
+ vendor.id		sdio 0x02db
+&device.id		sdio 0x0002
++device.name		Pegasus WLAN SDIO Card (6060SD)
+
+ vendor.id		sdio 0x02df
++vendor.name		Marvell Technology Group Ltd.
+
+ vendor.id		sdio 0x02df
+&device.id		sdio 0x9103
++device.name		Libertas
+
+ vendor.id		sdio 0x02df
+&device.id		sdio 0x9104
++device.name		SD8688 WLAN
+
+ vendor.id		sdio 0x02df
+&device.id		sdio 0x9105
++device.name		SD8688 BT
+
+ vendor.id		sdio 0x02df
+&device.id		sdio 0x9116
++device.name		SD8786 WLAN
+
+ vendor.id		sdio 0x02df
+&device.id		sdio 0x9119
++device.name		SD8787 WLAN
+
+ vendor.id		sdio 0x02df
+&device.id		sdio 0x911a
++device.name		SD8787 BT
+
+ vendor.id		sdio 0x02df
+&device.id		sdio 0x911b
++device.name		SD8787 BT AMP
+
+ vendor.id		sdio 0x02df
+&device.id		sdio 0x9129
++device.name		SD8797 WLAN
+
+ vendor.id		sdio 0x02df
+&device.id		sdio 0x912a
++device.name		SD8797 BT
+
+ vendor.id		sdio 0x02df
+&device.id		sdio 0x912e
++device.name		SD8897 BT
+
+ vendor.id		sdio 0x02df
+&device.id		sdio 0x912d
++device.name		SD8897 WLAN
+
+ vendor.id		sdio 0x02fe
++vendor.name		Spectec Computer Co., Ltd
+
+ vendor.id		sdio 0x02fe
+&device.id		sdio 0x2128
++device.name		SDIO WLAN Card (SDW820)
+
+ vendor.id		sdio 0x032a
++vendor.name		Cambridge Silicon Radio
+
+ vendor.id		sdio 0x032a
+&device.id		sdio 0x0001
++device.name		UniFi 1
+
+ vendor.id		sdio 0x032a
+&device.id		sdio 0x0002
++device.name		UniFi 2
+
+ vendor.id		sdio 0x032a
+&device.id		sdio 0x0007
++device.name		UniFi 3
+
+ vendor.id		sdio 0x032a
+&device.id		sdio 0x0008
++device.name		UniFi 4
+
+ vendor.id		sdio 0x037a
++vendor.name		MediaTek Inc.
+
+ vendor.id		sdio 0x037a
+&device.id		sdio 0x5911
++device.name		Spectec WLAN-11b/g
+
+ vendor.id		sdio 0x039a
++vendor.name		Siano Mobile Silicon
+
+ vendor.id		sdio 0x0501
++vendor.name		Globalsat Technology Co.
+
+ vendor.id		sdio 0x0501
+&device.id		sdio 0xf501
++device.name		SD-501 GPS Card
+
+ vendor.id		sdio 0x104c
++vendor.name		Texas Instruments, Inc.
+
+ vendor.id		sdio 0x104c
+&device.id		sdio 0x9066
++device.name		WL1251
+
+ vendor.id		sdio 0x1180
++vendor.name		Ricoh Co., Ltd
+
+ vendor.id		sdio 0x1180
+&device.id		sdio 0xe823
++device.name		MMC card reader
+
+ vendor.id		sdio 0x13d1
++vendor.name		AboCom Systems, Inc.
+
+ vendor.id		sdio 0x13d1
+&device.id		sdio 0xac02
++device.name		SDW11G
+
