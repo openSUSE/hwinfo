@@ -1812,7 +1812,7 @@ void hd_read_mmc(hd_data_t *hd_data)
     }
 
     hd = add_hd_entry(hd_data, __LINE__, 0);
-    hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6015);	/* mmc */
+    hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6015);	/* mmc, see src/ids/src/special */
     hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0000);
     if(mmc_type && !strcmp(mmc_type, "SD")) hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
     if(mmc_type && !strcmp(mmc_type, "SDIO")) hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0002);
