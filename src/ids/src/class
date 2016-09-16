@@ -961,3 +961,6 @@
  baseclass.id		0x116
 +baseclass.name		Fingerprint Reader
 
+ baseclass.id		0x117
++baseclass.name		MMC Controller
+

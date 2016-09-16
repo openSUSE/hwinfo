@@ -61,6 +61,8 @@ static void hd_read_virtio(hd_data_t *hd_data);
 static void hd_read_uisvirtpci(hd_data_t *hd_data);
 static void hd_read_ibmebus(hd_data_t *hd_data);
 static void add_edid_from_file(const char *file, pci_t *pci, int index, hd_data_t *hd_data);
+static void hd_read_mmc(hd_data_t *hd_data);
+static void hd_read_sdio(hd_data_t *hd_data);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
 {
@@ -112,6 +114,12 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
 
   PROGRESS(12, 0, "uisvirtpci");
   hd_read_uisvirtpci(hd_data);
+
+  PROGRESS(13, 0, "mmc");
+  hd_read_mmc(hd_data);
+
+  PROGRESS(14, 0, "sdio");
+  hd_read_sdio(hd_data);
 }
 
 
@@ -1744,6 +1752,173 @@ void hd_read_uisvirtpci(hd_data_t *hd_data)
     hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
     hd->sysfs_bus_id = new_str(sf_bus_e->str);
     if(drv_name) add_str_list(&hd->drivers, drv_name);
+
+    free_mem(sf_dev);
+    free_mem(drv);
+  }
+
+  free_str_list(sf_bus);
+}
+
+
+/*
+ * mmc
+ */
+void hd_read_mmc(hd_data_t *hd_data)
+{
+  int cnt;
+  hd_t *hd;
+  str_list_t *sf_bus, *sf_bus_e;
+  char *sf_dev, *drv, *drv_name, *modalias, *mmc_type;
+
+  sf_bus = read_dir("/sys/bus/mmc/devices", 'l');
+
+  if(!sf_bus) {
+    ADD2LOG("sysfs: no such bus: mmc\n");
+    return;
+  }
+
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/mmc/devices", sf_bus_e->str));
+
+    ADD2LOG(
+      "  mmc device: name = %s\n    path = %s\n",
+      sf_bus_e->str,
+      hd_sysfs_id(sf_dev)
+    );
+
+    drv_name = NULL;
+    drv = new_str(hd_read_sysfs_link(sf_dev, "driver"));
+    if(drv) {
+      drv_name = strrchr(drv, '/');
+      if(drv_name) drv_name++;
+    }
+
+    ADD2LOG("    driver = \"%s\"\n", drv_name);
+
+    if((modalias = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
+      modalias = canon_str(modalias, strlen(modalias));
+      ADD2LOG("    modalias = \"%s\"\n", modalias);
+    }
+
+    if(!sf_bus_e->str || sscanf(sf_bus_e->str, "mmc%u", &cnt) != 1) {
+      cnt = -1;
+    }
+    ADD2LOG("    index = %d\n", cnt);
+
+    if((mmc_type = get_sysfs_attr_by_path(sf_dev, "type"))) {
+      mmc_type = canon_str(mmc_type, strlen(mmc_type));
+      ADD2LOG("    type = \"%s\"\n", mmc_type);
+    }
+
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6015);	/* mmc, see src/ids/src/special */
+    hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0000);
+    if(mmc_type && !strcmp(mmc_type, "SD")) hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0001);
+    if(mmc_type && !strcmp(mmc_type, "SDIO")) hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0002);
+
+    hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+    hd->sysfs_bus_id = new_str(sf_bus_e->str);
+    if(drv_name) add_str_list(&hd->drivers, drv_name);
+    if(modalias) { hd->modalias = modalias; modalias = NULL; }
+
+    hd->bus.id = bus_mmc;
+    hd->base_class.id = bc_mmc_ctrl;
+    if(mmc_type && cnt >= 0) {
+      hd->slot = cnt;
+      str_printf(&hd->device.name, 0, "%s Controller %d", mmc_type, hd->slot);
+    }
+    else {
+      str_printf(&hd->device.name, 0, "MMC Controller");
+    }
+
+    free_mem(mmc_type);
+    free_mem(modalias);
+
+    free_mem(sf_dev);
+    free_mem(drv);
+  }
+
+  free_str_list(sf_bus);
+}
+
+
+/*
+ * sdio
+ */
+void hd_read_sdio(hd_data_t *hd_data)
+{
+  uint64_t ul0;
+  hd_t *hd, *hd2;
+  str_list_t *sf_bus, *sf_bus_e;
+  char *sf_dev, *drv, *drv_name, *modalias, *s, *t;
+
+  sf_bus = read_dir("/sys/bus/sdio/devices", 'l');
+
+  if(!sf_bus) {
+    ADD2LOG("sysfs: no such bus: sdio\n");
+    return;
+  }
+
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/sdio/devices", sf_bus_e->str));
+
+    ADD2LOG(
+      "  sdio device: name = %s\n    path = %s\n",
+      sf_bus_e->str,
+      hd_sysfs_id(sf_dev)
+    );
+
+    drv_name = NULL;
+    drv = new_str(hd_read_sysfs_link(sf_dev, "driver"));
+    if(drv) {
+      drv_name = strrchr(drv, '/');
+      if(drv_name) drv_name++;
+    }
+
+    ADD2LOG("    driver = \"%s\"\n", drv_name);
+
+    if((modalias = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
+      modalias = canon_str(modalias, strlen(modalias));
+      ADD2LOG("    modalias = \"%s\"\n", modalias);
+    }
+
+    hd = add_hd_entry(hd_data, __LINE__, 0);
+
+   if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "vendor"), &ul0, 0)) {
+       hd->vendor.id = MAKE_ID(TAG_SDIO, ul0);
+       ADD2LOG("    vendor = %lu\n", ul0);
+    }
+
+   if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "device"), &ul0, 0)) {
+       hd->device.id = MAKE_ID(TAG_SDIO, ul0);
+       ADD2LOG("    device = %lu\n", ul0);
+    }
+
+    hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+    hd->sysfs_bus_id = new_str(sf_bus_e->str);
+    if(drv_name) add_str_list(&hd->drivers, drv_name);
+    if(modalias) { hd->modalias = modalias; modalias = NULL; }
+
+    hd->bus.id = bus_sdio;
+
+    s = new_str(hd->sysfs_id);	// get a writable copy
+
+    if((t = strrchr(s, '/'))) {
+      *t = 0;				// cut out last path element
+      if((hd2 = hd_find_sysfs_id(hd_data, s))) {
+        hd->attached_to = hd2->idx;
+      }
+    }
+
+    free_mem(s);
+
+    if(hd_read_sysfs_link(sf_dev, "net")) {
+      hd->base_class.id = bc_network;
+      hd->sub_class.id = sc_nif_other;
+    }
+
+    free_mem(modalias);
 
     free_mem(sf_dev);
     free_mem(drv);

@@ -85,6 +85,7 @@ extern "C" {
 #define TAG_USB		3	/**< USB ids. */
 #define TAG_SPECIAL	4	/**< Internally used ids. */
 #define TAG_PCMCIA	5	/**< PCMCIA ids. */
+#define TAG_SDIO	6	/**< SDIO ids. */
 
 /**
  * Get the real id value.
@@ -142,7 +143,7 @@ typedef enum hw_item {
   hw_isapnp, hw_bridge, hw_hub, hw_scsi, hw_ide, hw_memory, hw_dvb,
   hw_pcmcia, hw_pcmcia_ctrl, hw_ieee1394, hw_ieee1394_ctrl, hw_hotplug,
   hw_hotplug_ctrl, hw_zip, hw_pppoe, hw_wlan, hw_redasd, hw_dsl, hw_block,
-  hw_tape, hw_vbe, hw_bluetooth, hw_fingerprint,
+  hw_tape, hw_vbe, hw_bluetooth, hw_fingerprint, hw_mmc_ctrl,
   /** append new entries here */
   hw_unknown, hw_all				/**< hw_all must be last */
 } hd_hw_item_t;
@@ -164,7 +165,8 @@ typedef enum base_classes {
   bc_monitor = 0x100, bc_internal, bc_modem, bc_isdn, bc_ps2, bc_mouse,
   bc_storage_device, bc_network_interface, bc_keyboard, bc_printer,
   bc_hub, bc_braille, bc_scanner, bc_joystick, bc_chipcard, bc_camera,
-  bc_framebuffer, bc_dvb, bc_tv, bc_partition, bc_dsl, bc_bluetooth, bc_fingerprint
+  bc_framebuffer, bc_dvb, bc_tv, bc_partition, bc_dsl, bc_bluetooth, bc_fingerprint,
+  bc_mmc_ctrl
 } hd_base_classes_t;
 
 /** subclass values of bc_monitor */
@@ -296,7 +298,7 @@ typedef enum bus_types {
   /** outside the range of the PCI values */
   bus_ps2 = 0x80, bus_serial, bus_parallel, bus_floppy, bus_scsi, bus_ide, bus_usb,
   bus_adb, bus_raid, bus_sbus, bus_i2o, bus_vio, bus_ccw, bus_iucv, bus_ps3_system_bus,
-  bus_virtio, bus_ibmebus, bus_gameport, bus_uisvirtpci
+  bus_virtio, bus_ibmebus, bus_gameport, bus_uisvirtpci, bus_mmc, bus_sdio
 } hd_bus_types_t;
 
 /** @} */

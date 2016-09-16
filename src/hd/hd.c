@@ -873,6 +873,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_pci:
+    case hw_mmc_ctrl:
       hd_set_probe_feature(hd_data, pr_misc);
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_net);
@@ -4013,6 +4014,7 @@ void hd_scan_xtra(hd_data_t *hd_data)
           case 's': tag = TAG_SPECIAL; s++; break;
           case 'u': tag = TAG_USB; s++; break;
           case 'P': tag = TAG_PCMCIA; s++; break;
+          case 'S': tag = TAG_SDIO; s++; break;
         }
         u1 = strtoul(s, &s, 16);
         if(*s) err |= 2;
@@ -4651,6 +4653,10 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
 
         case hw_fingerprint:
           base_class = bc_fingerprint;
+          break;
+
+        case hw_mmc_ctrl:
+          base_class = bc_mmc_ctrl;
           break;
 
         case hw_wlan:
