@@ -1849,9 +1849,9 @@ void hd_read_mmc(hd_data_t *hd_data)
 void hd_read_sdio(hd_data_t *hd_data)
 {
   uint64_t ul0;
-  hd_t *hd;
+  hd_t *hd, *hd2;
   str_list_t *sf_bus, *sf_bus_e;
-  char *sf_dev, *drv, *drv_name, *modalias;
+  char *sf_dev, *drv, *drv_name, *modalias, *s, *t;
 
   sf_bus = read_dir("/sys/bus/sdio/devices", 'l');
 
@@ -1901,6 +1901,17 @@ void hd_read_sdio(hd_data_t *hd_data)
     if(modalias) { hd->modalias = modalias; modalias = NULL; }
 
     hd->bus.id = bus_sdio;
+
+    s = new_str(hd->sysfs_id);	// get a writable copy
+
+    if((t = strrchr(s, '/'))) {
+      *t = 0;				// cut out last path element
+      if((hd2 = hd_find_sysfs_id(hd_data, s))) {
+        hd->attached_to = hd2->idx;
+      }
+    }
+
+    free_mem(s);
 
     if(hd_read_sysfs_link(sf_dev, "net")) {
       hd->base_class.id = bc_network;
