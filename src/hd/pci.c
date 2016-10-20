@@ -964,7 +964,7 @@ void hd_read_platform(hd_data_t *hd_data)
       sf_eth_dev = read_dir(sf_eth_net, 'd');
       is_net = sf_eth_net && sf_eth_dev;
       is_storage = device_type && !strcmp(device_type, "sata");
-      is_usb = device_type && !strcmp(device_type, "usb");
+      is_usb = device_type && (!strcmp(device_type, "usb") || !strcmp(device_type, "dwusb"));
       if(is_net) ADD2LOG("    is net: sf_eth_net = %s\n", sf_eth_net);
       if(is_storage) ADD2LOG("    is storage\n");
       if(is_usb) ADD2LOG("    is usb\n");
