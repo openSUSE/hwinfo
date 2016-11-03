@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
+#include <stdbool.h>
 #include <unistd.h>
 #include <ctype.h>
 #include <fcntl.h>
@@ -42,6 +44,7 @@ static void link_hal_tree(hd_data_t *hd_data);
 static int hal_match_str(hal_prop_t *prop, const char *key, const char *val);
 
 static int check_udi(const char *udi);
+static int mkdir_p(bool create_parents, const char *path, mode_t mode);
 static FILE *hd_open_properties(const char *udi, const char *mode);
 static char *skip_space(char *s);
 static char *skip_non_eq_or_space(char *s);
@@ -560,13 +563,65 @@ hal_prop_t *hd_read_properties(const char *udi)
   return prop_list;
 }
 
+int mkdir_p(bool create_parents, const char *path, mode_t mode)
+{
+  const size_t len = strlen(path);
+  char _path[PATH_MAX];
+  struct stat sbuf;
+  int i;
+  char *p;
+
+  errno = 0;
+
+  i = lstat(path, &sbuf);
+  if (i==0 && S_ISDIR(sbuf.st_mode))
+    return 0;
+
+  if (create_parents) {
+    /* Copy string so its mutable */
+    if (len > sizeof(_path)-1) {
+      errno = ENAMETOOLONG;
+      return -1;
+    }
+    strcpy(_path, path);
+
+    /* Iterate the string */
+    for (p = _path + 1; *p; p++) {
+      if (*p == '/') {
+        /* Temporarily truncate */
+        *p = '\0';
+
+        if (mkdir(_path, mode) != 0) {
+          if (errno != EEXIST)
+            return -1;
+        }
+	/* If EEXIST then _path may be a sym-link (dangling or not).
+	 * We should ensure that _path is a sane directory. */
+        i = lstat(_path, &sbuf);
+        if(i || !S_ISDIR(sbuf.st_mode))
+          return -1;
+
+        *p = '/';
+      }
+    }
+  }
+
+  if (mkdir(path, mode) != 0) {
+    if (errno != EEXIST)
+      return -1;
+  }
+  i = lstat(path, &sbuf);
+  if(i || !S_ISDIR(sbuf.st_mode))
+    return -1;
+
+  return 0;
+}
 
 FILE *hd_open_properties(const char *udi, const char *mode)
 {
-  str_list_t *path, *sl;
-  struct stat sbuf;
   char *dir = NULL;
-  int err, i;
+  const char* c = NULL;
+  int err;
   FILE *f = NULL;
 
   if(!udi) return f;
@@ -574,27 +629,28 @@ FILE *hd_open_properties(const char *udi, const char *mode)
 
   if(!check_udi(udi)) return f;
 
-  path = hd_split('/', udi);
-
-  if(!path) return f;
-
   dir = new_str(hd_get_hddb_path("udi"));
 
-  for(err = 0, sl = path; sl->next; sl = sl->next) {
-    str_printf(&dir, -1, "/%s", sl->str);
-    i = lstat(dir, &sbuf);
-    if(i == -1 && errno == ENOENT) {
-      mkdir(dir, 0755);
-      i = lstat(dir, &sbuf);
-    }
-    if(i || !S_ISDIR(sbuf.st_mode)) {
+  err = 0;
+  if ((c = strrchr(udi, '/')))
+  {
+    if (c-udi>=PATH_MAX-1)
       err = 1;
-      break;
+    else
+    {
+      char tmp[PATH_MAX] = {0};
+
+      strncpy(tmp, udi, c-udi);
+      str_printf(&dir, -1, "/%s", tmp);
+      c++;
     }
   }
+  else
+    c = udi;
 
-  if(!err) {
-    str_printf(&dir, -1, "/%s", sl->str);
+  /*Ensure dir exists */
+  if (!err && mkdir_p(true, dir, 0755) == 0) {
+    str_printf(&dir, -1, "/%s", c);
     f = fopen(dir, mode);
   }
 
