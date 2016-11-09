@@ -432,6 +432,10 @@ sub read_name_file
       $tag_default = $tag_sdio;
     }
 
+    if(/^#\s*List of USB ID/) {
+      $tag_default = $tag_usb;
+    }
+
     next if /^\s*[#;]/;
     next if /^$/;
 
