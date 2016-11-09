@@ -97,3 +97,6 @@
  bus.id			0x94
 +bus.name		SDIO
 
+ bus.id			0x95
++bus.name		ND
+

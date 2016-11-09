@@ -63,6 +63,7 @@ static void hd_read_ibmebus(hd_data_t *hd_data);
 static void add_edid_from_file(const char *file, pci_t *pci, int index, hd_data_t *hd_data);
 static void hd_read_mmc(hd_data_t *hd_data);
 static void hd_read_sdio(hd_data_t *hd_data);
+static void hd_read_nd(hd_data_t *hd_data);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
 {
@@ -120,6 +121,9 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
 
   PROGRESS(14, 0, "sdio");
   hd_read_sdio(hd_data);
+
+  PROGRESS(15, 0, "nd");
+  hd_read_nd(hd_data);
 }
 
 
@@ -1920,6 +1924,95 @@ void hd_read_sdio(hd_data_t *hd_data)
 
     free_mem(modalias);
 
+    free_mem(sf_dev);
+    free_mem(drv);
+  }
+
+  free_str_list(sf_bus);
+}
+
+
+/*
+ * nd (nvdimm)
+ */
+void hd_read_nd(hd_data_t *hd_data)
+{
+  int i, blk_cnt = 0;
+  hd_t *hd, *hd2;
+  str_list_t *sf_bus, *sf_bus_e;
+  char *sf_dev, *drv, *drv_name, *modalias, *s, *t;
+
+  sf_bus = read_dir("/sys/bus/nd/devices", 'l');
+
+  if(!sf_bus) {
+    ADD2LOG("sysfs: no such bus: nd\n");
+    return;
+  }
+
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/nd/devices", sf_bus_e->str));
+
+    ADD2LOG(
+      "  nd device: name = %s\n    path = %s\n",
+      sf_bus_e->str,
+      hd_sysfs_id(sf_dev)
+    );
+
+    drv_name = NULL;
+    drv = new_str(hd_read_sysfs_link(sf_dev, "driver"));
+    if(drv) {
+      drv_name = strrchr(drv, '/');
+      if(drv_name) drv_name++;
+    }
+
+    ADD2LOG("    driver = \"%s\"\n", drv_name);
+
+    if((modalias = get_sysfs_attr_by_path(sf_dev, "modalias"))) {
+      modalias = canon_str(modalias, strlen(modalias));
+      ADD2LOG("    modalias = \"%s\"\n", modalias);
+    }
+
+    if(hd_read_sysfs_link(sf_dev, "block")) {
+      ADD2LOG("    block device\n");
+
+      char *sysfs_id = new_str(hd_sysfs_id(sf_dev));
+      // go 3 levels up (bus, region, namespace)
+      for(i = 0; i < 3; i++) {
+        if((t = strrchr(sysfs_id, '/'))) *t = 0;
+      }
+
+      // if we haven't created it yet...
+      if(!hd_find_sysfs_id(hd_data, sysfs_id)) {
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+
+        hd->base_class.id = bc_storage;
+        hd->sub_class.id = sc_sto_other;
+
+        hd->sysfs_id = sysfs_id;
+        sysfs_id = NULL;
+        hd->sysfs_bus_id = new_str(sf_bus_e->str);
+        if(drv_name) add_str_list(&hd->drivers, drv_name);
+        if(modalias) { hd->modalias = modalias; modalias = NULL; }
+
+        hd->bus.id = bus_nd;
+        hd->slot = blk_cnt++;
+        str_printf(&hd->device.name, 0, "NVDIMM Storage %d", hd->slot);
+
+        // check for a parent device and connect to it
+        s = new_str(hd->sysfs_id);		// get a writable copy
+        if((t = strrchr(s, '/'))) {
+          *t = 0;				// cut out last path element
+          if((hd2 = hd_find_sysfs_id(hd_data, s))) {
+            hd->attached_to = hd2->idx;
+          }
+        }
+        free_mem(s);
+      }
+
+      free_mem(sysfs_id);
+    }
+
+    free_mem(modalias);
     free_mem(sf_dev);
     free_mem(drv);
   }
