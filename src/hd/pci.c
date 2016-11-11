@@ -429,6 +429,7 @@ void add_pci_data(hd_data_t *hd_data)
       for(; net_ifs2; net_ifs2 = net_ifs2->next) {
         hd2 = add_hd_entry(hd_data, __LINE__, 0);
         hd2->sysfs_id = new_str(hd->sysfs_id);
+        hd2->sysfs_bus_id = new_str(hd->sysfs_bus_id);
         if(hd->drivers) {
           add_str_list(&hd2->drivers, hd->drivers->str);
         }
