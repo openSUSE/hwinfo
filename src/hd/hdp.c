@@ -756,6 +756,10 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 	dump_line("HW Address: %s\n", res->hwaddr.addr);
         break;
 
+      case res_phwaddr:
+	dump_line("Permanent HW Address: %s\n", res->hwaddr.addr);
+        break;
+
       case res_link:
 	dump_line("Link detected: %s\n", res->link.state ? "yes" : "no");
         break;
