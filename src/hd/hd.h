@@ -1636,7 +1636,7 @@ typedef struct hal_device_s {
 typedef enum resource_types {
   res_any, res_phys_mem, res_mem, res_io, res_irq, res_dma, res_monitor,
   res_size, res_disk_geo, res_cache, res_baud, res_init_strings, res_pppd_option,
-  res_framebuffer, res_hwaddr, res_link, res_wlan, res_fc
+  res_framebuffer, res_hwaddr, res_link, res_wlan, res_fc, res_phwaddr
 } hd_resource_types_t;
 
 

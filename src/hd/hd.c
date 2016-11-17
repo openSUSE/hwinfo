@@ -1740,7 +1740,7 @@ hd_res_t *free_res_list(hd_res_t *res)
       free_mem(res->pppd_option.option);
     }
 
-    if(res->any.type == res_hwaddr) {
+    if(res->any.type == res_hwaddr || res->any.type == res_phwaddr) {
       free_mem(res->hwaddr.addr);
     }
 

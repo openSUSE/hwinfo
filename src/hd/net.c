@@ -37,6 +37,7 @@
 static void get_ethtool_priv(hd_data_t *hd_data, hd_t *hd);
 static void get_driverinfo(hd_data_t *hd_data, hd_t *hd);
 static void get_linkstate(hd_data_t *hd_data, hd_t *hd);
+static hd_res_t *get_phwaddr(hd_data_t *hd_data, hd_t *hd);
 static void add_xpnet(hd_data_t *hdata);
 static void add_uml(hd_data_t *hdata);
 static void add_kma(hd_data_t *hdata);
@@ -52,7 +53,7 @@ void hd_scan_net(hd_data_t *hd_data)
   int if_type, if_carrier;
   hd_t *hd, *hd_card;
   char *s, *t, *hw_addr;
-  hd_res_t *res, *res1;
+  hd_res_t *res, *res_hw, *res_phw, *res_lnk;
   uint64_t ul0;
   str_list_t *sf_class, *sf_class_e;
   char *sf_cdev = NULL, *sf_dev = NULL;
@@ -126,13 +127,18 @@ void hd_scan_net(hd_data_t *hd_data)
     hd->base_class.id = bc_network_interface;
     hd->sub_class.id = sc_nif_other;
 
-    res1 = NULL;
+    hd->unix_dev_name = new_str(sf_class_e->str);
+    hd->sysfs_id = new_str(hd_sysfs_id(sf_cdev));
+
+    res_hw = NULL;
     if(hw_addr && strspn(hw_addr, "0:") != strlen(hw_addr)) {
-      res1 = new_mem(sizeof *res1);
-      res1->hwaddr.type = res_hwaddr;
-      res1->hwaddr.addr = new_str(hw_addr);
-      add_res_entry(&hd->res, res1);
+      res_hw = new_mem(sizeof *res_hw);
+      res_hw->hwaddr.type = res_hwaddr;
+      res_hw->hwaddr.addr = new_str(hw_addr);
+      add_res_entry(&hd->res, res_hw);
     }
+
+    res_phw = get_phwaddr(hd_data, hd);
 
     if(if_carrier >= 0) {
       res = new_mem(sizeof *res);
@@ -140,9 +146,6 @@ void hd_scan_net(hd_data_t *hd_data)
       res->link.state = if_carrier ? 1 : 0;
       add_res_entry(&hd->res, res);
     }
-
-    hd->unix_dev_name = new_str(sf_class_e->str);
-    hd->sysfs_id = new_str(hd_sysfs_id(sf_cdev));
 
     if(sf_drv_name) {
       add_str_list(&hd->drivers, sf_drv_name);
@@ -280,12 +283,12 @@ void hd_scan_net(hd_data_t *hd_data)
         hd_set_hw_class(hd_card, hw_network_ctrl);
 
         /* add hw addr to network card */
-        if(res1) {
+        if(res_hw) {
           u = 0;
           for(res = hd_card->res; res; res = res->next) {
             if(
               res->any.type == res_hwaddr &&
-              !strcmp(res->hwaddr.addr, res1->hwaddr.addr)
+              !strcmp(res->hwaddr.addr, res_hw->hwaddr.addr)
             ) {
               u = 1;
               break;
@@ -294,10 +297,31 @@ void hd_scan_net(hd_data_t *hd_data)
           if(!u) {
             res = new_mem(sizeof *res);
             res->hwaddr.type = res_hwaddr;
-            res->hwaddr.addr = new_str(res1->hwaddr.addr);
+            res->hwaddr.addr = new_str(res_hw->hwaddr.addr);
             add_res_entry(&hd_card->res, res);
           }
         }
+
+        /* add permanent hw addr to network card */
+        if(res_phw) {
+          u = 0;
+          for(res = hd_card->res; res; res = res->next) {
+            if(
+              res->any.type == res_phwaddr &&
+              !strcmp(res->hwaddr.addr, res_phw->hwaddr.addr)
+            ) {
+              u = 1;
+              break;
+            }
+          }
+          if(!u) {
+            res = new_mem(sizeof *res);
+            res->hwaddr.type = res_phwaddr;
+            res->hwaddr.addr = new_str(res_phw->hwaddr.addr);
+            add_res_entry(&hd_card->res, res);
+          }
+        }
+
         /*
          * add interface names...
          * but not wmasterX (bnc #441778)
@@ -396,14 +420,14 @@ void hd_scan_net(hd_data_t *hd_data)
       }
 
       if(res) {
-        for(res1 = hd_card->res; res1; res1 = res1->next) {
-          if(res1->any.type == res_link) break;
+        for(res_lnk = hd_card->res; res_lnk; res_lnk = res_lnk->next) {
+          if(res_lnk->any.type == res_link) break;
         }
-        if(res && !res1) {
-          res1 = new_mem(sizeof *res1);
-          res1->link.type = res_link;
-          res1->link.state = res->link.state;
-          add_res_entry(&hd_card->res, res1);
+        if(res && !res_lnk) {
+          res_lnk = new_mem(sizeof *res_lnk);
+          res_lnk->link.type = res_link;
+          res_lnk->link.state = res->link.state;
+          add_res_entry(&hd_card->res, res_lnk);
         }
       }
 
@@ -558,6 +582,61 @@ void get_linkstate(hd_data_t *hd_data, hd_t *hd)
   }
 
   close(fd);
+}
+
+
+/*
+ * Get permanent hardware address (it's not in sysfs).
+ */
+hd_res_t *get_phwaddr(hd_data_t *hd_data, hd_t *hd)
+{
+  int fd;
+  struct ethtool_perm_addr *phwaddr = new_mem(sizeof (struct ethtool_perm_addr) + MAX_ADDR_LEN);
+  struct ifreq ifr;
+  hd_res_t *res = NULL;
+
+  phwaddr->cmd = ETHTOOL_GPERMADDR;
+  phwaddr->size = MAX_ADDR_LEN;
+
+  if(!hd->unix_dev_name) return res;
+
+  if(strlen(hd->unix_dev_name) > sizeof ifr.ifr_name - 1) return res;
+
+  if((fd = socket(PF_INET, SOCK_DGRAM, 0)) == -1) return res;
+
+  /* get permanent hardware addr */
+  memset(&ifr, 0, sizeof ifr);
+  strcpy(ifr.ifr_name, hd->unix_dev_name);
+  ifr.ifr_data = (caddr_t) phwaddr;
+  if(ioctl(fd, SIOCETHTOOL, &ifr) == 0) {
+    int i;
+    char *addr = NULL;
+    if(phwaddr->size > 0) {
+      addr = new_mem(phwaddr->size * 3 + 1);	// yes, we need an extra byte
+      for(i = 0; i < phwaddr->size; i++) {
+        sprintf(addr + 3 * i, "%02x:", phwaddr->data[i]);
+      }
+      addr[3 * i - 1] = 0;
+    }
+
+    ADD2LOG("  %s: ethtool permanent hw address[%d]: %s\n", hd->unix_dev_name, phwaddr->size, addr);
+
+    if(addr && strspn(addr, "0:") != strlen(addr)) {
+      res = new_mem(sizeof *res);
+      res->hwaddr.type = res_phwaddr;
+      res->hwaddr.addr = new_str(addr);
+      add_res_entry(&hd->res, res);
+    }
+
+    free_mem(addr);
+  }
+  else {
+    ADD2LOG("  %s: GLINK ethtool error: %s\n", hd->unix_dev_name, strerror(errno));
+  }
+
+  close(fd);
+
+  return res;
 }
 
 
