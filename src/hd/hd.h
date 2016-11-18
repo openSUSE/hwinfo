@@ -20,7 +20,7 @@ extern "C" {
 
 /** Interface version */
 #define HD_VERSION	21
-#define HD_MINOR_VERSION	36
+#define HD_MINOR_VERSION	37
 #define HD_FULL_VERSION		(HD_VERSION * 1000 + HD_MINOR_VERSION)
 
 /**

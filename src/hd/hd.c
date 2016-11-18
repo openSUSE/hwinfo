@@ -6067,16 +6067,26 @@ char *get_sysfs_attr_by_path(const char *path, const char *attr)
  */
 char *get_sysfs_attr_by_path2(const char *path, const char *attr, unsigned *len)
 {
-  static char buf[1024];
-  int i, fd;
+  static char *buf = NULL;
+  char * ptr;
+  int i, fd, max;
 
   if(len) *len = 0;
+
+  // init static buffer on first run
+  if(!buf) buf = new_mem(MAX_ATTR_SIZE + 1);
+
+  if(!buf) return NULL;
 
   sprintf(buf, "%s/%s", path, attr);
   fd = open(buf, O_RDONLY);
   if(fd >= 0) {
-    i = read(fd, buf, sizeof buf - 1);
+    max = MAX_ATTR_SIZE;
+    ptr = buf;
+    while((i = read(fd, ptr, max)) > 0) max -= i, ptr += i;
     close(fd);
+    // even if there was some read error, accept partial data
+    if(ptr != buf) i = ptr - buf;
     if(i >= 0) {
       if(len) *len = i;
       buf[i] = 0;
