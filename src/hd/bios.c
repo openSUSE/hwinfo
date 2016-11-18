@@ -612,9 +612,25 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
   unsigned u, u1, u2, ok, hlen = 0, ofs;
   unsigned addr = 0, len = 0, scnt;
   unsigned structs = 0, type, slen;
+  unsigned use_sysfs = 0;
   char *s;
-  memory_range_t memory;
+  memory_range_t memory, memory_sysfs;
   hd_smbios_t *sm;
+
+  memory_sysfs.data = get_sysfs_attr_by_path2("/sys/firmware/dmi/tables", "smbios_entry_point", &memory_sysfs.size);
+
+  if(memory_sysfs.data) {
+    // get_sysfs_attr_by_path2 returns static buffer; make a copy
+    unsigned char *buf = memory_sysfs.data;
+    memory_sysfs.data = new_mem(memory_sysfs.size);
+    memcpy(memory_sysfs.data, buf, memory_sysfs.size);
+    memory_sysfs.start = 0;
+    dump_memory(hd_data, &memory_sysfs, 0, "SMBIOS Entry Point (sysfs)");
+    if(memory_sysfs.size >= 0x10) {
+      use_sysfs = 1;
+      mem = &memory_sysfs;
+    }
+  }
 
   if(!mem->data || mem->size < 0x10) return;
 
@@ -649,15 +665,35 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
 
   hd_data->smbios = smbios_free(hd_data->smbios);
 
+  ADD2LOG("  Found DMI table at 0x%08x (0x%04x bytes)\n", addr, len);
+
   memory.start = mem->start + u;
   memory.size = hlen;
   memory.data = mem->data + u;
-  dump_memory(hd_data, &memory, 0, "SMBIOS Entry Point");
+  if(!use_sysfs) dump_memory(hd_data, &memory, 0, "SMBIOS Entry Point");
 
-  memory.start = addr;
-  memory.size = len;
   memory.data = NULL;
-  read_memory(hd_data, &memory);
+  memory.start = addr;
+
+  if(use_sysfs) {
+    memory.data = get_sysfs_attr_by_path2("/sys/firmware/dmi/tables", "DMI", &memory.size);
+    if(memory.data) {
+      // get_sysfs_attr_by_path2 returns static buffer; make a copy
+      unsigned char *buf = memory.data;
+      memory.data = new_mem(memory.size);
+      memcpy(memory.data, buf, memory.size);
+      ADD2LOG("  Got DMI table from sysfs (0x%04x bytes)\n", memory.size);
+      if(memory.size != len) {
+        ADD2LOG("  Oops: DMI table size mismatch; expected 0x%04x bytes!\n", len);
+      }
+    }
+  }
+
+  if(!memory.data) {
+    memory.size = len;
+    read_memory(hd_data, &memory);
+  }
+
   if(len >= 0x4000) {
     ADD2LOG(
       "  SMBIOS Structure Table at 0x%05x (size 0x%x)\n",
@@ -716,6 +752,7 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
   }
 
   memory.data = free_mem(memory.data);
+  memory_sysfs.data = free_mem(memory_sysfs.data);
 
   smbios_parse(hd_data);
 }
