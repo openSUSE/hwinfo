@@ -617,6 +617,10 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
   memory_range_t memory, memory_sysfs;
   hd_smbios_t *sm;
 
+  // looking for smbios data in 3 places:
+
+  // 1st try: look it up in sysfs
+
   memory_sysfs.data = get_sysfs_attr_by_path2("/sys/firmware/dmi/tables", "smbios_entry_point", &memory_sysfs.size);
 
   if(memory_sysfs.data) {
@@ -631,6 +635,26 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
       mem = &memory_sysfs;
     }
   }
+  else {
+    // 2nd try: look entry point up in EFI variables
+
+    char *t, *s = get_sysfs_attr_by_path("/sys/firmware/efi", "systab");
+    if(s && (t = strstr(s, "SMBIOS="))) {
+      unsigned start_ofs = strtoul(t + sizeof "SMBIOS=" - 1, NULL, 0);
+      if(start_ofs) {
+        memory_sysfs.size = 0x20;
+        memory_sysfs.start = start_ofs;
+        read_memory(hd_data, &memory_sysfs);
+        dump_memory(hd_data, &memory_sysfs, 0, "SMBIOS Entry Point (efi)");
+        if(memory_sysfs.size >= 0x10) {
+          use_sysfs = 1;
+          mem = &memory_sysfs;
+        }
+      }
+    }
+  }
+
+  // 3rd try: scan legacy BIOS
 
   if(!mem->data || mem->size < 0x10) return;
 
