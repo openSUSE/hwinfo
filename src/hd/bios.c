@@ -638,7 +638,8 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
   else {
     // 2nd try: look entry point up in EFI variables
 
-    char *t, *s = get_sysfs_attr_by_path("/sys/firmware/efi", "systab");
+    char *t;
+    char *s = get_sysfs_attr_by_path("/sys/firmware/efi", "systab");
     if(s && (t = strstr(s, "SMBIOS="))) {
       unsigned start_ofs = strtoul(t + sizeof "SMBIOS=" - 1, NULL, 0);
       if(start_ofs) {
@@ -646,10 +647,7 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
         memory_sysfs.start = start_ofs;
         read_memory(hd_data, &memory_sysfs);
         dump_memory(hd_data, &memory_sysfs, 0, "SMBIOS Entry Point (efi)");
-        if(memory_sysfs.size >= 0x10) {
-          use_sysfs = 1;
-          mem = &memory_sysfs;
-        }
+        mem = &memory_sysfs;
       }
     }
   }
