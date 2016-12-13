@@ -1,5 +1,17 @@
 #! /usr/bin/perl
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+# This script is maintained at https://github.com/openSUSE/ssob
+#
+# If you're in another project, this is just a copy.
+# You may update it to the latest version from time to time...
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+use strict;
+
 use Getopt::Long;
 
 use Data::Dumper;
@@ -8,27 +20,44 @@ $Data::Dumper::Terse = 1;
 $Data::Dumper::Indent = 1;
 
 sub usage;
+sub get_branch_tags;
+sub get_branch;
+sub get_parent_branch;
+sub get_version;
 
 usage 0 if !@ARGV;
 
-@deps = qw ( .git/HEAD .git/refs/heads .git/refs/tags );
+my @deps = qw ( .git/HEAD .git/refs/heads .git/refs/tags );
+
+my $branch;
+my $current_version;
+my $github_project;
+my @tags;
+my @all_tags;
+
+my $opt_log;
+my $opt_version;
+my $opt_branch;
+my $opt_update;
+my $opt_file;
 
 GetOptions(
   'help'          => sub { usage 0 },
   'version'       => \$opt_version,
+  'branch'        => \$opt_branch,
   'update'        => \$opt_update,
   'log|changelog' => \$opt_log,
 ) || usage 1;
 
-usage 1 if @ARGV > 1 || !($opt_log || $opt_version);
+usage 1 if @ARGV > 1 || !($opt_log || $opt_version || $opt_branch);
 $opt_file = @ARGV ? shift : '-';
 
 die "no git repo\n" unless -d ".git";
 
 if($opt_update && $opt_file ne '-' && -f($opt_file)) {
-  $ok = 1;
+  my $ok = 1;
 
-  $t = (stat $opt_file)[9];
+  my $t = (stat $opt_file)[9];
 
   for (@deps) {
     $ok = 0 if (stat)[9] > $t;
@@ -37,57 +66,55 @@ if($opt_update && $opt_file ne '-' && -f($opt_file)) {
   exit 0 if $ok;
 }
 
-for (`git branch`) {
-  if(/^\*\s+(\S+)/) {
-    $branch = $1;
-    last;
-  }
+if(`git config remote.origin.url` =~ m#github.com[:/]+(\S+/\S+)#) {
+  $github_project = $1;
 }
 
-$branch = "master" if $branch eq '(no';
+@all_tags = `git tag`;
+chomp @all_tags;
 
+$branch = get_branch;
 die "no branch?\n" unless $branch;
 
-# print STDERR "writing log for branch $branch\n";
-
-@tags = `git tag`;
-
-chomp @tags;
-
-for (@tags) {
-  if(/^\d/) {
-    s/(\d+)/sprintf "%04d", $1/eg;
-    push @ntags, $_;
-  }
-  elsif(s/^$branch\-//) {
-    s/(\d+)/sprintf "%04d", $1/eg;
-    push @ntags, "$branch-$_";
-  }
-}
-
-@tags = sort @ntags;
-
+@tags = get_branch_tags;
 die "no tags at all?\n" unless @tags;
 
-$current_version = $tags[-1];
-$current_version =~ s/(\d+)/$1 + 0/eg;
+if($branch ne 'master') {
+  if(!grep { /^$branch\-/ } @tags) {
+    $branch = get_parent_branch;
+    die "sorry, can't determine branch\n" unless $branch;
 
-if(`git log --pretty=medium --date=iso '$current_version..HEAD'`) {
-  $current_version =~ s/(\d+)$/$1 + 1/e;
+    @tags = get_branch_tags;
+    die "no tags at all?\n" unless @tags;
+  }
+}
+else {
+  @tags = get_branch_tags;
+  die "no tags at all?\n" unless @tags;
 }
 
-$current_version =~ s/^$branch\-//;
+if($opt_branch) {
+  open my $f, ">$opt_file";
+  print $f "$branch\n";
+  close $f;
+
+  exit 0;
+}
+
+$current_version = get_version;
 
 if($opt_version) {
-  open F, ">$opt_file";
-  print F "$current_version\n";
-  close F;
+  open my $f, ">$opt_file";
+  print $f "$current_version\n";
+  close $f;
 
   exit 0;
 }
 
 if($branch ne 'master') {
-  for ($i = 0; $i < @tags; $i++) {
+  my ($i1, $i2, $bi);
+
+  for (my $i = 0; $i < @tags; $i++) {
     if($tags[$i] =~ /^$branch\-(\S+)/) {
       $i2 = $i;
       $bi = $1;
@@ -99,7 +126,7 @@ if($branch ne 'master') {
 
   warn "no tags in this branch yet\n" unless $bi;
 
-  for ($i = 0; $i < $i2; $i++) {
+  for (my $i = 0; $i < $i2; $i++) {
     if($tags[$i] ge $bi) {
       if($tags[$i] eq $bi) {
         $i1 = $i;
@@ -122,31 +149,32 @@ push @tags, "HEAD";
 
 open F, ">$opt_file";
 
-for ($i = @tags - 1; $i > 0; $i--) {
-  $date = undef;
-  @t = `git log --pretty=medium --date=iso '$tags[$i-1]..$tags[$i]'`;
+for (my $i = @tags - 1; $i > 0; $i--) {
+  my ($date, @t2);
+
+  my @t = `git log --pretty=medium --date=iso '$tags[$i-1]..$tags[$i]'`;
 
   # print "\n--- $tags[$i-1]..$tags[$i] ---\n", @t, "---\n";
 
-  undef @t2;
-  $merge = 0;
+  my $merge = 0;
   for (@t) {
     $merge = 1 if /^Merge: /;
     $merge = 0 if /^commit /;
     push @t2, $_ if !$merge;
+    if(/^    Merge pull request #(\d+) from /) {
+      push @t2, "merge pr gh#$github_project#$1\n" if $github_project;
+    }
   }
   @t = @t2;
 
   undef @t2;
-  $detail = 0;
+  my $detail = 0;
   for (@t) {
     $detail = 1 if /^    $/;
+    $detail = 2 if /^    Conflicts:$/;
     $detail = 0 if /^commit /;
-    if($detail && /^    [^\-\s]/) {
-      # push @t2, "# $_";
-    }
-    else {
-      push @t2, $_;
+    if(!$detail) {
+      push @t2, $_ if $detail < 2;
     }
   }
   @t = @t2;
@@ -164,7 +192,7 @@ for ($i = @tags - 1; $i > 0; $i--) {
   # handle white space in every first line once and for all
   my $empty = 1;
   for (@t) {
-    $empty = 1, next if $_ eq "";
+    $empty = 1, $_ = "", next if $_ =~ /^\s*$/;
     next if !$empty;
     s/^\s*//;
     $empty = 0;
@@ -188,7 +216,7 @@ for ($i = @tags - 1; $i > 0; $i--) {
 
     # print "\n--- $tags[$i-1]..$tags[$i] ---\n", join("\n", @t);
 
-    $t = $tags[$i];
+    my $t = $tags[$i];
     $t = "${branch}-$t" if $branch ne 'master' && $t eq "HEAD";
     $t =~ s/HEAD/$current_version/;
     print F "$date:\t$t\n";
@@ -198,6 +226,8 @@ for ($i = @tags - 1; $i > 0; $i--) {
 
 close F;
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 sub usage
 {
   my $err = shift;
@@ -207,10 +237,80 @@ Usage: git2log [OPTIONS] [FILE]
 Create changelog and project version from git repo.
   --changelog   Write changelog to FILE.
   --version     Write version number to FILE.
+  --branch      Write current branch to FILE.
   --update      Write changelog or version only if FILE is outdated.
   --help        Print this help text.
   usage
 
   exit $err;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+sub get_branch_tags
+{
+  my @ntags;
+
+  for (@all_tags) {
+    if(/^\d/) {
+      s/(\d+)/sprintf "%04d", $1/eg;
+      push @ntags, $_;
+    }
+    elsif(s/^$branch\-//) {
+      s/(\d+)/sprintf "%04d", $1/eg;
+      push @ntags, "$branch-$_";
+    }
+  }
+
+  return sort @ntags;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+sub get_branch
+{
+  my $b;
+
+  for (`git branch`) {
+    if(/^\*\s+(\S+)/) {
+      $b = $1;
+      last;
+    }
+  }
+
+  $b = "master" if $b eq '(no';
+
+  return $b;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+sub get_parent_branch
+{
+  my $p;
+
+  for (`git log -g --pretty=oneline`) {
+    $p = $1 if /checkout: moving from (\S+) to $branch/;
+  }
+
+  # print "parent = $p\n";
+
+  return $p || "master";
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+sub get_version
+{
+  my $v = $tags[-1];
+  $v =~ s/(\d+)/$1 + 0/eg;
+
+  if(`git log --pretty=medium --date=iso '$v..HEAD'`) {
+    $v =~ s/(\d+)$/$1 + 1/e;
+  }
+
+  $v =~ s/^$branch\-//;
+
+  return $v;
 }
 
