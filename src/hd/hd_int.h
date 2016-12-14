@@ -58,6 +58,10 @@
 #define WITH_ISDN	1
 #endif
 
+// maximum attribute size in sysfs we expect
+// (this is to avoid accidentally reading unlimited data)
+#define MAX_ATTR_SIZE		0x10000
+
 #define PROGRESS(a, b, c) progress(hd_data, a, b, c)
 #define ADD2LOG(a...) str_printf(&hd_data->log, -2, a)
 
