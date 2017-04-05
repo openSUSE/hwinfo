@@ -843,6 +843,7 @@ void hd_read_vio(hd_data_t *hd_data)
     if(
       vio_name && (
         !strcmp(vio_name, "l-lan") || /* pseries && iseries */
+        !strcmp(vio_name, "vnic") || /* ibmvnic */
         !strcmp(vio_name, "viodasd") || /* iseries */
         !strcmp(vio_name, "viocd") || /* iseries */
         !strcmp(vio_name, "vfc-client") || /* ibmvfc */
@@ -855,7 +856,7 @@ void hd_read_vio(hd_data_t *hd_data)
 
       hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0x6001);
 
-      if(!strcmp(vio_name, "l-lan")) {
+      if(!strcmp(vio_name, "l-lan") || !strcmp(vio_name, "vnic")) {
         hd->base_class.id = bc_network;
         hd->sub_class.id = 0;	/* ethernet */
         hd->slot = eth_cnt++;
