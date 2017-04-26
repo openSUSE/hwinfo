@@ -6,7 +6,7 @@ hwinfo/libhd are used to probe for the hardware present in the system. It can be
 used to generate a system overview log which can be later used for support.
 
 This project provides a hardware probing library `libhd.so` and a command line tool `hwinfo` using it.
-A major project using this library is [YaST](https://en.opensuse.org/Portal:YaST), the SUSE installation tool.
+A major project using this library is [YaST](https://yast.github.io), the SUSE installation tool.
 
 To give you an idea what kind of information it provides, here's the output it gives when asked about the graphcs card:
 
@@ -82,7 +82,7 @@ For general usage instructions, see `hwinfo` manual page.
 
 ## openSUSE Development
 
-To build the library, simply run `make`. Install with `make intall`.
+To build the library, simply run `make`. Install with `make install`.
 
 Basically every new commit into the master branch of the repository will be auto-submitted
 to all current SUSE products. No further action is needed except accepting the pull request.
