@@ -17,6 +17,10 @@ settings *cannot* be overridden by command line switches). Examples:
 * `hwprobe=-isapnp` - *never* do any isapnp probing
 * `hwprobe=-braille,-modem` - don't look for braille displays & modems
 
+The list of supported flags varies from version to version. To get a list of
+the actual set of probing flags, call `hwinfo -all` (**Not** `--all`!) and look at the top of
+the log (it lists all probing flags with their respective status there).
+
 ## Adding/removing hardware from results
 
 `hwprobe` allows you to add and remove hardware from the probing results. In
