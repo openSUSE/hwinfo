@@ -124,8 +124,9 @@ install:
 
 archive: changelog
 	@if [ ! -d .git ] ; then echo no git repo ; false ; fi
+	make -C src/hd hd.h
 	mkdir -p package
 	git archive --prefix=$(PREFIX)/ $(BRANCH) > package/$(PREFIX).tar
-	tar -r -f package/$(PREFIX).tar --mode=0664 --owner=root --group=root --mtime="`git show -s --format=%ci`" --transform='s:^:$(PREFIX)/:' VERSION changelog
+	tar -r -f package/$(PREFIX).tar --mode=0664 --owner=root --group=root --mtime="`git show -s --format=%ci`" --transform='s:^:$(PREFIX)/:' VERSION changelog src/hd/hd.h
 	xz -f package/$(PREFIX).tar
 

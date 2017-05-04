@@ -76,12 +76,18 @@
  vendor.id		pci 0x0270
 +vendor.name		Hauppauge computer works Inc. (Wrong ID)
 
+ vendor.id		pci 0x0291
++vendor.name		Davicom Semiconductor, Inc. (Wrong ID)
+
  vendor.id		pci 0x02ac
 +vendor.name		SpeedStream
 
  vendor.id		pci 0x02ac
 &device.id		pci 0x1012
 +device.name		1012 PCMCIA 10/100 Ethernet Card [RTL81xx]
+
+ vendor.id		pci 0x02e0
++vendor.name		XFX Pine Group Inc. (Wrong ID)
 
  vendor.id		pci 0x0303
 +vendor.name		Hewlett-Packard Company (Wrong ID)
@@ -156,11 +162,11 @@
 
  vendor.id		pci 0x0b0b
 &device.id		pci 0x0105
-+device.name		Rhino R1T1
++device.name		R1T1
 
  vendor.id		pci 0x0b0b
 &device.id		pci 0x0205
-+device.name		Rhino R4FXO
++device.name		R4FXO
 
  vendor.id		pci 0x0b0b
 &device.id		pci 0x0206
@@ -168,11 +174,11 @@
 
  vendor.id		pci 0x0b0b
 &device.id		pci 0x0305
-+device.name		Rhino R4T1
++device.name		R4T1
 
  vendor.id		pci 0x0b0b
 &device.id		pci 0x0405
-+device.name		Rhino R8FXX
++device.name		R8FXX
 
  vendor.id		pci 0x0b0b
 &device.id		pci 0x0406
@@ -180,7 +186,7 @@
 
  vendor.id		pci 0x0b0b
 &device.id		pci 0x0505
-+device.name		Rhino R24FXX
++device.name		R24FXX
 
  vendor.id		pci 0x0b0b
 &device.id		pci 0x0506
@@ -188,11 +194,11 @@
 
  vendor.id		pci 0x0b0b
 &device.id		pci 0x0605
-+device.name		Rhino R2T1
++device.name		R2T1
 
  vendor.id		pci 0x0b0b
 &device.id		pci 0x0705
-+device.name		Rhino R24FXS
++device.name		R24FXS
 
  vendor.id		pci 0x0b0b
 &device.id		pci 0x0706
@@ -930,6 +936,16 @@
 &subvendor.id		pci 0x1d49
 &subdevice.id		pci 0x0602
 +subdevice.name		ThinkSystem RAID 930-16i 4GB Flash PCIe 12Gb Adapter
+
+ vendor.id		pci 0x1000
+&device.id		pci 0x0014
+&subvendor.id		pci 0x1d49
+&subdevice.id		pci 0x0604
++subdevice.name		ThinkSystem RAID 930-8e 4GB Flash PCIe 12Gb Adapter
+
+ vendor.id		pci 0x1000
+&device.id		pci 0x0015
++device.name		MegaRAID Tri-Mode SAS3416
 
  vendor.id		pci 0x1000
 &device.id		pci 0x0016
@@ -2604,6 +2620,12 @@
 +subdevice.name		HBA330 MMZ
 
  vendor.id		pci 0x1000
+&device.id		pci 0x0097
+&subvendor.id		pci 0x1bd4
+&subdevice.id		pci 0x0011
++subdevice.name		Inspur 12Gb 8i-3008 IT SAS HBA
+
+ vendor.id		pci 0x1000
 &device.id		pci 0x00ab
 +device.name		SAS3516 Fusion-MPT Tri-Mode RAID On Chip (ROC)
 
@@ -2615,13 +2637,13 @@
 &device.id		pci 0x00ac
 &subvendor.id		pci 0x1d49
 &subdevice.id		pci 0x0201
-+subdevice.name		ThinkSystem 9400-16i PCIe 12Gb HBA
++subdevice.name		ThinkSystem 430-16i SAS/SATA 12Gb HBA
 
  vendor.id		pci 0x1000
 &device.id		pci 0x00ac
 &subvendor.id		pci 0x1d49
 &subdevice.id		pci 0x0203
-+subdevice.name		ThinkSystem 9400-16e PCIe 12Gb HBA
++subdevice.name		ThinkSystem 430-16e SAS/SATA 12Gb HBA
 
  vendor.id		pci 0x1000
 &device.id		pci 0x00ae
@@ -2635,13 +2657,13 @@
 &device.id		pci 0x00af
 &subvendor.id		pci 0x1d49
 &subdevice.id		pci 0x0200
-+subdevice.name		ThinkSystem 9400-8i PCIe 12Gb HBA
++subdevice.name		ThinkSystem 430-8i SAS/SATA 12Gb HBA
 
  vendor.id		pci 0x1000
 &device.id		pci 0x00af
 &subvendor.id		pci 0x1d49
 &subdevice.id		pci 0x0202
-+subdevice.name		ThinkSystem 9400-8e PCIe 12Gb HBA
++subdevice.name		ThinkSystem 430-8e SAS/SATA 12Gb HBA
 
  vendor.id		pci 0x1000
 &device.id		pci 0x00be
@@ -5463,7 +5485,7 @@
 &device.id		pci 0x4c46
 &subvendor.id		pci 0x1014
 &subdevice.id		pci 0x0155
-+subdevice.name		IBM Thinkpad A22p
++subdevice.name		Thinkpad A22p
 
  vendor.id		pci 0x1002
 &device.id		pci 0x4c46
@@ -11464,6 +11486,26 @@
 +device.name		Ellesmere [Polaris10]
 
  vendor.id		pci 0x1002
+&device.id		pci 0x67c4
++device.name		Ellesmere [Radeon Pro WX 7100]
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x67c7
++device.name		Ellesmere [Radeon Pro WX 5100]
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x67ca
++device.name		Ellesmere [Polaris10]
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x67cc
++device.name		Ellesmere [Polaris10]
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x67cf
++device.name		Ellesmere [Polaris10]
+
+ vendor.id		pci 0x1002
 &device.id		pci 0x67df
 +device.name		Ellesmere [Radeon RX 470/480]
 
@@ -11490,6 +11532,12 @@
 &subvendor.id		pci 0x1043
 &subdevice.id		pci 0x04fb
 +subdevice.name		Radeon RX 480
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x67df
+&subvendor.id		pci 0x1043
+&subdevice.id		pci 0x04fd
++subdevice.name		Radeon RX 480 8GB
 
  vendor.id		pci 0x1002
 &device.id		pci 0x67df
@@ -11558,6 +11606,10 @@
  vendor.id		pci 0x1002
 &device.id		pci 0x67e1
 +device.name		Baffin [Polaris11]
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x67e3
++device.name		Baffin [Radeon Pro WX 4100]
 
  vendor.id		pci 0x1002
 &device.id		pci 0x67e8
@@ -11700,6 +11752,12 @@
 &subvendor.id		pci 0x1462
 &subdevice.id		pci 0x2016
 +subdevice.name		Trinidad PRO [Radeon R9 370 OEM]
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x6811
+&subvendor.id		pci 0x1462
+&subdevice.id		pci 0x3050
++subdevice.name		R9 270 Gaming OC
 
  vendor.id		pci 0x1002
 &device.id		pci 0x6811
@@ -12670,6 +12728,10 @@
  vendor.id		pci 0x1002
 &device.id		pci 0x6843
 +device.name		Thames [Radeon HD 7670M]
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x687f
++device.name		Vega [Radeon RX Vega]
 
  vendor.id		pci 0x1002
 &device.id		pci 0x6888
@@ -15594,6 +15656,30 @@
 &subvendor.id		pci 0x174b
 &subdevice.id		pci 0xe308
 +subdevice.name		Radeon R9 380 Nitro 4G D5
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x6980
++device.name		Polaris12
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x6981
++device.name		Polaris12
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x6985
++device.name		Polaris12
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x6986
++device.name		Polaris12
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x6987
++device.name		Polaris12
+
+ vendor.id		pci 0x1002
+&device.id		pci 0x699f
++device.name		Lexa PRO [Radeon RX 550]
 
  vendor.id		pci 0x1002
 &device.id		pci 0x700f
@@ -25952,6 +26038,10 @@
 +subdevice.name		ISDN Adapter (PCI Bus, DV, W)
 
  vendor.id		pci 0x1043
+&device.id		pci 0x13a0
++device.name		Transformer Book T101HA-GR030R
+
+ vendor.id		pci 0x1043
 &device.id		pci 0x9602
 +device.name		AMD RS780/RS880 PCI to PCI bridge (int gfx)
 
@@ -28022,6 +28112,14 @@
 +device.name		SxS Pro memory card
 
  vendor.id		pci 0x104d
+&device.id		pci 0x905c
++device.name		SxS Pro memory card
+
+ vendor.id		pci 0x104d
+&device.id		pci 0x907f
++device.name		SxS Pro+ memory card
+
+ vendor.id		pci 0x104d
 &device.id		pci 0x908f
 +device.name		Aeolia ACPI
 
@@ -28052,6 +28150,10 @@
  vendor.id		pci 0x104d
 &device.id		pci 0x90a4
 +device.name		Aeolia USB 3.0 xHCI Host Controller
+
+ vendor.id		pci 0x104d
+&device.id		pci 0x90bc
++device.name		SxS Pro+ memory card
 
  vendor.id		pci 0x104e
 +vendor.name		Oak Technology, Inc
@@ -30327,19 +30429,19 @@
 &device.id		pci 0x2031
 &subvendor.id		pci 0x103c
 &subdevice.id		pci 0x17e7
-+subdevice.name		HP SN1000Q 16Gb Single Port Fibre Channel Adapter
++subdevice.name		SN1000Q 16Gb Single Port Fibre Channel Adapter
 
  vendor.id		pci 0x1077
 &device.id		pci 0x2031
 &subvendor.id		pci 0x103c
 &subdevice.id		pci 0x17e8
-+subdevice.name		HP SN1000Q 16Gb Dual Port Fibre Channel Adapter
++subdevice.name		SN1000Q 16Gb Dual Port Fibre Channel Adapter
 
  vendor.id		pci 0x1077
 &device.id		pci 0x2031
 &subvendor.id		pci 0x103c
 &subdevice.id		pci 0x1939
-+subdevice.name		HP QMH2672 16Gb Dual Port Fibre Channel Adapter
++subdevice.name		QMH2672 16Gb Dual Port Fibre Channel Adapter
 
  vendor.id		pci 0x1077
 &device.id		pci 0x2031
@@ -30451,25 +30553,25 @@
 &device.id		pci 0x2261
 &subvendor.id		pci 0x1590
 &subdevice.id		pci 0x00f9
-+subdevice.name		HPE StoreFabric SN1100Q 16Gb Single Port Fibre Channel Host Bus Adapter
++subdevice.name		StoreFabric SN1100Q 16Gb Single Port Fibre Channel Host Bus Adapter
 
  vendor.id		pci 0x1077
 &device.id		pci 0x2261
 &subvendor.id		pci 0x1590
 &subdevice.id		pci 0x00fa
-+subdevice.name		HPE StoreFabric SN1100Q 16Gb Dual Port Fibre Channel Host Bus Adapter
++subdevice.name		StoreFabric SN1100Q 16Gb Dual Port Fibre Channel Host Bus Adapter
 
  vendor.id		pci 0x1077
 &device.id		pci 0x2261
 &subvendor.id		pci 0x1590
 &subdevice.id		pci 0x0203
-+subdevice.name		HPE StoreFabric SN1600Q 32Gb Single Port Fibre Channel Host Bus Adapter
++subdevice.name		StoreFabric SN1600Q 32Gb Single Port Fibre Channel Host Bus Adapter
 
  vendor.id		pci 0x1077
 &device.id		pci 0x2261
 &subvendor.id		pci 0x1590
 &subdevice.id		pci 0x0204
-+subdevice.name		HPE StoreFabric SN1600Q 32Gb Dual Port Fibre Channel Host Bus Adapter
++subdevice.name		StoreFabric SN1600Q 32Gb Dual Port Fibre Channel Host Bus Adapter
 
  vendor.id		pci 0x1077
 &device.id		pci 0x2300
@@ -30547,7 +30649,7 @@
 &device.id		pci 0x2532
 &subvendor.id		pci 0x1590
 &subdevice.id		pci 0x00fc
-+subdevice.name		HPE StoreFabric 84Q 8Gb Quad Port Fibre Channel Host Bus Adapter
++subdevice.name		StoreFabric 84Q 8Gb Quad Port Fibre Channel Host Bus Adapter
 
  vendor.id		pci 0x1077
 &device.id		pci 0x3022
@@ -30716,6 +30818,82 @@
  vendor.id		pci 0x1077
 &device.id		pci 0x8032
 +device.name		8300 Series 10GbE Converged Network Adapter (iSCSI)
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x8070
++device.name		FastLinQ QL41000 Series 10/25/40/50GbE Controller
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x8070
+&subvendor.id		pci 0x1077
+&subdevice.id		pci 0x0011
++subdevice.name		FastLinQ QL41212H 25GbE Adapter
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x8070
+&subvendor.id		pci 0x1077
+&subdevice.id		pci 0x0012
++subdevice.name		FastLinQ QL41112H 10GbE Adapter
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x8080
++device.name		FastLinQ QL41000 Series 10/25/40/50GbE Controller (FCoE)
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x8080
+&subvendor.id		pci 0x1077
+&subdevice.id		pci 0x000d
++subdevice.name		FastLinQ QL41262H 25GbE FCoE Adapter
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x8080
+&subvendor.id		pci 0x1077
+&subdevice.id		pci 0x000e
++subdevice.name		FastLinQ QL41162H 10GbE FCoE Adapter
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x8084
++device.name		FastLinQ QL41000 Series 10/25/40/50GbE Controller (iSCSI)
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x8084
+&subvendor.id		pci 0x1077
+&subdevice.id		pci 0x000d
++subdevice.name		FastLinQ QL41262H 25GbE iSCSI Adapter
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x8084
+&subvendor.id		pci 0x1077
+&subdevice.id		pci 0x000e
++subdevice.name		FastLinQ QL41162H 10GbE iSCSI Adapter
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x8090
++device.name		FastLinQ QL41000 Series Gigabit Ethernet Controller (SR-IOV VF)
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x8090
+&subvendor.id		pci 0x1077
+&subdevice.id		pci 0x000d
++subdevice.name		FastLinQ QL41262H 25GbE FCoE Adapter (SR-IOV VF)
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x8090
+&subvendor.id		pci 0x1077
+&subdevice.id		pci 0x000e
++subdevice.name		FastLinQ QL41162H 10GbE iSCSI Adapter (SR-IOV VF)
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x8090
+&subvendor.id		pci 0x1077
+&subdevice.id		pci 0x0011
++subdevice.name		FastLinQ QL41212H 25GbE Adapter (SR-IOV VF)
+
+ vendor.id		pci 0x1077
+&device.id		pci 0x8090
+&subvendor.id		pci 0x1077
+&subdevice.id		pci 0x0012
++subdevice.name		FastLinQ QL41112H 10GbE Adapter (SR-IOV VF)
 
  vendor.id		pci 0x1077
 &device.id		pci 0x8430
@@ -37307,7 +37485,7 @@
 &device.id		pci 0x9733
 &subvendor.id		pci 0x1d49
 &subdevice.id		pci 0x0001
-+subdevice.name		ThinkSystem P310W-4P NVMe Switch Card
++subdevice.name		ThinkSystem 1610-4P NVMe Switch Adapter
 
  vendor.id		pci 0x10b5
 &device.id		pci 0x9749
@@ -41510,6 +41688,12 @@
 +subdevice.name		GLoria II-64 Pro DVII
 
  vendor.id		pci 0x10de
+&device.id		pci 0x0103
+&subvendor.id		pci 0x10a9
+&subdevice.id		pci 0x9002
++subdevice.name		VPro VR3
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x0110
 +device.name		NV11 [GeForce2 MX/MX 400]
 
@@ -44139,7 +44323,7 @@
 &device.id		pci 0x0398
 &subvendor.id		pci 0x1025
 &subdevice.id		pci 0x006c
-+subdevice.name		Acer 9814 WKMI
++subdevice.name		Aspire 9814WKMi
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0399
@@ -48727,6 +48911,12 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x0e08
+&subvendor.id		pci 0x1043
+&subdevice.id		pci 0x83a0
++subdevice.name		ENGT520 SILENT
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x0e08
 &subvendor.id		pci 0x10b0
 &subdevice.id		pci 0x104a
 +subdevice.name		Gainward GeForce GT 610
@@ -49282,6 +49472,12 @@
 +device.name		GF119 [GeForce GT 520]
 
  vendor.id		pci 0x10de
+&device.id		pci 0x1040
+&subvendor.id		pci 0x1043
+&subdevice.id		pci 0x83a0
++subdevice.name		ENGT520 SILENT
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x1042
 +device.name		GF119 [GeForce 510]
 
@@ -49606,8 +49802,16 @@
 +device.name		GT218 [NVS 300]
 
  vendor.id		pci 0x10de
+&device.id		pci 0x10ef
++device.name		GP102 HDMI Audio Controller
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x10f0
 +device.name		GP104 High Definition Audio Controller
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x10f1
++device.name		GP106 High Definition Audio Controller
 
  vendor.id		pci 0x10de
 &device.id		pci 0x1140
@@ -52318,6 +52522,10 @@
 +device.name		GM108M [GeForce 930M]
 
  vendor.id		pci 0x10de
+&device.id		pci 0x134b
++device.name		GM108M [GeForce 940MX]
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x134d
 +device.name		GM108M [GeForce 940MX]
 
@@ -52466,6 +52674,14 @@
 +device.name		GM107GLM [Quadro K2200M]
 
  vendor.id		pci 0x10de
+&device.id		pci 0x13b4
++device.name		GM107GLM [Quadro M620 Mobile]
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x13b6
++device.name		GM107GLM [Quadro M1200 Mobile]
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x13b9
 +device.name		GM107GL [NVS 810]
 
@@ -52553,7 +52769,7 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x13f8
-+device.name		GM204GLM [Quadro M5000M]
++device.name		GM204GLM [Quadro M5000M / M5000 SE]
 
  vendor.id		pci 0x10de
 &device.id		pci 0x13f9
@@ -52602,20 +52818,28 @@
 +device.name		GM206GL [Tesla M4]
 
  vendor.id		pci 0x10de
+&device.id		pci 0x1436
++device.name		GM206GLM [Quadro M2200 Mobile]
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x15f0
-+device.name		GP100GL
++device.name		GP100GL [Quadro GP100]
 
  vendor.id		pci 0x10de
 &device.id		pci 0x15f1
 +device.name		GP100GL
 
  vendor.id		pci 0x10de
+&device.id		pci 0x15f7
++device.name		GP100GL [Tesla P100 PCIe 12GB]
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x15f8
-+device.name		GP100GL
++device.name		GP100GL [Tesla P100 PCIe 16GB]
 
  vendor.id		pci 0x10de
 &device.id		pci 0x15f9
-+device.name		GP100GL
++device.name		GP100GL [Tesla P100 SMX2 16GB]
 
  vendor.id		pci 0x10de
 &device.id		pci 0x1617
@@ -52678,6 +52902,10 @@
 +device.name		GP102
 
  vendor.id		pci 0x10de
+&device.id		pci 0x1b06
++device.name		GP102 [GeForce GTX 1080 Ti]
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x1b30
 +device.name		GP102GL [Quadro P6000]
 
@@ -52710,12 +52938,16 @@
 +device.name		GP104
 
  vendor.id		pci 0x10de
+&device.id		pci 0x1b84
++device.name		GP104 [GeForce GTX 1060 3GB]
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x1ba0
-+device.name		GP104M [GeForce GTX 1080]
++device.name		GP104M [GeForce GTX 1080 Mobile]
 
  vendor.id		pci 0x10de
 &device.id		pci 0x1ba1
-+device.name		GP104M [GeForce GTX 1070]
++device.name		GP104M [GeForce GTX 1070 Mobile]
 
  vendor.id		pci 0x10de
 &device.id		pci 0x1bb0
@@ -52723,19 +52955,35 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x1bb1
-+device.name		GP104GL
++device.name		GP104GL [Quadro P4000]
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x1bb3
++device.name		GP104GL [Tesla P4]
 
  vendor.id		pci 0x10de
 &device.id		pci 0x1bb4
 +device.name		GP104GL
 
  vendor.id		pci 0x10de
+&device.id		pci 0x1bb6
++device.name		GP104GLM [Quadro P5000 Mobile]
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x1bb7
++device.name		GP104GLM [Quadro P4000 Mobile]
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x1bb8
++device.name		GP104GLM [Quadro P3000 Mobile]
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x1be0
-+device.name		GP104M [GeForce GTX 1080]
++device.name		GP104M [GeForce GTX 1080 Mobile]
 
  vendor.id		pci 0x10de
 &device.id		pci 0x1be1
-+device.name		GP104M [GeForce GTX 1070]
++device.name		GP104M [GeForce GTX 1070 Mobile]
 
  vendor.id		pci 0x10de
 &device.id		pci 0x1c00
@@ -52755,11 +53003,11 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x1c20
-+device.name		GP106M [GeForce GTX 1060]
++device.name		GP106M [GeForce GTX 1060 Mobile]
 
  vendor.id		pci 0x10de
 &device.id		pci 0x1c30
-+device.name		GP106GL
++device.name		GP106GL [Quadro P2000]
 
  vendor.id		pci 0x10de
 &device.id		pci 0x1c35
@@ -52767,7 +53015,15 @@
 
  vendor.id		pci 0x10de
 &device.id		pci 0x1c60
-+device.name		GP106M [GeForce GTX 1060]
++device.name		GP106M [GeForce GTX 1060 Mobile]
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x1c61
++device.name		GP106M [GeForce GTX 1050 Ti Mobile]
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x1c62
++device.name		GP106M [GeForce GTX 1050 Mobile]
 
  vendor.id		pci 0x10de
 &device.id		pci 0x1c70
@@ -52786,6 +53042,18 @@
 +device.name		GP107 [GeForce GTX 1050 Ti]
 
  vendor.id		pci 0x10de
+&device.id		pci 0x1c8c
++device.name		GP107M [GeForce GTX 1050 Ti Mobile]
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x1c8d
++device.name		GP107M [GeForce GTX 1050 Mobile]
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x1c8e
++device.name		GP107M
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x1ca7
 +device.name		GP107GL
 
@@ -52798,8 +53066,24 @@
 +device.name		GP107GL
 
  vendor.id		pci 0x10de
+&device.id		pci 0x1cb1
++device.name		GP107GL [Quardo P1000]
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x1cb2
++device.name		GP107GL [Quardo P600]
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x1cb3
++device.name		GP107GL [Quardo P400]
+
+ vendor.id		pci 0x10de
 &device.id		pci 0x1d01
 +device.name		GP108
+
+ vendor.id		pci 0x10de
+&device.id		pci 0x1d81
++device.name		GV100
 
  vendor.id		pci 0x10df
 +vendor.name		Emulex Corporation
@@ -52945,6 +53229,24 @@
  vendor.id		pci 0x10df
 &device.id		pci 0xe300
 +device.name		Lancer Gen6: LPe32000 Fibre Channel Host Adapter
+
+ vendor.id		pci 0x10df
+&device.id		pci 0xe300
+&subvendor.id		pci 0x10df
+&subdevice.id		pci 0xe310
++subdevice.name		Lancer Gen6: LPe31000 Fibre Channel Host Adapter
+
+ vendor.id		pci 0x10df
+&device.id		pci 0xe300
+&subvendor.id		pci 0x10df
+&subdevice.id		pci 0xe311
++subdevice.name		Lancer Gen6: LPe31000 Fibre Channel Host Adapter
+
+ vendor.id		pci 0x10df
+&device.id		pci 0xe300
+&subvendor.id		pci 0x10df
+&subdevice.id		pci 0xe312
++subdevice.name		Lancer Gen6: LPe31000 Fibre Channel Host Adapter
 
  vendor.id		pci 0x10df
 &device.id		pci 0xf011
@@ -54332,6 +54634,12 @@
  vendor.id		pci 0x10ec
 &device.id		pci 0xb723
 +device.name		RTL8723BE PCIe Wireless Network Adapter
+
+ vendor.id		pci 0x10ec
+&device.id		pci 0xb723
+&subvendor.id		pci 0x10ec
+&subdevice.id		pci 0x8739
++subdevice.name		Dell Wireless 1801
 
  vendor.id		pci 0x10ed
 +vendor.name		Ascii Corporation
@@ -56749,13 +57057,13 @@
 &device.id		pci 0x3059
 &subvendor.id		pci 0x1043
 &subdevice.id		pci 0x80f3
-+subdevice.name		ASUSTek SK8V motherboard
++subdevice.name		SK8V motherboard
 
  vendor.id		pci 0x1106
 &device.id		pci 0x3059
 &subvendor.id		pci 0x1043
 &subdevice.id		pci 0x810d
-+subdevice.name		Asus P5VD1-X (AD1888 codec [SoundMax])
++subdevice.name		P5VD1-X (AD1888 codec [SoundMax])
 
  vendor.id		pci 0x1106
 &device.id		pci 0x3059
@@ -59363,7 +59671,19 @@
 +device.name		Frame capture bus interface
 
  vendor.id		pci 0x1120
-+vendor.name		EMC Corporation
++vendor.name		Dell EMC
+
+ vendor.id		pci 0x1120
+&device.id		pci 0x2306
++device.name		Unity Fibre Channel Controller
+
+ vendor.id		pci 0x1120
+&device.id		pci 0x2501
++device.name		Unity Ethernet Controller
+
+ vendor.id		pci 0x1120
+&device.id		pci 0x2505
++device.name		Unity Fibre Channel Controller
 
  vendor.id		pci 0x1121
 +vendor.name		Zilog
@@ -59767,7 +60087,7 @@
 &device.id		pci 0x7133
 &subvendor.id		pci 0x1043
 &subdevice.id		pci 0x4843
-+subdevice.name		ASUS TV-FM 7133
++subdevice.name		TV-FM 7133
 
  vendor.id		pci 0x1131
 &device.id		pci 0x7133
@@ -60209,7 +60529,7 @@
 &device.id		pci 0x7134
 &subvendor.id		pci 0x1043
 &subdevice.id		pci 0x4840
-+subdevice.name		ASUS TV-FM 7134
++subdevice.name		TV-FM 7134
 
  vendor.id		pci 0x1131
 &device.id		pci 0x7134
@@ -63658,7 +63978,7 @@
 &device.id		pci 0x0476
 &subvendor.id		pci 0x1043
 &subdevice.id		pci 0x1987
-+subdevice.name		Asus A4K and Z81K notebooks, possibly others ( mid-2005 machines )
++subdevice.name		A4K and Z81K notebooks, possibly others ( mid-2005 machines )
 
  vendor.id		pci 0x1180
 &device.id		pci 0x0476
@@ -63988,7 +64308,7 @@
 &device.id		pci 0x0822
 &subvendor.id		pci 0x1043
 &subdevice.id		pci 0x1967
-+subdevice.name		ASUS V6800V
++subdevice.name		V6800V
 
  vendor.id		pci 0x1180
 &device.id		pci 0x0822
@@ -64114,13 +64434,13 @@
 &device.id		pci 0x0843
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x01f5
-+subdevice.name		Dell Inspiron 1501
++subdevice.name		Inspiron 1501
 
  vendor.id		pci 0x1180
 &device.id		pci 0x0843
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x024f
-+subdevice.name		Dell Latitude e6500
++subdevice.name		Latitude e6500
 
  vendor.id		pci 0x1180
 &device.id		pci 0x0843
@@ -64703,6 +65023,10 @@
 
  vendor.id		pci 0x119f
 +vendor.name		Bull HN Information Systems
+
+ vendor.id		pci 0x119f
+&device.id		pci 0x1081
++device.name		BXI Host Channel Adapter
 
  vendor.id		pci 0x11a0
 +vendor.name		Convex Computer Corporation
@@ -67204,6 +67528,10 @@
 +device.name		PM8000  [SPC - SAS Protocol Controller]
 
  vendor.id		pci 0x11f8
+&device.id		pci 0x8009
++device.name		PM8009 SPCve 8x6G
+
+ vendor.id		pci 0x11f8
 &device.id		pci 0x8032
 +device.name		ATTO Celerity FC8xEN
 
@@ -67258,6 +67586,14 @@
  vendor.id		pci 0x11f8
 &device.id		pci 0x8073
 +device.name		PM8073 Tachyon SPCve 12G 16-port SAS/SATA controller
+
+ vendor.id		pci 0x11f8
+&device.id		pci 0x8531
++device.name		PM8531 PFX 24xG3 Fanout PCIe Switches
+
+ vendor.id		pci 0x11f8
+&device.id		pci 0x8546
++device.name		PM8546 B-FEIP PSX 96xG3 PCIe Storage Switch
 
  vendor.id		pci 0x11f9
 +vendor.name		I-Cube Inc
@@ -75405,7 +75741,7 @@
 +vendor.name		DSP Research Inc
 
  vendor.id		pci 0x140b
-+vendor.name		GE Intelligent Platforms
++vendor.name		Abaco Systems, Inc.
 
  vendor.id		pci 0x140c
 +vendor.name		Elmic Systems Inc
@@ -76636,7 +76972,7 @@
 
  vendor.id		pci 0x1425
 &device.id		pci 0x5084
-+device.name		T580-5084 Unified Wire Ethernet Controller
++device.name		T540-5084 Unified Wire Ethernet Controller
 
  vendor.id		pci 0x1425
 &device.id		pci 0x5085
@@ -76709,6 +77045,22 @@
  vendor.id		pci 0x1425
 &device.id		pci 0x509c
 +device.name		T520-509C Unified Wire Ethernet Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x509d
++device.name		T540-509D Unified Wire Ethernet Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x509e
++device.name		T520-509E Unified Wire Ethernet Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x509f
++device.name		T540-509F Unified Wire Ethernet Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x50a0
++device.name		T540-50A0 Unified Wire Ethernet Controller
 
  vendor.id		pci 0x1425
 &device.id		pci 0x5401
@@ -76824,7 +77176,7 @@
 
  vendor.id		pci 0x1425
 &device.id		pci 0x5484
-+device.name		T580-5084 Unified Wire Ethernet Controller
++device.name		T540-5084 Unified Wire Ethernet Controller
 
  vendor.id		pci 0x1425
 &device.id		pci 0x5485
@@ -76897,6 +77249,22 @@
  vendor.id		pci 0x1425
 &device.id		pci 0x549c
 +device.name		T520-509C Unified Wire Ethernet Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x549d
++device.name		T540-509D Unified Wire Ethernet Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x549e
++device.name		T520-509E Unified Wire Ethernet Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x549f
++device.name		T540-509F Unified Wire Ethernet Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x54a0
++device.name		T540-50A0 Unified Wire Ethernet Controller
 
  vendor.id		pci 0x1425
 &device.id		pci 0x5501
@@ -77012,7 +77380,7 @@
 
  vendor.id		pci 0x1425
 &device.id		pci 0x5584
-+device.name		T580-5084 Unified Wire Storage Controller
++device.name		T540-5084 Unified Wire Storage Controller
 
  vendor.id		pci 0x1425
 &device.id		pci 0x5585
@@ -77085,6 +77453,22 @@
  vendor.id		pci 0x1425
 &device.id		pci 0x559c
 +device.name		T520-509C Unified Wire Storage Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x559d
++device.name		T540-509D Unified Wire Storage Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x559e
++device.name		T520-509E Unified Wire Storage Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x559f
++device.name		T540-509F Unified Wire Storage Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x55a0
++device.name		T540-50A0 Unified Wire Storage Controller
 
  vendor.id		pci 0x1425
 &device.id		pci 0x5601
@@ -77200,7 +77584,7 @@
 
  vendor.id		pci 0x1425
 &device.id		pci 0x5684
-+device.name		T580-5084 Unified Wire Storage Controller
++device.name		T540-5084 Unified Wire Storage Controller
 
  vendor.id		pci 0x1425
 &device.id		pci 0x5685
@@ -77273,6 +77657,22 @@
  vendor.id		pci 0x1425
 &device.id		pci 0x569c
 +device.name		T520-509C Unified Wire Storage Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x569d
++device.name		T540-509D Unified Wire Storage Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x569e
++device.name		T520-509E Unified Wire Storage Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x569f
++device.name		T540-509F Unified Wire Storage Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x56a0
++device.name		T540-50A0 Unified Wire Storage Controller
 
  vendor.id		pci 0x1425
 &device.id		pci 0x5701
@@ -77544,7 +77944,7 @@
 
  vendor.id		pci 0x1425
 &device.id		pci 0x5884
-+device.name		T580-5084 Unified Wire Ethernet Controller [VF]
++device.name		T540-5084 Unified Wire Ethernet Controller [VF]
 
  vendor.id		pci 0x1425
 &device.id		pci 0x5885
@@ -77619,6 +78019,22 @@
 +device.name		T520-509C Unified Wire Ethernet Controller [VF]
 
  vendor.id		pci 0x1425
+&device.id		pci 0x589d
++device.name		T540-509D Unified Wire Ethernet Controller [VF]
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x589e
++device.name		T520-509E Unified Wire Ethernet Controller [VF]
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x589f
++device.name		T540-509F Unified Wire Ethernet Controller [VF]
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x58a0
++device.name		T540-50A0 Unified Wire Ethernet Controller [VF]
+
+ vendor.id		pci 0x1425
 &device.id		pci 0x6001
 +device.name		T6225-CR Unified Wire Ethernet Controller
 
@@ -77669,6 +78085,14 @@
  vendor.id		pci 0x1425
 &device.id		pci 0x6015
 +device.name		T6201-BT Unified Wire Ethernet Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x6080
++device.name		T6225-6080 Unified Wire Ethernet Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x6081
++device.name		T62100-6081 Unified Wire Ethernet Controller
 
  vendor.id		pci 0x1425
 &device.id		pci 0x6401
@@ -77723,6 +78147,14 @@
 +device.name		T6201-BT Unified Wire Ethernet Controller
 
  vendor.id		pci 0x1425
+&device.id		pci 0x6480
++device.name		T6225-6080 Unified Wire Ethernet Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x6481
++device.name		T62100-6081 Unified Wire Ethernet Controller
+
+ vendor.id		pci 0x1425
 &device.id		pci 0x6501
 +device.name		T6225-CR Unified Wire Storage Controller
 
@@ -77773,6 +78205,14 @@
  vendor.id		pci 0x1425
 &device.id		pci 0x6515
 +device.name		T6201-BT Unified Wire Storage Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x6580
++device.name		T6225-6080 Unified Wire Storage Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x6581
++device.name		T62100-6081 Unified Wire Storage Controller
 
  vendor.id		pci 0x1425
 &device.id		pci 0x6601
@@ -77827,6 +78267,14 @@
 +device.name		T6201-BT Unified Wire Storage Controller
 
  vendor.id		pci 0x1425
+&device.id		pci 0x6680
++device.name		T6225-6080 Unified Wire Storage Controller
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x6681
++device.name		T62100-6081 Unified Wire Storage Controller
+
+ vendor.id		pci 0x1425
 &device.id		pci 0x6801
 +device.name		T6225-CR Unified Wire Ethernet Controller [VF]
 
@@ -77877,6 +78325,14 @@
  vendor.id		pci 0x1425
 &device.id		pci 0x6815
 +device.name		T6201-BT Unified Wire Ethernet Controller [VF]
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x6880
++device.name		T6225-6080 Unified Wire Ethernet Controller [VF]
+
+ vendor.id		pci 0x1425
+&device.id		pci 0x6881
++device.name		T62100-6081 Unified Wire Ethernet Controller [VF]
 
  vendor.id		pci 0x1425
 &device.id		pci 0xa000
@@ -78113,7 +78569,11 @@
 
  vendor.id		pci 0x144d
 &device.id		pci 0xa802
-+device.name		NVMe SSD Controller
++device.name		NVMe SSD Controller SM951/PM951
+
+ vendor.id		pci 0x144d
+&device.id		pci 0xa804
++device.name		NVMe SSD Controller SM961/PM961
 
  vendor.id		pci 0x144d
 &device.id		pci 0xa820
@@ -78206,6 +78666,64 @@
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x1fc4
 +subdevice.name		Express Flash NVMe PM1725 1.6TB AIC
+
+ vendor.id		pci 0x144d
+&device.id		pci 0xa822
++device.name		NVMe SSD Controller 172Xa
+
+ vendor.id		pci 0x144d
+&device.id		pci 0xa822
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x0621
++subdevice.name		PCIe3 1.6TB NVMe Flash Adapter II x8
+
+ vendor.id		pci 0x144d
+&device.id		pci 0xa822
+&subvendor.id		pci 0x1014
+&subdevice.id		pci 0x0622
++subdevice.name		PCIe3 3.2TB NVMe Flash Adapter II x8
+
+ vendor.id		pci 0x144d
+&device.id		pci 0xa822
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x1fd9
++subdevice.name		Express Flash PM1725a 800GB SFF
+
+ vendor.id		pci 0x144d
+&device.id		pci 0xa822
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x1fda
++subdevice.name		Express Flash PM1725a 1.6TB SFF
+
+ vendor.id		pci 0x144d
+&device.id		pci 0xa822
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x1fdb
++subdevice.name		Express Flash PM1725a 3.2TB SFF
+
+ vendor.id		pci 0x144d
+&device.id		pci 0xa822
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x1fdc
++subdevice.name		Express Flash PM1725a 6.4TB SFF
+
+ vendor.id		pci 0x144d
+&device.id		pci 0xa822
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x1fdd
++subdevice.name		Express Flash PM1725a 1.6TB AIC
+
+ vendor.id		pci 0x144d
+&device.id		pci 0xa822
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x1fde
++subdevice.name		Express Flash PM1725a 3.2TB AIC
+
+ vendor.id		pci 0x144d
+&device.id		pci 0xa822
+&subvendor.id		pci 0x1028
+&subdevice.id		pci 0x1fdf
++subdevice.name		Express Flash PM1725a 6.4TB AIC
 
  vendor.id		pci 0x144e
 +vendor.name		OLITEC
@@ -78555,6 +79073,10 @@
 +vendor.name		Lite-On Technology Corporation
 
  vendor.id		pci 0x14a4
+&device.id		pci 0x22f1
++device.name		M8Pe Series NVMe SSD
+
+ vendor.id		pci 0x14a4
 &device.id		pci 0x4318
 +device.name		Broadcom BCM4318 [AirForce One 54g] 802.11g WLAN Controller
 
@@ -78807,7 +79329,19 @@
 +vendor.name		NAKAYO Telecommunications Inc
 
  vendor.id		pci 0x14cd
-+vendor.name		Universal Scientific Ind.
++vendor.name		Universal Global Scientific Industrial Co.,Ltd
+
+ vendor.id		pci 0x14cd
+&device.id		pci 0x0001
++device.name		USI-1514-1GbaseT [OCP1]
+
+ vendor.id		pci 0x14cd
+&device.id		pci 0x0002
++device.name		USI-4227-SFP [OCP2]
+
+ vendor.id		pci 0x14cd
+&device.id		pci 0x0003
++device.name		USI-X557-10GbaseT [OCP3]
 
  vendor.id		pci 0x14ce
 +vendor.name		Whistle Communications
@@ -79228,6 +79762,12 @@
  vendor.id		pci 0x14e4
 &device.id		pci 0x163d
 +device.name		NetXtreme II BCM57811 10-Gigabit Ethernet
+
+ vendor.id		pci 0x14e4
+&device.id		pci 0x163d
+&subvendor.id		pci 0x1043
+&subdevice.id		pci 0x858a
++subdevice.name		PEB-10G/57811-1S
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x163e
@@ -79929,7 +80469,7 @@
 &device.id		pci 0x165a
 &subvendor.id		pci 0x1014
 &subdevice.id		pci 0x0378
-+subdevice.name		IBM System x3350 (Machine type 4192)
++subdevice.name		System x3350 (Machine type 4192)
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x165a
@@ -81004,6 +81544,10 @@
 +device.name		BCM57765/57785 xD-Picture Card Reader
 
  vendor.id		pci 0x14e4
+&device.id		pci 0x16c1
++device.name		NetXtreme-E RDMA Virtual Function
+
+ vendor.id		pci 0x14e4
 &device.id		pci 0x16c6
 +device.name		NetXtreme BCM5702A3 Gigabit Ethernet
 
@@ -81085,7 +81629,7 @@
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x16cb
-+device.name		BCM57304 NetXtreme-C Ethernet Virtual Function
++device.name		NetXtreme-C Ethernet Virtual Function
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x16cc
@@ -81113,7 +81657,7 @@
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x16d3
-+device.name		BCM57404 NetXtreme-E Ethernet Virtual Function
++device.name		NetXtreme-E Ethernet Virtual Function
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x16d4
@@ -81130,6 +81674,18 @@
  vendor.id		pci 0x14e4
 &device.id		pci 0x16d7
 +device.name		BCM57414 NetXtreme-E 10Gb/25Gb RDMA Ethernet Controller
+
+ vendor.id		pci 0x14e4
+&device.id		pci 0x16d7
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x1202
++subdevice.name		BCM957412M4122 OCP 1x25G Type1 wRoCE
+
+ vendor.id		pci 0x14e4
+&device.id		pci 0x16d7
+&subvendor.id		pci 0x14e4
+&subdevice.id		pci 0x1404
++subdevice.name		BCM957414M4142 OCP 2x25G Type1 wRoCE
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x16d7
@@ -81171,7 +81727,7 @@
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x16dc
-+device.name		BCM57414 NetXtreme-E Ethernet Virtual Function
++device.name		NetXtreme-E Ethernet Virtual Function
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x16dd
@@ -81187,7 +81743,7 @@
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x16e1
-+device.name		BCM57314 NetXtreme-C Ethernet Virtual Function
++device.name		NetXtreme-C Ethernet Virtual Function
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x16e2
@@ -81202,6 +81758,10 @@
  vendor.id		pci 0x14e4
 &device.id		pci 0x16e3
 +device.name		BCM57416 NetXtreme-E 10Gb RDMA Ethernet Controller
+
+ vendor.id		pci 0x14e4
+&device.id		pci 0x16e5
++device.name		NetXtreme-C RDMA Virtual Function
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x16e7
@@ -81220,8 +81780,16 @@
 +device.name		BCM57414 NetXtreme-E Ethernet Partition
 
  vendor.id		pci 0x14e4
+&device.id		pci 0x16ed
++device.name		BCM57414 NetXtreme-E RDMA Partition
+
+ vendor.id		pci 0x14e4
 &device.id		pci 0x16ee
 +device.name		BCM57416 NetXtreme-E Ethernet Partition
+
+ vendor.id		pci 0x14e4
+&device.id		pci 0x16ef
++device.name		BCM57416 NetXtreme-E RDMA Partition
 
  vendor.id		pci 0x14e4
 &device.id		pci 0x16f3
@@ -82635,6 +83203,14 @@
 &device.id		pci 0xb842
 +device.name		BCM56842 Trident 10GE Switch Controller
 
+ vendor.id		pci 0x14e4
+&device.id		pci 0xb850
++device.name		Broadcom BCM56850 Switch ASIC
+
+ vendor.id		pci 0x14e4
+&device.id		pci 0xb960
++device.name		Broadcom BCM56960 Switch ASIC
+
  vendor.id		pci 0x14e5
 +vendor.name		Pixelfusion Ltd
 
@@ -83526,7 +84102,7 @@
 &device.id		pci 0x8800
 &subvendor.id		pci 0x1043
 &subdevice.id		pci 0x4823
-+subdevice.name		ASUS PVR-416
++subdevice.name		PVR-416
 
  vendor.id		pci 0x14f1
 &device.id		pci 0x8800
@@ -83798,7 +84374,7 @@
 &device.id		pci 0x8802
 &subvendor.id		pci 0x1043
 &subdevice.id		pci 0x4823
-+subdevice.name		ASUS PVR-416
++subdevice.name		PVR-416
 
  vendor.id		pci 0x14f1
 &device.id		pci 0x8802
@@ -85241,6 +85817,10 @@
  vendor.id		pci 0x159b
 +vendor.name		Faraday Technology Corp
 
+ vendor.id		pci 0x159b
+&device.id		pci 0x4321
++device.name		StorLink SL3516 (Gemini) Host Bridge
+
  vendor.id		pci 0x159c
 +vendor.name		Stratus Computer Systems
 
@@ -85394,6 +85974,10 @@
 +device.name		MT27500 Family [ConnectX-3 Flash Recovery]
 
  vendor.id		pci 0x15b3
+&device.id		pci 0x01f8
++device.name		MT27520 Family [ConnectX-3 Pro Flash Recovery]
+
+ vendor.id		pci 0x15b3
 &device.id		pci 0x01ff
 +device.name		MT27600 Family [Connect-IB Flash Recovery]
 
@@ -85410,6 +85994,14 @@
 +device.name		MT28800 Family [ConnectX-5 Flash Recovery]
 
  vendor.id		pci 0x15b3
+&device.id		pci 0x020f
++device.name		MT28908A0 Family [ConnectX-6 Flash Recovery]
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x0211
++device.name		MT416842 Family [BlueField SoC Flash Recovery]
+
+ vendor.id		pci 0x15b3
 &device.id		pci 0x024e
 +device.name		MT53100 [Spectrum-2, Flash recovery mode]
 
@@ -85424,6 +86016,10 @@
  vendor.id		pci 0x15b3
 &device.id		pci 0x0263
 +device.name		MT27710 [ConnectX-4 Lx Programmable Virtual Function] EN
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x0281
++device.name		NPS-600 Flash Recovery
 
  vendor.id		pci 0x15b3
 &device.id		pci 0x1002
@@ -85462,6 +86058,66 @@
 &subvendor.id		pci 0x103c
 &subdevice.id		pci 0x18d6
 +subdevice.name		InfiniBand FDR/EN 10/40Gb Dual Port 544QSFP Adapter
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1003
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0025
++subdevice.name		ConnectX-3 IB QDR Dual Port Mezzanine Card
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1003
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0026
++subdevice.name		ConnectX-3 IB FDR Dual Port Mezzanine Card
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1003
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0059
++subdevice.name		ConnectX-3 VPI IB FDR/40 GbE Single Port QSFP+ Mezzanine Card
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1003
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0065
++subdevice.name		ConnectX-3 VPI IB FDR/40 GbE Dual Port QSFP+ Adapter
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1003
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0066
++subdevice.name		ConnectX-3 IB FDR10 Dual Port Mezzanine Card
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1003
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0067
++subdevice.name		ConnectX-3 VPI IB FDR/40 GbE Single Port QSFP+ Adapter
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1003
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0071
++subdevice.name		ConnectX-3 VPI IB FDR/40 GbE Dual Port QSFP+ Mezzanine Card
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1003
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0078
++subdevice.name		ConnectX-3 10 GbE Dual Port KR Mezzanine Card
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1003
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0079
++subdevice.name		ConnectX-3 40 GbE Dual Port QSFP+ Adapter
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1003
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0080
++subdevice.name		ConnectX-3 10 GbE Dual Port SFP+ Adapter
 
  vendor.id		pci 0x15b3
 &device.id		pci 0x1004
@@ -85528,6 +86184,24 @@
 +subdevice.name		FastFrame NQ12
 
  vendor.id		pci 0x15b3
+&device.id		pci 0x1007
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0078
++subdevice.name		ConnectX-3 Pro 10 GbE Dual Port KR Mezzanine Card
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1007
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0079
++subdevice.name		ConnectX-3 Pro 40 GbE Dual Port QSFP+ Adapter
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1007
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0080
++subdevice.name		ConnectX-3 Pro 10 GbE Dual Port SFP+ Adapter
+
+ vendor.id		pci 0x15b3
 &device.id		pci 0x1009
 +device.name		MT27530 Family
 
@@ -85572,12 +86246,60 @@
 +device.name		MT27700 Family [ConnectX-4]
 
  vendor.id		pci 0x15b3
+&device.id		pci 0x1013
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0006
++subdevice.name		MCX416A-BCAT, ConnectX-4 EN, 40/56GbE 2P, PCIe3.0 x16
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1013
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0033
++subdevice.name		ConnectX-4 VPI IB EDR/100 GbE Single Port QSFP28 Adapter
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1013
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0034
++subdevice.name		ConnectX-4 VPI IB EDR/100 GbE Dual Port QSFP28 Adapter
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1013
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0050
++subdevice.name		ConnectX-4 100 GbE Dual Port QSFP28 Adapter
+
+ vendor.id		pci 0x15b3
 &device.id		pci 0x1014
 +device.name		MT27700 Family [ConnectX-4 Virtual Function]
 
  vendor.id		pci 0x15b3
 &device.id		pci 0x1015
 +device.name		MT27710 Family [ConnectX-4 Lx]
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1015
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0016
++subdevice.name		ConnectX-4 Lx 25 GbE Dual Port SFP28 Adapter
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1015
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0020
++subdevice.name		MCX4411A-ACQN, ConnectX-4 Lx EN OCP, 1x25Gb
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1015
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0021
++subdevice.name		MCX4421A-ACQN ConnectX-4 Lx EN OCP,2x25G
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0x1015
+&subvendor.id		pci 0x15b3
+&subdevice.id		pci 0x0025
++subdevice.name		ConnectX-4 Lx 25 GbE Dual Port SFP28 rNDC
 
  vendor.id		pci 0x15b3
 &device.id		pci 0x1016
@@ -85601,11 +86323,11 @@
 
  vendor.id		pci 0x15b3
 &device.id		pci 0x101b
-+device.name		MT28831
++device.name		MT28908 Family [ConnectX-6]
 
  vendor.id		pci 0x15b3
 &device.id		pci 0x101c
-+device.name		MT28840
++device.name		MT28908 Family [ConnectX-6 Virtual Function]
 
  vendor.id		pci 0x15b3
 &device.id		pci 0x101d
@@ -85791,11 +86513,15 @@
 
  vendor.id		pci 0x15b3
 &device.id		pci 0xa2d0
-+device.name		MT416842
++device.name		MT416842 BlueField SoC Crypto enabled
 
  vendor.id		pci 0x15b3
 &device.id		pci 0xa2d1
-+device.name		MT416842
++device.name		MT416842 BlueField SoC Crypto disabled
+
+ vendor.id		pci 0x15b3
+&device.id		pci 0xa2d2
++device.name		MT416842 BlueField integrated ConnectX-5 network controller
 
  vendor.id		pci 0x15b3
 &device.id		pci 0xa2d3
@@ -88204,6 +88930,12 @@
  vendor.id		pci 0x168c
 &device.id		pci 0x0034
 &subvendor.id		pci 0x1028
+&subdevice.id		pci 0x020b
++subdevice.name		Wireless 1601 802.11abgn Adapter
+
+ vendor.id		pci 0x168c
+&device.id		pci 0x0034
+&subvendor.id		pci 0x1028
 &subdevice.id		pci 0x0300
 +subdevice.name		Wireless 1802 802.11abgn Adapter
 
@@ -88718,6 +89450,10 @@
 +device.name		AP470 48-Channel TTL Level Digital Input/Output Module
 
  vendor.id		pci 0x16d5
+&device.id		pci 0x7017
++device.name		AP323 16-bit, 20 or 40 Channel Analog Input Module
+
+ vendor.id		pci 0x16d5
 &device.id		pci 0x7018
 +device.name		AP408: 32-Channel Digital I/O Module
 
@@ -89108,6 +89844,24 @@
 &device.id		pci 0x9702
 &subvendor.id		pci 0x177d
 &subdevice.id		pci 0x0004
++subdevice.name		CN2350 [LiquidIO II] 2-port 10GbE Intelligent adapter
+
+ vendor.id		pci 0x177d
+&device.id		pci 0x9702
+&subvendor.id		pci 0x177d
+&subdevice.id		pci 0x0005
++subdevice.name		CN2360 [LiquidIO II] 2-port 10GbE Intelligent adapter
+
+ vendor.id		pci 0x177d
+&device.id		pci 0x9702
+&subvendor.id		pci 0x177d
+&subdevice.id		pci 0x0006
++subdevice.name		CN2360 [LiquidIO II] 2-port 25GbE Intelligent adapter
+
+ vendor.id		pci 0x177d
+&device.id		pci 0x9702
+&subvendor.id		pci 0x177d
+&subdevice.id		pci 0x0007
 +subdevice.name		CN2350 [LiquidIO II] 2-port 25GbE Intelligent adapter
 
  vendor.id		pci 0x177d
@@ -89123,6 +89877,30 @@
 &subvendor.id		pci 0x177d
 &subdevice.id		pci 0x0003
 +subdevice.name		CN2350 [LiquidIO II] 2-port 10GbE SRIOV Virtual Function
+
+ vendor.id		pci 0x177d
+&device.id		pci 0x9712
+&subvendor.id		pci 0x177d
+&subdevice.id		pci 0x0004
++subdevice.name		CN2350 [LiquidIO II] 2-port 10GbE SRIOV Virtual Function
+
+ vendor.id		pci 0x177d
+&device.id		pci 0x9712
+&subvendor.id		pci 0x177d
+&subdevice.id		pci 0x0005
++subdevice.name		CN2360 [LiquidIO II] 2-port 10GbE SRIOV Virtual Function
+
+ vendor.id		pci 0x177d
+&device.id		pci 0x9712
+&subvendor.id		pci 0x177d
+&subdevice.id		pci 0x0006
++subdevice.name		CN2360 [LiquidIO II] 2-port 25GbE SRIOV Virtual Function
+
+ vendor.id		pci 0x177d
+&device.id		pci 0x9712
+&subvendor.id		pci 0x177d
+&subdevice.id		pci 0x0007
++subdevice.name		CN2350 [LiquidIO II] 2-port 25GbE SRIOV Virtual Function
 
  vendor.id		pci 0x177d
 &device.id		pci 0x9713
@@ -89685,6 +90463,10 @@
  vendor.id		pci 0x17d3
 &device.id		pci 0x1201
 +device.name		ARC-1200 2-Port PCI-Express to SATA II RAID Controller
+
+ vendor.id		pci 0x17d3
+&device.id		pci 0x1203
++device.name		ARC-1203 2/4/8 Port PCIe 2.0 to SATA 6Gb RAID Controller
 
  vendor.id		pci 0x17d3
 &device.id		pci 0x1210
@@ -91082,7 +91864,7 @@
 
  vendor.id		pci 0x18c3
 &device.id		pci 0x0720
-&subvendor.id		pci 0x07ca
+&subvendor.id		pci 0x1461
 &subdevice.id		pci 0x032e
 +subdevice.name		Hybrid M779 PCI-E
 
@@ -91524,6 +92306,14 @@
 &device.id		pci 0x0175
 +device.name		NT20E3-2-PTP Network Adapter 2x10Gb
 
+ vendor.id		pci 0x18f4
+&device.id		pci 0x0185
++device.name		NT40A01 Network Adapter
+
+ vendor.id		pci 0x18f4
+&device.id		pci 0x01a5
++device.name		NT200A01 Network Adapter
+
  vendor.id		pci 0x18f6
 +vendor.name		NextIO
 
@@ -91923,7 +92713,7 @@
 
  vendor.id		pci 0x1924
 &device.id		pci 0x0803
-+device.name		SFC9020 [Solarstorm]
++device.name		SFC9020 10G Ethernet Controller
 
  vendor.id		pci 0x1924
 &device.id		pci 0x0803
@@ -92101,7 +92891,7 @@
 
  vendor.id		pci 0x1924
 &device.id		pci 0x0813
-+device.name		SFL9021 [Solarstorm]
++device.name		SFL9021 10GBASE-T Ethernet Controller
 
  vendor.id		pci 0x1924
 &device.id		pci 0x0813
@@ -92153,7 +92943,7 @@
 
  vendor.id		pci 0x1924
 &device.id		pci 0x0903
-+device.name		SFC9120
++device.name		SFC9120 10G Ethernet Controller
 
  vendor.id		pci 0x1924
 &device.id		pci 0x0903
@@ -92223,7 +93013,7 @@
 
  vendor.id		pci 0x1924
 &device.id		pci 0x0923
-+device.name		SFC9140
++device.name		SFC9140 10/40G Ethernet Controller
 
  vendor.id		pci 0x1924
 &device.id		pci 0x0923
@@ -92245,13 +93035,13 @@
 
  vendor.id		pci 0x1924
 &device.id		pci 0x0a03
-+device.name		SFC9220
++device.name		SFC9220 10/40G Ethernet Controller
 
  vendor.id		pci 0x1924
 &device.id		pci 0x0a03
 &subvendor.id		pci 0x1924
 &subdevice.id		pci 0x8011
-+subdevice.name		SFN 8022-R1 Solarflare Flareon 8000 Series 10G Adapter
++subdevice.name		SFN8022-R1 Flareon 8000 Series 10G Adapter
 
  vendor.id		pci 0x1924
 &device.id		pci 0x0a03
@@ -92263,7 +93053,7 @@
 &device.id		pci 0x0a03
 &subvendor.id		pci 0x1924
 &subdevice.id		pci 0x8013
-+subdevice.name		SFN8042-R1 Solarflare Flareon 8000 Series 10/40G Adapter
++subdevice.name		SFN8042-R1 Flareon 8000 Series 10/40G Adapter
 
  vendor.id		pci 0x1924
 &device.id		pci 0x0a03
@@ -92296,20 +93086,30 @@
 +subdevice.name		SFN8542-R2 Flareon Ultra 8000 Series 10/40G Adapter
 
  vendor.id		pci 0x1924
+&device.id		pci 0x0a03
+&subvendor.id		pci 0x1924
+&subdevice.id		pci 0x801a
++subdevice.name		SFN8722-R1 Flareon Ultra 8000 Series OCP 10G Adapter
+
+ vendor.id		pci 0x1924
 &device.id		pci 0x1803
-+device.name		SFC9020 Virtual Function [Solarstorm]
++device.name		SFC9020 10G Ethernet Controller (Virtual Function)
 
  vendor.id		pci 0x1924
 &device.id		pci 0x1813
-+device.name		SFL9021 Virtual Function [Solarstorm]
++device.name		SFL9021 10GBASE-T Ethernet Controller (Virtual Function)
 
  vendor.id		pci 0x1924
 &device.id		pci 0x1903
-+device.name		SFC9120 Virtual Function
++device.name		SFC9120 10G Ethernet Controller (Virtual Function)
 
  vendor.id		pci 0x1924
 &device.id		pci 0x1923
-+device.name		SFC9140 Virtual Function
++device.name		SFC9140 10/40G Ethernet Controller (Virtual Function)
+
+ vendor.id		pci 0x1924
+&device.id		pci 0x1a03
++device.name		SFC9220 10/40G Ethernet Controller (Virtual Function)
 
  vendor.id		pci 0x1924
 &device.id		pci 0x6703
@@ -93466,6 +94266,13 @@
 &device.id		pci 0xdd52
 +device.name		DDRdrive X1-30
 
+ vendor.id		pci 0x19e5
++vendor.name		Huawei Technologies Co., Ltd.
+
+ vendor.id		pci 0x19e5
+&device.id		pci 0x1711
++device.name		Hi1710 [iBMC Intelligent Management system chip w/VGA support]
+
  vendor.id		pci 0x19e7
 +vendor.name		NET (Network Equipment Technologies)
 
@@ -94180,7 +94987,7 @@
 +device.name		D7 Multiformat Broadcast HD/SD Encoder/Decoder/Transcoder
 
  vendor.id		pci 0x1b08
-+vendor.name		MSC Vertriebs GmbH
++vendor.name		MSC Technologies GmbH
 
  vendor.id		pci 0x1b0a
 +vendor.name		Pegatron
@@ -94625,6 +95432,10 @@
 +device.name		RevoDrive 3 X2 PCI-Express SSD 240 GB (Marvell Controller)
 
  vendor.id		pci 0x1b85
+&device.id		pci 0x6018
++device.name		RD400/400A SSD
+
+ vendor.id		pci 0x1b85
 &device.id		pci 0x8788
 +device.name		RevoDrive Hybrid
 
@@ -94956,8 +95767,16 @@
 +device.name		FBC2XGHH Capture 2x10Gb
 
  vendor.id		pci 0x1c2c
+&device.id		pci 0x00ad
++device.name		FBC2CGG3HL Capture 2x200Gb
+
+ vendor.id		pci 0x1c2c
 &device.id		pci 0x00af
 +device.name		Capture slave device
+
+ vendor.id		pci 0x1c2c
+&device.id		pci 0xa001
++device.name		FBC2CGG3 Capture 2x200Gb
 
  vendor.id		pci 0x1c32
 +vendor.name		Highland Technology, Inc.
@@ -95001,6 +95820,13 @@
 &subvendor.id		pci 0x1014
 &subdevice.id		pci 0x04f6
 +subdevice.name		PCIe3 3.2TB NVMe Flash Adapter
+
+ vendor.id		pci 0x1c5f
++vendor.name		Beijing Memblaze Technology Co. Ltd.
+
+ vendor.id		pci 0x1c5f
+&device.id		pci 0x0540
++device.name		PBlaze4 NVMe SSD
 
  vendor.id		pci 0x1c63
 +vendor.name		Science and Research Centre of Computer Technology (JSC "NICEVT")
@@ -95077,6 +95903,13 @@
 &device.id		pci 0x0305
 +device.name		Simulyzer-RT CompactPCI Serial CAN-1 card
 
+ vendor.id		pci 0x1cd7
++vendor.name		Nanjing Magewell Electronics Co., Ltd.
+
+ vendor.id		pci 0x1cd7
+&device.id		pci 0x0010
++device.name		Pro Capture Endpoint
+
  vendor.id		pci 0x1cdd
 +vendor.name		secunet Security Networks AG
 
@@ -95102,6 +95935,10 @@
  vendor.id		pci 0x1ce4
 &device.id		pci 0x0005
 +device.name		ExaNIC X40
+
+ vendor.id		pci 0x1ce4
+&device.id		pci 0x0006
++device.name		ExaNIC X10-HPT
 
  vendor.id		pci 0x1cf7
 +vendor.name		Subspace Dynamics
@@ -95227,8 +96064,20 @@
 +device.name		AR-ARKA-FX0 [Arkville 32B DPDK Data Mover]
 
  vendor.id		pci 0x1d6c
+&device.id		pci 0x100d
+&subvendor.id		pci 0x1d6c
+&subdevice.id		pci 0x2001
++subdevice.name		DPDK-Aware Virtual Function [Arkville VF]
+
+ vendor.id		pci 0x1d6c
 &device.id		pci 0x100e
 +device.name		AR-ARKA-FX1 [Arkville 64B DPDK Data Mover]
+
+ vendor.id		pci 0x1d6c
+&device.id		pci 0x100e
+&subvendor.id		pci 0x1d6c
+&subdevice.id		pci 0x2001
++subdevice.name		DPDK-Aware Virtual Function [Arkville VF]
 
  vendor.id		pci 0x1d6c
 &device.id		pci 0x4200
@@ -95236,6 +96085,12 @@
 
  vendor.id		pci 0x1d78
 +vendor.name		DERA
+
+ vendor.id		pci 0x1d7c
++vendor.name		Aerotech, Inc.
+
+ vendor.id		pci 0x1d87
++vendor.name		Rockchip Inc. RK3399 PCI Express Root Port
 
  vendor.id		pci 0x1d8f
 +vendor.name		Enyx
@@ -95442,7 +96297,7 @@
 &device.id		pci 0x4022
 &subvendor.id		pci 0x1432
 &subdevice.id		pci 0x8103
-+subdevice.name		EN-8102PF 10GbE SPF+ Ethernet Adapter
++subdevice.name		10 Gigabit Ethernet SFP+ PCI Express Adapter
 
  vendor.id		pci 0x1fc9
 &device.id		pci 0x4022
@@ -95474,7 +96329,7 @@
 &device.id		pci 0x4025
 &subvendor.id		pci 0x1432
 &subdevice.id		pci 0x8102
-+subdevice.name		EN-8102P 10GbE Ethernet Adapter
++subdevice.name		10 Gigabit Ethernet PCI Express Adapter
 
  vendor.id		pci 0x1fc9
 &device.id		pci 0x4025
@@ -95489,6 +96344,18 @@
  vendor.id		pci 0x1fc9
 &device.id		pci 0x4027
 +device.name		TN9710P 10GBase-T/NBASE-T Ethernet Adapter
+
+ vendor.id		pci 0x1fc9
+&device.id		pci 0x4027
+&subvendor.id		pci 0x1432
+&subdevice.id		pci 0x8104
++subdevice.name		10 Gigabit Ethernet PCI Express Adapter
+
+ vendor.id		pci 0x1fc9
+&device.id		pci 0x4027
+&subvendor.id		pci 0x1fc9
+&subdevice.id		pci 0x3015
++subdevice.name		Ethernet Adapter
 
  vendor.id		pci 0x1fc9
 &device.id		pci 0x4527
@@ -95592,6 +96459,9 @@
 
  vendor.id		pci 0x3112
 +vendor.name		Satelco Ingenieria S.A.
+
+ vendor.id		pci 0x3130
++vendor.name		AUDIOTRAK
 
  vendor.id		pci 0x3142
 +vendor.name		Post Impression Systems.
@@ -98154,6 +99024,9 @@
  vendor.id		pci 0x5700
 +vendor.name		Netpower
 
+ vendor.id		pci 0x5845
++vendor.name		X-ES, Inc.
+
  vendor.id		pci 0x584d
 +vendor.name		AuzenTech Co., Ltd.
 
@@ -99584,6 +100457,90 @@
 +device.name		Moorestown SSP0
 
  vendor.id		pci 0x8086
+&device.id		pci 0x0817
++device.name		Medfield Serial IO I2C Controller #3
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x0818
++device.name		Medfield Serial IO I2C Controller #4
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x0819
++device.name		Medfield Serial IO I2C Controller #5
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x081a
++device.name		Medfield GPIO Controller [Core]
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x081b
++device.name		Medfield Serial IO HSUART Controller #1
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x081c
++device.name		Medfield Serial IO HSUART Controller #2
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x081d
++device.name		Medfield Serial IO HSUART Controller #3
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x081e
++device.name		Medfield Serial IO HSUART DMA Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x081f
++device.name		Medfield GPIO Controller [AON]
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x0820
++device.name		Medfield SD Host Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x0821
++device.name		Medfield SDIO Controller #1
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x0822
++device.name		Medfield SDIO Controller #2
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x0823
++device.name		Medfield eMMC Controller #0
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x0824
++device.name		Medfield eMMC Controller #1
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x0827
++device.name		Medfield Serial IO DMA Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x0828
++device.name		Medfield Power Management Unit
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x0829
++device.name		Medfield USB Device Controller (OTG)
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x082a
++device.name		Medfield SCU IPC
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x082c
++device.name		Medfield Serial IO I2C Controller #0
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x082d
++device.name		Medfield Serial IO I2C Controller #1
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x082e
++device.name		Medfield Serial IO I2C Controller #2
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x0885
 +device.name		Centrino Wireless-N + WiMAX 6150
 
@@ -100802,6 +101759,10 @@
  vendor.id		pci 0x8086
 &device.id		pci 0x0a2e
 +device.name		Haswell-ULT Integrated Graphics Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x0a53
++device.name		DC P3520 SSD
 
  vendor.id		pci 0x8086
 &device.id		pci 0x0be0
@@ -102411,7 +103372,7 @@
 &device.id		pci 0x1019
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x302c
-+subdevice.name		Intel 82865G Mainboard (D865GBF)
++subdevice.name		D865GBF Mainboard
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1019
@@ -103435,7 +104396,7 @@
 &device.id		pci 0x1096
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x3476
-+subdevice.name		Intel S5000PSLSATA Server Board
++subdevice.name		S5000PSLSATA Server Board
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1097
@@ -104221,6 +105182,12 @@
 
  vendor.id		pci 0x8086
 &device.id		pci 0x10f8
+&subvendor.id		pci 0x1059
+&subdevice.id		pci 0x0130
++subdevice.name		T4009 10GbE interface
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x10f8
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x000c
 +subdevice.name		Ethernet X520 10GbE Dual Port KX4-KR Mezz
@@ -104498,6 +105465,54 @@
  vendor.id		pci 0x8086
 &device.id		pci 0x1162
 +device.name		Xscale 80200 Big Endian Companion Chip
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1190
++device.name		Merrifield SD/SDIO/eMMC Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1191
++device.name		Merrifield Serial IO HSUART Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1192
++device.name		Merrifield Serial IO HSUART DMA Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1194
++device.name		Merrifield Serial IO SPI Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1195
++device.name		Merrifield Serial IO I2C Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1196
++device.name		Merrifield Serial IO I2C Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1199
++device.name		Merrifield GPIO Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x119e
++device.name		Merrifield USB Device Controller (OTG)
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x11a0
++device.name		Merrifield SCU IPC
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x11a1
++device.name		Merrifield Power Management Unit
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x11a2
++device.name		Merrifield Serial IO DMA Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x11a5
++device.name		Merrifield Serial IO PWM Controller
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1200
@@ -106340,6 +107355,14 @@
 +device.name		82599 10 Gigabit Dual Port Backplane Connection with FCoE
 
  vendor.id		pci 0x8086
+&device.id		pci 0x152e
++device.name		82599 Virtual Function
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1530
++device.name		X540 Virtual Function
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x1533
 +device.name		I210 Gigabit Network Connection
 
@@ -106410,6 +107433,24 @@
 &subvendor.id		pci 0x1059
 &subdevice.id		pci 0x0120
 +subdevice.name		T4008 1GbE interface
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1537
+&subvendor.id		pci 0x1059
+&subdevice.id		pci 0x0130
++subdevice.name		T4009 1GbE interface
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1537
+&subvendor.id		pci 0x1059
+&subdevice.id		pci 0x0140
++subdevice.name		T2035 1GbE interface
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1537
+&subvendor.id		pci 0x1059
+&subdevice.id		pci 0x0150
++subdevice.name		RD-01068 1GbE interface
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1538
@@ -106628,6 +107669,10 @@
 +subdevice.name		Ethernet Converged Network Adapter X550-T2
 
  vendor.id		pci 0x8086
+&device.id		pci 0x1564
++device.name		X550 Virtual Function
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x1565
 +device.name		X550 Virtual Function
 
@@ -106707,37 +107752,49 @@
 &device.id		pci 0x1572
 &subvendor.id		pci 0x103c
 &subdevice.id		pci 0x22fc
-+subdevice.name		HP Ethernet 10Gb 2-port 562FLR-SFP+ Adapter
++subdevice.name		Ethernet 10Gb 2-port 562FLR-SFP+ Adapter
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1572
 &subvendor.id		pci 0x103c
 &subdevice.id		pci 0x22fd
-+subdevice.name		HP Ethernet 10Gb 2-port 562SFP+ Adapter
++subdevice.name		Ethernet 10Gb 2-port 562SFP+ Adapter
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1572
 &subvendor.id		pci 0x1137
 &subdevice.id		pci 0x0000
-+subdevice.name		Ethernet Converged NIC X710-4
++subdevice.name		Ethernet Converged NIC X710-DA
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1572
 &subvendor.id		pci 0x1137
 &subdevice.id		pci 0x013b
-+subdevice.name		Ethernet Converged NIC X710-4
++subdevice.name		Ethernet Converged NIC X710-DA4
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1572
+&subvendor.id		pci 0x1137
+&subdevice.id		pci 0x020a
++subdevice.name		Ethernet Converged NIC X710-DA2
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1572
 &subvendor.id		pci 0x1590
 &subdevice.id		pci 0x0000
-+subdevice.name		Ethernet 10GbE 4P 563SFP+ Adapter
++subdevice.name		Ethernet Controller X710 for 10GbE SFP+
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1572
 &subvendor.id		pci 0x1590
 &subdevice.id		pci 0x0225
 +subdevice.name		Ethernet 10GbE 4P 563SFP+ Adapter
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1572
+&subvendor.id		pci 0x1590
+&subdevice.id		pci 0x022f
++subdevice.name		Ethernet 10Gb 2-port 564i Communication Board
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1572
@@ -106832,6 +107889,12 @@
  vendor.id		pci 0x8086
 &device.id		pci 0x1572
 &subvendor.id		pci 0x8086
+&subdevice.id		pci 0x000e
++subdevice.name		Ethernet Server Adapter OCP X710-2
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1572
+&subvendor.id		pci 0x8086
 &subdevice.id		pci 0x0010
 +subdevice.name		Ethernet Converged Network Adapter X710
 
@@ -106839,12 +107902,18 @@
 &device.id		pci 0x1572
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x4005
-+subdevice.name		Ethernet Controller XL710 for 10 Gigabit SFP+
++subdevice.name		Ethernet Controller X710 for 10GbE SFP+
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1572
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x4006
++subdevice.name		Ethernet Controller X710 for 10GbE SFP+
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1572
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x4007
 +subdevice.name		Ethernet Controller X710 for 10GbE SFP+
 
  vendor.id		pci 0x8086
@@ -106904,6 +107973,12 @@
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x1f9e
 +subdevice.name		Ethernet 10G 2P X710-k bNDC
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1581
+&subvendor.id		pci 0x1059
+&subdevice.id		pci 0x0150
++subdevice.name		RD-01068 10GbE-KR interface
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1581
@@ -107061,13 +108136,13 @@
 &device.id		pci 0x1587
 &subvendor.id		pci 0x103c
 &subdevice.id		pci 0x0000
-+subdevice.name		HPE Ethernet 10/20Gb 2-port 660FLB Adapter
++subdevice.name		Ethernet 10/20Gb 2-port 660FLB Adapter
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1587
 &subvendor.id		pci 0x103c
 &subdevice.id		pci 0x22fe
-+subdevice.name		HPE Ethernet 10/20Gb 2-port 660FLB Adapter
++subdevice.name		Ethernet 10/20Gb 2-port 660FLB Adapter
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1588
@@ -107077,13 +108152,13 @@
 &device.id		pci 0x1588
 &subvendor.id		pci 0x103c
 &subdevice.id		pci 0x0000
-+subdevice.name		HPE Ethernet 10/20Gb 2-port 660M Adapter
++subdevice.name		Ethernet 10/20Gb 2-port 660M Adapter
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1588
 &subvendor.id		pci 0x103c
 &subdevice.id		pci 0x22ff
-+subdevice.name		HPE Ethernet 10/20Gb 2-port 660M Adapter
++subdevice.name		Ethernet 10/20Gb 2-port 660M Adapter
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1589
@@ -107117,6 +108192,18 @@
 &device.id		pci 0x1589
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x0002
++subdevice.name		Ethernet Converged Network Adapter X710-T4
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1589
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x0003
++subdevice.name		Ethernet Converged Network Adapter X710-T
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x1589
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x00a0
 +subdevice.name		Ethernet Converged Network Adapter X710-T4
 
  vendor.id		pci 0x8086
@@ -107188,6 +108275,12 @@
 +subdevice.name		Ethernet Network Adapter OCP XXV710-1
 
  vendor.id		pci 0x8086
+&device.id		pci 0x158b
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x4001
++subdevice.name		Ethernet Network Adapter XXV710-2
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x15a0
 +device.name		Ethernet Connection (2) I218-LM
 
@@ -107216,6 +108309,10 @@
 +device.name		Ethernet Connection X552 Virtual Function
 
  vendor.id		pci 0x8086
+&device.id		pci 0x15a9
++device.name		X552 Virtual Function
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x15aa
 +device.name		Ethernet Connection X552 10 GbE Backplane
 
@@ -107224,6 +108321,12 @@
 &subvendor.id		pci 0x1059
 &subdevice.id		pci 0x0120
 +subdevice.name		T4008 10GbE interface
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x15aa
+&subvendor.id		pci 0x1059
+&subdevice.id		pci 0x0150
++subdevice.name		RD-01068 10GbE interface
 
  vendor.id		pci 0x8086
 &device.id		pci 0x15ab
@@ -107240,6 +108343,14 @@
  vendor.id		pci 0x8086
 &device.id		pci 0x15ae
 +device.name		Ethernet Connection X552 1000BASE-T
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x15b0
++device.name		Ethernet Connection X552 Backplane
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x15b4
++device.name		X553 Virtual Function
 
  vendor.id		pci 0x8086
 &device.id		pci 0x15b5
@@ -107262,12 +108373,32 @@
 +device.name		Ethernet Connection (3) I219-LM
 
  vendor.id		pci 0x8086
+&device.id		pci 0x15bb
++device.name		Ethernet Connection (7) I219-LM
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x15bc
++device.name		Ethernet Connection (7) I219-V
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x15bd
++device.name		Ethernet Connection (6) I219-LM
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x15be
++device.name		Ethernet Connection (6) I219-V
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x15bf
 +device.name		JHL6240 Thunderbolt 3 NHI (Low Power) [Alpine Ridge LP 2016]
 
  vendor.id		pci 0x8086
 &device.id		pci 0x15c0
 +device.name		JHL6240 Thunderbolt 3 Bridge (Low Power) [Alpine Ridge LP 2016]
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x15c5
++device.name		X553 Virtual Function
 
  vendor.id		pci 0x8086
 &device.id		pci 0x15d0
@@ -107941,7 +109072,7 @@
 &device.id		pci 0x1a38
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x3476
-+subdevice.name		Intel S5000PSLSATA Server Board
++subdevice.name		S5000PSLSATA Server Board
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1a48
@@ -109109,7 +110240,7 @@
 &device.id		pci 0x1e20
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x054b
-+subdevice.name		Dell XPS One 2710
++subdevice.name		XPS One 2710
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1e20
@@ -109139,7 +110270,7 @@
 &device.id		pci 0x1e20
 &subvendor.id		pci 0x1043
 &subdevice.id		pci 0x8445
-+subdevice.name		ASUS P8Z77-V LX Motherboard
++subdevice.name		P8Z77-V LX Motherboard
 
  vendor.id		pci 0x8086
 &device.id		pci 0x1e20
@@ -113954,6 +115085,16 @@
 +subdevice.name		Dual Band Wireless-AC 8260
 
  vendor.id		pci 0x8086
+&device.id		pci 0x24fd
++device.name		Wireless 8265 / 8275
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x24fd
+&subvendor.id		pci 0x8086
+&subdevice.id		pci 0x0010
++subdevice.name		Dual Band Wireless-AC 8265
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x2500
 +device.name		82820 820 (Camino) Chipset Host Bridge (MCH)
 
@@ -114421,7 +115562,7 @@
 &device.id		pci 0x2590
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x0182
-+subdevice.name		Dell Latitude C610
++subdevice.name		Latitude C610
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2590
@@ -115981,7 +117122,7 @@
 &device.id		pci 0x2668
 &subvendor.id		pci 0x1043
 &subdevice.id		pci 0x1173
-+subdevice.name		Asus A6VC
++subdevice.name		A6VC
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2668
@@ -116129,7 +117270,7 @@
 &device.id		pci 0x266e
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x0187
-+subdevice.name		Dell Precision M70 Laptop
++subdevice.name		Precision M70 Laptop
 
  vendor.id		pci 0x8086
 &device.id		pci 0x266e
@@ -116269,7 +117410,7 @@
 &device.id		pci 0x2670
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x3476
-+subdevice.name		Intel S5000PSLSATA Server Board
++subdevice.name		S5000PSLSATA Server Board
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2680
@@ -116301,7 +117442,7 @@
 &device.id		pci 0x2681
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x3476
-+subdevice.name		Intel S5000PSLSATA Server Board
++subdevice.name		S5000PSLSATA Server Board
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2682
@@ -116355,7 +117496,7 @@
 &device.id		pci 0x2688
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x3476
-+subdevice.name		Intel S5000PSLSATA Server Board
++subdevice.name		S5000PSLSATA Server Board
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2689
@@ -116395,7 +117536,7 @@
 &device.id		pci 0x2689
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x3476
-+subdevice.name		Intel S5000PSLSATA Server Board
++subdevice.name		S5000PSLSATA Server Board
 
  vendor.id		pci 0x8086
 &device.id		pci 0x268a
@@ -116429,7 +117570,7 @@
 &device.id		pci 0x268a
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x3476
-+subdevice.name		Intel S5000PSLSATA Server Board
++subdevice.name		S5000PSLSATA Server Board
 
  vendor.id		pci 0x8086
 &device.id		pci 0x268b
@@ -116451,7 +117592,7 @@
 &device.id		pci 0x268b
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x3476
-+subdevice.name		Intel S5000PSLSATA Server Board
++subdevice.name		S5000PSLSATA Server Board
 
  vendor.id		pci 0x8086
 &device.id		pci 0x268c
@@ -116491,7 +117632,7 @@
 &device.id		pci 0x268c
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x3476
-+subdevice.name		Intel S5000PSLSATA Server Board
++subdevice.name		S5000PSLSATA Server Board
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2690
@@ -116565,7 +117706,7 @@
 &device.id		pci 0x269b
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0x3476
-+subdevice.name		Intel S5000PSLSATA Server Board
++subdevice.name		S5000PSLSATA Server Board
 
  vendor.id		pci 0x8086
 &device.id		pci 0x269e
@@ -116659,7 +117800,7 @@
 &device.id		pci 0x2772
 &subvendor.id		pci 0x8086
 &subdevice.id		pci 0xd605
-+subdevice.name		Intel Desktop Board D945GCCR
++subdevice.name		Desktop Board D945GCCR
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2774
@@ -118251,7 +119392,7 @@
 &device.id		pci 0x27d8
 &subvendor.id		pci 0x1043
 &subdevice.id		pci 0x13c4
-+subdevice.name		Asus G2P
++subdevice.name		G2P
 
  vendor.id		pci 0x8086
 &device.id		pci 0x27d8
@@ -118359,7 +119500,7 @@
 &device.id		pci 0x27d8
 &subvendor.id		pci 0x17aa
 &subdevice.id		pci 0x3802
-+subdevice.name		Lenovo 3000 C200 audio [Realtek ALC861VD]
++subdevice.name		3000 C200 audio [Realtek ALC861VD]
 
  vendor.id		pci 0x8086
 &device.id		pci 0x27d8
@@ -118843,37 +119984,37 @@
 &device.id		pci 0x2826
 &subvendor.id		pci 0x1d49
 &subdevice.id		pci 0x0100
-+subdevice.name		ThinkSystem RAID 331
++subdevice.name		Intel RSTe SATA Software RAID
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2826
 &subvendor.id		pci 0x1d49
 &subdevice.id		pci 0x0101
-+subdevice.name		ThinkSystem RAID 331
++subdevice.name		Intel RSTe SATA Software RAID
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2826
 &subvendor.id		pci 0x1d49
 &subdevice.id		pci 0x0102
-+subdevice.name		ThinkSystem RAID 331
++subdevice.name		Intel RSTe SATA Software RAID
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2826
 &subvendor.id		pci 0x1d49
 &subdevice.id		pci 0x0103
-+subdevice.name		ThinkSystem RAID 331
++subdevice.name		Intel RSTe SATA Software RAID
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2826
 &subvendor.id		pci 0x1d49
 &subdevice.id		pci 0x0104
-+subdevice.name		ThinkSystem RAID 331
++subdevice.name		Intel RSTe SATA Software RAID
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2826
 &subvendor.id		pci 0x1d49
 &subdevice.id		pci 0x0105
-+subdevice.name		ThinkSystem RAID 331
++subdevice.name		Intel RSTe SATA Software RAID
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2827
@@ -118989,7 +120130,7 @@
 &device.id		pci 0x2830
 &subvendor.id		pci 0x1025
 &subdevice.id		pci 0x0121
-+subdevice.name		Acer Aspire 5920G
++subdevice.name		Aspire 5920G
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2830
@@ -119339,7 +120480,7 @@
 &device.id		pci 0x2835
 &subvendor.id		pci 0x1025
 &subdevice.id		pci 0x0121
-+subdevice.name		Acer Aspire 5920G
++subdevice.name		Aspire 5920G
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2835
@@ -119503,7 +120644,7 @@
 &device.id		pci 0x283a
 &subvendor.id		pci 0x1025
 &subdevice.id		pci 0x0121
-+subdevice.name		Acer Aspire 5920G
++subdevice.name		Aspire 5920G
 
  vendor.id		pci 0x8086
 &device.id		pci 0x283a
@@ -119817,13 +120958,13 @@
 &device.id		pci 0x284b
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x01f9
-+subdevice.name		Dell Latitude D630
++subdevice.name		Latitude D630
 
  vendor.id		pci 0x8086
 &device.id		pci 0x284b
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x01ff
-+subdevice.name		Dell Precision M4300
++subdevice.name		Precision M4300
 
  vendor.id		pci 0x8086
 &device.id		pci 0x284b
@@ -119859,7 +121000,7 @@
 &device.id		pci 0x284b
 &subvendor.id		pci 0x1043
 &subdevice.id		pci 0x1339
-+subdevice.name		Asus M51S series
++subdevice.name		M51S series
 
  vendor.id		pci 0x8086
 &device.id		pci 0x284b
@@ -121659,7 +122800,7 @@
 &device.id		pci 0x2a00
 &subvendor.id		pci 0x1025
 &subdevice.id		pci 0x0121
-+subdevice.name		Acer Aspire 5920G
++subdevice.name		Aspire 5920G
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2a00
@@ -122659,7 +123800,7 @@
 &device.id		pci 0x2e20
 &subvendor.id		pci 0x1028
 &subdevice.id		pci 0x0283
-+subdevice.name		Dell Vostro 220
++subdevice.name		Vostro 220
 
  vendor.id		pci 0x8086
 &device.id		pci 0x2e20
@@ -123595,7 +124736,7 @@
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3166
-+device.name		Intel Dual Band Wireless-AC 3165 Plus Bluetooth
++device.name		Dual Band Wireless-AC 3165 Plus Bluetooth
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3200
@@ -124938,8 +126079,32 @@
 +subdevice.name		Intel Ethernet Connection X722 for 10G SFP+
 
  vendor.id		pci 0x8086
+&device.id		pci 0x37d0
+&subvendor.id		pci 0x17aa
+&subdevice.id		pci 0x4022
++subdevice.name		Ethernet Connection X722 for 10GbE SFP+
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x37d1
 +device.name		Ethernet Connection X722 for 1GbE
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x37d1
+&subvendor.id		pci 0x1590
+&subdevice.id		pci 0x0216
++subdevice.name		Ethernet 1Gb 2-port 368i Adapter
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x37d1
+&subvendor.id		pci 0x1590
+&subdevice.id		pci 0x0217
++subdevice.name		Ethernet 1Gb 2-port 368FLR-MMT Adapter
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x37d1
+&subvendor.id		pci 0x1590
+&subdevice.id		pci 0x0247
++subdevice.name		Ethernet 1Gb 4-port 369i Adapter
 
  vendor.id		pci 0x8086
 &device.id		pci 0x37d1
@@ -124965,19 +126130,55 @@
 
  vendor.id		pci 0x8086
 &device.id		pci 0x37d2
+&subvendor.id		pci 0x14cd
+&subdevice.id		pci 0x0030
++subdevice.name		Ethernet OCP 2x10G RJ45 Phy Card [USI-X557-10GbaseT]
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x37d2
+&subvendor.id		pci 0x1590
+&subdevice.id		pci 0x0218
++subdevice.name		Ethernet 10Gb 2-port 568FLR-MMT Adapter
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x37d2
 &subvendor.id		pci 0x17aa
 &subdevice.id		pci 0x4020
-+subdevice.name		Intel Ethernet Connection X722 for 10GBASE
++subdevice.name		Ethernet Connection X722 for 10GBASE-T
 
  vendor.id		pci 0x8086
 &device.id		pci 0x37d2
 &subvendor.id		pci 0x17aa
 &subdevice.id		pci 0x4021
-+subdevice.name		Intel Ethernet Connection X722 for 10GBASE
++subdevice.name		Ethernet Connection X722 for 10GBASE-T
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x37d2
+&subvendor.id		pci 0x17aa
+&subdevice.id		pci 0x4022
++subdevice.name		Ethernet Connection X722 for 10GBASE-T
 
  vendor.id		pci 0x8086
 &device.id		pci 0x37d3
 +device.name		Ethernet Connection X722 for 10GbE SFP+
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x37d3
+&subvendor.id		pci 0x1590
+&subdevice.id		pci 0x0219
++subdevice.name		Ethernet 10Gb 2-port 568FLR-MMSFP+ Adapter
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x37d3
+&subvendor.id		pci 0x17aa
+&subdevice.id		pci 0x4020
++subdevice.name		Ethernet Connection X722 for 10GbE SFP+
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x37d3
+&subvendor.id		pci 0x17aa
+&subdevice.id		pci 0x4021
++subdevice.name		Ethernet Connection X722 for 10GbE SFP+
 
  vendor.id		pci 0x8086
 &device.id		pci 0x37d4
@@ -126363,7 +127564,7 @@
 &device.id		pci 0x3b56
 &subvendor.id		pci 0x1043
 &subdevice.id		pci 0x1373
-+subdevice.name		ASUSTek G73-series gaming laptop
++subdevice.name		G73-series gaming laptop
 
  vendor.id		pci 0x8086
 &device.id		pci 0x3b56
@@ -126993,9 +128194,9 @@
 
  vendor.id		pci 0x8086
 &device.id		pci 0x4223
-&subvendor.id		pci 0x1351
-&subdevice.id		pci 0x103c
-+subdevice.name		Compaq NC6220
+&subvendor.id		pci 0x103c
+&subdevice.id		pci 0x1351
++subdevice.name		Compaq nc6220
 
  vendor.id		pci 0x8086
 &device.id		pci 0x4224
@@ -127588,144 +128789,152 @@
 +subdevice.name		QEMU Virtual Machine
 
  vendor.id		pci 0x8086
+&device.id		pci 0x5902
++device.name		HD Graphics 610
+
+ vendor.id		pci 0x8086
+&device.id		pci 0x5912
++device.name		HD Graphics 630
+
+ vendor.id		pci 0x8086
 &device.id		pci 0x5a84
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series Integrated Graphics Controller
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series Integrated Graphics Controller
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5a88
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series Imaging Unit
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series Imaging Unit
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5a98
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series Audio Cluster
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series Audio Cluster
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5a9a
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series Trusted Execution Engine
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series Trusted Execution Engine
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5aa2
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series Integrated Sensor Hub
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series Integrated Sensor Hub
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5aa8
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series USB xHCI
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series USB xHCI
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5aac
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series I2C Controller #1
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series I2C Controller #1
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5aae
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series I2C Controller #2
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series I2C Controller #2
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ab0
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series I2C Controller #3
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series I2C Controller #3
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ab2
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series I2C Controller #4
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series I2C Controller #4
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ab4
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series I2C Controller #5
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series I2C Controller #5
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ab6
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series I2C Controller #6
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series I2C Controller #6
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ab8
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series I2C Controller #7
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series I2C Controller #7
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5aba
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series I2C Controller #8
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series I2C Controller #8
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5abc
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series HSUART Controller #1
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series HSUART Controller #1
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5abe
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series HSUART Controller #2
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series HSUART Controller #2
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ac0
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series HSUART Controller #3
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series HSUART Controller #3
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ac2
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series SPI Controller #1
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series SPI Controller #1
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ac4
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series SPI Controller #2
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series SPI Controller #2
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ac6
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series SPI Controller #3
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series SPI Controller #3
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ac8
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series PWM Pin Controller
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series PWM Pin Controller
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5aca
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series SDXC/MMC Host Controller
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series SDXC/MMC Host Controller
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5acc
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series eMMC Controller
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series eMMC Controller
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ad0
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series SDIO Controller
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series SDIO Controller
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ad4
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series SMBus Controller
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series SMBus Controller
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ad6
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series PCI Express Port B #1
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series PCI Express Port B #1
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ad7
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series PCI Express Port B #2
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series PCI Express Port B #2
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ad8
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series PCI Express Port A #1
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series PCI Express Port A #1
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ad9
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series PCI Express Port A #2
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series PCI Express Port A #2
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ada
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series PCI Express Port A #3
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series PCI Express Port A #3
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5adb
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series PCI Express Port A #4
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series PCI Express Port A #4
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ae3
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series SATA AHCI Controller
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series SATA AHCI Controller
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5ae8
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series Low Pin Count Interface
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series Low Pin Count Interface
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5aee
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series HSUART Controller #4
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series HSUART Controller #4
 
  vendor.id		pci 0x8086
 &device.id		pci 0x5af0
-+device.name		Atom/Celeron/Pentium Processor N4200/N3350/E3900 Series Host Bridge
++device.name		Celeron N3350/Pentium N4200/Atom E3900 Series Host Bridge
 
  vendor.id		pci 0x8086
 &device.id		pci 0x65c0
@@ -131310,6 +132519,194 @@
 +device.name		Lewisburg SSATA Controller [RAID mode]
 
  vendor.id		pci 0x8086
+&device.id		pci 0xa282
++device.name		200 Series PCH SATA controller [AHCI mode]
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa286
++device.name		200 Series PCH SATA controller [RAID mode]
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa290
++device.name		200 Series PCH PCI Express Root Port #1
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa291
++device.name		200 Series PCH PCI Express Root Port #2
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa292
++device.name		200 Series PCH PCI Express Root Port #3
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa293
++device.name		200 Series PCH PCI Express Root Port #4
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa294
++device.name		200 Series PCH PCI Express Root Port #5
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa295
++device.name		200 Series PCH PCI Express Root Port #6
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa296
++device.name		200 Series PCH PCI Express Root Port #7
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa297
++device.name		200 Series PCH PCI Express Root Port #8
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa298
++device.name		200 Series PCH PCI Express Root Port #9
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa299
++device.name		200 Series PCH PCI Express Root Port #10
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa29a
++device.name		200 Series PCH PCI Express Root Port #11
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa29b
++device.name		200 Series PCH PCI Express Root Port #12
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa29c
++device.name		200 Series PCH PCI Express Root Port #13
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa29d
++device.name		200 Series PCH PCI Express Root Port #14
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa29e
++device.name		200 Series PCH PCI Express Root Port #15
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa29f
++device.name		200 Series PCH PCI Express Root Port #16
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2a1
++device.name		200 Series PCH PMC
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2a3
++device.name		200 Series PCH SMBus Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2a7
++device.name		200 Series PCH Serial IO UART Controller #0
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2a8
++device.name		200 Series PCH Serial IO UART Controller #1
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2a9
++device.name		200 Series PCH Serial IO SPI Controller #0
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2aa
++device.name		200 Series PCH Serial IO SPI Controller #1
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2af
++device.name		200 Series PCH USB 3.0 xHCI Controller
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2b1
++device.name		200 Series PCH Thermal Subsystem
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2ba
++device.name		200 Series PCH CSME HECI #1
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2bb
++device.name		200 Series PCH CSME HECI #2
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2c4
++device.name		200 Series PCH LPC Controller (H270)
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2c5
++device.name		200 Series PCH LPC Controller (Z270)
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2c6
++device.name		200 Series PCH LPC Controller (Q270)
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2c7
++device.name		200 Series PCH LPC Controller (Q250)
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2c8
++device.name		200 Series PCH LPC Controller (B250)
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2e0
++device.name		200 Series PCH Serial IO I2C Controller #0
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2e1
++device.name		200 Series PCH Serial IO I2C Controller #1
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2e2
++device.name		200 Series PCH Serial IO I2C Controller #2
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2e3
++device.name		200 Series PCH Serial IO I2C Controller #3
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2e6
++device.name		200 Series PCH Serial IO UART Controller #2
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2e7
++device.name		200 Series PCH PCI Express Root Port #17
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2e8
++device.name		200 Series PCH PCI Express Root Port #18
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2e9
++device.name		200 Series PCH PCI Express Root Port #19
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2ea
++device.name		200 Series PCH PCI Express Root Port #20
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2eb
++device.name		200 Series PCH PCI Express Root Port #21
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2ec
++device.name		200 Series PCH PCI Express Root Port #22
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2ed
++device.name		200 Series PCH PCI Express Root Port #23
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2ee
++device.name		200 Series PCH PCI Express Root Port #24
+
+ vendor.id		pci 0x8086
+&device.id		pci 0xa2f0
++device.name		200 Series PCH HD Audio
+
+ vendor.id		pci 0x8086
 &device.id		pci 0xa620
 +device.name		6400/6402 Advanced Memory Buffer (AMB)
 
@@ -134743,6 +136140,10 @@
  vendor.id		pci 0xf1d0
 &device.id		pci 0xdaff
 +device.name		KONA LHi
+
+ vendor.id		pci 0xf1d0
+&device.id		pci 0xdb09
++device.name		Corvid 24
 
  vendor.id		pci 0xf1d0
 &device.id		pci 0xdcaf
