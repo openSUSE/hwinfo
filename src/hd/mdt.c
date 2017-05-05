@@ -43,10 +43,12 @@
 typedef struct vm_s {
   x86emu_t *emu;
   unsigned char *video_mem;
+  x86emu_memio_handler_t old_memio;
 
   unsigned ports;
   unsigned force:1;
   unsigned timeout;
+  unsigned no_io:1;
 
   unsigned all_modes:1;
   unsigned mode;
@@ -78,6 +80,7 @@ static void vm_free(vm_t *vm);
 static unsigned vm_run(x86emu_t *emu, double *t);
 static int vm_prepare(vm_t *vm);
 
+static unsigned new_memio(x86emu_t *emu, u32 addr, u32 *val, unsigned type);
 static double get_time(void);
 static void *map_mem(vm_t *vm, unsigned start, unsigned size, int rw);
 
@@ -178,6 +181,8 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
   if(hd_probe_feature(hd_data, pr_bios_fb)) {
     PROGRESS(4, 2, "mode info");
 
+    // there shouldn't any real io be needed for this
+    vm->no_io = 1;
     list_modes(vm, vbe);
   }
 
@@ -186,12 +191,16 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
 
     ADD2LOG("vbe: probing %d ports\n", vm->ports);
 
+    // for ddc probing we have to allow direct io accesses
+    vm->no_io = 0;
     probe_all(vm, vbe);
   }
 
   if(hd_probe_feature(hd_data, pr_bios_mode)) {
     PROGRESS(4, 4, "gfx mode");
 
+    // there shouldn't any real io be needed for this
+    vm->no_io = 1;
     get_video_mode(vm, vbe);
   }
 
@@ -310,7 +319,7 @@ unsigned vm_run(x86emu_t *emu, double *t)
   vm_t *vm = emu->private;
   unsigned err;
 
-  x86emu_log(emu, "=== emulation log %d ===\n", vm->exec_count);
+  x86emu_log(emu, "=== emulation log %d %s===\n", vm->exec_count, vm->no_io ? "(no i/o) " : "");
 
   *t = get_time();
 
@@ -407,9 +416,34 @@ int vm_prepare(vm_t *vm)
 
   if(vm->timeout) vm->emu->timeout = vm->timeout ?: 20;
 
+  vm->old_memio = x86emu_set_memio_handler(vm->emu, new_memio);
+
   ok = 1;
 
   return ok;
+}
+
+
+/*
+ * Use our own memory and i/o access handler to block all i/o accesses if vm->no_io
+ * is set.
+ */
+unsigned new_memio(x86emu_t *emu, u32 addr, u32 *val, unsigned type)
+{
+  vm_t *vm = emu->private;
+
+  if(vm->no_io) {
+    if((type & ~0xff) == X86EMU_MEMIO_I) {
+      *val = 0;
+      return 0;
+    }
+
+    if((type & ~0xff) == X86EMU_MEMIO_O) {
+      return 0;
+    }
+  }
+
+  return vm->old_memio(emu, addr, val, type);
 }
 
 
