@@ -85,7 +85,8 @@ void print_vbe_info(vm_t *vm, x86emu_t *emu, unsigned mode);
 
 void probe_all(vm_t *vm, vbe_info_t *vbe);
 void get_video_mode(vm_t *vm, vbe_info_t *vbe);
-void list_modes(vm_t *vm, vbe_info_t *vbe);
+void query_vbe(vm_t *vm, vbe_info_t *vbe, unsigned *modelist);
+void list_modes(vm_t *vm, vbe_info_t *vbe, unsigned *modelist);
 
 void print_edid(int port, unsigned char *edid);
 int chk_edid_info(unsigned char *edid);
@@ -176,9 +177,15 @@ void get_vbe_info(hd_data_t *hd_data, vbe_info_t *vbe)
   if(i) vm->ports = i;
 
   if(hd_probe_feature(hd_data, pr_bios_fb)) {
+    unsigned modelist[0x100];
     PROGRESS(4, 2, "mode info");
 
-    list_modes(vm, vbe);
+    query_vbe(vm, vbe, modelist);
+    /* mode listing locks up when KMS is used, so disable */
+#if 0
+    if (vbe->ok)
+      list_modes(vm, vbe, modelist);
+#endif
   }
 
   if(hd_probe_feature(hd_data, pr_bios_ddc)) {
@@ -456,18 +463,13 @@ void *map_mem(vm_t *vm, unsigned start, unsigned size, int rw)
 }
 
 
-void list_modes(vm_t *vm, vbe_info_t *vbe)
+void query_vbe(vm_t *vm, vbe_info_t *vbe, unsigned *modelist)
 {
   x86emu_t *emu = NULL;
-  int err = 0, i;
-  double d1, d2;
-  unsigned char buf2[0x100], tmp[0x100];
+  int err = 0;
+  double d1;
+  unsigned char buf2[0x100];
   unsigned u, ml;
-  unsigned modelist[0x100];
-  unsigned bpp;
-  int res_bpp;
-  vbe_mode_info_t *mi;
-  char s[64];
 
   LPRINTF("=== running bios\n");
 
@@ -530,11 +532,28 @@ void list_modes(vm_t *vm, vbe_info_t *vbe)
 
     ml = vm_read_segofs16(emu, VBE_BUF + 0x0e);
 
-    for(vbe->modes = 0; vbe->modes < sizeof modelist / sizeof *modelist; ) {
+    for(vbe->modes = 0; vbe->modes < 0x100; ) {
       u = x86emu_read_word(emu, ml + 2 * vbe->modes);
       if(u == 0xffff) break;
       modelist[vbe->modes++] = u;
     }
+  } else {
+    LPRINTF("=== no vbe info\n");
+  }
+
+  x86emu_done(emu);
+}
+
+void list_modes(vm_t *vm, vbe_info_t *vbe, unsigned *modelist)
+{
+  x86emu_t *emu = NULL;
+  int err = 0, i;
+  double d1, d2;
+  unsigned char tmp[0x100];
+  unsigned bpp;
+  int res_bpp;
+  vbe_mode_info_t *mi;
+  char s[64];
 
     LPRINTF("%u video modes:\n", vbe->modes);
 
@@ -545,8 +564,7 @@ void list_modes(vm_t *vm, vbe_info_t *vbe)
       mi = vbe->mode + i;
 
       mi->number = modelist[i];
-      
-      emu = x86emu_done(emu);
+
       emu = x86emu_clone(vm->emu);
 
       emu->x86.R_EAX = 0x4f01;
@@ -565,9 +583,13 @@ void list_modes(vm_t *vm, vbe_info_t *vbe)
         err
       );
 
-      if(err || emu->x86.R_AX != 0x4f) continue;
+      if(err || emu->x86.R_AX != 0x4f) {
+        emu = x86emu_done(emu);
+        continue;
+      }
 
       copy_from_vm(emu, tmp, VBE_BUF, sizeof tmp);
+      emu = x86emu_done(emu);
 
       mi->attributes = tmp[0x00] + (tmp[0x01] << 8);
 
@@ -654,12 +676,6 @@ void list_modes(vm_t *vm, vbe_info_t *vbe)
         LPRINTF("\n");
       }
     }
-  }
-  else {
-    LPRINTF("=== no vbe info\n");
-  }
-
-  x86emu_done(emu);
 }
 
 
