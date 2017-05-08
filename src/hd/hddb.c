@@ -1223,7 +1223,8 @@ void hddb_dump_skey(hddb2_data_t *hddb, FILE *f, prefix_t pre, hddb_entry_mask_t
         str_val = NULL;
         if(val < hddb->strings_len) str_val = hddb->strings + val;
         if(!str_val) break;
-        if(!*str_val && !str_val[1] == '\t') break;
+        // expected format is <LETTER><TAB><DATA>
+        if(!(*str_val && str_val[1] == '\t')) break;
 
         switch(*str_val) {
           case 'x':
