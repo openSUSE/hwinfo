@@ -393,6 +393,12 @@ int vm_prepare(vm_t *vm)
     x86emu_read_word(vm->emu, 0x10*4)
   );
 
+  // initialize video memory
+  for(u = VBIOS_MEM; u < VBIOS_MEM + VBIOS_MEM_SIZE; u++) {
+    vm_write_byte(vm->emu, u, 0, X86EMU_PERM_RW);
+  }
+
+#if 0
   // video memory
   vm->video_mem = map_mem(vm, VBIOS_MEM, VBIOS_MEM_SIZE, 1);
 
@@ -402,6 +408,7 @@ int vm_prepare(vm_t *vm)
       x86emu_set_page(vm->emu, VBIOS_MEM + u, vm->video_mem + u);
     }
   }
+#endif
 
   // start address 0:0x7c00
   x86emu_set_seg_register(vm->emu, vm->emu->x86.R_CS_SEL, 0);
