@@ -42,7 +42,6 @@
 
 typedef struct vm_s {
   x86emu_t *emu;
-  unsigned char *video_mem;
   x86emu_memio_handler_t old_memio;
 
   unsigned ports;
@@ -393,14 +392,9 @@ int vm_prepare(vm_t *vm)
     x86emu_read_word(vm->emu, 0x10*4)
   );
 
-  // video memory
-  vm->video_mem = map_mem(vm, VBIOS_MEM, VBIOS_MEM_SIZE, 1);
-
-  if(vm->video_mem) {
-    x86emu_set_perm(vm->emu, VBIOS_MEM, VBIOS_MEM + VBIOS_MEM_SIZE - 1, X86EMU_PERM_RW);
-    for(u = 0; u < VBIOS_MEM_SIZE; u += X86EMU_PAGE_SIZE) {
-      x86emu_set_page(vm->emu, VBIOS_MEM + u, vm->video_mem + u);
-    }
+  // initialize fake video memory
+  for(u = VBIOS_MEM; u < VBIOS_MEM + VBIOS_MEM_SIZE; u++) {
+    vm_write_byte(vm->emu, u, 0, X86EMU_PERM_RW);
   }
 
   // start address 0:0x7c00
