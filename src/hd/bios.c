@@ -455,7 +455,7 @@ void hd_scan_bios(hd_data_t *hd_data)
       bt->vbe_ver = vbe->version;
     }
 
-    if(vbe->ok && vbe->fb_start) {
+    if(vbe->ok && vbe->modes) {
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class.id = bc_framebuffer;
       hd->sub_class.id = sc_fb_vesa;
@@ -483,7 +483,7 @@ void hd_scan_bios(hd_data_t *hd_data)
           mi = vbe->mode + u;
           if(
             (mi->attributes & 1) &&	/* mode supported */
-            mi->fb_start &&
+            (mi->fb_start || (mi->attributes & 0x80)) &&	/* has linear framebuffer support */
             mi->pixel_size != -1u	/* text mode */
           ) {
             res = add_res_entry(&hd->res, new_mem(sizeof *res));

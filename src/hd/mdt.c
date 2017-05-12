@@ -277,8 +277,8 @@ int do_int(x86emu_t *emu, u8 num, unsigned type)
     return 0;
   }
 
-  // ignore ints != 0x10
-  if(num != 0x10) return 1;
+  // ignore ints != (0x10 or 0x42 or 0x6d)
+  if(num != 0x10 && num != 0x42 && num != 0x6d) return 1;
 
   return 0;
 }
@@ -370,7 +370,9 @@ int vm_prepare(vm_t *vm)
     return ok;
   }
 
-  copy_to_vm(vm->emu, 0x10*4, p1 + 0x10*4, 4, X86EMU_PERM_RW);
+  copy_to_vm(vm->emu, 0x10*4, p1 + 0x10*4, 4, X86EMU_PERM_RW);		// video bios entry
+  copy_to_vm(vm->emu, 0x42*4, p1 + 0x42*4, 4, X86EMU_PERM_RW);		// old video bios entry
+  copy_to_vm(vm->emu, 0x6d*4, p1 + 0x6d*4, 4, X86EMU_PERM_RW);		// saved video bios entry
   copy_to_vm(vm->emu, 0x400, p1 + 0x400, 0x100, X86EMU_PERM_RW);
 
   munmap(p1, 0x1000);
