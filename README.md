@@ -80,6 +80,12 @@ For general usage instructions, see `hwinfo` manual page.
 > `hwinfo -bios` - note the single '`-`'). Please don't do this. If you are interested, you can
 > read about it [here](README-legacy.md).
 
+## Technical documentation
+
+The hardware detection library makes use of a number of technical specifications.
+
+[Here](specifications.md) is a compilation of external links to technical standards relevant to `libhd`.
+
 ## openSUSE Development
 
 To build the library, simply run `make`. Install with `make install`.
