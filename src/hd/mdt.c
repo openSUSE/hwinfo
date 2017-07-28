@@ -410,7 +410,7 @@ int vm_prepare(vm_t *vm)
   // stack & buffer space
   x86emu_set_perm(vm->emu, VBE_BUF, 0xffff, X86EMU_PERM_RW);
 
-  if(vm->timeout) vm->emu->timeout = vm->timeout ?: 20;
+  vm->emu->timeout = vm->timeout ?: 20;
 
   vm->old_memio = x86emu_set_memio_handler(vm->emu, new_memio);
 
