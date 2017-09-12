@@ -27,7 +27,7 @@ SHARED_FLAGS	= -fPIC
 
 LDFLAGS	+= -Lsrc
 
-CFILES		= $(wildcard *.c)
+CFILES		= $(sort $(wildcard *.c))
 OBJS		= $(CFILES:.c=.o)
 LIBHD_BASE	= libhd
 LIBHD		= $(TOPDIR)/src/$(LIBHD_BASE).a

@@ -204,6 +204,7 @@ char **argv;
 	char	line[256];
 	int	l;
 	time_t	tim;
+	const char	*source_date_epoch;
 	if (argc<2) {
 		if (!freopen(CDBISDN_CDB_FILE,"rb", stdin)) {
 			fprintf(stderr, "Cannot open %s as stdin\n", CDBISDN_CDB_FILE);
@@ -269,7 +270,8 @@ char **argv;
 	fprintf(stdout, "! file is build with mk_isdnhwdb\n");
 	fprintf(stdout, "! Do not change this file !!!\n");
 	fprintf(stdout,"$%02d %d\n", IWHREC_TYPE_VERSION, CDB_DATAVERSION + 1);
-	time(&tim);
+	if ((source_date_epoch = getenv("SOURCE_DATE_EPOCH")) == NULL || (tim = (time_t)strtol(source_date_epoch, NULL, 10)) <= 0)
+		time(&tim);
 	strcpy(line,ctime(&tim));
 	l = strlen(line);
 	if (l)

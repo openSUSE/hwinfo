@@ -168,6 +168,7 @@ char **argv;
 	char	line[256];
 	int	l;
 	time_t	tim;
+	const char	*source_date_epoch;
 	if (argc<2) {
 		fprintf(stderr, "Error no filename\n");
 		exit(1);
@@ -221,7 +222,8 @@ char **argv;
 	
 	fprintf(stdout, "/* CDBISDN database */\n");
 	fprintf(stdout,"const int  CDBISDN_DBVERSION = 0x%x;\n", CDB_DATAVERSION);
-	time(&tim);
+	if ((source_date_epoch = getenv("SOURCE_DATE_EPOCH")) == NULL || (tim = (time_t)strtol(source_date_epoch, NULL, 10)) <= 0)
+		time(&tim);
 	strcpy(line,ctime(&tim));
 	l = strlen(line);
 	if (l)
