@@ -119,6 +119,7 @@ install:
 	install -m 755 getsysinfo $(DESTDIR)/usr/sbin
 	install -m 755 src/isdn/cdb/mk_isdnhwdb $(DESTDIR)/usr/sbin
 	install -d -m 755 $(DESTDIR)/usr/share/hwinfo
+	install -d -m 755 $(DESTDIR)/var/lib/hardware/udi
 	install -m 644 src/isdn/cdb/ISDN.CDB.txt $(DESTDIR)/usr/share/hwinfo
 	install -m 644 src/isdn/cdb/ISDN.CDB.hwdb $(DESTDIR)/usr/share/hwinfo
 
