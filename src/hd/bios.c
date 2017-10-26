@@ -610,7 +610,8 @@ unsigned char crc(unsigned char *mem, unsigned len)
 void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
 {
   unsigned u, u1, u2, ok, hlen = 0, ofs;
-  unsigned addr = 0, len = 0, scnt;
+  uint64_t addr = 0;
+  unsigned len = 0, scnt;
   unsigned structs = 0, type, slen;
   unsigned use_sysfs = 0;
   char *s;
@@ -657,6 +658,18 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
   if(!mem->data || mem->size < 0x10) return;
 
   for(u = ok = 0; u <= mem->size - 0x10; u += 0x10) {
+    if(memcmp(mem->data + u, "_SM3_", 5) == 0) {
+      hlen = mem->data[u + 6];
+      if(hlen < 0x18 || u + hlen > mem->size) continue;
+      addr = *(uint64_t *) (mem->data + u + 0x10);
+      len = *(unsigned *) (mem->data + u + 0x0c);	/* Maximum length */
+      structs = 0;					/* Unknown */
+      ok = crc(mem->data + u, hlen) == 0 && len;
+      if(ok) {
+        bt->smbios_ver = (mem->data[u + 7] << 8) + mem->data[u + 8];
+        break;
+      }
+    }
     if(*(unsigned *) (mem->data + u) == 0x5f4d535f) {	/* "_SM_" */
       hlen = mem->data[u + 5];
       if(hlen < 0x1e || u + hlen > mem->size) continue;
@@ -687,7 +700,11 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
 
   hd_data->smbios = smbios_free(hd_data->smbios);
 
-  ADD2LOG("  Found DMI table at 0x%08x (0x%04x bytes)\n", addr, len);
+  // Starting with SMBIOS 3.0, exact table length is not known
+  ADD2LOG(
+    "  Found DMI table at 0x%08llx (0x%04x bytes%s)\n",
+    (unsigned long long) addr, len, structs ? "" : " max"
+  );
 
   memory.start = mem->start + u;
   memory.size = hlen;
@@ -695,6 +712,10 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
   if(!use_sysfs) dump_memory(hd_data, &memory, 0, "SMBIOS Entry Point");
 
   memory.data = NULL;
+  /*
+   * Note: memory.start is only 32 bit but this will only matter if we have
+   * to read the memory ourself and not via /sys/firmware/dmi/tables.
+   */
   memory.start = addr;
 
   if(use_sysfs) {
@@ -705,7 +726,8 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
       memory.data = new_mem(memory.size);
       memcpy(memory.data, buf, memory.size);
       ADD2LOG("  Got DMI table from sysfs (0x%04x bytes)\n", memory.size);
-      if(memory.size != len) {
+      // Starting with SMBIOS 3.0, exact table length is not known
+      if(structs && memory.size != len) {
         ADD2LOG("  Oops: DMI table size mismatch; expected 0x%04x bytes!\n", len);
       }
     }
@@ -717,16 +739,17 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
   }
 
   if(len >= 0x4000) {
+    // Starting with SMBIOS 3.0, exact table length is not known
     ADD2LOG(
-      "  SMBIOS Structure Table at 0x%05x (size 0x%x)\n",
-      addr, len
+      "  SMBIOS Structure Table at 0x%08llx (%ssize 0x%x)\n",
+      (unsigned long long) addr, structs ? "" : "maximum ", len
     );
   }
   else {
     dump_memory(hd_data, &memory, 0, "SMBIOS Structure Table");
   }
 
-  for(type = 0, u = 0, ofs = 0; u < structs && ofs + 3 < len; u++) {
+  for(type = 0, u = 0, ofs = 0; (!structs || u < structs) && ofs + 3 < len; u++) {
     type = memory.data[ofs];
     slen = memory.data[ofs + 1];
     if(ofs + slen > len || slen < 4) break;
@@ -764,7 +787,8 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
     }
   }
 
-  if(u != structs) {
+  // Starting with SMBIOS 3.0, structure count is not announced
+  if(structs && u != structs) {
     if(type == sm_end) {
       ADD2LOG("  smbios: stopped at end tag\n");
     }
