@@ -224,7 +224,7 @@ char **argv;
 	fprintf(stdout,"const int  CDBISDN_DBVERSION = 0x%x;\n", CDB_DATAVERSION);
 	if ((source_date_epoch = getenv("SOURCE_DATE_EPOCH")) == NULL || (tim = (time_t)strtol(source_date_epoch, NULL, 10)) <= 0)
 		time(&tim);
-	strcpy(line,ctime(&tim));
+	strcpy(line,asctime(gmtime(&tim)));
 	l = strlen(line);
 	if (l)
 		line[l-1] = 0;
