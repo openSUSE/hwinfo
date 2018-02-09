@@ -1066,13 +1066,18 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
           ADD2LOG("\n");
         }
 
-        if((hd->serial = canon_str(serial_buf + 4, serial_buf[3]))) {
+        // bsc#1078511: additional consistency check:
+        // vpd page number should be returned at offset 1
+        if(serial_buf[1] == 0x80 && (hd->serial = canon_str(serial_buf + 4, serial_buf[3]))) {
           if(!*hd->serial) {
             hd->serial = free_mem(hd->serial);
           }
           else {
             ADD2LOG("  serial id: \"%s\"\n", hd->serial);
           }
+        }
+        else {
+          ADD2LOG("  invalid response\n");
         }
       }
       else {
