@@ -934,7 +934,7 @@ void hd_read_platform(hd_data_t *hd_data)
   str_list_t *sf_bus, *sf_bus_e, *sf_eth_dev = NULL;
   char *sf_dev, *sf_eth_net;
   int mv643xx_eth_seen = 0;
-  int is_net, is_storage, is_usb;
+  int is_net, is_storage, is_usb, is_xhci;
   hd_t *hd;
 
   sf_bus = read_dir("/sys/bus/platform/devices", 'l');
@@ -971,9 +971,11 @@ void hd_read_platform(hd_data_t *hd_data)
       is_net = sf_eth_net && sf_eth_dev;
       is_storage = device_type && !strcmp(device_type, "sata");
       is_usb = device_type && (!strcmp(device_type, "usb") || !strcmp(device_type, "dwusb"));
+      is_xhci = platform_type && strstr(platform_type, ":xhci-hcd");
       if(is_net) ADD2LOG("    is net: sf_eth_net = %s\n", sf_eth_net);
       if(is_storage) ADD2LOG("    is storage\n");
       if(is_usb) ADD2LOG("    is usb\n");
+      if(is_xhci) ADD2LOG("    is xhci\n");
       free_mem(sf_eth_net);
       free_str_list(sf_eth_dev);
       if(
@@ -1006,12 +1008,18 @@ void hd_read_platform(hd_data_t *hd_data)
         s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
         if(s) add_str_list(&hd->drivers, s);
       }
-      else if(is_usb) {
+      else if(is_usb || is_xhci) {
         hd = add_hd_entry(hd_data, __LINE__, 0);
         hd->base_class.id = bc_serial;
         hd->sub_class.id = sc_ser_usb;
 
-        str_printf(&hd->device.name, 0, "ARM USB %d", hd->slot);
+        if(is_xhci) {
+          hd->prog_if.id = pif_usb_xhci;
+          str_printf(&hd->device.name, 0, "ARM USB XHCI Controller");
+        }
+        else {
+          str_printf(&hd->device.name, 0, "ARM USB %d", hd->slot);
+        }
         hd->modalias = new_str(platform_type);
         hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
         hd->sysfs_bus_id = new_str(sf_bus_e->str);
