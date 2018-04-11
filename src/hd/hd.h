@@ -278,7 +278,7 @@ typedef enum sc_dsl {
 
 /** prog_if's of sc_ser_usb */
 typedef enum pif_usb_e {
-  pif_usb_uhci = 0, pif_usb_ohci = 0x10, pif_usb_ehci = 0x20,
+  pif_usb_uhci = 0, pif_usb_ohci = 0x10, pif_usb_ehci = 0x20, pif_usb_xhci = 0x30,
   pif_usb_other = 0x80, pif_usb_device = 0xfe
 } hd_pif_usb_t;
 
