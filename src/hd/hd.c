@@ -152,6 +152,10 @@
 #define HD_ARCH "68k"
 #endif
 
+#ifdef __riscv
+#define HD_ARCH "riscv"
+#endif
+
 typedef struct disk_s {
   struct disk_s *next;
   unsigned crc;
@@ -3072,6 +3076,8 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
   return arch_aarch64;
 #elif defined __m68k__
   return arch_68k;
+#elif defined __riscv
+  return arch_riscv;
 #else
   return arch_unknown;
 #endif

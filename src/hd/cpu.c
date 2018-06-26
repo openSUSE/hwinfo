@@ -149,6 +149,11 @@ void read_cpuinfo(hd_data_t *hd_data)
   double bogo;
 #endif
 
+#ifdef __riscv
+  char hart[32], isa[32], mmu[32];
+  char uarch[80];
+#endif
+
   hd_data->cpu = read_file(PROC_CPUINFO, 0, 0);
   if((hd_data->debug & HD_DEB_CPU)) dump_cpu_data(hd_data);
   if(!hd_data->cpu) return;
@@ -682,6 +687,34 @@ void read_cpuinfo(hd_data_t *hd_data)
     hd->detail->cpu.data = ct;
   }
 #endif	/* __m68k__ */
+
+#ifdef __riscv
+  *isa = *mmu = *uarch = 0;
+  cpus = 0;
+
+  for (sl = hd_data->cpu; sl; sl = sl->next) {
+    if (sscanf(sl->str, "isa     : %31[^\n]", isa) == 1);
+    if (sscanf(sl->str, "mmu     : %31[^\n]", mmu) == 1);
+    if (sscanf(sl->str, "uarch   : %79[^\n]", uarch) == 1);
+
+    if(strstr(sl->str, "hart") == sl->str || !sl->next) {		/* EOF */
+      if (*isa || *mmu || *uarch) {	/* at least one of those */
+	ct = new_mem(sizeof *ct);
+	ct->architecture = arch_riscv;
+	if (*isa) ct->model_name = new_str(isa);
+	if (*uarch) ct->vend_name = new_str(uarch);
+
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+        hd->base_class.id = bc_internal;
+        hd->sub_class.id = sc_int_cpu;
+        hd->slot = cpus;
+	hd->detail = new_mem(sizeof *hd->detail);
+	hd->detail->type = hd_detail_cpu;
+	hd->detail->cpu.data = ct;
+      }
+    }
+  }
+#endif	/* __riscv */
 }
 
 /*
