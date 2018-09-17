@@ -28,6 +28,7 @@
 static void sigsegv_handler(int signum);
 static int vmware_mouse(int set_iopl);
 static void chk_vmware(hd_data_t *hd_data, sys_info_t *st);
+static int chk_hypervisor(hd_data_t *hd_data);
 #endif
 
 #if defined(__i386__) || defined(__x86_64__)
@@ -214,8 +215,13 @@ void chk_vmware(hd_data_t *hd_data, sys_info_t *st)
   static int is_vmware = -1, has_vmware_mouse = -1;	/* check only once */
 
   if(is_vmware < 0) {
-    vm_1 = vmware_mouse(0);
-    vm_2 = vmware_mouse(1);
+    if(chk_hypervisor(hd_data)) {
+      vm_1 = vmware_mouse(0);
+      vm_2 = vmware_mouse(1);
+    }
+    else {
+      vm_1 = vm_2 = 0;
+    }
 
     is_vmware = vm_1 > 0 ? 1 : 0;
     has_vmware_mouse = is_vmware || vm_2 > 0 ? 1 : 0;
@@ -318,6 +324,35 @@ int chk_vaio(hd_data_t *hd_data, sys_info_t *st)
 
   return st->model ? 1 : 0;
 }
+
+/*
+ * Check if we're running under a hypervisor (in a virtual machine).
+ *
+ * Return 1 if yes, else 0.
+ *
+ * The purpose if this check is to minimize chances the vmware check will
+ * have negative side effects (see bsc#1105003).
+ */
+int chk_hypervisor(hd_data_t *hd_data)
+{
+  int vm = 0;
+  str_list_t *sl;
+
+  for(sl = hd_data->cpu; sl; sl = sl->next) {
+    if(
+      !strncmp(sl->str, "flags\t", sizeof "flags\t" - 1) &&
+      strstr(sl->str, " hypervisor")
+    ) {
+      vm = 1;
+      break;
+    }
+  }
+
+  ADD2LOG("  hypervisor check: %d\n", vm);
+
+  return vm;
+}
+
 #endif	/* __i386__ || __x86_64__ */
 
 /** @} */
