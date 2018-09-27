@@ -5640,6 +5640,7 @@ void read_udevinfo(hd_data_t *hd_data)
   str_list_t *sl, *udevinfo;
   hd_udevinfo_t **uip, *ui;
   char *s = NULL, buf[256];
+  struct stat sbuf;
 
   udevinfo = read_file("| " PROG_UDEVADM " info -e 2>/dev/null", 0, 0);
   if(!udevinfo) udevinfo = read_file("| " PROG_UDEVINFO " -e 2>/dev/null", 0, 0);
@@ -5680,6 +5681,33 @@ void read_udevinfo(hd_data_t *hd_data)
   }
 
   s = free_mem(s);
+
+  /*
+   * It sometimes happens that udev generates the same link for different
+   * kernel devices. To catch this we check here that udev device symlinks
+   * actually point to the kernel device name.
+   *
+   * If it does not match the link is replaced by the kernel device name.
+   */
+  for(ui = hd_data->udevinfo; ui; ui = ui->next) {
+    if(!ui->name || stat(ui->name, &sbuf)) continue;
+
+    for(sl = ui->links; sl; sl = sl->next) {
+      char *real_path = realpath(sl->str, NULL);
+
+      if(real_path) {
+        if(strcmp(real_path, ui->name)) {
+          ADD2LOG(
+            "udev link %s points to %s (expected %s) - removed\n",
+            sl->str, real_path, ui->name
+          );
+          str_printf(&sl->str, 0, "%s", ui->name);
+        }
+
+        free(real_path);
+      }
+    }
+  }
 
   for(ui = hd_data->udevinfo; ui; ui = ui->next) {
     ADD2LOG("%s\n", ui->sysfs);
