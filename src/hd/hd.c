@@ -5936,6 +5936,11 @@ int hd_read_mmap(hd_data_t *hd_data, char *name, unsigned char *buf, off_t start
   return 1;
 }
 
+static void create_default_dir()
+{
+  mkdir(HARDWARE_DIR, 0755);
+  mkdir(HARDWARE_DIR "/udi", 0755);
+}
 
 /*
  * Get hardware data base dir (default: /var/lib/hardware).
@@ -5943,8 +5948,15 @@ int hd_read_mmap(hd_data_t *hd_data, char *name, unsigned char *buf, off_t start
 char *hd_get_hddb_dir()
 {
   char *s = getenv("LIBHD_HDDB_DIR");
+  struct stat sbuf;
 
-  return s && *s ? s : HARDWARE_DIR;
+  if (s && *s)
+    return s;
+
+  if (stat(HARDWARE_DIR, &sbuf) == -1)
+    create_default_dir();
+
+  return HARDWARE_DIR;
 }
 
 
