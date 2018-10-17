@@ -65,6 +65,7 @@ static void hd_read_mmc(hd_data_t *hd_data);
 static void hd_read_sdio(hd_data_t *hd_data);
 static void hd_read_nd(hd_data_t *hd_data);
 static void hd_read_visorbus(hd_data_t *hd_data);
+static void hd_read_mdio(hd_data_t *hd_data);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
 {
@@ -128,6 +129,9 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
 
   PROGRESS(16, 0, "visorbus");
   hd_read_visorbus(hd_data);
+
+  PROGRESS(17, 0, "mdio");
+  hd_read_mdio(hd_data);
 }
 
 
@@ -2137,5 +2141,57 @@ void hd_read_visorbus(hd_data_t *hd_data)
 
   free_str_list(sf_bus);
 }
-/** @} */
 
+
+/*
+ * Get mdio data from sysfs.
+ */
+void hd_read_mdio(hd_data_t *hd_data)
+{
+  str_list_t *sf_bus, *sf_bus_e, *sf_eth_dev = NULL, *net_if;
+  char *s, *sf_dev, *sf_eth_net;
+  hd_t *hd;
+
+  sf_bus = read_dir("/sys/bus/mdio_bus/devices", 'l');
+
+  if(!sf_bus) {
+    ADD2LOG("sysfs: no such bus: mdio\n");
+    return;
+  }
+
+  for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
+    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/mdio_bus/devices", sf_bus_e->str));
+
+    ADD2LOG(
+      "  mdio device: name = %s\n    path = %s\n",
+      sf_bus_e->str,
+      hd_sysfs_id(sf_dev)
+    );
+
+    sf_eth_net = new_str(hd_read_sysfs_link(sf_dev, "net"));
+    sf_eth_dev = read_dir(sf_eth_net, 'd');
+
+    for(net_if = sf_eth_dev; net_if; net_if = net_if->next) {
+      ADD2LOG("    mdio net: sf_eth_net = %s, if = %s\n", sf_eth_net, net_if->str);
+
+      hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class.id = bc_network;
+      hd->sub_class.id = 0;
+      str_printf(&hd->device.name, 0, "Ethernet controller");
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+      hd->sysfs_bus_id = new_str(sf_bus_e->str);
+      hd->unix_dev_name = new_str(net_if->str);
+      s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+      if(s) add_str_list(&hd->drivers, s);
+    }
+
+    free_mem(sf_eth_net);
+    free_str_list(sf_eth_dev);
+
+    free_mem(sf_dev);
+  }
+
+  free_str_list(sf_bus);
+}
+
+/** @} */
