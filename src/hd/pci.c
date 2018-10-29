@@ -2111,7 +2111,7 @@ void hd_read_visorbus(hd_data_t *hd_data)
               hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0002);
               hd->base_class.id = bc_network;
             }
-            else if(!strcmp(drv_name,"visorthba")) {
+            else if(!strcmp(drv_name,"visorhba")) {
               hd->device.id = MAKE_ID(TAG_SPECIAL, 0x0003);
               hd->base_class.id = bc_storage;
             }
