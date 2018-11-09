@@ -634,6 +634,9 @@ void do_hw(hd_data_t *hd_data, FILE *f, int hw_item)
       case arch_aarch64:
         s = "AArch64";
         break;
+      case arch_riscv:
+        s = "RISC-V";
+        break;
     }
 
     switch(b_arch) {
