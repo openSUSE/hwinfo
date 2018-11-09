@@ -2,13 +2,12 @@
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #
-# This script is maintained at https://github.com/openSUSE/ssob
+# This script is maintained at https://github.com/openSUSE/linuxrc-devtools
 #
 # If you're in another project, this is just a copy.
 # You may update it to the latest version from time to time...
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 
 use strict;
 
@@ -20,206 +19,142 @@ $Data::Dumper::Terse = 1;
 $Data::Dumper::Indent = 1;
 
 sub usage;
-sub get_branch_tags;
-sub get_branch;
-sub get_parent_branch;
+sub changelog_outdated;
+sub get_github_project;
 sub get_version;
+sub get_tags;
+sub get_log;
+sub is_formatted_tag;
+sub get_branch;
+sub choose_tags;
+sub add_head_tag;
+sub tags_to_str;
+sub format_log;
+sub format_all_logs;
+sub fix_dates;
+sub add_line_breaks;
+sub format_date_obs;
+sub format_date_iso;
+sub raw_date_to_s;
 
 usage 0 if !@ARGV;
 
-my @deps = qw ( .git/HEAD .git/refs/heads .git/refs/tags );
+my @changelog_deps = qw ( .git/HEAD .git/refs/heads .git/refs/tags );
 
 my $branch;
 my $current_version;
 my @tags;
 my @all_tags;
+my $config;
 
 my $opt_log;
 my $opt_version;
 my $opt_branch;
 my $opt_update;
 my $opt_file;
+my $opt_start;
+my $opt_max;
+my $opt_width = 66;
+my $opt_width_fuzz = 8;
+my $opt_sep_width = 68;
+my $opt_format = 'internal';		# obs, internal
+my $opt_merge_msg_before = 1;		# log auto generated pr merge message before the commit messages (vs. after)
+my $opt_join_author = 1;		# join consecutive commit messages as long as they are by the same author
+my $opt_keep_date = 1;			# don't join consecutive commit messages if they have different time stamps
+my $opt_default_email = 'opensuse-packaging@opensuse.org';	# default email to use in changelog
 
 GetOptions(
   'help'          => sub { usage 0 },
   'version'       => \$opt_version,
   'branch'        => \$opt_branch,
   'update'        => \$opt_update,
+  'start=s'       => \$opt_start,
+  'format=s'      => \$opt_format,
+  'max=i'         => \$opt_max,
+  'width=i'       => \$opt_width,
+  'fuzz=i'        => \$opt_width_fuzz,
+  'merge-msg=s'   => sub { $opt_merge_msg_before = ($_[1] eq 'after' ? 0 : 1) },
+  'join-author!'  => \$opt_join_author,
+  'keep-date!'    => \$opt_keep_date,
   'log|changelog' => \$opt_log,
+  'default-email=s' => \$opt_default_email,
 ) || usage 1;
 
+# ensure we are used correctly
 usage 1 if @ARGV > 1 || !($opt_log || $opt_version || $opt_branch);
 $opt_file = @ARGV ? shift : '-';
 
 die "no git repo\n" unless -d ".git";
 
-if($opt_update && $opt_file ne '-' && -f($opt_file)) {
-  my $ok = 1;
+# if update option has been give write changelog only if git refs are newer
+exit 0 if $opt_update && $opt_file ne '-' && -f($opt_file) && !changelog_outdated($opt_file);
 
-  my $t = (stat $opt_file)[9];
+$opt_max = 2 if $opt_version || $opt_branch;
 
-  for (@deps) {
-    $ok = 0 if (stat)[9] > $t;
-  }
+# gather some data
+get_github_project;
+get_branch;
+get_log;
+fix_dates;
+get_tags;
+choose_tags;
+add_head_tag;
+get_version;
 
-  exit 0 if $ok;
-}
-
-@all_tags = `git tag`;
-chomp @all_tags;
-
-$branch = get_branch;
-die "no branch?\n" unless $branch;
-
-@tags = get_branch_tags;
-die "no tags at all?\n" unless @tags;
-
-if($branch ne 'master') {
-  if(!grep { /^$branch\-/ } @tags) {
-    $branch = get_parent_branch;
-    die "sorry, can't determine branch\n" unless $branch;
-
-    @tags = get_branch_tags;
-    die "no tags at all?\n" unless @tags;
-  }
-}
-else {
-  @tags = get_branch_tags;
-  die "no tags at all?\n" unless @tags;
-}
-
+# just print current branch
 if($opt_branch) {
   open my $f, ">$opt_file";
-  print $f "$branch\n";
+  print $f $config->{branch} ? $config->{branch} : "master", "\n";
   close $f;
 
   exit 0;
 }
 
-$current_version = get_version;
-
+# just print current version
 if($opt_version) {
-  open my $f, ">$opt_file";
-  print $f "$current_version\n";
-  close $f;
+  my $old_version;
+
+  if($opt_file ne '-' && open(my $f, $opt_file)) {
+    chomp($old_version = <$f>);
+    close $f;
+  }
+
+  if($config->{version} ne $old_version) {
+    open my $f, ">$opt_file";
+    print $f "$config->{version}\n";
+    close $f;
+  }
 
   exit 0;
 }
 
-if($branch ne 'master') {
-  my ($i1, $i2, $bi);
-
-  for (my $i = 0; $i < @tags; $i++) {
-    if($tags[$i] =~ /^$branch\-(\S+)/) {
-      $i2 = $i;
-      $bi = $1;
-      last;
-    }
-  }
-
-  # print STDERR ">> $branch-$bi\n";
-
-  warn "no tags in this branch yet\n" unless $bi;
-
-  for (my $i = 0; $i < $i2; $i++) {
-    if($tags[$i] ge $bi) {
-      if($tags[$i] eq $bi) {
-        $i1 = $i;
-      }
-      elsif($i > 0) {
-        $i1 = $i - 1;
-      }
-      last;
-    }
-  }
-
-  splice @tags, $i1, $i2 - $i1;
+# set start tag
+if($opt_start) {
+  my $x = is_formatted_tag $opt_start;
+  die "$opt_start: not a valid start tag\n" if !$x;
+  $x->{branch} = $config->{branch} if !$x->{branch};
+  $config->{start} = $x;
 }
 
-map { s/(\d+)/$1 + 0/eg } @tags;
+format_all_logs;
 
-push @tags, "HEAD";
+open my $f, ">$opt_file";
 
-# print Dumper(\@tags);
+print $f $_->{formatted} for @{$config->{log}};
 
-open F, ">$opt_file";
+close $f;
 
-for (my $i = @tags - 1; $i > 0; $i--) {
-  my ($date, @t2);
-
-  my @t = `git log --pretty=medium --date=iso '$tags[$i-1]..$tags[$i]'`;
-
-  # print "\n--- $tags[$i-1]..$tags[$i] ---\n", @t, "---\n";
-
-  my $merge = 0;
-  for (@t) {
-    $merge = 1 if /^Merge: /;
-    $merge = 0 if /^commit /;
-    push @t2, $_ if !$merge;
-  }
-  @t = @t2;
-
-  undef @t2;
-  my $detail = 0;
-  for (@t) {
-    $detail = 1 if /^    $/;
-    $detail = 2 if /^    Conflicts:$/;
-    $detail = 0 if /^commit /;
-    if(!$detail) {
-      push @t2, $_ if $detail < 2;
-    }
-  }
-  @t = @t2;
-
-  # print "\n--- $tags[$i-1]..$tags[$i] ---\n", @t;
-
-  chomp @t;
-  for (@t) {
-    if(/^Date:\s*(\S+)/) {
-      $date = $1;
-      last;
-    }
-  }
-
-  # handle white space in every first line once and for all
-  my $empty = 1;
-  for (@t) {
-    $empty = 1, $_ = "", next if $_ =~ /^\s*$/;
-    next if !$empty;
-    s/^\s*//;
-    $empty = 0;
-  }
-
-  @t = grep { !/^(commit|Author:|Date:|Merge:|\s*$)|created.*tag/ } @t;
-  if(@t) {
-    # rewrite a bit to have it look more consistent
-    map { s/(fate|bnc|bsc)#/$1 #/g } @t;
-    map { s/(fate|bnc|bsc)\s*(\d{4})/$1 #$2/g } @t;
-    map { s/\(#/(bnc #/g } @t;
-    map { s/bug\s*#/bnc #/g } @t;
-    map { s/feat(\.|ure)?\s*#?(\d+)/fate #$2/g } @t;
-    map { s/^ {4}// } @t;
-    map { s/^ {8}// } @t;
-    map { s/^ +/  / } @t;
-    map { s/^\s*[+\-][\-\s]*/- / } @t;
-    map { s/^([^ \-])/- $1/ } @t;
-    map { s/^/\t/ } @t;
-    map { s/\\'/'/ } @t;
-
-    # print "\n--- $tags[$i-1]..$tags[$i] ---\n", join("\n", @t);
-
-    my $t = $tags[$i];
-    $t = "${branch}-$t" if $branch ne 'master' && $t eq "HEAD";
-    $t =~ s/HEAD/$current_version/;
-    print F "$date:\t$t\n";
-    print F join("\n", @t), "\n\n";
-  }
-}
-
-close F;
+exit 0;
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# usage(exit_code)
+#
+# Print help message and exit.
+# - exit_code: exit code
+#
+# Function does not return.
+#
 sub usage
 {
   my $err = shift;
@@ -227,11 +162,25 @@ sub usage
   print <<"  usage";
 Usage: git2log [OPTIONS] [FILE]
 Create changelog and project version from git repo.
-  --changelog   Write changelog to FILE.
-  --version     Write version number to FILE.
-  --branch      Write current branch to FILE.
-  --update      Write changelog or version only if FILE is outdated.
-  --help        Print this help text.
+  --changelog         Write changelog to FILE.
+  --version           Write version number to FILE.
+  --branch            Write current branch to FILE.
+  --start START_TAG   Start with tag START_TAG.
+  --max N             Write at most MAX long entries.
+  --update            Write changelog or version only if FILE is outdated.
+  --format FORMAT     Write log using FORMAT. Supported FORMATs are 'internal' (default) and 'obs'.
+  --width WIDTH       Reformat log entries to be max WIDTH chars wide.
+  --fuzz FUZZ         Allow log lines to be up to FUZZ chars longer as WIDTH to avoid
+                      line breaks leaving tiny bits on the last line.
+  --merge-msg WHERE   Log message about merges before or after the actual merge commit messages.
+                      Valid values for WHERE are 'after' and 'before' (default).
+  --join-author       Join consecutive commits as long as they are by the same author. (default)
+  --no-join-author    Keep consecutive commits by the same author separate.
+  --keep-date         Join consecutive commits only if they have the same date. (default)
+  --no-keep-date      Join consecutive commits even if dates differ.
+  --default-email     Use this email in changelog entries if no other suitable email could be
+                      determined (default: opensuse-packaging\@opensuse.org).
+  --help              Print this help text.
   usage
 
   exit $err;
@@ -239,70 +188,797 @@ Create changelog and project version from git repo.
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-sub get_branch_tags
+# res = changelog_outdated(file)
+#
+# Return status of changelog file.
+# - file: changelog file name
+# - res: status
+#     1: file is newer than the last git repo change and should be updated
+#     0: file is still recent enough
+#
+# Relies on global var @changelog_deps.
+#
+sub changelog_outdated
 {
-  my @ntags;
+  my $file = $_[0];
 
-  for (@all_tags) {
-    if(/^\d/) {
-      s/(\d+)/sprintf "%04d", $1/eg;
-      push @ntags, $_;
-    }
-    elsif(s/^$branch\-//) {
-      s/(\d+)/sprintf "%04d", $1/eg;
-      push @ntags, "$branch-$_";
-    }
+  my $changelog_time = (stat $file)[9];
+
+  return 1 if !defined $changelog_time;
+
+  for (@changelog_deps) {
+    return 1 if (stat)[9] > $changelog_time;
   }
 
-  return sort @ntags;
+  return 0;
 }
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-sub get_branch
+# get_github_project()
+#
+# Set $config->{github_project} to the github project name.
+#
+sub get_github_project
 {
-  my $b;
-
-  for (`git branch`) {
-    if(/^\*\s+(\S+)/) {
-      $b = $1;
-      last;
-    }
+  if(`git config remote.origin.url` =~ m#github.com[:/]+(\S+/\S+)#) {
+    $config->{github_project} = $1;
+    $config->{github_project} =~ s/\.git$//;
   }
-
-  $b = "master" if $b eq '(no';
-
-  return $b;
 }
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-sub get_parent_branch
-{
-  my $p;
-
-  for (`git log -g --pretty=oneline`) {
-    $p = $1 if /checkout: moving from (\S+) to $branch/;
-  }
-
-  # print "parent = $p\n";
-
-  return $p || "master";
-}
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# get_version()
+#
+# Set $config->{branch} and $config->{version} to the current branch and
+# version info.
+#
+# This might be taken directly from HEAD if HEAD is tagged or otherwise be
+# exprapolated from the most recent tag (cf. add_head_tag()).
+#
 sub get_version
 {
-  my $v = $tags[-1];
-  $v =~ s/(\d+)/$1 + 0/eg;
+  $config->{version} = "0.0";
 
-  if(`git log --pretty=medium --date=iso '$v..HEAD'`) {
-    $v =~ s/(\d+)$/$1 + 1/e;
+  my $tag = $config->{log}[0]{tags}[0];
+
+  if($tag->{version}) {
+    $config->{version} = $tag->{version};
+    $config->{branch} = $tag->{branch};
   }
-
-  $v =~ s/^$branch\-//;
-
-  return $v;
 }
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# get_tags()
+#
+# Parse $config->{raw_log}, extract tag names, and split into per-tag
+# sections.
+#
+# Only tags recognized by is_formatted_tag() are considered.
+#
+# Tags inside merge commits are ignored.
+#
+# The parsed logs is stored in $config->{log}, an array of log sections.
+# Each section is a hash with these keys:
+#   - 'tags': array of tags for this section
+#   - 'commit': git commit id associated with these tags
+#   - 'lines': git log lines
+#
+sub get_tags
+{
+  my $log_entry;
+
+  # the end of the merge commit if in a merge
+  my $merge;
+
+  for (@{$config->{raw_log}}) {
+    if(/^commit (\S+)( \((.*)\))?/) {
+      my $commit = $1;
+      my $tag_list = $3;
+      my $xtag;
+
+      # we have reached the end of the merge commit
+      undef $merge if $merge && $commit =~ /^$merge/;
+
+      # ignore tag info inside a merge commit
+      $tag_list = "" if $merge;
+
+      for my $t (split /, /, $tag_list) {
+        if($t =~ /tag: (\S+)/) {
+          my $tag = $1;
+          my $x = is_formatted_tag $tag;
+          push @$xtag, $x if $x;
+        }
+      }
+
+      if($xtag) {
+        if($log_entry) {
+          push @{$config->{log}}, $log_entry;
+          last if $opt_max && @{$config->{log}} >= $opt_max;
+        }
+        $log_entry = { commit => $commit, tags => $xtag };
+      }
+      else {
+        $log_entry = { commit => $commit } if !$log_entry;
+      }
+    }
+    elsif(!$merge && /^Merge: (\S+)/) {
+      # remember end of merge
+      $merge = $1;
+    }
+
+    push @{$log_entry->{lines}}, $_ if $log_entry;
+  }
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# get_log()
+#
+# Read git log and store lines as array in $config->{raw_log} (trailing
+# newlines removed).
+#
+sub get_log
+{
+  chomp(@{$config->{raw_log}} = `git log --pretty=medium --date=raw --topo-order --decorate`);
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# hash_ref = is_formatted_tag(tag_name)
+#
+# Parse tag and return hash ref with branch and version number parts or
+# undef if it doesn't match.
+# - tag_name: tag as string
+# - hash_ref: hash ref with internal tag representation (with keys 'branch' and 'version').
+#
+# This expects tags of the form "VERSION" or "BRANCH-VERSION" where VERSION
+# consists of decimal numbers separated by dots '.' and BRANCH can be any
+# string.
+# (Note: it doesn't really have to be the name of an existing branch.)
+#
+# Tags not conforming to this convention are ignored.
+#
+sub is_formatted_tag
+{
+  if($_[0] =~ /^((.+)-)?((\d+\.)*\d+)$/) {
+    return { branch => $2, version => $3 }
+  }
+
+  return undef;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# get_branch()
+#
+# Get currently active git branch and store in $config->{branch}.
+#
+# 'master' branch is represented by empty 'branch' key.
+#
+sub get_branch
+{
+  chomp(my $branch = `git rev-parse --abbrev-ref HEAD`);
+
+  $branch = "" if $branch eq 'master';
+
+  $config->{branch} = $branch;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# res = tag_sort(a, b)
+#
+# Compare 2 tags.
+# - a, b: refs to tag hash
+# - res: -1, 0, 1
+#
+# This is used when we have to decide between alternative tags.
+# (Prefer 'lesser' variant.)
+#
+sub tag_sort
+{
+  my ($x, $y);
+
+  $x = length $a->{version};
+  $y = length $b->{version};
+
+  # longer version number first
+  return $y <=> $x if $y <=> $x;
+
+  return $a->{branch} cmp $b->{branch};
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# str = tag_to_str(tag_ref)
+#
+# Convert tag into string.
+# - tag_ref: ref to hash with 'branch' and 'version' keys
+# - str: string (e.g. "foo-1.44")
+#
+# 'master' branch is represented by missing/empty 'branch' key.
+#
+sub tag_to_str
+{
+  my $tag = $_[0];
+  my $str;
+
+  $str = "$tag->{branch}-" if $tag->{branch} ne "";
+  $str .= $tag->{version};
+
+  return $str;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# str = tags_to_str(tag_array_ref)
+#
+# Convert array of tags into string.
+# - tag_array_ref: ref to array of tags
+# - str: string (e.g. "(tag1, tag2)"
+#
+# This function is used only internally for debugging.
+#
+sub tags_to_str
+{
+  my $tags = $_[0];
+  my $str;
+
+  for my $t (@$tags) {
+    $str .= ", " if $str;
+    $str .= tag_to_str $t;
+  }
+
+  return "($str)";
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# choose_tags()
+#
+# Scan commit messages and extract tag & branch information.
+#
+# This stores the tag/branch info in $config->{log}[]{tags}.
+#
+sub choose_tags
+{
+  my $branch = $config->{branch};
+
+  for my $x (@{$config->{log}}) {
+    # printf "# %s\n", tags_to_str($x->{tags});
+
+    # no tag info? -> ignore
+    next if !$x->{tags};
+
+    # single tag? -> remember branch info
+    if(@{$x->{tags}} == 1) {
+      $branch = $x->{tags}[0]{branch};
+      next;
+    }
+
+    # several tags? -> choose one
+
+    # any with current branch name?
+    my @t = grep { $_->{branch} eq $branch } @{$x->{tags}};
+
+    # no? -> choose among all
+    @t = @{$x->{tags}} if @t == 0;
+
+    # prefer longest version number, then alphanumerically smallest branch name
+    @t = sort tag_sort @t;
+
+    $branch = $t[0]{branch};
+    $x->{tags} = [ $t[0] ];
+
+    # printf "X %s\n", tags_to_str($x->{tags});
+  }
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# add_head_tag()
+#
+# Suggest tag for HEAD if there isn't one.
+#
+# Basically, use branch + version from most recent tag and increment version.
+#
+sub add_head_tag
+{
+  return if @{$config->{log}} < 2;
+
+  # HEAD tagged already?
+  return if $config->{log}[0]{tags};
+
+  # the first tagged commit if HEAD isn't tagged
+  my $tag = { %{$config->{log}[1]{tags}[0]} };
+
+  # increment version
+  $tag->{version} =~ s/(\d+)$/$1 + 1/e;
+
+  $config->{log}[0]{tags}[0] = $tag;
+
+  # remember that the tag was generated
+  $config->{log}[0]{was_untagged} = 1;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# fix_dates()
+#
+# Adjust time stamps in entire git log.
+#
+# The time stamps of the git commits are not necessarily ordered by date.
+# But the generated changelog is required to have a strictly monotonic time.
+#
+# We do this by going through the log in reverse and rewriting any dates we
+# find whenever the date decreases.
+#
+# A minimum time difference of 1 second beween entries is maintained.
+#
+# Not very subtle but it works.
+#
+sub fix_dates
+{
+  my $last_date;
+
+  for (reverse @{$config->{raw_log}}) {
+    # e.g. "Date: 1443184889 +0200"
+    if(/^(Date:\s+)(\S+)(\s+\S+)/) {
+      if(defined $last_date && $2 < $last_date) {
+        $_ = "$1$last_date$3\n";
+      }
+      else {
+        $last_date = $2;
+      }
+
+      # ensure a minimal time gap of 1 second
+      $last_date += 1;
+    }
+  }
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# format_all_logs()
+#
+# Format the entire git log.
+#
+# This is done for every code version individually (the log has already been
+# split accordingly).
+#
+# If $config->{start} is set, use this as starting point. Else format the
+# entire git log.
+#
+sub format_all_logs
+{
+  # check if start tag actually exists - if not, print nothing
+  if($config->{start}) {
+    my $tag_found;
+    for (@{$config->{log}}) {
+      $tag_found = 1, last if grep { tag_to_str($config->{start}) eq tag_to_str($_) } @{$_->{tags}};
+    }
+    return if !$tag_found;
+  }
+
+  for (@{$config->{log}}) {
+    if($config->{start}) {
+      # stop if we meet the start tag
+      last if grep { tag_to_str($config->{start}) eq tag_to_str($_) } @{$_->{tags}};
+    }
+    format_log $_;
+  }
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# format_log(log)
+#
+# Format log messages.
+# - log: is an array ref with individual commits
+#
+# All commits belong to a specific code version (stored in $log->{tag}).
+# $log->{formatted} holds the result.
+#
+# The process is done in several individual steps, documented below in the code.
+#
+sub format_log
+{
+  my $log = $_[0];
+
+  my $merge;
+  my $commit;
+  my $commits;
+
+  for (@{$log->{lines}}) {
+    if(/^commit (\S+)/) {
+      $commit = { ref => $1 };
+      push @{$commits}, $commit;
+
+      if(
+        $merge &&
+        $merge->{merge_end} eq substr($commit->{ref}, 0, length($merge->{merge_end}))
+      ) {
+        undef $merge;
+      }
+
+      if($merge) {
+        $commit->{merge_ref} = $merge->{ref};
+        $commit->{date} = $merge->{date};
+        $commit->{author} = $merge->{author};
+        # add to all commits so it's not lost when we re-arrange
+        $commit->{merge_msg} = $merge->{msg};
+      }
+
+      next;
+    }
+
+    if(/^Merge: (\S+)/ && !$merge) {
+      if($commit) {
+        $merge = { merge_end => $1, ref => $commit->{ref} } unless $merge;
+      }
+      next;
+    }
+
+    if(/^Date:\s+(\S.*)/) {
+      $commit->{date} ||= $1 if $commit;
+      $merge->{date} ||= $1 if $merge;
+      next;
+    }
+
+    if(/^Author:\s+(\S.*)/) {
+      $commit->{author} ||= $1 if $commit;
+      $merge->{author} ||= $1 if $merge;
+      next;
+    }
+
+    if($merge) {
+      if(/^    Merge pull request (#\d+) from (\S+)/) {
+        if($config->{github_project}) {
+          push @{$merge->{msg}}, "merge gh#$config->{github_project}$1";
+        }
+        else {
+          push @{$merge->{msg}}, "merge pr $2";
+        }
+      }
+      elsif(/^    Merge branch '([^']+)'( into)?/) {
+        push @{$merge->{msg}}, "merge branch $1" if $2 eq "";
+      }
+      elsif(/^    Merge remote-tracking branch /) {
+        # ignore
+      }
+      elsif(s/^    //) {
+        push @{$commit->{lines}}, $_ unless /^# /;
+      }
+    }
+    elsif($commit) {
+      if(s/^    //) {
+        push @{$commit->{lines}}, $_ unless /^# /;
+      }
+    }
+  }
+
+  # Note: the individual steps below work on the array @$commits and modify
+  # its content.
+
+  # step 1
+  # - if there are paragraphs starting with '@log@' or '@+log@'
+  #     - delete first paragraph (short summary)
+  # - else
+  #     - keep only first paragraph
+  # - if there is a paragraph starting with '@-log', delete entire log
+  # - tag commits that have a '@log@' tag so we can delete untagged commits
+  #   belonging to the same merge commit later
+
+  my $tagged_merges = {};
+
+  for my $commit (@$commits) {
+    # skip leading empty lines
+    for (@{$commit->{lines}}) {
+      last if !/^\s*$/;
+      shift @{$commit->{lines}};
+    }
+    my $para_cnt = 0;
+    my $delete_all = 0;
+    my $delete_first = 0;
+    for (@{$commit->{lines}}) {
+      $para_cnt++ if $_ eq "";
+      $para_cnt = 0, $delete_first = 1 if /^\@\+log\@/;
+      $delete_all = 1 if /^\@\-log\@/;
+      if(/^\@log\@/) {
+        $para_cnt = 0;
+        $commit->{clear} = 1;
+        $tagged_merges->{$commit->{merge_ref}} = 1 if $commit->{merge_ref} || $log->{was_untagged};
+      }
+      $_ = undef if $para_cnt;
+    }
+    shift @{$commit->{lines}} if $delete_first;
+    $commit->{lines} = [] if $delete_all;
+  }
+
+  # step 2
+  # - clean up tagged commits or commits belonging to tagged merges
+
+  for my $commit (@$commits) {
+    next unless $commit->{clear} || $tagged_merges->{$commit->{merge_ref}};
+    for (@{$commit->{lines}}) {
+      last if /^\@\+?log\@/;
+      $_ = undef;
+    }
+  }
+
+  # step 3
+  # - join lines
+
+  for my $commit (@$commits) {
+    my $lines;
+    my $line;
+
+    for (@{$commit->{lines}}) {
+      next if $_ eq "";
+      if(
+        s/^\s*[+\-][\-\s]*// ||
+        s/^\@\+?log\@// ||
+        $line eq ""
+      ) {
+        s/^\s*//;
+        push @$lines, $line if $line ne "";
+        $line = $_;
+      }
+      else {
+        s/^\s*//;
+        $line .= " " if $line ne "";
+        $line .= $_;
+      }
+    }
+    push @$lines, $line if $line ne "";
+
+    $commit->{formatted} = $lines if $lines;
+  }
+
+  # step 4
+  # - fix small glitches
+
+  for my $commit (@$commits) {
+    next unless $commit->{formatted};
+    for (@{$commit->{formatted}}) {
+      s/(fate|bnc|bsc|boo)\s*(#\d+)/\L$1\E$2/ig;
+    }
+  }
+
+  # step 5
+  # - add merge info at the top or bottom (depending on $opt_merge_msg_before)
+
+  my $merge_logged;
+
+  for my $commit ($opt_merge_msg_before ? reverse(@$commits) : @$commits) {
+    next unless $commit->{formatted};
+
+    if($commit->{merge_ref} && !$merge_logged->{$commit->{merge_ref}}) {
+      $merge_logged->{$commit->{merge_ref}} = 1;
+      if($commit->{merge_msg}) {
+        if($opt_merge_msg_before) {
+          unshift @{$commit->{formatted}}, @{$commit->{merge_msg}};
+        }
+        else {
+          push @{$commit->{formatted}}, @{$commit->{merge_msg}};
+        }
+      }
+    }
+  }
+
+  # step 6
+  # - join commit messages with same author (optionally even with different dates)
+
+  my $commit0;
+
+  for my $commit (@$commits) {
+    next if !$commit->{formatted};
+    $commit0 = $commit, next if !$commit0;
+
+    if(
+      # $commit->{merge_ref} eq $commit0->{merge_ref} &&
+      (
+        $opt_join_author && ($commit->{author} eq $commit0->{author})
+        && (!$opt_keep_date || $commit->{date} eq $commit0->{date})
+      )
+      || $opt_format eq 'internal'
+    ) {
+      unshift @{$commit0->{formatted}}, @{$commit->{formatted}};
+      delete $commit->{formatted};
+    }
+    else {
+      $commit0 = $commit;
+    }
+  }
+
+  # step 7
+  # - add version tag at the end of the first log entry
+
+  for my $commit (@$commits) {
+    next unless $commit->{formatted};
+
+    if($opt_format eq 'obs') {
+      push @{$commit->{formatted}}, $log->{tags}[0]{version} if defined $log->{tags}[0]{version};
+    }
+    else {
+      # push @{$commit->{formatted}}, tag_to_str($log->{tags}[0]);
+    }
+
+    last;
+  }
+
+  # step 8
+  # - remove identical lines
+
+  for my $commit (@$commits) {
+    next unless $commit->{formatted};
+    my %k;
+    $commit->{formatted} = [ grep { !$k{$_}++ } @{$commit->{formatted}} ]
+  }
+
+  # step 9
+  # - remove shortened lines (that match the beginning of other lines)
+
+  for my $commit (@$commits) {
+    next unless $commit->{formatted};
+
+    # return 1 if some other commit line starts with function arg
+    my $is_substr = sub {
+      my $str = $_[0];
+      $str =~ s/\s*…$//;	# github likes to shorten lines with ' …'
+      my $str_len = length $str;
+      for (@{$commit->{formatted}}) {
+        return 1 if $str_len < length($_) && $str eq substr($_, 0, $str_len);
+      }
+
+      return 0;
+    };
+
+    $commit->{formatted} = [ grep { ! $is_substr->($_) } @{$commit->{formatted}} ]
+  }
+
+  # step 10
+  # - add line breaks
+
+  for my $commit (@$commits) {
+    next unless $commit->{formatted};
+    for (@{$commit->{formatted}}) {
+      $_ = add_line_breaks $_;
+    }
+  }
+
+  # step 11
+  # - generate final log message
+  #
+  # note: non-(open)suse email addresses are replaced by $opt_default_email
+
+  my $formated_log;
+
+  for my $commit (@$commits) {
+    next unless $commit->{formatted} && @{$commit->{formatted}};
+
+    if($opt_format eq 'obs') {
+      $formated_log .= "-" x $opt_sep_width . "\n";
+      $formated_log .= format_date_obs($commit->{date});
+    }
+    else {
+      $formated_log .= format_date_iso($commit->{date});
+    }
+    if($opt_format eq 'obs') {
+      my $auth = $commit->{author};
+      $auth =~ s/^.*<//;
+      $auth =~ s/>.*$//;
+      # replace non-suse e-mail addresses with a generic one
+      if($auth !~ /\@(suse\.(com|cz|de)|opensuse\.org)$/) {
+        $auth = $opt_default_email;
+      }
+      $formated_log .= " - $auth\n\n";
+    }
+    else {
+      $formated_log .= ":\t" . tag_to_str($log->{tags}[0]) . "\n";
+    }
+
+    for (@{$commit->{formatted}}) {
+      s/^/\t/mg if $opt_format eq 'internal';
+      $formated_log .= "$_\n";
+    }
+
+    $formated_log .= "\n";
+  }
+
+  $log->{formatted} = $formated_log;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# new_text = add_line_breaks(text)
+#
+# Add line breaks to text.
+# - text: some text
+# - new_text: same text, reformatted
+#
+# Lines are formatted to have a maximal length of $opt_width. If this causes
+# the last line to be shorter than $opt_width_fuzz, it is appended to the
+# previous line.
+#
+sub add_line_breaks
+{
+  my @words = split /\s+/, @_[0];
+  my $remaining_len = length(join '', @words);
+
+  my $str = shift(@words);
+  my $len = length $str;
+
+  my $next_len;
+  my $word_len;
+
+  for (@words) {
+    $word_len = length;
+    $remaining_len -= $word_len;
+    $next_len = $len + $word_len + 1;
+    if(
+      $next_len >= $opt_width &&
+      $next_len + $remaining_len + 1 >= $opt_width + $opt_width_fuzz
+    ) {
+      $str .= "\n  $_";
+      $len = $word_len;
+    }
+    else {
+      $str .= " $_";
+      $len += $word_len + 1;
+    }
+  }
+
+  return "- " . $str;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# seconds = raw_date_to_s(git_date)
+#
+# Convert git raw date to seconds.
+# - git_date: raw git format (e.g. "1443184889 +0200")
+# - seconds: the seconds part (e.g. "1443184889")
+#
+sub raw_date_to_s
+{
+  return (split / /, $_[0])[0];
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# date = format_date_obs(git_date)
+#
+# Convert git raw date to obs format.
+# - git_date: raw git format (e.g. "1443184889 +0200")
+# - date: obs format ("Fri Sep 25 12:41:29 UTC 2015")
+#
+sub format_date_obs
+{
+  my @d = gmtime(raw_date_to_s($_[0]));
+
+  return
+    qw(Sun Mon Tue Wed Thu Fri Sat)[$d[6]] . " " .
+    qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)[$d[4]] . " " .
+    $d[3] . " " .
+    sprintf("%02d:%02d:%02d", $d[2], $d[1], $d[0]) . " UTC " .
+    (1900 + $d[5]);
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# date = format_date_iso(git_date)
+#
+# Convert git raw date to iso format.
+# - git_date: raw git format (e.g. "1443184889 +0200")
+# - date: obs format ("2015-09-25")
+#
+sub format_date_iso
+{
+  my @d = gmtime(raw_date_to_s($_[0]));
+
+  return sprintf("%04d-%02d-%02d", 1900 + $d[5], $d[4] + 1, $d[3]);
+}
