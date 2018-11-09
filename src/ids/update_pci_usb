@@ -9,17 +9,18 @@
   exit 1
 }
 
-curl -o pci.ids http://pci-ids.ucw.cz/v2.2/pci.ids || {
+curl --fail -o pci.ids http://pci-ids.ucw.cz/v2.2/pci.ids || {
   echo "oops, no pci ids"
   exit 1
 }
 
-curl -o usb.ids http://www.linux-usb.org/usb.ids || {
+curl --fail -o usb.ids http://www.linux-usb.org/usb.ids || {
   echo "oops, no usb ids"
   exit 1
 }
 
 # keep only device info in usb list
+# (delete everything beginning with the class definitions)
 perl -pi -e 'undef $_ if /^C\s/..1' usb.ids
 
 ./convert_hd pci.ids && mv hd.ids src/pci
