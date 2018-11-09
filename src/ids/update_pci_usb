@@ -1,0 +1,29 @@
+#! /bin/bash
+
+# Script to update pci and usb id data.
+#
+# Just run it.
+
+[ -x convert_hd -a -d src ] || {
+  echo "this script must be run in the 'src/ids' directory"
+  exit 1
+}
+
+curl --fail -o pci.ids http://pci-ids.ucw.cz/v2.2/pci.ids || {
+  echo "oops, no pci ids"
+  exit 1
+}
+
+curl --fail -o usb.ids http://www.linux-usb.org/usb.ids || {
+  echo "oops, no usb ids"
+  exit 1
+}
+
+# keep only device info in usb list
+# (delete everything beginning with the class definitions)
+perl -pi -e 'undef $_ if /^C\s/..1' usb.ids
+
+./convert_hd pci.ids && mv hd.ids src/pci
+./convert_hd usb.ids && mv hd.ids src/usb
+
+rm -f pci.ids usb.ids
