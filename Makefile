@@ -116,6 +116,8 @@ install:
 	fi
 	install -m 644 hwinfo.pc $(DESTDIR)$(ULIBDIR)/pkgconfig
 	install -m 644 src/hd/hd.h $(DESTDIR)/usr/include
+	perl -pi -e "s/define\s+HD_VERSION\b.*/define HD_VERSION\t\t$(LIBHD_MAJOR_VERSION)/" $(DESTDIR)/usr/include/hd.h
+	perl -pi -e "s/define\s+HD_MINOR_VERSION\b.*/define HD_MINOR_VERSION\t$(LIBHD_MINOR_VERSION)/" $(DESTDIR)/usr/include/hd.h
 	install -m 755 getsysinfo $(DESTDIR)/usr/sbin
 	install -m 755 src/isdn/cdb/mk_isdnhwdb $(DESTDIR)/usr/sbin
 	install -d -m 755 $(DESTDIR)/usr/share/hwinfo
@@ -125,7 +127,6 @@ install:
 
 archive: changelog
 	@if [ ! -d .git ] ; then echo no git repo ; false ; fi
-	make -C src/hd hd.h
 	mkdir -p package
 	git archive --prefix=$(PREFIX)/ $(BRANCH) > package/$(PREFIX).tar
 	tar -r -f package/$(PREFIX).tar --mode=0664 --owner=root --group=root --mtime="`git show -s --format=%ci`" --transform='s:^:$(PREFIX)/:' VERSION changelog src/hd/hd.h
