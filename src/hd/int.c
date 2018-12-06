@@ -1081,6 +1081,8 @@ void int_system(hd_data_t *hd_data)
   hd_smbios_t *sm;
   struct {
     unsigned notebook:1;
+    unsigned notebook_by_mouse:1;
+    unsigned chassis_info:1;
     enum { v_none = 0, v_ibm = 1, v_toshiba, v_sony } vendor;
   } is = { };
   char *s;
@@ -1158,14 +1160,15 @@ void int_system(hd_data_t *hd_data)
       }
     }
 
-    if(
-      sm->any.type == sm_chassis &&
-      (
+    if(sm->any.type == sm_chassis) {
+      is.chassis_info = 1;
+
+      if(
         (sm->chassis.ch_type.id >= 8 && sm->chassis.ch_type.id <= 11) ||
         sm->chassis.ch_type.id == 14
-      )
-    ) {
-      is.notebook = 1;
+      ) {
+        is.notebook = 1;
+      }
     }
 
     /*
@@ -1177,8 +1180,13 @@ void int_system(hd_data_t *hd_data)
       sm->any.type == sm_mouse &&
       (sm->mouse.mtype.id == 5 || sm->mouse.mtype.id == 7)
     ) {
-      is.notebook = 1;
+      is.notebook_by_mouse = 1;
     }
+  }
+
+  /* use is.notebook_by_mouse only if there's no usable chassis info (bsc #1117982) */
+  if(!is.notebook) {
+    if(is.notebook_by_mouse && !is.chassis_info) is.notebook = 1;
   }
 
   /* check for battery, too (bnc #678456) */
