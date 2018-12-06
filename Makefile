@@ -116,8 +116,8 @@ install:
 	fi
 	install -m 644 hwinfo.pc $(DESTDIR)$(ULIBDIR)/pkgconfig
 	install -m 644 src/hd/hd.h $(DESTDIR)/usr/include
-	perl -pi -e "s/define\s+HD_VERSION\s+\d+/define HD_VERSION\t\t$(LIBHD_MAJOR_VERSION)/" $(DESTDIR)/usr/include/hd.h
-	perl -pi -e "s/define\s+HD_MINOR_VERSION\s+\d+/define HD_MINOR_VERSION\t$(LIBHD_MINOR_VERSION)/" $(DESTDIR)/usr/include/hd.h
+	perl -pi -e "s/define\s+HD_VERSION\b.*/define HD_VERSION\t\t$(LIBHD_MAJOR_VERSION)/" $(DESTDIR)/usr/include/hd.h
+	perl -pi -e "s/define\s+HD_MINOR_VERSION\b.*/define HD_MINOR_VERSION\t$(LIBHD_MINOR_VERSION)/" $(DESTDIR)/usr/include/hd.h
 	install -m 755 getsysinfo $(DESTDIR)/usr/sbin
 	install -m 755 src/isdn/cdb/mk_isdnhwdb $(DESTDIR)/usr/sbin
 	install -d -m 755 $(DESTDIR)/usr/share/hwinfo

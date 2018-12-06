@@ -19,8 +19,8 @@ extern "C" {
  */
 
 /** Interface version */
-#define HD_VERSION		0
-#define HD_MINOR_VERSION	0
+#define HD_VERSION		0	/* will be set during install */
+#define HD_MINOR_VERSION	0	/* will be set during install */
 #define HD_FULL_VERSION		(HD_VERSION * 1000 + HD_MINOR_VERSION)
 
 /**
