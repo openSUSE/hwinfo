@@ -121,3 +121,7 @@ In rare cases branching was unavoidable:
 You can find more information about the changes auto-generation and the
 tools used for jenkis submissions in the [linuxrc-devtools
 documentation](https://github.com/openSUSE/linuxrc-devtools#opensuse-development).
+
+## Updating Database for Pci and Usb Ids
+
+For details about updating pci and usb ids look [here](src/ids/README.md).
