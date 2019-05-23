@@ -6,6 +6,11 @@
 #include "hd_int.h"
 #include "smbios.h"
 
+// not in old uuid.h versions
+#ifndef UUID_STR_LEN
+#define UUID_STR_LEN 37
+#endif
+
 /**
  * @defgroup SMBIOSint System Management BIOS (SMBIOS)
  * @ingroup libhdINFOint

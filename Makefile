@@ -3,9 +3,9 @@ SUBDIRS		= src
 TARGETS		= hwinfo hwinfo.pc changelog
 CLEANFILES	= hwinfo hwinfo.pc hwinfo.static hwscan hwscan.static hwscand hwscanqueue doc/libhd doc/*~
 LIBS		= -lhd
-SLIBS		= -lhd
+SLIBS		= -lhd -luuid
 TLIBS		= -lhd_tiny
-SO_LIBS		=
+SO_LIBS		= -luuid
 TSO_LIBS	=
 
 export SO_LIBS
@@ -31,10 +31,10 @@ ULIBDIR		= $(LIBDIR)
 
 # ia64
 ifneq ($(filter i386 x86_64, $(ARCH)),)
-SLIBS		+= -lx86emu -luuid
-TLIBS		+= -lx86emu -luuid
-SO_LIBS		+= -lx86emu -luuid
-TSO_LIBS	+= -lx86emu -luuid
+SLIBS		+= -lx86emu
+TLIBS		+= -lx86emu
+SO_LIBS		+= -lx86emu
+TSO_LIBS	+= -lx86emu
 endif
 
 SHARED_FLAGS	=
