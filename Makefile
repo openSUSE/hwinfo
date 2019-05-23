@@ -31,10 +31,10 @@ ULIBDIR		= $(LIBDIR)
 
 # ia64
 ifneq ($(filter i386 x86_64, $(ARCH)),)
-SLIBS		+= -lx86emu
-TLIBS		+= -lx86emu
-SO_LIBS		+= -lx86emu
-TSO_LIBS	+= -lx86emu
+SLIBS		+= -lx86emu -luuid
+TLIBS		+= -lx86emu -luuid
+SO_LIBS		+= -lx86emu -luuid
+TSO_LIBS	+= -lx86emu -luuid
 endif
 
 SHARED_FLAGS	=
