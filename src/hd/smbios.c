@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <uuid/uuid.h>
 
 #include "hd.h"
 #include "hd_int.h"
@@ -35,6 +36,7 @@ static void smbios_id_print(FILE *f, hd_id_t *hid, char *label);
 static void smbios_str_print(FILE *f, char *str, char *label);
 static void smbios_id2str(hd_id_t *hid, sm_str_map_t *map, unsigned def);
 static void smbios_bitmap2str(hd_bitmap_t *hbm, sm_str_map_t *map);
+static char *smbios_decode_uuid(uuid_t uuid);
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -1287,7 +1289,7 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
   hd_smbios_t *sm;
   str_list_t *sl;
   char c, *s;
-  unsigned u;
+  unsigned u, u_and, u_or;
   int i;
 
   if(!hd_data->smbios) return;
@@ -1310,18 +1312,17 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
         if(sm->sysinfo.product) fprintf(f, "    Product: \"%s\"\n", sm->sysinfo.product);
         if(sm->sysinfo.version) fprintf(f, "    Version: \"%s\"\n", sm->sysinfo.version);
         if(sm->sysinfo.serial) fprintf(f, "    Serial: \"%s\"\n", sm->sysinfo.serial);
-        for(i = u = 0; (unsigned) i < sizeof sm->sysinfo.uuid / sizeof *sm->sysinfo.uuid; i++) {
-          u |= sm->sysinfo.uuid[i];
+        for(i = u_or = 0, u_and = 0xff; (unsigned) i < sizeof sm->sysinfo.uuid / sizeof *sm->sysinfo.uuid; i++) {
+          u_or |= sm->sysinfo.uuid[i];
+          u_and &= sm->sysinfo.uuid[i];
         }
         fprintf(f, "    UUID: ");
-        if(u == 0 || u == 0xff) {
+        if(u_or == 0 || u_and == 0xff) {
           fprintf(f, "undefined");
-          if(u == 0xff) fprintf(f, ", but settable");
+          if(u_and == 0xff) fprintf(f, ", but settable");
         }
         else {
-          for(i = sizeof sm->sysinfo.uuid / sizeof *sm->sysinfo.uuid - 1; i >= 0; i--) {
-            fprintf(f, "%02x", sm->sysinfo.uuid[i]);
-          }
+          fprintf(f, "%s", smbios_decode_uuid(sm->sysinfo.uuid));
         }
         fprintf(f, "\n");
         SMBIOS_PRINT_ID(sysinfo.wake_up, "Wake-up");
@@ -1666,6 +1667,32 @@ void smbios_dump(hd_data_t *hd_data, FILE *f)
 	break;
     }
   }
+}
+
+
+/*
+ * Convert UUID from binary form to string.
+ *
+ * Return string in a static buffer.
+ */
+char *smbios_decode_uuid(uuid_t uuid)
+{
+  uuid_t uuid_mixed;
+  static char buf[UUID_STR_LEN];
+  static unsigned char idx[sizeof (uuid_t)] = {3, 2, 1, 0, 5, 4, 7, 6, 8, 9, 10, 11, 12, 13, 14, 15};
+  int i;
+  unsigned char *s, *d;
+
+  s = (unsigned char *) uuid;
+  d = (unsigned char *) uuid_mixed;
+
+  for(i = 0; i < sizeof uuid_mixed; i++) {
+    d[i] = s[idx[i]];
+  }
+
+  uuid_unparse_lower(uuid_mixed, buf);
+
+  return buf;
 }
 
 /** @} */
