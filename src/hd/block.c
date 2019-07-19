@@ -1222,7 +1222,8 @@ void read_partitions(hd_data_t *hd_data)
           hd_data->flags.list_md ||
           (
             strncmp(name, "md", sizeof "md" - 1) &&
-            strncmp(name, "dm-", sizeof "dm-" - 1)
+            strncmp(name, "dm-", sizeof "dm-" - 1) &&
+            strncmp(name, "bcache", sizeof "bcache" - 1)
           )
         )
       ) {
