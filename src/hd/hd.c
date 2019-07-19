@@ -4783,13 +4783,6 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
   ) {
     hd_set_hw_class(hd, hw_tape);
   }
-
-  if(
-    hd->base_class.id == bc_storage_device &&
-    hd->sub_class.id == sc_sdev_disk
-  ) {
-    hd_set_hw_class(hd, hw_redasd);
-  }
 }
 
 
