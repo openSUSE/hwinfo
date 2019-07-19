@@ -525,36 +525,37 @@ void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd)
 
   if(hd->sysfs_id) {
     if(
-      sscanf(hd->sysfs_id, "/block/cciss!c%ud%u", &u0, &u1) == 2
+      sscanf(hd->sysfs_id, "/class/block/cciss!c%ud%u", &u0, &u1) == 2
     ) {
       hd->slot = (u0 << 8) + u1;
       str_printf(&hd->device.name, 0, "CCISS disk %u/%u", u0, u1);
     }
     else if(
-      sscanf(hd->sysfs_id, "/block/ida!c%ud%u", &u0, &u1) == 2
+      sscanf(hd->sysfs_id, "/class/block/ida!c%ud%u", &u0, &u1) == 2
     ) {
       hd->slot = (u0 << 8) + u1;
       str_printf(&hd->device.name, 0, "SMART Array %u/%u", u0, u1);
     }
     else if(
-      sscanf(hd->sysfs_id, "/block/rd!c%ud%u", &u0, &u1) == 2
+      sscanf(hd->sysfs_id, "/class/block/rd!c%ud%u", &u0, &u1) == 2
     ) {
       hd->slot = (u0 << 8) + u1;
       str_printf(&hd->device.name, 0, "DAC960 RAID Array %u/%u", u0, u1);
     }
     else if(
-      sscanf(hd->sysfs_id, "/block/i2o!hd%c", &c) == 1 &&
+      sscanf(hd->sysfs_id, "/class/block/i2o!hd%c", &c) == 1 &&
       c >= 'a'
     ) {
       hd->slot = c - 'a';
       str_printf(&hd->device.name, 0, "I2O disk %u", hd->slot);
     }
     else if(
-      sscanf(hd->sysfs_id, "/block/dasd%c", &c) == 1 &&
+      sscanf(hd->sysfs_id, "/class/block/dasd%c", &c) == 1 &&
       c >= 'a'
     ) {
       hd->slot = c - 'a';
       hd->device.name = new_str("S390 Disk");
+      hd_set_hw_class(hd, hw_redasd);
     }
   }
 
