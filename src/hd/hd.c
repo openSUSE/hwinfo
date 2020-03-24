@@ -3152,6 +3152,8 @@ int hd_is_sgi_altix(hd_data_t *hd_data)
 
 /*
  * check for xen hypervisor
+ *
+ * see https://www.sandpile.org/x86/cpuid.htm#level_4000_0000h
  */
 int hd_is_xen(hd_data_t *hd_data)
 {
