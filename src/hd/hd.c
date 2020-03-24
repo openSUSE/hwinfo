@@ -3150,8 +3150,6 @@ int hd_is_sgi_altix(hd_data_t *hd_data)
 }
 
 
-
-
 /*
  * check for xen hypervisor
  */
@@ -3159,33 +3157,18 @@ int hd_is_xen(hd_data_t *hd_data)
 {
 #if defined(__i386__) || defined(__x86_64__)
 
-  char signature[13];
-  unsigned u, foo;
+  unsigned eax, ebx, ecx, edx;
 
   __asm__(
-#ifdef __i386__
-    "push %%ebx\n\t"
-    "cpuid\n\t"
-    "mov %%ebx,(%%esi)\n\t"
-    "mov %%ecx,4(%%esi)\n\t"
-    "mov %%edx,8(%%esi)\n\t"
-    "pop %%ebx"
-#else
-    "push %%rbx\n\t"
-    "cpuid\n\t"
-    "mov %%ebx,(%%rsi)\n\t"
-    "mov %%ecx,4(%%rsi)\n\t"
-    "mov %%edx,8(%%rsi)\n\t"
-    "pop %%rbx"
-#endif
-    : "=a" (u), "=c" (foo)
-    : "a" (0x40000000), "c" (0), "S" (signature)
-    : "%edx"
+    "cpuid"
+    : "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx)
+    : "a" (0x40000000), "c" (0)
   );
 
-  signature[12] = 0;
-
-  return u < 0x40000002 || strcmp(signature, "XenVMMXenVMM") ? 0 : 1;
+  return eax >= 0x40000002 &&
+    ebx == 0x566e6558 /* "XenV" */ &&
+    ecx == 0x65584d4d /* "MMXe" */ &&
+    edx == 0x4d4d566e /* "nVMM" */;
 
 #else
 
