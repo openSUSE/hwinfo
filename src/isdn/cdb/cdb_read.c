@@ -119,7 +119,7 @@ static char *add_sortedname_list(const char *str, const char *list, const char *
 	char	*t,*p;
 	if (!list || !list[0])
 		return(add_name(str, 1));
-	strncpy(stmp, list, 4096);
+	strncpy(stmp, list, 4096 - 1);
 	sscanf(str, fmt, &v);
 	p = sstmp;
 	t = strtok(stmp, ",");
