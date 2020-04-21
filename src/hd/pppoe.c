@@ -199,10 +199,10 @@ open_interfaces (int n, PPPoEConnection* conns)
 	}
 
 	/* Fill in hardware address */
-	struct ifreq ifr;
+	struct ifreq ifr = {};
 	struct sockaddr_ll sa;
 	memset (&sa, 0, sizeof (sa));
-	strncpy (ifr.ifr_name, conn->ifname, sizeof (ifr.ifr_name));
+	strncpy (ifr.ifr_name, conn->ifname, sizeof (ifr.ifr_name) - 1);
 	if (ioctl (conn->fd, SIOCGIFHWADDR, &ifr) < 0) {
 	    ADD2LOG ("%s: ioctl (SIOCGIFHWADDR) failed: %m\n", conn->ifname);
 	    goto error;
@@ -221,7 +221,7 @@ open_interfaces (int n, PPPoEConnection* conns)
 	}
 
 	/* Sanity check on MTU */
-	strncpy (ifr.ifr_name, conn->ifname, sizeof (ifr.ifr_name));
+	strncpy (ifr.ifr_name, conn->ifname, sizeof (ifr.ifr_name) - 1);
 	if (ioctl (conn->fd, SIOCGIFMTU, &ifr) < 0) {
 	    ADD2LOG ("%s: ioctl (SIOCGIFMTU) failed: %m\n", conn->ifname);
 	    goto error;
@@ -232,7 +232,7 @@ open_interfaces (int n, PPPoEConnection* conns)
 	}
 
 	/* Skip interfaces that have the SLAVE flag set */
-	strncpy (ifr.ifr_name, conn->ifname, sizeof (ifr.ifr_name));
+	strncpy (ifr.ifr_name, conn->ifname, sizeof (ifr.ifr_name) - 1);
 	if (ioctl (conn->fd, SIOCGIFFLAGS, &ifr) < 0) {
 		ADD2LOG ("%s: ioctl (SIOCGIFFLAGS) failed: %m\n", conn->ifname);
 		goto error;
@@ -245,7 +245,7 @@ open_interfaces (int n, PPPoEConnection* conns)
 	/* Get interface index */
 	sa.sll_family = AF_PACKET;
 	sa.sll_protocol = htons (ETH_PPPOE_DISCOVERY);
-	strncpy (ifr.ifr_name, conn->ifname, sizeof (ifr.ifr_name));
+	strncpy (ifr.ifr_name, conn->ifname, sizeof (ifr.ifr_name) - 1);
 	if (ioctl (conn->fd, SIOCGIFINDEX, &ifr) < 0) {
 	    ADD2LOG ("%s: ioctl (SIOCFIGINDEX) failed: Could not get interface "
 		     "index\n", conn->ifname);

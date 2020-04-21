@@ -62,12 +62,22 @@
 &device.id		usb 0x1844
 +device.name		Mayflash GameCube Controller
 
+ vendor.id		usb 0x0080
++vendor.name		Assmann Electronic GmbH
+
+ vendor.id		usb 0x0080
+&device.id		usb 0xa001
++device.name		Digitus DA-71114 SATA
+
  vendor.id		usb 0x0085
 +vendor.name		Boeye Technology Co., Ltd.
 
  vendor.id		usb 0x0085
 &device.id		usb 0x0600
 +device.name		eBook Reader
+
+ vendor.id		usb 0x0102
++vendor.name		miniSTREAK
 
  vendor.id		usb 0x0105
 +vendor.name		Trust International B.V.
@@ -185,6 +195,10 @@
  vendor.id		usb 0x03e7
 &device.id		usb 0x2485
 +device.name		Movidius MyriadX
+
+ vendor.id		usb 0x03e7
+&device.id		usb 0xf63b
++device.name		Myriad VPU [Movidius Neural Compute Stick]
 
  vendor.id		usb 0x03e8
 +vendor.name		EndPoints, Inc.
@@ -567,6 +581,14 @@
 +device.name		Airspy HF+
 
  vendor.id		usb 0x03eb
+&device.id		usb 0xff01
++device.name		WootingOne
+
+ vendor.id		usb 0x03eb
+&device.id		usb 0xff02
++device.name		WootingTwo
+
+ vendor.id		usb 0x03eb
 &device.id		usb 0xff07
 +device.name		Tux Droid fish dongle
 
@@ -645,6 +667,10 @@
  vendor.id		usb 0x03f0
 &device.id		usb 0x002a
 +device.name		LaserJet P1102
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x0053
++device.name		DeskJet 2620 All-in-One Printer
 
  vendor.id		usb 0x03f0
 &device.id		usb 0x0101
@@ -863,6 +889,10 @@
 +device.name		Bluetooth Interface
 
  vendor.id		usb 0x03f0
+&device.id		usb 0x052a
++device.name		LaserJet M1212nf MFP
+
+ vendor.id		usb 0x03f0
 &device.id		usb 0x0601
 +device.name		ScanJet 6300c
 
@@ -873,6 +903,10 @@
  vendor.id		usb 0x03f0
 &device.id		usb 0x0605
 +device.name		ScanJet 2200c
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x0610
++device.name		Z24i Monitor Hub
 
  vendor.id		usb 0x03f0
 &device.id		usb 0x0611
@@ -961,6 +995,10 @@
  vendor.id		usb 0x03f0
 &device.id		usb 0x0924
 +device.name		Modular Smartcard Keyboard
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x0941
++device.name		X500 Optical Mouse
 
  vendor.id		usb 0x03f0
 &device.id		usb 0x094a
@@ -1507,6 +1545,10 @@
 +device.name		LP1965 19" Monitor Hub
 
  vendor.id		usb 0x03f0
+&device.id		usb 0x2441
++device.name		Prime G2 [2AP18AA]
+
+ vendor.id		usb 0x03f0
 &device.id		usb 0x2502
 +device.name		PhotoSmart 7700 series
 
@@ -1785,6 +1827,10 @@
  vendor.id		usb 0x03f0
 &device.id		usb 0x3611
 +device.name		PSC 2410 PhotoSmart
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x3612
++device.name		Officejet Pro 8000 A809
 
  vendor.id		usb 0x03f0
 &device.id		usb 0x3617
@@ -2519,8 +2565,16 @@
 +device.name		PhotoSmart R837
 
  vendor.id		usb 0x03f0
+&device.id		usb 0x942a
++device.name		LaserJet Pro M12a
+
+ vendor.id		usb 0x03f0
 &device.id		usb 0x9502
 +device.name		PhotoSmart R840 series
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0x952a
++device.name		LaserJet Pro M12w
 
  vendor.id		usb 0x03f0
 &device.id		usb 0x9602
@@ -2649,6 +2703,10 @@
  vendor.id		usb 0x03f0
 &device.id		usb 0xc202
 +device.name		PhotoSmart 8200 series
+
+ vendor.id		usb 0x03f0
+&device.id		usb 0xc211
++device.name		Deskjet 2540 series
 
  vendor.id		usb 0x03f0
 &device.id		usb 0xc302
@@ -3004,6 +3062,10 @@
 +device.name		MGTimer - MGCC (Vic) Timing System
 
  vendor.id		usb 0x0403
+&device.id		usb 0x8348
++device.name		FT232BM [SIENNA Serial Interface]
+
+ vendor.id		usb 0x0403
 &device.id		usb 0x8370
 +device.name		7 Port Hub
 
@@ -3014,6 +3076,10 @@
  vendor.id		usb 0x0403
 &device.id		usb 0x8372
 +device.name		FT8U100AX Serial Port
+
+ vendor.id		usb 0x0403
+&device.id		usb 0x8508
++device.name		Selectronic SP PRO
 
  vendor.id		usb 0x0403
 &device.id		usb 0x87d0
@@ -3070,6 +3136,10 @@
  vendor.id		usb 0x0403
 &device.id		usb 0x9e90
 +device.name		Marvell OpenRD Base/Client
+
+ vendor.id		usb 0x0403
+&device.id		usb 0x9f08
++device.name		CIB-1894 Conclusion SmartLink Box:
 
  vendor.id		usb 0x0403
 &device.id		usb 0x9f80
@@ -3673,6 +3743,10 @@
  vendor.id		usb 0x0408
 &device.id		usb 0x3001
 +device.name		Optical Touch Screen
+
+ vendor.id		usb 0x0408
+&device.id		usb 0xa060
++device.name		HD Webcam
 
  vendor.id		usb 0x0409
 +vendor.name		NEC Corp.
@@ -4397,6 +4471,22 @@
 +device.name		805 Photo Printer
 
  vendor.id		usb 0x040a
+&device.id		usb 0x4035
++device.name		7000 Photo Printer
+
+ vendor.id		usb 0x040a
+&device.id		usb 0x4037
++device.name		7010 Photo Printer
+
+ vendor.id		usb 0x040a
+&device.id		usb 0x4038
++device.name		7015 Photo Printer
+
+ vendor.id		usb 0x040a
+&device.id		usb 0x404d
++device.name		8810 Photo Printer
+
+ vendor.id		usb 0x040a
 &device.id		usb 0x404f
 +device.name		305 Photo Printer
 
@@ -4456,6 +4546,10 @@
 +device.name		Func MS-3 gaming mouse [WT6573F MCU]
 
  vendor.id		usb 0x040b
+&device.id		usb 0x2000
++device.name		wired Keyboard [Dynex DX-WRK1401]
+
+ vendor.id		usb 0x040b
 &device.id		usb 0x2367
 +device.name		Human Interface Device [HP CalcPad 200 Calculator and Numeric Keypad]
 
@@ -4484,6 +4578,10 @@
  vendor.id		usb 0x040d
 &device.id		usb 0x3184
 +device.name		VNT VT6656 USB-802.11 Wireless LAN Adapter
+
+ vendor.id		usb 0x040d
+&device.id		usb 0x340f
++device.name		Audinst HUD-mx2
 
  vendor.id		usb 0x040d
 &device.id		usb 0x6205
@@ -4990,6 +5088,10 @@
 &device.id		usb 0x7723
 +device.name		SD Card Reader
 
+ vendor.id		usb 0x0416
+&device.id		usb 0xc141
++device.name		Barcode Scanner
+
  vendor.id		usb 0x0417
 +vendor.name		Symbios Logic
 
@@ -5006,6 +5108,10 @@
  vendor.id		usb 0x0419
 &device.id		usb 0x0600
 +device.name		Desktop Wireless 6000
+
+ vendor.id		usb 0x0419
+&device.id		usb 0x2694
++device.name		Laila
 
  vendor.id		usb 0x0419
 &device.id		usb 0x3001
@@ -5865,6 +5971,10 @@
 +device.name		C7-00 (Media transfer mode)
 
  vendor.id		usb 0x0421
+&device.id		usb 0x03c2
++device.name		Sim
+
+ vendor.id		usb 0x0421
 &device.id		usb 0x03cd
 +device.name		C7-00 (Nokia Suite mode)
 
@@ -6231,7 +6341,7 @@
 +device.name		Andromeda Hub
 
  vendor.id		usb 0x0424
-+vendor.name		Standard Microsystems Corp.
++vendor.name		Microchip Technology, Inc. (formerly SMSC)
 
  vendor.id		usb 0x0424
 &device.id		usb 0x0001
@@ -6282,10 +6392,6 @@
 +device.name		USB 2.0 Hub
 
  vendor.id		usb 0x0424
-&device.id		usb 0x2504
-+device.name		USB 2.0 Hub
-
- vendor.id		usb 0x0424
 &device.id		usb 0x2507
 +device.name		hub
 
@@ -6330,6 +6436,10 @@
 +device.name		HTC Hub Controller
 
  vendor.id		usb 0x0424
+&device.id		usb 0x2807
++device.name		Hub
+
+ vendor.id		usb 0x0424
 &device.id		usb 0x3fcc
 +device.name		RME MADIface
 
@@ -6346,6 +6456,98 @@
 +device.name		Ultra Fast Media Reader
 
  vendor.id		usb 0x0424
+&device.id		usb 0x4712
++device.name		USB4712 high-speed hub
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4713
++device.name		USB4715 high-speed hub (2 ports disabled)
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4714
++device.name		USB4715 high-speed hub (1 port disabled)
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4715
++device.name		USB4715 high-speed hub
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4910
++device.name		USB491x hub integrated functions (primary)
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4912
++device.name		USB4912 high-speed hub (1 port disabled)
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4914
++device.name		USB4914 high-speed hub
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4916
++device.name		USB4916 high-speed hub
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4920
++device.name		USB491x hub integrated functions (secondary)
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4925
++device.name		USB4925 high-speed hub (primary upstream)
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4927
++device.name		USB4927 high-speed hub (primary upstream)
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4931
++device.name		USB4925/4927 high-speed hub (secondary upstream)
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4940
++device.name		USB47xx/49xx hub integrated WinUSB
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4942
++device.name		USB47xx/49xx hub integrated I2S audio port
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4943
++device.name		USB47xx/49xx hub integrated I2S audio + HID port
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4944
++device.name		USB47xx/49xx hub integrated serial port
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4946
++device.name		USB47xx/49xx hub integrated serial + I2S audio port
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x4947
++device.name		USB47xx/49xx hub integrated serial + I2S audio + HID port
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x494a
++device.name		USB47xx/49xx hub integrated WinUSB + I2S audio port
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x494b
++device.name		USB47xx/49xx hub integrated WinUSB + I2S audio + HID port
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x494c
++device.name		USB47xx/49xx hub integrated WinUSB + serial port
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x494e
++device.name		USB47xx/49xx hub integrated WinUSB + serial + I2S audio port
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x494f
++device.name		USB47xx/49xx hub integrated WinUSB + serial + I2S audio + HID port
+
+ vendor.id		usb 0x0424
 &device.id		usb 0x5434
 +device.name		Hub
 
@@ -6355,6 +6557,10 @@
 
  vendor.id		usb 0x0424
 &device.id		usb 0x5744
++device.name		Hub
+
+ vendor.id		usb 0x0424
+&device.id		usb 0x5807
 +device.name		Hub
 
  vendor.id		usb 0x0424
@@ -6482,6 +6688,10 @@
 +device.name		3-button Mouse
 
  vendor.id		usb 0x0430
+&device.id		usb 0x0502
++device.name		Panasonic CF-19 HID Touch Panel
+
+ vendor.id		usb 0x0430
 &device.id		usb 0x100e
 +device.name		24.1" LCD Monitor v4 / FID-638 Mouse
 
@@ -6564,6 +6774,10 @@
 
  vendor.id		usb 0x0438
 +vendor.name		Advanced Micro Devices, Inc.
+
+ vendor.id		usb 0x0438
+&device.id		usb 0x7900
++device.name		Root Hub
 
  vendor.id		usb 0x0439
 +vendor.name		Voice Technologies Group
@@ -7000,6 +7214,10 @@
 +device.name		X422
 
  vendor.id		usb 0x043d
+&device.id		usb 0x0091
++device.name		Laser Printer E232
+
+ vendor.id		usb 0x043d
 &device.id		usb 0x0093
 +device.name		X5250
 
@@ -7169,6 +7387,10 @@
  vendor.id		usb 0x043e
 &device.id		usb 0x3004
 +device.name		TWFM-B003D 802.11abgn Wireless Module [Broadcom BCM43236B]
+
+ vendor.id		usb 0x043e
+&device.id		usb 0x3009
++device.name		VC400
 
  vendor.id		usb 0x043e
 &device.id		usb 0x3101
@@ -7484,6 +7706,10 @@
 +device.name		F16 MFD 2
 
  vendor.id		usb 0x044f
+&device.id		usb 0xb365
++device.name		UbiSoft UbiConnect
+
+ vendor.id		usb 0x044f
 &device.id		usb 0xb603
 +device.name		force feedback Wheel
 
@@ -7526,6 +7752,10 @@
 +vendor.name		Texas Instruments, Inc.
 
  vendor.id		usb 0x0451
+&device.id		usb 0x0422
++device.name		TUSB422 Port Controller with Power Delivery
+
+ vendor.id		usb 0x0451
 &device.id		usb 0x1234
 +device.name		Bluetooth Device
 
@@ -7538,8 +7768,20 @@
 +device.name		TUSB2040/2070 Hub
 
  vendor.id		usb 0x0451
+&device.id		usb 0x16a2
++device.name		CC Debugger
+
+ vendor.id		usb 0x0451
 &device.id		usb 0x16a6
 +device.name		BM-USBD1 BlueRobin RF heart rate sensor receiver
+
+ vendor.id		usb 0x0451
+&device.id		usb 0x16a8
++device.name		CC2531 ZigBee
+
+ vendor.id		usb 0x0451
+&device.id		usb 0x16ae
++device.name		CC2531 Dongle
 
  vendor.id		usb 0x0451
 &device.id		usb 0x2036
@@ -7650,8 +7892,48 @@
 +device.name		TI-84 Plus Silver Calculator
 
  vendor.id		usb 0x0451
+&device.id		usb 0xe00e
++device.name		TI-89 Titanium Presentation Link
+
+ vendor.id		usb 0x0451
+&device.id		usb 0xe00f
++device.name		TI-84 Plus Presentation Link
+
+ vendor.id		usb 0x0451
+&device.id		usb 0xe010
++device.name		TI SmartPad Keyboard
+
+ vendor.id		usb 0x0451
+&device.id		usb 0xe011
++device.name		Nspire CAS+ prototype
+
+ vendor.id		usb 0x0451
 &device.id		usb 0xe012
 +device.name		TI-Nspire Calculator
+
+ vendor.id		usb 0x0451
+&device.id		usb 0xe013
++device.name		Network Bridge
+
+ vendor.id		usb 0x0451
+&device.id		usb 0xe01c
++device.name		Data Collection Sled [Nspire Lab Cradle, Nspire Datatracker Cradle]
+
+ vendor.id		usb 0x0451
+&device.id		usb 0xe01e
++device.name		Nspire CX Navigator Access Point
+
+ vendor.id		usb 0x0451
+&device.id		usb 0xe01f
++device.name		Python Adapter (firmware install mode)
+
+ vendor.id		usb 0x0451
+&device.id		usb 0xe020
++device.name		Python Adapter
+
+ vendor.id		usb 0x0451
+&device.id		usb 0xe022
++device.name		Nspire CX II
 
  vendor.id		usb 0x0451
 &device.id		usb 0xf430
@@ -7763,6 +8045,10 @@
 +device.name		Easy Mouse+
 
  vendor.id		usb 0x0458
+&device.id		usb 0x0007
++device.name		Trackbar Emotion
+
+ vendor.id		usb 0x0458
 &device.id		usb 0x000b
 +device.name		NetMouse Wheel(P+U)
 
@@ -7869,6 +8155,10 @@
  vendor.id		usb 0x0458
 &device.id		usb 0x011b
 +device.name		NetScroll T220
+
+ vendor.id		usb 0x0458
+&device.id		usb 0x0186
++device.name		Genius DX-120 Mouse
 
  vendor.id		usb 0x0458
 &device.id		usb 0x1001
@@ -7999,6 +8289,10 @@
 +device.name		MaxFire G-12U Vibration
 
  vendor.id		usb 0x0458
+&device.id		usb 0x301c
++device.name		Genius MaxFighter F-16U
+
+ vendor.id		usb 0x0458
 &device.id		usb 0x301d
 +device.name		Genius MaxFire MiniPad
 
@@ -8017,6 +8311,18 @@
  vendor.id		usb 0x0458
 &device.id		usb 0x5004
 +device.name		G-pen Tablet
+
+ vendor.id		usb 0x0458
+&device.id		usb 0x5005
++device.name		Genius EasyPen M406
+
+ vendor.id		usb 0x0458
+&device.id		usb 0x5012
++device.name		Genius EasyPen M406W
+
+ vendor.id		usb 0x0458
+&device.id		usb 0x5014
++device.name		Genius EasyPen 340
 
  vendor.id		usb 0x0458
 &device.id		usb 0x505e
@@ -8560,6 +8866,10 @@
  vendor.id		usb 0x045e
 &device.id		usb 0x00d1
 +device.name		Optical Mouse with Tilt Wheel
+
+ vendor.id		usb 0x045e
+&device.id		usb 0x00d2
++device.name		Notebook Optical Mouse with Tilt Wheel
 
  vendor.id		usb 0x045e
 &device.id		usb 0x00da
@@ -9406,6 +9716,10 @@
 +device.name		2.4GHz Transceiver v8.0 used by mouse Wireless Desktop 900
 
  vendor.id		usb 0x045e
+&device.id		usb 0x07b6
++device.name		Comfort Curve Keyboard 3000
+
+ vendor.id		usb 0x045e
 &device.id		usb 0x07b9
 +device.name		Wired Keyboard 200
 
@@ -9428,6 +9742,10 @@
  vendor.id		usb 0x045e
 &device.id		usb 0x07fd
 +device.name		Nano Transceiver 1.1
+
+ vendor.id		usb 0x045e
+&device.id		usb 0x0810
++device.name		LifeCam HD-3000
 
  vendor.id		usb 0x045e
 &device.id		usb 0x0900
@@ -9736,6 +10054,10 @@
 +device.name		Dell N889 Optical Mouse
 
  vendor.id		usb 0x0461
+&device.id		usb 0x4d8a
++device.name		HP Multimedia Keyboard
+
+ vendor.id		usb 0x0461
 &device.id		usb 0x4d91
 +device.name		Laser mouse M-D16DL
 
@@ -9758,6 +10080,14 @@
  vendor.id		usb 0x0461
 &device.id		usb 0x4e04
 +device.name		Lenovo Keyboard KB1021
+
+ vendor.id		usb 0x0461
+&device.id		usb 0x4e22
++device.name		Dell Mouse, 2 Buttons, Modell: MS111-P
+
+ vendor.id		usb 0x0461
+&device.id		usb 0x4e6f
++device.name		Acer Wired Keyboard Model KBAY211
 
  vendor.id		usb 0x0463
 +vendor.name		MGE UPS Systems
@@ -9865,6 +10195,10 @@
  vendor.id		usb 0x046a
 &device.id		usb 0x010d
 +device.name		MX-Board 3.0 Keyboard
+
+ vendor.id		usb 0x046a
+&device.id		usb 0x0180
++device.name		Strait 3.0
 
  vendor.id		usb 0x046a
 &device.id		usb 0xb090
@@ -10492,6 +10826,10 @@
 +device.name		G933 Wireless Headset Dongle
 
  vendor.id		usb 0x046d
+&device.id		usb 0x0a5d
++device.name		G933 Headset Battery Charger
+
+ vendor.id		usb 0x046d
 &device.id		usb 0x0a66
 +device.name		[G533 Wireless Headset Dongle]
 
@@ -11008,6 +11346,10 @@
 +device.name		Gaming Mouse G300
 
  vendor.id		usb 0x046d
+&device.id		usb 0xc247
++device.name		G100S Optical Gaming Mouse
+
+ vendor.id		usb 0x046d
 &device.id		usb 0xc248
 +device.name		G105 Gaming Keyboard
 
@@ -11200,6 +11542,10 @@
 +device.name		Corded Keyboard K280e
 
  vendor.id		usb 0x046d
+&device.id		usb 0xc32b
++device.name		G910 Orion Spark Mechanical Keyboard
+
+ vendor.id		usb 0x046d
 &device.id		usb 0xc332
 +device.name		G502 Proteus Spectrum Optical Mouse
 
@@ -11362,6 +11708,14 @@
  vendor.id		usb 0x046d
 &device.id		usb 0xc534
 +device.name		Unifying Receiver
+
+ vendor.id		usb 0x046d
+&device.id		usb 0xc537
++device.name		Cordless Mouse Receiver
+
+ vendor.id		usb 0x046d
+&device.id		usb 0xc53a
++device.name		PowerPlay Wireless Charging System
 
  vendor.id		usb 0x046d
 &device.id		usb 0xc603
@@ -12495,6 +12849,10 @@
 +device.name		Bulk Driver
 
  vendor.id		usb 0x047f
+&device.id		usb 0x02ee
++device.name		BT600
+
+ vendor.id		usb 0x047f
 &device.id		usb 0x0301
 +device.name		Bulk Driver
 
@@ -12509,6 +12867,10 @@
  vendor.id		usb 0x047f
 &device.id		usb 0x4254
 +device.name		BUA-100 Bluetooth Adapter
+
+ vendor.id		usb 0x047f
+&device.id		usb 0xaa05
++device.name		DA45
 
  vendor.id		usb 0x047f
 &device.id		usb 0xac01
@@ -12529,6 +12891,10 @@
  vendor.id		usb 0x047f
 &device.id		usb 0xc00e
 +device.name		Blackwire C310 headset
+
+ vendor.id		usb 0x047f
+&device.id		usb 0xc03b
++device.name		HD1
 
  vendor.id		usb 0x0480
 +vendor.name		Toshiba America Inc
@@ -12560,6 +12926,14 @@
  vendor.id		usb 0x0480
 &device.id		usb 0x0820
 +device.name		Canvio Advance Disk
+
+ vendor.id		usb 0x0480
+&device.id		usb 0x0821
++device.name		Canvio Advance 2TB model DTC920
+
+ vendor.id		usb 0x0480
+&device.id		usb 0x0900
++device.name		MQ04UBF100
 
  vendor.id		usb 0x0480
 &device.id		usb 0xa006
@@ -12807,6 +13181,10 @@
 +device.name		Virtual COM Port
 
  vendor.id		usb 0x0483
+&device.id		usb 0x5750
++device.name		LED badge -- mini LED display -- 11x44
+
+ vendor.id		usb 0x0483
 &device.id		usb 0x7270
 +device.name		ST Micro Serial Bridge
 
@@ -12829,6 +13207,10 @@
  vendor.id		usb 0x0483
 &device.id		usb 0xa171
 +device.name		ThermaData WiFi
+
+ vendor.id		usb 0x0483
+&device.id		usb 0xa2e0
++device.name		BMeasure instrument
 
  vendor.id		usb 0x0483
 &device.id		usb 0xdf11
@@ -12938,6 +13320,10 @@
 +device.name		Flash Drive
 
  vendor.id		usb 0x048d
+&device.id		usb 0x1234
++device.name		Mass storage
+
+ vendor.id		usb 0x048d
 &device.id		usb 0x1336
 +device.name		SD/MMC Cardreader
 
@@ -12972,6 +13358,10 @@
  vendor.id		usb 0x048d
 &device.id		usb 0x9910
 +device.name		IT9910 chipset based grabber
+
+ vendor.id		usb 0x048d
+&device.id		usb 0xff59
++device.name		Hdmi-CEC Bridge
 
  vendor.id		usb 0x048f
 +vendor.name		Eicon Tech.
@@ -13230,6 +13620,10 @@
  vendor.id		usb 0x0499
 &device.id		usb 0x1613
 +device.name		Clavinova CLP535
+
+ vendor.id		usb 0x0499
+&device.id		usb 0x1617
++device.name		PSR-E353 digital keyboard
 
  vendor.id		usb 0x0499
 &device.id		usb 0x1704
@@ -14285,6 +14679,10 @@
 +device.name		PIXMA iX6850 Printer
 
  vendor.id		usb 0x04a9
+&device.id		usb 0x12fe
++device.name		Printer in service mode
+
+ vendor.id		usb 0x04a9
 &device.id		usb 0x1404
 +device.name		W6400PG
 
@@ -14745,6 +15143,10 @@
 +device.name		PIXMA MG3000 series
 
  vendor.id		usb 0x04a9
+&device.id		usb 0x1856
++device.name		PIXMA TS6250
+
+ vendor.id		usb 0x04a9
 &device.id		usb 0x1900
 +device.name		CanoScan LiDE 90
 
@@ -15017,6 +15419,10 @@
 +device.name		MPC190
 
  vendor.id		usb 0x04a9
+&device.id		usb 0x2636
++device.name		LBP3200
+
+ vendor.id		usb 0x04a9
 &device.id		usb 0x2637
 +device.name		iR C6800
 
@@ -15073,12 +15479,20 @@
 +device.name		iR 3100C EUR
 
  vendor.id		usb 0x04a9
+&device.id		usb 0x2654
++device.name		LBP3600
+
+ vendor.id		usb 0x04a9
 &device.id		usb 0x2655
 +device.name		FP-L170/MF350/L380/L398
 
  vendor.id		usb 0x04a9
 &device.id		usb 0x2656
 +device.name		iR1510-1670 CAPT Printer
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x2657
++device.name		LBP3210
 
  vendor.id		usb 0x04a9
 &device.id		usb 0x2659
@@ -15134,7 +15548,7 @@
 
  vendor.id		usb 0x04a9
 &device.id		usb 0x266a
-+device.name		CAPT Device
++device.name		LBP3000
 
  vendor.id		usb 0x04a9
 &device.id		usb 0x266b
@@ -15194,7 +15608,7 @@
 
  vendor.id		usb 0x04a9
 &device.id		usb 0x2679
-+device.name		CAPT Device
++device.name		LBP5000
 
  vendor.id		usb 0x04a9
 &device.id		usb 0x267a
@@ -15207,6 +15621,10 @@
  vendor.id		usb 0x04a9
 &device.id		usb 0x267d
 +device.name		MF7100 series
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x267e
++device.name		LBP3300
 
  vendor.id		usb 0x04a9
 &device.id		usb 0x2684
@@ -15233,6 +15651,10 @@
 +device.name		LC310/L390/L408S
 
  vendor.id		usb 0x04a9
+&device.id		usb 0x268b
++device.name		LBP3500
+
+ vendor.id		usb 0x04a9
 &device.id		usb 0x268c
 +device.name		iR C6870
 
@@ -15253,8 +15675,16 @@
 +device.name		iR7105
 
  vendor.id		usb 0x04a9
+&device.id		usb 0x26a1
++device.name		LBP5300
+
+ vendor.id		usb 0x04a9
 &device.id		usb 0x26a3
 +device.name		MF4100 series
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x26a4
++device.name		LBP5100
 
  vendor.id		usb 0x04a9
 &device.id		usb 0x26b0
@@ -15273,16 +15703,52 @@
 +device.name		FAX-L140/L130
 
  vendor.id		usb 0x04a9
+&device.id		usb 0x26b9
++device.name		LBP3310
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x26ba
++device.name		LBP5050
+
+ vendor.id		usb 0x04a9
 &device.id		usb 0x26da
-+device.name		LBP3010B printer
++device.name		LBP3010/LBP3018/LBP3050
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x26db
++device.name		LBP3100/LBP3108/LBP3150
 
  vendor.id		usb 0x04a9
 &device.id		usb 0x26e6
 +device.name		iR1024
 
  vendor.id		usb 0x04a9
+&device.id		usb 0x26ea
++device.name		LBP9100C
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x26ee
++device.name		MF4320-4350
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x26f1
++device.name		LBP7200C
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x26ff
++device.name		LBP6300
+
+ vendor.id		usb 0x04a9
 &device.id		usb 0x271a
 +device.name		LBP6000
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x271b
++device.name		LBP6200
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x271c
++device.name		LBP7010C/7018C
 
  vendor.id		usb 0x04a9
 &device.id		usb 0x2736
@@ -15291,6 +15757,14 @@
  vendor.id		usb 0x04a9
 &device.id		usb 0x2737
 +device.name		MF4410
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x2771
++device.name		LBP6020
+
+ vendor.id		usb 0x04a9
+&device.id		usb 0x2796
++device.name		LBP6230/6240
 
  vendor.id		usb 0x04a9
 &device.id		usb 0x3041
@@ -16891,6 +17365,14 @@
 +device.name		D800 (ptp)
 
  vendor.id		usb 0x04b0
+&device.id		usb 0x0430
++device.name		D7100
+
+ vendor.id		usb 0x04b0
+&device.id		usb 0x0436
++device.name		D810
+
+ vendor.id		usb 0x04b0
 &device.id		usb 0x043f
 +device.name		D5600
 
@@ -17132,6 +17614,10 @@
 +device.name		DS-Xtreme Flash Card
 
  vendor.id		usb 0x04b4
+&device.id		usb 0x4717
++device.name		West Bridge
+
+ vendor.id		usb 0x04b4
 &device.id		usb 0x5201
 +device.name		Combi Keyboard-Hub (Hub)
 
@@ -17166,6 +17652,14 @@
  vendor.id		usb 0x04b4
 &device.id		usb 0x6560
 +device.name		CY7C65640 USB-2.0 "TetraHub"
+
+ vendor.id		usb 0x04b4
+&device.id		usb 0x6570
++device.name		Unprogrammed CY7C65632/34 hub HX2VL
+
+ vendor.id		usb 0x04b4
+&device.id		usb 0x6572
++device.name		Unprogrammed CY7C65642 hub
 
  vendor.id		usb 0x04b4
 &device.id		usb 0x6830
@@ -17497,7 +17991,7 @@
 
  vendor.id		usb 0x04b8
 &device.id		usb 0x0202
-+device.name		Receipt Printer M129C/TM-T70
++device.name		Interface Card UB-U05 for Thermal Receipt Printers [M129C/TM-T70/TM-T88IV]
 
  vendor.id		usb 0x04b8
 &device.id		usb 0x0401
@@ -17809,7 +18303,7 @@
 
  vendor.id		usb 0x04b8
 &device.id		usb 0x084f
-+device.name		ME OFFICE 510
++device.name		Multifunctional Printer Scanner [ME Office 510 / Epson Stylus SX215]
 
  vendor.id		usb 0x04b8
 &device.id		usb 0x0850
@@ -17970,6 +18464,10 @@
  vendor.id		usb 0x04b8
 &device.id		usb 0x0893
 +device.name		EP-774A
+
+ vendor.id		usb 0x04b8
+&device.id		usb 0x0e03
++device.name		Thermal Receipt Printer [TM-T20]
 
  vendor.id		usb 0x04b8
 &device.id		usb 0x1114
@@ -18493,12 +18991,20 @@
 +vendor.name		Lite-On Technology Corp.
 
  vendor.id		usb 0x04ca
+&device.id		usb 0x0020
++device.name		USB Keyboard
+
+ vendor.id		usb 0x04ca
 &device.id		usb 0x004b
 +device.name		Keyboard
 
  vendor.id		usb 0x04ca
 &device.id		usb 0x004f
 +device.name		SK-9020 keyboard
+
+ vendor.id		usb 0x04ca
+&device.id		usb 0x008a
++device.name		Acer Wired Mouse Model SM-9023
 
  vendor.id		usb 0x04ca
 &device.id		usb 0x1766
@@ -18535,6 +19041,10 @@
  vendor.id		usb 0x04ca
 &device.id		usb 0x3014
 +device.name		Qualcomm Atheros Bluetooth
+
+ vendor.id		usb 0x04ca
+&device.id		usb 0x3015
++device.name		Qualcomm Atheros QCA9377 Bluetooth
 
  vendor.id		usb 0x04ca
 &device.id		usb 0x7022
@@ -19159,6 +19669,18 @@
 +device.name		TL866CS EEPROM Programmer [MiniPRO]
 
  vendor.id		usb 0x04d8
+&device.id		usb 0xed16
++device.name		BeamiRC 2.0 CNC remote controller analoge
+
+ vendor.id		usb 0x04d8
+&device.id		usb 0xedb4
++device.name		micro PLC (ATSAMD51G19A) [Black Brix ECU II]
+
+ vendor.id		usb 0x04d8
+&device.id		usb 0xedb5
++device.name		ATMEGA32U4 [Black Brix ECU]
+
+ vendor.id		usb 0x04d8
 &device.id		usb 0xf2c4
 +device.name		Macareux-labs Hygrometry Temperature Sensor
 
@@ -19236,6 +19758,10 @@
  vendor.id		usb 0x04d9
 &device.id		usb 0x0022
 +device.name		Portable Keyboard
+
+ vendor.id		usb 0x04d9
+&device.id		usb 0x0348
++device.name		Keyboard
 
  vendor.id		usb 0x04d9
 &device.id		usb 0x048e
@@ -19340,6 +19866,14 @@
  vendor.id		usb 0x04d9
 &device.id		usb 0xa11b
 +device.name		Mouse [MX-3200]
+
+ vendor.id		usb 0x04d9
+&device.id		usb 0xa29f
++device.name		Microarray fingerprint reader
+
+ vendor.id		usb 0x04d9
+&device.id		usb 0xb534
++device.name		LGT8F328P Microprocessor
 
  vendor.id		usb 0x04d9
 &device.id		usb 0xe002
@@ -20372,6 +20906,10 @@
 +device.name		SCX-3400 Series
 
  vendor.id		usb 0x04e8
+&device.id		usb 0x347e
++device.name		C48x Series Color Laser Multifunction Printer
+
+ vendor.id		usb 0x04e8
 &device.id		usb 0x3605
 +device.name		InkJet Color Printer
 
@@ -20688,6 +21226,10 @@
 +device.name		M3 Portable Hard Drive 1TB
 
  vendor.id		usb 0x04e8
+&device.id		usb 0x61b7
++device.name		M3 Portable Hard Drive 4TB
+
+ vendor.id		usb 0x04e8
 &device.id		usb 0x61f3
 +device.name		Portable SSD T3 (MU-PT250B, MU-PT500B)
 
@@ -20936,8 +21478,20 @@
 +device.name		Human Interface Device
 
  vendor.id		usb 0x04e8
+&device.id		usb 0x7301
++device.name		Fingerprint Device
+
+ vendor.id		usb 0x04e8
 &device.id		usb 0x8001
 +device.name		Handheld
+
+ vendor.id		usb 0x04e8
+&device.id		usb 0x8002
++device.name		Portable SSD 500GB Model Number: MU - P8500B
+
+ vendor.id		usb 0x04e8
+&device.id		usb 0x8003
++device.name		Portable SSD T1
 
  vendor.id		usb 0x04e8
 &device.id		usb 0xd003
@@ -21101,6 +21655,10 @@
  vendor.id		usb 0x04f2
 &device.id		usb 0x0860
 +device.name		2.4G Multimedia Wireless Kit
+
+ vendor.id		usb 0x04f2
+&device.id		usb 0x0939
++device.name		Amazon Basics mouse
 
  vendor.id		usb 0x04f2
 &device.id		usb 0x1061
@@ -21347,6 +21905,10 @@
 +device.name		Integrated HP HD Webcam
 
  vendor.id		usb 0x04f2
+&device.id		usb 0xb249
++device.name		HP Integrated Webcam
+
+ vendor.id		usb 0x04f2
 &device.id		usb 0xb257
 +device.name		Lenovo Integrated Camera
 
@@ -21415,6 +21977,10 @@
 +device.name		Lenovo Integrated Webcam
 
  vendor.id		usb 0x04f2
+&device.id		usb 0xb49f
++device.name		Bluetooth (RTL8723BE)
+
+ vendor.id		usb 0x04f2
 &device.id		usb 0xb563
 +device.name		Integrated Camera
 
@@ -21429,6 +21995,14 @@
  vendor.id		usb 0x04f2
 &device.id		usb 0xb5db
 +device.name		HP Webcam
+
+ vendor.id		usb 0x04f2
+&device.id		usb 0xb604
++device.name		Integrated Camera (1280x720@30)
+
+ vendor.id		usb 0x04f2
+&device.id		usb 0xb681
++device.name		ThinkPad T490 Webcam
 
  vendor.id		usb 0x04f3
 +vendor.name		Elan Microelectronics Corp.
@@ -21492,6 +22066,10 @@
  vendor.id		usb 0x04f3
 &device.id		usb 0x04a0
 +device.name		Dream Cheeky Stress/Panic Button
+
+ vendor.id		usb 0x04f3
+&device.id		usb 0x2234
++device.name		Touchscreen
 
  vendor.id		usb 0x04f4
 +vendor.name		Harting Elektronik, Inc.
@@ -21670,6 +22248,14 @@
  vendor.id		usb 0x04f9
 &device.id		usb 0x0042
 +device.name		HL-2270DW Laser Printer
+
+ vendor.id		usb 0x04f9
+&device.id		usb 0x004d
++device.name		HL-6180DW series
+
+ vendor.id		usb 0x04f9
+&device.id		usb 0x0080
++device.name		HL-L6250DN series
 
  vendor.id		usb 0x04f9
 &device.id		usb 0x0100
@@ -22510,6 +23096,10 @@
  vendor.id		usb 0x04f9
 &device.id		usb 0x0240
 +device.name		MFC-J950DN
+
+ vendor.id		usb 0x04f9
+&device.id		usb 0x0245
++device.name		MFC-9560CDW
 
  vendor.id		usb 0x04f9
 &device.id		usb 0x0248
@@ -23476,6 +24066,10 @@
 +device.name		DCP-J762N
 
  vendor.id		usb 0x04f9
+&device.id		usb 0x03fd
++device.name		ADS-2700W
+
+ vendor.id		usb 0x04f9
 &device.id		usb 0x1000
 +device.name		Printer
 
@@ -23524,8 +24118,20 @@
 +device.name		PT-7600 P-touch Label Printer
 
  vendor.id		usb 0x04f9
+&device.id		usb 0x202c
++device.name		PT-1230PC P-touch Label Printer E mode
+
+ vendor.id		usb 0x04f9
+&device.id		usb 0x2030
++device.name		PT-1230PC P-touch Label Printer EL mode
+
+ vendor.id		usb 0x04f9
 &device.id		usb 0x2041
 +device.name		PT-2730 P-touch Label Printer
+
+ vendor.id		usb 0x04f9
+&device.id		usb 0x2042
++device.name		QL-700 P-touch Label Printer
 
  vendor.id		usb 0x04f9
 &device.id		usb 0x2061
@@ -23534,6 +24140,18 @@
  vendor.id		usb 0x04f9
 &device.id		usb 0x2064
 +device.name		PT-P700 P-touch Label Printer RemovableDisk
+
+ vendor.id		usb 0x04f9
+&device.id		usb 0x209b
++device.name		QL-800 P-touch Label Printer
+
+ vendor.id		usb 0x04f9
+&device.id		usb 0x209c
++device.name		QL-810W P-touch Label Printer
+
+ vendor.id		usb 0x04f9
+&device.id		usb 0x209d
++device.name		QL-820NWB P-touch Label Printer
 
  vendor.id		usb 0x04f9
 &device.id		usb 0x2100
@@ -24948,6 +25566,10 @@
 +device.name		ICSI Bluetooth Device
 
  vendor.id		usb 0x0547
+&device.id		usb 0x0080
++device.name		I3SYSTEM HYUNY
+
+ vendor.id		usb 0x0547
 &device.id		usb 0x1002
 +device.name		Python2 WDM Encoder
 
@@ -25117,6 +25739,10 @@
  vendor.id		usb 0x054c
 &device.id		usb 0x0046
 +device.name		Network Walkman
+
+ vendor.id		usb 0x054c
+&device.id		usb 0x0049
++device.name		UP-D895
 
  vendor.id		usb 0x054c
 &device.id		usb 0x004a
@@ -25455,6 +26081,10 @@
 +device.name		VRD-VC10 [Video Capture]
 
  vendor.id		usb 0x054c
+&device.id		usb 0x01e7
++device.name		UP-D897
+
+ vendor.id		usb 0x054c
 &device.id		usb 0x01e8
 +device.name		UP-DR150 Photo Printer
 
@@ -25631,6 +26261,10 @@
 +device.name		PSP Slim
 
  vendor.id		usb 0x054c
+&device.id		usb 0x02d4
++device.name		UP-CX1
+
+ vendor.id		usb 0x054c
 &device.id		usb 0x02d8
 +device.name		SBAC-US10 SxS PRO memory card reader/writer
 
@@ -25701,6 +26335,18 @@
  vendor.id		usb 0x054c
 &device.id		usb 0x03bc
 +device.name		Webbie HD - MHS-CM1
+
+ vendor.id		usb 0x054c
+&device.id		usb 0x03c3
++device.name		UP-DR80MD
+
+ vendor.id		usb 0x054c
+&device.id		usb 0x03c4
++device.name		Stryker SDP1000
+
+ vendor.id		usb 0x054c
+&device.id		usb 0x03c5
++device.name		UP-DR80
 
  vendor.id		usb 0x054c
 &device.id		usb 0x03cc
@@ -25817,6 +26463,10 @@
  vendor.id		usb 0x054c
 &device.id		usb 0x0c34
 +device.name		ILCE-7M3 [A7III] in PC Remote mode
+
+ vendor.id		usb 0x054c
+&device.id		usb 0x0cd3
++device.name		WH-1000XM3 [Wireless Noise-Canceling Headphones]
 
  vendor.id		usb 0x054c
 &device.id		usb 0x0cda
@@ -26421,6 +27071,14 @@
 +device.name		Genius KB-29E
 
  vendor.id		usb 0x0566
+&device.id		usb 0x3013
++device.name		BakkerElkhuizen Wired Keyboard S-board 840 Design
+
+ vendor.id		usb 0x0566
+&device.id		usb 0x3020
++device.name		BakkerElkhuizen Wired Keyboard S-board 840 Design USB-Hub
+
+ vendor.id		usb 0x0566
 &device.id		usb 0x3027
 +device.name		Sun-Flex ProTouch
 
@@ -26581,6 +27239,14 @@
 +device.name		DTU-710
 
  vendor.id		usb 0x056a
+&device.id		usb 0x003a
++device.name		DTI-520
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x003b
++device.name		Integrated Hub
+
+ vendor.id		usb 0x056a
 &device.id		usb 0x003f
 +device.name		DTZ-2100 [Cintiq 21UX]
 
@@ -26670,7 +27336,7 @@
 
  vendor.id		usb 0x056a
 &device.id		usb 0x0084
-+device.name		Wireless adapter for Bamboo tablets
++device.name		ACK-40401 [Wireless Accessory Kit]
 
  vendor.id		usb 0x056a
 &device.id		usb 0x0090
@@ -26687,6 +27353,10 @@
  vendor.id		usb 0x056a
 &device.id		usb 0x009a
 +device.name		TPC9A
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x00a2
++device.name		STU-300B [LCD signature pad]
 
  vendor.id		usb 0x056a
 &device.id		usb 0x00b0
@@ -26853,6 +27523,10 @@
 +device.name		TPCEF
 
  vendor.id		usb 0x056a
+&device.id		usb 0x00f0
++device.name		DTU-1631
+
+ vendor.id		usb 0x056a
 &device.id		usb 0x00f4
 +device.name		DTK-2400 [Cintiq 24HD] tablet
 
@@ -26863,6 +27537,10 @@
  vendor.id		usb 0x056a
 &device.id		usb 0x00f8
 +device.name		DTH-2400 [Cintiq 24HD touch] tablet
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x00f9
++device.name		DTK-2200 [Cintiq 22HD] hub
 
  vendor.id		usb 0x056a
 &device.id		usb 0x00fa
@@ -26953,16 +27631,72 @@
 +device.name		CTH-301 [Bamboo]
 
  vendor.id		usb 0x056a
+&device.id		usb 0x0319
++device.name		CTH-300 [Bamboo Pad wireless]
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x0323
++device.name		CTL-680 [Intuos Pen (M)]
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x032a
++device.name		DTK-2700 [Cintiq 27QHD]
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x032b
++device.name		DTH-2700 [Cintiq 27QHD touch] tablet
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x032c
++device.name		DTH-2700 [Cintiq 27QHD touch] touchscreen
+
+ vendor.id		usb 0x056a
 &device.id		usb 0x032f
 +device.name		DTU-1031X
 
  vendor.id		usb 0x056a
+&device.id		usb 0x0331
++device.name		ACK-411050 [ExpressKey Remote]
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x0333
++device.name		DTH-1300 [Cintiq 13HD Touch] tablet
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x0335
++device.name		DTH-1300 [Cintiq 13HD Touch] touchscreen
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x0336
++device.name		DTU-1141
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x033b
++device.name		CTL-490 [Intuos Draw (S)]
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x033c
++device.name		CTH-490 [Intuos Art/Photo/Comic (S)]
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x033d
++device.name		CTL-690 [Intuos Draw (M)]
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x033e
++device.name		CTH-690 [Intuos Art (M)]
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x0343
++device.name		DTK-1651
+
+ vendor.id		usb 0x056a
 &device.id		usb 0x0347
-+device.name		Integrated Hub
++device.name		DTH-W1620 [MobileStudio Pro 16] internal hub
 
  vendor.id		usb 0x056a
 &device.id		usb 0x0348
-+device.name		Integrated Hub
++device.name		DTH-W1620 [MobileStudio Pro 16] external hub
 
  vendor.id		usb 0x056a
 &device.id		usb 0x034a
@@ -27019,6 +27753,10 @@
  vendor.id		usb 0x056a
 &device.id		usb 0x0358
 +device.name		PTH-860 [Intuos Pro (L)]
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x0359
++device.name		DTU-1141B
 
  vendor.id		usb 0x056a
 &device.id		usb 0x035a
@@ -27089,6 +27827,46 @@
 +device.name		DTK-1660 [Cintiq 16]
 
  vendor.id		usb 0x056a
+&device.id		usb 0x0392
++device.name		PTH-460 [Intuos Pro (S)]
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x0396
++device.name		DTK-1660E
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x0398
++device.name		DTH-W1320 [MobileStudio Pro 13] tablet
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x0399
++device.name		DTH-W1620 [MobileStudio Pro 16] tablet
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x039a
++device.name		DTH-W1320 [MobileStudio Pro 13] touchscreen
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x039b
++device.name		DTH-W1620 [MobileStudio Pro 16] touchscreen
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x039c
++device.name		DTH-W1320 [MobileStudio Pro 16] external hub
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x039d
++device.name		DTH-W1320 [MobileStudio Pro 16] internal hub
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x03aa
++device.name		DTH-W1620 [MobileStudio Pro 16] tablet
+
+ vendor.id		usb 0x056a
+&device.id		usb 0x03ac
++device.name		DTH-W1620 [MobileStudio Pro 16] touchscreen
+
+ vendor.id		usb 0x056a
 &device.id		usb 0x0400
 +device.name		PenPartner 4x5
 
@@ -27157,6 +27935,10 @@
 &device.id		usb 0x0003
 +device.name		Device Bay Controller
 
+ vendor.id		usb 0x056d
+&device.id		usb 0x4001
++device.name		Monitor
+
  vendor.id		usb 0x056e
 +vendor.name		Elecom Co., Ltd
 
@@ -27217,6 +27999,94 @@
 +device.name		Laser mouse M-LY2UL
 
  vendor.id		usb 0x056e
+&device.id		usb 0x0079
++device.name		Laser mouse M-D21DL
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x007b
++device.name		Laser mouse M-D20DR
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x007c
++device.name		Laser Bluetooth mouse M-BT5BL
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x007e
++device.name		Option mouse M-M8UR
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x007f
++device.name		Option mouse M-M9UR
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x0081
++device.name		Option mouse M-DY6DR
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x0082
++device.name		Laser mouse M-D22DR
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x0088
++device.name		Micro Grast2 Bit M-BG3DL
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x0089
++device.name		Micro Grast2 Pop M-PG3DL
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x008c
++device.name		M-NE3DL Mouse
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x008d
++device.name		ORIME M-NE4DR
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x008f
++device.name		M-BT8BL Bluetooth Mouse
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x0092
++device.name		Wireless BlueLED Mouse (M-BL2DB)
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x009c
++device.name		IR Mouse M-IR02DR
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x009d
++device.name		IR Mouse M-IR03DR
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x009f
++device.name		BlueLED Mouse M-HS1DB
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x00a1
++device.name		IR Mouse M-IR05DR
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x00a4
++device.name		Blue LED Mouse M-BL06DB
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x00a5
++device.name		M-NV1BR Bluetooth Mouse
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x00a7
++device.name		Blue LED Mouse M-BL08DB
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x00a8
++device.name		M-BL09DB Mouse
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x00a9
++device.name		M-BL10UB Mouse
+
+ vendor.id		usb 0x056e
 &device.id		usb 0x2003
 +device.name		JC-U3613M
 
@@ -27227,6 +28097,10 @@
  vendor.id		usb 0x056e
 &device.id		usb 0x200c
 +device.name		LD-USB/TX
+
+ vendor.id		usb 0x056e
+&device.id		usb 0x2012
++device.name		JC-U4013S Gamepad
 
  vendor.id		usb 0x056e
 &device.id		usb 0x4002
@@ -29759,6 +30633,22 @@
  vendor.id		usb 0x05a6
 &device.id		usb 0x0004
 +device.name		CVA122E Cable Voice Adapter (WDM)
+
+ vendor.id		usb 0x05a6
+&device.id		usb 0x0a00
++device.name		Integrated Management Controller Hub
+
+ vendor.id		usb 0x05a6
+&device.id		usb 0x0a01
++device.name		Virtual Keyboard/Mouse
+
+ vendor.id		usb 0x05a6
+&device.id		usb 0x0a02
++device.name		Virtual Mass Storage
+
+ vendor.id		usb 0x05a6
+&device.id		usb 0x0a03
++device.name		Virtual Ethernet/RNDIS
 
  vendor.id		usb 0x05a7
 +vendor.name		Bose Corp.
@@ -36612,6 +37502,10 @@
  vendor.id		usb 0x06f8
 &device.id		usb 0xb000
 +device.name		Hercules DJ Console
+
+ vendor.id		usb 0x06f8
+&device.id		usb 0xb121
++device.name		Hercules P32 DJ
 
  vendor.id		usb 0x06f8
 &device.id		usb 0xc000
@@ -45026,7 +45920,7 @@
 +vendor.name		Nisca Corp.
 
  vendor.id		usb 0x09c3
-+vendor.name		ActivCard, Inc.
++vendor.name		HID Global
 
  vendor.id		usb 0x09c3
 &device.id		usb 0x0007
@@ -45039,6 +45933,30 @@
  vendor.id		usb 0x09c3
 &device.id		usb 0x0014
 +device.name		ActivIdentity ActivKey SIM USB Token
+
+ vendor.id		usb 0x09c3
+&device.id		usb 0x0028
++device.name		Crescendo Key
+
+ vendor.id		usb 0x09c3
+&device.id		usb 0x0029
++device.name		Crescendo Key
+
+ vendor.id		usb 0x09c3
+&device.id		usb 0x002a
++device.name		Crescendo Key
+
+ vendor.id		usb 0x09c3
+&device.id		usb 0x002b
++device.name		Crescendo Key
+
+ vendor.id		usb 0x09c3
+&device.id		usb 0x002c
++device.name		Crescendo Key
+
+ vendor.id		usb 0x09c3
+&device.id		usb 0x002e
++device.name		Crescendo Key
 
  vendor.id		usb 0x09c4
 +vendor.name		ACTiSYS Corp.
@@ -46920,6 +47838,18 @@
  vendor.id		usb 0x0aad
 &device.id		usb 0x0095
 +device.name		NRP-Z86
+
+ vendor.id		usb 0x0aad
+&device.id		usb 0x0117
++device.name		HMF / HMP / HMS-X / HMO series Oscilloscopes
+
+ vendor.id		usb 0x0aad
+&device.id		usb 0x0118
++device.name		HMF / HMP / HMS-X / HMO series Oscilloscopes
+
+ vendor.id		usb 0x0aad
+&device.id		usb 0x0119
++device.name		HMF / HMP / HMS-X / HMO series Oscilloscopes
 
  vendor.id		usb 0x0aae
 +vendor.name		NEC infrontia Corp. (Nitsuko)
@@ -58217,7 +59147,7 @@
 +device.name		ULS Print Support
 
  vendor.id		usb 0x10c4
-+vendor.name		Cygnal Integrated Products, Inc.
++vendor.name		Silicon Labs
 
  vendor.id		usb 0x10c4
 &device.id		usb 0x0002
@@ -58372,20 +59302,84 @@
 +device.name		C8051F38x HDMI Extender [UHBX-SW3-WP]
 
  vendor.id		usb 0x10c4
+&device.id		usb 0x89fb
++device.name		Qivicon ZigBee Stick
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0x8a3c
++device.name		C8051F38x HDBaseT Receiver [UHBX-R-XT]
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0x8a6c
++device.name		C8051F38x 4K HDMI Audio Extractor [EMX-AMP]
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0x8acb
++device.name		C8051F38x HDBaseT Wall Plate Receiver with IR, RS-232, and PoH [UHBX-R-WP]
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0x8af8
++device.name		C8051F38x 4K HDMI Audio Extractor w/Audio Amplifier, HDBT Input, Line Audio Input RS-232 Ports and IP Control [VSA-X21]
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0x8b8c
++device.name		C8051F38x 4K HDMI Audio Extractor w/Audio Amplifier, HDBT Input, Line Audio Input RS-232 Ports and IP Control [SC-3H]
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0x8db5
++device.name		C8051F38x CATx HDMI Receiver with USB [EX-HDU-R]
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0x8db6
++device.name		C8051F38x CATx HDMI Receiver
+
+ vendor.id		usb 0x10c4
 &device.id		usb 0xea60
-+device.name		CP2102/CP2109 UART Bridge Controller [CP210x family]
++device.name		CP210x UART Bridge
 
  vendor.id		usb 0x10c4
 &device.id		usb 0xea61
 +device.name		CP210x UART Bridge
 
  vendor.id		usb 0x10c4
-&device.id		usb 0xea70
+&device.id		usb 0xea63
 +device.name		CP210x UART Bridge
 
  vendor.id		usb 0x10c4
+&device.id		usb 0xea70
++device.name		CP2105 Dual UART Bridge
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0xea71
++device.name		CP2108 Quad UART Bridge
+
+ vendor.id		usb 0x10c4
 &device.id		usb 0xea80
-+device.name		CP210x UART Bridge
++device.name		CP2110 HID UART Bridge
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0xea90
++device.name		CP2112 HID I2C Bridge
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0xea91
++device.name		CP2112 HID SMBus/I2C Bridge for CP2614 Evaluation Kit
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0xea93
++device.name		CP2112 HID SMBus/I2C Bridge for CP2615 Evaluation Kit
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0xeab0
++device.name		CP2114 I2S Audio Bridge
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0xeac0
++device.name		CP2614 MFi Accessory Digital Audio Bridge
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0xeac1
++device.name		CP2615 I2S Audio Bridge
 
  vendor.id		usb 0x10c4
 &device.id		usb 0xeac9
@@ -58394,6 +59388,10 @@
  vendor.id		usb 0x10c4
 &device.id		usb 0xeaca
 +device.name		EFM8UB2 Bootloader
+
+ vendor.id		usb 0x10c4
+&device.id		usb 0xeacb
++device.name		EFM8UB3 Bootloader
 
  vendor.id		usb 0x10c5
 +vendor.name		Sanei Electric, Inc.
@@ -63494,6 +64492,10 @@
 &device.id		usb 0x001d
 +device.name		Greentit [Ambit2 R]
 
+ vendor.id		usb 0x1493
+&device.id		usb 0x001e
++device.name		Ibisbill [Ambit3 Run]
+
  vendor.id		usb 0x1497
 +vendor.name		Panstrong Company Ltd.
 
@@ -64850,6 +65852,10 @@
  vendor.id		usb 0x15d9
 &device.id		usb 0x0a4d
 +device.name		Optical Mouse
+
+ vendor.id		usb 0x15d9
+&device.id		usb 0x0a4e
++device.name		AM-5400 [Optical Mouse]
 
  vendor.id		usb 0x15d9
 &device.id		usb 0x0a4f
@@ -71426,11 +72432,15 @@
 +device.name		instadose dosimeter
 
  vendor.id		usb 0x1e1d
-+vendor.name		Lumension Security
++vendor.name		Kanguru Solutions
 
  vendor.id		usb 0x1e1d
 &device.id		usb 0x0165
 +device.name		Secure Pen drive
+
+ vendor.id		usb 0x1e1d
+&device.id		usb 0x1101
++device.name		FlashBlu Flash Drive
 
  vendor.id		usb 0x1e1f
 +vendor.name		INVIA
@@ -71617,6 +72627,10 @@
  vendor.id		usb 0x1e7d
 &device.id		usb 0x2d51
 +device.name		Kone+ Mouse
+
+ vendor.id		usb 0x1e7d
+&device.id		usb 0x2e22
++device.name		Kone XTD Mouse
 
  vendor.id		usb 0x1e7d
 &device.id		usb 0x30d4
@@ -72860,6 +73874,37 @@
 &device.id		usb 0x4161
 +device.name		eReader White
 
+ vendor.id		usb 0x224f
++vendor.name		APDM
+
+ vendor.id		usb 0x224f
+&device.id		usb 0x0001
++device.name		Access Point
+
+ vendor.id		usb 0x224f
+&device.id		usb 0x0002
++device.name		Docking Station
+
+ vendor.id		usb 0x224f
+&device.id		usb 0x0004
++device.name		V2 Opal ACM
+
+ vendor.id		usb 0x224f
+&device.id		usb 0x0005
++device.name		V2 Opal
+
+ vendor.id		usb 0x224f
+&device.id		usb 0x0006
++device.name		V2 Docking Station
+
+ vendor.id		usb 0x224f
+&device.id		usb 0x0007
++device.name		V2 Access Point ACM
+
+ vendor.id		usb 0x224f
+&device.id		usb 0x0008
++device.name		V2 Access Point
+
  vendor.id		usb 0x225d
 +vendor.name		Morpho
 
@@ -73270,6 +74315,52 @@
  vendor.id		usb 0x22ba
 +vendor.name		Technology Innovation Holdings, Ltd
 
+ vendor.id		usb 0x22c9
++vendor.name		StepOver GmbH
+
+ vendor.id		usb 0x22c9
+&device.id		usb 0x0601
++device.name		naturaSign Pad Colour
+
+ vendor.id		usb 0x22c9
+&device.id		usb 0x0701
++device.name		naturaSign Pad Mobile
+
+ vendor.id		usb 0x22c9
+&device.id		usb 0x0801
++device.name		naturaSign Pad Comfort
+
+ vendor.id		usb 0x22c9
+&device.id		usb 0x0881
++device.name		naturaSign Pad Flawless
+
+ vendor.id		usb 0x22c9
+&device.id		usb 0x0901
++device.name		naturaSign Pad Classic
+
+ vendor.id		usb 0x22c9
+&device.id		usb 0x09e1
++device.name		naturaSign Pad Biometric
+
+ vendor.id		usb 0x22c9
+&device.id		usb 0x0ce1
++device.name		duraSign Pad Brilliance
+
+ vendor.id		usb 0x22c9
+&device.id		usb 0x0cf1
++device.name		duraSign Pad Biometric 5.0
+
+ vendor.id		usb 0x22c9
+&device.id		usb 0x0d01
++device.name		duraSign 10.0
+
+ vendor.id		usb 0x22c9
+&device.id		usb 0x0df1
++device.name		duraSign Pad Biometric 10.0
+
+ vendor.id		usb 0x22cd
++vendor.name		Kinova Robotics Inc.
+
  vendor.id		usb 0x22e0
 +vendor.name		secunet Security Networks AG
 
@@ -73530,6 +74621,10 @@
 +device.name		Archer T1U 802.11a/n/ac Wireless Adapter [MediaTek MT7610U]
 
  vendor.id		usb 0x2357
+&device.id		usb 0x0106
++device.name		Archer T9UH v1 [Realtek RTL8814AU]
+
+ vendor.id		usb 0x2357
 &device.id		usb 0x0107
 +device.name		TL-WN821N Version 5 RTL8192EU
 
@@ -73674,6 +74769,13 @@
  vendor.id		usb 0x2548
 &device.id		usb 0x1002
 +device.name		CEC Adapter
+
+ vendor.id		usb 0x25b5
++vendor.name		FlatFrog
+
+ vendor.id		usb 0x25b5
+&device.id		usb 0x0002
++device.name		Multitouch 3200
 
  vendor.id		usb 0x2632
 +vendor.name		TwinMOS
@@ -74088,6 +75190,49 @@
 &device.id		usb 0x01ed
 +device.name		blink(1)
 
+ vendor.id		usb 0x27c6
++vendor.name		Shenzhen Goodix Technology Co.,Ltd.
+
+ vendor.id		usb 0x27c6
+&device.id		usb 0x5117
++device.name		Fingerprint Reader
+
+ vendor.id		usb 0x27c6
+&device.id		usb 0x5201
++device.name		Fingerprint Reader
+
+ vendor.id		usb 0x27c6
+&device.id		usb 0x5301
++device.name		Fingerprint Reader
+
+ vendor.id		usb 0x27c6
+&device.id		usb 0x530c
++device.name		Fingerprint Reader
+
+ vendor.id		usb 0x27c6
+&device.id		usb 0x5385
++device.name		Fingerprint Reader
+
+ vendor.id		usb 0x27c6
+&device.id		usb 0x538c
++device.name		Fingerprint Reader
+
+ vendor.id		usb 0x27c6
+&device.id		usb 0x5395
++device.name		Fingerprint Reader
+
+ vendor.id		usb 0x27c6
+&device.id		usb 0x5584
++device.name		Fingerprint Reader
+
+ vendor.id		usb 0x27c6
+&device.id		usb 0x55b4
++device.name		Fingerprint Reader
+
+ vendor.id		usb 0x27c6
+&device.id		usb 0x5740
++device.name		Fingerprint Reader
+
  vendor.id		usb 0x2821
 +vendor.name		ASUSTek Computer Inc.
 
@@ -74419,6 +75564,13 @@
 &device.id		usb 0x0000
 +device.name		Wireless Optical Mouse
 
+ vendor.id		usb 0x2c23
++vendor.name		Supermicro Computer Incorporated
+
+ vendor.id		usb 0x2c23
+&device.id		usb 0x1b83
++device.name		NIC
+
  vendor.id		usb 0x2c7c
 +vendor.name		Quectel Wireless Solutions Co., Ltd.
 
@@ -74450,6 +75602,13 @@
 &device.id		usb 0x0435
 +device.name		AG35 LTE modem
 
+ vendor.id		usb 0x2cdc
++vendor.name		Sea & Sun Technology GmbH
+
+ vendor.id		usb 0x2cdc
+&device.id		usb 0xf232
++device.name		CTD48Mc CTD Probe
+
  vendor.id		usb 0x2dcf
 +vendor.name		Dialog Semiconductor
 
@@ -74466,6 +75625,23 @@
  vendor.id		usb 0x3016
 &device.id		usb 0x0001
 +device.name		Nitrogen Bootloader
+
+ vendor.id		usb 0x30a4
++vendor.name		Blues Wireless
+
+ vendor.id		usb 0x30a4
+&device.id		usb 0x0001
++device.name		Notecard
+
+ vendor.id		usb 0x30c2
++vendor.name		UNPARALLEL Innovation, Lda
+
+ vendor.id		usb 0x30c2
+&device.id		usb 0x1388
++device.name		SPL Meter
+
+ vendor.id		usb 0x30c9
++vendor.name		Luxvisions Innotech Limited
 
  vendor.id		usb 0x30ee
 +vendor.name		Fujitsu Connected Technologies Limited
