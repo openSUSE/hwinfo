@@ -939,21 +939,26 @@ void add_mv643xx_eth(hd_data_t *hd_data, char *entry, char *platform_type)
 void hd_read_platform(hd_data_t *hd_data)
 {
   char *s, *platform_type, *device_type, *driver;
-  str_list_t *sf_bus, *sf_bus_e, *sf_eth_dev = NULL;
-  char *sf_dev, *sf_eth_net;
+  str_list_t *sf_bus, *sf_bus_e, *sf_bus_canonical, *sf_eth_dev = NULL;
+  char *sf_dev;
   int mv643xx_eth_seen = 0;
   int is_net, is_storage, is_usb, is_xhci, is_ehci;
   hd_t *hd;
+  char *sysfs_device_dir = "/sys/bus/platform/devices";
 
-  sf_bus = read_dir("/sys/bus/platform/devices", 'l');
+  sf_bus = read_dir(sysfs_device_dir, 'l');
+  sf_bus_canonical = read_dir_canonical(sysfs_device_dir, 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: platform\n");
     return;
   }
 
+  /* list of network interfaces */
+  str_list_t *net_list = read_dir_canonical("/sys/class/net", 'l');
+
   for(sf_bus_e = sf_bus; sf_bus_e; sf_bus_e = sf_bus_e->next) {
-    sf_dev = new_str(hd_read_sysfs_link("/sys/bus/platform/devices", sf_bus_e->str));
+    sf_dev = new_str(hd_read_sysfs_link(sysfs_device_dir, sf_bus_e->str));
 
     ADD2LOG(
       "  platform device: name = %s\n    path = %s\n",
@@ -977,10 +982,14 @@ void hd_read_platform(hd_data_t *hd_data)
       driver = hd_sysfs_find_driver(hd_data, hd_sysfs_id(sf_dev), 1);
       if(!driver) driver = "";
       ADD2LOG("    type = \"%s\", modalias = \"%s\", driver = \"%s\"\n", device_type, platform_type, driver);
+      /*
+       * it's a network device if
+       *   - there's a link to a network interface in a subdir *AND*
+       *   - there's no other device that is actually a subdevice of this one
+       */
       is_net = 0;
-      sf_eth_net = new_str(hd_read_sysfs_link(sf_dev, "net"));
-      sf_eth_dev = read_dir(sf_eth_net, 'd');
-      is_net = sf_eth_net && sf_eth_dev;
+      sf_eth_dev = subcomponent_list(net_list, sf_dev, 0);
+      is_net = !!sf_eth_dev && !has_subcomponent(sf_bus_canonical, sf_dev);
       is_storage =
         !strcmp(device_type, "sata") ||
         !strcmp(platform_type, "acpi:HISI0161:") ||
@@ -998,13 +1007,15 @@ void hd_read_platform(hd_data_t *hd_data)
         strstr(driver, "xhci-")
       );
       is_ehci = !!strstr(driver, "ehci-");
-      if(is_net) ADD2LOG("    is net: sf_eth_net = %s\n", sf_eth_net);
+      if(is_net) {
+        for(str_list_t *sl = sf_eth_dev; sl; sl = sl->next) {
+          ADD2LOG("    is net: interface = %s\n", sl->str);
+        }
+      }
       if(is_storage) ADD2LOG("    is storage\n");
       if(is_usb) ADD2LOG("    is usb\n");
       if(is_xhci) ADD2LOG("    is xhci\n");
       if(is_ehci) ADD2LOG("    is ehci\n");
-      free_mem(sf_eth_net);
-      free_str_list(sf_eth_dev);
       if(
         /* there is 'mv643xx_eth.0', 'mv643xx_eth.1' and 'mv643xx_eth_shared.' */
         is_net &&
@@ -1014,15 +1025,37 @@ void hd_read_platform(hd_data_t *hd_data)
         add_mv643xx_eth(hd_data, sf_bus_e->str, platform_type);
       }
       else if(is_net) {
-        hd = add_hd_entry(hd_data, __LINE__, 0);
-        hd->base_class.id = bc_network;
-        hd->sub_class.id = 0;
-        str_printf(&hd->device.name, 0, "ARM Ethernet controller");
-        hd->modalias = new_str(platform_type);
-        hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
-        hd->sysfs_bus_id = new_str(sf_bus_e->str);
-        s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
-        if(s) add_str_list(&hd->drivers, s);
+        /* note there might be more than one interface per device - hence this is a list */
+        for(str_list_t *sl = sf_eth_dev; sl; sl = sl->next) {
+          hd = add_hd_entry(hd_data, __LINE__, 0);
+          hd->base_class.id = bc_network;
+          hd->sub_class.id = 0;
+          str_printf(&hd->device.name, 0, "ARM Ethernet controller");
+          hd->modalias = new_str(platform_type);
+          /*
+           * the interface link ends with 'net' + interface, e.g. .../net/ethX
+           * -> strip these two parts to form the sysfs id
+           */
+          char *tmp = new_str(hd_sysfs_id(sl->str));
+          char *slash = strrchr(tmp, '/');
+          if(slash) *slash = 0, slash = strrchr(tmp, '/');
+          if(slash) *slash = 0;
+          hd->sysfs_id = new_str(tmp);
+          free_mem(tmp);
+          /*
+           * the bus id is the last part of the sysfs id - if that fails for
+           * some reason fall back to device link name
+           */
+          tmp = strrchr(hd->sysfs_id, '/');
+          if(tmp) {
+            hd->sysfs_bus_id = new_str(tmp + 1);
+          }
+          else {
+            hd->sysfs_bus_id = new_str(sf_bus_e->str);
+          }
+          s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
+          if(s) add_str_list(&hd->drivers, s);
+        }
       }
       else if(is_storage) {
         hd = add_hd_entry(hd_data, __LINE__, 0);
@@ -1064,12 +1097,15 @@ void hd_read_platform(hd_data_t *hd_data)
         s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
         if(s) add_str_list(&hd->drivers, s);
       }
+      free_str_list(sf_eth_dev);
       free_mem(device_type);
       free_mem(platform_type);
     }
 
     free_mem(sf_dev);
   }
+
+  free_str_list(net_list);
 
   free_str_list(sf_bus);
 }

@@ -120,7 +120,10 @@ str_list_t *free_str_list(str_list_t *list);
 str_list_t *reverse_str_list(str_list_t *list);
 str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines);
 str_list_t *read_dir(char *dir_name, int type);
+str_list_t *read_dir_canonical(char *dir_name, int type);
 char *hd_read_sysfs_link(char *base_dir, char *link_name);
+str_list_t *subcomponent_list(str_list_t *list, char *comp, int max);
+int has_subcomponent(str_list_t *list, char *comp);
 void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg);
 
 void remove_hd_entries(hd_data_t *hd_data);

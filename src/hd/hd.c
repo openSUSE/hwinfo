@@ -2633,6 +2633,28 @@ str_list_t *read_dir(char *dir_name, int type)
 }
 
 
+/*
+ * Read directory, return a list of canonicalized entries with file type 'type'.
+ *
+ * The difference to read_dir() is that symlinks are resolved and the
+ * canonical path within sysfs is returned.
+ */
+str_list_t *read_dir_canonical(char *dir_name, int type)
+{
+  str_list_t *list = read_dir(dir_name, type);
+
+  if(!list) return list;
+
+  for(str_list_t *sl = list; sl; sl = sl->next) {
+    char *tmp = new_str(hd_read_sysfs_link(dir_name, sl->str));
+    free_mem(sl->str);
+    sl->str = tmp;
+  }
+
+  return list;
+}
+
+
 char *hd_read_sysfs_link(char *base_dir, char *link_name)
 {
   char *s = NULL;
@@ -2648,6 +2670,53 @@ char *hd_read_sysfs_link(char *base_dir, char *link_name)
   free_mem(s);
 
   return buf;
+}
+
+
+/*
+ * Return list with all elements in list that are subcomponents of comp.
+ *
+ * If max > 0 at most max elements are returned.
+ *
+ * Note: it must really be a subdirectory or attribute below comp. A
+ * component is *not* a subcomponent of itself.
+ * IOW: the path in list must really be longer than comp to qualify.
+ */
+str_list_t *subcomponent_list(str_list_t *list, char *comp, int max)
+{
+  str_list_t *sub_list = NULL;
+
+  if(!list || !comp) return sub_list;
+
+  size_t comp_len = strlen(comp);
+
+  for(str_list_t *sl = list; sl; sl = sl->next) {
+    if(
+      !strncmp(sl->str, comp, comp_len) &&
+      sl->str[comp_len] == '/'
+    ) {
+      add_str_list(&sub_list, sl->str);
+      if(!--max) return sub_list;
+    }
+  }
+
+  return sub_list;
+}
+
+
+/*
+ * Check if list contains a subcomponent of comp.
+ *
+ * Returns 0 (no) or 1 (yes).
+ */
+int has_subcomponent(str_list_t *list, char *comp)
+{
+  str_list_t *sl = subcomponent_list(list, comp, 1);
+  if(!sl) return 0;
+
+  free_str_list(sl);
+
+  return 1;
 }
 
 
