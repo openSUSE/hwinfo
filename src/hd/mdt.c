@@ -24,13 +24,31 @@
 
 #define STR_SIZE 128
 
-#define VBIOS_ROM	0xc0000
-#define VBIOS_ROM_SIZE	0x10000
-
 #define VBIOS_MEM	0xa0000
 #define VBIOS_MEM_SIZE	0x10000
 
+#define VBIOS_ROM	0xc0000
+#define VBIOS_ROM_SIZE	0x10000
+
+#define VBIOS_GAP1	0xd0000
+#define VBIOS_GAP1_SIZE	0x20000
+
+#define SBIOS_ROM	0xf0000
+#define SBIOS_ROM_SIZE	0x10000
+
 #define VBE_BUF		0x8000
+
+/*
+ * I/O loop detection (if vm->no_io is set)
+ *
+ * IO_LOOP_MAX_SIZE: max number of instructions between reading the same I/O port
+ *   again (and no other I/O in between)
+ *
+ * IO_LOOP_MIN_MATCHES: at least this number of read accesses will return 0 before
+ *   starting to emulate a counter
+ */
+#define IO_LOOP_MAX_SIZE	20
+#define IO_LOOP_MIN_MATCHES	50
 
 #define ADD_RES(w, h, f, i) \
   res[res_cnt].width = w, \
@@ -60,6 +78,13 @@ typedef struct vm_s {
   int dump_only;
 
   int exec_count;
+
+  struct {
+    u64 last_tsc;
+    u32 last_addr;
+    u32 value;
+    unsigned matched;
+  } io_loop;
 
   hd_data_t *hd_data;
 } vm_t;
@@ -410,6 +435,9 @@ int vm_prepare(vm_t *vm)
   // stack & buffer space
   x86emu_set_perm(vm->emu, VBE_BUF, 0xffff, X86EMU_PERM_RW);
 
+  // make memory between mapped VBIOS ROM areas writable
+  x86emu_set_perm(vm->emu, VBIOS_GAP1, VBIOS_GAP1 + VBIOS_GAP1_SIZE - 1, X86EMU_PERM_RW);
+
   vm->emu->timeout = vm->timeout ?: 20;
 
   vm->old_memio = x86emu_set_memio_handler(vm->emu, new_memio);
@@ -421,8 +449,15 @@ int vm_prepare(vm_t *vm)
 
 
 /*
- * Use our own memory and i/o access handler to block all i/o accesses if vm->no_io
- * is set.
+ * I/O emulation used if vm->no_io is set. Otherwise real port accesses are done.
+ *
+ * The emulated I/O always returns 0. Unless a close loop reading a specific
+ * port is detected. In that case it starts to emulate a counter on this
+ * specific port, assuming the code waits for something to change.
+ *
+ * Reading any other port in between resets the logic.
+ *
+ * The detailed behavior is controlled by IO_LOOP_MAX_SIZE and IO_LOOP_MIN_MATCHES.
  */
 unsigned new_memio(x86emu_t *emu, u32 addr, u32 *val, unsigned type)
 {
@@ -430,7 +465,26 @@ unsigned new_memio(x86emu_t *emu, u32 addr, u32 *val, unsigned type)
 
   if(vm->no_io) {
     if((type & ~0xff) == X86EMU_MEMIO_I) {
-      *val = 0;
+      // tsc is incremented by 1 on each instruction in x86emu
+      u64 tsc = emu->x86.R_TSC;
+
+      if(addr == vm->io_loop.last_addr && tsc - vm->io_loop.last_tsc < IO_LOOP_MAX_SIZE) {
+        if(vm->io_loop.matched > IO_LOOP_MIN_MATCHES) {
+          vm->io_loop.value++;
+        }
+        else {
+          vm->io_loop.matched++;
+        }
+      }
+      else {
+        vm->io_loop.matched = 0;
+        vm->io_loop.value = 0;
+      }
+      vm->io_loop.last_addr = addr;
+      vm->io_loop.last_tsc = tsc;
+
+      *val = vm->io_loop.value;
+
       return 0;
     }
 
