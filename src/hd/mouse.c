@@ -407,7 +407,7 @@ void get_serial_mouse(hd_data_t *hd_data)
         /*
          * PnP COM spec black magic...
          */
-        setspeed(fd, 1200, 1, CS7);
+        setspeed(fd, 1200, 0, CS7);
         modem_info = TIOCM_DTR | TIOCM_RTS;
         ioctl(fd, TIOCMBIC, &modem_info);
       }
