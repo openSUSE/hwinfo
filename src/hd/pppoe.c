@@ -13,6 +13,7 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
@@ -447,10 +448,7 @@ wait_for_pado (int n, PPPoEConnection* conns)
     fd_set readable;
     PPPoEPacket packet;
     PacketCriteria pc;
-
-    struct timeval tv;
-    tv.tv_sec = PADO_TIMEOUT;
-    tv.tv_usec = 0;
+    struct timeval tv_end;
 
     while (1)
     {
@@ -459,7 +457,22 @@ wait_for_pado (int n, PPPoEConnection* conns)
 	    if (conns[i].fd != -1)
 		FD_SET (conns[i].fd, &readable);
 
+        /* don't rely on select() updating its timeout arg */
+
+        gettimeofday (&tv_end, NULL);
+        timeradd (&tv_end, &((struct timeval) { tv_sec: PADO_TIMEOUT }), &tv_end);
+
 	do {
+            struct timeval tv;
+
+            r = 0;
+
+            gettimeofday (&tv, NULL);
+            timersub (&tv_end, &tv, &tv);
+
+            if (timercmp (&tv, &((struct timeval) {}), <=))
+                break;
+
 	    r = select (FD_SETSIZE, &readable, NULL, NULL, &tv);
 	} while (r == -1 && errno == EINTR);
 
