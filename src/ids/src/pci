@@ -214,6 +214,9 @@
  vendor.id		pci 0x0721
 +vendor.name		Sapphire, Inc.
 
+ vendor.id		pci 0x0731
++vendor.name		Jingjia Microelectronics Co Ltd
+
  vendor.id		pci 0x0777
 +vendor.name		Ubiquiti Networks, Inc.
 
