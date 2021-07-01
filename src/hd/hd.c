@@ -3148,6 +3148,9 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 #ifdef __arm__
   return arch_arm;
 #else
+#ifdef __loongarch__
+  return arch_loongarch;
+#else
 #ifdef __aarch64__
   return arch_aarch64;
 #elif defined __m68k__
@@ -3156,6 +3159,7 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
   return arch_riscv;
 #else
   return arch_unknown;
+#endif
 #endif
 #endif
 #endif

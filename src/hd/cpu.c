@@ -124,6 +124,12 @@ void read_cpuinfo(hd_data_t *hd_data)
   int old_format;
 #endif
 
+#ifdef __loongarch__
+  char model_id[80], features[0x400];
+  unsigned cpu_revision, mhz;
+  double bogo;
+#endif
+
 #ifdef __PPC__
   char model_id[80], vendor_id[80], motherboard[80];
   unsigned mhz, cache, family, model, stepping;
@@ -350,6 +356,47 @@ void read_cpuinfo(hd_data_t *hd_data)
     }
   }
 #endif	/* __aarch64__ */
+
+#ifdef __loongarch__
+  *model_id = 0;
+  cpu_revision = mhz = 0;
+  bogo = 0;
+
+  for(sl = hd_data->cpu; sl; sl = sl->next) {
+    if(sscanf(sl->str, "Model Name : %79[^\n]", model_id) == 1) continue;
+    if(sscanf(sl->str, "CPU Revision    : %d", &cpu_revision) == 1);
+    if(sscanf(sl->str, "CPU MHz : %u", &mhz) == 1);
+    if(sscanf(sl->str, "BogoMIPS : %lg", &bogo) == 1);
+    if(sscanf(sl->str, "Features : %1023[^\n]", features) == 1);
+    if(strstr(sl->str, "processor") == sl->str || !sl->next) {/* EOF */
+      if(*model_id) {
+        ct = new_mem(sizeof *ct);
+        ct->architecture = arch_loongarch;
+        ct->model = cpu_revision;
+        ct->bogo = bogo;
+        ct->clock = mhz;
+        hd_data->boot = boot_grub;
+
+        if(*model_id) ct->model_name = new_str(model_id);
+        hd = add_hd_entry(hd_data, __LINE__, 0);
+        hd->base_class.id = bc_internal;
+        hd->sub_class.id = sc_int_cpu;
+        hd->slot = cpus;
+        hd->detail = new_mem(sizeof *hd->detail);
+        hd->detail->type = hd_detail_cpu;
+        hd->detail->cpu.data = ct;
+        if(*features) {
+          ct->features = hd_split(',', features);
+        }
+
+        *model_id = 0;
+        mhz= 0;
+        bogo = 0;
+        cpus++;
+      }
+    }
+  }
+#endif /* loongarch */
 
 #ifdef __sparc__
   *cpu_id = *fpu_id = *promlib = *prom = *type = *mmu = 0;

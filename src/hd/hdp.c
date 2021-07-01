@@ -1117,6 +1117,9 @@ void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
       case arch_aarch64:
 	dump_line0 ("AArch64\n");
 	break;
+      case arch_loongarch:
+	dump_line0 ("LoongArch\n");
+	break;
       case arch_riscv:
 	dump_line0 ("RISC-V\n");
 	break;

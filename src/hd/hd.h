@@ -1448,6 +1448,7 @@ typedef enum cpu_arch {
   arch_mips,
   arch_x86_64,
   arch_aarch64,
+  arch_loongarch,
   arch_riscv
 } hd_cpu_arch_t;
 
