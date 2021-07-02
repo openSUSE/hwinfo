@@ -156,6 +156,10 @@
 #define HD_ARCH "riscv"
 #endif
 
+#ifdef __loongarch__
+#define HD_ARCH "loongarch"
+#endif
+
 typedef struct disk_s {
   struct disk_s *next;
   unsigned crc;
