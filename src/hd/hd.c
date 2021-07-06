@@ -5808,10 +5808,7 @@ hd_t *hd_find_sysfs_id_devname(hd_data_t *hd_data, char *id, char *devname)
         !strcmp(hd->sysfs_id, id) &&
         (
           !hd->unix_dev_name ||
-          (
-            hd->unix_dev_name &&
-            !strcmp(hd->unix_dev_name, devname)
-          )
+          !strcmp(hd->unix_dev_name, devname)
         )
       ) return hd;
     }
