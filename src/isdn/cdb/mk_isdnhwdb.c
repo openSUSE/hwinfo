@@ -272,7 +272,7 @@ char **argv;
 	fprintf(stdout,"$%02d %d\n", IWHREC_TYPE_VERSION, CDB_DATAVERSION + 1);
 	if ((source_date_epoch = getenv("SOURCE_DATE_EPOCH")) == NULL || (tim = (time_t)strtol(source_date_epoch, NULL, 10)) <= 0)
 		time(&tim);
-	strcpy(line,ctime(&tim));
+	strcpy(line,asctime(gmtime(&tim)));
 	l = strlen(line);
 	if (l)
 		line[l-1] = 0;
