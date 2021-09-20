@@ -126,7 +126,7 @@ struct option options[] = {
   { "storage-ctrl", 0, NULL, 1000 + hw_storage_ctrl },
   { "storage_ctrl", 0, NULL, 1000 + hw_storage_ctrl },
   { "netcard", 0, NULL, 1000 + hw_network_ctrl },
-  { "netcards", 0, NULL, 1000 + hw_network_ctrl },	// outdated, just kept for comaptibility
+  { "netcards", 0, NULL, 1000 + hw_network_ctrl },	// outdated, just kept for compatibility
   { "network-ctrl", 0, NULL, 1000 + hw_network_ctrl },
   { "network_ctrl", 0, NULL, 1000 + hw_network_ctrl },
   { "printer", 0, NULL, 1000 + hw_printer },

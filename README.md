@@ -8,7 +8,7 @@ used to generate a system overview log which can be later used for support.
 This project provides a hardware probing library `libhd.so` and a command line tool `hwinfo` using it.
 A major project using this library is [YaST](https://yast.github.io), the SUSE installation tool.
 
-To give you an idea what kind of information it provides, here's the output it gives when asked about the graphcs card:
+To give you an idea what kind of information it provides, here's the output it gives when asked about the graphics card:
 
 ```sh
 # hwinfo --gfxcard

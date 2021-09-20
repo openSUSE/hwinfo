@@ -1,4 +1,4 @@
-# Links to external technical documentaion
+# Links to external technical documentation
 
 ## System Management BIOS (SMBIOS)
 
