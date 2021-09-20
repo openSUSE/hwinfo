@@ -336,7 +336,7 @@ int do_scan(hd_hw_item_t *items)
         ") %s\n",
         hd1->model
       );
-      
+
     }
     if(err) break;
   }
