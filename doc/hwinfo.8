@@ -23,7 +23,7 @@ This option can be given more than once.
 Probe for a particular \fIHARDWARE_ITEM\fR. Available hardware items are:
 
 all, arch, bios, block, bluetooth, braille, bridge, camera, cdrom, chipcard,
-cpu, disk, dsl, dvb, fingerprint, floppy, framebuffer, gfxcard, hub, ide, 
+cpu, disk, dsl, dvb, fingerprint, floppy, framebuffer, gfxcard, hub, ide,
 isapnp, isdn, joystick, keyboard, memory, mmc-ctrl, modem, monitor, mouse, netcard,
 network, partition, pci, pcmcia, pcmcia-ctrl, pppoe, printer, redasd,
 reallyall, scanner, scsi, smp, sound, storage-ctrl, sys, tape, tv, uml, usb,
@@ -33,7 +33,7 @@ Note that if this option is missing, no hardware probing will be done!
 .TP
 \fB--short\fR
 Show only a summary. Use this option in addition to a hardware probing
-option.   
+option.
 .TP
 \fB--listmd\fR
 Normally hwinfo does not report RAID devices. Add this option to see them.
@@ -81,8 +81,8 @@ Print usage.
 .\"
 .SH ENVIRONMENT
 \fBhwprobe\fR can hold a comma-separated list of probing flags preceded by '+'
-or '-' to be turned on or off. To get a complete list of supported flags, 
-run 'hwinfo -all' (note: not '--all') and look at the top of the output.  
+or '-' to be turned on or off. To get a complete list of supported flags,
+run 'hwinfo -all' (note: not '--all') and look at the top of the output.
 
 hwinfo also looks at /proc/cmdline for a \fBhwprobe\fR option.
 .\"
@@ -92,7 +92,7 @@ hwinfo also looks at /proc/cmdline for a \fBhwprobe\fR option.
 hwinfo --disk
 .TP
 - just an overview
-hwinfo --short --block 
+hwinfo --short --block
 .TP
 - show a particular disk
 hwinfo --disk --only /dev/sdb

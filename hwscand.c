@@ -132,16 +132,16 @@ int main( int argc, char **argv )
 					last = time(0L);
 					// config calls
 					commands[lines] = strdup(p+1);
-					lines++;	
+					lines++;
 				}
-				if ( p[0] == 'A' && dev_nr < BUFFERS ){	
+				if ( p[0] == 'A' && dev_nr < BUFFERS ){
 					// add scan devices
 					devices[dev_nr]        = strdup(p+1);
 					dev_last_state[dev_nr] = 0;
 					dev_counter[dev_nr]    = 0;
 					dev_nr++;
 				}
-				if ( p[0] == 'R' && dev_nr < BUFFERS ){	
+				if ( p[0] == 'R' && dev_nr < BUFFERS ){
 					for ( i=0; i<dev_nr; i++ ){
 						if ( !strcmp(p+1, devices[i]) ){
 							int j;
@@ -186,7 +186,7 @@ int main( int argc, char **argv )
 				}
 			}
 		}
-		
+
 		if ( last && (last+TIMEOUT <= time(0L)) ){
 			char buf[MESSAGE_BUFFER * NR_COMMANDS];
 			int run_really = 0;
@@ -233,7 +233,7 @@ int main( int argc, char **argv )
 				printf("RUN %s\n", buf);
 #endif
 				system(buf);
-#if DEBUG				
+#if DEBUG
 				printf("RUN quit %s\n", buf);
 #endif
 			}

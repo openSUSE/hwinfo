@@ -126,7 +126,7 @@ struct option options[] = {
   { "storage-ctrl", 0, NULL, 1000 + hw_storage_ctrl },
   { "storage_ctrl", 0, NULL, 1000 + hw_storage_ctrl },
   { "netcard", 0, NULL, 1000 + hw_network_ctrl },
-  { "netcards", 0, NULL, 1000 + hw_network_ctrl },	// outdated, just kept for comaptibility
+  { "netcards", 0, NULL, 1000 + hw_network_ctrl },	// outdated, just kept for compatibility
   { "network-ctrl", 0, NULL, 1000 + hw_network_ctrl },
   { "network_ctrl", 0, NULL, 1000 + hw_network_ctrl },
   { "printer", 0, NULL, 1000 + hw_printer },
@@ -193,7 +193,7 @@ int main(int argc, char **argv)
   FILE *f = NULL;
   int i;
   unsigned first_probe = 1;
-  
+
   hd_data = calloc(1, sizeof *hd_data);
   hd_data->progress = isatty(1) ? progress2 : NULL;
   hd_data->debug=~(HD_DEB_DRIVER_INFO | HD_DEB_HDDB);
@@ -831,14 +831,14 @@ void help()
     "        Note that you also have to specify --<HARDWARE_ITEM> to trigger\n"
     "        any device probing.\n"
     "    --save-config SPEC\n"
-    "        Store config  for a particular device below /var/lib/hardware.\n"
+    "        Store config for a particular device below /var/lib/hardware.\n"
     "        SPEC can be a device name, an UDI, or 'all'. This option must be\n"
     "        given in addition to a hardware probing option.\n"
     "    --show-config UDI\n"
     "        Show saved config data for a particular device.\n"
     "    --map\n"
-    "        If disk names have  changed (e.g. after a kernel update) this\n"
-    "        prints a list of disk name mappings. Note  that  you must have\n"
+    "        If disk names have changed (e.g. after a kernel update) this\n"
+    "        prints a list of disk name mappings. Note that you must have\n"
     "        used --save-config at some point before for this can work.\n"
     "    --debug N\n"
     "        Set debug level to N. The debug info is shown only in the log\n"
@@ -985,7 +985,7 @@ int braille_install_info(hd_data_t *hd_data)
     perror(INSTALL_INF);
     return 1;
   }
-  
+
   for(sl = sl0; sl; sl = sl->next) {
     if(
       strstr(sl->str, "Braille:") != sl->str &&
@@ -997,7 +997,7 @@ int braille_install_info(hd_data_t *hd_data)
 
   fprintf(f, "Braille: %s\n", braille);
   fprintf(f, "Brailledevice: %s\n", braille_dev);
-  
+
   fclose(f);
 
   return 0;
@@ -1125,7 +1125,7 @@ char *get_xserver(hd_data_t *hd_data, char **version, char **busid, driver_info_
 
   if(*display) return display;
 
-  if(c == 0) c = '4';	/* default to XF 4, if nothing else is known  */
+  if(c == 0) c = '4';	/* default to XF 4, if nothing else is known */
 
   xf86_ver[0] = c;
   xf86_ver[1] = 0;
@@ -1181,7 +1181,7 @@ int x11_install_info(hd_data_t *hd_data)
     perror(INSTALL_INF);
     return 1;
   }
-  
+
   for(sl = sl0; sl; sl = sl->next) {
     if(
       strstr(sl->str, "Framebuffer:") != sl->str &&
@@ -1895,5 +1895,4 @@ int get_mapping2()
 
   return err;
 }
-
 
