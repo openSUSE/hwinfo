@@ -330,6 +330,9 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
     if((u >> 8) == bc_monitor) hd->sub_class.id = u & 0xff;
   }
 
+  u = edid[12] + (edid[13] << 8) + (edid[14] << 16) + (edid[15] << 24);
+  str_printf(&serial, -1, "%u", u);
+
   if(edid[0x15] > 0 && edid[0x16] > 0) {
     width_mm = edid[0x15] * 10;
     height_mm = edid[0x16] * 10;
@@ -414,7 +417,8 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
         break;
 
       case 0xff:
-        if(!serial && edid[i + 5]) {
+        if(edid[i + 5]) {
+          free_mem(serial);
           serial = canon_str(edid + i + 5, 0xd);
           for(s = serial; *s; s++) if(*s < ' ') *s = ' ';
         }
