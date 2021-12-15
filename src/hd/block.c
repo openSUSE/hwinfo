@@ -1278,11 +1278,13 @@ cdrom_info_t *hd_read_cdrom_info(hd_data_t *hd_data, hd_t *hd)
 
   ci = hd->detail->cdrom.data;
 
-  hd->is.notready = 1;
+  fd = open(hd->unix_dev_name, O_RDONLY|O_NONBLOCK);
 
-  if((fd = open(hd->unix_dev_name, O_RDONLY|O_NONBLOCK)) > 0) {
-    /* we get CDS_DISK_OK if there is CD in the drive */
-    ioctl(fd, CDROM_DRIVE_STATUS, 0) == CDS_DISC_OK ? hd->is.notready = 0 : NULL;
+  /* we get CDS_DISK_OK if there is a CD in the drive */
+  hd->is.notready = fd != -1 && ioctl(fd, CDROM_DRIVE_STATUS, 0) == CDS_DISC_OK ? 0 : 1;
+
+  if(hd->is.notready) {
+    if(fd != -1) close(fd);
     return NULL;
   }
 
