@@ -137,10 +137,23 @@ void add_serial_console(hd_data_t *hd_data)
     if(ioctl(fd, TIOCGDEV, &u) != -1) {
       tty_major = (u >> 8) & 0xfff;
       tty_minor = (u & 0xff) | ((u >> 12) & 0xfff00);
-      ADD2LOG(DEV_CONSOLE ": major %u, minor %u\n", tty_major, tty_minor);
+      // get char device name from major:minor numbers
+      char *dev_link = NULL, *dev_name = NULL;
+      str_printf(&dev_link, 0, "/dev/char/%u:%u", tty_major, tty_minor);
+      dev_name = realpath(dev_link, NULL);
+      if(
+        dev_name &&
+        strcmp(dev_name, dev_link) &&
+        !strncmp(dev_name, "/dev/", sizeof "/dev/" - 1)
+      ) {
+        dev = new_str(dev_name + sizeof "/dev/" - 1);
+      }
+      ADD2LOG(DEV_CONSOLE ": major %u, minor %u, name %s\n", tty_major, tty_minor, dev);
+      free_mem(dev_link);
+      free_mem(dev_name);
     }
 
-    if (0)
+    if (dev)
 	    ;
 #ifdef __powerpc__
     else if(tty_major == 229 /* iseries hvc */) {
