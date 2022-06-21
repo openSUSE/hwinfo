@@ -169,6 +169,25 @@ void get_block_devs(hd_data_t *hd_data)
     }
 
     sf_dev = new_str(hd_read_sysfs_link(sf_cdev, "device"));
+
+    bus_name = NULL;
+    if(
+      (s = hd_read_sysfs_link(sf_dev, "subsystem")) ||
+      (s = hd_read_sysfs_link(sf_dev, "bus"))
+    ) {
+      bus_name = strrchr(s, '/');
+      if(bus_name) bus_name++;
+      bus_name = new_str(bus_name);
+      /* if bus_name is nvme-subsystem reconsider sf_dev value */
+      if(!strcmp(bus_name, "nvme-subsystem")) {
+        for(sl = read_dir(sf_dev, 'l'); sl; sl = sl->next) {
+          if(!strncmp(sl->str, "nvme", 4)) {
+            sf_dev = new_str(hd_read_sysfs_link(sf_dev, sl->str));
+          }
+        }
+      }
+    }
+
     sf_drv_name = NULL;
     sf_drv = hd_read_sysfs_link(sf_dev, "driver");
     if(!sf_drv) {
@@ -185,15 +204,6 @@ void get_block_devs(hd_data_t *hd_data)
     bus_id = sf_dev ? strrchr(sf_dev, '/') : NULL;
     if(bus_id) bus_id++;
 
-    bus_name = NULL;
-    if(
-      (s = hd_read_sysfs_link(sf_dev, "subsystem")) ||
-      (s = hd_read_sysfs_link(sf_dev, "bus"))
-    ) {
-      bus_name = strrchr(s, '/');
-      if(bus_name) bus_name++;
-      bus_name = new_str(bus_name);
-    }
 
     if(sf_dev) {
       ADD2LOG(
@@ -275,6 +285,7 @@ void get_block_devs(hd_data_t *hd_data)
         else if(!strcmp(bus_name, "scsi")) hd->bus.id = bus_scsi;
         else if(!strcmp(bus_name, "pci")) hd->bus.id = bus_pci;
         else if(!strcmp(bus_name, "nvme")) hd->bus.id = bus_pci;
+        else if(!strcmp(bus_name, "nvme-subsystem")) hd->bus.id = bus_pci;
       }
       hd->sysfs_bus_id = new_str(bus_id);
 
