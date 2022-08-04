@@ -144,6 +144,7 @@ struct option options[] = {
   { "pci", 0, NULL, 1000 + hw_pci },
   { "isapnp", 0, NULL, 1000 + hw_isapnp },
   { "scsi", 0, NULL, 1000 + hw_scsi },
+  { "nvme", 0, NULL, 1000 + hw_nvme },
   { "ide", 0, NULL, 1000 + hw_ide },
   { "bridge", 0, NULL, 1000 + hw_bridge },
   { "hub", 0, NULL, 1000 + hw_hub },
@@ -815,8 +816,8 @@ void help()
     "        all, arch, bios, block, bluetooth, braille, bridge, camera,\n"
     "        cdrom, chipcard, cpu, disk, dsl, dvb, fingerprint, floppy,\n"
     "        framebuffer, gfxcard, hub, ide, isapnp, isdn, joystick, keyboard,\n"
-    "        memory, mmc-ctrl, modem, monitor, mouse, netcard, network, partition,\n"
-    "        pci, pcmcia, pcmcia-ctrl, pppoe, printer, redasd,\n"
+    "        memory, mmc-ctrl, modem, monitor, mouse, netcard, network, nvme,\n"
+    "        partition, pci, pcmcia, pcmcia-ctrl, pppoe, printer, redasd,\n"
     "        reallyall, scanner, scsi, smp, sound, storage-ctrl, sys, tape,\n"
     "        tv, uml, usb, usb-ctrl, vbe, wlan, xen, zip\n"
     "    --short\n"

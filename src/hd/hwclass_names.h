@@ -59,6 +59,7 @@ static hash_t hw_items[] = {
   { hw_tape,          "tape"                },
   { hw_vbe,           "vesa bios"           },
   { hw_bluetooth,     "bluetooth"           },
+  { hw_nvme,          "nvme"                },
   { hw_unknown,       "unknown"             },
   { 0,                NULL                  }
 };

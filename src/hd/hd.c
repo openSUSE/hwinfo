@@ -910,6 +910,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
       break;
 
     case hw_scsi:
+    case hw_nvme:
     case hw_tape:
       hd_set_probe_feature(hd_data, pr_pci);
       hd_set_probe_feature(hd_data, pr_block);
@@ -4739,6 +4740,7 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
         case hw_pci:
         case hw_isapnp:
         case hw_scsi:
+        case hw_nvme:
         case hw_ide:
 
         case hw_pcmcia:		/* special */
@@ -4804,6 +4806,9 @@ void assign_hw_class(hd_data_t *hd_data, hd_t *hd)
   }
   else if(hd->bus.id == bus_scsi) {
     hd_set_hw_class(hd, hw_scsi);
+  }
+  else if(hd->bus.id == bus_nvme) {
+    hd_set_hw_class(hd, hw_nvme);
   }
   else if(hd->bus.id == bus_ide) {
     hd_set_hw_class(hd, hw_ide);
