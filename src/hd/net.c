@@ -619,7 +619,7 @@ hd_res_t *get_phwaddr(hd_data_t *hd_data, hd_t *hd)
       addr[3 * i - 1] = 0;
     }
 
-    ADD2LOG("  %s: ethtool permanent hw address[%d]: %s\n", hd->unix_dev_name, phwaddr->size, addr);
+    ADD2LOG("  %s: ethtool permanent hw address[%d]: %s\n", hd->unix_dev_name, phwaddr->size, addr ?: "");
 
     if(addr && strspn(addr, "0:") != strlen(addr)) {
       res = new_mem(sizeof *res);

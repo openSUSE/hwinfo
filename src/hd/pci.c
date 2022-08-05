@@ -1612,7 +1612,7 @@ void hd_read_vm(hd_data_t *hd_data)
       if(drv_name) drv_name++;
     }
 
-    ADD2LOG("    driver = \"%s\"\n", drv_name);
+    ADD2LOG("    driver = \"%s\"\n", drv_name ?: "");
 
     if(
       drv_name &&

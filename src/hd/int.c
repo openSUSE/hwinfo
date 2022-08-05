@@ -1230,8 +1230,6 @@ void int_legacy_geo(hd_data_t *hd_data)
   char *s;
   edd_info_t *ei;
 
-  if(!hd_data->edd) return;
-
   for(hd = hd_data->hd; hd; hd = hd->next) {
     if(
       hd->base_class.id == bc_storage_device &&
