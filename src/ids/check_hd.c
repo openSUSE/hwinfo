@@ -19,7 +19,7 @@ typedef enum hw_item {
   hw_isapnp, hw_bridge, hw_hub, hw_scsi, hw_ide, hw_memory, hw_dvb,
   hw_pcmcia, hw_pcmcia_ctrl, hw_ieee1394, hw_ieee1394_ctrl, hw_hotplug,
   hw_hotplug_ctrl, hw_zip, hw_pppoe, hw_wlan, hw_redasd, hw_dsl, hw_block,
-  hw_tape, hw_vbe, hw_bluetooth,
+  hw_tape, hw_vbe, hw_bluetooth, hw_nvme,
   /* append new entries here */
   hw_unknown, hw_all                                    /* hw_all must be last */
 } hd_hw_item_t;

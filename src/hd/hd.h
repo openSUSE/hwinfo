@@ -145,7 +145,7 @@ typedef enum hw_item {
   hw_isapnp, hw_bridge, hw_hub, hw_scsi, hw_ide, hw_memory, hw_dvb,
   hw_pcmcia, hw_pcmcia_ctrl, hw_ieee1394, hw_ieee1394_ctrl, hw_hotplug,
   hw_hotplug_ctrl, hw_zip, hw_pppoe, hw_wlan, hw_redasd, hw_dsl, hw_block,
-  hw_tape, hw_vbe, hw_bluetooth, hw_fingerprint, hw_mmc_ctrl,
+  hw_tape, hw_vbe, hw_bluetooth, hw_fingerprint, hw_mmc_ctrl, hw_nvme,
   /** append new entries here */
   hw_unknown, hw_all				/**< hw_all must be last */
 } hd_hw_item_t;
@@ -300,7 +300,8 @@ typedef enum bus_types {
   /** outside the range of the PCI values */
   bus_ps2 = 0x80, bus_serial, bus_parallel, bus_floppy, bus_scsi, bus_ide, bus_usb,
   bus_adb, bus_raid, bus_sbus, bus_i2o, bus_vio, bus_ccw, bus_iucv, bus_ps3_system_bus,
-  bus_virtio, bus_ibmebus, bus_gameport, bus_uisvirtpci, bus_mmc, bus_sdio, bus_nd
+  bus_virtio, bus_ibmebus, bus_gameport, bus_uisvirtpci, bus_mmc, bus_sdio, bus_nd,
+  bus_nvme,
 } hd_bus_types_t;
 
 /** @} */
