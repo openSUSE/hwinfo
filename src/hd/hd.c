@@ -21,11 +21,6 @@
 #include <sys/mman.h>
 #include <linux/pci.h>
 #include <linux/hdreg.h>
-#define _LINUX_AUDIT_H_
-#define _LINUX_PRIO_TREE_H
-#ifndef FSCONFIG_SET_FLAG
-#include <linux/fs.h>
-#endif
 
 /**
  * @defgroup libhdBUSint Bus scanning code
