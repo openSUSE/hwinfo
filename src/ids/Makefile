@@ -50,8 +50,11 @@ IDFILES += src/pci src/storage src/sound src/mouse src/braille
 $(LIBHD_D): hd_ids.o
 	ar r $(LIBHD) $?
 
-check_hd: check_hd.c
-	$(CC) $(CFLAGS) $< -o $@
+CHECK_HD_SRC = check_hd.c \
+               thread_pool.c
+
+check_hd: $(CHECK_HD_SRC)
+	$(CC) $(CFLAGS) -lpthread $(CHECK_HD_SRC) -o $@
 
 hd_ids.c: hd_ids.h hd_ids_tiny.h
 
