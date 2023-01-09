@@ -1441,7 +1441,7 @@ void hd_read_ibmebus(hd_data_t *hd_data)
 void hd_read_xen(hd_data_t *hd_data)
 {
   char *s, *xen_type, *xen_node;
-  int eth_cnt = 0, blk_cnt = 0;
+  int eth_cnt = 0, blk_cnt = 0, usb_cnt = 0;
   hd_t *hd;
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev, *drv, *module;
@@ -1493,6 +1493,7 @@ void hd_read_xen(hd_data_t *hd_data)
       xen_type &&
       (
         !strcmp(xen_type, "vif") ||
+        !strcmp(xen_type, "vusb") ||
         !strcmp(xen_type, "vbd")
       )
     ) {
@@ -1512,6 +1513,13 @@ void hd_read_xen(hd_data_t *hd_data)
         }
         hd->device.id = MAKE_ID(TAG_SPECIAL, u);
         str_printf(&hd->device.name, 0, "Virtual Ethernet Card %d", hd->slot);
+      }
+      else if(!strcmp(xen_type, "vusb")) {	/* usb controller */
+        hd->base_class.id = bc_serial;
+        hd->sub_class.id = sc_ser_usb;
+        hd->slot = usb_cnt++;
+        hd->device.id = MAKE_ID(TAG_SPECIAL, 0x2001);
+        str_printf(&hd->device.name, 0, "Virtual USB Controller %d", hd->slot);
       }
       else {	/* storage */
         hd->base_class.id = bc_storage;

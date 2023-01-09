@@ -649,6 +649,10 @@
 &device.id		special 0x1002
 +driver.module.modprobe	xen-vbd
 
+ vendor.id		special 0x6011
+&device.id		special 0x2001
++driver.module.modprobe	xen-hcd
+
 # VirtualIron
  vendor.id		special 0x6012
 +vendor.name		VirtualIron
