@@ -3924,7 +3924,8 @@ int load_module_with_params(hd_data_t *hd_data, char *module, char *params)
   return i;
 }
 
-int load_module(hd_data_t *hd_data, char *module)
+/* symbol clash with libsamba (bsc#1212756) */
+__attribute__((visibility("hidden"))) int load_module(hd_data_t *hd_data, char *module)
 {
   return load_module_with_params(hd_data, module, NULL);
 }
