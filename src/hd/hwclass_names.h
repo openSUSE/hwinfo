@@ -1,3 +1,7 @@
+#ifndef API_SYM
+#define API_SYM		__attribute__((visibility("default")))
+#endif
+
 typedef struct {
   int key;
   char *value;
