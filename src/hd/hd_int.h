@@ -82,6 +82,7 @@
  * Add aliases for some symbols that are widespread throughout libhd sources
  * to avoid massive code adjustments.
  */
+#define read_dir		hd_read_dir
 #define read_file		hd_read_file
 #define name2eisa_id		hd_name2eisa_id
 #define search_str_list		hd_search_str_list
@@ -132,9 +133,7 @@ void hd_log_hex(hd_data_t *hd_data, int with_ascii, unsigned data_len, unsigned 
 
 void str_printf(char **buf, int offset, char *format, ...) __attribute__ ((format (printf, 3, 4)));
 void hexdump(char **buf, int with_ascii, unsigned data_len, unsigned char *data);
-str_list_t *read_dir(char *dir_name, int type);
 str_list_t *read_dir_canonical(char *dir_name, int type);
-char *hd_read_sysfs_link(char *base_dir, char *link_name);
 str_list_t *subcomponent_list(str_list_t *list, char *comp, int max);
 int has_subcomponent(str_list_t *list, char *comp);
 void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg);
@@ -189,9 +188,6 @@ void gather_resources(misc_t *m, hd_res_t **r, char *name, unsigned which);
 char *vend_id2str(unsigned vend);
 
 int hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res_t **size);
-
-str_list_t *hd_split(char del, const char *str);
-char *hd_join(char *del, str_list_t *str);
 
 int is_pnpinfo(ser_device_t *mi, int ofs);
 

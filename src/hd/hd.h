@@ -2820,6 +2820,7 @@ int hd_change_config_status(hd_data_t *hd_data, const char *id, hd_status_t stat
 int hd_read_mmap(hd_data_t *hd_data, char *name, unsigned char *buf, off_t start, unsigned size);
 
 str_list_t *hd_read_file(char *file_name, unsigned start_line, unsigned lines);
+str_list_t *hd_read_dir(char *dir_name, int type);
 unsigned hd_name2eisa_id(char *);
 
 str_list_t *hd_search_str_list(str_list_t *sl, char *str);
@@ -2827,7 +2828,11 @@ str_list_t *hd_add_str_list(str_list_t **sl, char *str);
 str_list_t *hd_free_str_list(str_list_t *list);
 str_list_t *hd_reverse_str_list(str_list_t *list);
 
+str_list_t *hd_split(char del, const char *str);
+char *hd_join(char *del, str_list_t *str);
+
 hd_t *hd_add_hd_entry(hd_data_t *hd_data, unsigned line, unsigned count);
+char *hd_read_sysfs_link(char *base_dir, char *link_name);
 
 /* implemented in hddb.c */
 
