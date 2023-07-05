@@ -2819,6 +2819,16 @@ int hd_change_status(const char *id, hd_status_t status, const char *config_stri
 int hd_change_config_status(hd_data_t *hd_data, const char *id, hd_status_t status, const char *config_string);
 int hd_read_mmap(hd_data_t *hd_data, char *name, unsigned char *buf, off_t start, unsigned size);
 
+str_list_t *hd_read_file(char *file_name, unsigned start_line, unsigned lines);
+unsigned hd_name2eisa_id(char *);
+
+str_list_t *hd_search_str_list(str_list_t *sl, char *str);
+str_list_t *hd_add_str_list(str_list_t **sl, char *str);
+str_list_t *hd_free_str_list(str_list_t *list);
+str_list_t *hd_reverse_str_list(str_list_t *list);
+
+hd_t *hd_add_hd_entry(hd_data_t *hd_data, unsigned line, unsigned count);
+
 /* implemented in hddb.c */
 
 /**

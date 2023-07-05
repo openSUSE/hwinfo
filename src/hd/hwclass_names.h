@@ -83,13 +83,13 @@ char *key2value(hash_t *hash, int id)
 }
 
 
-char *hd_hw_item_name(hd_hw_item_t item)
+API_SYM char *hd_hw_item_name(hd_hw_item_t item)
 {
   return key2value(hw_items, item);
 }
 
 
-hd_hw_item_t hd_hw_item_type(char *name)
+API_SYM hd_hw_item_t hd_hw_item_type(char *name)
 {
   return name ? value2key(hw_items, name) : hw_none;
 }

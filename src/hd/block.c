@@ -1295,7 +1295,7 @@ void read_partitions(hd_data_t *hd_data)
  * Read iso9660/el torito info, if there is a CD inserted.
  * Returns NULL if nothing was found
  */
-cdrom_info_t *hd_read_cdrom_info(hd_data_t *hd_data, hd_t *hd)
+API_SYM cdrom_info_t *hd_read_cdrom_info(hd_data_t *hd_data, hd_t *hd)
 {
   int fd;
   char *s;

@@ -1056,7 +1056,7 @@ hddb_entry_mask_t add_entry(hddb2_data_t *hddb2, tmp_entry_t *te, hddb_entry_t i
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-void hddb_dump_raw(hddb2_data_t *hddb, FILE *f)
+API_SYM void hddb_dump_raw(hddb2_data_t *hddb, FILE *f)
 {
   int i;
   unsigned u, fl, v, t, id;
@@ -1283,7 +1283,7 @@ void hddb_dump_skey(hddb2_data_t *hddb, FILE *f, prefix_t pre, hddb_entry_mask_t
 }
 
 
-void hddb_dump(hddb2_data_t *hddb, FILE *f)
+API_SYM void hddb_dump(hddb2_data_t *hddb, FILE *f)
 {
   unsigned u;
 
@@ -1794,7 +1794,7 @@ void test_db(hd_data_t *hd_data)
 #endif
 
 
-str_list_t *hddb_get_packages(hd_data_t *hd_data)
+API_SYM str_list_t *hddb_get_packages(hd_data_t *hd_data)
 {
   return NULL;
 }
@@ -1845,7 +1845,7 @@ unsigned sub_device_class(hd_data_t *hd_data, unsigned vendor, unsigned device, 
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
+API_SYM void hddb_add_info(hd_data_t *hd_data, hd_t *hd)
 {
   hddb_search_t hs = {};
   driver_info_t *new_driver_info = NULL;

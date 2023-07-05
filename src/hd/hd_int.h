@@ -72,6 +72,25 @@
 #undef NUMERIC_UNIQUE_ID
 
 /*
+ * exported symbol - all others are not exported by the library
+ */
+#define API_SYM			__attribute__((visibility("default")))
+
+/*
+ * All API symbols start with 'hd_' or 'hddb_'.
+ *
+ * Add aliases for some symbols that are widespread throughout libhd sources
+ * to avoid massive code adjustments.
+ */
+#define read_file		hd_read_file
+#define name2eisa_id		hd_name2eisa_id
+#define search_str_list		hd_search_str_list
+#define add_str_list		hd_add_str_list
+#define free_str_list		hd_free_str_list
+#define reverse_str_list	hd_reverse_str_list
+#define add_hd_entry		hd_add_hd_entry
+
+/*
  * Internal probing module numbers. Use mod_name_by_idx() outside of libhd.
  */
 enum mod_idx {
@@ -103,7 +122,6 @@ void hd_add_id(hd_data_t *hd_data, hd_t *hd);
 
 char *isa_id2str(unsigned);
 char *eisa_vendor_str(unsigned);
-unsigned name2eisa_id(char *);
 char *canon_str(char *, int);
 
 int hex(char *string, int digits);
@@ -114,11 +132,6 @@ void hd_log_hex(hd_data_t *hd_data, int with_ascii, unsigned data_len, unsigned 
 
 void str_printf(char **buf, int offset, char *format, ...) __attribute__ ((format (printf, 3, 4)));
 void hexdump(char **buf, int with_ascii, unsigned data_len, unsigned char *data);
-str_list_t *search_str_list(str_list_t *sl, char *str);
-str_list_t *add_str_list(str_list_t **sl, char *str);
-str_list_t *free_str_list(str_list_t *list);
-str_list_t *reverse_str_list(str_list_t *list);
-str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines);
 str_list_t *read_dir(char *dir_name, int type);
 str_list_t *read_dir_canonical(char *dir_name, int type);
 char *hd_read_sysfs_link(char *base_dir, char *link_name);
