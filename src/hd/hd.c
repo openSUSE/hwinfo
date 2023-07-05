@@ -535,7 +535,7 @@ void set_probe_feature(hd_data_t *hd_data, enum probe_feature feature, unsigned 
 }
 
 
-void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
+API_SYM void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
   unsigned ofs, bit, mask;
   int i;
@@ -563,7 +563,7 @@ void hd_set_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 }
 
 
-void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
+API_SYM void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
   unsigned ofs, bit, mask;
   int i;
@@ -586,7 +586,7 @@ void hd_clear_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 }
 
 
-int hd_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
+API_SYM int hd_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 {
   if(feature < 0 || feature >= pr_default) return 0;
 
@@ -594,7 +594,7 @@ int hd_probe_feature(hd_data_t *hd_data, enum probe_feature feature)
 }
 
 
-void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
+API_SYM void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 {
   hd_set_probe_feature(hd_data, pr_int);
 //  hd_set_probe_feature(hd_data, pr_manual);
@@ -978,7 +978,7 @@ void hd_set_probe_feature_hw(hd_data_t *hd_data, hd_hw_item_t item)
 /*
  * Free all data associated with a hd_data_t struct. *Not* the struct itself.
  */
-hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
+API_SYM hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
 {
   modinfo_t *p;
   unsigned u;
@@ -1077,7 +1077,7 @@ hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
 /*
  * Free HAL property data.
  */
-hal_prop_t *hd_free_hal_properties(hal_prop_t *prop)
+API_SYM hal_prop_t *hd_free_hal_properties(hal_prop_t *prop)
 {
   hal_prop_t *next;
 
@@ -1204,7 +1204,7 @@ int exists_hd_entry(hd_data_t *hd_data, hd_t *old_hd, hd_t *hd_ex)
 /*!
  * \note This may not free it.
  */
-hd_t *hd_free_hd_list(hd_t *hd)
+API_SYM hd_t *hd_free_hd_list(hd_t *hd)
 {
   hd_t *h;
 
@@ -1517,7 +1517,7 @@ scsi_t *free_scsi(scsi_t *scsi, int free_all)
 
 
 // FIXME: obsolete
-hd_manual_t *hd_free_manual(hd_manual_t *manual)
+API_SYM hd_manual_t *hd_free_manual(hd_manual_t *manual)
 {
   return NULL;
 }
@@ -1786,7 +1786,7 @@ hd_res_t *add_res_entry(hd_res_t **res, hd_res_t *new_res)
 }
 
 
-hd_t *add_hd_entry(hd_data_t *hd_data, unsigned line, unsigned count)
+API_SYM hd_t *hd_add_hd_entry(hd_data_t *hd_data, unsigned line, unsigned count)
 {
   hd_t *hd;
 
@@ -1809,7 +1809,7 @@ hd_t *add_hd_entry2(hd_t **hd, hd_t *new_hd)
 }
 
 
-void hd_scan(hd_data_t *hd_data)
+API_SYM void hd_scan(hd_data_t *hd_data)
 {
   char *s = NULL;
   int i, j;
@@ -2179,7 +2179,7 @@ char *eisa_vendor_str(unsigned v)
 /*
  *  Must _not_ check that s is exactly 3 chars.
  */
-unsigned name2eisa_id(char *s)
+API_SYM unsigned hd_name2eisa_id(char *s)
 {
   int i;
   unsigned u = 0;
@@ -2299,7 +2299,7 @@ char *float2str(int f, int n)
 /*
  * find hardware entry with given index
  */
-hd_t *hd_get_device_by_idx(hd_data_t *hd_data, unsigned idx)
+API_SYM hd_t *hd_get_device_by_idx(hd_data_t *hd_data, unsigned idx)
 {
   hd_t *hd;
 
@@ -2370,7 +2370,7 @@ void hd_log(hd_data_t *hd_data, char *buf, ssize_t len)
 }
 
 
-void hd_log_printf(hd_data_t *hd_data, char *format, ...)
+API_SYM void hd_log_printf(hd_data_t *hd_data, char *format, ...)
 {
   ssize_t l;
   char *s = NULL;
@@ -2473,7 +2473,7 @@ void hexdump(char **buf, int with_ascii, unsigned data_len, unsigned char *data)
 /** \relates s_str_list_t
  * Search a string list for a string.
  */
-str_list_t *search_str_list(str_list_t *sl, char *str)
+API_SYM str_list_t *hd_search_str_list(str_list_t *sl, char *str)
 {
   if(!str) return NULL;
 
@@ -2488,7 +2488,7 @@ str_list_t *search_str_list(str_list_t *sl, char *str)
  *
  * The new string (str) will be *copied*!
  */
-str_list_t *add_str_list(str_list_t **sl, char *str)
+API_SYM str_list_t *hd_add_str_list(str_list_t **sl, char *str)
 {
   while(*sl) sl = &(*sl)->next;
 
@@ -2502,7 +2502,7 @@ str_list_t *add_str_list(str_list_t **sl, char *str)
 /** \relates s_str_list_t
  * Free the memory allocated by a string list.
  */
-str_list_t *free_str_list(str_list_t *list)
+API_SYM str_list_t *hd_free_str_list(str_list_t *list)
 {
   str_list_t *l;
 
@@ -2517,7 +2517,7 @@ str_list_t *free_str_list(str_list_t *list)
 /** \relates s_str_list_t
  * Reverse string list.
  */
-str_list_t *reverse_str_list(str_list_t *list)
+API_SYM str_list_t *hd_reverse_str_list(str_list_t *list)
 {
   str_list_t *sl, *sl_new = NULL, *next;
 
@@ -2536,7 +2536,7 @@ str_list_t *reverse_str_list(str_list_t *list)
  *
  * start_line is zero-based; lines == 0 -> all lines
  */
-str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines)
+API_SYM str_list_t *hd_read_file(char *file_name, unsigned start_line, unsigned lines)
 {
   FILE *f;
   char buf[0x10000];
@@ -2761,7 +2761,7 @@ void progress(hd_data_t *hd_data, unsigned pos, unsigned count, char *msg)
  * If name is not a valid probe feature, 0 is returned.
  *
  */
-enum probe_feature hd_probe_feature_by_name(char *name)
+API_SYM enum probe_feature hd_probe_feature_by_name(char *name)
 {
   pr_flags_t *flags;
 
@@ -2775,7 +2775,7 @@ enum probe_feature hd_probe_feature_by_name(char *name)
  * Coverts a enum probe_feature to a string.
  * If it fails, NULL is returned.
  */
-char *hd_probe_feature_by_value(enum probe_feature feature)
+API_SYM char *hd_probe_feature_by_value(enum probe_feature feature)
 {
   pr_flags_t *flags;
 
@@ -2828,7 +2828,7 @@ void remove_tagged_hd_entries(hd_data_t *hd_data)
 }
 
 
-int hd_module_is_active(hd_data_t *hd_data, char *mod)
+API_SYM int hd_module_is_active(hd_data_t *hd_data, char *mod)
 {
   str_list_t *sl, *sl0 = read_kmods(hd_data);
   int active = 0;
@@ -2901,7 +2901,7 @@ int hd_module_is_active(hd_data_t *hd_data, char *mod)
 }
 
 
-int hd_has_pcmcia(hd_data_t *hd_data)
+API_SYM int hd_has_pcmcia(hd_data_t *hd_data)
 {
   hd_t *hd;
 
@@ -2933,7 +2933,7 @@ int hd_apm_enabled(hd_data_t *hd_data)
 }
 
 
-int hd_usb_support(hd_data_t *hd_data)
+API_SYM int hd_usb_support(hd_data_t *hd_data)
 {
   hd_t *hd;
   hd_res_t *res;
@@ -2951,7 +2951,7 @@ int hd_usb_support(hd_data_t *hd_data)
 }
 
 
-int hd_smp_support(hd_data_t *hd_data)
+API_SYM int hd_smp_support(hd_data_t *hd_data)
 {
   int is_smp = 0;
   unsigned u;
@@ -3013,7 +3013,7 @@ int hd_smp_support(hd_data_t *hd_data)
 }
 
 
-int hd_color(hd_data_t *hd_data)
+API_SYM int hd_color(hd_data_t *hd_data)
 {
 #if 0
   hd_t *hd;
@@ -3037,13 +3037,13 @@ int hd_color(hd_data_t *hd_data)
 }
 
 
-int hd_mac_color(hd_data_t *hd_data)
+API_SYM int hd_mac_color(hd_data_t *hd_data)
 {
   return hd_color(hd_data);
 }
 
 
-unsigned hd_display_adapter(hd_data_t *hd_data)
+API_SYM unsigned hd_display_adapter(hd_data_t *hd_data)
 {
   hd_t *hd;
   driver_info_t *di;
@@ -3105,7 +3105,7 @@ unsigned hd_display_adapter(hd_data_t *hd_data)
 }
 
 
-enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
+API_SYM enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 {
   hd_t *hd;
 
@@ -3169,13 +3169,13 @@ enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 }
 
 
-enum boot_arch hd_boot_arch(hd_data_t *hd_data)
+API_SYM enum boot_arch hd_boot_arch(hd_data_t *hd_data)
 {
   return hd_data->boot;
 }
 
 
-int hd_is_uml(hd_data_t *hd_data)
+API_SYM int hd_is_uml(hd_data_t *hd_data)
 {
   int is_uml = 0;
   hd_t *hd;
@@ -3218,7 +3218,7 @@ int hd_is_uml(hd_data_t *hd_data)
 }
 
 
-int hd_is_sgi_altix(hd_data_t *hd_data)
+API_SYM int hd_is_sgi_altix(hd_data_t *hd_data)
 {
   struct stat sbuf;
 
@@ -3231,7 +3231,7 @@ int hd_is_sgi_altix(hd_data_t *hd_data)
  *
  * see https://www.sandpile.org/x86/cpuid.htm#level_4000_0000h
  */
-int hd_is_xen(hd_data_t *hd_data)
+API_SYM int hd_is_xen(hd_data_t *hd_data)
 {
 #if defined(__i386__) || defined(__x86_64__)
 
@@ -3284,7 +3284,7 @@ void hd_copy(hd_t *dst, hd_t *src)
 }
 
 
-hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
+API_SYM hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
   unsigned char probe_save[sizeof hd_data->probe];
@@ -3345,7 +3345,7 @@ hd_t *hd_list(hd_data_t *hd_data, hd_hw_item_t item, int rescan, hd_t *hd_old)
 }
 
 
-hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t status)
+API_SYM hd_t *hd_list_with_status(hd_data_t *hd_data, hd_hw_item_t item, hd_status_t status)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
   unsigned char probe_save[sizeof hd_data->probe];
@@ -3395,7 +3395,7 @@ int has_hw_class(hd_t *hd, hd_hw_item_t *items)
 /*
  * items must be a 0 terminated list
  */
-hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan)
+API_SYM hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
   unsigned char probe_save[sizeof hd_data->probe];
@@ -3463,7 +3463,7 @@ hd_t *hd_list2(hd_data_t *hd_data, hd_hw_item_t *items, int rescan)
 /*
  * items must be a 0 terminated list
  */
-hd_t *hd_list_with_status2(hd_data_t *hd_data, hd_hw_item_t *items, hd_status_t status)
+API_SYM hd_t *hd_list_with_status2(hd_data_t *hd_data, hd_hw_item_t *items, hd_status_t status)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
   unsigned char probe_save[sizeof hd_data->probe];
@@ -3494,7 +3494,7 @@ hd_t *hd_list_with_status2(hd_data_t *hd_data, hd_hw_item_t *items, hd_status_t 
 }
 
 
-hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
+API_SYM hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
 //  hd_t *bridge_hd;
@@ -3517,7 +3517,7 @@ hd_t *hd_base_class_list(hd_data_t *hd_data, unsigned base_class)
   return hd_list;
 }
 
-hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_class)
+API_SYM hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_class)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
 
@@ -3531,7 +3531,7 @@ hd_t *hd_sub_class_list(hd_data_t *hd_data, unsigned base_class, unsigned sub_cl
   return hd_list;
 }
 
-hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus)
+API_SYM hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus)
 {
   hd_t *hd, *hd1, *hd_list = NULL;
 
@@ -3546,7 +3546,7 @@ hd_t *hd_bus_list(hd_data_t *hd_data, unsigned bus)
 }
 
 /* Convert libhd bus IDs to hwcfg bus names */
-const char* hd_busid_to_hwcfg(int busid)
+API_SYM const char* hd_busid_to_hwcfg(int busid)
 {
 	const char* const ids1[]={"none","isa","eisa","mc","pci","pcmcia","nubus","cardbus","other"};
 	const char* const ids2[]={"ps2","serial","parallel","floppy","scsi","ide","usb","adb","raid","sbus","i2o","vio","ccw","iucv"};
@@ -3761,7 +3761,7 @@ int dev_name_duplicate(disk_t *dl, char *dev_name)
   return 0;
 }
 
-unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
+API_SYM unsigned hd_boot_disk(hd_data_t *hd_data, int *matches)
 {
   hd_t *hd;
   unsigned crc, hd_idx = 0;
@@ -3924,8 +3924,7 @@ int load_module_with_params(hd_data_t *hd_data, char *module, char *params)
   return i;
 }
 
-/* symbol clash with libsamba (bsc#1212756) */
-__attribute__((visibility("hidden"))) int load_module(hd_data_t *hd_data, char *module)
+int load_module(hd_data_t *hd_data, char *module)
 {
   return load_module_with_params(hd_data, module, NULL);
 }
@@ -5023,7 +5022,7 @@ void create_model_name(hd_data_t *hd_data, hd_t *hd)
 
 
 #ifndef LIBHD_TINY
-int hd_change_config_status(hd_data_t *hd_data, const char *id, hd_status_t status, const char *config_string)
+API_SYM int hd_change_config_status(hd_data_t *hd_data, const char *id, hd_status_t status, const char *config_string)
 {
   hd_t *hd;
   int i;
@@ -5051,7 +5050,7 @@ int hd_change_config_status(hd_data_t *hd_data, const char *id, hd_status_t stat
 
 
 /* wrapper for hd_change_config_status(); obsolete - do not use */
-int hd_change_status(const char *id, hd_status_t status, const char *config_string)
+API_SYM int hd_change_status(const char *id, hd_status_t status, const char *config_string)
 {
   hd_data_t *hd_data;
   int i;
@@ -5190,7 +5189,7 @@ int hd_getdisksize(hd_data_t *hd_data, char *dev, int fd, hd_res_t **geo, hd_res
 }
 
 
-str_list_t *hd_split(char del, const char *str)
+API_SYM str_list_t *hd_split(char del, const char *str)
 {
   char *t, *s, *str0;
   str_list_t *sl = NULL;
@@ -5209,7 +5208,7 @@ str_list_t *hd_split(char del, const char *str)
 }
 
 
-char *hd_join(char *del, str_list_t *str)
+API_SYM char *hd_join(char *del, str_list_t *str)
 {
   char *s;
   str_list_t *str0;
@@ -5306,7 +5305,7 @@ int is_pcmcia_ctrl(hd_data_t *hd_data, hd_t *hd)
   return 0;
 }
 
-void hd_set_hw_class(hd_t *hd, hd_hw_item_t hw_class)
+API_SYM void hd_set_hw_class(hd_t *hd, hd_hw_item_t hw_class)
 {
   unsigned ofs, bit;
 
@@ -5319,7 +5318,7 @@ void hd_set_hw_class(hd_t *hd, hd_hw_item_t hw_class)
 }
 
 
-int hd_is_hw_class(hd_t *hd, hd_hw_item_t hw_class)
+API_SYM int hd_is_hw_class(hd_t *hd, hd_hw_item_t hw_class)
 {
   unsigned ofs, bit;
 
@@ -5785,7 +5784,7 @@ void read_udevinfo(hd_data_t *hd_data)
 /*
  * Return libhd version.
  */
-char *hd_version()
+API_SYM char *hd_version()
 {
   return HD_VERSION_STRING;
 }
@@ -5962,7 +5961,7 @@ str_list_t *hd_module_list(hd_data_t *hd_data, unsigned id)
 /*
  * Read using mmap().
  */
-int hd_read_mmap(hd_data_t *hd_data, char *name, unsigned char *buf, off_t start, unsigned size)
+API_SYM int hd_read_mmap(hd_data_t *hd_data, char *name, unsigned char *buf, off_t start, unsigned size)
 {
   off_t map_start, xofs;
   int psize = getpagesize(), fd;

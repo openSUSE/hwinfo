@@ -498,7 +498,7 @@ int check_udi(const char *udi)
 }
 
 
-int hd_write_properties(const char *udi, hal_prop_t *prop)
+API_SYM int hd_write_properties(const char *udi, hal_prop_t *prop)
 {
   FILE *f;
   char *s;
@@ -519,7 +519,7 @@ int hd_write_properties(const char *udi, hal_prop_t *prop)
 }
 
 
-hal_prop_t *hd_read_properties(const char *udi)
+API_SYM hal_prop_t *hd_read_properties(const char *udi)
 {
   char *path = NULL;
   str_list_t *sl0, *sl;

@@ -43,7 +43,7 @@ static char *print_dev_num(hd_dev_num_t *d);
 /*
  * Dump a hardware entry to FILE *f.
  */
-void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
+API_SYM void hd_dump_entry(hd_data_t *hd_data, hd_t *h, FILE *f)
 {
   char *s, *a0, *a1, *a2, *s1, *s2;
   char buf1[32], buf2[32];

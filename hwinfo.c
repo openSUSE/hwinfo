@@ -29,12 +29,6 @@ typedef struct {
 static int get_probe_flags(int, char **, hd_data_t *);
 static void progress2(char *, char *);
 
-// ##### temporary solution, fix it later!
-str_list_t *read_file(char *file_name, unsigned start_line, unsigned lines);
-str_list_t *search_str_list(str_list_t *sl, char *str);
-str_list_t *add_str_list(str_list_t **sl, char *str);
-char *new_str(const char *);
-
 static unsigned deb = 0;
 static char *log_file = "";
 static char *list = NULL;
@@ -1272,8 +1266,8 @@ void dump_packages(hd_data_t *hd_data)
   sl = hddb_get_packages(hd_data);
 
   for(i = 0; xserver3map[i]; i += 2) {
-    if (!search_str_list(sl, xserver3map[i + 1]))
-      add_str_list(&sl, new_str(xserver3map[i + 1]));
+    if(xserver3map[i + 1] && !search_str_list(sl, xserver3map[i + 1]))
+      add_str_list(&sl, strdup(xserver3map[i + 1]));
   }
 
   for(; sl; sl = sl->next) {
@@ -1433,7 +1427,7 @@ void ask_db(hd_data_t *hd_data, char *query)
     }
 
     if(sscanf(sl->str, "vendor=%3s%n", buf, &cnt) >= 1 && !sl->str[cnt]) {
-      u = name2eisa_id(buf);
+      u = hd_name2eisa_id(buf);
       if(u) hd->vendor.id = u;
       tag = TAG_EISA;
       continue;
@@ -1450,7 +1444,7 @@ void ask_db(hd_data_t *hd_data, char *query)
     }
 
     if(sscanf(sl->str, "subvendor=%3s%n", buf, &cnt) >= 1 && !sl->str[cnt]) {
-      u = name2eisa_id(buf);
+      u = hd_name2eisa_id(buf);
       if(u) hd->sub_vendor.id = u;
       tag = TAG_EISA;
       continue;
@@ -1467,7 +1461,7 @@ void ask_db(hd_data_t *hd_data, char *query)
     }
 
     if(sscanf(sl->str, "serial=%255s%n", buf, &cnt) >= 1 && !sl->str[cnt]) {
-      hd->serial = new_str(buf);
+      hd->serial = strdup(buf);
       continue;
     }
 

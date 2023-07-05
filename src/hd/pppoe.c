@@ -86,7 +86,8 @@ typedef struct PPPoEPacketStruct {
 typedef struct PPPoETagStruct {
     unsigned int type:16;	/* tag type */
     unsigned int length:16;	/* Length of payload */
-    unsigned char payload[ETH_DATA_LEN];	/* A LOT of room to spare */
+    /* ETH_DATA_LEN - 4 as PPPoETag is expected to fit into PPPoEPacket.payload[] */
+    unsigned char payload[ETH_DATA_LEN - 4];	/* A LOT of room to spare */
 } PPPoETag;
 
 /* Header size of a PPPoE Tag */

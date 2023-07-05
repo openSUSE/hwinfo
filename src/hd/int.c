@@ -1329,7 +1329,7 @@ void int_update_driver_data(hd_data_t *hd_data, hd_t *hd)
  *
  * Interface function, don't use internally.
  */
-void hd_add_driver_data(hd_data_t *hd_data, hd_t *hd)
+API_SYM void hd_add_driver_data(hd_data_t *hd_data, hd_t *hd)
 {
   char *s;
 

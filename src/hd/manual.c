@@ -191,7 +191,7 @@ void hd_scan_manual2(hd_data_t *hd_data)
 }
 
 
-char *hd_status_value_name(hd_status_value_t status)
+API_SYM char *hd_status_value_name(hd_status_value_t status)
 {
   return key2value(status_names, status);
 }
@@ -200,7 +200,7 @@ char *hd_status_value_name(hd_status_value_t status)
 /*
  * read an entry - obsolete
  */
-hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
+API_SYM hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
 {
   return NULL;
 }
@@ -261,7 +261,7 @@ hal_prop_t *hd_manual_read_entry_old(const char *id)
  * write an entry
  */
 
-int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
+API_SYM int hd_manual_write_entry(hd_data_t *hd_data, hd_manual_t *entry)
 {
   return 0;
 }
@@ -888,7 +888,7 @@ hal_prop_t *read_properties(hd_data_t *hd_data, const char *udi, const char *id)
 }
 
 
-hd_t *hd_read_config(hd_data_t *hd_data, const char *id)
+API_SYM hd_t *hd_read_config(hd_data_t *hd_data, const char *id)
 {
   hd_t *hd = NULL;
   hal_prop_t *prop = NULL;
@@ -919,7 +919,7 @@ hd_t *hd_read_config(hd_data_t *hd_data, const char *id)
 }
 
 
-int hd_write_config(hd_data_t *hd_data, hd_t *hd)
+API_SYM int hd_write_config(hd_data_t *hd_data, hd_t *hd)
 {
   char *udi;
 
