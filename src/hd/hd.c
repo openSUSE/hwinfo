@@ -2585,7 +2585,7 @@ API_SYM str_list_t *hd_read_file(char *file_name, unsigned start_line, unsigned 
 /*
  * Read directory, return a list of entries with file type 'type'.
  */
-str_list_t *read_dir(char *dir_name, int type)
+API_SYM str_list_t *hd_read_dir(char *dir_name, int type)
 {
   str_list_t *sl_start = NULL, *sl_end = NULL, *sl;
   DIR *dir;
@@ -2662,7 +2662,7 @@ str_list_t *read_dir_canonical(char *dir_name, int type)
 }
 
 
-char *hd_read_sysfs_link(char *base_dir, char *link_name)
+API_SYM char *hd_read_sysfs_link(char *base_dir, char *link_name)
 {
   char *s = NULL;
   static char *buf = NULL;
