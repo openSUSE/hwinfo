@@ -7,8 +7,11 @@
 #include <unistd.h>
 #include <time.h>
 #include <getopt.h>
+#include <pthread.h>
+#include <semaphore.h>
 
 #include "../hd/hddb_int.h"
+#include "thread_pool.h"
 
 typedef enum hw_item {
   hw_none = 0, hw_sys, hw_cpu, hw_keyboard, hw_braille, hw_mouse,
@@ -189,12 +192,12 @@ unsigned driver_entry_types(hid_t *hid);
 
 void remove_items(list_t *hd);
 void remove_nops(list_t *hd);
-void check_items(list_t *hd);
+void check_items(thread_pool_t *th_pool, list_t *hd);
 void split_items(list_t *hd);
 void combine_driver(list_t *hd);
 void combine_requires(list_t *hd);
-void join_items_by_value(list_t *hd);
-void join_items_by_key(list_t *hd);
+void join_items_by_value(thread_pool_t *th_pool, list_t *hd);
+void join_items_by_key(thread_pool_t *th_pool, list_t *hd);
 void remove_unimportant_items(list_t *hd);
 
 void write_cfile(FILE *f, list_t *hd);
@@ -251,7 +254,8 @@ struct {
   unsigned items_in, items_out;
   unsigned diffs, errors, errors_res;
 } stats;
-
+/* protect global value stats in multi-thread scene */
+pthread_mutex_t stats_lock = PTHREAD_MUTEX_INITIALIZER;
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 int main(int argc, char **argv)
@@ -259,6 +263,8 @@ int main(int argc, char **argv)
   int i, close_log = 0, close_cfile = 0;
   item_t *item;
   FILE *cfile;
+  unsigned thread_num = sysconf(_SC_NPROCESSORS_ONLN);
+  thread_pool_t *th_pool = NULL;
 
   for(opterr = 0; (i = getopt_long(argc, argv, "", options, NULL)) != -1; ) {
     switch(i) {
@@ -386,6 +392,9 @@ int main(int argc, char **argv)
   }
 
   if(opt.check) {
+    th_pool = threadpool_create(thread_num);
+    if (!th_pool) return 4;
+
     fprintf(logfh, "- combining driver info\n");
     fflush(logfh);
     combine_driver(&hd);
@@ -396,20 +405,21 @@ int main(int argc, char **argv)
 
     fprintf(logfh, "- checking for consistency\n");
     fflush(logfh);
-    check_items(&hd);
+    check_items(th_pool, &hd);
 
     fprintf(logfh, "- join items\n");
     fflush(logfh);
     if(opt.join_keys_first) {
-      join_items_by_key(&hd);
-      join_items_by_value(&hd);
+      join_items_by_key(th_pool, &hd);
+      join_items_by_value(th_pool, &hd);
     }
     else {
-      join_items_by_value(&hd);
-      join_items_by_key(&hd);
+      join_items_by_value(th_pool, &hd);
+      join_items_by_key(th_pool, &hd);
     }
 
     if(opt.split) split_items(&hd);
+    threadpool_destroy(th_pool);
   }
 
   if(opt.sort) {
@@ -2113,17 +2123,157 @@ void split_items(list_t *hd)
   *hd = hd_new;
 }
 
+struct thread_input {
+  item_t *item_si0;
+  item_t *item_ei0;
+  unsigned *item_group0;
+  item_t *item_si1;
+  item_t *item_ei1;
+  unsigned *item_group1;
+  void (*routine)(item_t *, item_t *, item_t *, item_t *);
+  sem_t *done_ind;
+};
 
-void check_items(list_t *hd)
+struct items_point {
+  item_t *item_s;
+  item_t *item_e;
+};
+
+#define ITEMS_SPILT_SIZE 60
+
+void *threadpool_map_thread(void *args)
+{
+  struct thread_input *in = (struct thread_input *)args;
+  item_t *item_si0 = in->item_si0;
+  item_t *item_ei0 = in->item_ei0;
+  item_t *item_si1 = in->item_si1;
+  item_t *item_ei1 = in->item_ei1;
+  unsigned *item_group0 = in->item_group0;
+  unsigned *item_group1 = in->item_group1;
+  sem_t *done_ind = in->done_ind;
+
+  in->routine(item_si0, item_ei0, item_si1, item_ei1);
+  sem_post(done_ind);
+
+  *item_group0 = 0;
+  *item_group1 = 0;
+
+  return NULL;
+}
+
+static void threadpool_map(thread_pool_t *th_pool, list_t *hd, void (*routine)(item_t *, item_t *, item_t *, item_t *))
+{
+  unsigned total_items = 0;
+  unsigned average = 0;
+  unsigned count_total = 0;
+  unsigned spilt_count = 0;
+  item_t *item_tmp;
+  unsigned mk_calculated_Combine[ITEMS_SPILT_SIZE][ITEMS_SPILT_SIZE];
+  unsigned mk_calculating_group[ITEMS_SPILT_SIZE];
+  struct items_point items_group[ITEMS_SPILT_SIZE];
+  int total_calculated = ITEMS_SPILT_SIZE * (ITEMS_SPILT_SIZE + 1)/ 2;
+  int cur_calculated = 0;
+  struct thread_input *input;
+  struct thread_input *cur_input;
+  sem_t done_indicator;
+  int i, j, found;
+
+  memset(mk_calculated_Combine, 0, sizeof(mk_calculated_Combine));
+  memset(mk_calculating_group, 0, sizeof(mk_calculating_group));
+  memset(items_group, 0, sizeof(items_group));
+
+  input = (struct thread_input *)malloc(sizeof(struct thread_input) * total_calculated);
+
+  for(item_tmp = hd->first; item_tmp; item_tmp = item_tmp->next) total_items++;
+
+  average = total_items / (ITEMS_SPILT_SIZE - 1);
+  items_group[0].item_s = hd->first;
+  for(item_tmp = hd->first; item_tmp; item_tmp = item_tmp->next) {
+    count_total++;
+    if (count_total % average == 0) {
+      items_group[spilt_count].item_e = item_tmp;
+      spilt_count++;
+      items_group[spilt_count].item_s = item_tmp;
+    }
+  }
+
+  sem_init(&done_indicator, 0, 0);
+  for (i = 0; i < ITEMS_SPILT_SIZE; i++) {
+    cur_input = &(input[cur_calculated]);
+    cur_input->item_si0 = items_group[i].item_s;
+    cur_input->item_ei0 = items_group[i].item_e;
+    cur_input->item_si1 = items_group[i].item_s;
+    cur_input->item_ei1 = items_group[i].item_e;
+    cur_input->item_group0 = &mk_calculating_group[i];
+    cur_input->item_group1 = &mk_calculating_group[i];
+    cur_input->routine = routine;
+    cur_input->done_ind = &done_indicator;
+
+    mk_calculating_group[i] = 1;
+    mk_calculated_Combine[i][i]++;
+    threadpool_add_task(th_pool, threadpool_map_thread, cur_input);
+    cur_calculated++;
+  }
+
+  for(;;) {
+    found = 0;
+    for (i = 0; i < ITEMS_SPILT_SIZE; i++) {
+      if (mk_calculating_group[i]) continue;
+
+      for (j = i + 1; j < ITEMS_SPILT_SIZE; j++) {
+        if (mk_calculating_group[j]) continue;
+        if (mk_calculated_Combine[i][j]) continue;
+
+        cur_input = &(input[cur_calculated]);
+        cur_input->item_si0 = items_group[i].item_s;
+        cur_input->item_ei0 = items_group[i].item_e;
+        cur_input->item_si1 = items_group[j].item_s;
+        cur_input->item_ei1 = items_group[j].item_e;
+        cur_input->item_group0 = &mk_calculating_group[i];
+        cur_input->item_group1 = &mk_calculating_group[j];
+        cur_input->routine = routine;
+        cur_input->done_ind = &done_indicator;
+
+        mk_calculated_Combine[i][j]++;
+        mk_calculating_group[i] = 1;
+        mk_calculating_group[j] = 1;
+        threadpool_add_task(th_pool, threadpool_map_thread, cur_input);
+        cur_calculated++;
+        found = 1;
+        break;
+      }
+      if (found) break;
+    }
+
+    if (cur_calculated >= total_calculated) break;
+  }
+
+  /* wait thread_pool_t run over */
+  for (i = 0; i < cur_calculated; i++)
+    sem_wait(&done_indicator);
+
+  free(input);
+}
+
+
+void check_items_internal(item_t *item_si0, item_t *item_ei0, item_t *item_si1, item_t *item_ei1)
 {
   int i, j, k, m, mr, m_all, mr_all, c_ident, c_diff, c_crit;
   char *s;
   item_t *item0, *item1, *item_a, *item_b;
   unsigned *stat_cnt;
+  unsigned local = 0;
 
-  for(item0 = hd->first; item0; item0 = item0->next) {
+  if (!item_si0 || !item_si1)
+    return;
+
+  if (item_si0 == item_si1 && item_ei0 == item_ei1)
+    local = 1;
+
+  for(item0 = item_si0; item0 != item_ei0; item0 = item0->next) {
     if(item0->remove) continue;
-    for(item1 = item0->next; item1 && !item0->remove; item1 = item1->next) {
+    if (local) item_si1 = item0->next;
+    for(item1 = item_si1; item1 != item_ei1; item1 = item1->next) {
       if(item1->remove) continue;
 
       item_a = item0; item_b = item1;
@@ -2230,14 +2380,18 @@ void check_items(list_t *hd)
                  * else make it an error
                  */
                 if(c_diff && !c_ident) {
+                  pthread_mutex_lock(&stats_lock);
                   (*stat_cnt)++;
+                  pthread_mutex_unlock(&stats_lock);
                   fprintf(logfh,
                     "%s: info %s %s, info removed\n",
                     item_a->pos, s, item_b->pos
                   );
                 }
                 else if(c_diff && c_ident) {
+                  pthread_mutex_lock(&stats_lock);
                   (*stat_cnt)++;
+                  pthread_mutex_unlock(&stats_lock);
                   fprintf(logfh,
                     "%s: info %s/is identical to %s, info removed\n",
                     item_a->pos, s, item_b->pos
@@ -2271,7 +2425,9 @@ void check_items(list_t *hd)
             c_diff = (j >> 8) & 0xff;
             if(c_diff) {
               /* different keys, conflicting values --> error */
+              pthread_mutex_lock(&stats_lock);
               stats.errors++;
+              pthread_mutex_unlock(&stats_lock);
               fprintf(logfh,
                 "%s: info conflicts with %s\n",
                 item_b->pos, item_a->pos
@@ -2285,9 +2441,13 @@ void check_items(list_t *hd)
     }
   }
 
-  remove_items(hd);
 }
 
+void check_items(thread_pool_t *th_pool, list_t *hd)
+{
+  threadpool_map(th_pool, hd, check_items_internal);
+  remove_items(hd);
+}
 
 void combine_driver(list_t *hd)
 {
@@ -2490,31 +2650,11 @@ void combine_requires(list_t *hd)
   remove_items(hd);
 }
 
-
-void join_items_by_value(list_t *hd)
+static void sort_and_combine_key(list_t *hd)
 {
-  item_t *item0, *item1;
+  item_t *item0;
   skey_t *skey, *next;
   int i;
-
-  for(item0 = hd->first; item0; item0 = item0->next) {
-    if(item0->remove) continue;
-    for(item1 = item0->next; item1; item1 = item1->next) {
-      if(item1->remove) continue;
-
-      if(!cmp_skey(item0->value, item1->value)) {
-        for(skey = item1->key.first; skey; skey = next) {
-          next = skey->next;
-          add_list(&item0->key, skey);
-        }
-        memset(&item1->key, 0, sizeof item1->key);
-        item1->remove = 1;
-        fprintf(logfh, "%s: info added to %s, item removed\n", item1->pos, item0->pos);
-      }
-    }
-  }
-
-  remove_items(hd);
 
   for(item0 = hd->first; item0; item0 = item0->next) {
 
@@ -2537,17 +2677,65 @@ void join_items_by_value(list_t *hd)
   }
 }
 
+void join_items_by_value_internal(item_t *item_si0, item_t *item_ei0, item_t *item_si1, item_t *item_ei1)
+{
+  item_t *item0, *item1;
+  skey_t *skey, *next;
+  int local = 0;
 
-void join_items_by_key(list_t *hd)
+  if (!item_si0 || !item_si1)
+    return;
+
+  if (item_si0 == item_si1 && item_ei0 == item_ei1)
+    local = 1;
+
+  for(item0 = item_si0; item0 != item_ei0; item0 = item0->next) {
+
+    if(item0->remove) continue;
+    if (local) item_si1 = item0->next;
+    for(item1 = item_si1; item1 != item_ei1; item1 = item1->next) {
+      if(item1->remove) continue;
+
+      if(!cmp_skey(item0->value, item1->value)) {
+        for(skey = item1->key.first; skey; skey = next) {
+          next = skey->next;
+          add_list(&item0->key, skey);
+        }
+        memset(&item1->key, 0, sizeof item1->key);
+        item1->remove = 1;
+        fprintf(logfh, "%s: info added to %s, item removed\n", item1->pos, item0->pos);
+      }
+    }
+  }
+}
+
+
+void join_items_by_value(thread_pool_t *th_pool, list_t *hd)
+{
+  threadpool_map(th_pool, hd, join_items_by_value_internal);
+  remove_items(hd);
+  sort_and_combine_key(hd);
+}
+
+void join_items_by_key_internal(item_t *item_si0, item_t *item_ei0, item_t *item_si1, item_t *item_ei1)
 {
   item_t *item0, *item1;
   skey_t *val0, *val1;
   int i;
+  int local = 0;
 
-  for(item0 = hd->first; item0; item0 = item0->next) {
+  if (!item_si0 || !item_si1)
+    return;
+
+  if (item_si0 == item_si1 && item_ei0 == item_ei1)
+    local = 1;
+
+  for(item0 = item_si0; item0 != item_ei0; item0 = item0->next) {
+
     if(item0->remove) continue;
     val0 = item0->value;
-    for(item1 = item0->next; item1; item1 = item1->next) {
+    if (local) item_si1 = item0->next;
+    for(item1 = item_si1; item1 != item_ei1; item1 = item1->next) {
       if(item1->remove) continue;
 
       i = cmp_item(item0, item1);
@@ -2570,10 +2758,13 @@ void join_items_by_key(list_t *hd)
       }
     }
   }
-
-  remove_items(hd);
 }
 
+void join_items_by_key(thread_pool_t *th_pool, list_t *hd)
+{
+  threadpool_map(th_pool, hd, join_items_by_key_internal);
+  remove_items(hd);
+}
 
 void remove_unimportant_items(list_t *hd)
 {
