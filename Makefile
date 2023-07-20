@@ -24,6 +24,8 @@ include Makefile.common
 
 ifeq "$(ARCH)" "x86_64"
 LIBDIR		?= /usr/lib64
+else ifeq "$(ARCH)" "loongarch64"
+LIBDIR		?= /usr/lib64
 else
 LIBDIR		?= /usr/lib
 endif
