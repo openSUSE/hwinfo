@@ -168,7 +168,7 @@ typedef enum base_classes {
   bc_storage_device, bc_network_interface, bc_keyboard, bc_printer,
   bc_hub, bc_braille, bc_scanner, bc_joystick, bc_chipcard, bc_camera,
   bc_framebuffer, bc_dvb, bc_tv, bc_partition, bc_dsl, bc_bluetooth, bc_fingerprint,
-  bc_mmc_ctrl
+  bc_mmc_ctrl,bc_touchpad
 } hd_base_classes_t;
 
 /** subclass values of bc_monitor */
