@@ -1329,6 +1329,8 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
         free_mem(c->model_name);
         free_mem(c->platform);
         free_str_list(c->features);
+        free_str_list(c->bugs);
+        free_str_list(c->power_management);
         free_mem(c);
       }
       break;
