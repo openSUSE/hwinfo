@@ -1,4 +1,4 @@
-#! /usr/bin/perl
+#! /usr/bin/env perl
 
 #
 # read gcc -E {aic79xx_pci.c,aic7xxx_pci.c} and extract module info
