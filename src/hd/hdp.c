@@ -1129,7 +1129,31 @@ void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
   }
 
   if(ct->vend_name) dump_line("Vendor: \"%s\"\n", ct->vend_name);
- 
+
+  switch(ct->architecture) {
+      case arch_intel:
+      case arch_x86_64:
+          dump_line("Physical ID: %u\n", ct->physical_id);
+          dump_line("Siblings: %u\n", ct->siblings);
+          dump_line("Cores: %u\n", ct->cores);
+          dump_line("Core ID: %u\n", ct->core_id);
+          dump_line("APICID: %u\n", ct->apicid);
+          dump_line("Initial APICID: %u\n", ct->apicid_initial);
+          dump_line("FPU: %s\n", ct->fpu ? "yes" : "no");
+          dump_line("FPU Exception: %s\n", ct->fpu_exception ? "yes" : "no");
+          dump_line("CPUID Level: %u\n", ct->cpuid_level);
+          dump_line("Write Protect: %s\n", ct->write_protect ? "yes" : "no");
+          dump_line("TLB Size: %u 4K pages\n", ct->tlb_size);
+          dump_line("CLFLUSH Size: %u\n", ct->clflush_size);
+          dump_line("Cache Alignment: %d\n", ct->cache_alignment);
+          dump_line("Address Sizes: %u bits physical, %u bits virtual\n", ct->address_size_physical, ct->address_size_virtual);
+
+          break;
+      default:
+          // do nothing
+          break;
+  }
+
   dump_line(
     "Model: %u.%u.%u \"%s\"\n",
     ct->family, ct->model, ct->stepping, ct->model_name ?: ""
@@ -1141,6 +1165,21 @@ void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
     dump_line("Features: %s", ct->features->str);
     for(sl = ct->features->next; sl; sl = sl->next) {
       dump_line0(",%s", sl->str);
+    }
+    dump_line0("\n");
+  }
+
+  if(ct->bugs) {
+    dump_line("Bugs: %s", ct->bugs->str);
+    for(sl = ct->bugs->next; sl; sl = sl->next) {
+        dump_line0(",%s", sl->str);
+    }
+    dump_line0("\n");
+  }
+  if(ct->power_management) {
+    dump_line("Power Management: %s", ct->power_management->str);
+    for(sl = ct->power_management->next; sl; sl = sl->next) {
+        dump_line0(",%s", sl->str);
     }
     dump_line0("\n");
   }
