@@ -1,11 +1,11 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 # Copyright (c) 1996 SuSE GmbH Nuernberg, Germany.  All rights reserved.
 #
 # Author: Dirk Hessing <dhess@suse.de>, 08/2001
 #
 # Exporting hw-data for x11 from developer-CDB
 
-
+use warnings;
 use DBI;
 use strict;
 use IO::Handle;
