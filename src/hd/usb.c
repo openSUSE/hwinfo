@@ -398,7 +398,10 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
   int cls, sub, prot;
   unsigned u;
 
-  if(usb->d_cls) {
+  if(usb->iad_i_count) {
+    cls = usb->iad_f_cls; sub = usb->iad_f_sub; prot = usb->iad_f_prot;
+  }
+  else if(usb->d_cls) {
     cls = usb->d_cls; sub = usb->d_sub; prot = usb->d_prot;
   }
   else {
@@ -485,6 +488,10 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
 
     case 0x0b:
       hd->base_class.id = bc_chipcard;
+      break;
+
+    case 0x0e:
+      hd->base_class.id = bc_camera;
       break;
 
     case 0xe0:
