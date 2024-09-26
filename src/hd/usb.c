@@ -162,6 +162,11 @@ void get_usb_devs(hd_data_t *hd_data)
         ADD2LOG("    bInterfaceProtocol = %u\n", usb->i_prot);
       }
 
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "bAlternateSetting"), &ul0, 16)) {
+        usb->i_alt = ul0;
+        ADD2LOG("    bAlternateSetting = %u\n", usb->i_prot);
+      }
+
       /* device has longest matching sysfs id */
       u2 = strlen(sf_dev);
       s = NULL;
