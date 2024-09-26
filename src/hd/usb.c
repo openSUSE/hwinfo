@@ -164,7 +164,32 @@ void get_usb_devs(hd_data_t *hd_data)
 
       if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "bAlternateSetting"), &ul0, 16)) {
         usb->i_alt = ul0;
-        ADD2LOG("    bAlternateSetting = %u\n", usb->i_prot);
+        ADD2LOG("    bAlternateSetting = %u\n", usb->i_alt);
+      }
+
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "iad_bFirstInterface"), &ul0, 16)) {
+        usb->iad_i_first = ul0;
+        ADD2LOG("    iad_bFirstInterface = %u\n", usb->iad_i_first);
+      }
+
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "iad_bFunctionClass"), &ul0, 16)) {
+        usb->iad_f_cls = ul0;
+        ADD2LOG("    iad_bFunctionClass = %u\n", usb->iad_f_cls);
+      }
+
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "iad_bFunctionSubClass"), &ul0, 16)) {
+        usb->iad_f_sub = ul0;
+        ADD2LOG("    iad_bFunctionSubClass = %u\n", usb->iad_f_sub);
+      }
+
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "iad_bFunctionProtocol"), &ul0, 16)) {
+        usb->iad_f_prot = ul0;
+        ADD2LOG("    iad_bFunctionProtocol = %u\n", usb->iad_f_prot);
+      }
+
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "iad_bInterfaceCount"), &ul0, 16)) {
+        usb->iad_i_count = ul0;
+        ADD2LOG("    iad_bInterfaceCount = %u\n", usb->iad_i_count);
       }
 
       /* device has longest matching sysfs id */
