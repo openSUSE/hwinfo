@@ -47,6 +47,7 @@ static void int_legacy_geo(hd_data_t *hd_data);
 static void int_find_parent(hd_data_t *hd_data);
 static void int_add_driver_modules(hd_data_t *hd_data);
 static void int_update_driver_data(hd_data_t *hd_data, hd_t *hd);
+static int is_usb_storage(hd_t *hd);
 
 
 void hd_scan_int(hd_data_t *hd_data)
@@ -611,7 +612,10 @@ void int_floppy(hd_data_t *hd_data)
 
 
 /*
- * Remove usb entries that are handled by usb-storage.
+ * Remove usb entries that are handled by a usb storage driver.
+ *
+ * USB disks are handled in block.c and usb.c - this can lead to incorrect
+ * duplicate entries.
  */
 void int_fix_usb_scsi(hd_data_t *hd_data)
 {
@@ -621,13 +625,13 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
     if(
       hd_usb->bus.id == bus_usb &&
       hd_usb->sysfs_id &&
-      search_str_list(hd_usb->drivers, "usb-storage")
+      is_usb_storage(hd_usb)
     ) {
       for(hd_scsi = hd_data->hd; hd_scsi; hd_scsi = hd_scsi->next) {
         if(
           hd_scsi->bus.id == bus_scsi &&
           hd_scsi->sysfs_device_link &&
-          search_str_list(hd_scsi->drivers, "usb-storage")
+          is_usb_storage(hd_scsi)
         ) {
           if(!strncmp(hd_scsi->sysfs_device_link, hd_usb->sysfs_id, strlen(hd_usb->sysfs_id))) {
             hd_set_hw_class(hd_scsi, hw_usb);
@@ -1341,6 +1345,26 @@ API_SYM void hd_add_driver_data(hd_data_t *hd_data, hd_t *hd)
   if(s) add_str_list(&hd->drivers, s);
 
   int_update_driver_data(hd_data, hd);
+}
+
+
+/*
+ * Return 1 if an usb storage driver is used, otherwise 0.
+ *
+ * Storage drivers can be usb-storage or uas.
+ */
+int is_usb_storage(hd_t *hd)
+{
+  int is_storage = 0;
+
+  if(
+    search_str_list(hd->drivers, "usb-storage") ||
+    search_str_list(hd->drivers, "uas")
+  ) {
+    is_storage = 1;
+  }
+
+  return is_storage;
 }
 
 /** @} */
