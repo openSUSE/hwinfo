@@ -91,6 +91,8 @@ void get_usb_devs(hd_data_t *hd_data)
   str_list_t *sf_bus, *sf_bus_e;
   char *sf_dev, *sf_dev_2;
 
+  int loose_match = hd_probe_feature(hd_data, pr_loose_match);
+
   sf_bus = read_dir("/sys/bus/usb/devices", 'l');
 
   if(!sf_bus) {
@@ -342,9 +344,9 @@ void get_usb_devs(hd_data_t *hd_data)
           if(t) *t = 0;
 
           /* same usb device */
-          if(!strcmp(s, s1)) {
+          if(loose_match ? !strcmp(s, s1) : !strcmp(hd->sysfs_id, hd1->sysfs_id)) {
             hd1->tag.remove = 1;
-            ADD2LOG("removed: %s\n", hd1->sysfs_id);
+            ADD2LOG("usb removed: #%d (sysfs id %s), kept #%d\n", hd1->idx, hd1->sysfs_id, hd->idx);
           }
 
           s1 = free_mem(s1);
