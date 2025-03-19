@@ -280,8 +280,8 @@ static pr_flags_t pr_flags[] = {
   { pr_s390,          0,            8|4|2|1, "s390",         p_bool },
   { pr_s390disks,     0,                  0, "s390disks",    p_bool },
   { pr_isapnp,        0,              4|2|1, "isapnp",       p_bool },
-  { pr_isapnp_old,    pr_isapnp,          0, "isapnp.old",   p_bool },
-  { pr_isapnp_new,    pr_isapnp,          0, "isapnp.new",   p_bool },
+  { pr_no_remove,     0,                  0, "no.remove",    p_bool },	// replace unused pr_isapnp_old
+  { pr_loose_match,   0,                  0, "loose.match",  p_bool },	// replace unused pr_isapnp_new
   { pr_isapnp_mod,    0,              4    , "isapnp.mod",   p_bool },
   { pr_isapnp,        0,                  0, "pnpdump",      p_bool },	/* alias for isapnp */
   { pr_net,           0,            8|4|2|1, "net",          p_bool },
@@ -2810,6 +2810,8 @@ void remove_hd_entries(hd_data_t *hd_data)
 void remove_tagged_hd_entries(hd_data_t *hd_data)
 {
   hd_t *hd, **prev, **h;
+
+  if(hd_probe_feature(hd_data, pr_no_remove)) return;
 
   for(hd = *(prev = &hd_data->hd); hd;) {
     if(hd->tag.remove) {
