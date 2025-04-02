@@ -162,6 +162,10 @@
 #define HD_ARCH "loongarch"
 #endif
 
+#ifdef __sw_64__
+#define HD_ARCH "sw_64"
+#endif
+
 typedef struct disk_s {
   struct disk_s *next;
   unsigned crc;
