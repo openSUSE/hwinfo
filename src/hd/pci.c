@@ -66,6 +66,7 @@ static void hd_read_sdio(hd_data_t *hd_data);
 static void hd_read_nd(hd_data_t *hd_data);
 static void hd_read_visorbus(hd_data_t *hd_data);
 static void hd_read_mdio(hd_data_t *hd_data);
+static str_list_t *netdevice_list(str_list_t *net_list, str_list_t *all_devices, char *device);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
 {
@@ -100,6 +101,9 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
   PROGRESS(6, 0, "ps3");
   hd_read_ps3_system_bus(hd_data);
   
+  PROGRESS(14, 0, "sdio");
+  hd_read_sdio(hd_data);
+
   PROGRESS(7, 0, "platform");
   hd_read_platform(hd_data);
 
@@ -120,9 +124,6 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
 
   PROGRESS(13, 0, "mmc");
   hd_read_mmc(hd_data);
-
-  PROGRESS(14, 0, "sdio");
-  hd_read_sdio(hd_data);
 
   PROGRESS(15, 0, "nd");
   hd_read_nd(hd_data);
@@ -985,11 +986,12 @@ void hd_read_platform(hd_data_t *hd_data)
       /*
        * it's a network device if
        *   - there's a link to a network interface in a subdir *AND*
-       *   - there's no other device that is actually a subdevice of this one
+       *   - there's no other device that is actually a subdevice of this one and would match the network device
        */
       is_net = 0;
-      sf_eth_dev = subcomponent_list(net_list, sf_dev, 0);
-      is_net = !!sf_eth_dev && !has_subcomponent(sf_bus_canonical, sf_dev);
+      sf_eth_dev = netdevice_list(net_list, sf_bus_canonical, sf_dev);
+      is_net = !!sf_eth_dev;
+
       is_storage =
         !strcmp(device_type, "sata") ||
         !strcmp(platform_type, "acpi:HISI0161:") ||
@@ -1027,26 +1029,36 @@ void hd_read_platform(hd_data_t *hd_data)
       else if(is_net) {
         /* note there might be more than one interface per device - hence this is a list */
         for(str_list_t *sl = sf_eth_dev; sl; sl = sl->next) {
+
+          /*
+           * the interface link ends with 'net' + interface, e.g. .../net/ethX
+           * -> strip these two parts to form the sysfs id
+           */
+          char *tmp_sysfs_id = new_str(hd_sysfs_id(sl->str));
+          char *slash = strrchr(tmp_sysfs_id, '/');
+          if(slash) *slash = 0, slash = strrchr(tmp_sysfs_id, '/');
+          if(slash) *slash = 0;
+
+          if((hd = hd_find_sysfs_id(hd_data, tmp_sysfs_id))) {
+            ADD2LOG("    device ignored; is duplicate of #%d (sysfs id %s)\n", hd->idx, hd->sysfs_id);
+            free_mem(tmp_sysfs_id);
+            continue;
+          }
+
           hd = add_hd_entry(hd_data, __LINE__, 0);
           hd->base_class.id = bc_network;
           hd->sub_class.id = 0;
           str_printf(&hd->device.name, 0, "ARM Ethernet controller");
           hd->modalias = new_str(platform_type);
-          /*
-           * the interface link ends with 'net' + interface, e.g. .../net/ethX
-           * -> strip these two parts to form the sysfs id
-           */
-          char *tmp = new_str(hd_sysfs_id(sl->str));
-          char *slash = strrchr(tmp, '/');
-          if(slash) *slash = 0, slash = strrchr(tmp, '/');
-          if(slash) *slash = 0;
-          hd->sysfs_id = new_str(tmp);
-          free_mem(tmp);
+
+          hd->sysfs_id = new_str(tmp_sysfs_id);
+          free_mem(tmp_sysfs_id);
+
           /*
            * the bus id is the last part of the sysfs id - if that fails for
            * some reason fall back to device link name
            */
-          tmp = strrchr(hd->sysfs_id, '/');
+          char *tmp = strrchr(hd->sysfs_id, '/');
           if(tmp) {
             hd->sysfs_bus_id = new_str(tmp + 1);
           }
@@ -2236,6 +2248,42 @@ void hd_read_mdio(hd_data_t *hd_data)
   }
 
   free_str_list(sf_bus);
+}
+
+
+/*
+ * Return ist of network devices. That is:
+ *
+ *   - (a) entries in 'net_list' that start with 'device' AND
+ *   - (b) there's no longer entry in 'all_devices' that matches the same 'net_list' entry
+ */
+str_list_t *netdevice_list(str_list_t *net_list, str_list_t *all_devices, char *device)
+{
+  if(!net_list || !all_devices || !device) return NULL;
+
+  str_list_t *final_list = NULL;
+  str_list_t *candidates = subcomponent_list(net_list, device, 0);
+
+  size_t device_len = strlen(device);
+
+  for(str_list_t *sl_c = candidates; sl_c; sl_c = sl_c->next) {
+    int ok = 1;
+    for(str_list_t *sl_a = all_devices; sl_a; sl_a = sl_a->next) {
+      size_t sl_a_len = strlen(sl_a->str);
+      if(
+        !strncmp(sl_a->str, device, device_len) &&
+        sl_a->str[device_len] == '/' &&
+        !strncmp(sl_a->str, sl_c->str, sl_a_len) &&
+        sl_c->str[sl_a_len] == '/'
+      ) {
+        ok = 0;
+        break;
+      }
+    }
+    if(ok) add_str_list(&final_list, sl_c->str);
+  }
+
+  return final_list;
 }
 
 /** @} */
