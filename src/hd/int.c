@@ -31,6 +31,7 @@ static int contains_word(char *str, char *str2);
 static int is_zip(hd_t *hd);
 static void int_floppy(hd_data_t *hd_data);
 static void int_fix_usb_scsi(hd_data_t *hd_data);
+static void int_fix_usb_network(hd_data_t *hd_data);
 static void int_mouse(hd_data_t *hd_data);
 static void new_id(hd_data_t *hd_data, hd_t *hd);
 static void int_modem(hd_data_t *hd_data);
@@ -101,6 +102,9 @@ void hd_scan_int(hd_data_t *hd_data)
 
   PROGRESS(8, 0, "usbscsi");
   int_fix_usb_scsi(hd_data);
+
+  PROGRESS(17, 0, "usbnetwork");
+  int_fix_usb_network(hd_data);
 
   PROGRESS(9, 0, "hotplug");
   int_hotplug(hd_data);
@@ -621,7 +625,7 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
 {
   hd_t *hd_scsi, *hd_usb;
 
-  for(hd_usb = hd_data->hd; hd_usb; hd_usb= hd_usb->next) {
+  for(hd_usb = hd_data->hd; hd_usb; hd_usb = hd_usb->next) {
     if(
       hd_usb->bus.id == bus_usb &&
       hd_usb->sysfs_id &&
@@ -665,6 +669,79 @@ void int_fix_usb_scsi(hd_data_t *hd_data)
 
             hd_usb->tag.remove = 1;
           }
+        }
+      }
+    }
+  }
+
+  remove_tagged_hd_entries(hd_data);
+}
+
+
+/*
+ * Remove usb network entries that are duplicates of network cards handled
+ * in other places (like pci.c - e.g. platform devices).
+ *
+ */
+void int_fix_usb_network(hd_data_t *hd_data)
+{
+  hd_t *hd_net, *hd_usb;
+
+  for(hd_net = hd_data->hd; hd_net; hd_net = hd_net->next) {
+    if(
+      hd_net->base_class.id == bc_network &&
+      hd_net->sysfs_id
+    ) {
+      for(hd_usb = hd_data->hd; hd_usb; hd_usb = hd_usb->next) {
+        if(
+          hd_usb->bus.id == bus_usb &&
+          hd_usb->sysfs_id &&
+          !strcmp(hd_usb->sysfs_id, hd_net->sysfs_id)
+        ) {
+          hd_set_hw_class(hd_net, hw_usb);
+
+          free_mem(hd_net->unique_id);
+          hd_net->unique_id = hd_usb->unique_id;
+          hd_usb->unique_id = NULL;
+
+          add_res_entry(&hd_net->res, hd_usb->res);
+          hd_usb->res = NULL;
+
+          if(hd_usb->modalias) {
+            free_mem(hd_net->modalias);
+            hd_net->modalias = hd_usb->modalias;
+            hd_usb->modalias = NULL;
+          }
+
+          if(hd_usb->vendor.id) {
+            hd_net->vendor.id = hd_usb->vendor.id;
+            free_mem(hd_net->vendor.name);
+            hd_net->vendor.name = hd_usb->vendor.name;
+            hd_usb->vendor.name = NULL;
+          }
+
+          if(hd_usb->device.id) {
+            hd_net->device.id = hd_usb->device.id;
+            free_mem(hd_net->device.name);
+            hd_net->device.name = hd_usb->device.name;
+            hd_usb->device.name = NULL;
+          }
+
+          if(hd_usb->serial) {
+            free_mem(hd_net->serial);
+            hd_net->serial = hd_usb->serial;
+            hd_usb->serial = NULL;
+          }
+
+          if(hd_usb->driver_info) {
+            free_driver_info(hd_net->driver_info);
+            hd_net->driver_info = hd_usb->driver_info;
+            hd_usb->driver_info = NULL;
+          }
+
+          new_id(hd_data, hd_net);
+
+          hd_usb->tag.remove = 1;
         }
       }
     }
