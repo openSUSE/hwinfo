@@ -104,7 +104,7 @@ doc:
 	@cd doc ; doxygen libhd.doxy
 
 install:
-	install -d -m 755 $(DESTDIR)/sbin $(DESTDIR)/usr/sbin $(DESTDIR)$(ULIBDIR) \
+	install -d -m 755 $(DESTDIR)/usr/sbin $(DESTDIR)$(ULIBDIR) \
 		$(DESTDIR)$(ULIBDIR)/pkgconfig $(DESTDIR)/usr/include
 	install -m 755 hwinfo $(DESTDIR)/usr/sbin
 	install -m 755 src/ids/check_hd $(DESTDIR)/usr/sbin
