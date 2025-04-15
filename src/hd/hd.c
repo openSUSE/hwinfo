@@ -1367,6 +1367,7 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
         free_mem(s->model);
         free_mem(s->serial);
         free_mem(s->lang);
+        free_mem(s->formfactor);
 
         free_mem(s);
       }
@@ -1421,6 +1422,7 @@ hd_t *free_hd_entry(hd_t *hd)
   free_mem(hd->udi);
   free_mem(hd->block0);
   free_mem(hd->driver);
+  free_mem(hd->driver_module);
   free_str_list(hd->drivers);
   free_str_list(hd->driver_modules);
   free_mem(hd->old_unique_id);
@@ -1439,6 +1441,7 @@ hd_t *free_hd_entry(hd_t *hd)
   free_str_list(hd->requires);
 
   free_mem(hd->modalias);
+  free_mem(hd->label);
 
   hd_free_hal_properties(hd->hal_prop);
   hd_free_hal_properties(hd->persistent_prop);
@@ -5821,10 +5824,7 @@ hd_t *hd_find_sysfs_id_devname(hd_data_t *hd_data, char *id, char *devname)
         !strcmp(hd->sysfs_id, id) &&
         (
           !hd->unix_dev_name ||
-          (
-            hd->unix_dev_name &&
-            !strcmp(hd->unix_dev_name, devname)
-          )
+          !strcmp(hd->unix_dev_name, devname)
         )
       ) return hd;
     }
