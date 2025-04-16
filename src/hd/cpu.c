@@ -121,10 +121,8 @@ void read_cpuinfo(hd_data_t *hd_data)
 #ifdef __aarch64__
   char model_id[80], system_id[80], serial_number[80], features[0x400];
   unsigned cpu_variation, cpu_revision, vendor_id;
-  unsigned u;
   double bogo;
   char *t0, *t;
-  int old_format;
 #endif
 
 #ifdef __loongarch__
@@ -309,11 +307,9 @@ void read_cpuinfo(hd_data_t *hd_data)
     if(!bogo && sscanf(sl->str, "BogoMIPS        : %lg", &bogo) == 1);
     if(strstr(sl->str, "processor") == sl->str || !sl->next) {		/* EOF */
       if (!vendor_id) { /* pre-3.19 format */
-	cpus++;
 	continue;
       }
       if (*model_id || vendor_id) {	/* at least one of those */
-      loop:
 	ct = new_mem(sizeof *ct);
 	ct->architecture = arch_aarch64;
 	ct->family = cpu_variation;
@@ -340,21 +336,17 @@ void read_cpuinfo(hd_data_t *hd_data)
 	  }
 	}
 
-	if(*features) {
-	  for(t0 = features; (t = strsep(&t0, " ")); ) {
-	    add_str_list(&ct->features, t);
-	  }
+	for(t0 = features; (t = strsep(&t0, " ")); ) {
+	  add_str_list(&ct->features, t);
 	}
 
 	hd = add_hd_entry(hd_data, __LINE__, 0);
 	hd->base_class.id = bc_internal;
 	hd->sub_class.id = sc_int_cpu;
-	hd->slot = u;
+	hd->slot = cpus++;
 	hd->detail = new_mem(sizeof *hd->detail);
 	hd->detail->type = hd_detail_cpu;
 	hd->detail->cpu.data = ct;
-	if (*model_id && --cpus) goto loop; /* pre-3.19 format */
-	cpus++;
       }
     }
   }
