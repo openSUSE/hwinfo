@@ -7,7 +7,7 @@ The internal id database is compiled mainly from these public sources:
   http://www.linux-usb.org/usb.ids
 
 * sdio ids
-  https://github.com/systemd/systemd/blob/master/hwdb/sdio.ids
+  https://raw.githubusercontent.com/systemd/systemd/refs/heads/main/hwdb.d/sdio.ids
   https://wikidevi.com/wiki/Talk:Linux_Wi-Fi_device_entries
 
 > ### Note:

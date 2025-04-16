@@ -1,0 +1,40 @@
+#! /bin/bash
+
+# Script to update pci, usb, and sdio id data.
+#
+# Just run it.
+
+[ -x convert_hd -a -d src ] || {
+  echo "this script must be run in the 'src/ids' directory"
+  exit 1
+}
+
+curl --fail -o pci.ids https://pci-ids.ucw.cz/v2.2/pci.ids || {
+  echo "oops, no pci ids"
+  exit 1
+}
+
+curl --fail -o usb.ids http://www.linux-usb.org/usb.ids || {
+  echo "oops, no usb ids"
+  exit 1
+}
+
+curl --fail -o sdio.ids https://raw.githubusercontent.com/systemd/systemd/refs/heads/main/hwdb.d/sdio.ids || {
+  echo "oops, no sdio ids"
+  exit 1
+}
+
+# keep only device info in usb list
+# (delete everything beginning with the class definitions)
+perl -pi -e 'undef $_ if /^C\s/..1' usb.ids
+
+# keep only device info in sdio list
+# (delete everything beginning with the class definitions)
+# and: people apparently put comments at the end of entries in sdio.ids
+perl -pi -e 's/\s+#.*// ; undef $_ if /^C\s/..1' sdio.ids
+
+./convert_hd pci.ids && mv hd.ids src/pci
+./convert_hd usb.ids && mv hd.ids src/usb
+./convert_hd sdio.ids && mv hd.ids src/sdio
+
+rm -f pci.ids usb.ids sdio.ids

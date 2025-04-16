@@ -98,6 +98,10 @@
 +device.name		BCM43143 WLAN card
 
  vendor.id		sdio 0x02d0
+&device.id		sdio 0xa9a6
++device.name		BCM43438 combo WLAN and Bluetooth Low Energy (BLE)
+
+ vendor.id		sdio 0x02d0
 &device.id		sdio 0x4324
 +device.name		BCM43241 WLAN card
 
@@ -132,14 +136,6 @@
  vendor.id		sdio 0x02d0
 &device.id		sdio 0x4354
 +device.name		BCM4354 WLAN card
-
- vendor.id		sdio 0x02d0
-&device.id		sdio 0xa9a6
-+device.name		BCM43430 WLAN card
-
- vendor.id		sdio 0x02d0
-&device.id		sdio 0x4345
-+device.name		BCM43455 WLAN card
 
  vendor.id		sdio 0x02db
 +vendor.name		SyChip Inc.
