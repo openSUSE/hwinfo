@@ -1483,6 +1483,26 @@ typedef struct {
   char *platform;		/**< x86: NULL */
   str_list_t *features;		/**< x86: flags */
   double bogo;			/**< bogo mips */
+
+  // x86 only
+  unsigned physical_id;
+  unsigned siblings;
+  unsigned core_id;
+  unsigned cores;
+  unsigned apicid;
+  unsigned apicid_initial;
+  unsigned fpu:1;
+  unsigned fpu_exception:1;
+  unsigned cpuid_level;
+  unsigned write_protect:1;
+  unsigned tlb_size;
+  unsigned clflush_size;
+  int cache_alignment;
+  unsigned address_size_physical;
+  unsigned address_size_virtual;
+
+  str_list_t *bugs;
+  str_list_t *power_management;
 } cpu_info_t;
 
 

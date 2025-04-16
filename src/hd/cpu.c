@@ -89,8 +89,11 @@ void read_cpuinfo(hd_data_t *hd_data)
   str_list_t *sl;
 
 #if defined(__i386__) || defined (__x86_64__)
-  char model_id[80], vendor_id[80], features[0x400];
-  unsigned mhz, cache, family, model, stepping;
+  char model_id[80], vendor_id[80], features[0x400], fpu[4], fpu_exception[4], write_protect[4], bugs[0x400];
+  char power_management[0x400];
+  unsigned mhz, cache, family, model, stepping, pyhsical_id, siblings, core_id, cores, apicid, apicid_initial;
+  unsigned cpuid_level, tlb_size, clflush_size, address_size_physical, address_size_virtual;
+  int cache_alignment;
   double bogo;
   char *t0, *t;
 #endif
@@ -442,8 +445,10 @@ void read_cpuinfo(hd_data_t *hd_data)
 
 
 #if defined(__i386__) || defined (__x86_64__)
-  *model_id = *vendor_id = *features = 0;
-  mhz = cache = family = model = stepping = 0;
+  *model_id = *vendor_id = *features = *fpu = *fpu_exception = *write_protect = *bugs = *power_management = 0;
+  mhz = cache = family = model = stepping = pyhsical_id = siblings = core_id = cores = apicid = apicid_initial = 0;
+  tlb_size = clflush_size = address_size_physical, address_size_virtual = 0;
+  cache_alignment = 0;
   bogo = 0;
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
@@ -457,15 +462,31 @@ void read_cpuinfo(hd_data_t *hd_data)
     if(sscanf(sl->str, "cpu family : %u", &family) == 1);
     if(sscanf(sl->str, "model : %u", &model) == 1);
     if(sscanf(sl->str, "stepping : %u", &stepping) == 1);
+    if(sscanf(sl->str, "physical id : %u", &pyhsical_id) == 1);
+    if(sscanf(sl->str, "siblings : %u", &siblings) == 1);
+    if(sscanf(sl->str, "core id : %u", &core_id) == 1);
+    if(sscanf(sl->str, "cpu cores : %u", &cores) == 1);
+    if(sscanf(sl->str, "apicid : %u", &apicid) == 1);
+    if(sscanf(sl->str, "initial apicid : %u", &apicid_initial) == 1);
+    if(sscanf(sl->str, "fpu : %3[^\n]", fpu) == 1);
+    if(sscanf(sl->str, "fpu_exception : %3[^\n]", fpu_exception) == 1);
+    if(sscanf(sl->str, "cpuid level : %u", &cpuid_level) == 1);
+    if(sscanf(sl->str, "wp : %3[^\n]", write_protect) == 1);
+    if(sscanf(sl->str, "bugs : %1023[^\n]", bugs) == 1);
+    if(sscanf(sl->str, "TLB size : %u 4K pages", &tlb_size) == 1);
+    if(sscanf(sl->str, "clflush size : %u", &clflush_size) == 1);
+    if(sscanf(sl->str, "cache_alignment : %d", &cache_alignment) == 1);
+    if(sscanf(sl->str, "address sizes : %u bits physical, %u bits virtual", &address_size_physical, &address_size_virtual) == 2);
+    if(sscanf(sl->str, "power management : %1023[^\n]", power_management) == 1);
 
     if(strstr(sl->str, "processor") == sl->str || !sl->next) {		/* EOF */
       if(*model_id || *vendor_id) {	/* at least one of those */
         ct = new_mem(sizeof *ct);
 #ifdef __i386__
-	ct->architecture = arch_intel;
+        ct->architecture = arch_intel;
 #endif
 #ifdef __x86_64__
-	ct->architecture = arch_x86_64;
+        ct->architecture = arch_x86_64;
 #endif
         if(*model_id) ct->model_name = new_str(model_id);
         if(*vendor_id) ct->vend_name = new_str(vendor_id);
@@ -474,7 +495,23 @@ void read_cpuinfo(hd_data_t *hd_data)
         ct->stepping = stepping;
         ct->cache = cache;
         ct->bogo = bogo;
-	hd_data->boot = boot_grub;
+        ct->physical_id = pyhsical_id;
+        ct->siblings = siblings;
+        ct->core_id = core_id;
+        ct->cores = cores;
+        ct->apicid = apicid;
+        ct->apicid_initial = apicid_initial;
+        ct->fpu = strcmp(fpu, "yes");
+        ct->fpu_exception = strcmp(fpu_exception, "yes");
+        ct->cpuid_level = cpuid_level;
+        ct->write_protect = strcmp(write_protect, "yes");
+        ct->tlb_size = tlb_size;
+        ct->clflush_size = clflush_size;
+        ct->cache_alignment = cache_alignment;
+        ct->address_size_physical = address_size_physical;
+        ct->address_size_virtual = address_size_virtual;
+
+        hd_data->boot = boot_grub;
 
         /* round clock to typical values */
         if(mhz >= 38 && mhz <= 42)
@@ -482,7 +519,7 @@ void read_cpuinfo(hd_data_t *hd_data)
         else if(mhz >= 88 && mhz <= 92)
           mhz = 90;
         else {
-	  unsigned u, v;
+          unsigned u, v;
 
           u = (mhz + 2) % 100;
           v = (mhz + 2) / 100;
@@ -514,11 +551,17 @@ void read_cpuinfo(hd_data_t *hd_data)
         hd->detail->type = hd_detail_cpu;
         hd->detail->cpu.data = ct;
 
-        if(*features) {
-          for(t0 = features; (t = strsep(&t0, " ")); ) {
-            add_str_list(&ct->features, t);
-            if(!strcmp(t, "ht")) ct->units = units_per_cpu();
-          }
+        for(t0 = features; (t = strsep(&t0, " ")); ) {
+          add_str_list(&ct->features, t);
+          if(!strcmp(t, "ht")) ct->units = units_per_cpu();
+        }
+
+        for(t0 = bugs; (t = strsep(&t0, " ")); ) {
+          add_str_list(&ct->bugs, t);
+        }
+
+        for(t0 = power_management; (t = strsep(&t0, " ")); ) {
+          add_str_list(&ct->power_management, t);
         }
 
         *model_id = *vendor_id = 0;

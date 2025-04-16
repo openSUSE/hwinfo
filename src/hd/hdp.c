@@ -1069,7 +1069,6 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
 void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
 {
   cpu_info_t *ct;
-  str_list_t *sl;
 
   if(!hd->detail || hd->detail->type != hd_detail_cpu) return;
   if(!(ct = hd->detail->cpu.data)) return;
@@ -1130,7 +1129,31 @@ void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
   }
 
   if(ct->vend_name) dump_line("Vendor: \"%s\"\n", ct->vend_name);
- 
+
+  switch(ct->architecture) {
+      case arch_intel:
+      case arch_x86_64:
+          dump_line("Physical ID: %u\n", ct->physical_id);
+          dump_line("Siblings: %u\n", ct->siblings);
+          dump_line("Cores: %u\n", ct->cores);
+          dump_line("Core ID: %u\n", ct->core_id);
+          dump_line("APICID: %u\n", ct->apicid);
+          dump_line("Initial APICID: %u\n", ct->apicid_initial);
+          dump_line("FPU: %s\n", ct->fpu ? "yes" : "no");
+          dump_line("FPU Exception: %s\n", ct->fpu_exception ? "yes" : "no");
+          dump_line("CPUID Level: %u\n", ct->cpuid_level);
+          dump_line("Write Protect: %s\n", ct->write_protect ? "yes" : "no");
+          dump_line("TLB Size: %u 4K pages\n", ct->tlb_size);
+          dump_line("CLFLUSH Size: %u\n", ct->clflush_size);
+          dump_line("Cache Alignment: %d\n", ct->cache_alignment);
+          dump_line("Address Sizes: %u bits physical, %u bits virtual\n", ct->address_size_physical, ct->address_size_virtual);
+
+          break;
+      default:
+          // do nothing
+          break;
+  }
+
   dump_line(
     "Model: %u.%u.%u \"%s\"\n",
     ct->family, ct->model, ct->stepping, ct->model_name ?: ""
@@ -1139,11 +1162,20 @@ void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
   if(ct->platform) dump_line("Platform: \"%s\"\n", ct->platform);
 
   if(ct->features) {
-    dump_line("Features: %s", ct->features->str);
-    for(sl = ct->features->next; sl; sl = sl->next) {
-      dump_line0(",%s", sl->str);
-    }
-    dump_line0("\n");
+    char *s = hd_join(",", ct->features);
+    dump_line("Features: %s\n", s);
+    free_mem(s);
+  }
+
+  if(ct->bugs) {
+    char *s = hd_join(",", ct->bugs);
+    dump_line("Bugs: %s\n", s);
+    free_mem(s);
+  }
+  if(ct->power_management) {
+    char *s = hd_join(",", ct->power_management);
+    dump_line("Power Management: %s\n", s);
+    free_mem(s);
   }
 
   if(ct->clock) dump_line("Clock: %u MHz\n", ct->clock);
