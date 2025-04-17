@@ -1084,6 +1084,9 @@ typedef struct usb_s {
   memory_range_t raw_descr;
   int d_cls, d_sub, d_prot;
   int i_alt, i_cls, i_sub, i_prot;
+  int iad_f_cls, iad_f_sub, iad_f_prot;
+  int iad_i_count, iad_i_first;
+
   unsigned country;
 } usb_t;
 
