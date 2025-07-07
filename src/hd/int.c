@@ -689,11 +689,14 @@ void int_fix_usb_network(hd_data_t *hd_data)
 
   for(hd_net = hd_data->hd; hd_net; hd_net = hd_net->next) {
     if(
+      !hd_net->tag.remove &&
       hd_net->base_class.id == bc_network &&
       hd_net->sysfs_id
     ) {
       for(hd_usb = hd_data->hd; hd_usb; hd_usb = hd_usb->next) {
         if(
+          hd_usb != hd_net &&
+          !hd_usb->tag.remove &&
           hd_usb->bus.id == bus_usb &&
           hd_usb->sysfs_id &&
           !strcmp(hd_usb->sysfs_id, hd_net->sysfs_id)
