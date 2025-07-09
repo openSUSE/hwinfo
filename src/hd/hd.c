@@ -1772,6 +1772,13 @@ hd_res_t *free_res_list(hd_res_t *res)
       free_mem(res->fc.controller_id);
     }
 
+    if(res->any.type == res_fabric) {
+      free_mem(res->fabric.transport_type);
+      free_mem(res->fabric.host_addr);
+      free_mem(res->fabric.target_qn);
+      free_mem(res->fabric.subsystem_qn);
+    }
+
     free_mem(res);
   }
 
@@ -5920,6 +5927,78 @@ void hd_sysfs_driver_list(hd_data_t *hd_data)
   }
 
   free_str_list(sf_bus);
+
+  struct {
+    char *driver, *module;
+  } driver_list[] = {
+    { "iscsi_tcp", "iscsi-tcp" },
+    { "nvme_fc", "nvme-fc" },
+    { "nvme_rdma", "nvme-rdma" },
+    { "nvme_tcp", "nvme-tcp" }
+  };
+
+  for(unsigned u = 0; u < sizeof driver_list / sizeof *driver_list; u++) {
+    sf = *sfp = new_mem(sizeof **sfp);
+    sfp = &(*sfp)->next;
+    sf->driver = new_str(driver_list[u].driver);
+    sf->module = new_str(driver_list[u].module);
+    ADD2LOG("%16s: module = %s\n", sf->driver, sf->module);
+  }
+
+  // add iscsi session entries
+
+  char *iscsi_class_dir = "/sys/class/iscsi_session";
+  str_list_t *sf_class = read_dir(iscsi_class_dir, 'l');
+
+  for(str_list_t *sf_class_e = sf_class; sf_class_e; sf_class_e = sf_class_e->next) {
+    char *sf_dev = new_str(hd_read_sysfs_link(iscsi_class_dir, sf_class_e->str));
+    if(!sf_dev) continue;
+
+    char *sf_dev_base = new_str(sf_dev);
+    char *s = strstr(sf_dev_base, "/iscsi_session/");
+
+    if(s) {
+      *s = 0;
+
+      sf = *sfp = new_mem(sizeof **sfp);
+      sfp = &(*sfp)->next;
+      sf->driver = new_str("iscsi_tcp");
+      sf->device = new_str(hd_sysfs_id(sf_dev_base));
+      ADD2LOG("%16s: %s\n", sf->driver, sf->device);
+    }
+
+    free_mem(sf_dev_base);
+    free_mem(sf_dev);
+  }
+
+  free_str_list(sf_class);
+
+  // add nvme-of entries
+
+  char *nvme_class_dir = "/sys/class/nvme";
+  sf_class = read_dir(nvme_class_dir, 'l');
+
+  for(str_list_t *sf_class_e = sf_class; sf_class_e; sf_class_e = sf_class_e->next) {
+    char *sf_dev = new_str(hd_read_sysfs_link(nvme_class_dir, sf_class_e->str));
+
+    if(!sf_dev) continue;
+
+    if(strstr(sf_dev, "/nvme-fabrics/")) {
+      char *transport = get_sysfs_attr_by_path(sf_dev, "transport");
+
+      if(transport) {
+        transport = canon_str(transport, strlen(transport));
+
+        sf = *sfp = new_mem(sizeof **sfp);
+        sfp = &(*sfp)->next;
+        str_printf(&sf->driver, 0, "nvme_%s", transport);
+        sf->device = new_str(hd_sysfs_id(sf_dev));
+        ADD2LOG("%16s: %s\n", sf->driver, sf->device);
+      }
+    }
+
+    free_mem(sf_dev);
+  }
 
   drv = free_mem(drv);
   drv_dir = free_mem(drv_dir);

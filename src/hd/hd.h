@@ -168,7 +168,7 @@ typedef enum base_classes {
   bc_storage_device, bc_network_interface, bc_keyboard, bc_printer,
   bc_hub, bc_braille, bc_scanner, bc_joystick, bc_chipcard, bc_camera,
   bc_framebuffer, bc_dvb, bc_tv, bc_partition, bc_dsl, bc_bluetooth, bc_fingerprint,
-  bc_mmc_ctrl, bc_touchpad
+  bc_mmc_ctrl, bc_touchpad, bc_nvmeof_ctrl, bc_iscsi_ctrl
 } hd_base_classes_t;
 
 /** subclass values of bc_monitor */
@@ -1661,7 +1661,7 @@ typedef struct hal_device_s {
 typedef enum resource_types {
   res_any, res_phys_mem, res_mem, res_io, res_irq, res_dma, res_monitor,
   res_size, res_disk_geo, res_cache, res_baud, res_init_strings, res_pppd_option,
-  res_framebuffer, res_hwaddr, res_link, res_wlan, res_fc, res_phwaddr
+  res_framebuffer, res_hwaddr, res_link, res_wlan, res_fc, res_phwaddr, res_fabric
 } hd_resource_types_t;
 
 
@@ -1845,6 +1845,18 @@ typedef struct {
   char *controller_id;
 } res_fc_t;
 
+typedef struct {
+  union u_hd_res_t *next;
+  enum resource_types type;
+  char *transport_type;
+  char *host_addr;
+  unsigned host_port;
+  // for nvme-of: target qn = host qn
+  char *target_qn;
+  // iscsi does not have a subsystem qn
+  char *subsystem_qn;
+} res_fabric_t;
+
 /** libhd resource union */
 typedef union u_hd_res_t {
   union u_hd_res_t *next;  
@@ -1866,6 +1878,7 @@ typedef union u_hd_res_t {
   res_link_t link;
   res_wlan_t wlan;
   res_fc_t fc;
+  res_fabric_t fabric;
 } hd_res_t;
 
 /** @} */

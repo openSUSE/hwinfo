@@ -967,3 +967,9 @@
  baseclass.id		0x118
 +baseclass.name		Touchpad
 
+ baseclass.id		0x119
++baseclass.name		NVMe-oF controller
+
+ baseclass.id		0x11a
++baseclass.name		iSCSI controller
+

@@ -329,8 +329,11 @@ void get_block_devs(hd_data_t *hd_data)
 
         /* find longest matching sysfs id we have a driver for */
         s = new_str(s);
-        t = strrchr(s, '/');
-        if(t) *t = 0;
+        // nvme-of is a bit special: don't go one level up
+        if(!strstr(s, "/nvme-fabrics/")) {
+          t = strrchr(s, '/');
+          if(t) *t = 0;
+        }
         t = hd_sysfs_find_driver(hd_data, s, 0);
         if(t) {
           add_str_list(&hd->drivers, t);

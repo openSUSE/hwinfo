@@ -805,6 +805,14 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
        if(res->fc.controller_id) dump_line("SCSI Host CCW ID: %s\n", res->fc.controller_id);
        break;
 
+     case res_fabric:
+       if(res->fabric.transport_type) dump_line("Transport type: %s\n", res->fabric.transport_type);
+       if(res->fabric.host_addr) dump_line("Host address: %s\n", res->fabric.host_addr);
+       if(res->fabric.host_port) dump_line("Host port: %d\n", res->fabric.host_port);
+       if(res->fabric.target_qn) dump_line("Target QN: %s\n", res->fabric.target_qn);
+       if(res->fabric.subsystem_qn) dump_line("Subsystem QN: %s\n", res->fabric.subsystem_qn);
+       break;
+
       default:
         dump_line("Unknown resource type %d\n", res->any.type);
     }
