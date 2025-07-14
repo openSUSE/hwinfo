@@ -731,6 +731,27 @@
 &device.id		special 0x0004
 +driver.module.modprobe	thermal|fan
 
+# nvmeof controller
+ vendor.id		special 0xf010
+&device.id		special 0x0001
++device.name		"NVMe-oF TCP controller"
++driver.module.modprobe	nvme-tcp
+
+ vendor.id		special 0xf010
+&device.id		special 0x0002
++device.name		"NVMe-oF FC controller"
++driver.module.modprobe	nvme-fc
+
+ vendor.id		special 0xf010
+&device.id		special 0x0003
++device.name		"NVMe-oF RDMA controller"
++driver.module.modprobe	nvme-rdma
+
+# nvmeof controller
+ vendor.id		special 0xf011
+&device.id		special 0x0001
++device.name		"iSCSI controller"
++driver.module.modprobe	iscsi-tcp
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # altix things

@@ -66,6 +66,8 @@ static void hd_read_sdio(hd_data_t *hd_data);
 static void hd_read_nd(hd_data_t *hd_data);
 static void hd_read_visorbus(hd_data_t *hd_data);
 static void hd_read_mdio(hd_data_t *hd_data);
+static void hd_read_nvmeof(hd_data_t *hd_data);
+static void hd_read_iscsi(hd_data_t *hd_data);
 static str_list_t *netdevice_list(str_list_t *net_list, str_list_t *all_devices, char *device);
 
 void hd_scan_sysfs_pci(hd_data_t *hd_data)
@@ -133,6 +135,12 @@ void hd_scan_sysfs_pci(hd_data_t *hd_data)
 
   PROGRESS(17, 0, "mdio");
   hd_read_mdio(hd_data);
+
+  PROGRESS(18, 0, "nvmeof");
+  hd_read_nvmeof(hd_data);
+
+  PROGRESS(19, 0, "iscsi");
+  hd_read_iscsi(hd_data);
 }
 
 
@@ -2248,6 +2256,205 @@ void hd_read_mdio(hd_data_t *hd_data)
   }
 
   free_str_list(sf_bus);
+}
+
+
+/*
+ * Get nvmeof data from sysfs.
+ */
+void hd_read_nvmeof(hd_data_t *hd_data)
+{
+  char *base_dir = "/sys/class/nvme";
+
+  str_list_t *sf_class = read_dir(base_dir, 'l');
+
+  if(!sf_class) {
+    ADD2LOG("sysfs: no such class: nvme\n");
+    return;
+  }
+
+  for(str_list_t *sf_class_e = sf_class; sf_class_e; sf_class_e = sf_class_e->next) {
+    char *sf_dev = new_str(hd_read_sysfs_link(base_dir, sf_class_e->str));
+
+    if(!sf_dev) continue;
+
+    char *transport = get_sysfs_attr_by_path(sf_dev, "transport");
+
+    if(transport) transport = canon_str(transport, strlen(transport));
+
+    ADD2LOG(
+      "  nvme ctrl: name = %s\n    path = %s\n    transport = %s\n",
+      sf_class_e->str,
+      hd_sysfs_id(sf_dev),
+      transport
+    );
+
+    int transport_id = 0;
+    if(!strcmp(transport, "tcp")) transport_id = 1;
+    if(!strcmp(transport, "fc")) transport_id = 2;
+    if(!strcmp(transport, "rdma")) transport_id = 3;
+
+    if(transport_id) {
+      ADD2LOG("  added nvmeof ctrl: sf_dev = %s\n", sf_dev);
+
+      hd_t *hd = add_hd_entry(hd_data, __LINE__, 0);
+      hd->base_class.id = bc_nvmeof_ctrl;
+      hd->hw_class = hw_storage_ctrl;
+      hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0xf010);
+      hd->device.id = MAKE_ID(TAG_SPECIAL, transport_id);
+      hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
+      hd->sysfs_bus_id = new_str(sf_class_e->str);
+
+      char *drv = NULL;
+      str_printf(&drv, 0, "nvme_%s", transport);
+      add_str_list(&hd->drivers, drv);
+      free_mem(drv);
+
+      hd_res_t *res = new_mem(sizeof *res);
+      add_res_entry(&hd->res, res);
+
+      res->fabric.type = res_fabric;
+      res->fabric.transport_type = new_str(transport);
+
+      char *subsystem_qn = get_sysfs_attr_by_path(sf_dev, "subsysnqn");
+      if(subsystem_qn) subsystem_qn = canon_str(subsystem_qn, strlen(subsystem_qn));
+      res->fabric.subsystem_qn = subsystem_qn;
+
+      char *target_qn = get_sysfs_attr_by_path(sf_dev, "hostnqn");
+      if(target_qn) target_qn = canon_str(target_qn, strlen(target_qn));
+      res->fabric.target_qn = target_qn;
+
+      char *address = get_sysfs_attr_by_path(sf_dev, "address");
+      if(address) {
+        char *p = strstr(address, "traddr=");
+        if(p) {
+          p += sizeof("traddr=") - 1;
+          char *t = p;
+          while(*t && *t != ',' && *t != '\n') t++;
+          if(t > p) res->fabric.host_addr = canon_str(p, t - p);
+        }
+        p = strstr(address, "trsvcid=");
+        if(p) {
+          p += sizeof("trsvcid=") - 1;
+          char *t = p;
+          while(*t && *t != ',' && *t != '\n') t++;
+          if(t > p) {
+            unsigned long ul = 0;
+            ul = strtoul(p, &p, 0);
+            if(p == t) res->fabric.host_port = ul;
+          }
+        }
+      }
+    }
+
+    free_mem(transport);
+    free_mem(sf_dev);
+  }
+
+  free_str_list(sf_class);
+}
+
+
+/*
+ * Get iscsi data from sysfs.
+ */
+void hd_read_iscsi(hd_data_t *hd_data)
+{
+  char *base_dir = "/sys/class/iscsi_session";
+
+  str_list_t *sf_class = read_dir(base_dir, 'l');
+
+  if(!sf_class) {
+    ADD2LOG("sysfs: no such class: iscsi_session\n");
+    return;
+  }
+
+  char *conn_dir = "/sys/class/iscsi_connection";
+  str_list_t *sf_conn = read_dir(conn_dir, 'l');
+
+  for(str_list_t *sf_conn_e = sf_conn; sf_conn_e; sf_conn_e = sf_conn_e->next) {
+    char *sf_c = new_str(hd_read_sysfs_link(conn_dir, sf_conn_e->str));
+
+    if(!sf_c) continue;
+
+    ADD2LOG(
+      "  iscsi connection: name = %s\n    path = %s\n",
+      sf_conn_e->str,
+      hd_sysfs_id(sf_c)
+    );
+
+    free_mem(sf_conn_e->str);
+    sf_conn_e->str = sf_c;
+  }
+
+  for(str_list_t *sf_class_e = sf_class; sf_class_e; sf_class_e = sf_class_e->next) {
+    char *sf_dev = new_str(hd_read_sysfs_link(base_dir, sf_class_e->str));
+
+    if(!sf_dev) continue;
+
+    char *sf_dev_base = new_str(sf_dev);
+    char *s = strstr(sf_dev_base, "/iscsi_session/");
+
+    // include terminating '/' for now
+    if(s) s[1] = 0;
+
+    // don't free conn
+    char *conn = NULL;
+
+    for(str_list_t *sf_conn_e = sf_conn; sf_conn_e; sf_conn_e = sf_conn_e->next) {
+      if(!strncmp(sf_conn_e->str, sf_dev_base, strlen(sf_dev_base))) {
+        conn = sf_conn_e->str;
+        break;
+      }
+    }
+
+    // remove terminating '/'
+    if(s) s[0] = 0;
+
+    ADD2LOG(
+      "  iscsi session: name = %s\n    path = %s\n    connection = %s\n",
+      sf_class_e->str,
+      hd_sysfs_id(sf_dev),
+      hd_sysfs_id(conn)
+    );
+
+    hd_t *hd = add_hd_entry(hd_data, __LINE__, 0);
+    hd->base_class.id = bc_iscsi_ctrl;
+    hd->hw_class = hw_storage_ctrl;
+    hd->vendor.id = MAKE_ID(TAG_SPECIAL, 0xf011);
+    hd->device.id = MAKE_ID(TAG_SPECIAL, 1);
+    hd->sysfs_id = new_str(hd_sysfs_id(sf_dev_base));
+    hd->sysfs_bus_id = new_str(sf_class_e->str);
+    add_str_list(&hd->drivers, new_str("iscsi_tcp"));
+
+    hd_res_t *res = new_mem(sizeof *res);
+    add_res_entry(&hd->res, res);
+
+    res->fabric.type = res_fabric;
+    res->fabric.transport_type = new_str("tcp");
+
+    // target name (qn)
+    char *target_qn = get_sysfs_attr_by_path(sf_dev, "targetname");
+    if(target_qn) target_qn = canon_str(target_qn, strlen(target_qn));
+    res->fabric.target_qn = target_qn;
+
+    if(conn) {
+      char *address = get_sysfs_attr_by_path(conn, "address");
+      if(address) {
+        res->fabric.host_addr = canon_str(address, strlen(address));
+      }
+      uint64_t ul;
+      if(hd_attr_uint(get_sysfs_attr_by_path(conn, "port"), &ul, 0)) {
+        res->fabric.host_port = ul;
+      }
+    }
+
+    free_mem(sf_dev_base);
+    free_mem(sf_dev);
+  }
+
+  free_str_list(sf_conn);
+  free_str_list(sf_class);
 }
 
 
