@@ -162,6 +162,36 @@ void get_usb_devs(hd_data_t *hd_data)
         ADD2LOG("    bInterfaceProtocol = %u\n", usb->i_prot);
       }
 
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "bAlternateSetting"), &ul0, 16)) {
+        usb->i_alt = ul0;
+        ADD2LOG("    bAlternateSetting = %u\n", usb->i_alt);
+      }
+
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "iad_bFirstInterface"), &ul0, 16)) {
+        usb->iad_i_first = ul0;
+        ADD2LOG("    iad_bFirstInterface = %u\n", usb->iad_i_first);
+      }
+
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "iad_bFunctionClass"), &ul0, 16)) {
+        usb->iad_f_cls = ul0;
+        ADD2LOG("    iad_bFunctionClass = %u\n", usb->iad_f_cls);
+      }
+
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "iad_bFunctionSubClass"), &ul0, 16)) {
+        usb->iad_f_sub = ul0;
+        ADD2LOG("    iad_bFunctionSubClass = %u\n", usb->iad_f_sub);
+      }
+
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "iad_bFunctionProtocol"), &ul0, 16)) {
+        usb->iad_f_prot = ul0;
+        ADD2LOG("    iad_bFunctionProtocol = %u\n", usb->iad_f_prot);
+      }
+
+      if(hd_attr_uint(get_sysfs_attr_by_path(sf_dev, "iad_bInterfaceCount"), &ul0, 16)) {
+        usb->iad_i_count = ul0;
+        ADD2LOG("    iad_bInterfaceCount = %u\n", usb->iad_i_count);
+      }
+
       /* device has longest matching sysfs id */
       u2 = strlen(sf_dev);
       s = NULL;
@@ -368,7 +398,10 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
   int cls, sub, prot;
   unsigned u;
 
-  if(usb->d_cls) {
+  if(usb->iad_i_count) {
+    cls = usb->iad_f_cls; sub = usb->iad_f_sub; prot = usb->iad_f_prot;
+  }
+  else if(usb->d_cls) {
     cls = usb->d_cls; sub = usb->d_sub; prot = usb->d_prot;
   }
   else {
@@ -455,6 +488,10 @@ void set_class_entries(hd_data_t *hd_data, hd_t *hd, usb_t *usb)
 
     case 0x0b:
       hd->base_class.id = bc_chipcard;
+      break;
+
+    case 0x0e:
+      hd->base_class.id = bc_camera;
       break;
 
     case 0xe0:
