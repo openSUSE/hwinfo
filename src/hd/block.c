@@ -592,6 +592,7 @@ void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd)
       c >= 'a'
     ) {
       hd->slot = c - 'a';
+      free_mem(hd->device.name);
       hd->device.name = new_str("S390 Disk");
       hd_set_hw_class(hd, hw_redasd);
     }
@@ -639,6 +640,7 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd)
     if((sl = read_file(fname, 0, 1))) {
       hd->vendor.name = canon_str(sl->str, strlen(sl->str));
       if((s = strchr(hd->vendor.name, ' '))) {
+        free_mem(hd->device.name);
         hd->device.name = canon_str(s, strlen(s));
         if(*hd->device.name) {
           *s = 0;
@@ -828,6 +830,7 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
     cs = canon_str(s, strlen(s));
     ADD2LOG("    model = %s\n", cs);
     if(*cs) {
+      free_mem(hd->device.name);
       hd->device.name = cs;
     }
     else {
