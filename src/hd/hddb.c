@@ -185,6 +185,8 @@ modinfo_t *parse_modinfo(str_list_t *file)
   for(m = modinfo, sl = file; sl; sl = sl->next) {
     if(sscanf(sl->str, "alias %255s %255s", alias, module) != 2) continue;
 
+    m->module = free_mem(m->module);
+    m->alias = free_mem(m->alias);
     m->module = new_str(module);
     m->alias = new_str(alias);
     m->type = mi_other;
