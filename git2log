@@ -33,6 +33,7 @@ sub format_log;
 sub format_all_logs;
 sub fix_dates;
 sub add_line_breaks;
+sub add_bugzilla_to_weblate;
 sub format_date_obs;
 sub format_date_iso;
 sub raw_date_to_s;
@@ -62,6 +63,9 @@ my $opt_merge_msg_before = 1;		# log auto generated pr merge message before the 
 my $opt_join_author = 1;		# join consecutive commit messages as long as they are by the same author
 my $opt_keep_date = 1;			# don't join consecutive commit messages if they have different time stamps
 my $opt_default_email = 'opensuse-packaging@opensuse.org';	# default email to use in changelog
+my $opt_weblate = 'bsc#1149754';	# bugzilla ref to use for Weblate commits
+
+$opt_default_email = $ENV{GIT2LOG_DEFAULT_EMAIL} if $ENV{GIT2LOG_DEFAULT_EMAIL};
 
 GetOptions(
   'help'          => sub { usage 0 },
@@ -78,6 +82,7 @@ GetOptions(
   'keep-date!'    => \$opt_keep_date,
   'log|changelog' => \$opt_log,
   'default-email=s' => \$opt_default_email,
+  'weblate=s'     => \$opt_weblate,
 ) || usage 1;
 
 # ensure we are used correctly
@@ -166,7 +171,7 @@ Create changelog and project version from git repo.
   --version           Write version number to FILE.
   --branch            Write current branch to FILE.
   --start START_TAG   Start with tag START_TAG.
-  --max N             Write at most MAX long entries.
+  --max N             Write at most N log entries.
   --update            Write changelog or version only if FILE is outdated.
   --format FORMAT     Write log using FORMAT. Supported FORMATs are 'internal' (default) and 'obs'.
   --width WIDTH       Reformat log entries to be max WIDTH chars wide.
@@ -180,6 +185,7 @@ Create changelog and project version from git repo.
   --no-keep-date      Join consecutive commits even if dates differ.
   --default-email     Use this email in changelog entries if no other suitable email could be
                       determined (default: opensuse-packaging\@opensuse.org).
+  --weblate STRING    Add this STRING to every auto-generated Weblate commit.
   --help              Print this help text.
   usage
 
@@ -268,24 +274,40 @@ sub get_version
 #
 sub get_tags
 {
-  my $log_entry;
-
-  # the end of the merge commit if in a merge
-  my $merge;
+  my $pre_parsed;
+  my $current;
 
   for (@{$config->{raw_log}}) {
     if(/^commit (\S+)( \((.*)\))?/) {
-      my $commit = $1;
-      my $tag_list = $3;
-      my $xtag;
+      $current = { commit => $1, tag_list => $3 };
+      push @$pre_parsed, $current;
+    }
 
-      # we have reached the end of the merge commit
-      undef $merge if $merge && $commit =~ /^$merge/;
+    next if !defined $current;
 
-      # ignore tag info inside a merge commit
-      $tag_list = "" if $merge;
+    if(/^Merge: (\S+) (\S+)/) {
+      $current->{merge_end} = $1;
+      $current->{merge_start} = $2;
+    }
 
-      for my $t (split /, /, $tag_list) {
+    push @{$current->{lines}}, $_;
+  }
+
+  # the end of the merge commit if in a merge
+  my $merge;
+  my $log_entry;
+
+  for my $p (@$pre_parsed) {
+    my $xtag;
+
+    # we have reached the end of the merge commit
+    if((defined($merge) && $p->{commit} =~ /^$merge/) || (!defined($merge) && $p->{merge_end})) {
+      undef $merge;
+    }
+
+    # ignore tag info inside a merge commit
+    if(!$merge) {
+      for my $t (split /, /, $p->{tag_list}) {
         if($t =~ /tag: (\S+)/) {
           my $tag = $1;
           my $x = is_formatted_tag $tag;
@@ -293,23 +315,27 @@ sub get_tags
         }
       }
 
-      if($xtag) {
-        if($log_entry) {
-          push @{$config->{log}}, $log_entry;
-          last if $opt_max && @{$config->{log}} >= $opt_max;
-        }
-        $log_entry = { commit => $commit, tags => $xtag };
+      if($p->{merge_end}) {
+        # remember end of current merge commit
+        $merge = $p->{merge_end};
       }
-      else {
-        $log_entry = { commit => $commit } if !$log_entry;
-      }
-    }
-    elsif(!$merge && /^Merge: (\S+)/) {
-      # remember end of merge
-      $merge = $1;
     }
 
-    push @{$log_entry->{lines}}, $_ if $log_entry;
+    if(!$log_entry) {
+      $log_entry = { commit => $p->{commit} };
+      $log_entry->{tags} = $xtag if $xtag;
+      push @{$config->{log}}, $log_entry;
+    }
+    else {
+      if($xtag) {
+        $log_entry = { commit => $p->{commit}, tags => $xtag };
+        push @{$config->{log}}, $log_entry;
+      }
+    }
+
+    push @{$log_entry->{lines}}, @{$p->{lines}};
+
+    last if $opt_max && @{$config->{log}} >= $opt_max;
   }
 }
 
@@ -471,6 +497,23 @@ sub choose_tags
     @t = sort tag_sort @t;
 
     $branch = $t[0]{branch};
+
+    # Here's some magic:
+    #
+    # If a commit is tagged  "FOO-X.Y" *and* "FOO-X.Y.0" assume the user
+    # wants to start a new sub-numbering scheme.
+    #
+    # Use "X.Y" as version but remember to go to "X.Y.1" instead of
+    # "X.{Y+1}" when we need to increment the version.
+    #
+    my $version = $t[0]{version};
+    if($version =~ s/\.0$//) {
+      if(grep { $_->{branch} eq $branch && $_->{version} eq $version } @t) {
+        $t[0]{new_start} = 1;
+        $t[0]{version} = $version;
+      }
+    }
+
     $x->{tags} = [ $t[0] ];
 
     # printf "X %s\n", tags_to_str($x->{tags});
@@ -485,6 +528,8 @@ sub choose_tags
 #
 # Basically, use branch + version from most recent tag and increment version.
 #
+# If the 'new_start' attribute to tag is set, start a new sub-numbering scheme.
+#
 sub add_head_tag
 {
   return if @{$config->{log}} < 2;
@@ -494,6 +539,9 @@ sub add_head_tag
 
   # the first tagged commit if HEAD isn't tagged
   my $tag = { %{$config->{log}[1]{tags}[0]} };
+
+  # append '.0' to version
+  $tag->{version} .= '.0' if $tag->{new_start};
 
   # increment version
   $tag->{version} =~ s/(\d+)$/$1 + 1/e;
@@ -744,7 +792,7 @@ sub format_log
   for my $commit (@$commits) {
     next unless $commit->{formatted};
     for (@{$commit->{formatted}}) {
-      s/(fate|bnc|bsc|boo)\s*(#\d+)/\L$1\E$2/ig;
+      s/(fate|bnc|bsc|boo|jsc)\s*(#[a-z\d\-]+)/\L$1\E$2/ig;
     }
   }
 
@@ -820,7 +868,7 @@ sub format_log
   }
 
   # step 9
-  # - remove shortened lines (that match the beginning of other lines)
+  # - remove shortened lines (that [case-insensitive] match the beginning of other lines)
 
   for my $commit (@$commits) {
     next unless $commit->{formatted};
@@ -831,7 +879,7 @@ sub format_log
       $str =~ s/\s*…$//;	# github likes to shorten lines with ' …'
       my $str_len = length $str;
       for (@{$commit->{formatted}}) {
-        return 1 if $str_len < length($_) && $str eq substr($_, 0, $str_len);
+        return 1 if $str_len < length($_) && "\L$str" eq substr("\L$_", 0, $str_len);
       }
 
       return 0;
@@ -841,6 +889,16 @@ sub format_log
   }
 
   # step 10
+  # - add bugzilla reference to Weblate commits
+
+  for my $commit (@$commits) {
+    next unless $commit->{formatted};
+    for (@{$commit->{formatted}}) {
+      $_ = add_bugzilla_to_weblate $_;
+    }
+  }
+
+  # step 11
   # - add line breaks
 
   for my $commit (@$commits) {
@@ -850,7 +908,7 @@ sub format_log
     }
   }
 
-  # step 11
+  # step 12
   # - generate final log message
   #
   # note: non-(open)suse email addresses are replaced by $opt_default_email
@@ -933,6 +991,27 @@ sub add_line_breaks
   }
 
   return "- " . $str;
+}
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# new_text = add_bugzilla_to_weblate(text)
+#
+# Add bugzilla number to an auto-generated Weblate commit.
+# - text: some text
+# - new_text: same text, "($opt_weblate)" added
+#
+sub add_bugzilla_to_weblate
+{
+  my $text = @_[0];
+
+  if($opt_weblate ne "") {
+    if($text =~ /Translated using Weblate/ && $text !~ /\($opt_weblate\)/) {
+      $text .= " ($opt_weblate)";
+    }
+  }
+
+  return $text;
 }
 
 
