@@ -193,5 +193,7 @@ void hd_scan_wlan(hd_data_t *hd_data)
       add_res_entry(&hd->res, res);
     }
   }
+
+  close(skfd);
 }
 #endif
