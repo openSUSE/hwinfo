@@ -1833,7 +1833,7 @@ API_SYM void hd_scan(hd_data_t *hd_data)
   if(!hd_data->flags.internal) {
   /* log debug & probe flags */
     if(hd_data->debug) {
-      ADD2LOG("libhd version %s%s (%s) [%ld]\n", HD_VERSION_STRING, getuid() ? "u" : "", HD_ARCH, sizeof (hd_data_t));
+      ADD2LOG("libhd version %s%s (%s) [%zu]\n", HD_VERSION_STRING, getuid() ? "u" : "", HD_ARCH, sizeof (hd_data_t));
     }
 
     ADD2LOG("using %s\n", hd_get_hddb_dir());
