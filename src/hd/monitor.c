@@ -387,7 +387,11 @@ void add_edid_info(hd_data_t *hd_data, hd_t *hd, unsigned char *edid)
       case 0xfc:
         if(edid[i + 5]) {
           /* name entry is splitted some times */
-          str_printf(&name, -1, "%s%s", name ? " " : "", canon_str(edid + i + 5, 0xd));
+          // Store canon_str result in temporary variable to ensure proper memory cleanup
+          char *tmp = canon_str(edid + i + 5, 0xd);
+          str_printf(&name, -1, "%s%s", name ? " " : "", tmp);
+          // Free temporary string to prevent memory leak
+          free_mem(tmp);
         }
         break;
 

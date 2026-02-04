@@ -598,11 +598,21 @@ hd_res_t *get_phwaddr(hd_data_t *hd_data, hd_t *hd)
   phwaddr->cmd = ETHTOOL_GPERMADDR;
   phwaddr->size = MAX_ADDR_LEN;
 
-  if(!hd->unix_dev_name) return res;
+  if(!hd->unix_dev_name) {
+    free_mem(phwaddr);
+    return res;
+  }
 
-  if(strlen(hd->unix_dev_name) > sizeof ifr.ifr_name - 1) return res;
+  if(strlen(hd->unix_dev_name) > sizeof ifr.ifr_name - 1) {
+    free_mem(phwaddr);
+    return res;
+  }
 
-  if((fd = socket(PF_INET, SOCK_DGRAM, 0)) == -1) return res;
+  if((fd = socket(PF_INET, SOCK_DGRAM, 0)) == -1) {
+    // Free allocated memory before early return to prevent memory leak
+    free_mem(phwaddr);
+    return res;
+  }
 
   /* get permanent hardware addr */
   memset(&ifr, 0, sizeof ifr);
@@ -635,6 +645,7 @@ hd_res_t *get_phwaddr(hd_data_t *hd_data, hd_t *hd)
   }
 
   close(fd);
+  free_mem(phwaddr);
 
   return res;
 }
