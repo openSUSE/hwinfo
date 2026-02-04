@@ -551,7 +551,7 @@ void add_input_dev(hd_data_t *hd_data, char *name)
 
   ADD2LOG(
     "  input: name = %s, path = %s\n",
-    sf_cdev_name,
+    sf_cdev_name ?: "",
     hd_sysfs_id(name)
   );
 

@@ -4,6 +4,7 @@ VALCHAR [^\|]
 %START Main NextLine NewEntry Value
 
 %{
+#pragma GCC diagnostic ignored "-Wunused-function"
 #include "isdn_cdb_def.h"
 %}
 %%

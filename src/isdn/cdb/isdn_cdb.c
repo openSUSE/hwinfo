@@ -160,9 +160,7 @@ static int WriteVarios(FILE *f) {
 	return(0);
 }
 
-int main(argc,argv)
-int argc;
-char **argv;
+int main(int argc, char **argv)
 {
 	char	line[256];
 	int	l;
