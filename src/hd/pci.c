@@ -1117,7 +1117,7 @@ void hd_read_platform(hd_data_t *hd_data)
         s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
         if(s) add_str_list(&hd->drivers, s);
       }
-      free_str_list(sf_eth_dev);
+      sf_eth_dev = free_str_list(sf_eth_dev);
       free_mem(device_type);
       free_mem(platform_type);
     }
@@ -1128,6 +1128,8 @@ void hd_read_platform(hd_data_t *hd_data)
   free_str_list(net_list);
 
   free_str_list(sf_bus);
+  free_str_list(sf_bus_canonical);
+  free_str_list(sf_eth_dev);
 }
 
 
