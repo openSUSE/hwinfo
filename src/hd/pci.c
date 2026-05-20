@@ -179,7 +179,10 @@ void hd_pci_read_data(hd_data_t *hd_data)
       hd_sysfs_id(sf_dev)
     );
 
-    if(sscanf(sf_bus_e->str, "%x:%x:%x.%x", &u0, &u1, &u2, &u3) != 4) continue;
+    if(sscanf(sf_bus_e->str, "%x:%x:%x.%x", &u0, &u1, &u2, &u3) != 4) {
+      free_mem(sf_dev);
+      continue;
+    }
 
     pci = add_pci_entry(hd_data, new_mem(sizeof *pci));
 
@@ -806,6 +809,11 @@ void hd_read_macio(hd_data_t *hd_data)
       free_mem(s);
     }
 
+    free_mem(macio_name);
+    free_mem(macio_type);
+    free_mem(macio_compat);
+    free_mem(macio_modalias);
+
     free_mem(sf_dev);
   }
 
@@ -901,13 +909,17 @@ void hd_read_vio(hd_data_t *hd_data)
         str_printf(&hd->device.name, 0, "Virtual SCSI %d", hd->slot);
       }
 
-      hd->rom_id = new_str(vio_devspec ? vio_devspec + 1 : 0);	/* skip leading '/' */
+      hd->rom_id = new_str(vio_devspec && *vio_devspec ? vio_devspec + 1 : 0);	/* skip leading '/' */
 
       hd->sysfs_id = new_str(hd_sysfs_id(sf_dev));
       hd->sysfs_bus_id = new_str(sf_bus_e->str);
       s = hd_sysfs_find_driver(hd_data, hd->sysfs_id, 1);
       if(s) add_str_list(&hd->drivers, s);
     }
+
+    free_mem(vio_devspec);
+    free_mem(vio_name);
+    free_mem(vio_modalias);
 
     free_mem(sf_dev);
   }
@@ -948,7 +960,7 @@ void add_mv643xx_eth(hd_data_t *hd_data, char *entry, char *platform_type)
 void hd_read_platform(hd_data_t *hd_data)
 {
   char *s, *platform_type, *device_type, *driver;
-  str_list_t *sf_bus, *sf_bus_e, *sf_bus_canonical, *sf_eth_dev = NULL;
+  str_list_t *sf_bus, *sf_bus_e, *sf_bus_canonical;
   char *sf_dev;
   int mv643xx_eth_seen = 0;
   int is_net, is_storage, is_usb, is_xhci, is_ehci;
@@ -956,12 +968,13 @@ void hd_read_platform(hd_data_t *hd_data)
   char *sysfs_device_dir = "/sys/bus/platform/devices";
 
   sf_bus = read_dir(sysfs_device_dir, 'l');
-  sf_bus_canonical = read_dir_canonical(sysfs_device_dir, 'l');
 
   if(!sf_bus) {
     ADD2LOG("sysfs: no such bus: platform\n");
     return;
   }
+
+  sf_bus_canonical = read_dir_canonical(sysfs_device_dir, 'l');
 
   /* list of network interfaces */
   str_list_t *net_list = read_dir_canonical("/sys/class/net", 'l');
@@ -997,7 +1010,7 @@ void hd_read_platform(hd_data_t *hd_data)
        *   - there's no other device that is actually a subdevice of this one and would match the network device
        */
       is_net = 0;
-      sf_eth_dev = netdevice_list(net_list, sf_bus_canonical, sf_dev);
+      str_list_t *sf_eth_dev = netdevice_list(net_list, sf_bus_canonical, sf_dev);
       is_net = !!sf_eth_dev;
 
       is_storage =
@@ -1126,7 +1139,7 @@ void hd_read_platform(hd_data_t *hd_data)
   }
 
   free_str_list(net_list);
-
+  free_str_list(sf_bus_canonical);
   free_str_list(sf_bus);
 }
 
@@ -1284,7 +1297,9 @@ void hd_read_ps3_system_bus(hd_data_t *hd_data)
         hd->unix_dev_name = new_str(sf_eth_dev_e->str);		/* this is needed to correctly link to interfaces later */
 
         /* ethernet and wireless differ only by directory "wireless" so check for it */
-        sf_eth_wireless = hd_read_sysfs_link(hd_read_sysfs_link(sf_eth_net, sf_eth_dev_e->str), "wireless");
+        char *tmp_link = new_str(hd_read_sysfs_link(sf_eth_net, sf_eth_dev_e->str));
+        sf_eth_wireless = hd_read_sysfs_link(tmp_link, "wireless");
+        free_mem(tmp_link);
         if(sf_eth_wireless) {
           hd->sub_class.id = 0x82;	/* wireless */
           str_printf(&hd->device.name, 0, "PS3 Wireless card %d", wlan_cnt++);
@@ -2286,13 +2301,15 @@ void hd_read_nvmeof(hd_data_t *hd_data)
       "  nvme ctrl: name = %s\n    path = %s\n    transport = %s\n",
       sf_class_e->str,
       hd_sysfs_id(sf_dev),
-      transport
+      transport ?: ""
     );
 
     int transport_id = 0;
-    if(!strcmp(transport, "tcp")) transport_id = 1;
-    if(!strcmp(transport, "fc")) transport_id = 2;
-    if(!strcmp(transport, "rdma")) transport_id = 3;
+    if(transport) {
+      if(!strcmp(transport, "tcp")) transport_id = 1;
+      if(!strcmp(transport, "fc")) transport_id = 2;
+      if(!strcmp(transport, "rdma")) transport_id = 3;
+    }
 
     if(transport_id) {
       ADD2LOG("  added nvmeof ctrl: sf_dev = %s\n", sf_dev);
@@ -2489,6 +2506,8 @@ str_list_t *netdevice_list(str_list_t *net_list, str_list_t *all_devices, char *
     }
     if(ok) add_str_list(&final_list, sl_c->str);
   }
+
+  free_str_list(candidates);
 
   return final_list;
 }
