@@ -2301,7 +2301,7 @@ void hd_read_nvmeof(hd_data_t *hd_data)
       "  nvme ctrl: name = %s\n    path = %s\n    transport = %s\n",
       sf_class_e->str,
       hd_sysfs_id(sf_dev),
-      transport
+      transport ?: ""
     );
 
     int transport_id = 0;
