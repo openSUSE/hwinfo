@@ -1013,7 +1013,7 @@ API_SYM hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   if((p = hd_data->modinfo_ext)) {
     for(; p->type; p++) free_mem(p->module);
   }
-  hd_data->modinfo = free_mem(hd_data->modinfo_ext);
+  hd_data->modinfo_ext = free_mem(hd_data->modinfo_ext);
 
   if(hd_data->hddb2[0]) {
     free_mem(hd_data->hddb2[0]->list);
