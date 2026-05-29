@@ -57,7 +57,7 @@ void add_joystick_details(hd_data_t *hd_data, hd_t *h, const char *key, const ch
   h->detail = new_mem(sizeof *h->detail);
   h->detail->type = hd_detail_joystick;
 
-  joystick_t *jt = new_mem(sizeof jt);
+  joystick_t *jt = new_mem(sizeof *jt);
   unsigned u;
 
   if(key) {
