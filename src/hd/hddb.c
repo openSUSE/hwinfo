@@ -28,9 +28,9 @@ extern hddb2_data_t hddb_internal;
 // #define HDDB_TEST
 // #define HDDB_EXTERNAL_ONLY
 
-static char *hid_tag_names[] = { "", "pci ", "eisa ", "usb ", "special ", "pcmcia ", "sdio " };
+static char *hid_tag_names[] = { "", "pci ", "eisa ", "usb ", "special ", "pcmcia ", "sdio ", "mmc " };
 // just experimenting...
-static char *hid_tag_names2[] = { "", "pci ", "eisa ", "usb ", "int ", "pcmcia ", "sdio " };
+static char *hid_tag_names2[] = { "", "pci ", "eisa ", "usb ", "int ", "pcmcia ", "sdio ", "mmc " };
 
 typedef enum {
   pref_empty, pref_new, pref_and, pref_or, pref_add
@@ -887,6 +887,7 @@ int parse_id(char *str, unsigned *id, unsigned *range, unsigned *mask)
     else if(!strcmp(s, "isapnp")) tag = TAG_EISA;
     else if(!strcmp(s, "pcmcia")) tag = TAG_PCMCIA;
     else if(!strcmp(s, "sdio")) tag = TAG_SDIO;
+    else if(!strcmp(s, "mmc")) tag = TAG_MMC;
     else {
       str = s;
       if(t) *t = c;	/* restore */
