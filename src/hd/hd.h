@@ -88,6 +88,7 @@ extern "C" {
 #define TAG_SPECIAL	4	/**< Internally used ids. */
 #define TAG_PCMCIA	5	/**< PCMCIA ids. */
 #define TAG_SDIO	6	/**< SDIO ids. */
+#define TAG_MMC		7	/**< MMC/SD card ids. */
 
 /**
  * Get the real id value.
@@ -2107,7 +2108,7 @@ typedef enum hd_detail_type {
   hd_detail_pci, hd_detail_usb, hd_detail_isapnp, hd_detail_cdrom,
   hd_detail_floppy, hd_detail_bios, hd_detail_cpu, hd_detail_prom,
   hd_detail_monitor, hd_detail_sys, hd_detail_scsi, hd_detail_devtree,
-  hd_detail_ccw, hd_detail_joystick
+  hd_detail_ccw, hd_detail_joystick, hd_detail_mmc
 } hd_detail_type_t;
 
 typedef struct {
@@ -2181,6 +2182,25 @@ typedef struct {
   joystick_t *data;
 } hd_detail_joystick_t;
 
+/**
+ * MMC/SD card detail information.
+ * Captures MMC-specific sysfs attributes read from
+ * /sys/class/block/mmcblkX/device/.
+ */
+typedef struct {
+  unsigned manfid;	/**< Manufacturer ID (from sysfs 'manfid'). */
+  unsigned oemid;	/**< OEM ID (from sysfs 'oemid'). */
+  char *type;		/**< Card type: "SD", "MMC", "SDIO" (from sysfs 'type'). */
+  unsigned hwrev;	/**< Hardware revision (from sysfs 'hwrev'). */
+  unsigned fwrev;	/**< Firmware revision (from sysfs 'fwrev'). */
+  char *date;		/**< Manufacturing date, e.g. "01/2021" (from sysfs 'date'). */
+} mmc_info_t;
+
+typedef struct {
+  enum hd_detail_type type;
+  mmc_info_t *data;
+} hd_detail_mmc_t;
+
 typedef union {
   enum hd_detail_type type;
   hd_detail_pci_t pci;
@@ -2197,6 +2217,7 @@ typedef union {
   hd_detail_devtree_t devtree;
   hd_detail_ccw_t ccw;
   hd_detail_joystick_t joystick;
+  hd_detail_mmc_t mmc;
 } hd_detail_t;
 
 /** @} */

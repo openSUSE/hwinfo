@@ -839,6 +839,23 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     dump_line("Axes: %hhd\n", jt->axes);
   }
 
+  // print mmc/sd card details
+  if(
+    h->detail &&
+    h->detail->type == hd_detail_mmc &&
+    h->detail->mmc.data
+  )
+  {
+    mmc_info_t *mmc = h->detail->mmc.data;
+
+    dump_line("Manufacturer ID: 0x%04x\n", mmc->manfid);
+    dump_line("OEM ID: 0x%04x\n", mmc->oemid);
+    if(mmc->type) dump_line("Card Type: \"%s\"\n", mmc->type);
+    if(mmc->hwrev) dump_line("Hardware Revision: 0x%x\n", mmc->hwrev);
+    if(mmc->fwrev) dump_line("Firmware Revision: 0x%x\n", mmc->fwrev);
+    if(mmc->date) dump_line("Manufacturing Date: \"%s\"\n", mmc->date);
+  }
+
   if(
     h->detail &&
     h->detail->type == hd_detail_monitor &&

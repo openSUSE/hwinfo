@@ -1393,6 +1393,17 @@ hd_detail_t *free_hd_detail(hd_detail_t *d)
     case hd_detail_joystick:
       free_mem(d->joystick.data);
       break;
+
+    case hd_detail_mmc:
+      {
+        mmc_info_t *m = d->mmc.data;
+        if(m) {
+          free_mem(m->type);
+          free_mem(m->date);
+          free_mem(m);
+        }
+      }
+      break;
   }
 
   free_mem(d);
@@ -4103,6 +4114,7 @@ void hd_scan_xtra(hd_data_t *hd_data)
           case 'u': tag = TAG_USB; s++; break;
           case 'P': tag = TAG_PCMCIA; s++; break;
           case 'S': tag = TAG_SDIO; s++; break;
+          case 'm': tag = TAG_MMC; s++; break;
         }
         u1 = strtoul(s, &s, 16);
         if(*s) err |= 2;
@@ -4513,6 +4525,7 @@ char *vend_id2str(unsigned vend)
     if(ID_TAG(vend) == TAG_USB) *s++ = 'u', *s = 0;
     if(ID_TAG(vend) == TAG_SPECIAL) *s++ = 's', *s = 0;
     if(ID_TAG(vend) == TAG_PCMCIA) *s++ = 'P', *s = 0;
+    if(ID_TAG(vend) == TAG_MMC) *s++ = 'm', *s = 0;
     sprintf(s, "%04x", ID_VALUE(vend));
   }
 

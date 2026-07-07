@@ -32,6 +32,7 @@ static void add_cdrom_info(hd_data_t *hd_data, hd_t *hd);
 static void add_other_sysfs_info(hd_data_t *hd_data, hd_t *hd);
 static void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd);
 static void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev);
+static void add_mmc_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev);
 static void read_partitions(hd_data_t *hd_data);
 static void read_cdroms(hd_data_t *hd_data);
 static cdrom_info_t *new_cdrom_entry(cdrom_info_t **ci);
@@ -288,6 +289,7 @@ void get_block_devs(hd_data_t *hd_data)
         else if(!strcmp(bus_name, "pci")) hd->bus.id = bus_pci;
         else if(!strcmp(bus_name, "nvme")) hd->bus.id = bus_nvme;
         else if(!strcmp(bus_name, "nvme-subsystem")) hd->bus.id = bus_nvme;
+        else if(!strcmp(bus_name, "mmc")) hd->bus.id = bus_mmc;
       }
       hd->sysfs_bus_id = new_str(bus_id);
 
@@ -392,6 +394,9 @@ void get_block_devs(hd_data_t *hd_data)
         else {
           add_scsi_sysfs_info(hd_data, hd, sf_dev);
         }
+      }
+      else if(hd->bus.id == bus_mmc) {
+        add_mmc_sysfs_info(hd_data, hd, sf_dev);
       }
       else {
         add_other_sysfs_info(hd_data, hd);
@@ -555,6 +560,104 @@ void add_cdrom_info(hd_data_t *hd_data, hd_t *hd)
   ) {
     hd_read_cdrom_info(hd_data, hd);
   }
+}
+
+
+void add_mmc_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
+{
+  char *s, *cs;
+  uint64_t ul0;
+  mmc_info_t *mmc;
+
+  if(!hd_report_this(hd_data, hd)) return;
+
+  hd->detail = new_mem(sizeof *hd->detail);
+  hd->detail->type = hd_detail_mmc;
+  hd->detail->mmc.data = mmc = new_mem(sizeof *mmc);
+
+  /* hook into the generic "MMC/SD Storage Device" entry (special 0x6016)
+   * so an unrecognized manufacturer still resolves to a device name */
+  hd->compat_vendor.id = MAKE_ID(TAG_SPECIAL, 0x6016);
+  hd->compat_device.id = MAKE_ID(TAG_SPECIAL, 0x0000);
+
+  if((s = get_sysfs_attr_by_path(sf_dev, "manfid"))) {
+    if(hd_attr_uint(s, &ul0, 0)) {
+      ADD2LOG("    manfid = 0x%x\n", (unsigned) ul0);
+      mmc->manfid = ul0 & 0xffff;
+      hd->vendor.id = MAKE_ID(TAG_MMC, mmc->manfid);
+    }
+  }
+
+  if((s = get_sysfs_attr_by_path(sf_dev, "oemid"))) {
+    if(hd_attr_uint(s, &ul0, 0)) {
+      ADD2LOG("    oemid = 0x%x\n", (unsigned) ul0);
+      mmc->oemid = ul0 & 0xffff;
+    }
+  }
+
+  if((s = get_sysfs_attr_by_path(sf_dev, "name"))) {
+    cs = canon_str(s, strlen(s));
+    ADD2LOG("    name = %s\n", cs);
+    if(*cs) {
+      free_mem(hd->device.name);
+      hd->device.name = cs;
+    }
+    else {
+      free_mem(cs);
+    }
+  }
+
+  if((s = get_sysfs_attr_by_path(sf_dev, "serial"))) {
+    cs = canon_str(s, strlen(s));
+    ADD2LOG("    serial = %s\n", cs);
+    if(*cs) {
+      free_mem(hd->serial);
+      hd->serial = cs;
+    }
+    else {
+      free_mem(cs);
+    }
+  }
+
+  if((s = get_sysfs_attr_by_path(sf_dev, "type"))) {
+    cs = canon_str(s, strlen(s));
+    ADD2LOG("    type = %s\n", cs);
+    if(*cs) {
+      mmc->type = cs;
+    }
+    else {
+      free_mem(cs);
+    }
+  }
+
+  if((s = get_sysfs_attr_by_path(sf_dev, "hwrev"))) {
+    if(hd_attr_uint(s, &ul0, 0)) {
+      ADD2LOG("    hwrev = 0x%x\n", (unsigned) ul0);
+      mmc->hwrev = ul0;
+      str_printf(&hd->revision.name, 0, "hw%u", (unsigned) ul0);
+    }
+  }
+
+  if((s = get_sysfs_attr_by_path(sf_dev, "fwrev"))) {
+    if(hd_attr_uint(s, &ul0, 0)) {
+      ADD2LOG("    fwrev = 0x%x\n", (unsigned) ul0);
+      mmc->fwrev = ul0;
+      str_printf(&hd->revision.name, 0, "fw%u", (unsigned) ul0);
+    }
+  }
+
+  if((s = get_sysfs_attr_by_path(sf_dev, "date"))) {
+    cs = canon_str(s, strlen(s));
+    ADD2LOG("    date = %s\n", cs);
+    if(*cs) {
+      mmc->date = cs;
+    }
+    else {
+      free_mem(cs);
+    }
+  }
+
+  add_disk_size(hd_data, hd);
 }
 
 

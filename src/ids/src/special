@@ -686,6 +686,11 @@
 &device.id		special 0x0000
 +device.name		MMC Controller
 
+# mmc storage device (SD/MMC card)
+ vendor.id		special 0x6016
+&device.id		special 0x0000
++device.name		MMC/SD Storage Device
+
 # internal: usb scanner driver list
  vendor.id		special 0xf000
 &device.id		special 0x0001
