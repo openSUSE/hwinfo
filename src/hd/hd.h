@@ -1456,16 +1456,6 @@ typedef enum cpu_arch {
 } hd_cpu_arch_t;
 
 /**
- * @todo drop boot_arch at all? 
- */
-typedef enum boot_arch {
-  boot_unknown = 0,
-  boot_lilo, boot_milo, boot_aboot, boot_silo, boot_ppc, boot_elilo, boot_s390,
-  boot_mips, boot_grub, boot_uboot,
-} hd_boot_arch_t;
-
-
-/**
  * @addtogroup HWDETAILpub
  * @{
  */
@@ -2722,7 +2712,8 @@ typedef struct {
   hal_prop_t *probe_val;	/**< (Internal) probing features with arbitrary values */
   unsigned last_idx;		/**< (Internal) index of the last hd entry generated */
   unsigned module;		/**< (Internal) the current probing module we are in */
-  enum boot_arch boot;		/**< (Internal) boot method */
+  char *boot;			/**< (Internal) bootloader name */
+  char *boot_mode;		/**< (Internal) firmware boot mode */
   hd_t *old_hd;			/**< (Internal) old (outdated) entries (if you scan more than once) */
   pci_t *pci;			/**< (Internal) raw PCI data */
   isapnp_t *isapnp;		/**< (Internal) raw ISA-PnP data */
@@ -2837,7 +2828,8 @@ int hd_is_xen(hd_data_t *hd_data);
 unsigned hd_display_adapter(hd_data_t *hd_data);
 unsigned hd_boot_disk(hd_data_t *hd_data, int *matches);
 enum cpu_arch hd_cpu_arch(hd_data_t *hd_data);
-enum boot_arch hd_boot_arch(hd_data_t *hd_data);
+char *hd_bootloader(hd_data_t *hd_data);
+char *hd_boot_mode(hd_data_t *hd_data);
 
 hd_t *hd_get_device_by_idx(hd_data_t *hd_data, unsigned idx);
 

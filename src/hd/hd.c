@@ -1032,6 +1032,8 @@ API_SYM hd_data_t *hd_free_hd_data(hd_data_t *hd_data)
   hd_data->bios_ram.data = free_mem(hd_data->bios_ram.data);
   hd_data->bios_ebda.data = free_mem(hd_data->bios_ebda.data);
   hd_data->cmd_line = free_mem(hd_data->cmd_line);
+  hd_data->boot = free_mem(hd_data->boot);
+  hd_data->boot_mode = free_mem(hd_data->boot_mode);
   hd_data->xtra_hd = free_str_list(hd_data->xtra_hd);
   hd_data->devtree = free_devtree(hd_data);
 
@@ -3190,9 +3192,135 @@ API_SYM enum cpu_arch hd_cpu_arch(hd_data_t *hd_data)
 }
 
 
-API_SYM enum boot_arch hd_boot_arch(hd_data_t *hd_data)
+void hd_set_bootloader(hd_data_t *hd_data, char *name)
 {
+  if(!name || !*name) return;
+
+  if(hd_data->boot && !strcmp(hd_data->boot, name)) return;
+
+  hd_data->boot = free_mem(hd_data->boot);
+  hd_data->boot = new_str(name);
+}
+
+
+static char *decode_efi_string(unsigned char *buf, ssize_t len)
+{
+  char *s;
+  ssize_t i, j;
+
+  if(len <= 4) return NULL;
+
+  buf += 4;
+  len -= 4;
+
+  s = new_mem(len + 1);
+  for(i = j = 0; i < len; i += 2) {
+    if(i + 1 < len && buf[i + 1]) {
+      s = free_mem(s);
+      return NULL;
+    }
+    if(!buf[i]) break;
+    s[j++] = buf[i];
+  }
+  s[j] = 0;
+
+  return *s ? s : free_mem(s);
+}
+
+
+static char *linux_efi_loader_info(void)
+{
+  unsigned len;
+  char *buf;
+  char *loader_info = NULL;
+  str_list_t *entry, *entries;
+
+  entries = read_dir("/sys/firmware/efi/efivars", 'r');
+  for(entry = entries; entry; entry = entry->next) {
+    if(strncmp(entry->str, "LoaderInfo-", sizeof "LoaderInfo-" - 1)) continue;
+    buf = get_sysfs_attr_by_path2("/sys/firmware/efi/efivars", entry->str, &len);
+    if(!buf) continue;
+    loader_info = decode_efi_string((unsigned char *) buf, len);
+    if(loader_info) break;
+  }
+  free_str_list(entries);
+
+  return loader_info;
+}
+
+
+static char *linux_cmdline_bootloader(hd_data_t *hd_data)
+{
+  str_list_t *boot_image;
+  char *bootloader = NULL;
+  char *cmdline;
+
+  boot_image = get_cmdline(hd_data, "BOOT_IMAGE");
+  cmdline = hd_data->cmd_line;
+  if(cmdline) {
+    if(strcasestr(cmdline, "systemd-boot")) bootloader = new_str("systemd-boot");
+    else if(strcasestr(cmdline, "grub")) bootloader = new_str("grub");
+    else if(strcasestr(cmdline, "lilo")) bootloader = new_str("lilo");
+    else if(strcasestr(cmdline, "elilo")) bootloader = new_str("elilo");
+    else if(strcasestr(cmdline, "uboot") || strcasestr(cmdline, "u-boot")) bootloader = new_str("u-boot");
+  }
+  free_str_list(boot_image);
+
+  return bootloader;
+}
+
+
+static void detect_linux_boot(hd_data_t *hd_data)
+{
+  char *loader_info;
+  struct stat st;
+
+  if(!hd_data->boot_mode) {
+    if(!stat("/sys/firmware/efi", &st)) {
+      hd_data->boot_mode = new_str("UEFI");
+    }
+#if defined(__i386__) || defined(__x86_64__)
+    else {
+      hd_data->boot_mode = new_str("BIOS");
+    }
+#endif
+  }
+
+  loader_info = linux_efi_loader_info();
+  if(loader_info) {
+    if(
+      !hd_data->boot ||
+      !strcmp(hd_data->boot, "grub") ||
+      !strcmp(hd_data->boot, "u-boot") ||
+      !strcmp(hd_data->boot, "elilo")
+    ) {
+      hd_data->boot = free_mem(hd_data->boot);
+      hd_data->boot = loader_info;
+    }
+    else {
+      free_mem(loader_info);
+    }
+  }
+
+  if(!hd_data->boot) {
+    hd_data->boot = linux_cmdline_bootloader(hd_data);
+  }
+}
+
+
+API_SYM char *hd_bootloader(hd_data_t *hd_data)
+{
+  detect_linux_boot(hd_data);
+
   return hd_data->boot;
+}
+
+
+API_SYM char *hd_boot_mode(hd_data_t *hd_data)
+{
+  detect_linux_boot(hd_data);
+
+  return hd_data->boot_mode;
 }
 
 
