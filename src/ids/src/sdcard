@@ -1,0 +1,51 @@
+#
+# SD card manufacturer IDs (from sdcard.ids, upstream bp0/verbose-spork)
+# https://www.cameramemoryspeed.com/sd-memory-card-faq/reading-sd-card-cid-serial-psn-internal-numbers
+# Tag: TAG_MMC (7) — used by hwinfo for MMC/SD block device vendor lookup
+#
+# Format:
+#  vendor.id	mmc 0xXXXX
+# +vendor.name	Manufacturer Name
+#
+# The id value is the lower 16 bits of the 'manfid' sysfs attribute
+# (/sys/class/block/mmcblkX/device/manfid).
+#
+
+ vendor.id		mmc 0x0001
++vendor.name		Panasonic
+
+ vendor.id		mmc 0x0002
++vendor.name		Toshiba
+
+ vendor.id		mmc 0x0003
++vendor.name		SanDisk
+
+ vendor.id		mmc 0x001b
++vendor.name		Samsung
+
+ vendor.id		mmc 0x001d
++vendor.name		ADATA
+
+ vendor.id		mmc 0x0027
++vendor.name		Phison
+
+ vendor.id		mmc 0x0028
++vendor.name		Lexar
+
+ vendor.id		mmc 0x0031
++vendor.name		Silicon Power
+
+ vendor.id		mmc 0x0041
++vendor.name		Kingston
+
+ vendor.id		mmc 0x0074
++vendor.name		Transcend Information
+
+ vendor.id		mmc 0x0076
++vendor.name		Patriot Memory
+
+ vendor.id		mmc 0x0082
++vendor.name		Sony
+
+ vendor.id		mmc 0x009c
++vendor.name		Angelbird / Hoodman
