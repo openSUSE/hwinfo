@@ -51,7 +51,7 @@ $(LIBHD_D): hd_ids.o
 	ar r $(LIBHD) $?
 
 check_hd: check_hd.c
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
 
 hd_ids.c: hd_ids.h hd_ids_tiny.h
 
