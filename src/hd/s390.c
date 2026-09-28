@@ -141,6 +141,7 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     att = get_sysfs_attr(BUSNAME, curdev->d_name, "cutype");
     if(!att) {
       ADD2LOG("CCW device %s has no cutype attribute, skipping\n", curdev->d_name);
+      free_mem(res);
       continue;
     }
     cutype = strtol(att, NULL, 16);
@@ -155,12 +156,16 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
     res->io.base=strtol(rindex(curdev->d_name,'.')+1,NULL,16);
 
     /* Skip additional channels for multi-channel devices */
-    if(cutypes[res->io.base] < -3)
+    if(cutypes[res->io.base] < -3) {
+      free_mem(res);
       continue;
+    }
 
     if(disks_only && cutype!=0x3990 && cutype!=0x2105 && cutype!=0x3880 && cutype!=0x9343 && cutype!=0x6310 &&
-       (cutype != 0x1731 || devtype != 0x1732 || cumod != 3))
+       (cutype != 0x1731 || devtype != 0x1732 || cumod != 3)) {
+      free_mem(res);
       continue;
+    }
 
     res->io.range=1;
     switch (cutype)
