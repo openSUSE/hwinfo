@@ -849,10 +849,18 @@ void dump_normal(hd_data_t *hd_data, hd_t *h, FILE *f)
     mmc_info_t *mmc = h->detail->mmc.data;
 
     dump_line("Manufacturer ID: 0x%04x\n", mmc->manfid);
-    dump_line("OEM ID: 0x%04x\n", mmc->oemid);
+    char oem_str[] = " \"XX\"";
+    if(isalpha(mmc->oemid & 0xff) && isalpha((mmc->oemid >> 8) & 0xff)) {
+      oem_str[2] = (mmc->oemid >> 8) & 0xff;
+      oem_str[3] = mmc->oemid & 0xff;
+    }
+    else {
+      oem_str[0] = 0;
+    }
+    dump_line("OEM ID: 0x%04x%s\n", mmc->oemid, oem_str);
     if(mmc->type) dump_line("Card Type: \"%s\"\n", mmc->type);
-    if(mmc->hwrev) dump_line("Hardware Revision: 0x%x\n", mmc->hwrev);
-    if(mmc->fwrev) dump_line("Firmware Revision: 0x%x\n", mmc->fwrev);
+    dump_line("Hardware Revision: 0x%x\n", mmc->hwrev);
+    dump_line("Firmware Revision: 0x%x\n", mmc->fwrev);
     if(mmc->date) dump_line("Manufacturing Date: \"%s\"\n", mmc->date);
   }
 

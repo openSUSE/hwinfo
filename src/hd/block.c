@@ -634,7 +634,6 @@ void add_mmc_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
     if(hd_attr_uint(s, &ul0, 0)) {
       ADD2LOG("    hwrev = 0x%x\n", (unsigned) ul0);
       mmc->hwrev = ul0;
-      str_printf(&hd->revision.name, 0, "hw%u", (unsigned) ul0);
     }
   }
 
@@ -642,9 +641,10 @@ void add_mmc_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
     if(hd_attr_uint(s, &ul0, 0)) {
       ADD2LOG("    fwrev = 0x%x\n", (unsigned) ul0);
       mmc->fwrev = ul0;
-      str_printf(&hd->revision.name, 0, "fw%u", (unsigned) ul0);
     }
   }
+
+  str_printf(&hd->revision.name, 0, "%u.%u", mmc->hwrev, mmc->fwrev);
 
   if((s = get_sysfs_attr_by_path(sf_dev, "date"))) {
     cs = canon_str(s, strlen(s));

@@ -4176,6 +4176,9 @@ void hd_scan_xtra(hd_data_t *hd_data)
             hd->bus.id = bus_pcmcia;
             hd->hotplug = hp_pcmcia;
           }
+          if(ID_TAG(hd->vendor.id) == TAG_MMC) {
+            hd->bus.id = bus_mmc;
+          }
           if(*buf3) hd->unix_dev_name = new_str(buf3);
           hd->status.available = status_yes;
           hd->status.configured = status_new;
