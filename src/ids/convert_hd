@@ -95,10 +95,10 @@ $he_class_id = $he_nomask;
 );
 @xml_values{@xml_names} = ( 0 .. 100 );
 
-( $tag_none, $tag_pci, $tag_eisa, $tag_usb, $tag_special, $tag_pcmcia, $tag_sdio ) = ( 0 .. 6 );
+( $tag_none, $tag_pci, $tag_eisa, $tag_usb, $tag_special, $tag_pcmcia, $tag_sdio ) = ( 0 .. 7 );
 
-@tag_name = ( "", "pci", "eisa", "usb", "special", "pcmcia", "sdio" );
-@tag_values{@tag_name} = ( 0 .. 6 );
+@tag_name = ( "", "pci", "eisa", "usb", "special", "pcmcia", "sdio", "mmc" );
+@tag_values{@tag_name} = ( 0 .. 7 );
 $tag_values{none} = 0;
 
 ( $flag_id, $flag_range, $flag_mask, $flag_string, $flag_regexp ) = ( 0 .. 4 );
