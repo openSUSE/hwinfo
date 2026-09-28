@@ -75,8 +75,12 @@ static void hd_scan_s390_ex(hd_data_t *hd_data, int disks_only)
   /* check for each channel if it must be skipped and identify virtual reader/punch */
   for(i=0;i<(1<<16);i++)
   {
-    if(cutypes[i]==0x3088)	/* It seems that QDIO devices only appear once */
-      cutypes[i+1]*=-1;	/* negative cutype -> skip */
+    if(cutypes[i]==0x3088)
+    {
+      /* It seems that QDIO devices only appear once */
+      if(i < (1<<16)-1)
+        cutypes[i+1]*=-1;	/* negative cutype -> skip */
+    }
 
     if(cutypes[i]==0x2540)
     {
