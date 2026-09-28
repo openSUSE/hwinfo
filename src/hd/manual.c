@@ -212,7 +212,6 @@ API_SYM hd_manual_t *hd_manual_read_entry(hd_data_t *hd_data, const char *id)
 hal_prop_t *hd_manual_read_entry_old(const char *id)
 {
   char path[PATH_MAX];
-  int line;
   str_list_t *sl, *sl0;
   char *s, *s1, *s2;
   hal_prop_t *prop_list = NULL, *prop = NULL;
@@ -223,7 +222,7 @@ hal_prop_t *hd_manual_read_entry_old(const char *id)
 
   if(!(sl0 = read_file(path, 0, 0))) return prop_list;
 
-  for(line = 1, sl = sl0; sl; sl = sl->next, line++) {
+  for(sl = sl0; sl; sl = sl->next) {
     s = sl->str;
     while(isspace(*s)) s++;
     if(!*s || *s == '#' || *s == ';') continue;	/* empty lines & comments */

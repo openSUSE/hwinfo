@@ -662,13 +662,13 @@ void smbios_parse(hd_data_t *hd_data)
 {
   hd_smbios_t *sm;
   str_list_t *sl_any, *sl;
-  int cnt, data_len;
+  int data_len;
   unsigned char *sm_data;
   unsigned u, v;
 
   if(!hd_data->smbios) return;
 
-  for(cnt = 0, sm = hd_data->smbios; sm; sm = sm->next, cnt++) {
+  for(sm = hd_data->smbios; sm; sm = sm->next) {
     sm_data = sm->any.data;
     data_len = sm->any.data_len;
     sl_any = sm->any.strings;

@@ -2791,9 +2791,8 @@ void hddb_init(hddb_data_t *hddb, list_t *hd)
 {
   item_t *item;
   hddb_list_t db_list = {};
-  unsigned item_cnt;
 
-  for(item_cnt = 0, item = hd->first; item; item = item->next, item_cnt++) {
+  for(item = hd->first; item; item = item->next) {
 
     hddb_store_skey(hddb, item->key.first, &db_list.key_mask, &db_list.key);
     hddb_store_skey(hddb, item->value, &db_list.value_mask, &db_list.value);
