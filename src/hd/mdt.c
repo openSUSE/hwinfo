@@ -544,7 +544,7 @@ void list_modes(vm_t *vm, vbe_info_t *vbe)
 {
   x86emu_t *emu = NULL;
   int err = 0, i;
-  double d1, d2;
+  double d1;
   unsigned char buf2[0x100], tmp[0x100];
   unsigned u, ml;
   unsigned modelist[0x100];
@@ -639,7 +639,6 @@ void list_modes(vm_t *vm, vbe_info_t *vbe)
       emu->x86.R_EDI = VBE_BUF;
 
       err = vm_run(emu, &d1);
-      d2 += d1;
 
       LPRINTF("=== vbe mode info [0x%04x]: %s (time %.3fs, eax 0x%x, err = 0x%x)\n",
         modelist[i],

@@ -609,7 +609,7 @@ unsigned char crc(unsigned char *mem, unsigned len)
 
 void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
 {
-  unsigned u, u1, u2, ok, hlen = 0, ofs;
+  unsigned u, u1, ok, hlen = 0, ofs;
   uint64_t addr = 0;
   unsigned len = 0, scnt;
   unsigned structs = 0, type, slen;
@@ -765,7 +765,6 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
     if(type == sm_end) break;
     ofs += slen;
     u1 = ofs;
-    u2 = 1;
     scnt = 0;
     while(ofs + 1 < len) {
       if(!memory.data[ofs]) {
@@ -776,7 +775,6 @@ void smbios_get_info(hd_data_t *hd_data, memory_range_t *mem, bios_info_t *bt)
           if(*s) ADD2LOG("       str%d: \"%s\"\n", scnt, s);
           free_mem(s);
           u1 = ofs + 1;
-          u2++;
         }
         if(!memory.data[ofs + 1]) {
           ofs += 2;
