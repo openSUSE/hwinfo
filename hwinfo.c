@@ -504,7 +504,7 @@ void do_hw(hd_data_t *hd_data, FILE *f, int hw_item)
   hd_t *hd, *hd0;
   int smp = -1, uml = 0, xen = 0, i;
   char *s, *t;
-  enum boot_arch b_arch;
+  char *boot_mode;
   enum cpu_arch c_arch;
 
   hd0 = NULL;
@@ -581,7 +581,6 @@ void do_hw(hd_data_t *hd_data, FILE *f, int hw_item)
   }
   else if(hw_item == 2003) {
     c_arch = hd_cpu_arch(hd_data);
-    b_arch = hd_boot_arch(hd_data);
 
     s = t = "Unknown";
     switch(c_arch) {
@@ -637,42 +636,12 @@ void do_hw(hd_data_t *hd_data, FILE *f, int hw_item)
         break;
     }
 
-    switch(b_arch) {
-      case boot_unknown:
-        break;
-      case boot_lilo:
-        t = "lilo";
-        break;
-      case boot_milo:
-        t = "milo";
-        break;
-      case boot_aboot:
-        t = "aboot";
-        break;
-      case boot_silo:
-        t = "silo";
-        break;
-      case boot_ppc:
-        t = "ppc";
-        break;
-      case boot_elilo:
-        t = "elilo";
-        break;
-      case boot_s390:
-        t = "s390";
-        break;
-      case boot_mips:
-        t = "mips";
-        break;
-      case boot_grub:
-        t = "grub";
-        break;
-      case boot_uboot:
-        t = "uboot";
-        break;
-    }
+    t = hd_bootloader(hd_data);
+    if(!t) t = "Unknown";
 
     fprintf(f ? f : stdout, "Arch: %s/%s\n", s, t);
+    boot_mode = hd_boot_mode(hd_data);
+    if(boot_mode) fprintf(f ? f : stdout, "Boot mode: %s\n", boot_mode);
   }
   else if(hw_item == 2004) {
     fprintf(f ? f : stdout, "UML: %s\n", uml ? "yes" : "no");

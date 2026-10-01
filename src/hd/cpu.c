@@ -186,9 +186,9 @@ void read_cpuinfo(hd_data_t *hd_data)
     if(*model_id) ct->model_name = new_str(model_id);
     if(*system_id) ct->vend_name = new_str(system_id);
     if(strncmp(serial_number, "MILO", 4) == 0)
-      hd_data->boot = boot_milo;
+      hd_set_bootloader(hd_data, "milo");
     else
-      hd_data->boot = boot_aboot;
+      hd_set_bootloader(hd_data, "aboot");
 
     ct->family = cpu_variation;
     ct->model = cpu_revision;
@@ -229,7 +229,7 @@ void read_cpuinfo(hd_data_t *hd_data)
   cpu_variation = cpu_revision = 0;
   ct = 0; bogo = 0;
 
-  hd_data->boot = boot_uboot;
+  hd_set_bootloader(hd_data, "u-boot");
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(sscanf(sl->str, "Processor       : %79[^\n]", model_id) == 1) continue;
@@ -295,7 +295,7 @@ void read_cpuinfo(hd_data_t *hd_data)
   ct = 0; bogo = 0;
   vendor_id = 0;
 
-  hd_data->boot = boot_uboot;
+  hd_set_bootloader(hd_data, "u-boot");
 
   for(sl = hd_data->cpu; sl; sl = sl->next) {
     if(sscanf(sl->str, "Processor       : %79[^\n]", model_id) == 1);
@@ -370,7 +370,7 @@ void read_cpuinfo(hd_data_t *hd_data)
         ct->model = cpu_revision;
         ct->bogo = bogo;
         ct->clock = mhz;
-        hd_data->boot = boot_grub;
+        hd_set_bootloader(hd_data, "grub");
 
         if(*model_id) ct->model_name = new_str(model_id);
         hd = add_hd_entry(hd_data, __LINE__, 0);
@@ -422,7 +422,7 @@ void read_cpuinfo(hd_data_t *hd_data)
       ct->model_name = new_str(cpu_id);
       ct->bogo = bogo;
 
-      hd_data->boot = boot_silo;
+      hd_set_bootloader(hd_data, "silo");
 
       hd = add_hd_entry(hd_data, __LINE__, 0);
       hd->base_class.id = bc_internal;
@@ -503,7 +503,7 @@ void read_cpuinfo(hd_data_t *hd_data)
         ct->address_size_physical = address_size_physical;
         ct->address_size_virtual = address_size_virtual;
 
-        hd_data->boot = boot_grub;
+        hd_set_bootloader(hd_data, "grub");
 
         /* round clock to typical values */
         if(mhz >= 38 && mhz <= 42)
@@ -598,7 +598,7 @@ void read_cpuinfo(hd_data_t *hd_data)
         ct->model = model;
         ct->stepping = stepping;
         ct->cache = cache;
-        hd_data->boot = boot_ppc;
+        hd_set_bootloader(hd_data, "ppc");
         ct->clock = mhz;
         ct->bogo = bogo;
 
@@ -648,7 +648,7 @@ void read_cpuinfo(hd_data_t *hd_data)
         ct->family = family;
         ct->model = model;
         ct->stepping = stepping;
-	hd_data->boot = boot_elilo;
+	hd_set_bootloader(hd_data, "elilo");
 
         /* round clock to typical values */
         if(mhz >= 38 && mhz <= 42)
@@ -724,7 +724,7 @@ void read_cpuinfo(hd_data_t *hd_data)
 #endif
       if(*vendor_id) ct->vend_name = new_str(vendor_id);
       ct->stepping = u1;
-      hd_data->boot = boot_s390;
+      hd_set_bootloader(hd_data, "s390");
       ct->bogo = bogo;
 
       hd = add_hd_entry(hd_data, __LINE__, 0);
