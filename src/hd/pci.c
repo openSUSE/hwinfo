@@ -303,7 +303,7 @@ void hd_pci_read_data(hd_data_t *hd_data)
       close(fd);
     }
 
-    /* FIXME: stil valid? */
+    /* FIXME: still valid? */
     for(u = 0; u < sizeof pci->edid_len / sizeof *pci->edid_len; u++) {
       str_printf(&s, 0, "%s/edid%u", sf_dev, u + 1);
       add_edid_from_file(s, pci, u, hd_data);

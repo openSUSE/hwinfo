@@ -525,7 +525,7 @@ unsigned do_fhp_new(hd_data_t *hd_data, char *dev_name, int cnt)
   tcflush(fd, TCIOFLUSH);
   usleep(100 * 1000);
 
-  /* get status of inteface */
+  /* get status of interface */
   ioctl(fd, TIOCMGET, &status);
 
   /* clear dtr-line */

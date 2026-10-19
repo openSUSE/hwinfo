@@ -711,7 +711,7 @@ line_t *parse_line(char *str)
   /* drop leading spaces */
   while(isspace(*str)) str++;
 
-  /* skip emtpy lines and comments */
+  /* skip empty lines and comments */
   if(!*str || *str == ';' || *str == '#') {
     l.prefix = pref_empty;
     return &l;

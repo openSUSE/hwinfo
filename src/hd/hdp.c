@@ -1157,7 +1157,7 @@ void dump_cpu(hd_data_t *hd_data, hd_t *hd, FILE *f)
 	dump_line0 ("RISC-V\n");
 	break;
       default:
-	dump_line0 ("**UNKNWON**\n");
+	dump_line0 ("**UNKNOWN**\n");
 	break;
   }
 

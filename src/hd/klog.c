@@ -29,7 +29,7 @@ int str_ok(str_list_t *sl)
 }
 
 /*
- * Check if sl1 is idential to sl2; sl1 may be shorter as sl2.
+ * Check if sl1 is identical to sl2; sl1 may be shorter as sl2.
  *
  * Returns 0/1 if they are equal/not equal. If sl1 is NULL, 0 is returned.
  */
