@@ -853,7 +853,7 @@ void add_ide_sysfs_info(hd_data_t *hd_data, hd_t *hd)
 
 
 /*
- * assumes hd->drivers aleady includes scsi device drivers (like 'sd')
+ * assumes hd->drivers already includes scsi device drivers (like 'sd')
  *
  * The following code uses ioctl() calls to issue some SCSI commands
  * directly (namely the INQUIRY command).
@@ -1204,7 +1204,7 @@ void add_scsi_sysfs_info(hd_data_t *hd_data, hd_t *hd, char *sf_dev)
         ADD2LOG("  got it from vpd_pg80\n");
       }
 
-      // sanity check: serial_buf[3] holds the lenght of user data starting at offset 4
+      // sanity check: serial_buf[3] holds the length of user data starting at offset 4
       if(serial_buf_len < 4 || serial_buf_len < serial_buf[3] + 4) serial_buf = NULL;
 
       if(serial_buf) {

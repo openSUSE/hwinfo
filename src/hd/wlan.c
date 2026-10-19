@@ -36,7 +36,7 @@ int iw_sockets_open(void)
   int           sock;
 
   /*
-   * Now pick any (exisiting) useful socket family for generic queries
+   * Now pick any (existing) useful socket family for generic queries
    * Note : don't open all the socket, only returns when one matches,
    * all protocols might not be valid.
    * Workaround by Jim Kaba <jkaba@sarnoff.com>

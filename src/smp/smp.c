@@ -1,7 +1,7 @@
 /*
 [_Anarchy_(alan@lightning.swansea.uk.linux.org)] you should do one check
    though - if the board seems to be SMP and the CPU in /proc/cpuinfo is non
-   intel dont install an SMP kernel - thats a dual pentium board with a cyrix
+   intel dont install an SMP kernel - that's a dual pentium board with a cyrix
    or similar single cpu in it
 */
 

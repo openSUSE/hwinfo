@@ -1053,7 +1053,7 @@ typedef struct s_pci_t {
   char *sysfs_id;				/**< sysfs path */
   char *sysfs_bus_id;				/**< sysfs bus id */
   char *modalias;				/**< module alias */
-  char *label;					/**< Consistant Device Name (CDN), pci firmware spec 3.1, chapter 4.6.7 */
+  char *label;					/**< Consistent Device Name (CDN), pci firmware spec 3.1, chapter 4.6.7 */
   unsigned edid_len[6];				/**< edid record length */
   unsigned char edid_data[6][0x80];		/**< edid record */
 } pci_t;
@@ -1972,7 +1972,7 @@ typedef struct isdn_parm_s {
   struct isdn_parm_s *next;
   char *name;				/**< parameter name */
   unsigned valid:1;			/**< 1: entry is valid, 0: some inconsistencies */
-  unsigned conflict:1;			/**< 1: ressource conflict (eg. no free irq) */
+  unsigned conflict:1;			/**< 1: resource conflict (eg. no free irq) */
   uint64_t value;			/**< value of the parameter */
   unsigned type;			/**< CDBISDN type (P_...) */
   unsigned flags;			/**< CDBISDN flags (P_...) */
@@ -2972,7 +2972,7 @@ typedef struct	{
 	unsigned int features;	/**< feature flags */
 	int	line_cnt;	/**< count of ISDN ports */
 	int	vario_cnt;	/**< count of driver varios */
-	int	vario;		/**< referenz to driver vario record */
+	int	vario;		/**< reference to driver vario record */
 } cdb_isdn_card;
 
 typedef struct  {

@@ -564,7 +564,7 @@ sub add_head_tag
 # We do this by going through the log in reverse and rewriting any dates we
 # find whenever the date decreases.
 #
-# A minimum time difference of 1 second beween entries is maintained.
+# A minimum time difference of 1 second between entries is maintained.
 #
 # Not very subtle but it works.
 #

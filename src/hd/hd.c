@@ -45,7 +45,7 @@
 /**
  * @defgroup libhdInternals Implementation internals
  *
- * various functions commmon to all probing modules
+ * various functions common to all probing modules
  *
  * @{
  */
@@ -97,7 +97,7 @@
 #include "drm.h"
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * various functions commmon to all probing modules
+ * various functions common to all probing modules
  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
@@ -1802,7 +1802,7 @@ hd_res_t *free_res_list(hd_res_t *res)
 
 /*
  * Note: new_res is directly inserted into the list, so you *must* make sure
- * that new_res points to a malloc'ed pice of memory.
+ * that new_res points to a malloc'ed piece of memory.
  */
 hd_res_t *add_res_entry(hd_res_t **res, hd_res_t *new_res)
 {
@@ -2052,7 +2052,7 @@ void hd_scan_no_hal(hd_data_t *hd_data)
   hd_t *hd;
 
   /*
-   * for various reasons, do it befor scan_misc()
+   * for various reasons, do it before scan_misc()
    */
   hd_scan_floppy(hd_data);
 
@@ -2798,7 +2798,7 @@ API_SYM enum probe_feature hd_probe_feature_by_name(char *name)
 
 
 /*
- * Coverts a enum probe_feature to a string.
+ * Converts a enum probe_feature to a string.
  * If it fails, NULL is returned.
  */
 API_SYM char *hd_probe_feature_by_value(enum probe_feature feature)

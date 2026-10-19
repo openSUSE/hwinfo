@@ -141,7 +141,7 @@ unsigned read_data(hd_data_t *hd_data, int fd, unsigned char *buf, unsigned buf_
  *        out to be less reliable, as this command returns only one byte, which
  *        is even 0.
  * Note2: step 2 is mainly relevant if the mouse is already in use. In that
- *        case we would have problems reading back the respose of our command.
+ *        case we would have problems reading back the response of our command.
  *        (Typically the mouse driver will get it (and choke on it).)
  */
 
