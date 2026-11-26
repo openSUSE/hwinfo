@@ -439,7 +439,7 @@ void read_cpuinfo(hd_data_t *hd_data)
 #if defined(__i386__) || defined (__x86_64__)
   *model_id = *vendor_id = *features = *fpu = *fpu_exception = *write_protect = *bugs = *power_management = 0;
   mhz = cache = family = model = stepping = pyhsical_id = siblings = core_id = cores = apicid = apicid_initial = 0;
-  tlb_size = clflush_size = address_size_physical, address_size_virtual = 0;
+  tlb_size = clflush_size = address_size_physical = address_size_virtual = 0;
   cache_alignment = 0;
   bogo = 0;
 
